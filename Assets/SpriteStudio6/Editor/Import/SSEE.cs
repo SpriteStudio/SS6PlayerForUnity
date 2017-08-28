@@ -821,10 +821,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public Parts[] TableParts;
 
-				public Library_SpriteStudio6.Data.Parts.Effect[] DataTablePartsSS6PU;
-				public Library_SpriteStudio6.Data.Effect.Emitter[] DataTableEmitterSS6PU;
+				public Library_SpriteStudio6.Data.Parts.Effect[] TablePartsSS6PU;
+				public Library_SpriteStudio6.Data.Effect.Emitter[] TableEmitterSS6PU;
 
-				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataEffect> PrefabSS6PU;
+				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataEffect> DataEffectSS6PU;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -845,11 +845,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					TableParts = null;
 
-					DataTablePartsSS6PU = null;
-					DataTableEmitterSS6PU = null;
+					TablePartsSS6PU = null;
+					TableEmitterSS6PU = null;
 
-					PrefabSS6PU.CleanUp();
-					PrefabSS6PU.BootUp(1);	/* Always 1 */
+					DataEffectSS6PU.CleanUp();
+					DataEffectSS6PU.BootUp(1);	/* Always 1 */
 				}
 
 				public string FileNameGetFullPath()
@@ -952,15 +952,15 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					if(null != effectOverride)
 					{	/* Specified */
-						informationSSEE.PrefabSS6PU.TableName[0] = AssetDatabase.GetAssetPath(effectOverride);
-						informationSSEE.PrefabSS6PU.TableData[0] = effectOverride;
+						informationSSEE.DataEffectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(effectOverride);
+						informationSSEE.DataEffectSS6PU.TableData[0] = effectOverride;
 					}
 					else
 					{	/* Default */
-						informationSSEE.PrefabSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU, nameOutputAssetFolderBase)
-																	+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU, informationSSEE.NameFileBody, informationSSPJ.NameFileBody)
-																	+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
-						informationSSEE.PrefabSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataEffect>(informationSSEE.PrefabSS6PU.TableName[0]);
+						informationSSEE.DataEffectSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU, nameOutputAssetFolderBase)
+																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU, informationSSEE.NameFileBody, informationSSPJ.NameFileBody)
+																		+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
+						informationSSEE.DataEffectSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataEffect>(informationSSEE.DataEffectSS6PU.TableName[0]);
 					}
 
 					return(true);
@@ -976,9 +976,32 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					const string messageLogPrefix = "Create Asset(Data-Effect)";
 
+					Script_SpriteStudio6_DataEffect dataEffect = informationSSEE.DataEffectSS6PU.TableData[0];
+					if(null == dataEffect)
+					{
+						dataEffect = ScriptableObject.CreateInstance<Script_SpriteStudio6_DataEffect>();
+						AssetDatabase.CreateAsset(dataEffect, informationSSEE.DataEffectSS6PU.TableName[0]);
+						informationSSEE.DataEffectSS6PU.TableData[0] = dataEffect;
+					}
+
+					dataEffect.Version = Script_SpriteStudio6_DataEffect.KindVersion.SUPPORT_LATEST;
+					dataEffect.TableParts = informationSSEE.TablePartsSS6PU;
+					dataEffect.TableEmitter = informationSSEE.TableEmitterSS6PU;
+
+					dataEffect.FlagData = Script_SpriteStudio6_DataEffect.FlagBit.CLEAR;
+					dataEffect.FlagData |= (true == informationSSEE.FlagLockSeed) ? Script_SpriteStudio6_DataEffect.FlagBit.SEEDRANDOM_LOCK : Script_SpriteStudio6_DataEffect.FlagBit.CLEAR;
+					dataEffect.SeedRandom = informationSSEE.Seed;
+					dataEffect.CountFramePerSecond = informationSSEE.FramePerSecond;
+					dataEffect.ScaleLayout = informationSSEE.ScaleLayout;
+					dataEffect.VersionRenderer = informationSSEE.VersionRenderer;
+					dataEffect.CountMaxParticle = 0;
+
+					EditorUtility.SetDirty(dataEffect);
+					AssetDatabase.SaveAssets();
+
 					return(true);
 
-//				AssetCreateDataSS6PU_ErroeEnd:;
+//				AssetCreateCellMap_ErrorEnd:;
 //					return(false);
 				}
 
@@ -1106,7 +1129,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 						}
 					}
-					informationSSEE.DataTableEmitterSS6PU = tableDataEmitter;
+					informationSSEE.TableEmitterSS6PU = tableDataEmitter;
 
 					/* Tidy up & Create Parts for Runtime */
 					Library_SpriteStudio6.Data.Parts.Effect[] tableDataParts = new Library_SpriteStudio6.Data.Parts.Effect[countPartsRebuild];
@@ -1115,7 +1138,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						tableDataParts[i].CleanUp();
 						tableDataParts[i] = tablePartsNew[i].Data;
 					}
-					informationSSEE.DataTablePartsSS6PU = tableDataParts;
+					informationSSEE.TablePartsSS6PU = tableDataParts;
 
 					return(true);
 

@@ -278,7 +278,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public LibraryEditor_SpriteStudio6.Import.SSEE.Information[] TableInformationSSEE;
 				public string[] TableNameSSEE;	/* Temporary */
 
-				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataCellMap> PrefabCellMap;
+				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataCellMap> DataCellMapSS6PU;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -309,8 +309,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					TableNameSSEE = null;
 					TableInformationSSEE = null;
 
-					PrefabCellMap.CleanUp();
-//					PrefabCellMap.BootUp(1);	/* Don't boot-up here. */
+					DataCellMapSS6PU.CleanUp();
+//					DataCellMapSS6PU.BootUp(1);	/* Don't boot-up here. */
 				}
 
 				public bool InformationCreateTexture(ref LibraryEditor_SpriteStudio6.Import.Setting setting)
@@ -558,12 +558,12 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
 					if(0 < countSSCE)
 					{
-						informationSSPJ.PrefabCellMap.BootUp(1);	/* Always 1 */
+						informationSSPJ.DataCellMapSS6PU.BootUp(1);	/* Always 1 */
 						AssetNameDecideCellMap(ref setting, informationSSPJ, nameOutputAssetFolderBase, null);
 					}
 					else
 					{
-						informationSSPJ.PrefabCellMap.CleanUp();
+						informationSSPJ.DataCellMapSS6PU.CleanUp();
 					}
 
 					/* Materials & Textures */
@@ -616,15 +616,15 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					if(null != cellMapOverride)
 					{	/* Specified */
-						informationSSPJ.PrefabCellMap.TableName[0] = AssetDatabase.GetAssetPath(cellMapOverride);
-						informationSSPJ.PrefabCellMap.TableData[0] = cellMapOverride;
+						informationSSPJ.DataCellMapSS6PU.TableName[0] = AssetDatabase.GetAssetPath(cellMapOverride);
+						informationSSPJ.DataCellMapSS6PU.TableData[0] = cellMapOverride;
 					}
 					else
 					{	/* Default */
-						informationSSPJ.PrefabCellMap.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU, nameOutputAssetFolderBase)
+						informationSSPJ.DataCellMapSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU, nameOutputAssetFolderBase)
 																	+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU, informationSSPJ.NameFileBody, informationSSPJ.NameFileBody)
 																	+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
-						informationSSPJ.PrefabCellMap.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataCellMap>(informationSSPJ.PrefabCellMap.TableName[0]);
+						informationSSPJ.DataCellMapSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataCellMap>(informationSSPJ.DataCellMapSS6PU.TableName[0]);
 					}
 
 					return(true);
@@ -637,18 +637,18 @@ public static partial class LibraryEditor_SpriteStudio6
 														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 													)
 				{
-					Script_SpriteStudio6_DataCellMap dataCellMap = informationSSPJ.PrefabCellMap.TableData[0];
+					Script_SpriteStudio6_DataCellMap dataCellMap = informationSSPJ.DataCellMapSS6PU.TableData[0];
 					if(null == dataCellMap)
 					{
 						dataCellMap = ScriptableObject.CreateInstance<Script_SpriteStudio6_DataCellMap>();
-						AssetDatabase.CreateAsset(dataCellMap, informationSSPJ.PrefabCellMap.TableName[0]);
-						informationSSPJ.PrefabCellMap.TableData[0] = dataCellMap;
+						AssetDatabase.CreateAsset(dataCellMap, informationSSPJ.DataCellMapSS6PU.TableName[0]);
+						informationSSPJ.DataCellMapSS6PU.TableData[0] = dataCellMap;
 					}
 
-					int countSSEE = informationSSPJ.TableInformationSSCE.Length;
+					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
 					dataCellMap.Version = Script_SpriteStudio6_DataCellMap.KindVersion.SUPPORT_LATEST;
-					dataCellMap.TableCellMap = new Library_SpriteStudio6.Data.CellMap[countSSEE];
-					for(int i=0; i<countSSEE; i++)
+					dataCellMap.TableCellMap = new Library_SpriteStudio6.Data.CellMap[countSSCE];
+					for(int i=0; i<countSSCE; i++)
 					{
 						dataCellMap.TableCellMap[i] = informationSSPJ.TableInformationSSCE[i].Data;
 					}
