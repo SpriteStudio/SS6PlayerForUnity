@@ -22,7 +22,7 @@ public static partial class LibraryEditor_SpriteStudio6
 												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 											)
 			{
-				const string messageLogPrefix = "SSEE-Parse";
+				const string messageLogPrefix = "Parse SSEE";
 				Information informationSSEE = null;
 
 				/* ".ssee" Load */
@@ -176,6 +176,20 @@ public static partial class LibraryEditor_SpriteStudio6
 					break;
 				}
 
+				/* Limit Sub-Emitters */
+				if(false == informationSSEE.EmitterLimit(ref setting, informationSSPJ))
+				{
+					goto Parse_ErrorEnd;
+				}
+
+				/* Fix Parts' child list */
+				int countParts = informationSSEE.TableParts.Length;
+				for(int i=0; i<countParts; i++)
+				{
+					informationSSEE.TableParts[i].Data.TableIDChild = informationSSEE.TableParts[i].ListIndexPartsChild.ToArray();
+					informationSSEE.TableParts[i].ListIndexPartsChild = null;
+				}
+
 				return(informationSSEE);
 
 			Parse_ErrorEnd:;
@@ -191,7 +205,7 @@ public static partial class LibraryEditor_SpriteStudio6
 															string nameFileSSEE
 														)
 			{
-				const string messageLogPrefix = "SSEE-Parse (Parts)";
+				const string messageLogPrefix = "Parse SSEE(Parts)";
 
 				/* Create Information */
 				Information.Parts informationParts = new Information.Parts();
@@ -201,6 +215,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					goto ParseParts_ErrorEnd;
 				}
 				informationParts.CleanUp();
+				informationParts.BootUp();
 
 				/* Get Base-Datas */
 				string valueText = "";
@@ -317,7 +332,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		string nameFileSSEE
 																	)
 			{
-				const string messageLogPrefix = "SSEE-Parse (Emitter)";
+				const string messageLogPrefix = "Parse SSEE(Emitter)";
 
 				/* Create Information */
 				Information.Parts.Emitter informationEmitter = new Information.Parts.Emitter();
@@ -619,7 +634,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																string nameFileSSEE
 															)
 			{
-				const string messageLogPrefix = "SSEE-Parse (Emitter)";
+				const string messageLogPrefix = "Parse SSEE(Emitter)";
 
 				bool flagValid = true;
 				string valueText = "";
@@ -670,7 +685,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																string nameFileSSEE
 															)
 			{
-				const string messageLogPrefix = "SSEE-Parse (Emitter)";
+				const string messageLogPrefix = "Parse SSEE(Emitter)";
 
 				bool flagValid = true;
 				string valueText = "";
@@ -777,6 +792,12 @@ public static partial class LibraryEditor_SpriteStudio6
 				TARGET_LATEST = CODE_010100
 			};
 
+			public enum Constants
+			{
+				LIMIT_SUBEMITTER_DEPTH = 2,
+				LIMIT_SUBEMITTER_COUNT = 10,
+			}
+
 			private const string ExtentionFile = ".ssee";
 			#endregion Enums & Constants
 
@@ -799,6 +820,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				public int FramePerSecond;
 
 				public Parts[] TableParts;
+
+				public Library_SpriteStudio6.Data.Parts.Effect[] DataTablePartsSS6PU;
+				public Library_SpriteStudio6.Data.Effect.Emitter[] DataTableEmitterSS6PU;
+
+				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataEffect> PrefabSS6PU;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -818,23 +844,41 @@ public static partial class LibraryEditor_SpriteStudio6
 					FramePerSecond = 60;
 
 					TableParts = null;
+
+					DataTablePartsSS6PU = null;
+					DataTableEmitterSS6PU = null;
+
+					PrefabSS6PU.CleanUp();
+					PrefabSS6PU.BootUp(1);	/* Always 1 */
 				}
 
 				public string FileNameGetFullPath()
 				{
 					return(NameDirectory + NameFileBody + NameFileExtension);
 				}
+
+				public bool EmitterLimit(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+											LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
+										)
+				{
+					/* MEMO: "Effect"data has limitation of "up to 10 parallel sub-emitters" and "Emitter hierarchy up to 2 levels". */
+					/*       Sub-emitters for beyond limitations are ignored.                                                        */
+					return(true);
+
+//				EmitterLimit_ErrorEnd:;
+//					return(false);
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
-				#region Classes, Structs & Interface
+				#region Classes, Structs & Interfaces
 				public class Parts
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
 					public Library_SpriteStudio6.Data.Parts.Effect Data;
 
-					public List<int> ListIndexPartsChild;
+					public List<int> ListIndexPartsChild;	/* Temporary */
 					public Emitter DataEmitter;
 					#endregion Variables & Properties
 
@@ -844,16 +888,27 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						Data.CleanUp();
 
+						ListIndexPartsChild = null;
+						DataEmitter = null;
+					}
+
+					public bool BootUp()
+					{
 						ListIndexPartsChild = new List<int>();
 						ListIndexPartsChild.Clear();
 
 						DataEmitter = new Emitter();
 						DataEmitter.CleanUp();
+
+						return(true);
+
+//					BootUp_ErrorEnd:;
+//						return(false);
 					}
 					#endregion Functions
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
-					#region Classes, Structs & Interfac
+					#region Classes, Structs & Interfaces
 					public class Emitter
 					{
 						/* ----------------------------------------------- Variables & Properties */
@@ -875,7 +930,220 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						#endregion Functions
 					}
-					#endregion Classes, Structs & Interface
+					#endregion Classes, Structs & Interfaces
+				}
+				#endregion Classes, Structs & Interfaces
+			}
+
+			public static class ModeSS6PU
+			{
+				/* MEMO: Originally functions that should be defined in each information class. */
+				/*       However, confusion tends to occur with mode increases.                 */
+				/*       ... Compromised way.                                                   */
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public static bool AssetNameDecideData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE,
+														string nameOutputAssetFolderBase,
+														Script_SpriteStudio6_DataEffect effectOverride
+													)
+				{
+					if(null != effectOverride)
+					{	/* Specified */
+						informationSSEE.PrefabSS6PU.TableName[0] = AssetDatabase.GetAssetPath(effectOverride);
+						informationSSEE.PrefabSS6PU.TableData[0] = effectOverride;
+					}
+					else
+					{	/* Default */
+						informationSSEE.PrefabSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU, nameOutputAssetFolderBase)
+																	+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU, informationSSEE.NameFileBody, informationSSPJ.NameFileBody)
+																	+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
+						informationSSEE.PrefabSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataEffect>(informationSSEE.PrefabSS6PU.TableName[0]);
+					}
+
+					return(true);
+
+//				AssetNameDecideSS6PU_ErroeEnd:;
+//					return(false);
+				}
+
+				public static bool AssetCreateData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE
+												)
+				{
+					const string messageLogPrefix = "Create Asset(Data-Effect)";
+
+					return(true);
+
+//				AssetCreateDataSS6PU_ErroeEnd:;
+//					return(false);
+				}
+
+				public static bool ConvertData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+												LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE
+											)
+				{
+					const string messageLogPrefix = "Convert (Data-Effect)";
+
+					/* Rebuild Parts */
+					/* MEMO: Effect data has only parts "Root" and "Emitter". */
+					int countParts = informationSSEE.TableParts.Length;
+					int countPartsRebuild = 0;
+					int countEmitter = 0;
+					int[] tableIndexPartsRebuild = new int[countParts];
+					WorkAreaRebuildPartsConvertData[] workAreaRebuildParts = new WorkAreaRebuildPartsConvertData[countParts];
+					for(int i=0; i<countParts; i++)
+					{
+						workAreaRebuildParts[i].CleanUp();
+
+						tableIndexPartsRebuild[i] = -1;
+					}
+					for(int i=0; i<countParts; i++)
+					{
+						switch(informationSSEE.TableParts[i].Data.Feature)
+						{
+							case Library_SpriteStudio6.Data.Parts.Effect.KindFeature.ROOT:
+								workAreaRebuildParts[countPartsRebuild].IndexParts = i;
+								workAreaRebuildParts[countPartsRebuild].IndexPartsChildParicle = -1;
+								workAreaRebuildParts[countPartsRebuild].IndexEmitter = -1;	/* Has no "Emitter" */
+
+								tableIndexPartsRebuild[i] = countPartsRebuild;
+								countPartsRebuild++;
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Effect.KindFeature.EMITTER:
+								/* MEMO: hEmitterhalways has only 1 child(definitely "Particle"). */
+								workAreaRebuildParts[countPartsRebuild].IndexParts = i;
+								workAreaRebuildParts[countPartsRebuild].IndexPartsChildParicle = informationSSEE.TableParts[i].Data.TableIDChild[0];
+								workAreaRebuildParts[countPartsRebuild].IndexEmitter = countEmitter;
+								countEmitter++;
+
+								tableIndexPartsRebuild[i] = countPartsRebuild;
+								countPartsRebuild++;
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Effect.KindFeature.PARTICLE:
+								/* MEMO: Parent(Emitter) has already been set to "tableIndexPartsRebuild". */
+								/* MEMO: "Particle" always has parent. */
+								tableIndexPartsRebuild[i] = tableIndexPartsRebuild[informationSSEE.TableParts[i].Data.IDParent];
+								break;
+
+							default:
+								continue;
+						}
+					}
+
+					Information.Parts[] tablePartsNew = new Information.Parts[countPartsRebuild];
+					Information.Parts partsNew = null; 
+					Information.Parts partsOriginal = null;
+					int indexPartsTemp;
+					int countPartsChild;
+					for(int i=0; i<countPartsRebuild; i++)
+					{
+						partsNew = new Information.Parts();
+						partsNew.CleanUp();
+
+						partsOriginal = informationSSEE.TableParts[workAreaRebuildParts[i].IndexParts];
+
+						partsNew.Data.Name = string.Copy(partsOriginal.Data.Name);
+						partsNew.Data.ID = i;
+						indexPartsTemp = partsOriginal.Data.IDParent;
+						partsNew.Data.IDParent = (-1 == indexPartsTemp) ? -1 : tableIndexPartsRebuild[indexPartsTemp];
+						partsNew.Data.Feature = partsOriginal.Data.Feature;
+						partsNew.Data.IndexEmitter = workAreaRebuildParts[i].IndexEmitter;
+
+						partsNew.DataEmitter = partsOriginal.DataEmitter;
+						indexPartsTemp = workAreaRebuildParts[i].IndexPartsChildParicle;	/* Sub-emitters are "Particle"'s children. */
+						indexPartsTemp = (-1 == indexPartsTemp) ? workAreaRebuildParts[i].IndexParts : indexPartsTemp;
+						countPartsChild = informationSSEE.TableParts[indexPartsTemp].Data.TableIDChild.Length;
+						partsNew.Data.TableIDChild = new int[countPartsChild];
+						for(int j=0; j<countPartsChild; j++)
+						{
+							partsNew.Data.TableIDChild[j] = tableIndexPartsRebuild[informationSSEE.TableParts[indexPartsTemp].Data.TableIDChild[j]];
+						}
+
+						partsNew.DataEmitter = partsOriginal.DataEmitter;
+
+						tablePartsNew[i] = partsNew;
+					}
+
+					/* Tidy up & Create "Emitter"s for Runtime */
+					Library_SpriteStudio6.Data.Effect.Emitter[] tableDataEmitter = new Library_SpriteStudio6.Data.Effect.Emitter[countEmitter];
+					Information.Parts.Emitter[] tableEmitter = new Information.Parts.Emitter[countEmitter];
+					Information.Parts.Emitter emitterOriginal = null;
+					for(int i=0; i<countEmitter; i++)
+					{
+						tableEmitter[i] = null;
+					}
+					for(int i=0; i<countPartsRebuild; i++)
+					{
+						indexPartsTemp = workAreaRebuildParts[i].IndexEmitter;
+						if(-1 == indexPartsTemp)
+						{
+							continue;
+						}
+
+						emitterOriginal = informationSSEE.TableParts[workAreaRebuildParts[i].IndexParts].DataEmitter;
+						tableDataEmitter[indexPartsTemp].CleanUp();
+						tableDataEmitter[indexPartsTemp] = emitterOriginal.Data;
+						tableDataEmitter[indexPartsTemp].IndexCellMap = informationSSPJ.IndexGetCellMap(emitterOriginal.NameCellMap);
+						if(-1 == tableDataEmitter[indexPartsTemp].IndexCellMap)
+						{
+							tableDataEmitter[indexPartsTemp].IndexCellMap = -1;
+							tableDataEmitter[indexPartsTemp].IndexCell = -1;
+						}
+						else
+						{
+							tableDataEmitter[indexPartsTemp].IndexCell = informationSSPJ.TableInformationSSCE[tableDataEmitter[indexPartsTemp].IndexCellMap].IndexGetCell(emitterOriginal.NameCell);
+							if(-1 == tableDataEmitter[indexPartsTemp].IndexCell)
+							{
+								tableDataEmitter[indexPartsTemp].IndexCellMap = -1;
+								tableDataEmitter[indexPartsTemp].IndexCell = -1;
+							}
+						}
+					}
+					informationSSEE.DataTableEmitterSS6PU = tableDataEmitter;
+
+					/* Tidy up & Create Parts for Runtime */
+					Library_SpriteStudio6.Data.Parts.Effect[] tableDataParts = new Library_SpriteStudio6.Data.Parts.Effect[countPartsRebuild];
+					for(int i=0; i<countPartsRebuild; i++)
+					{
+						tableDataParts[i].CleanUp();
+						tableDataParts[i] = tablePartsNew[i].Data;
+					}
+					informationSSEE.DataTablePartsSS6PU = tableDataParts;
+
+					return(true);
+
+//				ConvertSS6PU_ErroeEnd:;
+//					return(false);
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				private struct WorkAreaRebuildPartsConvertData
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public int IndexParts;
+					public int IndexPartsChildParicle;	/* only Emitter */
+					public int IndexEmitter;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						IndexParts = -1;
+						IndexPartsChildParicle = -1;
+						IndexEmitter = -1;
+					}
+					#endregion Functions
 				}
 				#endregion Classes, Structs & Interfaces
 			}

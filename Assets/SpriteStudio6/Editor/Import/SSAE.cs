@@ -21,7 +21,7 @@ public static partial class LibraryEditor_SpriteStudio6
 												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 											)
 			{
-				const string messageLogPrefix = "SSAE-Parse";
+				const string messageLogPrefix = "Parse SSAE";
 				Information informationSSAE = null;
 
 				/* ".ssce" Load */
@@ -211,7 +211,7 @@ public static partial class LibraryEditor_SpriteStudio6
 															string nameFileSSAE
 														)
 			{
-				const string messageLogPrefix = "SSAE-Parse (Parts)";
+				const string messageLogPrefix = "Parse SSAE(Parts)";
 
 				Information.Parts informationParts = new Information.Parts();
 				if(null == informationParts)
@@ -555,7 +555,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	string nameFileSSAE
 																)
 			{
-				const string messageLogPrefix = "SSAE-Parse (Animation)";
+				const string messageLogPrefix = "Parse SSAE(Animation)";
 
 				Information.Animation informationAnimation = new Information.Animation();
 				if(null == informationAnimation)
@@ -677,7 +677,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				string nameFileSSAE
 																			)
 			{
-				const string messageLogPrefix = "SSAE-Parse (Attributes)";
+				const string messageLogPrefix = "Parse SSAE(Attributes)";
 
 				Information.Animation.Parts informationAnimationParts = new Information.Animation.Parts();
 				if(null == informationAnimationParts)
@@ -1421,7 +1421,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				string nameFileSSAE
 																			)
 			{
-				const string messageLogPrefix = "SSAE-Parse (Attributes)";
+				const string messageLogPrefix = "Parse SSAE(Attributes)";
 
 				/* Adjust Top-Frame Key-Data */
 				informationAnimationParts.Cell.KeyDataAdjustTopFrame();

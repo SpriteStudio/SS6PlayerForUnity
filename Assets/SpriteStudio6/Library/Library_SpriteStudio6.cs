@@ -2427,7 +2427,7 @@ public static partial class Library_SpriteStudio6
 
 				public int ID;
 				public int IDParent;
-				public int[] ListIDChild;
+				public int[] TableIDChild;
 
 				public KindFeature Feature;	/* Preliminary ... "Root"or"Emitter" */
 				public int IndexEmitter;	/* -1 == Not "Emitter" */
@@ -2441,7 +2441,7 @@ public static partial class Library_SpriteStudio6
 
 					ID = -1;
 					IDParent = -1;
-					ListIDChild = null;
+					TableIDChild = null;
 
 					Feature = (KindFeature)(-1);
 					IndexEmitter = -1;

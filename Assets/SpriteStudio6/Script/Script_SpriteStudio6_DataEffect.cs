@@ -14,6 +14,25 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
 	public KindVersion Version;
+
+	public FlagBit FlagData;
+	public bool IsLockSeedRandom
+	{
+		get
+		{
+			return(0 != (FlagData & FlagBit.SEEDRANDOM_LOCK));
+		}
+	}
+	public int SeedRandom;
+	public int VersionRenderer;
+
+	public int CountMaxParticle;
+	public int CountFramePerSecond;
+
+	public Vector2 ScaleLayout;
+
+	public Library_SpriteStudio6.Data.Parts.Effect[] TableParts;
+	public Library_SpriteStudio6.Data.Effect.Emitter[] TableEmitter;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
@@ -33,6 +52,14 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 
 		SUPPORT_EARLIEST = CODE_010000,
 		SUPPORT_LATEST = CODE_010000
+	}
+
+	[System.Flags]
+	public enum FlagBit
+	{
+		SEEDRANDOM_LOCK = 0x00000001,
+
+		CLEAR = 0x00000000
 	}
 	#endregion Enums & Constants
 }

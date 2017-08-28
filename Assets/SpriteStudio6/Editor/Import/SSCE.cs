@@ -22,7 +22,7 @@ public static partial class LibraryEditor_SpriteStudio6
 												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 											)
 			{
-				const string messageLogPrefix = "SSCE-Parse";
+				const string messageLogPrefix = "Parse SSCE";
 				Information informationSSCE = null;
 
 				/* ".ssce" Load */
@@ -335,47 +335,18 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 						}
 					}
-					return(-1);
-				}
-
-				public bool ConvertSS6PU(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
-											)
-				{	/* Convert-SS6PU Pass-1 ... Transfer necessary data from the temporary. */
-					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* ÅhUnityEngine.TextureÅh and my "Texture", class-names are conflict unless fully-qualified. */
-					if(0 <= IndexTexture)
+					else
 					{
-						informationTexture = informationSSPJ.TableInformationTexture[IndexTexture];
-						int countCell = TableCell.Length;
-
-						Data.Name = string.Copy(NameFileBody);
-						Data.SizeOriginal.x = (float)informationTexture.SizeX;
-						Data.SizeOriginal.y = (float)informationTexture.SizeY;
-						Data.TableCell = new Library_SpriteStudio6.Data.CellMap.Cell[countCell];
-
-						Library_SpriteStudio6.Data.CellMap.Cell informationCell = new Library_SpriteStudio6.Data.CellMap.Cell();
-						for(int i=0; i<countCell; i++)
+						int count = Data.TableCell.Length;
+						for(int i=0; i<count; i++)
 						{
-							informationCell.CleanUp();
-							informationCell.Name = string.Copy(TableCell[i].Name);
-							informationCell.Rectangle = TableCell[i].Area;
-							informationCell.Pivot = TableCell[i].Pivot;
-
-							Data.TableCell[i] = informationCell;
+							if(name == Data.TableCell[i].Name)
+							{
+								return(i);
+							}
 						}
-						TableCell = null;	/* Purge WorkArea */
 					}
-					return(true);
-
-//				ConvertSS6PU_ErrorEnd:;
-//					return(false);
-				}
-
-				public bool ConvertTrimPixelSS6PU(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
-												)
-				{	/* Convert-SS6PU Pass-2 */
-					return(false);
+					return(-1);
 				}
 				#endregion Functions
 
@@ -420,8 +391,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					public int SizeY;
 
 					public LibraryEditor_SpriteStudio6.Import.Assets<Texture2D> PrefabTexture;
-					public LibraryEditor_SpriteStudio6.Import.Assets<Material> MaterialAnimation;
-					public LibraryEditor_SpriteStudio6.Import.Assets<Material> MaterialEffect;
+					public LibraryEditor_SpriteStudio6.Import.Assets<Material> MaterialAnimationSS6PU;
+					public LibraryEditor_SpriteStudio6.Import.Assets<Material> MaterialEffectSS6PU;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -442,233 +413,296 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						PrefabTexture.CleanUp();
 						PrefabTexture.BootUp(1);	/* Always 1 */
-						MaterialAnimation.CleanUp();
-						MaterialAnimation.BootUp((int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR);
-						MaterialEffect.CleanUp();
-						MaterialEffect.BootUp((int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR);
+						MaterialAnimationSS6PU.CleanUp();
+						MaterialAnimationSS6PU.BootUp((int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR);
+						MaterialEffectSS6PU.CleanUp();
+						MaterialEffectSS6PU.BootUp((int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR);
 					}
 
 					public string FileNameGetFullPath()
 					{
 						return(NameDirectory + NameFileBody + NameFileExtension);
 					}
+					#endregion Functions
+				}
+				#endregion Classes, Structs & Interfaces
+			}
 
-					public bool AssetNameDecideTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+			public static class ModeSS6PU
+			{
+				/* MEMO: Originally functions that should be defined in each information class. */
+				/*       However, confusion tends to occur with mode increases.                 */
+				/*       ... Compromised way.                                                   */
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public static bool AssetNameDecideTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+															Information.Texture informationTexture,
+															string nameOutputAssetFolderBase,
+															Texture2D textureOverride
+														)
+				{	/* MEMO: In each import mode, texture is shared. */
+					if(null != textureOverride)
+					{	/* Specified */
+						informationTexture.PrefabTexture.TableName[0] = AssetDatabase.GetAssetPath(textureOverride);
+						informationTexture.PrefabTexture.TableData[0] = textureOverride;
+					}
+					else
+					{	/* Default */
+						informationTexture.PrefabTexture.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, nameOutputAssetFolderBase)
+																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, informationTexture.NameFileBody, informationSSPJ.NameFileBody)
+																		+ informationTexture.NameFileExtension;
+						/* MEMO: Can not detect Platform-Dependent Textures (such as DDS and PVR). */
+						informationTexture.PrefabTexture.TableData[0] = AssetDatabase.LoadAssetAtPath<Texture2D>(informationTexture.PrefabTexture.TableName[0]);
+					}
+
+					return(true);
+
+//				AssetNameDecideTexture_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool AssetCreateTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-														string nameOutputAssetFolderBase,
-														Texture2D textureOverride
+														Information.Texture informationTexture
 													)
+				{	/* MEMO: In each import mode, texture is shared. */
+					const string messageLogPrefix = "Create Asset(Texture)";
+
+					/* Copy into Asset */
+					string namePathAssetNative = LibraryEditor_SpriteStudio6.Utility.File.PathGetAssetNative(informationTexture.PrefabTexture.TableName[0]);
+					LibraryEditor_SpriteStudio6.Utility.File.FileCopyToAsset(	namePathAssetNative,
+																				informationTexture.FileNameGetFullPath(),
+																				true
+																			);
+
+					/* Set Texture-Importer */
+					if(null == informationTexture.PrefabTexture.TableData[0])
 					{
-						if(null != textureOverride)
-						{	/* Specified */
-							PrefabTexture.TableName[0] = AssetDatabase.GetAssetPath(textureOverride);
-							PrefabTexture.TableData[0] = textureOverride;
-						}
-						else
-						{	/* Default */
-							PrefabTexture.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, nameOutputAssetFolderBase)
-															+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, NameFileBody, informationSSPJ.NameFileBody)
-															+ NameFileExtension;
-							/* MEMO: Can not detect Platform-Dependent Textures (such as DDS and PVR). */
-							PrefabTexture.TableData[0] = AssetDatabase.LoadAssetAtPath<Texture2D>(PrefabTexture.TableName[0]);
-						}
-
-						return(true);
-					}
-
-					public bool AssetCreateTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
-												)
-					{
-						const string messageLogPrefix = "AssetCreate(Texture)";
-
-						/* Copy into Asset */
-						string namePathAssetNative = LibraryEditor_SpriteStudio6.Utility.File.PathGetAssetNative(PrefabTexture.TableName[0]);
-						LibraryEditor_SpriteStudio6.Utility.File.FileCopyToAsset(	namePathAssetNative,
-																					FileNameGetFullPath(),
-																					true
-																				);
-
-						/* Set Texture-Importer */
-						if(null == PrefabTexture.TableData[0])
+						AssetDatabase.ImportAsset(informationTexture.PrefabTexture.TableName[0]);
+						TextureImporter importer = TextureImporter.GetAtPath(informationTexture.PrefabTexture.TableName[0]) as TextureImporter;
+						if(null != importer)
 						{
-							AssetDatabase.ImportAsset(PrefabTexture.TableName[0]);
-							TextureImporter importer = TextureImporter.GetAtPath(PrefabTexture.TableName[0]) as TextureImporter;
-							if(null != importer)
+							importer.anisoLevel = 1;
+							importer.borderMipmap = false;
+							importer.convertToNormalmap = false;
+							importer.fadeout = false;
+							switch(informationTexture.Filter)
 							{
-								importer.anisoLevel = 1;
-								importer.borderMipmap = false;
-								importer.convertToNormalmap = false;
-								importer.fadeout = false;
-								switch(Filter)
-								{
-									case Library_SpriteStudio6.Data.Texture.KindFilter.NEAREST:
-										importer.filterMode = FilterMode.Point;
-										break;
+								case Library_SpriteStudio6.Data.Texture.KindFilter.NEAREST:
+									importer.filterMode = FilterMode.Point;
+									break;
 
-									case Library_SpriteStudio6.Data.Texture.KindFilter.LINEAR:
-										importer.filterMode = FilterMode.Bilinear;
-										break;
+								case Library_SpriteStudio6.Data.Texture.KindFilter.LINEAR:
+									importer.filterMode = FilterMode.Bilinear;
+									break;
 
-									default:
-										/* MEMO: Errors and warnings have already been done and values have been revised. Therefore, will not come here. */
-										goto AssetCreate_ErrorEnd;
-								}
-
-								/* MEMO: For 5.5.0beta & later, with "Sprite" to avoid unnecessary interpolation. */
-								importer.textureShape = TextureImporterShape.Texture2D;
-								importer.isReadable = false;
-								importer.mipmapEnabled = false;
-								importer.maxTextureSize = 4096;
-								importer.alphaSource = TextureImporterAlphaSource.FromInput;
-								importer.alphaIsTransparency = true;
-								importer.npotScale = TextureImporterNPOTScale.None;
-								importer.textureType = TextureImporterType.Sprite;
-
-								switch(Wrap)
-								{
-									case Library_SpriteStudio6.Data.Texture.KindWrap.REPEAT:
-										importer.wrapMode = TextureWrapMode.Repeat;
-										break;
-
-									case Library_SpriteStudio6.Data.Texture.KindWrap.CLAMP:
-										importer.wrapMode = TextureWrapMode.Clamp;
-										break;
-
-									case Library_SpriteStudio6.Data.Texture.KindWrap.MIRROR:
-										importer.wrapMode = TextureWrapMode.Mirror;
-										break;
-
-									default:
-										/* MEMO: Errors and warnings have already been done and values have been revised. Therefore, will not come here. */
-										goto AssetCreate_ErrorEnd;
-								}
-								AssetDatabase.ImportAsset(PrefabTexture.TableName[0], ImportAssetOptions.ForceUpdate);
+								default:
+									/* MEMO: Errors and warnings have already been done and values have been revised. Therefore, will not come here. */
+									goto AssetCreateTexture_ErrorEnd;
 							}
+
+							/* MEMO: For 5.5.0beta & later, with "Sprite" to avoid unnecessary interpolation. */
+							importer.textureShape = TextureImporterShape.Texture2D;
+							importer.isReadable = false;
+							importer.mipmapEnabled = false;
+							importer.maxTextureSize = 4096;
+							importer.alphaSource = TextureImporterAlphaSource.FromInput;
+							importer.alphaIsTransparency = true;
+							importer.npotScale = TextureImporterNPOTScale.None;
+							importer.textureType = TextureImporterType.Sprite;
+
+							switch(informationTexture.Wrap)
+							{
+								case Library_SpriteStudio6.Data.Texture.KindWrap.REPEAT:
+									importer.wrapMode = TextureWrapMode.Repeat;
+									break;
+
+								case Library_SpriteStudio6.Data.Texture.KindWrap.CLAMP:
+									importer.wrapMode = TextureWrapMode.Clamp;
+									break;
+
+								case Library_SpriteStudio6.Data.Texture.KindWrap.MIRROR:
+									importer.wrapMode = TextureWrapMode.Mirror;
+									break;
+
+								default:
+									/* MEMO: Errors and warnings have already been done and values have been revised. Therefore, will not come here. */
+									goto AssetCreateTexture_ErrorEnd;
+							}
+							AssetDatabase.ImportAsset(informationTexture.PrefabTexture.TableName[0], ImportAssetOptions.ForceUpdate);
 						}
-						AssetDatabase.SaveAssets();
+					}
+					AssetDatabase.SaveAssets();
 
-						PrefabTexture.TableData[0] = AssetDatabase.LoadAssetAtPath(PrefabTexture.TableName[0], typeof(Texture2D)) as Texture2D;
-						if((0 >= SizeX) || (0 >= SizeY))
-						{	/* Only when texture size can not be get from SSCE */
-							SizeX = PrefabTexture.TableData[0].width;
-							SizeY = PrefabTexture.TableData[0].height;
-						}
-
-						return(true);
-
-					AssetCreate_ErrorEnd:;
-						return(false);
+					informationTexture.PrefabTexture.TableData[0] = AssetDatabase.LoadAssetAtPath(informationTexture.PrefabTexture.TableName[0], typeof(Texture2D)) as Texture2D;
+					if((0 >= informationTexture.SizeX) || (0 >= informationTexture.SizeY))
+					{	/* Only when texture size can not be get from SSCE */
+						informationTexture.SizeX = informationTexture.PrefabTexture.TableData[0].width;
+						informationTexture.SizeY = informationTexture.PrefabTexture.TableData[0].height;
 					}
 
-					public bool AssetNameDecideMaterialAnimationSS6PU(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+					return(true);
+
+				AssetCreateTexture_ErrorEnd:;
+					return(false);
+				}
+
+				public static bool AssetNameDecideMaterialAnimation(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																		Information.Texture informationTexture,
 																		string nameOutputAssetFolderBase,
 																		Library_SpriteStudio6.KindOperationBlend operationTarget,
 																		Material materialOverride
 																	)
-					{
-						int indexTable = (int)operationTarget;
-						if(null != materialOverride)
-						{	/* Specified */
-							MaterialAnimation.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
-							MaterialAnimation.TableData[indexTable] = materialOverride;
-						}
-						else
-						{	/* Default */
-							MaterialAnimation.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, nameOutputAssetFolderBase)
-																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, NameFileBody, informationSSPJ.NameFileBody) + "_" + operationTarget.ToString()
-																		+ NameExtentionMaterial;
-							MaterialAnimation.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(MaterialAnimation.TableName[indexTable]);
-						}
-
-						return(true);
+				{
+					int indexTable = (int)operationTarget;
+					if(null != materialOverride)
+					{	/* Specified */
+						informationTexture.MaterialAnimationSS6PU.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
+						informationTexture.MaterialAnimationSS6PU.TableData[indexTable] = materialOverride;
+					}
+					else
+					{	/* Default */
+						informationTexture.MaterialAnimationSS6PU.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, nameOutputAssetFolderBase)
+																							+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, informationTexture.NameFileBody, informationSSPJ.NameFileBody) + "_" + operationTarget.ToString()
+																							+ LibraryEditor_SpriteStudio6.Import.NameExtentionMaterial;
+						informationTexture.MaterialAnimationSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
 					}
 
-					public bool AssetNameDecideMaterialEffectSS6PU(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+					return(true);
+
+//				AssetNameDecideMaterialAnimation_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool AssetNameDecideMaterialEffect(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 																	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																	Information.Texture informationTexture,
 																	string nameOutputAssetFolderBase,
 																	Library_SpriteStudio6.KindOperationBlendEffect operationTarget,
 																	Material materialOverride
 																)
-					{
-						int indexTable = (int)operationTarget;
-						if(null != materialOverride)
-						{	/* Specified */
-							MaterialEffect.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
-							MaterialEffect.TableData[indexTable] = materialOverride;
-						}
-						else
-						{	/* Default */
-							MaterialEffect.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, nameOutputAssetFolderBase)
-																	+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, NameFileBody, informationSSPJ.NameFileBody) + "_" + operationTarget.ToString()
-																	+ NameExtentionMaterial;
-							MaterialEffect.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(MaterialEffect.TableName[indexTable]);
-						}
-
-						return(true);
+				{
+					int indexTable = (int)operationTarget;
+					if(null != materialOverride)
+					{	/* Specified */
+						informationTexture.MaterialEffectSS6PU.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
+						informationTexture.MaterialEffectSS6PU.TableData[indexTable] = materialOverride;
+					}
+					else
+					{	/* Default */
+						informationTexture.MaterialEffectSS6PU.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, nameOutputAssetFolderBase)
+																						+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, informationTexture.NameFileBody, informationSSPJ.NameFileBody) + "_" + operationTarget.ToString()
+																						+ LibraryEditor_SpriteStudio6.Import.NameExtentionMaterial;
+						informationTexture.MaterialEffectSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexTable]);
 					}
 
-					public bool AssetCreateMaterialAnimationSS6PU(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+					return(true);
+
+//				AssetNameDecideMaterialEffect_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool AssetCreateMaterialAnimation(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 																	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																	Information.Texture informationTexture,
 																	Library_SpriteStudio6.KindOperationBlend operationTarget
 																)
+				{
+					const string messageLogPrefix = "Create Asset(Material-Animation)";
+					int indexOperationTarget = (int)operationTarget;
+
+					Material material = null;
+					material = informationTexture.MaterialAnimationSS6PU.TableData[indexOperationTarget];
+					if(null == material)
 					{
-						const string messageLogPrefix = "AssetCreate(Material-Animation)";
-						int indexOperationTarget = (int)operationTarget;
-
-						Material material = null;
-						material = MaterialAnimation.TableData[indexOperationTarget];
-						if(null == material)
-						{
-							material = new Material(Library_SpriteStudio6.Data.Shader.TableSprite[indexOperationTarget]);
-							AssetDatabase.CreateAsset(material, MaterialAnimation.TableName[indexOperationTarget]);
-						}
-
-						material.mainTexture = PrefabTexture.TableData[0];
-						EditorUtility.SetDirty(material);
-						AssetDatabase.SaveAssets();
-
-						return(true);
-
-//					AssetCreateMaterialAnimationSS6PU_ErrorEnd:;
-//						return(false);
+						material = new Material(Library_SpriteStudio6.Data.Shader.TableSprite[indexOperationTarget]);
+						AssetDatabase.CreateAsset(material, informationTexture.MaterialAnimationSS6PU.TableName[indexOperationTarget]);
 					}
 
-					public bool AssetCreateMaterialEffectSS6PU(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
+					EditorUtility.SetDirty(material);
+					AssetDatabase.SaveAssets();
+
+					return(true);
+
+//				AssetCreateMaterialAnimation_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool AssetCreateMaterialEffect(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 																LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																Information.Texture informationTexture,
 																Library_SpriteStudio6.KindOperationBlendEffect operationTarget
 															)
+				{
+					const string messageLogPrefix = "Create Asset(Material-Effect)";
+					int indexOperationTarget = (int)operationTarget;
+
+					Material material = null;
+					material = informationTexture.MaterialEffectSS6PU.TableData[indexOperationTarget];
+					if(null == material)
 					{
-						const string messageLogPrefix = "AssetCreate(Material-Effect)";
-						int indexOperationTarget = (int)operationTarget;
-
-						Material material = null;
-						material = MaterialEffect.TableData[indexOperationTarget];
-						if(null == material)
-						{
-							material = new Material(Library_SpriteStudio6.Data.Shader.TableEffect[indexOperationTarget]);
-							AssetDatabase.CreateAsset(material, MaterialEffect.TableName[indexOperationTarget]);
-						}
-
-						material.mainTexture = PrefabTexture.TableData[0];
-						EditorUtility.SetDirty(material);
-						AssetDatabase.SaveAssets();
-
-						return(true);
-
-//					AssetCreateMaterialEffectSS6PU_ErrorEnd:;
-//						return(false);
+						material = new Material(Library_SpriteStudio6.Data.Shader.TableEffect[indexOperationTarget]);
+						AssetDatabase.CreateAsset(material, informationTexture.MaterialEffectSS6PU.TableName[indexOperationTarget]);
 					}
 
-					#endregion Functions
+					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
+					EditorUtility.SetDirty(material);
+					AssetDatabase.SaveAssets();
 
-					/* ----------------------------------------------- Enums & Constants */
-					#region Enums & Constants
-					private const string NameExtentionMaterial = ".mat";
-					#endregion Enums & Constants
+					return(true);
+
+//				AssetCreateMaterialEffect_ErrorEnd:;
+//					return(false);
 				}
-				#endregion Classes, Structs & Interfaces
+
+				public static bool ConvertCellMap(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
+												)
+				{	/* Convert-SS6PU Pass-1 ... Transfer necessary data from the temporary. */
+					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* ÅhUnityEngine.TextureÅh and my "Texture", class-names are conflict unless fully-qualified. */
+					if(0 <= informationSSCE.IndexTexture)
+					{
+						informationTexture = informationSSPJ.TableInformationTexture[informationSSCE.IndexTexture];
+						int countCell = informationSSCE.TableCell.Length;
+
+						informationSSCE.Data.Name = string.Copy(informationSSCE.NameFileBody);
+						informationSSCE.Data.SizeOriginal.x = (float)informationTexture.SizeX;
+						informationSSCE.Data.SizeOriginal.y = (float)informationTexture.SizeY;
+						informationSSCE.Data.TableCell = new Library_SpriteStudio6.Data.CellMap.Cell[countCell];
+
+						Library_SpriteStudio6.Data.CellMap.Cell informationCell = new Library_SpriteStudio6.Data.CellMap.Cell();
+						for(int i=0; i<countCell; i++)
+						{
+							informationCell.CleanUp();
+							informationCell.Name = string.Copy(informationSSCE.TableCell[i].Name);
+							informationCell.Rectangle = informationSSCE.TableCell[i].Area;
+							informationCell.Pivot = informationSSCE.TableCell[i].Pivot;
+
+							informationSSCE.Data.TableCell[i] = informationCell;
+						}
+						informationSSCE.TableCell = null;	/* Purge WorkArea */
+					}
+					return(true);
+
+//				ConvertSS6PU_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool ConverCellMaptTrimPixel(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+															LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
+														)
+				{	/* Convert-SS6PU Pass-2 */
+					return(false);
+				}
+
+
+				#endregion Functions
 			}
 			#endregion Classes, Structs & Interfaces
 		}

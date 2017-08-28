@@ -29,7 +29,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagDisplayProgressBar = true
 								)
 		{
-			const string messageLogPrefix = "Importer-Main";
+			const string messageLogPrefix = "Main";
 			SSPJ.Information informationSSPJ = null;
 			int countProgressNow = 0;
 			int countProgressMax = 0;
@@ -124,7 +124,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					goto Exec_ErrorEnd;
 				}
-
 				ProgressBarUpdate("Reading SSEEs", flagDisplayProgressBar, ref countProgressNow, countProgressMax);
 			}
 
@@ -151,17 +150,17 @@ public static partial class LibraryEditor_SpriteStudio6
 				nameOutputAssetFolderBase += informationSSPJ.NameFileBody + "/";
 			}
 
-			/* Convert Datas */
+			/* Convert & Create Assets */
 			switch(setting.Mode)
 			{
 				case Setting.KindMode.SS6PU:
-					if(false == ConvertSS6PU(	ref setting,
-												ref countProgressNow,
-												countProgressMax,
-												flagDisplayProgressBar,
-												informationSSPJ,
-												nameOutputAssetFolderBase
-											)
+					if(false == ExecSS6PU(	ref setting,
+											ref countProgressNow,
+											countProgressMax,
+											flagDisplayProgressBar,
+											informationSSPJ,
+											nameOutputAssetFolderBase
+										)
 						)
 					{
 						goto Exec_ErrorEnd;
@@ -169,7 +168,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					break;
 
 				case Setting.KindMode.UNITY_NATIVE:
-					if(false == ConvertUnityNative(	ref setting,
+					if(false == ExecUnityNative(	ref setting,
 													ref countProgressNow,
 													countProgressMax,
 													flagDisplayProgressBar,
@@ -199,7 +198,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 			return(false);
 		}
-		private static bool ConvertSS6PU(	ref Setting setting,
+		private static bool ExecSS6PU(	ref Setting setting,
 											ref int countProgressNow,
 											int countProgressMax,
 											bool flagDisplayProgressBar,
@@ -207,14 +206,14 @@ public static partial class LibraryEditor_SpriteStudio6
 											string nameOutputAssetFolderBase
 										)
 		{
-			const string messageLogPrefix = "Importer-Convert(SS6PU)";
+			const string messageLogPrefix = "Convert-Main (SS6PU)";
 			string nameOutputAssetFolder = "";
 			string nameOutputAssetBody = "";
 			string nameOutputAssetExtention = "";
 			bool flagCreateAsset = true;
 
 			/* Decide Asset Names & Check Assets existing */
-			informationSSPJ.AssetNameDecideSS6PU(ref setting, nameOutputAssetFolderBase);
+			SSPJ.ModeSS6PU.AssetNameDecide(ref setting, informationSSPJ, nameOutputAssetFolderBase);
 
 			/* Get Datas' count */
 			int countTexture = informationSSPJ.TableInformationTexture.Length;
@@ -244,7 +243,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(true == string.IsNullOrEmpty( LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
 						{
 							LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-							goto ConvertSS6PU_ErrorEnd;
+							goto ExecSS6PU_ErrorEnd;
 						}
 					}
 					else
@@ -263,9 +262,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Create-Asset */
 					if(true == flagCreateAsset)
 					{
-						if(false == informationTexture.AssetCreateTexture(ref setting, informationSSPJ))
+						if(false == SSCE.ModeSS6PU.AssetCreateTexture(ref setting, informationSSPJ, informationTexture))
 						{
-							goto ConvertSS6PU_ErrorEnd;
+							goto ExecSS6PU_ErrorEnd;
 						}
 						ProgressBarUpdate("Copy Textures", flagDisplayProgressBar, ref countProgressNow, countProgressMax);
 					}
@@ -286,22 +285,22 @@ public static partial class LibraryEditor_SpriteStudio6
 						flagCreateAsset = true;
 						/* Check Overwrite */
 						/* MEMO: Texture always has only 1 prefab. */
-						if(null == informationTexture.MaterialAnimation.TableData[j])
+						if(null == informationTexture.MaterialAnimationSS6PU.TableData[j])
 						{	/* New */
 							/* Create Output Asset-Folder */
 							LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
-																				informationTexture.MaterialAnimation.TableName[j]
+																				informationTexture.MaterialAnimationSS6PU.TableName[j]
 																			);
 							if(true == string.IsNullOrEmpty( LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
 							{
 								LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-								goto ConvertSS6PU_ErrorEnd;
+								goto ExecSS6PU_ErrorEnd;
 							}
 						}
 						else
 						{	/* Exist */
 							if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialAnimation,
-																														informationTexture.MaterialAnimation.TableName[j],
+																														informationTexture.MaterialAnimationSS6PU.TableName[j],
 																														"Material Animation"
 																													)
 								)
@@ -313,9 +312,14 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* Create-Asset */
 						if(true == flagCreateAsset)
 						{
-							if(false == informationTexture.AssetCreateMaterialAnimationSS6PU(ref setting, informationSSPJ, (Library_SpriteStudio6.KindOperationBlend)j))
+							if(false == SSCE.ModeSS6PU.AssetCreateMaterialAnimation(	ref setting,
+																					informationSSPJ,
+																					informationTexture,
+																					(Library_SpriteStudio6.KindOperationBlend)j
+																				)
+								)
 							{
-								goto ConvertSS6PU_ErrorEnd;
+								goto ExecSS6PU_ErrorEnd;
 							}
 						}
 					}
@@ -336,22 +340,22 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						/* Check Overwrite */
 						/* MEMO: Texture always has only 1 prefab. */
-						if(null == informationTexture.MaterialEffect.TableData[j])
+						if(null == informationTexture.MaterialEffectSS6PU.TableData[j])
 						{	/* New */
 							/* Create Output Asset-Folder */
 							LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
-																				informationTexture.MaterialEffect.TableName[j]
+																				informationTexture.MaterialEffectSS6PU.TableName[j]
 																			);
 							if(true == string.IsNullOrEmpty( LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
 							{
 								LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-								goto ConvertSS6PU_ErrorEnd;
+								goto ExecSS6PU_ErrorEnd;
 							}
 						}
 						else
 						{	/* Exist */
 							if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialEffect,
-																														informationTexture.MaterialEffect.TableName[j],
+																														informationTexture.MaterialEffectSS6PU.TableName[j],
 																														"Material Effect"
 																													)
 								)
@@ -363,9 +367,14 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* Create-Asset */
 						if(true == flagCreateAsset)
 						{
-							if(false == informationTexture.AssetCreateMaterialEffectSS6PU(ref setting, informationSSPJ, (Library_SpriteStudio6.KindOperationBlendEffect)j))
+							if(false == SSCE.ModeSS6PU.AssetCreateMaterialEffect(	ref setting,
+																					informationSSPJ,
+																					informationTexture,
+																					(Library_SpriteStudio6.KindOperationBlendEffect)j
+																				)
+								)
 							{
-								goto ConvertSS6PU_ErrorEnd;
+								goto ExecSS6PU_ErrorEnd;
 							}
 						}
 					}
@@ -385,18 +394,18 @@ public static partial class LibraryEditor_SpriteStudio6
 					informationSSCE = informationSSPJ.TableInformationSSCE[i];
 
 					/* Convert Pass1 (Normal) */
-					if(false == informationSSCE.ConvertSS6PU(ref setting, informationSSPJ))
+					if(false == SSCE.ModeSS6PU.ConvertCellMap(ref setting, informationSSPJ, informationSSCE))
 					{
-						goto ConvertSS6PU_ErrorEnd;
+						goto ExecSS6PU_ErrorEnd;
 					}
 					ProgressBarUpdate("Convert SSCEs Pass-1 (" + i + "/" + countSSCE + ")", flagDisplayProgressBar, ref countProgressNow, countProgressMax);
 
 					/* Convert Pass2 (Trim Transparent-Pixel) */
 					if(true == setting.PreCalcualation.FlagTrimTransparentPixelsCell)
 					{
-						if(false == informationSSCE.ConvertTrimPixelSS6PU(ref setting, informationSSPJ))
+						if(false == SSCE.ModeSS6PU.ConverCellMaptTrimPixel(ref setting, informationSSPJ, informationSSCE))
 						{
-							goto ConvertSS6PU_ErrorEnd;
+							goto ExecSS6PU_ErrorEnd;
 						}
 						ProgressBarUpdate("Convert SSCEs Pass-2 (" + i + "/" + countSSCE + ")", flagDisplayProgressBar, ref countProgressNow, countProgressMax);
 					}
@@ -413,7 +422,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					if(true == string.IsNullOrEmpty( LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
 					{
 						LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-						goto ConvertSS6PU_ErrorEnd;
+						goto ExecSS6PU_ErrorEnd;
 					}
 				}
 				else
@@ -432,21 +441,32 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Create-Asset */
 				if(true == flagCreateAsset)
 				{
-					if(false == informationSSPJ.AssetCreateCellMapSS6PU(ref setting))
+					if(false == SSPJ.ModeSS6PU.AssetCreateCellMap(ref setting, informationSSPJ))
 					{
-						goto ConvertSS6PU_ErrorEnd;
+						goto ExecSS6PU_ErrorEnd;
 					}
 					ProgressBarUpdate("Create Asset \"Data-CellMap\"", flagDisplayProgressBar, ref countProgressNow, countProgressMax);
 				}
 			}
 
-#if false
 			/* Create-Asset: Effect */
-			for(int i=0; i<countSSEE; i++)
+			if(0 < countSSEE)
 			{
-				countProgressNow++;
+				SSEE.Information informationSSEE = null;
+				for(int i=0; i<countSSEE; i++)
+				{
+					informationSSEE = informationSSPJ.TableInformationSSEE[i];
+					/* Convert Pass1 (Normal) */
+					if(false == SSEE.ModeSS6PU.ConvertData(ref setting, informationSSPJ, informationSSEE))
+					{
+						goto ExecSS6PU_ErrorEnd;
+					}
+
+					ProgressBarUpdate("Convert SSEEs Pass-1 (" + i + "/" + countSSCE + ")", flagDisplayProgressBar, ref countProgressNow, countProgressMax);
+				}
 			}
 
+#if false
 			/* Get Convert-Order SSAE */
 
 			/* Create-Asset: Animation */
@@ -471,10 +491,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			return(true);
 
-		ConvertSS6PU_ErrorEnd:;
+		ExecSS6PU_ErrorEnd:;
 			return(false);
 		}
-		private static bool ConvertUnityNative(	ref Setting setting,
+		private static bool ExecUnityNative(	ref Setting setting,
 												ref int countProgressNow,
 												int countProgressMax,
 												bool flagDisplayProgressBar,
@@ -488,6 +508,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 
 			return(false);
+
+//		ExecUnityNative_ErrorEnd:;
+//			return(false);
 		}
 
 		private static void LogError(string messagePrefix, string message)
@@ -523,6 +546,9 @@ public static partial class LibraryEditor_SpriteStudio6
 			SSAE,
 			SSEE,
 		}
+
+		public const string NameExtentionMaterial = ".mat";
+		public const string NameExtentionScriptableObject = ".asset";
 		#endregion Enums & Constants
 
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
