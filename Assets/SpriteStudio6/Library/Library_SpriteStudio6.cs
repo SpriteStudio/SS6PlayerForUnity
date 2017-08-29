@@ -2123,6 +2123,76 @@ public static partial class Library_SpriteStudio6
 					TablePatternOffset = original.TablePatternOffset;
 					TableSeedParticle = original.TableSeedParticle;
 				}
+
+				public void TableGetPatternOffset(ref int[] dataTablePatternOffset)
+				{
+					int countEmitMax = CountParticleMax;
+					int countEmit = CountParticleEmit;
+					countEmit = (1 > countEmit) ? 1 : countEmit;
+
+					/* Create Offset-Pattern Table */
+					/* MEMO: This Table will be solved at Importing. */
+					int shot = 0;
+					int offset = Delay;
+					int count = countEmitMax;
+					dataTablePatternOffset = new int[count];
+					for(int i=0; i<count; i++)
+					{
+						if(shot >= countEmit)
+						{
+							shot = 0;
+							offset += Interval;
+						}
+						dataTablePatternOffset[i] = offset;
+						shot++;
+					}
+				}
+
+				public void TableGetPatternEmit(	ref PatternEmit[] tablePatternEmit,
+													ref long[] tableSeedParticle,
+													Library_SpriteStudio6.Utility.Random.Generator random,
+													uint seedRandom
+												)
+				{	/* CAUTION!: Obtain "TablePatternOffset" before executing this function. */
+					int count;
+					int countEmitMax = CountParticleMax;
+
+					List<PatternEmit> listPatternEmit = new List<PatternEmit>();
+					listPatternEmit.Clear();
+
+					int countEmit = CountParticleEmit;
+					countEmit = (1 > countEmit) ? 1 : countEmit;
+
+					/* Create Emit-Pattern Table */
+					/* MEMO: This Table will be solved at Importing (at seedRandom is fixed). */
+					random.InitSeed(seedRandom);
+					int cycle = (int)(((float)(countEmitMax * Interval) / (float)countEmit) + 0.5f);
+					count = countEmitMax * (int)Constant.LIFE_EXTEND_SCALE;
+					if((int)Constant.LIFE_EXTEND_MIN > count)
+					{
+						count = (int)Constant.LIFE_EXTEND_MIN;
+					}
+					tablePatternEmit = new PatternEmit[count];
+					int duration;
+					for(int i=0; i<count; i++)
+					{
+						tablePatternEmit[i] = new PatternEmit();
+						tablePatternEmit[i].IndexGenerate = i;
+						duration = (int)((float)DurationParticle.Main + random.RandomFloat((float)DurationParticle.Sub));
+						tablePatternEmit[i].Duration = duration;
+						tablePatternEmit[i].Cycle = (duration > cycle) ? duration : cycle;
+					}
+
+					/* Create Random-Seed Table */
+					/* MEMO: This Table will be solved at Importing (at seedRandom is fixed). */
+					count = countEmitMax * 3;
+					tableSeedParticle = new long[count];
+					random.InitSeed(seedRandom);
+					for(int i=0; i<count; i++)
+					{
+						tableSeedParticle[i] = (long)((ulong)random.RandomUint32());
+					}
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
@@ -2534,6 +2604,34 @@ public static partial class Library_SpriteStudio6
 
 	public static partial class Utility
 	{
+		/* ----------------------------------------------- Classes, Structs & Interfaces */
+		#region Classes, Structs & Interfaces
+		public static partial class Random
+		{
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+			public interface Generator
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				uint[] ListSeed
+				{
+					get;
+				}
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				void InitSeed(uint seed);
+				uint RandomUint32();
+				double RandomDouble(double valueMax=1.0);
+				float RandomFloat(float valueMax=1.0f);
+				int RandomN(int valueMax);
+				#endregion Functions
+			}
+			#endregion Classes, Structs & Interfaces
+		}
+		#endregion Classes, Structs & Interfaces
 	}
 	#endregion Classes, Structs & Interfaces
 }

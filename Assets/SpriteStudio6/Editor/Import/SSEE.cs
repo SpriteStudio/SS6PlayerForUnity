@@ -107,7 +107,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "effectData/lockRandSeed", managerNameSpace);
 						if(false == string.IsNullOrEmpty(valueText))
 						{
-							informationSSEE.Seed = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+							informationSSEE.SeedRandom = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
 						}
 
 						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "effectData/isLockRandSeed", managerNameSpace);
@@ -815,7 +815,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public int VersionRenderer;
 				public Vector2 ScaleLayout;
-				public int Seed;
+				public int SeedRandom;
 				public bool FlagLockSeed;
 				public int FramePerSecond;
 
@@ -839,7 +839,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					VersionRenderer = 0;
 					ScaleLayout = Vector2.one;
-					Seed = 0;
+					SeedRandom = 0;
 					FlagLockSeed = false;;
 					FramePerSecond = 60;
 
@@ -990,7 +990,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					dataEffect.FlagData = Script_SpriteStudio6_DataEffect.FlagBit.CLEAR;
 					dataEffect.FlagData |= (true == informationSSEE.FlagLockSeed) ? Script_SpriteStudio6_DataEffect.FlagBit.SEEDRANDOM_LOCK : Script_SpriteStudio6_DataEffect.FlagBit.CLEAR;
-					dataEffect.SeedRandom = informationSSEE.Seed;
+					dataEffect.SeedRandom = informationSSEE.SeedRandom;
 					dataEffect.CountFramePerSecond = informationSSEE.FramePerSecond;
 					dataEffect.ScaleLayout = informationSSEE.ScaleLayout;
 					dataEffect.VersionRenderer = informationSSEE.VersionRenderer;
@@ -1140,11 +1140,79 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					informationSSEE.TablePartsSS6PU = tableDataParts;
 
+					/* Create Pattern-Offset & Emt-Pattern */
+					if(false == ConvertDataCalculateInAdvance(ref setting, informationSSPJ, informationSSEE))
+					{
+						LibraryEditor_SpriteStudio6.Import.SSEE.LogError(messageLogPrefix, "Failure to Generate PatternEmit Datas", informationSSEE.FileNameGetFullPath(), informationSSPJ);
+						goto ConvertSS6PU_ErroeEnd;
+					}
+
 					return(true);
 
-//				ConvertSS6PU_ErroeEnd:;
+				ConvertSS6PU_ErroeEnd:;
+					return(false);
+				}
+				private static bool ConvertDataCalculateInAdvance(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																	LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE
+																)
+				{	/* MEMO: Use "Calculate In Advance" to distinguish from "Precalculate". */
+					int countEmitter = informationSSEE.TableEmitterSS6PU.Length;
+					bool flagLockSeed = false;
+					uint seedRandom = 0;
+
+					Library_SpriteStudio6.Utility.Random.Generator random = Script_SpriteStudio6_RootEffect.InstanceCreateRandom();
+					Library_SpriteStudio6.Data.Effect.Emitter.PatternEmit[] tablePatternEmit = null;
+					long[] tableSeedParticle = null;
+					for(int i=0; i<countEmitter; i++)
+					{
+						/* Fixed Random-Seed */
+						flagLockSeed = false;
+						if(0 != (informationSSEE.TableEmitterSS6PU[i].FlagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SEEDRANDOM))
+						{	/* Seed Overwrite */
+							seedRandom = (uint)informationSSEE.SeedRandom + (uint)Library_SpriteStudio6.Data.Effect.Emitter.Constant.SEED_MAGIC;
+							flagLockSeed = true;
+						}
+						else
+						{
+							if(true == informationSSEE.FlagLockSeed)
+							{	/* Seed Locked */
+								/* MEMO: Overwritten to the Effect's Seed. */
+								seedRandom = ((uint)informationSSEE.SeedRandom + 1) * (uint)Library_SpriteStudio6.Data.Effect.Emitter.Constant.SEED_MAGIC;
+								flagLockSeed = true;
+							}
+						}
+
+						/* Calcurate Table-Offset-Pattern */
+						informationSSEE.TableEmitterSS6PU[i].TableGetPatternOffset(ref informationSSEE.TableEmitterSS6PU[i].TablePatternOffset);
+
+						/* Set to Data */
+						if(true == flagLockSeed)
+						{	/* Fixed Data */
+							/* Calcurate Table-Datas */
+							informationSSEE.TableEmitterSS6PU[i].TableGetPatternEmit(	ref tablePatternEmit,
+																						ref tableSeedParticle,
+																						random,
+																						seedRandom
+																					);
+							informationSSEE.TableEmitterSS6PU[i].TablePatternEmit = tablePatternEmit;
+							informationSSEE.TableEmitterSS6PU[i].TableSeedParticle = tableSeedParticle;
+						}
+						else
+						{	/* Calculate on runtime */
+							informationSSEE.TableEmitterSS6PU[i].TablePatternEmit = null;
+							informationSSEE.TableEmitterSS6PU[i].TableSeedParticle = null;
+						}
+						tablePatternEmit = null;
+						tableSeedParticle = null;
+					}
+
+					return(true);
+
+//				ConvertDataCalculateInAdvance_ErrorEnd:;
 //					return(false);
 				}
+
 				#endregion Functions
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
