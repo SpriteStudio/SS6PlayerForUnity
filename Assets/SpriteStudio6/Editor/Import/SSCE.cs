@@ -428,7 +428,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				#endregion Classes, Structs & Interfaces
 			}
 
-			public static class ModeSS6PU
+			public static partial class ModeSS6PU
 			{
 				/* MEMO: Originally functions that should be defined in each information class. */
 				/*       However, confusion tends to occur with mode increases.                 */
@@ -693,15 +693,16 @@ public static partial class LibraryEditor_SpriteStudio6
 //					return(false);
 				}
 
-				public static bool ConverCellMaptTrimPixel(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-															LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
-														)
+				public static bool ConverCellMaptPixelTrimTransparent(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																		LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
+																	)
 				{	/* Convert-SS6PU Pass-2 */
 					return(false);
+
+//				ConverCellMaptPixelTrimTransparent_ErrorEnd:;
+//					return(false);
 				}
-
-
 				#endregion Functions
 			}
 			#endregion Classes, Structs & Interfaces

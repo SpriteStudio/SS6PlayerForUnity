@@ -7,6 +7,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public static partial class LibraryEditor_SpriteStudio6
 {
@@ -124,9 +125,30 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				for(int i=0; i<countParts; i++)
 				{
+					/* Fix child-parts' index table */
 					informationSSAE.TableParts[i].Data.TableIDChild = informationSSAE.TableParts[i].ListIndexPartsChild.ToArray();
 					informationSSAE.TableParts[i].ListIndexPartsChild.Clear();
 					informationSSAE.TableParts[i].ListIndexPartsChild = null;
+
+					/* Fix inheritance kind */
+					/* MEMO: Parent-part is always fixed earlier. */
+					int indexPartsParent = -1;
+					switch(informationSSAE.TableParts[i].Inheritance)
+					{
+						case Information.Parts.KindInheritance.PARENT:
+							indexPartsParent = informationSSAE.TableParts[i].Data.IDParent;
+							if(0 <= indexPartsParent)
+							{
+								informationSSAE.TableParts[i].Inheritance = Information.Parts.KindInheritance.SELF;
+								informationSSAE.TableParts[i].FlagInheritance = informationSSAE.TableParts[indexPartsParent].FlagInheritance;
+							}
+							break;
+						case Information.Parts.KindInheritance.SELF:
+							break;
+
+						default:
+							goto case Information.Parts.KindInheritance.PARENT;
+					}
 				}
 
 				/* Solve Referenced-CellMaps' index */
@@ -315,17 +337,15 @@ public static partial class LibraryEditor_SpriteStudio6
 								case KindVersion.CODE_010200:
 								case KindVersion.CODE_010201:
 								case KindVersion.CODE_010202:	/* EffectPartsCheck? */
+									if(0 == informationParts.Data.ID)
 									{
-										if(0 == informationParts.Data.ID)
-										{
-											informationParts.Inheritance = Information.Parts.KindInheritance.SELF;
-											informationParts.FlagInheritance = Information.Parts.FlagBitInheritance.PRESET;
-										}
-										else
-										{
-											informationParts.Inheritance = Information.Parts.KindInheritance.PARENT;
-											informationParts.FlagInheritance = Information.Parts.FlagBitInheritance.CLEAR;
-										}
+										informationParts.Inheritance = Information.Parts.KindInheritance.SELF;
+										informationParts.FlagInheritance = Information.Parts.FlagBitInheritance.PRESET;
+									}
+									else
+									{
+										informationParts.Inheritance = Information.Parts.KindInheritance.PARENT;
+										informationParts.FlagInheritance = Information.Parts.FlagBitInheritance.CLEAR;
 									}
 									break;
 							}
@@ -708,7 +728,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Get Key-Data */
 					System.Xml.XmlNode nodeInterpolation = null;
 					int frame = -1;
-					Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;
+					Library_SpriteStudio6.Utility.Interpolation.KindFormula formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
 					bool flagHasParameterCurve = false;
 					float frameCurveStart = 0.0f;
 					float valueCurveStart = 0.0f;
@@ -716,13 +736,13 @@ public static partial class LibraryEditor_SpriteStudio6
 					float valueCurveEnd = 0.0f;
 					string[] valueTextSplit = null;
 
-					Information.Animation.Parts.AttributeBool attributeBool = null;
-					Information.Animation.Parts.AttributeFloat attributeFloat = null;
+					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool attributeBool = null;
+					 Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat = null;
 					foreach(System.Xml.XmlNode nodeKey in listNodeKey)
 					{
 						/* Get Interpolation(Curve) Parameters */
 						frame = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(nodeKey.Attributes["time"].Value);
-						interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;
+						formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
 						flagHasParameterCurve = false;
 						frameCurveStart = 0.0f;
 						valueCurveStart = 0.0f;
@@ -735,33 +755,33 @@ public static partial class LibraryEditor_SpriteStudio6
 							switch(valueText)
 							{
 								case "linear":
-									interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.LINEAR;
+									formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.LINEAR;
 									flagHasParameterCurve = false;
 									break;
 
 								case "hermite":
-									interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.HERMITE;
+									formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.HERMITE;
 									flagHasParameterCurve = true;
 									break;
 
 								case "bezier":
-									interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.BEZIER;
+									formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.BEZIER;
 									flagHasParameterCurve = true;
 									break;
 
 								case "acceleration":
-									interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.ACCELERATE;
+									formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.ACCELERATE;
 									flagHasParameterCurve = false;
 									break;
 
 								case "deceleration":
-									interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.DECELERATE;
+									formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.DECELERATE;
 									flagHasParameterCurve = false;
 									break;
 
 								default:
 									LogWarning(messageLogPrefix, "Unknown Interpolation \"" + valueText + "\" Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-									interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;
+									formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
 									flagHasParameterCurve = false;
 									break;
 							}
@@ -771,7 +791,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								if(null == valueText)
 								{
 									LogWarning(messageLogPrefix, "Interpolation \"" + valueText + "\" Parameter Missing Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-									interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;
+									formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
 									flagHasParameterCurve = false;
 									frameCurveStart = 0.0f;
 									valueCurveStart = 0.0f;
@@ -811,15 +831,15 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "_ValueBool_":
 								{
-									Information.Animation.Parts.AttributeBool.KeyData data = new Information.Animation.Parts.AttributeBool.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool.KeyData();
 
 									/* Set Interpolation-Data */
 									/* MEMO: Bool-Value can't have interpolation */
-									data.Interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;	/* interpolation */
-									data.FrameCurveStart = 0.0f;	/* frameCurveStart */
-									data.ValueCurveStart = 0.0f;	/* valueCurveStart */
-									data.FrameCurveEnd = 0.0f;	/* frameCurveEnd */
-									data.ValueCurveEnd = 0.0f;	/* valueCurveEnd */
+									data.Formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
+									data.FrameCurveStart = 0.0f;
+									data.ValueCurveStart = 0.0f;
+									data.FrameCurveEnd = 0.0f;
+									data.ValueCurveEnd = 0.0f;
 
 									/* Set Body-Data */
 									data.Frame = frame;
@@ -902,10 +922,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "_ValueFloat_":
 								{
-									Information.Animation.Parts.AttributeFloat.KeyData data = new Information.Animation.Parts.AttributeFloat.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat.KeyData();
 
 									/* Set Interpolation-Data */
-									data.Interpolation = interpolation;
+									data.Formula = formula;
 									data.FrameCurveStart = frameCurveStart;
 									data.ValueCurveStart = valueCurveStart;
 									data.FrameCurveEnd = frameCurveEnd;
@@ -925,11 +945,11 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* Uniquet-Value Attributes */
 							case "CELL":
 								{
-									Information.Animation.Parts.AttributeCell.KeyData data = new Information.Animation.Parts.AttributeCell.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell.KeyData();
 									data.Value.CleanUp();
 
 									/* Set Interpolation-Data */
-									data.Interpolation = interpolation;
+									data.Formula = formula;
 									data.FrameCurveStart = frameCurveStart;
 									data.ValueCurveStart = valueCurveStart;
 									data.FrameCurveEnd = frameCurveEnd;
@@ -977,13 +997,13 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "VCOL":
 								{
-									Information.Animation.Parts.AttributeColorBlend.KeyData data = new Information.Animation.Parts.AttributeColorBlend.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend.KeyData();
 									data.Value.CleanUp();
 									data.Value.VertexColor = new Color[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
 									data.Value.RatePixelAlpha = new float[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
 
 									/* Set Interpolation-Data */
-									data.Interpolation = interpolation;
+									data.Formula = formula;
 									data.FrameCurveStart = frameCurveStart;
 									data.ValueCurveStart = valueCurveStart;
 									data.FrameCurveEnd = frameCurveEnd;
@@ -1098,12 +1118,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "VERT":
 								{
-									Information.Animation.Parts.AttributeVertexCorrection.KeyData data = new Information.Animation.Parts.AttributeVertexCorrection.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection.KeyData();
 									data.Value.CleanUp();
 									data.Value.Coordinate = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
 
 									/* Set Interpolation-Data */
-									data.Interpolation = interpolation;
+									data.Formula = formula;
 									data.FrameCurveStart = frameCurveStart;
 									data.ValueCurveStart = valueCurveStart;
 									data.FrameCurveEnd = frameCurveEnd;
@@ -1139,16 +1159,16 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "USER":
 								{
-									Information.Animation.Parts.AttributeUserData.KeyData data = new Information.Animation.Parts.AttributeUserData.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData.KeyData();
 									data.Value.CleanUp();
 
 									/* Set Interpolation-Data */
 									/* MEMO: User-Data can't have interpolation */
-									data.Interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;	/* interpolation */
-									data.FrameCurveStart = 0.0f;	/* frameCurveStart */
-									data.ValueCurveStart = 0.0f;	/* valueCurveStart */
-									data.FrameCurveEnd = 0.0f;	/* frameCurveEnd */
-									data.ValueCurveEnd = 0.0f;	/* valueCurveEnd */
+									data.Formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
+									data.FrameCurveStart = 0.0f;
+									data.ValueCurveStart = 0.0f;
+									data.FrameCurveEnd = 0.0f;
+									data.ValueCurveEnd = 0.0f;
 
 									/* Set Body-Data */
 									data.Frame = frame;
@@ -1232,16 +1252,16 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "IPRM":
 								{
-									Information.Animation.Parts.AttributeInstance.KeyData data = new Information.Animation.Parts.AttributeInstance.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance.KeyData();
 									data.Value.CleanUp();
 
 									/* Set Interpolation-Data */
 									/* MEMO: Instance can't have interpolation */
-									data.Interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;	/* interpolation */
-									data.FrameCurveStart = 0.0f;	/* frameCurveStart */
-									data.ValueCurveStart = 0.0f;	/* valueCurveStart */
-									data.FrameCurveEnd = 0.0f;	/* frameCurveEnd */
-									data.ValueCurveEnd = 0.0f;	/* valueCurveEnd */
+									data.Formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
+									data.FrameCurveStart = 0.0f;
+									data.ValueCurveStart = 0.0f;
+									data.FrameCurveEnd = 0.0f;
+									data.ValueCurveEnd = 0.0f;
 
 									/* Set Body-Data */
 									data.Frame = frame;
@@ -1315,16 +1335,16 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "EFCT":
 								{
-									Information.Animation.Parts.AttributeEffect.KeyData data = new Information.Animation.Parts.AttributeEffect.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect.KeyData();
 									data.Value.CleanUp();
 
 									/* Set Interpolation-Data */
 									/* MEMO: Instance can't have interpolation */
-									data.Interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;	/* interpolation */
-									data.FrameCurveStart = 0.0f;	/* frameCurveStart */
-									data.ValueCurveStart = 0.0f;	/* valueCurveStart */
-									data.FrameCurveEnd = 0.0f;	/* frameCurveEnd */
-									data.ValueCurveEnd = 0.0f;	/* valueCurveEnd */
+									data.Formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
+									data.FrameCurveStart = 0.0f;
+									data.ValueCurveStart = 0.0f;
+									data.FrameCurveEnd = 0.0f;
+									data.ValueCurveEnd = 0.0f;
 
 									/* Set Body-Data */
 									data.Frame = frame;
@@ -1359,12 +1379,12 @@ public static partial class LibraryEditor_SpriteStudio6
 							case "IMGH":
 							case "ORFX":
 							case "ORFY":
-								LogWarning(messageLogPrefix, "No-Longer-Used Attribute \"" + tagText + "\"  Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+								LogWarning(messageLogPrefix, "No-Longer-Used Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 								break;
 
 							/* Unknown Attributes */
 							default:
-								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\"  Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 								break;
 						}
 					}
@@ -1413,13 +1433,13 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 
 			private static bool ParseAnimationAttributeSolve(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-																				LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-																				Information informationSSAE,
-																				Information.Animation informationAnimation,
-																				Information.Animation.Parts informationAnimationParts,
-																				int indexParts,
-																				string nameFileSSAE
-																			)
+																LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																Information informationSSAE,
+																Information.Animation informationAnimation,
+																Information.Animation.Parts informationAnimationParts,
+																int indexParts,
+																string nameFileSSAE
+															)
 			{
 				const string messageLogPrefix = "Parse SSAE(Attributes)";
 
@@ -1626,13 +1646,15 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Parts[] TableParts;
 				public int[] TableIndexCellMap;
 				public Animation[] TableAnimation;
+
+				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataAnimation> DataAnimationSS6PU;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
 				public void CleanUp()
 				{
-					Version =  LibraryEditor_SpriteStudio6.Import.SSAE.KindVersion.ERROR;
+					Version = LibraryEditor_SpriteStudio6.Import.SSAE.KindVersion.ERROR;
 
 					NameDirectory = "";
 					NameFileBody = "";
@@ -1641,6 +1663,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					TableParts = null;
 					TableIndexCellMap = null;
 					TableAnimation = null;
+
+					DataAnimationSS6PU.CleanUp();
+					DataAnimationSS6PU.BootUp(1);	/* Always 1 */
 				}
 
 				public string FileNameGetFullPath()
@@ -1751,130 +1776,130 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						/* ----------------------------------------------- Variables & Properties */
 						#region Variables & Properties
-						public AttributeCell Cell;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell Cell;
 
-						public AttributeFloat PositionX;
-						public AttributeFloat PositionY;
-						public AttributeFloat PositionZ;
-						public AttributeFloat RotationX;
-						public AttributeFloat RotationY;
-						public AttributeFloat RotationZ;
-						public AttributeFloat ScalingX;
-						public AttributeFloat ScalingY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat PositionX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat PositionY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat PositionZ;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat RotationX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat RotationY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat RotationZ;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat ScalingX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat ScalingY;
 
-						public AttributeFloat RateOpacity;
-						public AttributeFloat Priority;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat RateOpacity;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat Priority;
 
-						public AttributeBool FlipX;
-						public AttributeBool FlipY;
-						public AttributeBool Hide;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool FlipX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool FlipY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool Hide;
 
-						public AttributeColorBlend ColorBlend;
-						public AttributeVertexCorrection VertexCorrection;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend ColorBlend;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection VertexCorrection;
 
-						public AttributeFloat PivotOffsetX;
-						public AttributeFloat PivotOffsetY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat PivotOffsetX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat PivotOffsetY;
 
-						public AttributeFloat AnchorPositionX;
-						public AttributeFloat AnchorPositionY;
-						public AttributeFloat SizeForceX;
-						public AttributeFloat SizeForceY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat AnchorPositionX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat AnchorPositionY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat SizeForceX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat SizeForceY;
 
-						public AttributeFloat TexturePositionX;
-						public AttributeFloat TexturePositionY;
-						public AttributeFloat TextureRotation;
-						public AttributeFloat TextureScalingX;
-						public AttributeFloat TextureScalingY;
-						public AttributeBool TextureFlipX;
-						public AttributeBool TextureFlipY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat TexturePositionX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat TexturePositionY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat TextureRotation;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat TextureScalingX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat TextureScalingY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool TextureFlipX;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool TextureFlipY;
 
-						public AttributeFloat CollisionRadius;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat CollisionRadius;
 
-						public AttributeUserData UserData;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData UserData;
 
-						public AttributeInstance Instance;
-						public AttributeEffect Effect;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance Instance;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect Effect;
 						#endregion Variables & Properties
 
 						/* ----------------------------------------------- Functions */
 						#region Functions
 						public void CleanUp()
 						{
-							Cell = new AttributeCell();
+							Cell = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell();
 							Cell.CleanUp();
 
-							PositionX = new AttributeFloat();
+							PositionX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							PositionX.CleanUp();
-							PositionY = new AttributeFloat();
+							PositionY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							PositionY.CleanUp();
-							PositionZ = new AttributeFloat();
+							PositionZ = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							PositionZ.CleanUp();
-							RotationX = new AttributeFloat();
+							RotationX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							RotationX.CleanUp();
-							RotationY = new AttributeFloat();
+							RotationY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							RotationY.CleanUp();
-							RotationZ = new AttributeFloat();
+							RotationZ = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							RotationZ.CleanUp();
-							ScalingX = new AttributeFloat();
+							ScalingX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							ScalingX.CleanUp();
-							ScalingY = new AttributeFloat();
+							ScalingY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							ScalingY.CleanUp();
 
-							RateOpacity = new AttributeFloat();
+							RateOpacity = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							RateOpacity.CleanUp();
-							Priority = new AttributeFloat();
+							Priority = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							Priority.CleanUp();
 
-							FlipX = new AttributeBool();
+							FlipX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool();
 							FlipX.CleanUp();
-							FlipY = new AttributeBool();
+							FlipY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool();
 							FlipY.CleanUp();
-							Hide = new AttributeBool();
+							Hide = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool();
 							Hide.CleanUp();
 
-							ColorBlend = new AttributeColorBlend();
-							VertexCorrection = new AttributeVertexCorrection();
+							ColorBlend = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend();
 							ColorBlend.CleanUp();
+							VertexCorrection = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection();
 							VertexCorrection.CleanUp();
 
-							PivotOffsetX = new AttributeFloat();
+							PivotOffsetX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							PivotOffsetX.CleanUp();
-							PivotOffsetY = new AttributeFloat();
+							PivotOffsetY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							PivotOffsetY.CleanUp();
 
-							AnchorPositionX = new AttributeFloat();
+							AnchorPositionX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							AnchorPositionX.CleanUp();
-							AnchorPositionY = new AttributeFloat();
+							AnchorPositionY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							AnchorPositionY.CleanUp();
-							SizeForceX = new AttributeFloat();
+							SizeForceX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							SizeForceX.CleanUp();
-							SizeForceY = new AttributeFloat();
+							SizeForceY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							SizeForceY.CleanUp();
 
-							TexturePositionX = new AttributeFloat();
+							TexturePositionX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							TexturePositionX.CleanUp();
-							TexturePositionY = new AttributeFloat();
+							TexturePositionY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							TexturePositionY.CleanUp();
-							TextureRotation = new AttributeFloat();
+							TextureRotation = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							TextureRotation.CleanUp();
-							TextureScalingX = new AttributeFloat();
+							TextureScalingX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							TextureScalingX.CleanUp();
-							TextureScalingY = new AttributeFloat();
+							TextureScalingY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							TextureScalingY.CleanUp();
-							TextureFlipX = new AttributeBool();
+							TextureFlipX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool();
 							TextureFlipX.CleanUp();
-							TextureFlipY = new AttributeBool();
+							TextureFlipY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool();
 							TextureFlipY.CleanUp();
 
-							CollisionRadius = new AttributeFloat();
+							CollisionRadius = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							CollisionRadius.CleanUp();
 
-							UserData = new AttributeUserData();
+							UserData = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData();
 							UserData.CleanUp();
 
-							Instance = new AttributeInstance();
+							Instance = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance();
 							Instance.CleanUp();
-							Effect = new AttributeEffect();
+							Effect = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect();
 							Effect.CleanUp();
 						}
 
@@ -1974,259 +1999,610 @@ public static partial class LibraryEditor_SpriteStudio6
 							Effect.ShutDown();
 						}
 						#endregion Functions
-
-						/* ----------------------------------------------- Enums & Constants */
-						#region Enums & Constants
-						#endregion Enums & Constants
-
-						/* ----------------------------------------------- Classes, Structs & Interfaces */
-						#region Classes, Structs & Interfaces
-						public class AttributeBool : Attribute<bool>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override bool ValueGet(int frame)
-							{
-								return(false);
-							}
-							#endregion Functions
-						}
-						public class AttributeInt : Attribute<int>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override int ValueGet(int frame)
-							{
-								return(0);
-							}
-							#endregion Functions
-						}
-						public class AttributeFloat : Attribute<float>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override float ValueGet(int frame)
-							{
-								return(0);
-							}
-							#endregion Functions
-						}
-						public class AttributeVector2 : Attribute<Vector2>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override Vector2 ValueGet(int frame)
-							{
-								return(Vector2.zero);
-							}
-							#endregion Functions
-						}
-						public class AttributeVector3 : Attribute<Vector3>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override Vector3 ValueGet(int frame)
-							{
-								return(Vector2.zero);
-							}
-							#endregion Functions
-						}
-						public class AttributeUserData : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.UserData>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override Library_SpriteStudio6.Data.Animation.Attribute.UserData ValueGet(int frame)
-							{
-								return(default(Library_SpriteStudio6.Data.Animation.Attribute.UserData));
-							}
-							#endregion Functions
-						}
-						public class AttributeCell : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.Cell>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override Library_SpriteStudio6.Data.Animation.Attribute.Cell ValueGet(int frame)
-							{
-								return(default(Library_SpriteStudio6.Data.Animation.Attribute.Cell));
-							}
-							#endregion Functions
-						}
-						public class AttributeColorBlend : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend ValueGet(int frame)
-							{
-								return(default(Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend));
-							}
-							#endregion Functions
-						}
-						public class AttributeVertexCorrection : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection ValueGet(int frame)
-							{
-								return(default(Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection));
-							}
-							#endregion Functions
-						}
-						public class AttributeInstance : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.Instance>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override Library_SpriteStudio6.Data.Animation.Attribute.Instance ValueGet(int frame)
-							{
-								return(default(Library_SpriteStudio6.Data.Animation.Attribute.Instance));
-							}
-							#endregion Functions
-						}
-						public class AttributeEffect : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.Effect>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public override Library_SpriteStudio6.Data.Animation.Attribute.Effect ValueGet(int frame)
-							{
-								return(default(Library_SpriteStudio6.Data.Animation.Attribute.Effect));
-							}
-							#endregion Functions
-						}
-
-						public abstract class Attribute<_Type>
-							where _Type : struct
-						{
-							/* ----------------------------------------------- Variables & Properties */
-							#region Variables & Properties
-							public List<KeyData> ListKey;
-							#endregion Variables & Properties
-
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							public abstract _Type ValueGet(int frame);
-
-							public void CleanUp()
-							{
-								ListKey = null;
-							}
-
-							public bool BootUp()
-							{
-								ListKey = new List<KeyData>();
-								ListKey.Clear();
-
-								return(true);
-							}
-
-							public void ShutDown()
-							{
-								if(null != ListKey)
-								{
-									ListKey.Clear();
-								}
-								ListKey = null;
-							}
-
-							public int IndexGetFramePrevious(int frame)
-							{
-								if((null != ListKey) && (0 <= frame))
-								{
-									int indexPrevious = -1;
-									int count = ListKey.Count;
-									for(int i=0; i<count; i++)
-									{
-										int frameNow = ListKey[i].Frame;
-										if(frameNow == frame)
-										{
-											return(i);
-										}
-										if(frameNow > frame)
-										{
-											return(indexPrevious);
-										}
-										indexPrevious = i;
-									}
-								}
-								return(-1);
-							}
-
-							public int IndexGetFrameNext(int frame)
-							{
-								if((null != ListKey) && (0 <= frame))
-								{
-									int count = ListKey.Count;
-									for(int i=0; i<count; i++)
-									{
-										if(ListKey[i].Frame > frame)
-										{
-											return(i);
-										}
-									}
-									return(count - 1);
-								}
-								return(-1);
-							}
-
-							public void KeyDataAdjustTopFrame()
-							{
-								if(0 >= ListKey.Count)
-								{	/* No Keys */
-									return;
-								}
-
-								if(0 < ListKey[0].Frame)
-								{
-									/* Create Top Key-Data */
-									/* MEMO:  Same value. However, "frame = 0" and "no interpolation". */
-									KeyData KeyDataTopFrame = ListKey[0];
-									KeyDataTopFrame.Frame = 0;
-									KeyDataTopFrame.Interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;
-									KeyDataTopFrame.FrameCurveStart = 0.0f;
-									KeyDataTopFrame.ValueCurveStart = 0.0f;
-									KeyDataTopFrame.FrameCurveEnd = 0.0f;
-									KeyDataTopFrame.ValueCurveEnd = 0.0f;
-
-									ListKey.Insert(0, KeyDataTopFrame);
-								}
-							}
-
-							#endregion Functions
-
-							/* ----------------------------------------------- Classes, Structs & Interfaces */
-							#region Classes, Structs & Interfaces
-							public class KeyData
-							{
-								/* ----------------------------------------------- Variables & Properties */
-								#region Variables & Properties
-								public int Frame;
-								public _Type Value;
-
-								public Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation Interpolation;
-								public float FrameCurveStart;
-								public float ValueCurveStart;
-								public float FrameCurveEnd;
-								public float ValueCurveEnd;
-								#endregion Variables & Properties
-
-								/* ----------------------------------------------- Functions */
-								#region Functions
-								public void CleanUp()
-								{
-									Frame = -1;	/* Frame-Value Invalid */
-									Value = default(_Type);
-
-									Interpolation = Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON;
-									FrameCurveStart = 0.0f;
-									ValueCurveStart = 0.0f;
-									FrameCurveEnd = 0.0f;
-									ValueCurveEnd = 0.0f;
-								}
-								#endregion Functions
-							}
-							#endregion Classes, Structs & Interfaces
-						}
-						#endregion Classes, Structs & Interfaces
 					}
 					#endregion Classes, Structs & Interfaces
+				}
+				#endregion Classes, Structs & Interfaces
+			}
+
+			public static partial class ModeSS6PU
+			{
+				/* MEMO: Originally functions that should be defined in each information class. */
+				/*       However, confusion tends to occur with mode increases.                 */
+				/*       ... Compromised way.                                                   */
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public static bool AssetNameDecideData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE,
+														string nameOutputAssetFolderBase,
+														Script_SpriteStudio6_DataAnimation animationOverride
+													)
+				{
+					if(null != animationOverride)
+					{	/* Specified */
+						informationSSAE.DataAnimationSS6PU.TableName[0] = AssetDatabase.GetAssetPath(animationOverride);
+						informationSSAE.DataAnimationSS6PU.TableData[0] = animationOverride;
+					}
+					else
+					{	/* Default */
+						informationSSAE.DataAnimationSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_SS6PU, nameOutputAssetFolderBase)
+																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_SS6PU, informationSSAE.NameFileBody, informationSSPJ.NameFileBody)
+																		+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
+						informationSSAE.DataAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataAnimation>(informationSSAE.DataAnimationSS6PU.TableName[0]);
+					}
+
+					return(true);
+
+//				AssetNameDecideData_ErroeEnd:;
+//					return(false);
+				}
+
+				public static bool AssetCreateData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
+												)
+				{
+					const string messageLogPrefix = "Create Asset(Data-Animation)";
+
+					Script_SpriteStudio6_DataAnimation dataAnimation = informationSSAE.DataAnimationSS6PU.TableData[0];
+					if(null == dataAnimation)
+					{
+						dataAnimation = ScriptableObject.CreateInstance<Script_SpriteStudio6_DataAnimation>();
+						AssetDatabase.CreateAsset(dataAnimation, informationSSAE.DataAnimationSS6PU.TableName[0]);
+						informationSSAE.DataAnimationSS6PU.TableData[0] = dataAnimation;
+					}
+
+					dataAnimation.Version = Script_SpriteStudio6_DataAnimation.KindVersion.SUPPORT_LATEST;
+
+
+
+
+					EditorUtility.SetDirty(dataAnimation);
+					AssetDatabase.SaveAssets();
+
+					return(true);
+
+//				AssetCreateData_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool ConvertData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+												LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
+											)
+				{
+					const string messageLogPrefix = "Convert (Data-Animation)";
+					/* MEMO: ここでは1Plainのみを作成する */
+
+
+					return(true);
+
+//				ConvertData_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool ConvertDataFixMesh(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
+													)
+				{
+					/* MEMO: ここでは1Plain→Fixを作成する */
+
+					return(true);
+
+//				ConvertDataFixMesh_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool ConvertDataPack(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
+												)
+				{
+					/* MEMO: ここで必要なアトリビュートをパックする */
+
+					return(true);
+
+//				ConvertDataFixMesh_ErrorEnd:;
+//					return(false);
+				}
+
+				#endregion Functions
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				public static partial class PackAttribute
+				{
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public static bool FactoryInt(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<int> container,
+													ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt> containerImport,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+												)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeInt attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeInt();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeInt attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeInt();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryFloat(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<float> container,
+														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat> containerImport,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+													)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeFloat attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeFloat();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeFloat attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeFloat();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryVector2(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> container,
+														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat> containerImport,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+												)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector2 attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector2();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVector2 attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVector2();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryVector3(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector3> container,
+														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat> containerImport,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+												)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector3 attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector3();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVector3 attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVector3();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryStatus(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Status> container,
+														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool> containerImport,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+												)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeStatus attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeStatus();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeStatus attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeStatus();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryCell(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Cell> container,
+													ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell> containerImport,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+												)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCell attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCell();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeCell attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeCell();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryColorBlend(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend> container,
+															ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend> containerImport,
+															Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+														)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlend attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlend();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeColorBlend attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeColorBlend();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryVertexCorrection(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> container,
+																ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection> containerImport,
+																Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+															)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVertexCorrection attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVertexCorrection();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVertexCorrection attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVertexCorrection();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryUserData(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.UserData> container,
+														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData> containerImport,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+													)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								/* Not Support */
+								return(false);
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeUserData attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeUserData();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryInstance(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Instance> container,
+														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance> containerImport,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+													)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								/* Not Support */
+								return(false);
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeInstance attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeInstance();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryEffect(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Effect> container,
+														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect> containerImport,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+													)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								/* Not Support */
+								return(false);
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeEffect attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeEffect();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryCoordinateFix(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix> container,
+																ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix> containerImport,
+																Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+															)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCoordinateFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCoordinateFix();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeCoordinateFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeCoordinateFix();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryColorBlendFix(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix> container,
+																ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix> containerImport,
+																Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+															)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlendFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlendFix();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeColorBlendFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeColorBlendFix();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+
+					public static bool FactoryUVFix(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.UVFix> container,
+														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix> containerImport,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
+													)
+					{
+						switch(pack)
+						{
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeUVFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeUVFix();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
+								{
+									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeUVFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeUVFix();
+									attribute.CleanUp();
+
+									container = attribute;
+									containerImport = attribute;
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
+								break;
+
+							default:
+								return(false);
+						}
+						return(true);
+					}
+					#endregion Functions
 				}
 				#endregion Classes, Structs & Interfaces
 			}

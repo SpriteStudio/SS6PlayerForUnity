@@ -48,5 +48,5 @@ InputPS	VS_main(InputVS Input)
 	Output.PositionDraw = Temp;
 	Output.Position = Temp;
 
-    return Output;
+	return Output;
 }

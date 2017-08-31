@@ -130,84 +130,204 @@ public static partial class Library_SpriteStudio6
 							outValue = TableValue[index];
 							return(true);	/* outValue is overwritten. */
 						}
-
-						public bool Pack(_Type[] tableDataRaw, int frameMax, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(false);
-						}
-
-						public bool PackTrigger(_Type[] tableDataRaw, int[] tableFrameKey, int frameMax, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(false);
-						}
-
-						public bool Unpack(ref _Type[] outTableDataRaw, int frameMax, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(false);
-						}
-
-						public bool UnpackTrigger(ref _Type[] outTableDataRaw, ref int[] outTableFrameKey, int frameMax, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{	/* Not-Supported */
-							return(false);
-						}
 						#endregion Functions
 					}
 
 					[System.Serializable]
-					public class PackAttributeInt : Base<int>
+					public class PackAttributeInt :
+						Base<int>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeFloat : Base<float>
+					public class PackAttributeFloat :
+						Base<float>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeVector2 : Base<Vector2>
+					public class PackAttributeVector2 :
+						Base<Vector2>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 2 (X, Y) */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeVector3 : Base<Vector3>
+					public class PackAttributeVector3 :
+						Base<Vector3>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 3 (X, Y, Z) */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeStatus : Base<Library_SpriteStudio6.Data.Animation.Attribute.Status>
+					public class PackAttributeStatus :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.Status>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 5 (Hide, FlipX, FlipY, FlipTextureX, FlipTextureY) */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeCell : Base<Library_SpriteStudio6.Data.Animation.Attribute.Cell>
+					public class PackAttributeCell :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.Cell>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeColorBlend : Base<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend>
+					public class PackAttributeColorBlend :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeVertexCorrection : Base<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection>
+					public class PackAttributeVertexCorrection :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeUserData : Base<Library_SpriteStudio6.Data.Animation.Attribute.UserData>
+					public class PackAttributeUserData :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.UserData>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeInstance : Base<Library_SpriteStudio6.Data.Animation.Attribute.Instance>
+					public class PackAttributeInstance :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.Instance>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeEffect : Base<Library_SpriteStudio6.Data.Animation.Attribute.Effect>
+					public class PackAttributeEffect :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.Effect>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeCoordinateFix : Base<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix>
+					public class PackAttributeCoordinateFix :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeColorBlendFix : Base<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix>
+					public class PackAttributeColorBlendFix :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					[System.Serializable]
-					public class PackAttributeUVFix : Base<Library_SpriteStudio6.Data.Animation.Attribute.UVFix>
+					public class PackAttributeUVFix :
+						Base<Library_SpriteStudio6.Data.Animation.Attribute.UVFix>,
+						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix>
 					{
+						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+											int frameMax,
+											string nameAttribute,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix[] listKeyData
+										)
+						{	/* MEMO: "ListKeyData.Length" is always 1 */
+							return(false);
+						}
 					}
 					#endregion Classes, Structs & Interfaces
 				}

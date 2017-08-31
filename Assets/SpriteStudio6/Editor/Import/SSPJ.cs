@@ -273,6 +273,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public string NameDirectoryBaseSSAE;
 				public LibraryEditor_SpriteStudio6.Import.SSAE.Information[] TableInformationSSAE;
 				public string[] TableNameSSAE;	/* Temporary */
+				public int[] QueueConvertSSAE;
 
 				public string NameDirectoryBaseSSEE;
 				public LibraryEditor_SpriteStudio6.Import.SSEE.Information[] TableInformationSSEE;
@@ -304,7 +305,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					NameDirectoryBaseSSAE = "";
 					TableNameSSAE = null;
 					TableInformationSSAE = null;
-
+					QueueConvertSSAE = null;
+;
 					NameDirectoryBaseSSEE = "";
 					TableNameSSEE = null;
 					TableInformationSSEE = null;
@@ -524,10 +526,151 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					return(-1);
 				}
+
+				public int[] QueueGetConvertSSAE(ref LibraryEditor_SpriteStudio6.Import.Setting setting)
+				{
+					const string messageLogPrefix = "Fix SSAEs Conversion-Queue";
+
+					int countSSAE = TableInformationSSAE.Length;
+					int index = 0;
+
+					int[] tableIndexSSAE = new int[countSSAE];
+					if(null == tableIndexSSAE)
+					{
+						LogError(messageLogPrefix, "Not Enough Memory (Order-Table)", FileNameGetFullPath());
+						goto QueueGetConvertSSAE_ErrorEnd;
+					}
+					for(int i=0; i<countSSAE; i++)
+					{
+						tableIndexSSAE[i] = -1;
+					}
+
+					/* Set having no "Instance"parts */
+					for(int i=0; i<countSSAE; i++)
+					{
+						if(0 >= CountGetInstancePartsSSAE(ref setting, TableInformationSSAE[i]))
+						{
+							tableIndexSSAE[index] = i;
+							index++;
+						}
+					}
+
+					/* Set having "Instance"parts */
+					bool flagAlreadyQueued = false;
+					bool flagAllInstanceExist = false;
+					while(countSSAE > index)
+					{
+						for(int i=0; i<countSSAE; i++)
+						{
+							/* Check already queued */
+							flagAlreadyQueued = false;
+							for(int j=0; j<index; j++)
+							{
+								if(i == tableIndexSSAE[j])
+								{	/* Already Set */
+									flagAlreadyQueued = true;
+									break;
+								}
+							}
+							if(true == flagAlreadyQueued)
+							{
+								continue;
+							}
+
+							/* Check all calling "Instance"s are queued */
+							flagAllInstanceExist = false;
+							if(false == QueueCheckAllInstance(	ref flagAllInstanceExist,
+																ref setting,
+																TableInformationSSAE[i],
+																tableIndexSSAE,
+																index
+															)
+								)
+							{	/* Error (Not Found SSAE-Name) */
+								goto QueueGetConvertSSAE_ErrorEnd;
+							}
+							if(true == flagAllInstanceExist)
+							{	/* All Queued */
+								tableIndexSSAE[index] = i;
+								index++;
+								break;	/* Break for-Loop */
+							}
+						}
+					}
+
+					return(tableIndexSSAE);
+
+				QueueGetConvertSSAE_ErrorEnd:;
+					return(null);
+				}
+				private int CountGetInstancePartsSSAE(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
+													)
+				{
+//					const string messageLogPrefix = "Fix SSAEs Conversion-Queue";
+					int countParts = informationSSAE.TableParts.Length;
+					int count = 0;
+					for(int i=0; i<countParts; i++)
+					{
+						if(Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE == informationSSAE.TableParts[i].Data.Feature)
+						{
+							count++;
+						}
+					}
+					return(count);
+				}
+				private bool QueueCheckAllInstance(	ref bool flagAllInstanceExist,
+													ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE,
+													int[] tableIndexSSAE,
+													int countQueued
+												)
+				{
+					const string messageLogPrefix = "Fix SSAEs Conversion-Queue";
+
+					int countParts = informationSSAE.TableParts.Length;
+					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Parts parts = null;
+					int indexInstanceSSAE;
+					bool flagExist;
+					for(int i=0; i<countParts; i++)
+					{
+						parts = informationSSAE.TableParts[i];
+						if(Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE == parts.Data.Feature)
+						{
+							indexInstanceSSAE = parts.IndexUnderControl;
+							if(-1 == indexInstanceSSAE)
+							{
+								LogError(messageLogPrefix, "Instance missing Parts [" + parts.Data.Name + "] in [" + informationSSAE.FileNameGetFullPath() + "]", FileNameGetFullPath());
+								goto QueueCheckAllInstance_ErrorEnd;
+							}
+							flagExist = false;
+							for(int j=0; j<countQueued; j++)
+							{
+								if(tableIndexSSAE[j] == indexInstanceSSAE)
+								{
+									flagExist = true;
+									break;
+								}
+							}
+							if(false == flagExist)
+							{
+								flagAllInstanceExist = false;
+								return(true);
+							}
+						}
+					}
+
+					flagAllInstanceExist = true;
+					return(true);
+
+				QueueCheckAllInstance_ErrorEnd:;
+					flagAllInstanceExist = false;
+					return(false);
+				}
 				#endregion Functions
 			}
 
-			public static class ModeSS6PU
+			public static partial class ModeSS6PU
 			{
 				/* ----------------------------------------------- Functions */
 				#region Functions
@@ -536,9 +679,9 @@ public static partial class LibraryEditor_SpriteStudio6
 													string nameOutputAssetFolderBase
 												)
 				{
-					/* オプションがない場合は、名前で照合 */
-					/* オプションがある場合は、SpriteStudio_Root/RootEffectから使用しているデータを追いかける */
-						/* SpriteStudio_Root/RootEffectがない場合は名前で照合していく */
+					/* Yuzu.: オプションがない場合は、名前で照合 */
+					/* Yuzu.: オプションがある場合は、SpriteStudio_Root/RootEffectから使用しているデータを追いかける */
+						/* Yuzu.: SpriteStudio_Root/RootEffectがない場合は名前で照合していく */
 
 					/* SSAEs */
 

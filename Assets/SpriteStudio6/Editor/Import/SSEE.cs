@@ -345,7 +345,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* Get Base Datas */
 				informationEmitter.Data.FlagData = Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.CLEAR;
-				informationEmitter.Data.OperationBlendTarget =  operationBlendTarget;
+				informationEmitter.Data.OperationBlendTarget = operationBlendTarget;
 				informationEmitter.NameCellMap = nameCellMap;
 				informationEmitter.NameCell = nameCell;
 
@@ -935,7 +935,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				#endregion Classes, Structs & Interfaces
 			}
 
-			public static class ModeSS6PU
+			public static partial class ModeSS6PU
 			{
 				/* MEMO: Originally functions that should be defined in each information class. */
 				/*       However, confusion tends to occur with mode increases.                 */
@@ -965,7 +965,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 
-//				AssetNameDecideSS6PU_ErroeEnd:;
+//				AssetNameDecideData_ErroeEnd:;
 //					return(false);
 				}
 
@@ -1001,7 +1001,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 
-//				AssetCreateCellMap_ErrorEnd:;
+//				AssetCreateData_ErrorEnd:;
 //					return(false);
 				}
 
@@ -1212,7 +1212,6 @@ public static partial class LibraryEditor_SpriteStudio6
 //				ConvertDataCalculateInAdvance_ErrorEnd:;
 //					return(false);
 				}
-
 				#endregion Functions
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */

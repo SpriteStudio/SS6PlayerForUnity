@@ -49,7 +49,7 @@ InputPS	VS_main(InputVS Input)
 	Temp = (0.1f > Index) ? _OverlayParameter_Non
 							: ((3.0f > Index) ? ((2.0f > Index) ? _OverlayParameter_Mix : _OverlayParameter_Add)
 												: ((4.0 > Index) ? _OverlayParameter_Sub : _OverlayParameter_Mul)
-							  );
+							);
 	Output.ParameterOverlay = Temp;
 
 	Temp = Input.vertex;
@@ -57,5 +57,5 @@ InputPS	VS_main(InputVS Input)
 	Output.PositionDraw = Temp;
 	Output.Position = Temp;
 
-    return Output;
+	return Output;
 }

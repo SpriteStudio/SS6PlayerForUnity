@@ -39,6 +39,8 @@ public static partial class LibraryEditor_SpriteStudio6
 			string nameFileBody = "";
 			string nameFileExtension = "";
 			nameInputFullPathSSPJ = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameInputFullPathSSPJ);
+			LibraryEditor_SpriteStudio6.Utility.Log.Message("Importing Start [" + nameInputFullPathSSPJ + "]", true, false);	/* External-File only, no indent */
+
 			if(false == System.IO.File.Exists(nameInputFullPathSSPJ))
 			{	/* Not Found */
 				LogError(messageLogPrefix, "File Not Found [" + nameInputFullPathSSPJ +"]");
@@ -159,6 +161,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				nameOutputAssetFolderBase += informationSSPJ.NameFileBody + "/";
 			}
 
+			/* Get Convert-Order SSAE */
+			informationSSPJ.QueueConvertSSAE = informationSSPJ.QueueGetConvertSSAE(ref setting);
+			if(null == informationSSPJ.QueueConvertSSAE)
+			{
+				goto Exec_ErrorEnd;
+			}
+
 			/* Convert & Create Assets */
 			switch(setting.Mode)
 			{
@@ -197,6 +206,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			countProgressNow = -1;
 			ProgressBarUpdate("", flagDisplayProgressBar, ref countProgressNow, -1);
+
+			LibraryEditor_SpriteStudio6.Utility.Log.Message("Success", true, false);	/* External-File only */
+
 			return(true);
 
 		Exec_ErrorEnd:;
@@ -205,6 +217,9 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				informationSSPJ.CleanUp();
 			}
+
+			LibraryEditor_SpriteStudio6.Utility.Log.Message("Failure", true, false);	/* External-File only */
+
 			return(false);
 		}
 		private static bool ExecSS6PU(	ref Setting setting,
@@ -423,7 +438,7 @@ public static partial class LibraryEditor_SpriteStudio6
 											flagDisplayProgressBar, ref countProgressNow, countProgressMax
 										);
 
-						if(false == SSCE.ModeSS6PU.ConverCellMaptTrimPixel(ref setting, informationSSPJ, informationSSCE))
+						if(false == SSCE.ModeSS6PU.ConverCellMaptPixelTrimTransparent(ref setting, informationSSPJ, informationSSCE))
 						{
 							goto ExecSS6PU_ErrorEnd;
 						}
@@ -530,8 +545,6 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 
 #if false
-			/* Get Convert-Order SSAE */
-
 			/* Create-Asset: Animation */
 			for(int i=0; i<countSSEE; i++)
 			{
@@ -679,130 +692,7 @@ public static partial class LibraryEditor_SpriteStudio6
 	{
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
 		#region Classes, Structs & Interfaces
-		public static class Interpolation
-		{
-			/* ----------------------------------------------- Functions */
-			#region Functions
-			public static float Linear(float start, float end, float point)
-			{
-				return(((end - start) * point) + start);
-			}
-
-			public static float Hermite(float start, float end, float point, float speedStart, float speedEnd)
-			{
-				float pointPow2 = point * point;
-				float pointPow3 = pointPow2 * point;
-				return(	(((2.0f * pointPow3) - (3.0f * pointPow2) + 1.0f) * start)
-						+ (((3.0f * pointPow2) - (2.0f * pointPow3)) * end)
-						+ ((pointPow3 - (2.0f * pointPow2) + point) * (speedStart - start))
-						+ ((pointPow3 - pointPow2) * (speedEnd - end))
-					);
-			}
-
-			public static float Bezier(ref Vector2 start, ref Vector2 end, float point, ref Vector2 vectorStart, ref Vector2 vectorEnd)
-			{
-				float PointNow = Linear(start.x, end.x, point);
-				float PointTemp;
-
-				float AreaNow = 0.5f;
-				float RangeNow = 0.5f;
-
-				float Base;
-				float BasePow2;
-				float BasePow3;
-				float AreaNowPow2;
-				for(int i=0; i<8; i++)
-				{
-					Base = 1.0f - AreaNow;
-					BasePow2 = Base * Base;
-					BasePow3 = BasePow2 * Base;
-					AreaNowPow2 = AreaNow * AreaNow;
-					PointTemp = (BasePow3 * start.x)
-								+ (3.0f * BasePow2 * AreaNow * (vectorStart.x + start.x))
-								+ (3.0f * Base * AreaNowPow2 * (vectorEnd.x + end.x))
-								+ (AreaNow * AreaNowPow2 * end.x);
-					RangeNow *= 0.5f;
-					AreaNow += ((PointTemp > PointNow) ? (-RangeNow) : (RangeNow));
-				}
-
-				AreaNowPow2 = AreaNow * AreaNow;
-				Base = 1.0f - AreaNow;
-				BasePow2 = Base * Base;
-				BasePow3 = BasePow2 * Base;
-				return(	(BasePow3 * start.y)
-						+ (3.0f * BasePow2 * AreaNow * (vectorStart.y + start.y))
-						+ (3.0f * Base * AreaNowPow2 * (vectorEnd.y + end.y))
-						+ (AreaNow * AreaNowPow2 * end.y)
-					);
-			}
-
-			public static float Accelerate(float start, float end, float point)
-			{
-				return(((end - start) * (point * point)) + start);
-			}
-
-			public static float Decelerate(float start, float end, float point)
-			{
-				float pointInverse = 1.0f - point;
-				float rate = 1.0f - (pointInverse * pointInverse);
-				return(((end - start) * rate) + start);
-			}
-
-			public static float ValueGetFloat(	Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation interpolation,
-												int frameNow,
-												int frameStart,
-												float valueStart,
-												int frameEnd,
-												float valueEnd,
-												float curveFrameStart,
-												float curveValueStart,
-												float curveFrameEnd,
-												float curveValueEnd
-											)
-			{
-				if(frameEnd <= frameStart)
-				{
-					return(valueStart);
-				}
-				float frameNormalized = ((float)(frameNow - frameStart)) / ((float)(frameEnd - frameStart));
-				frameNormalized = Mathf.Clamp01(frameNormalized);
-
-				switch(interpolation)
-				{
-					case Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.NON:
-						return(valueStart);
-
-					case Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.LINEAR:
-						return(Linear(valueStart, valueEnd, frameNormalized));
-
-					case Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.HERMITE:
-						return(Hermite(valueStart, valueEnd, frameNormalized, curveValueStart, curveValueEnd));
-
-					case Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.BEZIER:
-						{
-							Vector2 start = new Vector2((float)frameStart, valueStart);
-							Vector2 vectorStart = new Vector2(curveFrameStart, curveValueStart);
-							Vector2 end = new Vector2((float)frameEnd, valueEnd);
-							Vector2 vectorEnd = new Vector2(curveFrameEnd, curveValueEnd);
-							return(Interpolation.Bezier(ref start, ref end, frameNormalized, ref vectorStart, ref vectorEnd));
-						}
-//						break;	/* Redundant */
-
-					case Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.ACCELERATE:
-						return(Accelerate(valueStart, valueEnd, frameNormalized));
-
-					case Library_SpriteStudio6.Data.Animation.Attribute.KindInterpolation.DECELERATE:
-						return(Decelerate(valueStart, valueEnd, frameNormalized));
-
-					default:
-						break;
-				}
-				return(valueStart);	/* Error */
-			}
-			#endregion Functions
-		}
-
-		public static class File
+		public static partial class File
 		{
 			/* ----------------------------------------------- Functions */
 			#region Functions
@@ -1351,13 +1241,16 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			/* ----------------------------------------------- Functions */
 			#region Functions
-			public static void Error(string message, bool flagIndent=true)
+			public static void Error(string message, bool flagExternalOnly=false, bool flagIndentExternal=true)
 			{
 				string text = "SS6PU Error: " + message;
-				Debug.LogError(text);
+				if(false == flagExternalOnly)
+				{
+					Debug.LogError(text);
+				}
 				if(null != StreamExternal)
 				{
-					if(true == flagIndent)
+					if(true == flagIndentExternal)
 					{
 						text = "\t" + text;
 					}
@@ -1365,13 +1258,16 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 			}
 
-			public static void Warning(string message, bool flagIndent=true)
+			public static void Warning(string message, bool flagExternalOnly=false, bool flagIndentExternal=true)
 			{
 				string text = "SS6PU Warning: " + message;
-				Debug.LogWarning(text);
+				if(false == flagExternalOnly)
+				{
+					Debug.LogWarning(text);
+				}
 				if(null != StreamExternal)
 				{
-					if(true == flagIndent)
+					if(true == flagIndentExternal)
 					{
 						text = "\t" + text;
 					}
@@ -1379,13 +1275,16 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 			}
 
-			public static void Message(string message, bool flagIndent=true)
+			public static void Message(string message, bool flagExternalOnly=false, bool flagIndentExternal=true)
 			{
 				string text = "SS6PU-Message: " + message;
-				Debug.Log(text);
+				if(false == flagExternalOnly)
+				{
+					Debug.Log(text);
+				}
 				if(null != StreamExternal)
 				{
-					if(true == flagIndent)
+					if(true == flagIndentExternal)
 					{
 						text = "\t" + text;
 					}
@@ -1395,7 +1294,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			#endregion Functions
 		}
 
-		public static class Miscellaneous
+		public static partial class Miscellaneous
 		{
 			/* ----------------------------------------------- Functions */
 			#region Functions

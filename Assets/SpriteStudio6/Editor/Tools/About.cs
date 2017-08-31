@@ -7,7 +7,7 @@
 using UnityEngine;
 using UnityEditor;
 
-public sealed partial class MenuItem_SpriteStudio6_About : EditorWindow
+public sealed class MenuItem_SpriteStudio6_About : EditorWindow
 {
 	/* ----------------------------------------------- Functions */
 	#region Functions

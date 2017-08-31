@@ -345,7 +345,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.Space();
 
 		SettingOption.ModeBatchImporter.FlagFoldOptions = EditorGUILayout.Foldout(SettingOption.ModeBatchImporter.FlagFoldOptions, "Options");
-		if(true ==  SettingOption.ModeBatchImporter.FlagFoldOptions)
+		if(true == SettingOption.ModeBatchImporter.FlagFoldOptions)
 		{
 			EditorGUI.indentLevel = levelIndent + 1;
 
@@ -1192,7 +1192,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
 			private const string PrefsKeyPrefix = "SS6PU_ToolImporter_SettingBackUp_";
-			private const string PrefsKeyFlagExportCommon =  PrefsKeyPrefix + "FlagExportCommon";
+			private const string PrefsKeyFlagExportCommon = PrefsKeyPrefix + "FlagExportCommon";
 			private const string PrefsKeyFlagExportBasic = PrefsKeyPrefix + "FlagExportBasic";
 			private const string PrefsKeyFlagExportPrecalculation = PrefsKeyPrefix + "FlagExportPrecalculation";
 			private const string PrefsKeyFlagExportCollider = PrefsKeyPrefix + "FlagExportCollider";
@@ -1218,7 +1218,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		#endregion Classes, Structs & Interfaces
 	}
 
-	/* MEMO: For some reason, if "PullDownPackAttribute" is struct,  values are set case be correctly in BootUp not. */
+	/* MEMO: For some reason, if "PullDownPackAttribute" is struct, values are set case be correctly in BootUp not. */
 //	private struct PullDownPackAttribute
 	private class PullDownPackAttribute
 	{
