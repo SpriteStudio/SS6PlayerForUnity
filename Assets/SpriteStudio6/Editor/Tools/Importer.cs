@@ -710,12 +710,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Position, "Position", ref PullDownPackAttributeAnimation.Position);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Rotation, "Rotation", ref PullDownPackAttributeAnimation.Rotation);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RateOpacity, "RateOpacity", ref PullDownPackAttributeAnimation.RateOpacity);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Priority, "Priority", ref PullDownPackAttributeAnimation.Priority);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionAnchor, "PositionAnchor", ref PullDownPackAttributeAnimation.PositionAnchor);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.SizeForce, "SizeForce", ref PullDownPackAttributeAnimation.SizeForce);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.UserData, "UserData", ref PullDownPackAttributeAnimation.UserData);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Instance, "Instance", ref PullDownPackAttributeAnimation.Instance);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Effect, "Effect", ref PullDownPackAttributeAnimation.Effect);
+		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RadiusCollision, "RadiusCollision", ref PullDownPackAttributeAnimation.RadiusCollision);
 		EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField("[Plain]");
@@ -726,7 +726,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPositionTexture, "PositionTexture", ref PullDownPackAttributeAnimation.PlainPositionTexture);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainScalingTexture, "ScalingTexture", ref PullDownPackAttributeAnimation.PlainScalingTexture);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainRotationTexture, "RotationTexture", ref PullDownPackAttributeAnimation.PlainRotationTexture);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainRadiusCollision, "RadiusCollision", ref PullDownPackAttributeAnimation.PlainRadiusCollision);
 		EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField("[Fix]");
@@ -737,7 +736,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixRadiusCollision, "RadiusCollision", ref PullDownPackAttributeAnimation.FixRadiusCollision);
 		EditorGUILayout.Space();
 	}
 	private void FoldOutExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)
@@ -1229,12 +1227,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute Rotation;
 		public Attribute Scaling;
 		public Attribute RateOpacity;
-		public Attribute Priority;
 		public Attribute PositionAnchor;
 		public Attribute SizeForce;
 		public Attribute UserData;
 		public Attribute Instance;
 		public Attribute Effect;
+		public Attribute RadiusCollision;
 
 		public Attribute PlainCell;
 		public Attribute PlainColorBlend;
@@ -1243,7 +1241,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute PlainPositionTexture;
 		public Attribute PlainScalingTexture;
 		public Attribute PlainRotationTexture;
-		public Attribute PlainRadiusCollision;
 
 		public Attribute FixIndexCellMap;
 		public Attribute FixCoordinate;
@@ -1251,7 +1248,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute FixUV0;
 		public Attribute FixSizeCollision;
 		public Attribute FixPivotCollision;
-		public Attribute FixRadiusCollision;
 		#endregion Variables & Properties
 
 		/* ----------------------------------------------- Functions */
@@ -1263,13 +1259,13 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			Rotation.CleanUp();
 			Scaling.CleanUp();
 			RateOpacity.CleanUp();
-			Priority.CleanUp();
 			PositionAnchor.CleanUp();
 			SizeForce.CleanUp();
 			UserData.CleanUp();
 			Instance.CleanUp();
 			Effect.CleanUp();
-			
+			RadiusCollision.CleanUp();
+
 			PlainCell.CleanUp();
 			PlainColorBlend.CleanUp();
 			PlainVertexCorrection.CleanUp();
@@ -1277,7 +1273,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			PlainPositionTexture.CleanUp();
 			PlainScalingTexture.CleanUp();
 			PlainRotationTexture.CleanUp();
-			PlainRadiusCollision.CleanUp();
 			
 			FixIndexCellMap.CleanUp();
 			FixCoordinate.CleanUp();
@@ -1285,7 +1280,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			FixUV0.CleanUp();
 			FixSizeCollision.CleanUp();
 			FixPivotCollision.CleanUp();
-			FixRadiusCollision.CleanUp();
 		}
 
 		public void BootUp()
@@ -1336,12 +1330,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
-				tableFlagEnablePack[i] = capacityPack[i].Priority;
-			}
-			Priority.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
 				tableFlagEnablePack[i] = capacityPack[i].PositionAnchor;
 			}
 			PositionAnchor.BootUp(tableFlagEnablePack);
@@ -1369,6 +1357,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].Effect;
 			}
 			Effect.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].RadiusCollision;
+			}
+			RadiusCollision.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{
@@ -1414,12 +1408,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainRadiusCollision;
-			}
-			PlainRadiusCollision.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
 				tableFlagEnablePack[i] = capacityPack[i].FixIndexCellMap;
 			}
 			FixIndexCellMap.BootUp(tableFlagEnablePack);
@@ -1453,12 +1441,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].FixPivotCollision;
 			}
 			FixPivotCollision.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].FixRadiusCollision;
-			}
-			FixRadiusCollision.BootUp(tableFlagEnablePack);
 
 			SettingImport.PackAttributeAnimation.Adjust();
 		}

@@ -17,6 +17,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 	public Library_SpriteStudio6.Data.Parts.Animation[] TableParts;
 	public Library_SpriteStudio6.Data.Animation[] TableAnimation;
+	/* MEMO: 念のため、セットアップポーズも入れておく */
 
 	/* MEMO: Can use only from Implemented-Class of Library_SpriteStudio6.Data.Animation.PackAttribute.Parameter.Container */
 	public Library_SpriteStudio6.Data.Animation.PackAttribute.Parameter ParameterPackAttribute;

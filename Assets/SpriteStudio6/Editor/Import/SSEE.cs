@@ -825,6 +825,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Effect.Emitter[] TableEmitterSS6PU;
 
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataEffect> DataEffectSS6PU;
+				public LibraryEditor_SpriteStudio6.Import.Assets<Object> PrefabEffectSS6PU;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -850,6 +851,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					DataEffectSS6PU.CleanUp();
 					DataEffectSS6PU.BootUp(1);	/* Always 1 */
+					PrefabEffectSS6PU.CleanUp();
+					PrefabEffectSS6PU.BootUp(1);	/* Always 1 */
 				}
 
 				public string FileNameGetFullPath()
@@ -943,17 +946,18 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public static bool AssetNameDecideData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+				public static bool AssetNameDecide(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 														LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE,
 														string nameOutputAssetFolderBase,
-														Script_SpriteStudio6_DataEffect effectOverride
+														Script_SpriteStudio6_DataEffect dataOverride,
+														Script_SpriteStudio6_RootEffect prefabOverride
 													)
 				{
-					if(null != effectOverride)
+					if(null != dataOverride)
 					{	/* Specified */
-						informationSSEE.DataEffectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(effectOverride);
-						informationSSEE.DataEffectSS6PU.TableData[0] = effectOverride;
+						informationSSEE.DataEffectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(dataOverride);
+						informationSSEE.DataEffectSS6PU.TableData[0] = dataOverride;
 					}
 					else
 					{	/* Default */
@@ -963,9 +967,22 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationSSEE.DataEffectSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataEffect>(informationSSEE.DataEffectSS6PU.TableName[0]);
 					}
 
+					if(null != prefabOverride)
+					{	/* Specified */
+						informationSSEE.PrefabEffectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(prefabOverride);
+						informationSSEE.PrefabEffectSS6PU.TableData[0] = prefabOverride;
+					}
+					else
+					{	/* Default */
+						informationSSEE.PrefabEffectSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_EFFECT_SS6PU, nameOutputAssetFolderBase)
+																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_EFFECT_SS6PU, informationSSEE.NameFileBody, informationSSPJ.NameFileBody)
+																		+ LibraryEditor_SpriteStudio6.Import.NameExtensionPrefab;
+						informationSSEE.PrefabEffectSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<GameObject>(informationSSEE.PrefabEffectSS6PU.TableName[0]);
+					}
+
 					return(true);
 
-//				AssetNameDecideData_ErroeEnd:;
+//				AssetNameDecide_ErroeEnd:;
 //					return(false);
 				}
 
@@ -1210,6 +1227,34 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(true);
 
 //				ConvertDataCalculateInAdvance_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool AssetPrecreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+															LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSEE
+														)
+				{
+					const string messageLogPrefix = "Create Asset(Prefab-Effect)";
+
+					return(true);
+
+//				AssetCreateData_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool AssetCreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSEE
+													)
+				{
+					const string messageLogPrefix = "Create Asset(Prefab-Effect)";
+
+					AssetDatabase.SaveAssets();
+
+					return(true);
+
+//				AssetCreateData_ErrorEnd:;
 //					return(false);
 				}
 				#endregion Functions

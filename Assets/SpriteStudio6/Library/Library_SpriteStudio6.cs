@@ -184,6 +184,188 @@ public static partial class Library_SpriteStudio6
 
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
 			#region Classes, Structs & Interfaces
+
+			[System.Serializable]
+			public struct Parts
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				public KindFormat Format;
+				public FlagBitStatus StatusParts;
+
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus Status;
+
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Position;	/* Always Compressed */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;	/* Always Compressed */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;	/* Always Compressed */
+
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;	/* Reserved */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
+
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;	/* Trigger (Always Compressed) */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;	/* Trigger (Always Compressed) */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect Effect;	/* Trigger (Always Compressed) */
+
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;	/* for Sphere-Collider *//* Always Compressed */
+
+				public AttributeGroupPlain Plain;
+				public AttributeGroupFix Fix;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public void CleanUp()
+				{
+					Format = KindFormat.PLAIN;
+					StatusParts = FlagBitStatus.CLEAR;
+
+					Status = null;
+
+					Position = null;
+					Rotation = null;
+					Scaling = null;
+
+					RateOpacity = null;
+
+					PositionAnchor = null;
+					SizeForce = null;
+
+					UserData = null;
+					Instance = null;
+					Effect = null;
+
+					RadiusCollision = null;
+
+					Plain.Cell = null;
+					Plain.ColorBlend = null;
+					Plain.VertexCorrection = null;
+					Plain.OffsetPivot = null;
+					Plain.PositionTexture = null;
+					Plain.ScalingTexture = null;
+					Plain.RotationTexture = null;
+
+					Fix.IndexCellMap = null;
+					Fix.Coordinate = null;
+					Fix.ColorBlend = null;
+					Fix.UV0 = null;
+					Fix.SizeCollision = null;
+					Fix.PivotCollision = null;
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				public enum KindFormat
+				{	/* ERROR/NON: -1 */
+					PLAIN = 0,	/* Data-Format: Plain-Data */
+					FIX,	/* Data-Format: Precalculated "Fix Mesh" */
+				}
+
+				[System.Flags]
+				public enum FlagBitStatus
+				{
+					VALID = 0x40000000,
+					NOT_USED = 0x20000000,
+					HIDE_FULL = 0x10000000,
+
+					NO_POSITION = 0x08000000,
+					NO_ROTATION = 0x04000000,
+					NO_SCALING = 0x02000000,
+
+					CLEAR = 0x00000000
+				}
+				#endregion Enums & Constants
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				[System.Serializable]
+				public struct AttributeGroupPlain
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell Cell;	/* Always Compressed */
+
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend ColorBlend;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 OffsetPivot;
+
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionTexture;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingTexture;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RotationTexture;
+					#endregion Variables & Properties
+				}
+
+				[System.Serializable]
+				public struct AttributeGroupFix
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt IndexCellMap;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix Coordinate;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix ColorBlend;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix UV0;
+
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeCollision;	/* for Box-Collider *//* Always Compressed */
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PivotCollision;	/* for Box-Collider *//* Always Compressed */
+					#endregion Variables & Properties
+				}
+				#endregion Classes, Structs & Interfaces
+			}
+
+			[System.Serializable]
+			public struct Label
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				public string Name;
+				public int Frame;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public void CleanUp()
+				{
+					Name = "";
+					Frame = -1;
+				}
+
+				public static int NameCheckReserved(string name)
+				{
+					if(false == string.IsNullOrEmpty(name))
+					{
+						for(int i=0; i<(int)KindLabelReserved.TERMINATOR; i++)
+						{
+							if(name == TableNameLabelReserved[i])
+							{
+								return(i);
+							}
+						}
+					}
+					return(-1);
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				public enum KindLabelReserved
+				{
+					START = 0,	/* "_start" *//* START + INDEX_RESERVED */
+					END,	/* "_end" *//* END + INDEX_RESERVED */
+
+					TERMINATOR,
+					INDEX_RESERVED = 0x10000000,
+				}
+
+				public readonly static string[] TableNameLabelReserved = new string[(int)KindLabelReserved.TERMINATOR]
+				{
+					"_start",
+					"_end",
+				};
+				#endregion Enums & Constants
+			}
+
 			public static partial class Attribute
 			{
 				/* Part: SpriteStudio6/Library/Data/Animation/Attribute.cs */
@@ -193,34 +375,6 @@ public static partial class Library_SpriteStudio6
 			{
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				private readonly static CapacityContainer CapacityContainerDummy = new CapacityContainer(
-					false,		/* Status */
-					false,		/* Position *//* Always Compressed */
-					false,		/* Rotation *//* Always Compressed */
-					false,		/* Scaling *//* Always Compressed */
-					false,		/* RateOpacity */
-					false,		/* Priority */
-					false,		/* PositionAnchor */
-					false,		/* SizeForce */
-					false,		/* UserData (Trigger) *//* Always Compressed */
-					false,		/* Instance (Trigger) *//* Always Compressed */
-					false,		/* Effect (Trigger) *//* Always Compressed */
-					false,		/* Plain.Cell */
-					false,		/* Plain.ColorBlend */
-					false,		/* Plain.VertexCorrection */
-					false,		/* Plain.OffsetPivot */
-					false,		/* Plain.PositionTexture */
-					false,		/* Plain.ScalingTexture */
-					false,		/* Plain.RotationTexture */
-					false,		/* Plain.RadiusCollision *//* Always Compressed */
-					false,		/* Fix.IndexCellMap */
-					false,		/* Fix.Coordinate */
-					false,		/* Fix.ColorBlend */
-					false,		/* Fix.UV0 */
-					false,		/* Fix.SizeCollision *//* Always Compressed */
-					false,		/* Fix.PivotCollision *//* Always Compressed */
-					false		/* Fix.RadiusCollision *//* Always Compressed */
-				);
 				public static CapacityContainer CapacityGet(KindPack pack)
 				{
 					switch(pack)
@@ -270,20 +424,103 @@ public static partial class Library_SpriteStudio6
 
 					TERMINATOR,
 				}
+
+				private readonly static CapacityContainer CapacityContainerDummy = new CapacityContainer(
+					false,		/* Status */
+					false,		/* Position *//* Always Compressed */
+					false,		/* Rotation *//* Always Compressed */
+					false,		/* Scaling *//* Always Compressed */
+					false,		/* RateOpacity */
+					false,		/* PositionAnchor */
+					false,		/* SizeForce */
+					false,		/* UserData (Trigger) *//* Always Compressed */
+					false,		/* Instance (Trigger) *//* Always Compressed */
+					false,		/* Effect (Trigger) *//* Always Compressed */
+					false,		/* RadiusCollision *//* Always Compressed */
+					false,		/* Plain.Cell */
+					false,		/* Plain.ColorBlend */
+					false,		/* Plain.VertexCorrection */
+					false,		/* Plain.OffsetPivot */
+					false,		/* Plain.PositionTexture */
+					false,		/* Plain.ScalingTexture */
+					false,		/* Plain.RotationTexture */
+					false,		/* Fix.IndexCellMap */
+					false,		/* Fix.Coordinate */
+					false,		/* Fix.ColorBlend */
+					false,		/* Fix.UV0 */
+					false,		/* Fix.SizeCollision *//* Always Compressed */
+					false		/* Fix.PivotCollision *//* Always Compressed */
+				);
 				#endregion Enums & Constants
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
 				#region Classes, Structs & Interfaces
-				public interface Container<_Type>
-					where _Type : struct
-				{	/* MEMO: for Runtime */
-					/* ----------------------------------------------- Functions */
-					#region Functions
-					void CleanUp();
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack();
+				[System.Serializable]
+				public class ContainerInt : Container<int> {}
+				[System.Serializable]
+				public class ContainerFloat : Container<float> {}
+				[System.Serializable]
+				public class ContainerVector2 : Container<Vector2> {}
+				[System.Serializable]
+				public class ContainerVector3 : Container<Vector3> {}
+				[System.Serializable]
+				public class ContainerStatus : Container<Library_SpriteStudio6.Data.Animation.Attribute.Status> {}
+				[System.Serializable]
+				public class ContainerCell : Container<Library_SpriteStudio6.Data.Animation.Attribute.Cell> {}
+				[System.Serializable]
+				public class ContainerColorBlend : Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend> {}
+				[System.Serializable]
+				public class ContainerVertexCorrection : Container<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> {}
+				[System.Serializable]
+				public class ContainerUserData : Container<Library_SpriteStudio6.Data.Animation.Attribute.UserData> {}
+				[System.Serializable]
+				public class ContainerInstance : Container<Library_SpriteStudio6.Data.Animation.Attribute.Instance> {}
+				[System.Serializable]
+				public class ContainerEffect : Container<Library_SpriteStudio6.Data.Animation.Attribute.Effect> {}
+				[System.Serializable]
+				public class ContainerCoordinateFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix> {}
+				[System.Serializable]
+				public class ContainerColorBlendFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix> {}
+				[System.Serializable]
+				public class ContainerUVFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.UVFix> {}
 
-					bool ValueGet(ref _Type outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument);
+				[System.Serializable]
+				public class Container<_Type>
+					where _Type : struct
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public CodeValueContainer[] TableCodeValue;
+					public _Type[] TableValue;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					/* MEMO: Be sure to override virtual-functions with implementation class. */
+					#region Functions
+					public void CleanUp()
+					{
+						TableCodeValue = null;
+						TableValue = null;
+					}
+
+					public virtual Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+					{
+						return((Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(-1));
+					}
+
+					public virtual bool ValueGet(ref _Type outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
+					{
+						return(false);
+					}
 					#endregion Functions
+				}
+				[System.Serializable]
+				public struct CodeValueContainer
+				{	/* MEMO: Since Jagged-Array can not be serialized...  */
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public int[] TableCode;
+					#endregion Variables & Properties
 				}
 				public class Parameter
 				{
@@ -372,13 +609,6 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.RATE_OPACITY));
 						}
 					}
-					public bool Priority
-					{
-						get
-						{
-							return(0 != (Flags & FlagBit.PRIORITY));
-						}
-					}
 					public bool PositionAnchor
 					{
 						get
@@ -412,6 +642,13 @@ public static partial class Library_SpriteStudio6
 						get
 						{
 							return(0 != (Flags & FlagBit.EFFECT));
+						}
+					}
+					public bool RadiusCollision
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.RADIUS_COLLISION));
 						}
 					}
 
@@ -464,13 +701,6 @@ public static partial class Library_SpriteStudio6
 							return(0 != (FlagsPlain & FlagBitPlain.ROTATION_TEXTURE));
 						}
 					}
-					public bool PlainRadiusCollision
-					{
-						get
-						{
-							return(0 != (FlagsPlain & FlagBitPlain.RADIUS_COLLISION));
-						}
-					}
 
 					public bool FixIndexCellMap
 					{
@@ -514,13 +744,6 @@ public static partial class Library_SpriteStudio6
 							return(0 != (FlagsFix & FlagBitFix.PIVOT_COLLISION));
 						}
 					}
-					public bool FixRadiusCollision
-					{
-						get
-						{
-							return(0 != (FlagsFix & FlagBitFix.RADIUS_COLLISION));
-						}
-					}
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -530,12 +753,12 @@ public static partial class Library_SpriteStudio6
 												bool rotation,
 												bool scaling,
 												bool rateOpacity,
-												bool priority,
 												bool positionAnchor,
 												bool sizeForce,
 												bool userData,
 												bool instance,
 												bool effect,
+												bool radiusCollision,
 												bool plainCell,
 												bool plainColorBlend,
 												bool plainVertexCorrection,
@@ -543,14 +766,12 @@ public static partial class Library_SpriteStudio6
 												bool plainPositionTexture,
 												bool plainScalingTexture,
 												bool plainRotationTexture,
-												bool plainRadiusCollision,
 												bool fixIndexCellMap,
 												bool fixCoordinate,
 												bool fixColorBlend,
 												bool fixUV0,
 												bool fixSizeCollision,
-												bool fixPivotCollision,
-												bool fixRadiusCollision
+												bool fixPivotCollision
 											)
 					{
 						Flags = 0;
@@ -559,12 +780,12 @@ public static partial class Library_SpriteStudio6
 						Flags |= (true == rotation) ? FlagBit.ROTATION : (FlagBit)0;
 						Flags |= (true == scaling) ? FlagBit.SCALING : (FlagBit)0;
 						Flags |= (true == rateOpacity) ? FlagBit.RATE_OPACITY : (FlagBit)0;
-						Flags |= (true == priority) ? FlagBit.PRIORITY : (FlagBit)0;
 						Flags |= (true == positionAnchor) ? FlagBit.POSITION_ANCHOR : (FlagBit)0;
 						Flags |= (true == sizeForce) ? FlagBit.SIZE_FORCE : (FlagBit)0;
 						Flags |= (true == userData) ? FlagBit.USER_DATA : (FlagBit)0;
 						Flags |= (true == instance) ? FlagBit.INSTANCE : (FlagBit)0;
 						Flags |= (true == effect) ? FlagBit.EFFECT : (FlagBit)0;
+						Flags |= (true == radiusCollision) ? FlagBit.RADIUS_COLLISION : (FlagBit)0;
 
 						FlagsPlain = 0;
 						FlagsPlain |= (true == plainCell) ? FlagBitPlain.CELL : (FlagBitPlain)0;
@@ -574,7 +795,6 @@ public static partial class Library_SpriteStudio6
 						FlagsPlain |= (true == plainPositionTexture) ? FlagBitPlain.POSITION_TEXTURE : (FlagBitPlain)0;
 						FlagsPlain |= (true == plainScalingTexture) ? FlagBitPlain.SCALING_TEXTURE : (FlagBitPlain)0;
 						FlagsPlain |= (true == plainRotationTexture) ? FlagBitPlain.ROTATION_TEXTURE : (FlagBitPlain)0;
-						FlagsPlain |= (true == plainRadiusCollision) ? FlagBitPlain.RADIUS_COLLISION : (FlagBitPlain)0;
 
 						FlagsFix = 0;
 						FlagsFix |= (true == fixIndexCellMap) ? FlagBitFix.INDEX_CELL_MAP : (FlagBitFix)0;
@@ -583,7 +803,6 @@ public static partial class Library_SpriteStudio6
 						FlagsFix |= (true == fixUV0) ? FlagBitFix.UV0 : (FlagBitFix)0;
 						FlagsFix |= (true == fixSizeCollision) ? FlagBitFix.SIZE_COLLISION : (FlagBitFix)0;
 						FlagsFix |= (true == fixPivotCollision) ? FlagBitFix.PIVOT_COLLISION : (FlagBitFix)0;
-						FlagsFix |= (true == fixRadiusCollision) ? FlagBitFix.RADIUS_COLLISION : (FlagBitFix)0;
 					}
 					#endregion Functions
 
@@ -597,12 +816,12 @@ public static partial class Library_SpriteStudio6
 						ROTATION = 0x00000004,
 						SCALING = 0x00000008,
 						RATE_OPACITY = 0x00000010,
-						PRIORITY = 0x00000020,
-						POSITION_ANCHOR = 0x00000040,
-						SIZE_FORCE = 0x00000080,
-						USER_DATA = 0x00000100,
-						INSTANCE = 0x00000200,
-						EFFECT = 0x00000400,
+						POSITION_ANCHOR = 0x00000020,
+						SIZE_FORCE = 0x00000040,
+						USER_DATA = 0x00000080,
+						INSTANCE = 0x00000100,
+						EFFECT = 0x00000200,
+						RADIUS_COLLISION = 0x00000400,
 					}
 
 					[System.Flags]
@@ -615,7 +834,6 @@ public static partial class Library_SpriteStudio6
 						POSITION_TEXTURE = 0x00000010,
 						SCALING_TEXTURE = 0x00000020,
 						ROTATION_TEXTURE = 0x00000040,
-						RADIUS_COLLISION = 0x00000080,
 					}
 
 					[System.Flags]
@@ -627,151 +845,12 @@ public static partial class Library_SpriteStudio6
 						UV0 = 0x00000008,
 						SIZE_COLLISION = 0x00000010,
 						PIVOT_COLLISION = 0x00000020,
-						RADIUS_COLLISION = 0x00000040,
 					}
 					#endregion Enums & Constants
 				}
 				#endregion Classes, Structs & Interfaces
 
 				/* Implementation: SpriteStudio6/Library/Data/Animation/PackAttribute/*.cs */
-			}
-
-			[System.Serializable]
-			public struct Parts
-			{
-				/* ----------------------------------------------- Variables & Properties */
-				#region Variables & Properties
-				public KindFormat Format;
-				public FlagBitStatus StatusParts;
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Status> Status;
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector3> Position;	/* Always Compressed */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector3> Rotation;	/* Always Compressed */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> Scaling;	/* Always Compressed */
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<float> RateOpacity;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<float> Priority;
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> PositionAnchor;	/* Reserved */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> SizeForce;
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.UserData> UserData;	/* Trigger (Always Compressed) */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Instance> Instance;	/* Trigger (Always Compressed) */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Effect> Effect;	/* Trigger (Always Compressed) */
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<float> RadiusCollision;	/* for Sphere-Collider *//* Always Compressed */
-
-				public AttributeGroupPlain Plain;
-				public AttributeGroupFix Fix;
-				#endregion Variables & Properties
-
-				/* ----------------------------------------------- Enums & Constants */
-				#region Enums & Constants
-				public enum KindFormat
-				{	/* ERROR/NON: -1 */
-					PLAIN = 0,	/* Data-Format: Plain-Data */
-					FIX,	/* Data-Format: Deformation of "Mesh" and "Collider" are Calculated-In-Advance. */
-				}
-
-				[System.Flags]
-				public enum FlagBitStatus
-				{
-					UNUSED = 0x40000000,
-
-					HIDE_FORCE = 0x08000000,
-					HIDE_FULL = 0x04000000,
-
-					CLEAR = 0x00000000
-				}
-				#endregion Enums & Constants
-
-				/* ----------------------------------------------- Classes, Structs & Interfaces */
-				#region Classes, Structs & Interfaces
-				[System.Serializable]
-				public class AttributeGroupPlain
-				{
-					/* ----------------------------------------------- Variables & Properties */
-					#region Variables & Properties
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.Cell> Cell;	/* Always Compressed */
-
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend> ColorBlend;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> VertexCorrection;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> OffsetPivot;
-
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> PositionTexture;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> ScalingTexture;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<float> RotationTexture;
-					#endregion Variables & Properties
-				}
-
-				[System.Serializable]
-				public class AttributeGroupFix
-				{
-					/* ----------------------------------------------- Variables & Properties */
-					#region Variables & Properties
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<int> IndexCellMap;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix> Coordinate;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix> ColorBlend;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Library_SpriteStudio6.Data.Animation.Attribute.UVFix> UV0;
-
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> SizeCollision;	/* for Box-Collider *//* Always Compressed */
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.Container<Vector2> PivotCollision;	/* for Box-Collider *//* Always Compressed */
-					#endregion Variables & Properties
-				}
-				#endregion Classes, Structs & Interfaces
-			}
-
-			[System.Serializable]
-			public struct Label
-			{
-				/* ----------------------------------------------- Variables & Properties */
-				#region Variables & Properties
-				public string Name;
-				public int Frame;
-				#endregion Variables & Properties
-
-				/* ----------------------------------------------- Functions */
-				#region Functions
-				public void CleanUp()
-				{
-					Name = "";
-					Frame = -1;
-				}
-
-				public static int NameCheckReserved(string name)
-				{
-					if(false == string.IsNullOrEmpty(name))
-					{
-						for(int i=0; i<(int)KindLabelReserved.TERMINATOR; i++)
-						{
-							if(name == TableNameLabelReserved[i])
-							{
-								return(i);
-							}
-						}
-					}
-					return(-1);
-				}
-				#endregion Functions
-
-				/* ----------------------------------------------- Enums & Constants */
-				#region Enums & Constants
-				public enum KindLabelReserved
-				{
-					START = 0,	/* "_start" *//* START + INDEX_RESERVED */
-					END,	/* "_end" *//* END + INDEX_RESERVED */
-
-					TERMINATOR,
-					INDEX_RESERVED = 0x10000000,
-				}
-
-				public readonly static string[] TableNameLabelReserved = new string[(int)KindLabelReserved.TERMINATOR]
-				{
-					"_start",
-					"_end",
-				};
-				#endregion Enums & Constants
 			}
 			#endregion Classes, Structs & Interfaces
 		}

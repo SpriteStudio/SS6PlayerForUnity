@@ -413,7 +413,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			/* Create Asset: CellMap */
 			/* MEMO: Process after creating all Texture-Assets. */
-			if(0 < countSSEE)
+			if(0 < countSSCE)
 			{
 				/* MEMO: Since informations of SSCE files are grouped in 1 CellMap data-asset, always only 1 CellMap data-asset for a SSPJ. */
 				SSCE.Information informationSSCE = null;
@@ -422,8 +422,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* MEMO: Be sure to "Convert" even when not create CellMap data-assets. Datas may be used at converting SSAE. */
 					informationSSCE = informationSSPJ.TableInformationSSCE[i];
 
-					/* Convert Pass1 (Normal) */
-					ProgressBarUpdate(	"Convert SSCEs Pass-1 (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
+					/* Convert */
+					ProgressBarUpdate(	"Convert SSCEs (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
 										flagDisplayProgressBar, ref countProgressNow, countProgressMax
 									);
 					if(false == SSCE.ModeSS6PU.ConvertCellMap(ref setting, informationSSPJ, informationSSCE))
@@ -431,10 +431,10 @@ public static partial class LibraryEditor_SpriteStudio6
 						goto ExecSS6PU_ErrorEnd;
 					}
 
-					/* Convert Pass2 (Trim Transparent-Pixel) */
+					/* Convert "Trim Transparent-Pixel" */
 					if(true == setting.PreCalcualation.FlagTrimTransparentPixelsCell)
 					{
-						ProgressBarUpdate(	"Convert SSCEs Pass-2 (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
+						ProgressBarUpdate(	"Convert SSCEs \"Trim Pixel\" (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
 											flagDisplayProgressBar, ref countProgressNow, countProgressMax
 										);
 
@@ -493,8 +493,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					informationSSEE = informationSSPJ.TableInformationSSEE[i];
 
-					/* Convert Pass1 (Normal) */
-					ProgressBarUpdate(	"Convert SSEEs Pass-1 (" + (i + 1).ToString() + "/" + countSSEE.ToString() + ")",
+					/* Convert */
+					ProgressBarUpdate(	"Convert SSEEs (" + (i + 1).ToString() + "/" + countSSEE.ToString() + ")",
 										flagDisplayProgressBar, ref countProgressNow, countProgressMax
 									);
 
@@ -544,10 +544,99 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 			}
 
+			/* Create-Asset: Animation */
+			if(0 < countSSAE)
+			{
+				SSAE.Information informationSSAE = null;
+				for(int i=0; i<countSSAE; i++)
+				{
+					informationSSAE = informationSSPJ.TableInformationSSAE[i];
+
+					/* Create-Prefab (Pass-1) */
+					/* MEMO: Inconvenience will occur, if do not create ScriptableObject first. */
+//					if(false == SSEE.ModeSS6PU.AssetPrecreatePrefab(ref setting, informationSSPJ, informationSSAE))
+//					{
+//						goto ExecSS6PU_ErrorEnd;
+//					}
+
+					/* Convert "Trim Transparent-Pixel" */
+					if(true == setting.PreCalcualation.FlagFixMesh)
+					{
+						ProgressBarUpdate(	"Convert SSAEs \"Fix Mesh\" (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
+											flagDisplayProgressBar, ref countProgressNow, countProgressMax
+										);
+
+						if(false == SSAE.ModeSS6PU.ConvertFixMesh(ref setting, informationSSPJ, informationSSAE))
+						{
+							goto ExecSS6PU_ErrorEnd;
+						}
+					}
+
+					/* Convert */
+					ProgressBarUpdate(	"Convert SSAEs (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+
+					if(false == SSAE.ModeSS6PU.ConvertData(ref setting, informationSSPJ, informationSSAE))
+					{
+						goto ExecSS6PU_ErrorEnd;
+					}
+
+					/* Check Overwrite */
+					ProgressBarUpdate(	"Create Asset \"Data-Animation\" (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+
+					flagCreateAsset = true;
+					if(null == informationSSAE.DataAnimationSS6PU.TableData[0])
+					{	/* New */
+						/* Create Output Asset-Folder */
+						LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																			informationSSAE.DataAnimationSS6PU.TableName[0]
+																		);
+						if(true == string.IsNullOrEmpty( LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+						{
+							LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+							goto ExecSS6PU_ErrorEnd;
+						}
+					}
+					else
+					{	/* Exist */
+						if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagDataAnimation,
+																													informationSSAE.DataAnimationSS6PU.TableName[0],
+																													"Data Animation"
+																												)
+							)
+						{	/* Not overwrite */
+							flagCreateAsset = false;
+						}
+					}
+
+					/* Create-Asset */
+					if(true == flagCreateAsset)
+					{
+						if(false == SSAE.ModeSS6PU.AssetCreateData(ref setting, informationSSPJ, informationSSAE))
+						{
+							goto ExecSS6PU_ErrorEnd;
+						}
+					}
+
+					/* Create-Prefab (Pass-1) */
+					/* MEMO: Inconvenience will occur, if do not create ScriptableObject first. */
+//					if(false == SSEE.ModeSS6PU.AssetCreatePrefab(ref setting, informationSSPJ, informationSSAE))
+//					{
+//						goto ExecSS6PU_ErrorEnd;
+//					}
+				}
+			}
+
 #if false
 			/* Create-Asset: Animation */
-			for(int i=0; i<countSSEE; i++)
+			if(0 < countSSAE)
 			{
+				SSAE.Information informationSSAE = null;
+				for(int i=0; i<countSSAE; i++)
+				{
 				/* Convert Pass1 (Create Unpack) */
 				countProgressNow++;
 
@@ -625,6 +714,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 		public const string NameExtentionMaterial = ".mat";
 		public const string NameExtentionScriptableObject = ".asset";
+		public const string NameExtensionPrefab = ".prefab";
 		#endregion Enums & Constants
 
 		/* ----------------------------------------------- Classes, Structs & Interfaces */

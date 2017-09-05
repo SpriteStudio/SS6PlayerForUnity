@@ -93,7 +93,7 @@ public static partial class Library_SpriteStudio6
 				public const bool DefaultTextureFlipX = false;
 				public const bool DefaultTextureFlipY = false;
 
-				public const float DefaultCollisionRadius = 0.0f;
+				public const float DefaultRadiusCollision = 0.0f;
 
 				public readonly static UserData DefaultUseData = new UserData(UserData.FlagBit.CLEAR, 0, Rect.zero, Vector2.zero, "");
 
@@ -101,6 +101,39 @@ public static partial class Library_SpriteStudio6
 
 				public readonly static Effect DefaultEffect = new Effect(Effect.FlagBit.CLEAR, 0, 1.0f);
 
+				private readonly static Vector3[] TableCoordinateCoordinateFixDefault = new Vector3[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{
+					Vector3.zero,
+					Vector3.zero,
+					Vector3.zero,
+					Vector3.zero,
+				};
+				public readonly static CoordinateFix DefaultCoordinateFix = new CoordinateFix(TableCoordinateCoordinateFixDefault);
+
+				private readonly static Vector2[] TableUVUVFixDefault = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{
+					Vector2.zero,
+					Vector2.zero,
+					Vector2.zero,
+					Vector2.zero,
+				};
+				public readonly static UVFix DefaultUVFix = new UVFix(TableUVUVFixDefault);
+
+				private readonly static Vector2[] TableUVColorBlendFixDefault = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{
+					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.NON + 0.01f),
+					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.NON + 0.01f),
+					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.NON + 0.01f),
+					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.NON + 0.01f),
+				};
+				private readonly static Color32[] TableColorColorBlendFixDefault = new Color32[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{
+					Color.white,
+					Color.white,
+					Color.white,
+					Color.white
+				};
+				public readonly static ColorBlendFix DefaultColorBlendFix = new ColorBlendFix(TableUVColorBlendFixDefault, TableColorColorBlendFixDefault);
 				#endregion Enums & Constants
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -130,35 +163,35 @@ public static partial class Library_SpriteStudio6
 					{
 						get
 						{
-							return(0 != (Flags & FlagBit.FLIPX));
+							return(0 != (Flags & FlagBit.FLIP_X));
 						}
 					}
 					public bool IsFlipY
 					{
 						get
 						{
-							return(0 != (Flags & FlagBit.FLIPY));
+							return(0 != (Flags & FlagBit.FLIP_Y));
 						}
 					}
 					public bool IsTextureFlipX
 					{
 						get
 						{
-							return(0 != (Flags & FlagBit.FLIPXTEXTURE));
+							return(0 != (Flags & FlagBit.FLIP_TEXTURE_X));
 						}
 					}
 					public bool IsTextureFlipY
 					{
 						get
 						{
-							return(0 != (Flags & FlagBit.FLIPYTEXTURE));
+							return(0 != (Flags & FlagBit.FLIP_TEXTURE_Y));
 						}
 					}
 					public int PartsIDNext
 					{
 						get
 						{
-							FlagBit data = Flags & FlagBit.PARTSIDNEXT;
+							FlagBit data = Flags & FlagBit.PARTS_ID_NEXT;
 							return((0 == data) ? (-1) : (int)data);
 						}
 					}
@@ -204,17 +237,17 @@ public static partial class Library_SpriteStudio6
 					public enum FlagBit
 					{
 						VALID = 0x40000000,
-						HIDE = 0x20000000,
+						HIDE = 0x20000000,	/* Store as assistant data for skip useless processing. */
 
-						FLIPX = 0x08000000,
-						FLIPY = 0x04000000,
-						FLIPXTEXTURE = 0x02000000,
-						FLIPYTEXTURE = 0x01000000,
+						FLIP_X = 0x08000000,
+						FLIP_Y = 0x04000000,
+						FLIP_TEXTURE_X = 0x02000000,
+						FLIP_TEXTURE_Y = 0x01000000,
 
-						PARTSIDNEXT = 0x0000ffff,
+						PARTS_ID_NEXT = 0x0000ffff,
 
 						CLEAR = 0x00000000,
-						MASK = (VALID | HIDE | FLIPX | FLIPY | FLIPXTEXTURE | FLIPYTEXTURE | PARTSIDNEXT),
+						MASK = (VALID | HIDE | FLIP_X | FLIP_Y | FLIP_TEXTURE_X | FLIP_TEXTURE_Y | PARTS_ID_NEXT),
 					}
 					#endregion Enums & Constants
 				}
@@ -472,10 +505,7 @@ public static partial class Library_SpriteStudio6
 					{
 						Flags = FlagBit.CLEAR;
 						NumberInt = 0;
-						Rectangle.xMin = 0.0f;
-						Rectangle.yMin = 0.0f;
-						Rectangle.xMax = 0.0f;
-						Rectangle.yMax = 0.0f;
+						Rectangle = Rect.zero;
 						Coordinate = Vector2.zero;
 						Text = "";
 					}
@@ -484,10 +514,7 @@ public static partial class Library_SpriteStudio6
 					{
 						Flags = original.Flags;
 						NumberInt = original.NumberInt;
-						Rectangle.xMin = original.Rectangle.xMin;
-						Rectangle.yMin = original.Rectangle.yMin;
-						Rectangle.xMax = original.Rectangle.xMax;
-						Rectangle.yMax = original.Rectangle.yMax;
+						Rectangle = original.Rectangle;
 						Coordinate = original.Coordinate;
 						Text = (true == string.IsNullOrEmpty(original.Text)) ? "" : string.Copy(original.Text);
 					}
@@ -502,10 +529,7 @@ public static partial class Library_SpriteStudio6
 						UserData targetData = (UserData)target;
 						return(	(Flags == targetData.Flags)
 								&& (NumberInt == targetData.NumberInt)
-								&& (Rectangle.xMin == targetData.Rectangle.xMin)
-								&& (Rectangle.yMin == targetData.Rectangle.yMin)
-								&& (Rectangle.xMax == targetData.Rectangle.xMax)
-								&& (Rectangle.yMax == targetData.Rectangle.yMax)
+								&& (Rectangle == targetData.Rectangle)
 								&& (Coordinate == targetData.Coordinate)
 								&& (Text == targetData.Text)
 							);
@@ -723,6 +747,11 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
+					public CoordinateFix(Vector3[] tableCoordinate)
+					{
+						TableCoordinate = tableCoordinate;
+					}
+
 					public void CleanUp()
 					{
 						TableCoordinate = null;
@@ -778,6 +807,11 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
+					public UVFix(Vector2[] tableUV)
+					{
+						TableUV = tableUV;
+					}
+
 					public void CleanUp()
 					{
 						TableUV = null;
@@ -834,6 +868,12 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
+					public ColorBlendFix(Vector2[] tableUV, Color32[] tableColorOverlay)
+					{
+						TableUV = tableUV;
+						TableColorOverlay = tableColorOverlay;
+					}
+
 					public void CleanUp()
 					{
 						TableUV = null;

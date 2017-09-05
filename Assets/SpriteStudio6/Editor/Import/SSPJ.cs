@@ -684,17 +684,29 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* Yuzu.: SpriteStudio_Root/RootEffect‚ª‚È‚¢ê‡‚Í–¼‘O‚ÅÆ‡‚µ‚Ä‚¢‚­ */
 
 					/* SSAEs */
+					int countSSAE = informationSSPJ.TableInformationSSAE.Length;
+					for(int i=0; i<countSSAE; i++)
+					{
+						LibraryEditor_SpriteStudio6.Import.SSAE.ModeSS6PU.AssetNameDecide(	ref setting,
+																							informationSSPJ,
+																							informationSSPJ.TableInformationSSAE[i],
+																							nameOutputAssetFolderBase,
+																							null,
+																							null
+																						);
+					}
 
 					/* SSEEs */
 					int countSSEE = informationSSPJ.TableInformationSSEE.Length;
 					for(int i=0; i<countSSEE; i++)
 					{
-						LibraryEditor_SpriteStudio6.Import.SSEE.ModeSS6PU.AssetNameDecideData(	ref setting,
-																								informationSSPJ,
-																								informationSSPJ.TableInformationSSEE[i],
-																								nameOutputAssetFolderBase,
-																								null
-																							);
+						LibraryEditor_SpriteStudio6.Import.SSEE.ModeSS6PU.AssetNameDecide(	ref setting,
+																							informationSSPJ,
+																							informationSSPJ.TableInformationSSEE[i],
+																							nameOutputAssetFolderBase,
+																							null,
+																							null
+																						);
 					}
 
 					/* SSCEs */
