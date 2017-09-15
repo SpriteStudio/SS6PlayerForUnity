@@ -738,15 +738,15 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
 		EditorGUILayout.Space();
 	}
-	private void FoldOutExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)
+	private void FoldOutExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)
 	{
-		if(0 >= dataPopup.TableKindPack.Length)
+		if(0 >= dataPopup.TableKindTypePack.Length)
 		{
 			EditorGUILayout.LabelField(message + ": ERROR");
 		}
 		else
 		{
-			pack = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorGUILayout.IntPopup(message, (int)pack, dataPopup.TableName, dataPopup.TableKindPack));
+			pack = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorGUILayout.IntPopup(message, (int)pack, dataPopup.TableName, dataPopup.TableKindTypePack));
 		}
 	}
 	#endregion Functions
@@ -1286,12 +1286,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		{
 			CleanUp();
 
-			int countPack = (int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.TERMINATOR;
+			int countPack = (int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.TERMINATOR;
 
 			Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer[] capacityPack = new Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer[countPack];
 			for(int i=0; i<countPack; i++)
 			{
-				capacityPack[i] = Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityGet((Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)i);
+				capacityPack[i] = Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityGet((Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)i);
 			}
 
 			/* MEMO: "Standard-CPE" packer can pack all attributes, so no way that "Packer can not be found". */
@@ -1453,7 +1453,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
 			public string[] TableName;
-			public int[] TableKindPack;
+			public int[] TableKindTypePack;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1461,21 +1461,21 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public void CleanUp()
 			{
 				TableName = null;
-				TableKindPack = null;
+				TableKindTypePack = null;
 			}
 
 			public void BootUp(bool[] tableFlagEnable)
 			{
 				List<string> listName = new List<string>();
-				List<int> listKindPack = new List<int>();
+				List<int> listKindTypePack = new List<int>();
 				listName.Clear();
-				listKindPack.Clear();
+				listKindTypePack.Clear();
 
 				int count = tableFlagEnable.Length;
 				if(0 >= count)
 				{
 					TableName = new string[0];
-					TableKindPack = new int[0];
+					TableKindTypePack = new int[0];
 				}
 				else
 				{
@@ -1484,22 +1484,22 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 						if(true == tableFlagEnable[i])
 						{
 							listName.Add(PackName[i]);
-							listKindPack.Add(i);
+							listKindTypePack.Add(i);
 						}
 					}
 
 					TableName = listName.ToArray();
-					TableKindPack = listKindPack.ToArray();
+					TableKindTypePack = listKindTypePack.ToArray();
 
 					listName.Clear();
-					listKindPack.Clear();
+					listKindTypePack.Clear();
 				}
 			}
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
-			private readonly static string[] PackName = new string[(int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.TERMINATOR] {
+			private readonly static string[] PackName = new string[(int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.TERMINATOR] {
 				"Standard Uncompressed",
 				"Standard CPE",
 				"CPE & GOF-Flyweight",

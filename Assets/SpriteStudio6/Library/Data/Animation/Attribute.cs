@@ -187,11 +187,11 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.FLIP_TEXTURE_Y));
 						}
 					}
-					public int PartsIDNext
+					public int IDPartsNext
 					{
 						get
 						{
-							FlagBit data = Flags & FlagBit.PARTS_ID_NEXT;
+							FlagBit data = Flags & FlagBit.ID_PARTS_DRAWNEXT;
 							return((0 == data) ? (-1) : (int)data);
 						}
 					}
@@ -244,10 +244,10 @@ public static partial class Library_SpriteStudio6
 						FLIP_TEXTURE_X = 0x02000000,
 						FLIP_TEXTURE_Y = 0x01000000,
 
-						PARTS_ID_NEXT = 0x0000ffff,
+						ID_PARTS_DRAWNEXT = 0x0000ffff,
 
 						CLEAR = 0x00000000,
-						MASK = (VALID | HIDE | FLIP_X | FLIP_Y | FLIP_TEXTURE_X | FLIP_TEXTURE_Y | PARTS_ID_NEXT),
+						MASK = (VALID | HIDE | FLIP_X | FLIP_Y | FLIP_TEXTURE_X | FLIP_TEXTURE_Y | ID_PARTS_DRAWNEXT),
 					}
 					#endregion Enums & Constants
 				}

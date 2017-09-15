@@ -55,6 +55,7 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
 					#region Classes, Structs & Interfaces
+#if false
 					public static class PackAttribute
 					{
 						/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -63,9 +64,8 @@ public static partial class Library_SpriteStudio6
 						{
 							/* ----------------------------------------------- Functions */
 							#region Functions
-							bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
+							bool Pack(	string nameAttribute,
 										int countFrame,
-										string nameAttribute,
 										Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 										int[] tableOrderDraw,
 										params _Type[] listKeyData
@@ -88,6 +88,7 @@ public static partial class Library_SpriteStudio6
 						public interface ContainerUVFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix> {}
 						#endregion Classes, Structs & Interfaces
 					}
+#endif
 
 					public class AttributeBool : Attribute<bool>
 					{
@@ -154,6 +155,7 @@ public static partial class Library_SpriteStudio6
 
 						ValueGet_ErrorEnd:;
 							valueOutput = 0;
+
 							return(false);
 						}
 						#endregion Functions
@@ -204,6 +206,7 @@ public static partial class Library_SpriteStudio6
 
 						ValueGet_ErrorEnd:;
 							valueOutput = 0.0f;
+
 							return(false);
 						}
 						#endregion Functions

@@ -23,6 +23,7 @@ public static partial class Library_SpriteStudio6
 
 		TERMINATOR,
 	}
+
 	public enum KindOperationBlendEffect
 	{
 		NON = -1,
@@ -34,12 +35,14 @@ public static partial class Library_SpriteStudio6
 		TERMINATOR,
 		TERMINATOR_KIND = ADD,
 	}
+
 	public enum KindBoundBlend
 	{
 		NON = 0,
 		OVERALL,
 		VERTEX
 	}
+
 	public enum KindVertex
 	{
 		LU = 0,	/* Left-Up (TRIANGLE2 & TRIANGLE4) */
@@ -52,16 +55,30 @@ public static partial class Library_SpriteStudio6
 		TERMINATOR4 = TERMINATOR,
 		TERMINATOR2 = C
 	}
+
+	public enum KindStylePlay
+	{
+		NO_CHANGE = -1,
+		NORMAL = 0,
+		PINGPONG = 1,
+	}
 	#endregion Enums & Constants
 
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
 	#region Classes, Structs & Interfaces
 	public static partial class CallBack
 	{
-		public delegate bool FunctionPlayEnd(Script_SpriteStudio6_Root instanceRoot, GameObject objectControl);
-		public delegate bool FunctionPlayEndEffect(Script_SpriteStudio6_RootEffect instanceRoot);
-		public delegate bool FunctionControlEndFrame(Script_SpriteStudio6_Root instanceRoot, int indexControlFrame);
-		public delegate void FunctionUserData(Script_SpriteStudio6_Root instanceRoot, string nameParts, int indexParts, int indexAnimation, int frameDecode, int frameKeyData, ref Library_SpriteStudio6.Data.Animation.Attribute.UserData userData, bool flagWayBack);
+		/* ----------------------------------------------- Delegates */
+		#region Delegates
+		public delegate bool FunctionPlayEnd(Script_SpriteStudio6_Root scriptRoot, GameObject objectControl);
+		public delegate bool FunctionPlayEndEffect(Script_SpriteStudio6_RootEffect scriptRoot);
+		public delegate void FunctionUserData(Script_SpriteStudio6_Root scriptRoot, string nameParts, int indexParts, int indexAnimation, int frameDecode, int frameKeyData, ref Library_SpriteStudio6.Data.Animation.Attribute.UserData userData, bool flagWayBack);
+
+		public delegate float FunctionTimeElapse(Script_SpriteStudio6_Root scriptRoot);
+		public delegate float FunctionTimeElapseEffect(Script_SpriteStudio6_RootEffect scriptRoot);
+
+		public delegate bool FunctionControlEndTrackPlay(Script_SpriteStudio6_Root scriptRoot, int indexTrackPlay);
+		#endregion Delegates
 	}
 
 	public static partial class Data
@@ -179,6 +196,58 @@ public static partial class Library_SpriteStudio6
 			public int IndexGetParts(int indexParts)
 			{
 				return(((0 > indexParts) || (TableParts.Length <= indexParts)) ? -1 : indexParts);
+			}
+
+			public void FrameRangeGet(	out int frameRangeStart, out int frameRangeEnd,
+										string labelStart, int frameOffsetStart,
+										string labelEnd, int frameOffsetEnd
+									)
+			{
+				int frameEnd = CountFrame - 1;
+				string label;
+				int indexLabel;
+
+				/* Get Start frame */
+				label = (true == string.IsNullOrEmpty(labelStart))
+						? Library_SpriteStudio6.Data.Animation.Label.TableNameLabelReserved[(int)Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.START]
+						: labelStart;
+				indexLabel = IndexGetLabel(label);
+				if(0 > indexLabel)
+				{	/* Not found */
+					indexLabel = (int)(Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.START | Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.INDEX_RESERVED);
+				}
+
+				frameRangeStart = FrameGetLabel(indexLabel);
+				if(0 > frameRangeStart)
+				{
+					frameRangeStart = 0;
+				}
+				frameRangeStart += frameOffsetStart;
+				if((0 > frameRangeStart) || (frameEnd < frameRangeStart))
+				{
+					frameRangeStart = 0;
+				}
+
+				/* Get End frame */
+				label = (true == string.IsNullOrEmpty(labelEnd))
+						? Library_SpriteStudio6.Data.Animation.Label.TableNameLabelReserved[(int)Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.END]
+						: labelEnd;
+				indexLabel = IndexGetLabel(label);
+				if(0 > indexLabel)
+				{	/* Not found */
+					indexLabel = (int)(Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.END | Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.INDEX_RESERVED);
+				}
+
+				frameRangeEnd = FrameGetLabel(indexLabel);
+				if(0 > frameRangeEnd)
+				{
+					frameRangeEnd = frameEnd;
+				}
+				frameRangeEnd += frameOffsetEnd;
+				if((0 > frameRangeEnd) || (frameEnd < frameRangeEnd))
+				{
+					frameRangeEnd = frameEnd;
+				}
 			}
 			#endregion Functions
 
@@ -375,17 +444,17 @@ public static partial class Library_SpriteStudio6
 			{
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public static CapacityContainer CapacityGet(KindPack pack)
+				public static CapacityContainer CapacityGet(KindTypePack pack)
 				{
 					switch(pack)
 					{
-						case KindPack.STANDARD_UNCOMPRESSED:
+						case KindTypePack.STANDARD_UNCOMPRESSED:
 							return(StandardUncompressed.Capacity);
 
-						case KindPack.STANDARD_CPE:
+						case KindTypePack.STANDARD_CPE:
 							return(StandardCPE.Capacity);
 
-						case KindPack.CPE_FLYWEIGHT:
+						case KindTypePack.CPE_FLYWEIGHT:
 							return(CapacityContainerDummy);
 
 						default:
@@ -394,17 +463,17 @@ public static partial class Library_SpriteStudio6
 					return(null);
 				}
 
-				public static string IDGetPack(KindPack pack)
+				public static string IDGetPack(KindTypePack typePack)
 				{
-					switch(pack)
+					switch(typePack)
 					{
-						case KindPack.STANDARD_UNCOMPRESSED:
+						case KindTypePack.STANDARD_UNCOMPRESSED:
 							return(StandardUncompressed.ID);
 
-						case KindPack.STANDARD_CPE:
+						case KindTypePack.STANDARD_CPE:
 							return(StandardCPE.ID);
 
-						case KindPack.CPE_FLYWEIGHT:
+						case KindTypePack.CPE_FLYWEIGHT:
 							return("Dummy");
 
 						default:
@@ -412,11 +481,294 @@ public static partial class Library_SpriteStudio6
 					}
 					return(null);
 				}
+
+				public static void BootUpFunctionInt(ContainerInt container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionInt;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionInt;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionFloat(ContainerFloat container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionFloat;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionFloat;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionVector2(ContainerVector2 container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionVector2;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionVector2;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionVector3(ContainerVector3 container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionVector3;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionVector3;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionStatus(ContainerStatus container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionStatus;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionStatus;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionCell(ContainerCell container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionCell;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionCell;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionColorBlend(ContainerColorBlend container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionColorBlend;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionColorBlend;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionVertexCorrection(ContainerVertexCorrection container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionVertexCorrection;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionVertexCorrection;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionUserData(ContainerUserData container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							/* MEMO: Unsupported */
+//							container.Function = StandardUncompressed.FunctionUserData;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionUserData;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionInstance(ContainerInstance container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							/* MEMO: Unsupported */
+//							container.Function = StandardUncompressed.FunctionInstance;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionInstance;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionEffect(ContainerEffect container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							/* MEMO: Unsupported */
+//							container.Function = StandardUncompressed.FunctionEffect;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionEffect;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionCoordinateFix(ContainerCoordinateFix container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionCoordinateFix;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionCoordinateFix;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionColorBlendFix(ContainerColorBlendFix container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionColorBlendFix;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionColorBlendFix;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionUVFix(ContainerUVFix container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionUVFix;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionUVFix;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							break;
+
+						default:
+							break;
+					}
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
-				public enum KindPack
+				public enum KindTypePack
 				{
 					STANDARD_UNCOMPRESSED = 0,	/* Standard-Uncompressed (Plain Array) */
 					STANDARD_CPE,	/* Standard-Compressed (Changing-Point Extracting) */
@@ -456,42 +808,45 @@ public static partial class Library_SpriteStudio6
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
 				#region Classes, Structs & Interfaces
 				[System.Serializable]
-				public class ContainerInt : Container<int> {}
+				public class ContainerInt : Container<int, InterfaceContainerInt> {}
 				[System.Serializable]
-				public class ContainerFloat : Container<float> {}
+				public class ContainerFloat : Container<float, InterfaceContainerFloat> {}
 				[System.Serializable]
-				public class ContainerVector2 : Container<Vector2> {}
+				public class ContainerVector2 : Container<Vector2, InterfaceContainerVector2> {}
 				[System.Serializable]
-				public class ContainerVector3 : Container<Vector3> {}
+				public class ContainerVector3 : Container<Vector3, InterfaceContainerVector3> {}
 				[System.Serializable]
-				public class ContainerStatus : Container<Library_SpriteStudio6.Data.Animation.Attribute.Status> {}
+				public class ContainerStatus : Container<Library_SpriteStudio6.Data.Animation.Attribute.Status, InterfaceContainerStatus> {}
 				[System.Serializable]
-				public class ContainerCell : Container<Library_SpriteStudio6.Data.Animation.Attribute.Cell> {}
+				public class ContainerCell : Container<Library_SpriteStudio6.Data.Animation.Attribute.Cell, InterfaceContainerCell> {}
 				[System.Serializable]
-				public class ContainerColorBlend : Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend> {}
+				public class ContainerColorBlend : Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend, InterfaceContainerColorBlend> {}
 				[System.Serializable]
-				public class ContainerVertexCorrection : Container<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> {}
+				public class ContainerVertexCorrection : Container<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection, InterfaceContainerVertexCorrection> {}
 				[System.Serializable]
-				public class ContainerUserData : Container<Library_SpriteStudio6.Data.Animation.Attribute.UserData> {}
+				public class ContainerUserData : Container<Library_SpriteStudio6.Data.Animation.Attribute.UserData, InterfaceContainerUserData> {}
 				[System.Serializable]
-				public class ContainerInstance : Container<Library_SpriteStudio6.Data.Animation.Attribute.Instance> {}
+				public class ContainerInstance : Container<Library_SpriteStudio6.Data.Animation.Attribute.Instance, InterfaceContainerInstance> {}
 				[System.Serializable]
-				public class ContainerEffect : Container<Library_SpriteStudio6.Data.Animation.Attribute.Effect> {}
+				public class ContainerEffect : Container<Library_SpriteStudio6.Data.Animation.Attribute.Effect, InterfaceContainerEffect> {}
 				[System.Serializable]
-				public class ContainerCoordinateFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix> {}
+				public class ContainerCoordinateFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix, InterfaceContainerCoordinateFix> {}
 				[System.Serializable]
-				public class ContainerColorBlendFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix> {}
+				public class ContainerColorBlendFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix, InterfaceContainerColorBlendFix> {}
 				[System.Serializable]
-				public class ContainerUVFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.UVFix> {}
+				public class ContainerUVFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.UVFix, InterfaceContainerUVFix> {}
 
 				[System.Serializable]
-				public class Container<_Type>
-					where _Type : struct
+				public class Container<_TypeValue, _TypeInterface>
+					where _TypeValue : struct
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack TypePack;
 					public CodeValueContainer[] TableCodeValue;
-					public _Type[] TableValue;
+					public _TypeValue[] TableValue;
+
+					public _TypeInterface Function;	/* NonSerialized */
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -499,21 +854,92 @@ public static partial class Library_SpriteStudio6
 					#region Functions
 					public void CleanUp()
 					{
+						TypePack = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(-1);
 						TableCodeValue = null;
 						TableValue = null;
-					}
 
-					public virtual Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
-					{
-						return((Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(-1));
-					}
-
-					public virtual bool ValueGet(ref _Type outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-					{
-						return(false);
+						Function = default(_TypeInterface);
 					}
 					#endregion Functions
 				}
+
+				public interface InterfaceContainerInt : InterfaceContainer<	int,
+																				ContainerInt,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt
+																			> {}
+				public interface InterfaceContainerFloat : InterfaceContainer<	float,
+																				ContainerFloat,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat
+																			> {}
+				public interface InterfaceContainerVector2 : InterfaceContainer<	Vector2,
+																					ContainerVector2,
+																					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat
+																				> {}
+				public interface InterfaceContainerVector3 : InterfaceContainer<	Vector3,
+																					ContainerVector3,
+																					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat
+																				> {}
+				public interface InterfaceContainerStatus : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Status,
+																					ContainerStatus,
+																					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool
+																			> {}
+				public interface InterfaceContainerCell : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Cell,
+																				ContainerCell,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell
+																			> {}
+				public interface InterfaceContainerColorBlend : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend,
+																						ContainerColorBlend,
+																						Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend
+																				> {}
+				public interface InterfaceContainerVertexCorrection : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection,
+																							ContainerVertexCorrection,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection
+																						> {}
+				public interface InterfaceContainerUserData : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.UserData,
+																					ContainerUserData,
+																					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData
+																				> {}
+				public interface InterfaceContainerInstance : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Instance,
+																					ContainerInstance,
+																					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance
+																				> {}
+				public interface InterfaceContainerEffect : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Effect,
+																				ContainerEffect,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect
+																			> {}
+				public interface InterfaceContainerCoordinateFix : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix,
+																							ContainerCoordinateFix,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix
+																					> {}
+				public interface InterfaceContainerColorBlendFix : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix,
+																							ContainerColorBlendFix,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix
+																					> {}
+				public interface InterfaceContainerUVFix : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.UVFix,
+																				ContainerUVFix,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix
+																			> {}
+
+				public interface InterfaceContainer<_TypeValue, _TypeContainer, _TypeSource>
+					where _TypeValue : struct
+				{
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					bool ValueGet(	ref _TypeValue outValue,
+									ref int outFrameKey,
+									_TypeContainer container,
+									ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+								);
+					bool Pack(	_TypeContainer container,
+								string nameAttribute,
+								int countFrame,
+								Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+								int[] tableOrderDraw,
+								params _TypeSource[] listKeyData
+							);
+					#endregion Functions
+				}
+
 				[System.Serializable]
 				public struct CodeValueContainer
 				{	/* MEMO: Since Jagged-Array can not be serialized...  */
@@ -522,46 +948,36 @@ public static partial class Library_SpriteStudio6
 					public int[] TableCode;
 					#endregion Variables & Properties
 				}
-				public class Parameter
-				{
-					/* ----------------------------------------------- Functions */
-					#region Functions
-					public virtual KindPack KindGetPack()
-					{	/* MEMO: Be sure to override in Derived-Class */
-						return((KindPack)(-1));
-					}
-					#endregion Functions
-				}
 
 				public struct ArgumentContainer
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
-					public Script_SpriteStudio6_DataAnimation InstanceDataAnimation;
+					public Script_SpriteStudio6_DataAnimation DataAnimation;
 					public int IndexAnimation;
-					public int IndexParts;	/* index of Data.Animation.TableParts[] */
+					public int IDParts;
 					public int Frame;
-					public int FrameKeyPrevious;
+					public int FramePrevious;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
-					public ArgumentContainer(Script_SpriteStudio6_DataAnimation instanceDataAnimation, int indexAnimation, int indexParts, int frame, int frameKeyPrevious)
+					public ArgumentContainer(Script_SpriteStudio6_DataAnimation dataAnimation, int indexAnimation, int idParts, int frame, int framePrevious)
 					{
-						InstanceDataAnimation = instanceDataAnimation;
+						DataAnimation = dataAnimation;
 						IndexAnimation = indexAnimation;
-						IndexParts = indexParts;
+						IDParts = idParts;
 						Frame = frame;
-						FrameKeyPrevious = frameKeyPrevious;
+						FramePrevious = framePrevious;
 					}
 
 					public void CleanUp()
 					{
-						InstanceDataAnimation = null;
+						DataAnimation = null;
 						IndexAnimation = -1;
-						IndexParts = -1;
+						IDParts = -1;
 						Frame = -1;
-						FrameKeyPrevious = -1;
+						FramePrevious = -1;
 					}
 					#endregion Functions
 				}
@@ -1494,8 +1910,162 @@ public static partial class Library_SpriteStudio6
 	{
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
 		#region Classes, Structs & Interfaces
+		[System.Serializable]
 		public class Root : MonoBehaviour
 		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			public Material[] TableMaterial;
+
+			public Script_SpriteStudio6_DataCellMap DataCellMap;
+			internal Library_SpriteStudio6.Data.CellMap[] TableCellMap = null;
+
+			internal Script_SpriteStudio6_Root ScriptRootParent = null;
+
+			public bool FlagReassignMaterialForce;
+			public bool FlagHideForce;
+
+			internal float RateOpacity = 1.0f;
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			protected bool BaseAwake()
+			{
+				/* Reassignment for shader lost */
+				/* MEMO: Memory leak occasionally, so normally no reassign. */
+				if(true == FlagReassignMaterialForce)
+				{
+					int Count = (null != TableMaterial) ? TableMaterial.Length : 0;
+					Material instanceMaterial = null;
+					for(int i=0; i<Count; i++)
+					{
+						instanceMaterial = TableMaterial[i];
+						if(null != instanceMaterial)
+						{
+							instanceMaterial.shader = Shader.Find(instanceMaterial.shader.name);
+						}
+					}
+					instanceMaterial = null;
+				}
+
+				return(true);
+			}
+
+			protected bool BaseStart()
+			{
+				/* Generate CellMap table */
+				if(false == CellMapBootUp())
+				{
+					return(false);
+				}
+
+				return(true);
+			}
+
+			protected bool BaseLateUpdate(float timeElapsed)
+			{
+				/* Recover CellMap table */
+				if(null == TableCellMap)
+				{
+					if(false == CellMapBootUp())
+					{
+						return(false);
+					}
+				}
+
+				return(true);
+			}
+
+			public int CountGetCellMap()
+			{
+				return((null == TableCellMap) ? -1 : TableCellMap.Length);
+			}
+
+			public int IndexGetCellMap(string name)
+			{
+				if(true == string.IsNullOrEmpty(name))
+				{
+					return(-1);
+				}
+
+				int count = TableCellMap.Length;
+				for(int i=0; i<count; i++)
+				{
+					if(name == TableCellMap[i].Name)
+					{
+						return(i);
+					}
+				}
+				return(-1);
+			}
+
+			public Library_SpriteStudio6.Data.CellMap DataGetCellMap(int index)
+			{
+				return(((0 > index) || (TableCellMap.Length <= index)) ? null : TableCellMap[index]);
+			}
+
+			public  Library_SpriteStudio6.Data.CellMap CellMapCopyFull(int indexCellMap, bool flagSourceIsOriginal)
+			{
+				Library_SpriteStudio6.Data.CellMap[] tableCellMapSource = (true == flagSourceIsOriginal) ? DataCellMap.TableCellMap : TableCellMap;
+
+				if((0 > indexCellMap) || (tableCellMapSource.Length <= indexCellMap))
+				{
+					goto CellMapDuplicate_ErrorEnd;
+				}
+
+				Library_SpriteStudio6.Data.CellMap cellMap = new Library_SpriteStudio6.Data.CellMap();
+				if(null == cellMap)
+				{
+					goto CellMapDuplicate_ErrorEnd;
+				}
+				Library_SpriteStudio6.Data.CellMap cellMapSource = tableCellMapSource[indexCellMap];
+
+				int countCell = cellMapSource.TableCell.Length;
+				cellMap.Name = string.Copy(cellMapSource.Name);
+				cellMap.SizeOriginal = cellMapSource.SizeOriginal;
+				cellMap.TableCell = new Library_SpriteStudio6.Data.CellMap.Cell[countCell];
+				if(null == cellMap.TableCell)
+				{
+					goto CellMapDuplicate_ErrorEnd;
+				}
+				for(int i=0; i<countCell; i++)
+				{
+					cellMap.TableCell[i] = cellMapSource.TableCell[i];
+				}
+				return(cellMap);
+
+			CellMapDuplicate_ErrorEnd:;
+				return(null);
+			}
+
+			private bool CellMapBootUp()
+			{
+				if(null == DataCellMap)
+				{
+					return(false);
+				}
+
+				int countCellMap = DataCellMap.CountGetCellMap();
+				if((null == TableCellMap) || (countCellMap > TableCellMap.Length))
+				{
+					TableCellMap = new Library_SpriteStudio6.Data.CellMap[DataCellMap.TableCellMap.Length];
+					if(null == TableCellMap)
+					{
+						return(false);
+					}
+				}
+				if(null != TableCellMap)
+				{
+					for(int i=0; i<countCellMap; i++)
+					{
+						TableCellMap[i] = DataCellMap.DataGetCellMap(i);
+					}
+				}
+
+				return(true);
+			}
+			#endregion Functions
 		}
 		#endregion Classes, Structs & Interfaces
 	}
@@ -1504,25 +2074,818 @@ public static partial class Library_SpriteStudio6
 	{
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
 		#region Classes, Structs & Interfaces
-		public class Frame
-		{
-		}
-
-		public class Parts
+		public static partial class Animation
 		{
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
 			#region Classes, Structs & Interfaces
-			public class Animation
+			internal struct Track
 			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				internal KindMode Mode;
+				internal FlagBitStatus Status;
+				internal bool StatusIsPlaying
+				{
+					get
+					{
+						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)));
+					}
+				}
+				internal bool StatusIsPausing
+				{
+					get
+					{
+						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING)));
+					}
+				}
+
+				internal Library_SpriteStudio6.CallBack.FunctionControlEndTrackPlay FunctionPlayEnd;
+
+				internal Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer ArgumentContainer;
+
+				internal float TimeDelay;
+				internal float TimeElapsed;
+				internal float RateTime;
+
+				internal int TimesPlay;
+				internal int TimesPlayNow;
+				internal int CountLoop;
+				internal int CountLoopNow;
+
+				internal int FramePerSecond;
+				internal float TimePerFrame;
+				internal float TimePerFrameConsideredRateTime;
+
+				internal int FrameStart;
+				internal int FrameEnd;
+				internal int FrameRange;
+				internal float TimeRange;
+
+				internal float RateBlend;
+				internal float RateBlendNormalized;
+
+				internal int IndexTrackSlave;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public void CleanUp()
+				{
+					Mode = KindMode.NORMAL;
+					Status = FlagBitStatus.CLEAR;
+
+					FunctionPlayEnd = null;
+
+					ArgumentContainer.CleanUp();
+
+					TimeDelay = 0.0f;
+					TimeElapsed = 0.0f;
+					RateTime = 1.0f;
+
+					TimesPlay = -1;
+					TimesPlayNow = -1;
+					CountLoop = -1;
+					CountLoopNow = -1;
+
+					FramePerSecond = 60;
+					TimePerFrame = 0.0f;
+					TimePerFrameConsideredRateTime = 0.0f;
+
+					FrameStart = -1;
+					FrameEnd = -1;
+					FrameRange = 0;
+					TimeRange = 0.0f;
+
+					RateBlend = 1.0f;
+					RateBlendNormalized = 1.0f;
+
+					IndexTrackSlave = -1;
+				}
+
+				public bool BootUp()
+				{
+					CleanUp();
+
+					Status |= FlagBitStatus.VALID;
+
+					return(true);
+				}
+
+				public bool Start(	Script_SpriteStudio6_Root instanceRoot,
+									int indexAnimation,
+									int frameRangeStart,
+									int frameRangeEnd,
+									int frame,
+									int framePerSecond,
+									float rateTime,
+									float timeDelay,
+									bool flagPingpong,
+									int timesPlay
+								)
+									
+				{
+					/* Check booted-up */
+					if(0 == (Status & FlagBitStatus.VALID))
+					{
+						if(false == BootUp())
+						{
+							return(false);
+						}
+					}
+
+					/* Reset Animation */
+					ArgumentContainer.DataAnimation = instanceRoot.DataAnimation;
+					ArgumentContainer.IndexAnimation = indexAnimation;
+
+					/* Set datas */
+					Status &= FlagBitStatus.VALID;	/* Clear */
+
+					Status = (true == flagPingpong) ? (Status | FlagBitStatus.STYLE_PINGPONG) : (Status & ~FlagBitStatus.STYLE_PINGPONG); 
+					RateTime = rateTime;
+					if(0.0f > RateTime)
+					{
+						Status = (0 == (Status & FlagBitStatus.STYLE_REVERSE)) ? (Status | FlagBitStatus.STYLE_REVERSE) : (Status & ~FlagBitStatus.STYLE_REVERSE);
+						RateTime *= -1.0f;
+					}
+					TimePerFrame = 1.0f / (float)FramePerSecond;
+
+					FramePerSecond = framePerSecond;
+					FrameStart = frameRangeStart;
+					FrameEnd = frameRangeEnd;
+					ArgumentContainer.Frame = frame;
+					if(0 != (Status & FlagBitStatus.STYLE_REVERSE))
+					{	/* Play-Reverse */
+						Status |= FlagBitStatus.PLAYING_REVERSE;
+						ArgumentContainer.Frame = (ArgumentContainer.Frame <= FrameStart) ? (FrameEnd + 1) : ArgumentContainer.Frame;
+					}
+					else
+					{	/* Play-Normal */
+						Status &= ~FlagBitStatus.PLAYING_REVERSE;
+						ArgumentContainer.Frame = (ArgumentContainer.Frame >= (FrameEnd + 1)) ? (FrameStart - 1) : ArgumentContainer.Frame;
+					}
+
+					TimesPlay = timesPlay;
+					TimeDelay = timeDelay;
+
+					CountLoop = 0;
+					TimeElapsed = (ArgumentContainer.Frame - FrameStart) * TimePerFrame;
+					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, FrameStart, FrameEnd);
+
+					Status |= FlagBitStatus.PLAYING;
+					Status |= FlagBitStatus.PLAYING_START;
+
+					FrameRange = (FrameEnd - FrameStart) + 1;
+					TimeRange = (float)FrameRange * TimePerFrame;
+					TimePerFrameConsideredRateTime = TimePerFrame * RateTime;
+
+					return(true);
+				}
+
+				public bool Stop(bool flagJumpEnd)
+				{
+					if(0 == (Status & FlagBitStatus.VALID))
+					{
+						return(false);
+					}
+
+					if(0 == (Status & FlagBitStatus.PLAYING))
+					{
+						return(true);
+					}
+
+					if(true == flagJumpEnd)
+					{
+					}
+
+					return(true);
+				}
+
+				public bool Pause(bool flagSwitch)
+				{
+					if(0 == (Status & FlagBitStatus.VALID))
+					{
+						return(false);
+					}
+
+					if(true == flagSwitch)
+					{
+						Status |= FlagBitStatus.PAUSING;
+					}
+					else
+					{
+						Status &= ~FlagBitStatus.PAUSING;
+					}
+
+					return(true);
+				}
+
+				public bool Update(float timeElapsed)
+				{
+					timeElapsed *= RateTime;
+
+					if((FlagBitStatus.VALID | FlagBitStatus.PLAYING) != (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)))
+					{	/* Not-Playing */
+						return(false);
+					}
+					if((0 != (Status & FlagBitStatus.PAUSING)) && (0 == (Status & FlagBitStatus.PLAYING_START)))
+					{	/* Play & Pausing (Through, Right-After-Starting) */
+						return(true);
+					}
+					if(0.0f > TimeDelay)
+					{	/* Wait Infinite */
+						TimeDelay = -1.0f;
+						Status &= ~(FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);	/* Cancel Start & Decoding Attribute */
+						return(true);
+					}
+					else
+					{	/* Wait Limited-Time */
+						if(0.0f < TimeDelay)
+						{	/* Waiting */
+							TimeDelay -= timeElapsed;
+							if(0.0f < TimeDelay)
+							{
+								Status &= ~(FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);	/* Cancel Start & Decoding Attribute */
+								return(true);
+							}
+
+							/* Start */
+							timeElapsed += -TimeDelay * ((0 == (Status & FlagBitStatus.PLAYING_REVERSE)) ? 1.0f : -1.0f);
+							TimeDelay = 0.0f;
+							ArgumentContainer.FramePrevious = -1;
+							Status |= (FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);
+						}
+					}
+					if(0 != (Status & FlagBitStatus.PLAYING_START))
+					{	/* Play & Right-After-Starting */
+						Status |= (FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);
+						timeElapsed = 0.0f;
+						goto AnimationUpdate_End;	/* Display the first frame, force */
+					}
+
+					/* Calculate New-Frame */
+					ArgumentContainer.FramePrevious = ArgumentContainer.Frame;
+					bool FlagRangeOverPrevious = false;
+					if(0 != (Status & FlagBitStatus.STYLE_PINGPONG))
+					{	/* Play-Style: PingPong */
+						if(0 != (Status & FlagBitStatus.PLAYING_REVERSE))
+						{
+							FlagRangeOverPrevious = (0.0f > TimeElapsed) ? true : false;
+							TimeElapsed -= timeElapsed;
+							if((0.0f > TimeElapsed) && (true == FlagRangeOverPrevious))
+							{	/* Still Range-Over */
+								goto AnimationUpdate_End;
+							}
+						}
+						else
+						{
+							FlagRangeOverPrevious = (TimeRange <= TimeElapsed) ? true : false;
+							TimeElapsed += timeElapsed;
+							if((TimeRange <= TimeElapsed) && (true == FlagRangeOverPrevious))
+							{	/* Still Range-Over */
+								goto AnimationUpdate_End;
+							}
+						}
+
+						if(0 != (Status & FlagBitStatus.STYLE_REVERSE))
+						{	/* Play-Style: PingPong & Reverse */
+							while((TimeRange <= TimeElapsed) || (0.0f > TimeElapsed))
+							{
+								if(0 != (Status & FlagBitStatus.PLAYING_REVERSE))
+								{	/* Now: Reverse */
+									if(TimeRange <= TimeElapsed)
+									{	/* MEMO: Follow "FlagRangeOverPrevious" */
+										break;
+									}
+									if(0.0f > TimeElapsed)
+									{	/* Frame-Over: Turn */
+										TimeElapsed += TimeRange;
+										TimeElapsed = TimeRange - TimeElapsed;
+										Status |= FlagBitStatus.PLAYING_TURN;
+										Status &= ~FlagBitStatus.PLAYING_REVERSE;
+									}
+								}
+								else
+								{   /* Now: Foward */
+									if(true == FlagRangeOverPrevious)
+									{
+										FlagRangeOverPrevious = false;
+										Status |= FlagBitStatus.PLAYING_TURN;
+										break;
+									}
+									else
+									{
+										CountLoop++;
+										if(TimeRange <= TimeElapsed)
+										{	/* Frame-Over: Loop/End */
+											if(0 < TimesPlayNow)
+											{	/* Limited-Count Loop */
+												TimesPlayNow--;
+												if(0 >= TimesPlayNow)
+												{	/* End */
+													goto AnimationUpdate_PlayEnd_Foward;
+												}
+											}
+
+											/* Not-End */
+											TimeElapsed -= TimeRange;
+											TimeElapsed = TimeRange - TimeElapsed;
+											Status |= FlagBitStatus.PLAYING_REVERSE;
+											Status |= FlagBitStatus.PLAYING_TURN;
+											CountLoopNow++;
+										}
+									}
+								}
+							}
+						}
+						else
+						{	/* Play-Style: PingPong & Foward */
+							while((TimeRange <= TimeElapsed) || (0.0f > TimeElapsed))
+							{
+								if(0 != (Status & FlagBitStatus.PLAYING_REVERSE))
+								{	/* Now: Reverse */
+									if(true == FlagRangeOverPrevious)
+									{
+										FlagRangeOverPrevious = false;
+										Status |= FlagBitStatus.PLAYING_TURN;
+										break;
+									}
+									else
+									{
+										CountLoop++;
+										if(0.0f > TimeElapsed)
+										{	/* Frame-Over: Loop/End */
+											if(0 < TimesPlayNow)
+											{	/* Limited-Count Loop */
+												TimesPlayNow--;
+												if(0 >= TimesPlayNow)
+												{	/* End */
+													goto AnimationUpdate_PlayEnd_Reverse;
+												}
+											}
+
+											/* Not-End */
+											TimeElapsed += TimeRange;
+											TimeElapsed = TimeRange - TimeElapsed;
+											Status &= ~FlagBitStatus.PLAYING_REVERSE;
+											Status |= FlagBitStatus.PLAYING_TURN;
+											CountLoopNow++;
+										}
+									}
+								}
+								else
+								{	/* Now: Foward */
+									if(0.0f > TimeElapsed)
+									{	/* MEMO: Follow "FlagRangeOverPrevious" */
+										break;
+									}
+									if(TimeRange <= TimeElapsed)
+									{	/* Frame-Over: Turn */
+										TimeElapsed -= TimeRange;
+										TimeElapsed = TimeRange - TimeElapsed;
+										Status |= FlagBitStatus.PLAYING_TURN;
+										Status |= FlagBitStatus.PLAYING_REVERSE;
+									}
+								}
+							}
+						}
+					}
+					else
+					{	/* Play-Style: OneWay */
+						if(0 != (Status & FlagBitStatus.STYLE_REVERSE))
+						{	/* Play-Style: OneWay & Reverse */
+							FlagRangeOverPrevious = (0.0f > TimeElapsed) ? true : false;
+							TimeElapsed -= timeElapsed;
+							if((0.0f > TimeElapsed) && (true == FlagRangeOverPrevious))
+							{	/* Still Range-Over */
+								goto AnimationUpdate_End;
+							}
+
+							while(0.0f > TimeElapsed)
+							{
+								TimeElapsed += TimeRange;
+								if(true == FlagRangeOverPrevious)
+								{
+									FlagRangeOverPrevious = false;
+									Status |= FlagBitStatus.PLAYING_TURN;
+								}
+								else
+								{
+									CountLoop++;
+									if(0 < TimesPlayNow)
+									{	/* Limited-Count Loop */
+										TimesPlayNow--;
+										if(0 >= TimesPlayNow)
+										{	/* End */
+											goto AnimationUpdate_PlayEnd_Reverse;
+										}
+									}
+
+									/* Not-End */
+									CountLoopNow++;
+									Status |= FlagBitStatus.PLAYING_TURN;
+								}
+							}
+						}
+						else
+						{	/* Play-Style: OneWay & Foward */
+							FlagRangeOverPrevious = (TimeRange <= TimeElapsed) ? true : false;
+							TimeElapsed += timeElapsed;
+							if((TimeRange <= TimeElapsed) && (true == FlagRangeOverPrevious))
+							{	/* Still Range-Over */
+								goto AnimationUpdate_End;
+							}
+
+							while(TimeRange <= TimeElapsed)
+							{
+								TimeElapsed -= TimeRange;
+								if(true == FlagRangeOverPrevious)
+								{
+									FlagRangeOverPrevious = false;
+									Status |= FlagBitStatus.PLAYING_TURN;
+								}
+								else
+								{
+									CountLoop++;
+									if(0 < TimesPlayNow)
+									{	/* Limited-Count Loop */
+										TimesPlayNow--;
+										if(0 >= TimesPlayNow)
+										{	/* End */
+											goto AnimationUpdate_PlayEnd_Foward;
+										}
+									}
+
+									/* Not-End */
+									Status |= FlagBitStatus.PLAYING_TURN;
+									CountLoopNow++;
+								}
+							}
+						}
+					}
+
+				AnimationUpdate_End:;
+					ArgumentContainer.Frame = (int)(TimeElapsed / TimePerFrame);
+					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, 0, (FrameRange - 1));
+					ArgumentContainer.Frame += FrameStart;
+					if((ArgumentContainer.Frame != ArgumentContainer.FramePrevious) || (0 != (Status & FlagBitStatus.PLAYING_TURN)))
+					{
+						Status |= FlagBitStatus.DECODE_ATTRIBUTE;
+					}
+					return(true);
+
+				AnimationUpdate_PlayEnd_Foward:;
+					TimesPlayNow = 0;	/* Clip */
+					Status |= (FlagBitStatus.REQUEST_PLAYEND | FlagBitStatus.DECODE_ATTRIBUTE);
+					TimeElapsed = TimeRange;
+					ArgumentContainer.Frame = FrameEnd;
+					return(true);
+
+				AnimationUpdate_PlayEnd_Reverse:;
+					TimesPlayNow = 0;	/* Clip */
+					Status |= (FlagBitStatus.REQUEST_PLAYEND | FlagBitStatus.DECODE_ATTRIBUTE);
+					TimeElapsed = 0.0f;
+					ArgumentContainer.Frame = FrameStart;
+					return(true);
+				}
+
+				/* MEMO: Originally should be function, but call-cost is high(taking processing content into account). */
+				/*       Processed directly in "Script_SpriteStudio6_Root".                                            */
+//				public void StatusClearTransient()
+//				{
+//					if((FlagBitStatus.VALID | FlagBitStatus.PLAYING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)))
+//					{	/* Not-Playing */
+//						Status &= ~(FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);
+//					}
+//				}
+
+				public void TimeElapse(float time, bool flagReverseParent, bool flagRangeEnd)
+				{	/* MEMO: In principle, This Function is for calling from "UpdateInstance". */
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				[System.Flags]
+				internal enum FlagBitStatus
+				{
+					VALID = 0x40000000,
+					PLAYING = 0x20000000,
+					PAUSING = 0x10000000,
+
+					STYLE_PINGPONG = 0x08000000,
+					STYLE_REVERSE = 0x04000000,
+
+					PLAYING_START = 0x00800000,
+					PLAYING_REVERSE = 0x00400000,
+					PLAYING_REVERSEPREVIOUS = 0x00200000,
+					PLAYING_TURN = 0x00100000,
+
+					DECODE_ATTRIBUTE = 0x00080000,
+
+					IGNORE_USERDATA = 0x00008000,
+					IGNORE_SKIPLOOP = 0x00004000,
+
+					REQUEST_PLAYEND = 0x00000080,
+
+					CLEAR = 0x00000000,
+				}
+
+				internal enum KindMode
+				{
+					NORMAL = 0,
+					SLAVE,	/* Fade destination when bridging animation */
+				}
+				#endregion Enums & Constants
 			}
 
-			public class Effect
+			[System.Serializable]
+			public struct Parts
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				internal int IDParts;
+				internal int IDPartsDrawNext;
+
+				internal FlagBitStatus Status;
+
+				public GameObject InstanceGameObject;
+				internal Transform InstanceTransform;
+
+				public Object PrefabUnderControl;
+				public GameObject InstanceGameObjectUnderControl;
+				internal Script_SpriteStudio6_Root InstanceRootUnderControl;
+				internal int IndexAnimationUnderControl;
+				internal Script_SpriteStudio6_RootEffect InstanceRootEffectUnderControl;
+
+				public Collider InstanceComponentCollider;
+
+				internal int IndexControlTrack;
+
+				internal Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus StatusAnimationParts;
+
+				internal BufferTRS TRSMaster;
+				internal BufferTRS TRSSlave;
+
+				/* Mesh Buffer */
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				internal void CleanUp()
+				{
+					IDParts = -1;
+					IDPartsDrawNext = -1;
+
+					Status = FlagBitStatus.CLEAR;
+
+//					InstanceGameObject =
+					InstanceTransform = null;
+
+//					PrefabUnderControl =
+//					InstanceGameObjectUnderControl =
+					InstanceRootUnderControl = null;
+					IndexAnimationUnderControl = -1;
+					InstanceRootEffectUnderControl = null;
+
+//					InstanceComponentCollider =
+
+					IndexControlTrack = 0;
+
+					StatusAnimationParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.CLEAR;
+
+					TRSMaster.CleanUp();
+					TRSSlave.CleanUp();
+				}
+
+				internal bool BootUp(Script_SpriteStudio6_Root instanceRoot, int idParts)
+				{
+					IDParts = idParts;
+					IDPartsDrawNext = -1;
+
+					Status = FlagBitStatus.CLEAR;
+
+					/* Get Part's Transform */
+					if(null == InstanceGameObject)
+					{
+						return(false);
+					}
+					InstanceTransform = InstanceGameObject.transform;
+
+					/* Clean up TRS Buffer */
+					TRSMaster.CleanUp();
+					TRSSlave.CleanUp();
+
+					/* Instance/Effect BootUp */
+					switch(instanceRoot.DataAnimation.TableParts[idParts].Feature)
+					{
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+							/* MEMO: Erase, because can not have undercontrol object. */
+							PrefabUnderControl = null;
+							InstanceGameObjectUnderControl = null;
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+							if(null == PrefabUnderControl)
+							{
+								PrefabUnderControl = instanceRoot.DataAnimation.TableParts[idParts].PrefabUnderControl;
+								IndexAnimationUnderControl = -1;
+							}
+							if(false == BootUpInstance(instanceRoot, idParts, false))
+							{
+								goto BootUp_ErrorEnd;
+							}
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+							if(null == PrefabUnderControl)
+							{
+								PrefabUnderControl = instanceRoot.DataAnimation.TableParts[idParts].PrefabUnderControl;
+								IndexAnimationUnderControl = -1;
+							}
+							if(false == BootUpEffect(instanceRoot, idParts, false))
+							{
+								goto BootUp_ErrorEnd;
+							}
+							break;
+					}
+
+					Status |= FlagBitStatus.VALID;
+					return(true);
+
+				BootUp_ErrorEnd:;
+					CleanUp();
+					Status = FlagBitStatus.CLEAR;
+					return(false);
+				}
+				private bool BootUpInstance(Script_SpriteStudio6_Root instanceRoot, int idParts, bool flagRenewInstance)
+				{
+					if(null != PrefabUnderControl)
+					{
+						/* Create UnderControl-Instance */
+						InstanceGameObjectUnderControl = Library_SpriteStudio6.Utility.Asset.PrefabInstantiate(	(GameObject)PrefabUnderControl,
+																												InstanceGameObjectUnderControl,
+																												InstanceGameObject,
+																												flagRenewInstance
+																											);
+						if(null != InstanceGameObjectUnderControl)
+						{
+							InstanceRootUnderControl = InstanceGameObjectUnderControl.GetComponent<Script_SpriteStudio6_Root>();
+							InstanceRootUnderControl.ScriptRootParent = instanceRoot;
+
+							int indexAnimation = (true == string.IsNullOrEmpty(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl))
+													? 0 : instanceRoot.IndexGetAnimation(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl);
+							IndexAnimationUnderControl = (-1 == indexAnimation) ? 0 : indexAnimation;
+//							InstanceRootUnderControl.AnimationPlay(-1, IndexAnimationUnderControl);
+//							InstanceRootUnderControl.AnimationStop();
+						}
+					}
+					return(true);
+				}
+				private bool BootUpEffect(Script_SpriteStudio6_Root instanceRoot, int idParts, bool flagRenewInstance)
+				{
+					if(null != PrefabUnderControl)
+					{
+						/* Create UnderControl-Instance */
+						InstanceGameObjectUnderControl = Library_SpriteStudio6.Utility.Asset.PrefabInstantiate(	(GameObject)PrefabUnderControl,
+																												InstanceGameObjectUnderControl,
+																												InstanceGameObject,
+																												flagRenewInstance
+																											);
+						if(null != InstanceGameObjectUnderControl)
+						{
+							InstanceRootEffectUnderControl = InstanceGameObjectUnderControl.GetComponent<Script_SpriteStudio6_RootEffect>();
+							InstanceRootEffectUnderControl.ScriptRootParent = instanceRoot;
+							IndexAnimationUnderControl = -1;
+//							InstanceRootEffectUnderControl.AnimationPlay(-1, IndexAnimationUnderControl);
+//							InstanceRootEffectUnderControl.AnimationStop();
+						}
+					}
+					return(true);
+				}
+
+				internal void UpdateGameObject(Script_SpriteStudio6_Root instanceRoot, int idParts)
+				{
+					int indexTrack = IndexControlTrack;
+					int indexAnimation = instanceRoot.TableControlTrack[indexTrack].ArgumentContainer.IndexAnimation;
+					if(0 <= indexAnimation)
+					{
+						UpdateGameObjectMain(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+					}
+				}
+				private void UpdateGameObjectMain(	Script_SpriteStudio6_Root instanceRoot,
+													int idParts,
+													ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+													ref Library_SpriteStudio6.Control.Animation.Track controlTrack
+												)
+				{
+					controlTrack.ArgumentContainer.IDParts = idParts;
+
+					Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusParts = dataAnimationParts.StatusParts;
+					StatusAnimationParts = statusParts;	/* cache */
+					if(0 != (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+					{
+						return;
+					}
+
+					Transform transform = InstanceGameObject.transform;
+					Data.Animation.PackAttribute.ArgumentContainer argument = new Data.Animation.PackAttribute.ArgumentContainer();
+					argument.Frame = 0;
+
+					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION))
+					{
+						if(true == dataAnimationParts.Position.Function.ValueGet(ref TRSMaster.Position, ref TRSMaster.IndexPosition, dataAnimationParts.Position, ref controlTrack.ArgumentContainer))
+						{	/* New Value */
+							transform.localPosition = TRSMaster.Position;
+						}
+					}
+
+					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION))
+					{
+						if(true == dataAnimationParts.Rotation.Function.ValueGet(ref TRSMaster.Rotation, ref TRSMaster.IndexRotation, dataAnimationParts.Rotation, ref controlTrack.ArgumentContainer))
+						{	/* New Value */
+							transform.localEulerAngles = TRSMaster.Rotation;
+						}
+					}
+
+					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING))
+					{
+						if(true == dataAnimationParts.Scaling.Function.ValueGet(ref TRSMaster.Scaling, ref TRSMaster.IndexScaling, dataAnimationParts.Scaling, ref controlTrack.ArgumentContainer))
+						{	/* New Value */
+							Vector3 scaling = TRSMaster.Scaling;
+							scaling.z = 1.0f;
+							transform.localEulerAngles = scaling;
+						}
+					}
+				}
+
+				internal void UpdateDraw(Script_SpriteStudio6_Root instanceRoot, int idParts)
+				{
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				[System.Flags]
+				internal enum FlagBitStatus
+				{
+					VALID = 0x40000000,
+					RUNNING = 0x20000000,
+
+					HIDEFORCE = 0x08000000,
+
+					CHANGE_TRANSFORM_POSITION = 0x00100000,
+					CHANGE_TRANSFORM_ROTATION = 0x00200000,
+					CHANGE_TRANSFORM_SCALING = 0x00400000,
+
+					OVERWRITE_CELL_UNREFLECTED = 0x00080000,
+					OVERWRITE_CELL_IGNOREATTRIBUTE = 0x00040000,
+
+					INSTANCE_VALID = 0x00008000,
+					INSTANCE_PLAYINDEPENDENT = 0x00004000,
+
+					EFFECT_VALID = 0x00000800,
+					EFFECT_PLAYINDEPENDENT = 0x00000400,
+
+					CLEAR = 0x00000000
+				}
+				#endregion Enums & Constants
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				internal struct BufferTRS
+				{
+					internal Vector3 Position;
+					internal Vector3 Rotation;
+					internal Vector2 Scaling;
+
+					internal int IndexPosition;
+					internal int IndexRotation;
+					internal int IndexScaling;
+
+					internal void CleanUp()
+					{
+						Position = Vector3.zero;
+						Rotation = Vector3.zero;
+						Scaling = Vector2.one;
+
+						IndexPosition = -1;
+						IndexRotation = -1;
+						IndexScaling = -1;
+					}
+				}
+				#endregion Classes, Structs & Interfaces
+			}
+
+			public class ColorBlend
 			{
 			}
 			#endregion Classes, Structs & Interfaces
 		}
 
-		public class ColorBlend
+		public class Effect
 		{
 		}
 		#endregion Classes, Structs & Interfaces
@@ -1540,6 +2903,124 @@ public static partial class Library_SpriteStudio6
 	{
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
 		#region Classes, Structs & Interfaces
+		public class Asset
+		{
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public static GameObject GameObjectCreate(string name, bool flagActive, GameObject gameObjectParent)
+			{
+				GameObject gameObject = new GameObject(name);
+				if(null != gameObject)
+				{
+					gameObject.SetActive(flagActive);
+					Transform transform = gameObject.transform;
+					if(null != gameObjectParent)
+					{
+						transform.parent = gameObjectParent.transform;
+					}
+					transform.localPosition = Vector3.zero;
+					transform.localEulerAngles = Vector3.zero;
+					transform.localScale = Vector3.one;
+				}
+				return(gameObject);
+			}
+
+			public static Transform TransformSearchNameChild(string name, Transform transformParent)
+			{
+				if(null == transformParent)
+				{
+					return(null);
+				}
+
+				Transform transform;
+				int countChild = transformParent.childCount;
+				for(int i=0; i<countChild; i++)
+				{
+					transform = transformParent.GetChild(i);
+					if(null != transform)
+					{
+						if(name == transform.name)
+						{
+							return(transform);
+						}
+					}
+
+					transform = TransformSearchNameChild(name, transform);	/* Recursion */
+					if(null != transform)
+					{
+						return(transform);
+					}
+				}
+				return(null);
+			}
+
+			public static GameObject PrefabInstantiate(	GameObject prefab,
+														GameObject gameObjectOld,
+														GameObject gameObjectParent,
+														bool flagInstanceUnderControlRenew
+													)
+			{
+				/* Error-Check */
+				if(null == prefab)
+				{
+					return(null);
+				}
+
+				GameObject gameObject = gameObjectOld;
+				Transform transformParent = gameObjectParent.transform;
+				Transform transform;
+
+				if(null == gameObject)
+				{	/* Lost (Not-Found) */
+					transform = transformParent.Find(prefab.name);
+					if(null != transform)
+					{	/* Found */
+						gameObject = transform.gameObject;
+					}
+				}
+
+				if(true == flagInstanceUnderControlRenew)
+				{	/* Renew Force */
+					if(null != gameObject)
+					{	/* Exist */
+						Object.DestroyImmediate(gameObject);
+					}
+					gameObject = null;
+				}
+
+				if(null == gameObject)
+				{	/* Instantiate */
+#if UNITY_EDITOR
+					gameObject = UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+					if(null == gameObject)
+					{	/* for not-prefab */
+						gameObject = Object.Instantiate(prefab) as GameObject;
+						gameObject.name = prefab.name;	/* Remove "(clone)" */
+					}
+#else
+					gameObject = Object.Instantiate(prefab) as GameObject;
+					gameObject.name = prefab.name;	/* Remove "(clone)" */
+#endif
+					transform = gameObject.transform;
+
+					if (null != gameObjectParent)
+					{
+						transform = gameObject.transform;
+						transform.parent = transformParent;
+					}
+					if(null != gameObject)
+					{
+						transform.localPosition = Vector3.zero;
+						transform.localEulerAngles = Vector3.zero;
+						transform.localScale = Vector3.one;
+					}
+				}
+
+				return(gameObject);
+			}
+			#endregion Functions
+		}
+
 		public static partial class Interpolation
 		{
 			/* ----------------------------------------------- Functions */

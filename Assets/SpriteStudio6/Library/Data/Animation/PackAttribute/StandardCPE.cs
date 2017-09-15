@@ -51,6 +51,21 @@ public static partial class Library_SpriteStudio6
 
 					public const string ID = "StandardCPE";
 
+					internal readonly static InterfaceFunctionInt FunctionInt = new InterfaceFunctionInt();
+					internal readonly static InterfaceFunctionFloat FunctionFloat = new InterfaceFunctionFloat();
+					internal readonly static InterfaceFunctionVector2 FunctionVector2 = new InterfaceFunctionVector2();
+					internal readonly static InterfaceFunctionVector3 FunctionVector3 = new InterfaceFunctionVector3();
+					internal readonly static InterfaceFunctionStatus FunctionStatus = new InterfaceFunctionStatus();
+					internal readonly static InterfaceFunctionCell FunctionCell = new InterfaceFunctionCell();
+					internal readonly static InterfaceFunctionColorBlend FunctionColorBlend = new InterfaceFunctionColorBlend();
+					internal readonly static InterfaceFunctionVertexCorrection FunctionVertexCorrection = new InterfaceFunctionVertexCorrection();
+					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
+					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
+					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
+					internal readonly static InterfaceFunctionCoordinateFix FunctionCoordinateFix = new InterfaceFunctionCoordinateFix();
+					internal readonly static InterfaceFunctionColorBlendFix FunctionColorBlendFix = new InterfaceFunctionColorBlendFix();
+					internal readonly static InterfaceFunctionUVFix FunctionUVFix = new InterfaceFunctionUVFix();
+
 					[System.Flags]
 					public enum FlagBit
 					{
@@ -63,298 +78,278 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
 					#region Classes, Structs & Interfaces
-					[System.Serializable]
-					public class PackAttributeInt :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerInt
+					public class InterfaceFunctionInt : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerInt
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref int outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref int outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeInt dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeInt();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeFloat :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerFloat
+					public class InterfaceFunctionFloat : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerFloat
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref float outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref float outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeFloat dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeFloat();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeVector2 :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerFloat
+					public class InterfaceFunctionVector2 : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerVector2
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Vector2 outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Vector2 outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 2 (X, Y) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector2 dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector2();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeVector3 :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerFloat
+					public class InterfaceFunctionVector3 : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerVector3
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Vector3 outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Vector3 outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 3 (X, Y, Z) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector3 dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector3();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeStatus :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerBool
+					public class InterfaceFunctionStatus : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerStatus
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Status outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.Status outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 5 (Hide, FlipX, FlipY, FlipTextureX, FlipTextureY) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeStatus dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeStatus();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionStatus(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeCell :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerCell
+					public class InterfaceFunctionCell : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerCell
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Cell outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.Cell outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCell dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCell();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeColorBlend :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerColorBlend
+					public class InterfaceFunctionColorBlend : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerColorBlend
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlend dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlend();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlend(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeVertexCorrection :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerVertexCorrection
+					public class InterfaceFunctionVertexCorrection : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerVertexCorrection
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVertexCorrection dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVertexCorrection();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeUserData :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerUserData
+					public class InterfaceFunctionUserData : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerUserData
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.UserData outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.UserData outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData[] listKeyData
@@ -363,46 +358,42 @@ public static partial class Library_SpriteStudio6
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
-								TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-								TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.UserData[0];
+								container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.UserData[0];
 								return(true);
 							}
 
-							TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
-							TableCodeValue[0].TableCode = new int[countKey];
-							TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.UserData[countKey];
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
+							container.TableCodeValue[0].TableCode = new int[countKey];
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.UserData[countKey];
 							for(int i=0; i<countKey; i++)
 							{
-								TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
-								TableCodeValue[0].TableCode[i] |= (int)FlagBit.FRAMEKEY & listKeyData[0].ListKey[i].Frame;
+								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
+								container.TableCodeValue[0].TableCode[i] |= (int)FlagBit.FRAMEKEY & listKeyData[0].ListKey[i].Frame;
 
-								TableValue[i] = listKeyData[0].ListKey[i].Value;
+								container.TableValue[i] = listKeyData[0].ListKey[i].Value;
 							}
 							return(true);
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeInstance :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerInstance
+					public class InterfaceFunctionInstance : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerInstance
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Instance outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.Instance outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance[] listKeyData
@@ -411,46 +402,42 @@ public static partial class Library_SpriteStudio6
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
-								TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-								TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Instance[0];
+								container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Instance[0];
 								return(true);
 							}
 
-							TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
-							TableCodeValue[0].TableCode = new int[countKey];
-							TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Instance[countKey];
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
+							container.TableCodeValue[0].TableCode = new int[countKey];
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Instance[countKey];
 							for(int i=0; i<countKey; i++)
 							{
-								TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
-								TableCodeValue[0].TableCode[i] |= (int)FlagBit.FRAMEKEY & listKeyData[0].ListKey[i].Frame;
+								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
+								container.TableCodeValue[0].TableCode[i] |= (int)FlagBit.FRAMEKEY & listKeyData[0].ListKey[i].Frame;
 
-								TableValue[i] = listKeyData[0].ListKey[i].Value;
+								container.TableValue[i] = listKeyData[0].ListKey[i].Value;
 							}
 							return(true);
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeEffect :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerEffect
+					public class InterfaceFunctionEffect : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerEffect
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Effect outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.Effect outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect[] listKeyData
@@ -459,124 +446,118 @@ public static partial class Library_SpriteStudio6
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
-								TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-								TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Effect[0];
+								container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Effect[0];
 								return(true);
 							}
 
-							TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
-							TableCodeValue[0].TableCode = new int[countKey];
-							TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Effect[countKey];
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
+							container.TableCodeValue[0].TableCode = new int[countKey];
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Effect[countKey];
 							for(int i=0; i<countKey; i++)
 							{
-								TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
-								TableCodeValue[0].TableCode[i] |= (int)FlagBit.FRAMEKEY & listKeyData[0].ListKey[i].Frame;
+								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
+								container.TableCodeValue[0].TableCode[i] |= (int)FlagBit.FRAMEKEY & listKeyData[0].ListKey[i].Frame;
 
-								TableValue[i] = listKeyData[0].ListKey[i].Value;
+								container.TableValue[i] = listKeyData[0].ListKey[i].Value;
 							}
 							return(true);
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeCoordinateFix :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerCoordinateFix
+					public class InterfaceFunctionCoordinateFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerCoordinateFix
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCoordinateFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCoordinateFix();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeColorBlendFix :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerColorBlendFix
+					public class InterfaceFunctionColorBlendFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerColorBlendFix
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlendFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlendFix();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlendFix(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
 
-					[System.Serializable]
-					public class PackAttributeUVFix :
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix,
-						Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerUVFix
+					public class InterfaceFunctionUVFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerUVFix
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPack()
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.UVFix outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE);
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
 						}
 
-						public override bool ValueGet(ref Library_SpriteStudio6.Data.Animation.Attribute.UVFix outValue, ref int outFrameKey, int framePrevious, ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, framePrevious, TableCodeValue[0].TableCode, TableValue));
-						}
-
-						public bool Pack(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument,
-											int countFrame,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container,
 											string nameAttribute,
+											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeUVFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeUVFix();
-							dataUncompressed.Pack(ref argument, countFrame, nameAttribute, flagStatusParts, tableOrderDraw, listKeyData);
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUVFix(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out TableCodeValue, out TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
@@ -587,7 +568,6 @@ public static partial class Library_SpriteStudio6
 					public static bool ValueGet<_Type>(	ref _Type outValue,
 														ref int outFrameKey,
 														int frame,
-														int framePrevious,
 														int[] tableStatus,
 														_Type[] tableValue
 													)
@@ -623,11 +603,11 @@ public static partial class Library_SpriteStudio6
 
 						status = tableStatus[indexMinimum];
 						frameKey = status & (int)FlagBit.FRAMEKEY;
-						outFrameKey = frameKey;
-						if(framePrevious == frameKey)
+						if(outFrameKey == frameKey)
 						{
 							return(false);	/* outValue is not overwritten. */
 						}
+						outFrameKey = frameKey;
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
 						outValue = tableValue[index];

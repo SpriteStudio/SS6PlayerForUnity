@@ -1022,6 +1022,90 @@ public static partial class LibraryEditor_SpriteStudio6
 //					return(false);
 				}
 
+				public static bool AssetCreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE
+													)
+				{
+					const string messageLogPrefix = "Create Asset(Prefab-Effect)";
+
+					GameObject gameObjectRoot = null;
+					Script_SpriteStudio6_RootEffect scriptRoot = null;
+					int limitParticleLimit = 0;
+					float rateTime = 1.0f;
+					bool flagHideForce = false;
+					bool flagReassignMaterialForce = false;
+
+					/* Create? Update? */
+					if(null == informationSSEE.PrefabEffectSS6PU.TableData[0])
+					{	/* New */
+						informationSSEE.PrefabEffectSS6PU.TableData[0] = PrefabUtility.CreateEmptyPrefab(informationSSEE.PrefabEffectSS6PU.TableName[0]);
+						if(null == informationSSEE.PrefabEffectSS6PU.TableData[0])
+						{
+							LogError(messageLogPrefix, "Failure to create Prefab", informationSSEE.FileNameGetFullPath(), informationSSPJ);
+							goto AssetCreatePrefab_ErrorEnd;
+						}
+					}
+					else
+					{	/* Exist */
+						/* MEMO: Do not instantiate old prefabs. Instantiates up to objects under control, and mixed in updated prefab. */
+						gameObjectRoot = (GameObject)informationSSEE.PrefabEffectSS6PU.TableData[0];
+						scriptRoot = gameObjectRoot.GetComponent<Script_SpriteStudio6_RootEffect>();
+						if(null != scriptRoot)
+						{
+							limitParticleLimit = scriptRoot.LimitParticleDraw;
+							flagHideForce = scriptRoot.FlagHideForce;
+							flagReassignMaterialForce = scriptRoot.FlagReassignMaterialForce;
+							rateTime = scriptRoot.RateTime;
+						}
+
+						gameObjectRoot = null;
+						scriptRoot = null;
+					}
+
+					gameObjectRoot = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(informationSSEE.NameFileBody, false, null);
+					if(null == gameObjectRoot)
+					{
+						LogError(messageLogPrefix, "Failure to get Temporary-GameObject", informationSSEE.FileNameGetFullPath(), informationSSPJ);
+						goto AssetCreatePrefab_ErrorEnd;
+					}
+					gameObjectRoot.name = informationSSEE.NameFileBody;	/* Give Root same name as SSEE */
+					scriptRoot = gameObjectRoot.AddComponent<Script_SpriteStudio6_RootEffect>();
+					if(null == scriptRoot)
+					{
+						LogError(messageLogPrefix, "Failure to add component\"Script_SpriteStudio6_RootEffect\"", informationSSEE.FileNameGetFullPath(), informationSSPJ);
+						goto AssetCreatePrefab_ErrorEnd;
+					}
+
+					/* Datas Set */
+					scriptRoot.DataCellMap = informationSSPJ.DataCellMapSS6PU.TableData[0];
+					scriptRoot.DataEffect = informationSSEE.DataEffectSS6PU.TableData[0];
+					scriptRoot.TableMaterial = informationSSPJ.TableMaterialEffectSS6PU;
+
+					scriptRoot.LimitParticleDraw = limitParticleLimit;
+					scriptRoot.FlagHideForce = flagHideForce;
+					scriptRoot.FlagReassignMaterialForce = flagReassignMaterialForce;
+					scriptRoot.RateTime = rateTime;
+
+					gameObjectRoot.SetActive(true);
+
+					/* Fixing Prefab */
+					informationSSEE.PrefabEffectSS6PU.TableData[0] = PrefabUtility.ReplacePrefab(	gameObjectRoot,
+																									informationSSEE.PrefabEffectSS6PU.TableData[0],
+																									LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
+																								);
+					AssetDatabase.SaveAssets();
+
+					/* Destroy Temporary */
+					UnityEngine.Object.DestroyImmediate(gameObjectRoot);
+					gameObjectRoot = null;
+
+					return(true);
+
+				AssetCreatePrefab_ErrorEnd:;
+					return(false);
+				}
+
 				public static bool ConvertData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 												LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE
@@ -1160,7 +1244,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Create Pattern-Offset & Emt-Pattern */
 					if(false == ConvertDataCalculateInAdvance(ref setting, informationSSPJ, informationSSEE))
 					{
-						LibraryEditor_SpriteStudio6.Import.SSEE.LogError(messageLogPrefix, "Failure to Generate PatternEmit Datas", informationSSEE.FileNameGetFullPath(), informationSSPJ);
+						LogError(messageLogPrefix, "Failure to Generate PatternEmit Datas", informationSSEE.FileNameGetFullPath(), informationSSPJ);
 						goto ConvertSS6PU_ErroeEnd;
 					}
 
@@ -1227,34 +1311,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(true);
 
 //				ConvertDataCalculateInAdvance_ErrorEnd:;
-//					return(false);
-				}
-
-				public static bool AssetPrecreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-															LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSEE
-														)
-				{
-					const string messageLogPrefix = "Create Asset(Prefab-Effect)";
-
-					return(true);
-
-//				AssetCreateData_ErrorEnd:;
-//					return(false);
-				}
-
-				public static bool AssetCreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-														LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSEE
-													)
-				{
-					const string messageLogPrefix = "Create Asset(Prefab-Effect)";
-
-					AssetDatabase.SaveAssets();
-
-					return(true);
-
-//				AssetCreateData_ErrorEnd:;
 //					return(false);
 				}
 				#endregion Functions

@@ -13,14 +13,14 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
+	/* MEMO: Use "delegate" because value is cleared each compiling. */
+	internal FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
+
 	public KindVersion Version;
 
 	public Library_SpriteStudio6.Data.Parts.Animation[] TableParts;
 	public Library_SpriteStudio6.Data.Animation[] TableAnimation;
 	/* MEMO: 念のため、セットアップポーズも入れておく */
-
-	/* MEMO: Can use only from Implemented-Class of Library_SpriteStudio6.Data.Animation.PackAttribute.Parameter.Container */
-	public Library_SpriteStudio6.Data.Animation.PackAttribute.Parameter ParameterPackAttribute;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
@@ -30,7 +30,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		Version = (KindVersion)(-1);
 		TableParts = null;
 		TableAnimation = null;
-		ParameterPackAttribute = null;
 	}
 
 	public int CountGetParts()
@@ -114,4 +113,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		SUPPORT_LATEST = CODE_010000
 	}
 	#endregion Enums & Constants
+
+	/* ----------------------------------------------- Deligates */
+	#region Deligates
+	internal delegate void FunctionSignatureBootUpFunction();
+	#endregion Deligates
 }

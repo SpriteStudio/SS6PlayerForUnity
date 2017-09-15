@@ -502,10 +502,15 @@ public static partial class LibraryEditor_SpriteStudio6
 						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "refAnimePack", managerNameSpace);
 						if(null != valueText)
 						{
+							/* MEMO: CAUTION! Store only the name, because index of animation referring to can not be decided here. */
+							/*       (Determined at "ModeSS6PU.ConvertData".)                                                       */
 							informationParts.NameUnderControl = valueText;
 
+							/* MEMO: Store animation names paired with references of undercontrol object("informationParts.Data.PrefabUnderControl") */
+							/*        to other variable(not "informationParts.Data.NameAnimationUnderControl").                                      */
+							/*       (Because I think that pair data should be stored in same place)                                                 */
 							valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "refAnime", managerNameSpace);
-							informationParts.Data.NameAnimationUnderControl = (null != valueText) ? string.Copy(valueText) : "";
+							informationParts.NameAnimationUnderControl = (null != valueText) ? string.Copy(valueText) : "";
 						}
 						break;
 
@@ -517,7 +522,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* MEMO: Tag present but value may be empty. */
 							if(false == string.IsNullOrEmpty(valueText))
 							{
+								/* MEMO: CAUTION! Store only the name, because index of animation referring to can not be decided here. */
+								/*       (Determined at "ModeSS6PU.ConvertData".)                                                       */
 								informationParts.NameUnderControl = string.Copy(valueText);
+								informationParts.NameAnimationUnderControl = "";
 							}
 						}
 						break;
@@ -1781,8 +1789,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					/* MEMO: UnderControl == Instance, Effect */
 					public string NameUnderControl;
-					public int IndexUnderControl;
-					public int IndexAnimationUnderControl;	/* only Instance */
+					public string NameAnimationUnderControl;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -1798,8 +1805,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						ListIndexPartsChild.Clear();
 
 						NameUnderControl = "";
-						IndexUnderControl = -1;
-						IndexAnimationUnderControl = -1;
 					}
 					#endregion Functions
 
@@ -2075,7 +2080,6 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 						}
 					}
-
 					#endregion Functions
 
 					/* ----------------------------------------------- Enums & Constants */
@@ -2473,6 +2477,211 @@ public static partial class LibraryEditor_SpriteStudio6
 //					return(false);
 				}
 
+				public static bool AssetCreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
+													)
+				{
+					const string messageLogPrefix = "Create Asset(Prefab-Animation)";
+
+					GameObject gameObjectRoot = null;
+					Script_SpriteStudio6_Root scriptRoot = null;
+					Script_SpriteStudio6_Root.InformationPlay[] informationPlayRoot = null;
+					string[] nameAnimation = null;
+					bool flagHideForce = false;
+					bool flagReassignMaterialForce = false;
+					int limitTrack = 0;
+					int indexAnimation;
+
+					/* Create? Update? */
+					if(null == informationSSAE.PrefabAnimationSS6PU.TableData[0])
+					{	/* New */
+						informationSSAE.PrefabAnimationSS6PU.TableData[0] = PrefabUtility.CreateEmptyPrefab(informationSSAE.PrefabAnimationSS6PU.TableName[0]);
+						if(null == informationSSAE.PrefabAnimationSS6PU.TableData[0])
+						{
+							LogError(messageLogPrefix, "Failure to create Prefab", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+							goto AssetCreatePrefab_ErrorEnd;
+						}
+					}
+					else
+					{	/* Exist */
+						/* MEMO: Do not instantiate old prefabs. Instantiates up to objects under control, and mixed in updated prefab. */
+						gameObjectRoot = (GameObject)informationSSAE.PrefabAnimationSS6PU.TableData[0];
+						scriptRoot = gameObjectRoot.GetComponent<Script_SpriteStudio6_Root>();
+						if(null != scriptRoot)
+						{
+							flagHideForce = scriptRoot.FlagHideForce;
+							flagReassignMaterialForce = scriptRoot.FlagReassignMaterialForce;
+							limitTrack = scriptRoot.LimitTrack;
+
+							if(null != scriptRoot.TableInformationPlay)
+							{
+								int countInformationPlay = scriptRoot.TableInformationPlay.Length;
+								if(0 < countInformationPlay)
+								{
+									informationPlayRoot = new Script_SpriteStudio6_Root.InformationPlay[countInformationPlay];
+									nameAnimation = new string[countInformationPlay];
+									if((null == informationPlayRoot) || (null == nameAnimation))
+									{
+										LogError(messageLogPrefix, "Not Enough Memory (Play-Information BackUp)", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+										goto AssetCreatePrefab_ErrorEnd;
+									}
+
+									for(int i=0; i<countInformationPlay; i++)
+									{
+										informationPlayRoot[i].FlagSetInitial = scriptRoot.TableInformationPlay[i].FlagSetInitial;
+										informationPlayRoot[i].FlagStopInitial = scriptRoot.TableInformationPlay[i].FlagStopInitial;
+
+										indexAnimation = scriptRoot.TableInformationPlay[i].IndexAnimation;
+										nameAnimation[i] = (0 <= indexAnimation) ? scriptRoot.DataAnimation.TableAnimation[indexAnimation].Name : "";
+										informationPlayRoot[i].IndexAnimation = -1;
+										informationPlayRoot[i].FlagPingPong = scriptRoot.TableInformationPlay[i].FlagPingPong;
+										informationPlayRoot[i].LabelStart = (false == string.IsNullOrEmpty(scriptRoot.TableInformationPlay[i].LabelStart)) ? string.Copy(scriptRoot.TableInformationPlay[i].LabelStart) : "";
+										informationPlayRoot[i].FrameOffsetStart = scriptRoot.TableInformationPlay[i].FrameOffsetStart;
+										informationPlayRoot[i].LabelEnd = (false == string.IsNullOrEmpty(scriptRoot.TableInformationPlay[i].LabelEnd)) ? string.Copy(scriptRoot.TableInformationPlay[i].LabelEnd) : "";
+										informationPlayRoot[i].FrameOffsetEnd = scriptRoot.TableInformationPlay[i].FrameOffsetEnd;
+										informationPlayRoot[i].Frame = scriptRoot.TableInformationPlay[i].Frame;
+										informationPlayRoot[i].TimesPlay = scriptRoot.TableInformationPlay[i].TimesPlay;
+										informationPlayRoot[i].RateTime = scriptRoot.TableInformationPlay[i].RateTime;
+									}
+								}
+							}
+						}
+
+						gameObjectRoot = null;
+						scriptRoot = null;
+					}
+					if(null == informationPlayRoot)
+					{
+						informationPlayRoot = new Script_SpriteStudio6_Root.InformationPlay[1];
+						nameAnimation = new string[1];
+						if(null == informationPlayRoot)
+						{
+							LogError(messageLogPrefix, "Not Enough Memory (Play-Information BackUp)", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+							goto AssetCreatePrefab_ErrorEnd;
+						}
+
+						nameAnimation[0] = "";
+						informationPlayRoot[0].CleanUp();
+						informationPlayRoot[0].FlagSetInitial = true;
+					}
+
+					/* Create new GameObject (Root) */
+					gameObjectRoot = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(informationSSAE.NameFileBody, false, null);
+					if(null == gameObjectRoot)
+					{
+						LogError(messageLogPrefix, "Failure to get Temporary-GameObject", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+						goto AssetCreatePrefab_ErrorEnd;
+					}
+					gameObjectRoot.name = informationSSAE.NameFileBody;	/* Give Root same name as SSAE */
+					scriptRoot = gameObjectRoot.AddComponent<Script_SpriteStudio6_Root>();
+					if(null == scriptRoot)
+					{
+						LogError(messageLogPrefix, "Failure to add component\"Script_SpriteStudio6_Root\"", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+						goto AssetCreatePrefab_ErrorEnd;
+					}
+
+					/* Make GameObject & Parts controllers */
+					/* MEMO: Should be stored keeping permutation of parent and child. */
+					int countParts = informationSSAE.TableParts.Length;
+					Library_SpriteStudio6.Control.Animation.Parts[] tableControlParts = new Library_SpriteStudio6.Control.Animation.Parts[countParts];
+					tableControlParts[0].InstanceGameObject = gameObjectRoot;
+
+					GameObject gameObjectParent = null;
+					int indexPartsParent;
+					for(int i=1; i<countParts; i++)
+					{
+						indexPartsParent = informationSSAE.TableParts[i].Data.IDParent;
+						gameObjectParent = (0 <= indexPartsParent) ? tableControlParts[indexPartsParent].InstanceGameObject : null;
+						tableControlParts[i].InstanceGameObject = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(informationSSAE.TableParts[i].Data.Name, true, gameObjectParent);
+						tableControlParts[i].InstanceGameObject.name = informationSSAE.TableParts[i].Data.Name;
+					}
+
+					/* Datas Set */
+					scriptRoot.DataCellMap = informationSSPJ.DataCellMapSS6PU.TableData[0];
+					scriptRoot.DataAnimation = informationSSAE.DataAnimationSS6PU.TableData[0];
+					scriptRoot.TableMaterial = informationSSPJ.TableMaterialAnimationSS6PU;
+					scriptRoot.LimitTrack = limitTrack;
+					scriptRoot.TableControlParts = tableControlParts;
+					tableControlParts = null;
+
+					scriptRoot.FlagHideForce = flagHideForce;
+					scriptRoot.FlagReassignMaterialForce = flagReassignMaterialForce;
+
+					int countLimitTrack = scriptRoot.LimitGetTrack();
+					scriptRoot.TableInformationPlay = new Script_SpriteStudio6_Root.InformationPlay[countLimitTrack];
+					if(null == scriptRoot.TableInformationPlay)
+					{
+						LogError(messageLogPrefix, "Not Enough Memory (Play-Information)", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+						goto AssetCreatePrefab_ErrorEnd;
+					}
+					for(int i=0; i<countLimitTrack; i++)
+					{
+						scriptRoot.TableInformationPlay[i].CleanUp();
+					}
+					countLimitTrack = (countLimitTrack > informationPlayRoot.Length) ? informationPlayRoot.Length : countLimitTrack;
+					bool flagClearAnimation;
+					for(int i=0; i<countLimitTrack; i++)
+					{
+						scriptRoot.TableInformationPlay[i].FlagSetInitial = informationPlayRoot[i].FlagSetInitial;
+						scriptRoot.TableInformationPlay[i].FlagStopInitial = informationPlayRoot[i].FlagStopInitial;
+
+						flagClearAnimation = false;
+						if(false == string.IsNullOrEmpty(nameAnimation[i]))
+						{
+							informationPlayRoot[i].IndexAnimation = scriptRoot.DataAnimation.IndexGetAnimation(nameAnimation[i]);
+							if(0 > informationPlayRoot[i].IndexAnimation)
+							{
+								flagClearAnimation = true;
+							}
+						}
+						else
+						{
+							flagClearAnimation = true;
+						}
+						if(true == flagClearAnimation)
+						{
+							informationPlayRoot[i].IndexAnimation = -1;
+							informationPlayRoot[i].LabelStart = "";
+							informationPlayRoot[i].FrameOffsetStart = 0;
+							informationPlayRoot[i].LabelEnd = "";
+							informationPlayRoot[i].FrameOffsetEnd = 0;
+						}
+
+						scriptRoot.TableInformationPlay[i].IndexAnimation = informationPlayRoot[i].IndexAnimation;
+						scriptRoot.TableInformationPlay[i].FlagPingPong = informationPlayRoot[i].FlagPingPong;
+						scriptRoot.TableInformationPlay[i].LabelStart = (false == string.IsNullOrEmpty(informationPlayRoot[i].LabelStart)) ? informationPlayRoot[i].LabelStart : "";
+						scriptRoot.TableInformationPlay[i].FrameOffsetStart = informationPlayRoot[i].FrameOffsetStart;
+						scriptRoot.TableInformationPlay[i].LabelEnd = (false == string.IsNullOrEmpty(informationPlayRoot[i].LabelEnd)) ? informationPlayRoot[i].LabelEnd : "";
+						scriptRoot.TableInformationPlay[i].FrameOffsetEnd = informationPlayRoot[i].FrameOffsetEnd;
+						scriptRoot.TableInformationPlay[i].Frame = informationPlayRoot[i].Frame;
+						scriptRoot.TableInformationPlay[i].TimesPlay = informationPlayRoot[i].TimesPlay;
+						scriptRoot.TableInformationPlay[i].RateTime = informationPlayRoot[i].RateTime;
+					}
+
+					gameObjectRoot.SetActive(true);
+
+					/* Fixing Prefab */
+					informationSSAE.PrefabAnimationSS6PU.TableData[0] = PrefabUtility.ReplacePrefab(	gameObjectRoot,
+																										informationSSAE.PrefabAnimationSS6PU.TableData[0],
+																										LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
+																									);
+					AssetDatabase.SaveAssets();
+
+					/* Destroy Temporary */
+					UnityEngine.Object.DestroyImmediate(gameObjectRoot);
+					gameObjectRoot = null;
+
+					return(true);
+
+				AssetCreatePrefab_ErrorEnd:;
+					if(null != gameObjectRoot)
+					{
+						UnityEngine.Object.DestroyImmediate(gameObjectRoot);
+					}
+					return(false);
+				}
+
 				public static bool ConvertFixMesh(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 													LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
@@ -2495,23 +2704,58 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countParts = informationSSAE.TableParts.Length;
 					int countAnimation = informationSSAE.TableAnimation.Length;
 
+					/* Convert Parts (Pick up underControl Objects) */
+					/* MEMO: Since order of SSAE conversion is determined in "informationSSPJ.QueueGetConvertSSAE", */
+					/*        prefabs referred to in this animation has already been fixed.                         */
+					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Parts informationParts = null;
+					for(int i=0; i<countParts; i++)
+					{
+						int indexUnderControl;
+						informationParts = informationSSAE.TableParts[i];
+						switch(informationParts.Data.Feature)
+						{
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+								informationParts.Data.PrefabUnderControl = null;
+								informationParts.Data.NameAnimationUnderControl = "";
+								if(false == string.IsNullOrEmpty(informationParts.NameUnderControl))
+								{
+									indexUnderControl = informationSSPJ.IndexGetAnimation(informationParts.NameUnderControl);
+									if(0 <= indexUnderControl)
+									{
+										informationParts.Data.PrefabUnderControl = informationSSPJ.TableInformationSSAE[indexUnderControl].PrefabAnimationSS6PU.TableData[0];
+										informationParts.Data.NameAnimationUnderControl = informationParts.NameAnimationUnderControl;
+									}
+								}
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+								informationParts.Data.PrefabUnderControl = null;
+								informationParts.Data.NameAnimationUnderControl = "";
+								if(false == string.IsNullOrEmpty(informationParts.NameUnderControl))
+								{
+									indexUnderControl = informationSSPJ.IndexGetEffect(informationParts.NameUnderControl);
+									if(0 <= indexUnderControl)
+									{
+										informationParts.Data.PrefabUnderControl = informationSSPJ.TableInformationSSEE[indexUnderControl].PrefabEffectSS6PU.TableData[0];
+									}
+								}
+								break;
+
+							default:
+								break;
+						}
+					}
+
 					/* Convert Animations */
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation informationAnimation = null;
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation.Parts informationAnimationParts = null;
 					Library_SpriteStudio6.Data.Animation dataAnimation = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerBool packArgumentBool = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerInt packArgumentInt = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerFloat packArgumentFloat = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerCell packArgumentCell = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerColorBlend packArgumentColorBlend = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerVertexCorrection packArgumentVertexCorrection = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerUserData packArgumentUserData = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerInstance packArgumentInstance = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerEffect packArgumentEffect = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerCoordinateFix packArgumentCoordinateFix = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerColorBlendFix packArgumentColorBlendFix = null;
-					Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerUVFix packArgumentUVFix = null;
-					Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer;
 					int countFrame;
 					for(int i=0; i<countAnimation; i++)
 					{
@@ -2527,220 +2771,241 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						for(int j=0; j<countParts; j++)
 						{
-							argumentContainer.InstanceDataAnimation = null;	/* Unuse */
-							argumentContainer.IndexAnimation = i;
-							argumentContainer.IndexParts = j;
-							argumentContainer.Frame = -1;	/* Unuse */
-							argumentContainer.FrameKeyPrevious = -1;	/* Unuse */
-
 							informationAnimationParts = informationAnimation.TableParts[j];
 							dataAnimation.TableParts[j].StatusParts = informationAnimationParts.StatusParts;
 							dataAnimation.TableParts[j].Format = informationSSAE.FormatSS6PU;
 
-							PackAttribute.FactoryStatus(ref dataAnimation.TableParts[j].Status, ref packArgumentBool, setting.PackAttributeAnimation.Status);
-							if(false == packArgumentBool.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeStatus,
-																informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																informationAnimationParts.Hide,
-																informationAnimationParts.FlipX,
-																informationAnimationParts.FlipY,
-																informationAnimationParts.TextureFlipX,
-																informationAnimationParts.TextureFlipY
-															)
+							dataAnimation.TableParts[j].Status = PackAttribute.FactoryStatus(setting.PackAttributeAnimation.Status);
+							if(false == dataAnimation.TableParts[j].Status.Function.Pack(	dataAnimation.TableParts[j].Status,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeStatus, countFrame,
+																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.Hide,
+																							informationAnimationParts.FlipX,
+																							informationAnimationParts.FlipY,
+																							informationAnimationParts.TextureFlipX,
+																							informationAnimationParts.TextureFlipY
+																					)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"Status\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
 
-							PackAttribute.FactoryVector3(ref dataAnimation.TableParts[j].Position, ref packArgumentFloat, setting.PackAttributeAnimation.Position);
-							if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePosition,
-																informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																informationAnimationParts.PositionX,
-																informationAnimationParts.PositionY,
-																informationAnimationParts.PositionZ
-															)
+							dataAnimation.TableParts[j].Position = PackAttribute.FactoryVector3(setting.PackAttributeAnimation.Position);
+							if(false == dataAnimation.TableParts[j].Position.Function.Pack(	dataAnimation.TableParts[j].Position,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePosition, countFrame,
+																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.PositionX,
+																							informationAnimationParts.PositionY,
+																							informationAnimationParts.PositionZ
+																						)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"Position\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
-							PackAttribute.FactoryVector3(ref dataAnimation.TableParts[j].Rotation, ref packArgumentFloat, setting.PackAttributeAnimation.Rotation);
-							if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRotation,
-																informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																informationAnimationParts.RotationX,
-																informationAnimationParts.RotationY,
-																informationAnimationParts.RotationZ
-															)
+							dataAnimation.TableParts[j].Rotation = PackAttribute.FactoryVector3(setting.PackAttributeAnimation.Rotation);
+							if(false == dataAnimation.TableParts[j].Rotation.Function.Pack(	dataAnimation.TableParts[j].Rotation,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRotation, countFrame,
+																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.RotationX,
+																							informationAnimationParts.RotationY,
+																							informationAnimationParts.RotationZ
+																						)
 								)
 							{
 								goto ConvertData_ErrorEnd;
 							}
-							PackAttribute.FactoryVector2(ref dataAnimation.TableParts[j].Scaling, ref packArgumentFloat, setting.PackAttributeAnimation.Scaling);
-							if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScaling,
-																informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																informationAnimationParts.ScalingX,
-																informationAnimationParts.ScalingY
-															)
+							dataAnimation.TableParts[j].Scaling = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.Scaling);
+							if(false == dataAnimation.TableParts[j].Scaling.Function.Pack(	dataAnimation.TableParts[j].Scaling,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScaling, countFrame,
+																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.ScalingX,
+																							informationAnimationParts.ScalingY
+																						)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"Rotation\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
 
-
-							PackAttribute.FactoryFloat(ref dataAnimation.TableParts[j].RateOpacity, ref packArgumentFloat, setting.PackAttributeAnimation.RateOpacity);
-							if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity,
-																informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																informationAnimationParts.RateOpacity
-															)
+							dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
+							if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
+																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity, countFrame,
+																								informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.RateOpacity
+																							)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"Scaling\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
 
-							PackAttribute.FactoryVector2(ref dataAnimation.TableParts[j].PositionAnchor, ref packArgumentFloat, setting.PackAttributeAnimation.PositionAnchor);
-							if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePositionAnchor,
-																informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																informationAnimationParts.AnchorPositionX,
-																informationAnimationParts.AnchorPositionY
-															)
+							dataAnimation.TableParts[j].PositionAnchor = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PositionAnchor);
+							if(false == dataAnimation.TableParts[j].PositionAnchor.Function.Pack(	dataAnimation.TableParts[j].PositionAnchor,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePositionAnchor, countFrame,
+																									informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.AnchorPositionX,
+																									informationAnimationParts.AnchorPositionY
+																								)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"PositionAnchor\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
-							PackAttribute.FactoryVector2(ref dataAnimation.TableParts[j].SizeForce, ref packArgumentFloat, setting.PackAttributeAnimation.SizeForce);
-							if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeSizeForce,
-																informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																informationAnimationParts.SizeForceX,
-																informationAnimationParts.SizeForceY
-															)
+							dataAnimation.TableParts[j].SizeForce = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.SizeForce);
+							if(false == dataAnimation.TableParts[j].SizeForce.Function.Pack(	dataAnimation.TableParts[j].SizeForce,
+																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeSizeForce, countFrame,
+																								informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.SizeForceX,
+																								informationAnimationParts.SizeForceY
+																							)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"SizeForce\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
 
-							PackAttribute.FactoryUserData(ref dataAnimation.TableParts[j].UserData, ref packArgumentUserData, setting.PackAttributeAnimation.UserData);
-							if(false == packArgumentUserData.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeUserData,
-																	informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																	informationAnimationParts.UserData
-															)
+							dataAnimation.TableParts[j].UserData = PackAttribute.FactoryUserData(setting.PackAttributeAnimation.UserData);
+							if(false == dataAnimation.TableParts[j].UserData.Function.Pack(	dataAnimation.TableParts[j].UserData,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeUserData, countFrame,
+																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.UserData
+																						)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"UserData\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
-							PackAttribute.FactoryInstance(ref dataAnimation.TableParts[j].Instance, ref packArgumentInstance, setting.PackAttributeAnimation.Instance);
-							if(false == packArgumentInstance.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeInstance,
-																	informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																	informationAnimationParts.Instance
-															)
+							dataAnimation.TableParts[j].Instance = PackAttribute.FactoryInstance(setting.PackAttributeAnimation.Instance);
+							if(false == dataAnimation.TableParts[j].Instance.Function.Pack(	dataAnimation.TableParts[j].Instance,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeInstance, countFrame,
+																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.Instance
+																						)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"Instance\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
-							PackAttribute.FactoryEffect(ref dataAnimation.TableParts[j].Effect, ref packArgumentEffect, setting.PackAttributeAnimation.Effect);
-							if(false == packArgumentEffect.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeEffect,
-																	informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																	informationAnimationParts.Effect
-															)
+							dataAnimation.TableParts[j].Effect = PackAttribute.FactoryEffect(setting.PackAttributeAnimation.Effect);
+							if(false == dataAnimation.TableParts[j].Effect.Function.Pack(	dataAnimation.TableParts[j].Effect,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeEffect, countFrame,
+																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.Effect
+																					)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"Effect\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
 
-							PackAttribute.FactoryFloat(ref dataAnimation.TableParts[j].RadiusCollision, ref packArgumentFloat, setting.PackAttributeAnimation.RadiusCollision);
-							if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRadiusCollision,
-																informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																informationAnimationParts.RadiusCollision
-															)
+							dataAnimation.TableParts[j].RadiusCollision = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RadiusCollision);
+							if(false == dataAnimation.TableParts[j].RadiusCollision.Function.Pack(	dataAnimation.TableParts[j].RadiusCollision,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRadiusCollision, countFrame,
+																									informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.RadiusCollision
+																								)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"RadiusCollision\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
 
+							/* MEMO: Just create, even if do not use.                            */
+							/*       (Because pack format at instantiate becomes inappropriate.) */
+							dataAnimation.TableParts[j].Plain.Cell = PackAttribute.FactoryCell(setting.PackAttributeAnimation.PlainCell);
+							dataAnimation.TableParts[j].Plain.ColorBlend = PackAttribute.FactoryColorBlend(setting.PackAttributeAnimation.PlainColorBlend);
+							dataAnimation.TableParts[j].Plain.VertexCorrection = PackAttribute.FactoryVertexCorrection(setting.PackAttributeAnimation.PlainVertexCorrection);
+							dataAnimation.TableParts[j].Plain.OffsetPivot = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainOffsetPivot);
+							dataAnimation.TableParts[j].Plain.PositionTexture = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainPositionTexture);
+							dataAnimation.TableParts[j].Plain.ScalingTexture = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainScalingTexture);
+							dataAnimation.TableParts[j].Plain.RotationTexture = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.PlainRotationTexture);
+
+							dataAnimation.TableParts[j].Fix.IndexCellMap = PackAttribute.FactoryInt(setting.PackAttributeAnimation.FixIndexCellMap);
+							dataAnimation.TableParts[j].Fix.Coordinate = PackAttribute.FactoryCoordinateFix(setting.PackAttributeAnimation.FixCoordinate);
+							dataAnimation.TableParts[j].Fix.ColorBlend = PackAttribute.FactoryColorBlendFix(setting.PackAttributeAnimation.FixColorBlend);
+							dataAnimation.TableParts[j].Fix.UV0 = PackAttribute.FactoryUVFix(setting.PackAttributeAnimation.FixUV0);
+							dataAnimation.TableParts[j].Fix.SizeCollision = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.FixSizeCollision);
+							dataAnimation.TableParts[j].Fix.PivotCollision = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.FixPivotCollision);
+
 							switch(informationSSAE.FormatSS6PU)
 							{
 								case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
-									PackAttribute.FactoryCell(ref dataAnimation.TableParts[j].Plain.Cell, ref packArgumentCell, setting.PackAttributeAnimation.PlainCell);
-									if(false == packArgumentCell.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainCell,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.Cell
-																	)
+									if(false ==  dataAnimation.TableParts[j].Plain.Cell.Function.Pack(	dataAnimation.TableParts[j].Plain.Cell,
+																										Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainCell, countFrame,
+																										informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																										informationAnimationParts.Cell
+																									)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.Cell\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryColorBlend(ref dataAnimation.TableParts[j].Plain.ColorBlend, ref packArgumentColorBlend, setting.PackAttributeAnimation.PlainColorBlend);
-									if(false == packArgumentColorBlend.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainColorBlend,
-																				informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																				informationAnimationParts.ColorBlend
-																		)
+									if(false == dataAnimation.TableParts[j].Plain.ColorBlend.Function.Pack(	dataAnimation.TableParts[j].Plain.ColorBlend,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainColorBlend, countFrame,
+																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.ColorBlend
+																										)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.ColorBlend\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryVertexCorrection(ref dataAnimation.TableParts[j].Plain.VertexCorrection, ref packArgumentVertexCorrection, setting.PackAttributeAnimation.PlainVertexCorrection);
-									if(false == packArgumentVertexCorrection.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainVertexCorrection,
-																					informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																					informationAnimationParts.VertexCorrection
-																				)
+									if(false == dataAnimation.TableParts[j].Plain.VertexCorrection.Function.Pack(	dataAnimation.TableParts[j].Plain.VertexCorrection,
+																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainVertexCorrection, countFrame,
+																													informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																													informationAnimationParts.VertexCorrection
+																											)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.VertexCorrection\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryVector2(ref dataAnimation.TableParts[j].Plain.OffsetPivot, ref packArgumentFloat, setting.PackAttributeAnimation.PlainOffsetPivot);
-									if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainOffsetPivot,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.PivotOffsetX,
-																		informationAnimationParts.PivotOffsetY
-																	)
+									if(false == dataAnimation.TableParts[j].Plain.OffsetPivot.Function.Pack(	dataAnimation.TableParts[j].Plain.OffsetPivot,
+																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainOffsetPivot, countFrame,
+																												informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																												informationAnimationParts.PivotOffsetX,
+																												informationAnimationParts.PivotOffsetY
+																										)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.OffsetPivot\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryVector2(ref dataAnimation.TableParts[j].Plain.PositionTexture, ref packArgumentFloat, setting.PackAttributeAnimation.PlainPositionTexture);
-									if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPositionTexture,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.TexturePositionX,
-																		informationAnimationParts.TexturePositionY
-																	)
+									if(false == dataAnimation.TableParts[j].Plain.PositionTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.PositionTexture,
+																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPositionTexture, countFrame,
+																													informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																													informationAnimationParts.TexturePositionX,
+																													informationAnimationParts.TexturePositionY
+																											)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.PositionTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryVector2(ref dataAnimation.TableParts[j].Plain.ScalingTexture, ref packArgumentFloat, setting.PackAttributeAnimation.PlainScalingTexture);
-									if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingTexture,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.TextureScalingX,
-																		informationAnimationParts.TextureScalingY
-																	)
+									if(false == dataAnimation.TableParts[j].Plain.ScalingTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.ScalingTexture,
+																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingTexture, countFrame,
+																												informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																												informationAnimationParts.TextureScalingX,
+																												informationAnimationParts.TextureScalingY
+																											)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.ScalingTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryFloat(ref dataAnimation.TableParts[j].Plain.RotationTexture, ref packArgumentFloat, setting.PackAttributeAnimation.PlainRotationTexture);
-									if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainRotationTexture,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.TextureRotation
-																	)
+									if(false == dataAnimation.TableParts[j].Plain.RotationTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.RotationTexture,
+																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainRotationTexture, countFrame,
+																													informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																													informationAnimationParts.TextureRotation
+																											)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.RotationTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
@@ -2749,74 +3014,73 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
-									PackAttribute.FactoryInt(ref dataAnimation.TableParts[j].Fix.IndexCellMap, ref packArgumentInt, setting.PackAttributeAnimation.FixIndexCellMap);
-									if(false == packArgumentInt.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixIndexCellMap,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.FixIndexCellMap
-																	)
+									if(false == dataAnimation.TableParts[j].Fix.IndexCellMap.Function.Pack(	dataAnimation.TableParts[j].Fix.IndexCellMap,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixIndexCellMap, countFrame,
+																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.FixIndexCellMap
+																										)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.Coordinate\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryCoordinateFix(ref dataAnimation.TableParts[j].Fix.Coordinate, ref packArgumentCoordinateFix, setting.PackAttributeAnimation.FixCoordinate);
-									if(false == packArgumentCoordinateFix.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixCoordinate,
-																				informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																				informationAnimationParts.FixCoordinate
-																			)
+									if(false == dataAnimation.TableParts[j].Fix.Coordinate.Function.Pack(	dataAnimation.TableParts[j].Fix.Coordinate,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixCoordinate, countFrame,
+																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.FixCoordinate
+																									)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.Coordinate\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryColorBlendFix(ref dataAnimation.TableParts[j].Fix.ColorBlend, ref packArgumentColorBlendFix, setting.PackAttributeAnimation.FixColorBlend);
-									if(false == packArgumentColorBlendFix.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixColorBlend,
-																				informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																				informationAnimationParts.FixColorBlend
-																			)
+									if(false == dataAnimation.TableParts[j].Fix.ColorBlend.Function.Pack(	dataAnimation.TableParts[j].Fix.ColorBlend,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixColorBlend, countFrame,
+																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.FixColorBlend
+																									)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.ColorBlend\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryUVFix(ref dataAnimation.TableParts[j].Fix.UV0, ref packArgumentUVFix, setting.PackAttributeAnimation.FixUV0);
-									if(false == packArgumentUVFix.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixUV0,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.FixUV
-																	)
+									if(false == dataAnimation.TableParts[j].Fix.UV0.Function.Pack(	dataAnimation.TableParts[j].Fix.UV0,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixUV0, countFrame,
+																									informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.FixUV
+																								)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.UV0\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryVector2(ref dataAnimation.TableParts[j].Fix.SizeCollision, ref packArgumentFloat, setting.PackAttributeAnimation.FixSizeCollision);
-									if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixSizeCollision,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.FixSizeCollisionX,
-																		informationAnimationParts.FixSizeCollisionY
-																	)
+									if(false == dataAnimation.TableParts[j].Fix.SizeCollision.Function.Pack(	dataAnimation.TableParts[j].Fix.SizeCollision,
+																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixSizeCollision, countFrame,
+																												informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																												informationAnimationParts.FixSizeCollisionX,
+																												informationAnimationParts.FixSizeCollisionY
+																										)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.SizeCollision\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
-									PackAttribute.FactoryVector2(ref dataAnimation.TableParts[j].Fix.PivotCollision, ref packArgumentFloat, setting.PackAttributeAnimation.FixPivotCollision);
-									if(false == packArgumentFloat.Pack(	ref argumentContainer, countFrame, Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPivotCollision,
-																		informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																		informationAnimationParts.FixPivotCollisionX,
-																		informationAnimationParts.FixPivotCollisionY
-																	)
+									if(false == dataAnimation.TableParts[j].Fix.PivotCollision.Function.Pack(	dataAnimation.TableParts[j].Fix.PivotCollision,
+																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPivotCollision, countFrame,
+																												informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																												informationAnimationParts.FixPivotCollisionX,
+																												informationAnimationParts.FixPivotCollisionY
+																										)
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.PivotCollision\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
-
 									break;
 
 								default:
@@ -2831,34 +3095,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				ConvertData_ErrorEnd:;
 					return(false);
 				}
-
-				public static bool AssetPrecreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-															LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
-														)
-				{
-					const string messageLogPrefix = "Create Asset(Prefab-Animation)";
-
-					return(true);
-
-//				AssetCreateData_ErrorEnd:;
-//					return(false);
-				}
-
-				public static bool AssetCreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-														LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
-													)
-				{
-					const string messageLogPrefix = "Create Asset(Prefab-Animation)";
-
-					AssetDatabase.SaveAssets();
-
-					return(true);
-
-//				AssetCreateData_ErrorEnd:;
-//					return(false);
-				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -2867,490 +3103,116 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					/* ----------------------------------------------- Functions */
 					#region Functions
-					public static bool FactoryInt(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
-													ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerInt containerImport,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-												)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt FactoryInt(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeInt attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeInt();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeInt attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeInt();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(container);
+						return(container);
 					}
 
-					public static bool FactoryFloat(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
-														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerFloat containerImport,
-														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-													)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat FactoryFloat(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeFloat attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeFloat();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeFloat attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeFloat();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(container);
+						return(container);
 					}
 
-					public static bool FactoryVector2(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
-														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerFloat containerImport,
-														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-												)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 FactoryVector2(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector2 attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector2();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVector2 attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVector2();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(container);
+						return(container);
 					}
 
-					public static bool FactoryVector3(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
-														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerFloat containerImport,
-														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-												)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 FactoryVector3(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector3 attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVector3();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVector3 attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVector3();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(container);
+						return(container);
 					}
 
-					public static bool FactoryStatus(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container,
-														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerBool containerImport,
-														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-												)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus FactoryStatus(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeStatus attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeStatus();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeStatus attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeStatus();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionStatus(container);
+						return(container);
 					}
 
-					public static bool FactoryCell(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container,
-													ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerCell containerImport,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-												)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell FactoryCell(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCell attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCell();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeCell attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeCell();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(container);
+						return(container);
 					}
 
-					public static bool FactoryColorBlend(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container,
-															ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerColorBlend containerImport,
-															Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-														)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend FactoryColorBlend(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlend attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlend();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeColorBlend attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeColorBlend();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlend(container);
+						return(container);
 					}
 
-					public static bool FactoryVertexCorrection(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
-																ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerVertexCorrection containerImport,
-																Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-															)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection FactoryVertexCorrection(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVertexCorrection attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeVertexCorrection();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVertexCorrection attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeVertexCorrection();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(container);
+						return(container);
 					}
 
-					public static bool FactoryUserData(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData container,
-														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerUserData containerImport,
-														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-													)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData FactoryUserData(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								/* Not Support */
-								return(false);
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeUserData attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeUserData();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUserData(container);
+						return(container);
 					}
 
-					public static bool FactoryInstance(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance container,
-														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerInstance containerImport,
-														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-													)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance FactoryInstance(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								/* Not Support */
-								return(false);
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeInstance attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeInstance();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInstance(container);
+						return(container);
 					}
 
-					public static bool FactoryEffect(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect container,
-														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerEffect containerImport,
-														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-													)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect FactoryEffect(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								/* Not Support */
-								return(false);
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeEffect attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeEffect();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionEffect(container);
+						return(container);
 					}
 
-					public static bool FactoryCoordinateFix(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container,
-																ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerCoordinateFix containerImport,
-																Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-															)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix FactoryCoordinateFix(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCoordinateFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeCoordinateFix();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeCoordinateFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeCoordinateFix();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(container);
+						return(container);
 					}
 
-					public static bool FactoryColorBlendFix(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container,
-																ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerColorBlendFix containerImport,
-																Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-															)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix FactoryColorBlendFix(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlendFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeColorBlendFix();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeColorBlendFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeColorBlendFix();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlendFix(container);
+						return(container);
 					}
 
-					public static bool FactoryUVFix(	ref Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container,
-														ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.PackAttribute.ContainerUVFix containerImport,
-														Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack
-													)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix FactoryUVFix(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						switch(pack)
-						{
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_UNCOMPRESSED:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeUVFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.PackAttributeUVFix();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE:
-								{
-									Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeUVFix attribute = new Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.PackAttributeUVFix();
-									attribute.CleanUp();
-
-									container = attribute;
-									containerImport = attribute;
-								}
-								break;
-
-							case Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT:
-								break;
-
-							default:
-								return(false);
-						}
-						return(true);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix();
+						container.TypePack = pack;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUVFix(container);
+						return(container);
 					}
 					#endregion Functions
 				}

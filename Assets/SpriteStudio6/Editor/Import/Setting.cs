@@ -1767,60 +1767,60 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack Status;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack Position;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack Rotation;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack Scaling;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack RateOpacity;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PositionAnchor;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack SizeForce;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack UserData;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack Instance;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack Effect;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack RadiusCollision;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Status;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Position;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Rotation;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Scaling;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PositionAnchor;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack SizeForce;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack UserData;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Instance;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Effect;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack RadiusCollision;
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PlainCell;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PlainColorBlend;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PlainVertexCorrection;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PlainOffsetPivot;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PlainPositionTexture;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PlainScalingTexture;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PlainRotationTexture;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainCell;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainColorBlend;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainVertexCorrection;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainOffsetPivot;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainPositionTexture;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainScalingTexture;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainRotationTexture;
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack FixIndexCellMap;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack FixCoordinate;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack FixColorBlend;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack FixUV0;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack FixSizeCollision;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack FixPivotCollision;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack FixIndexCellMap;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack FixCoordinate;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack FixColorBlend;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack FixUV0;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack FixSizeCollision;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack FixPivotCollision;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public GroupPackAttributeAnimation(	Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack status,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack position,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack rotation,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack scaling,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack rateOpacity,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack positionAnchor,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack sizeForce,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack userData,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack instance,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack effect,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack radiusCollision,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack plainCell,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack plainColorBlend,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack plainVertexCorrection,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack plainOffsetPivot,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack plainPositionTexture,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack plainScalingTexture,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack plainRotationTexture,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack fixIndexCellMap,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack fixCoordinate,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack fixColorBlend,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack fixUV0,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack fixSizeCollision,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack fixPivotCollision
+				public GroupPackAttributeAnimation(	Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack status,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack position,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack rotation,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack scaling,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack rateOpacity,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack positionAnchor,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack sizeForce,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack userData,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack instance,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack effect,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack radiusCollision,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainCell,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainColorBlend,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainVertexCorrection,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainOffsetPivot,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainPositionTexture,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainScalingTexture,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainRotationTexture,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack fixIndexCellMap,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack fixCoordinate,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack fixColorBlend,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack fixUV0,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack fixSizeCollision,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack fixPivotCollision
 												)
 				{
 					Status = status;
@@ -1858,32 +1858,32 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Load()
 				{
-					Status = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyStatus, (int)Default.Status));
-					Position = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPosition, (int)Default.Position));
-					Rotation = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyRotation, (int)Default.Rotation));
-					Scaling = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyScaling, (int)Default.Scaling));
-					RateOpacity = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyRateOpacity, (int)Default.RateOpacity));
-					PositionAnchor = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPositionAnchor, (int)Default.PositionAnchor));
-					SizeForce = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeySizeForce, (int)Default.SizeForce));
-					UserData = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyUserData, (int)Default.UserData));
-					Instance = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyInstance, (int)Default.Instance));
-					Effect = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyEffect, (int)Default.Effect));
-					RadiusCollision = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyRadiusCollision, (int)Default.RadiusCollision));
+					Status = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyStatus, (int)Default.Status));
+					Position = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPosition, (int)Default.Position));
+					Rotation = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyRotation, (int)Default.Rotation));
+					Scaling = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyScaling, (int)Default.Scaling));
+					RateOpacity = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyRateOpacity, (int)Default.RateOpacity));
+					PositionAnchor = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPositionAnchor, (int)Default.PositionAnchor));
+					SizeForce = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeySizeForce, (int)Default.SizeForce));
+					UserData = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyUserData, (int)Default.UserData));
+					Instance = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyInstance, (int)Default.Instance));
+					Effect = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyEffect, (int)Default.Effect));
+					RadiusCollision = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyRadiusCollision, (int)Default.RadiusCollision));
 
-					PlainCell = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPlainCell, (int)Default.PlainCell));
-					PlainColorBlend = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPlainColorBlend, (int)Default.PlainColorBlend));
-					PlainVertexCorrection = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPlainVertexCorrection, (int)Default.PlainVertexCorrection));
-					PlainOffsetPivot = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPlainOffsetPivot, (int)Default.PlainOffsetPivot));
-					PlainPositionTexture = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPlainPositionTexture, (int)Default.PlainPositionTexture));
-					PlainScalingTexture = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPlainScalingTexture, (int)Default.PlainScalingTexture));
-					PlainRotationTexture = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyPlainRotationTexture, (int)Default.PlainRotationTexture));
+					PlainCell = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainCell, (int)Default.PlainCell));
+					PlainColorBlend = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainColorBlend, (int)Default.PlainColorBlend));
+					PlainVertexCorrection = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainVertexCorrection, (int)Default.PlainVertexCorrection));
+					PlainOffsetPivot = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainOffsetPivot, (int)Default.PlainOffsetPivot));
+					PlainPositionTexture = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainPositionTexture, (int)Default.PlainPositionTexture));
+					PlainScalingTexture = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainScalingTexture, (int)Default.PlainScalingTexture));
+					PlainRotationTexture = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainRotationTexture, (int)Default.PlainRotationTexture));
 
-					FixIndexCellMap = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyFixIndexCellMap, (int)Default.FixIndexCellMap));
-					FixCoordinate = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyFixCoordinate, (int)Default.FixCoordinate));
-					FixColorBlend = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyFixColorBlend, (int)Default.FixColorBlend));
-					FixUV0 = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyFixUV0, (int)Default.FixUV0));
-					FixSizeCollision = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyFixSizeCollision, (int)Default.FixSizeCollision));
-					FixPivotCollision = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(EditorPrefs.GetInt(PrefsKeyFixPivotCollision, (int)Default.FixPivotCollision));
+					FixIndexCellMap = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyFixIndexCellMap, (int)Default.FixIndexCellMap));
+					FixCoordinate = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyFixCoordinate, (int)Default.FixCoordinate));
+					FixColorBlend = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyFixColorBlend, (int)Default.FixColorBlend));
+					FixUV0 = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyFixUV0, (int)Default.FixUV0));
+					FixSizeCollision = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyFixSizeCollision, (int)Default.FixSizeCollision));
+					FixPivotCollision = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyFixPivotCollision, (int)Default.FixPivotCollision));
 
 					return(true);
 				}
@@ -2108,14 +2108,14 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public void Adjust()
 				{
-					int countPack = (int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.TERMINATOR;
+					int countPack = (int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.TERMINATOR;
 					Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer[] capacityPack = new Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer[countPack];
 					for(int i=0; i<countPack; i++)
 					{
-						capacityPack[i] = Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityGet((Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)i);
+						capacityPack[i] = Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityGet((Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)i);
 					}
 
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack PackError = Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE;	/* all Attributes Support */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PackError = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE;	/* all Attributes Support */
 					if(false == capacityPack[(int)Status].Status)
 					{
 						Status = PackError;
@@ -2216,23 +2216,23 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				private static void BootUpNamePack()
 				{
-					int countPack = (int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.TERMINATOR;
+					int countPack = (int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.TERMINATOR;
 					if(null == TableNamePack)
 					{
 						TableNamePack = new string[countPack];
 						for(int i=0; i<countPack; i++)
 						{
-							TableNamePack[i] = Library_SpriteStudio6.Data.Animation.PackAttribute.IDGetPack((Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)i);
+							TableNamePack[i] = Library_SpriteStudio6.Data.Animation.PackAttribute.IDGetPack((Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)i);
 							
 						}
 					}
 				}
-				private static string NameGetPackKind(Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack pack)
+				private static string NameGetPackKind(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 				{
 					BootUpNamePack();
 					return(TableNamePack[(int)pack]);
 				}
-				private static Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack KindGetPackName(string name)
+				private static Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack KindGetPackName(string name)
 				{
 					BootUpNamePack();
 					int count = TableNamePack.Length;
@@ -2240,10 +2240,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						if(name == TableNamePack[i])
 						{
-							return((Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)i);
+							return((Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)i);
 						}
 					}
-					return((Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack)(-1));
+					return((Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(-1));
 				}
 
 				#endregion Functions
@@ -2330,30 +2330,30 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFixPivotCollision = PrefsKeyPrefix + KeyFixPivotCollision;
 
 				private readonly static GroupPackAttributeAnimation Default = new GroupPackAttributeAnimation(
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* Status */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* Position */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* Rotation */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* Scaling */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* RateOpacity */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* PositionAnchor */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* SizeForce */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* UserData */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* Instance */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* Effect */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* RadiusCollision */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* PlainCell */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* PlainColorBlend */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* PlainVertexCorrection */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* PlainOffsetPivot */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* PlainPositionTexture */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* PlainScalingTexture */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* PlainRotationTexture */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* FixIndexCellMap */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT,	/* FixCoordinate */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT,	/* FixColorBlend */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.CPE_FLYWEIGHT,	/* FixUV0 */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE,	/* FixSizeCollision */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindPack.STANDARD_CPE	/* FixPivotCollision */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Status */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Position */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Rotation */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Scaling */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RateOpacity */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PositionAnchor */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* SizeForce */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* UserData */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Instance */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Effect */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RadiusCollision */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainCell */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainColorBlend */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainVertexCorrection */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainOffsetPivot */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainPositionTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainScalingTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainRotationTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* FixIndexCellMap */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_FLYWEIGHT,	/* FixCoordinate */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_FLYWEIGHT,	/* FixColorBlend */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_FLYWEIGHT,	/* FixUV0 */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* FixSizeCollision */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE	/* FixPivotCollision */
 				);
 				#endregion Enums & Constants
 			}

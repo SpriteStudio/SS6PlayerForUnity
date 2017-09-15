@@ -620,6 +620,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						material = new Material(Library_SpriteStudio6.Data.Shader.TableSprite[indexOperationTarget]);
 						AssetDatabase.CreateAsset(material, informationTexture.MaterialAnimationSS6PU.TableName[indexOperationTarget]);
+						informationTexture.MaterialAnimationSS6PU.TableData[indexOperationTarget] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexOperationTarget]);
 					}
 
 					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
@@ -647,6 +648,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						material = new Material(Library_SpriteStudio6.Data.Shader.TableEffect[indexOperationTarget]);
 						AssetDatabase.CreateAsset(material, informationTexture.MaterialEffectSS6PU.TableName[indexOperationTarget]);
+						informationTexture.MaterialEffectSS6PU.TableData[indexOperationTarget] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexOperationTarget]);
 					}
 
 					material.mainTexture = informationTexture.PrefabTexture.TableData[0];

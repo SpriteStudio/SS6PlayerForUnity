@@ -279,6 +279,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				public LibraryEditor_SpriteStudio6.Import.SSEE.Information[] TableInformationSSEE;
 				public string[] TableNameSSEE;	/* Temporary */
 
+				public Material[] TableMaterialAnimationSS6PU;
+				public Material[] TableMaterialEffectSS6PU;
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataCellMap> DataCellMapSS6PU;
 				#endregion Variables & Properties
 
@@ -311,6 +313,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					TableNameSSEE = null;
 					TableInformationSSEE = null;
 
+					TableMaterialAnimationSS6PU = null;
+					TableMaterialEffectSS6PU = null;
 					DataCellMapSS6PU.CleanUp();
 //					DataCellMapSS6PU.BootUp(1);	/* Don't boot-up here. */
 				}
@@ -527,6 +531,38 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(-1);
 				}
 
+				public int IndexGetAnimation(string name)
+				{
+					int count = TableInformationSSAE.Length;
+					for(int i=0; i<count; i++)
+					{
+						if(null != TableInformationSSAE[i])
+						{
+							if(name == TableInformationSSAE[i].NameFileBody)
+							{
+								return(i);
+							}
+						}
+					}
+					return(-1);
+				}
+
+				public int IndexGetEffect(string name)
+				{
+					int count = TableInformationSSEE.Length;
+					for(int i=0; i<count; i++)
+					{
+						if(null != TableInformationSSEE[i])
+						{
+							if(name == TableInformationSSEE[i].NameFileBody)
+							{
+								return(i);
+							}
+						}
+					}
+					return(-1);
+				}
+
 				public int[] QueueGetConvertSSAE(ref LibraryEditor_SpriteStudio6.Import.Setting setting)
 				{
 					const string messageLogPrefix = "Fix SSAEs Conversion-Queue";
@@ -637,7 +673,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						parts = informationSSAE.TableParts[i];
 						if(Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE == parts.Data.Feature)
 						{
-							indexInstanceSSAE = parts.IndexUnderControl;
+							indexInstanceSSAE = IndexGetAnimation(parts.NameUnderControl);
 							if(-1 == indexInstanceSSAE)
 							{
 								LogError(messageLogPrefix, "Instance missing Parts [" + parts.Data.Name + "] in [" + informationSSAE.FileNameGetFullPath() + "]", FileNameGetFullPath());
@@ -815,6 +851,52 @@ public static partial class LibraryEditor_SpriteStudio6
 
 //				AssetCreateCellMap_ErrorEnd:;
 //					return(false);
+				}
+
+				public static bool MaterialPickUp(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
+													)
+				{
+					const string messageLogPrefix = "Pick up Materials";
+
+					int indexTexture;
+					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
+					int countMaterial = countSSCE * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+					informationSSPJ.TableMaterialAnimationSS6PU = new Material[countMaterial];
+					if(null == informationSSPJ.TableMaterialAnimationSS6PU)
+					{
+						LogError(messageLogPrefix, "Not Enough Memory (MaterialTable Animation)", informationSSPJ.FileNameGetFullPath());
+						goto MaterialPickUp_ErrorEnd;
+					}
+					for(int i=0; i<countSSCE; i++)
+					{
+						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+						{
+							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
+							informationSSPJ.TableMaterialAnimationSS6PU[(i * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR) + j] = (0 > indexTexture) ? null : informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[j];
+						}
+					}
+
+					countMaterial = countSSCE * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
+					informationSSPJ.TableMaterialEffectSS6PU = new Material[countMaterial];
+					if(null == informationSSPJ.TableMaterialEffectSS6PU)
+					{
+						LogError(messageLogPrefix, "Not Enough Memory (MaterialTable Effect)", informationSSPJ.FileNameGetFullPath());
+						goto MaterialPickUp_ErrorEnd;
+					}
+					for(int i=0; i<countSSCE; i++)
+					{
+						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+						{
+							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
+							informationSSPJ.TableMaterialEffectSS6PU[(i * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR) + j] = (0 > indexTexture) ? null : informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[j];
+						}
+					}
+
+					return(true);
+
+				MaterialPickUp_ErrorEnd:;
+					return(false);
 				}
 				#endregion Functions
 			}
