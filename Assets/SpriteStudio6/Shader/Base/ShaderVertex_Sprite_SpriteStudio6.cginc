@@ -40,12 +40,12 @@ InputPS	VS_main(InputVS Input)
 	Temp.w = 0.0f;
 	Output.Texture00UV = Temp;
 
-	Temp = float4(1.0f, 1.0f, 1.0f, Input.texcoord1.x);
+	Temp = float4(1.0f, 1.0f, 1.0f, Input.texcoord1.y);
 	Output.ColorMain = Temp;
 
 	Output.ColorOverlay = Input.color;
 
-	float Index = Input.texcoord1.y;
+	float Index = Input.texcoord1.x;
 	Temp = (0.1f > Index) ? _OverlayParameter_Non
 							: ((3.0f > Index) ? ((2.0f > Index) ? _OverlayParameter_Mix : _OverlayParameter_Add)
 												: ((4.0 > Index) ? _OverlayParameter_Sub : _OverlayParameter_Mul)

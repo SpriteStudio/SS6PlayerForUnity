@@ -680,7 +680,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					informationAnimation.TableParts[i].CleanUp();
 					informationAnimation.TableParts[i].BootUp();
-					informationAnimation.TableParts[i].StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
 				}
 
 				System.Xml.XmlNodeList nodeListAnimationParts = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeAnimation, "partAnimes/partAnime", managerNameSpace);
@@ -1601,7 +1600,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
-						if(null == informationAnimationParts.VertexCorrection)
+						if(0 >= informationAnimationParts.VertexCorrection.CountGetKey())
 						{
 							informationSSAE.TableParts[indexParts].Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2;
 						}
@@ -1869,10 +1868,14 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							if(0 != (animationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
 							{	/* Not Use */
-								animationParts.StatusParts |= (Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION
+								animationParts.StatusParts |= (	Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION
 																| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION
 																| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING
-																| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.HIDE_FULL);
+																| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.HIDE_FULL
+																| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE
+																| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA
+																| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_PARTSCOLOR
+															);
 							}
 							else
 							{
@@ -1916,6 +1919,26 @@ public static partial class LibraryEditor_SpriteStudio6
 								if(true == flagHideAll)
 								{
 									animationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.HIDE_FULL;
+								}
+
+								if((0 >= animationParts.TexturePositionX.CountGetKey())
+									&& (0 >= animationParts.TexturePositionY.CountGetKey())
+									&& (0 >= animationParts.TextureScalingX.CountGetKey())
+									&& (0 >= animationParts.TextureScalingY.CountGetKey())
+									&& (0 >= animationParts.TextureRotation.CountGetKey())
+									)
+								{
+									animationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE;
+								}
+
+								if(0 >= animationParts.UserData.CountGetKey())
+								{
+									animationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA;
+								}
+
+								if(0 >= animationParts.ColorBlend.CountGetKey())
+								{
+									animationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_PARTSCOLOR;
 								}
 							}
 
@@ -2314,7 +2337,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							FixPivotCollisionX.BootUp();
 							FixPivotCollisionY.BootUp();
 
-							StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.CLEAR;
+							StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
 							TableHide = null;
 							TableOrderDraw = null;
 

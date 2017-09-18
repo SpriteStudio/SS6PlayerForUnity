@@ -174,10 +174,14 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Draw Parts */
-		int indexPartsNext = 0;
-		while(0 > indexPartsNext)
+		if(false == FlagHideForce)
 		{
-			indexPartsNext = -1;
+			int idPartsDrawNext = TableControlParts[0].IDPartsDrawNext;
+			while(0 <= idPartsDrawNext)
+			{
+				TableControlParts[idPartsDrawNext].UpdateDraw(this, idPartsDrawNext);
+				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsDrawNext;
+			}
 		}
 
 		/* Clear transient status */
@@ -197,6 +201,29 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
+	/* ******************************************************** */
+	//! Get Material
+	/*!
+	@param	indexCellMap
+		Serial-number of using Cell-Map
+	@param	operationBlend
+		Color-Blend Operation for the target
+	@retval	Return-Value
+		Material
+	*/
+	public Material MaterialGet(int indexCellMap, Library_SpriteStudio6.KindOperationBlend operationBlend)
+	{
+		const int CountLength = (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+		if(	(0 <= indexCellMap)
+			&& ((null != TableMaterial) && ((TableMaterial.Length / CountLength) > indexCellMap))
+			&& (Library_SpriteStudio6.KindOperationBlend.NON < operationBlend) && (Library_SpriteStudio6.KindOperationBlend.TERMINATOR > operationBlend)
+			)
+		{
+			return(TableMaterial[(indexCellMap * CountLength) + (int)operationBlend]);
+		}
+		return(null);
+	}
+
 	private void FunctionBootUpDataAnimation()
 	{
 		if((null == DataAnimation) || (null == DataAnimation.TableParts) || (null == DataAnimation.TableAnimation))

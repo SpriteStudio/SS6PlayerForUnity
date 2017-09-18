@@ -192,7 +192,7 @@ public static partial class Library_SpriteStudio6
 						get
 						{
 							FlagBit data = Flags & FlagBit.ID_PARTS_DRAWNEXT;
-							return((0 == data) ? (-1) : (int)data);
+							return((FlagBit.ID_PARTS_DRAWNEXT == data) ? (-1) : (int)data);
 						}
 					}
 					#endregion Variables & Properties
@@ -319,6 +319,16 @@ public static partial class Library_SpriteStudio6
 						Coordinate = null;
 					}
 
+					public void BootUp()
+					{
+						int count = (int)Library_SpriteStudio6.KindVertex.TERMINATOR2;
+						Coordinate = new Vector2[count];
+						for(int i=0; i<count; i++)
+						{
+							Coordinate[i] = Vector2.zero;
+						}
+					}
+
 					public void Duplicate(VertexCorrection original)
 					{
 						for(int i=0; i<Coordinate.Length; i++)
@@ -388,6 +398,22 @@ public static partial class Library_SpriteStudio6
 						Operation = Library_SpriteStudio6.KindOperationBlend.MIX;
 						VertexColor = null;
 						RatePixelAlpha = null;
+					}
+
+					public void BootUp()
+					{
+						Bound = Library_SpriteStudio6.KindBoundBlend.NON;
+						Operation = Library_SpriteStudio6.KindOperationBlend.MIX;
+
+						int count = (int)Library_SpriteStudio6.KindVertex.TERMINATOR2;
+
+						VertexColor = new Color[count];
+						RatePixelAlpha = new float[count];
+						for(int i=0; i<count; i++)
+						{
+							VertexColor[i] = Color.white;
+							RatePixelAlpha[i] = 1.0f;
+						}
 					}
 
 					public void Duplicate(ColorBlend original)
