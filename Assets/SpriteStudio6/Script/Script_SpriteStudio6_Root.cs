@@ -197,6 +197,20 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
 	}
+
+	void OnDestroy()
+	{
+		if(null != TableControlParts)
+		{
+			int countControlParts = TableControlParts.Length;
+			for(int i=0; i<countControlParts; i++)
+			{
+				TableControlParts[i].ShutDown();
+			}
+		}
+
+//		BaseOnDestroy();
+	}
 	#endregion MonoBehaviour-Functions
 
 	/* ----------------------------------------------- Functions */

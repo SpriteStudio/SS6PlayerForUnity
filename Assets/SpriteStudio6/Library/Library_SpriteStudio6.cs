@@ -1940,9 +1940,9 @@ public static partial class Library_SpriteStudio6
 				/* MEMO: Memory leak occasionally, so normally no reassign. */
 				if(true == FlagReassignMaterialForce)
 				{
-					int Count = (null != TableMaterial) ? TableMaterial.Length : 0;
+					int countTableMaterial = (null != TableMaterial) ? TableMaterial.Length : 0;
 					Material instanceMaterial = null;
-					for(int i=0; i<Count; i++)
+					for(int i=0; i<countTableMaterial; i++)
 					{
 						instanceMaterial = TableMaterial[i];
 						if(null != instanceMaterial)
@@ -1979,6 +1979,23 @@ public static partial class Library_SpriteStudio6
 				}
 
 				return(true);
+			}
+
+			protected void BaseOnDestroy()
+			{
+				int countTableMaterial = (null != TableMaterial) ? TableMaterial.Length : 0;
+				Material instanceMaterial = null;
+				for(int i=0; i<countTableMaterial; i++)
+				{
+					instanceMaterial = TableMaterial[i];
+					if(null != instanceMaterial)
+					{
+						UnityEngine.Object.DestroyImmediate(instanceMaterial);
+						TableMaterial[i] = null;
+						instanceMaterial = null;
+					}
+				}
+				TableMaterial = null;
 			}
 
 			public int CountGetCellMap()
@@ -2211,9 +2228,9 @@ public static partial class Library_SpriteStudio6
 						Status = (0 == (Status & FlagBitStatus.STYLE_REVERSE)) ? (Status | FlagBitStatus.STYLE_REVERSE) : (Status & ~FlagBitStatus.STYLE_REVERSE);
 						RateTime *= -1.0f;
 					}
+					FramePerSecond = framePerSecond;
 					TimePerFrame = 1.0f / (float)FramePerSecond;
 
-					FramePerSecond = framePerSecond;
 					FrameStart = frameRangeStart;
 					FrameEnd = frameRangeEnd;
 					ArgumentContainer.Frame = frame;
@@ -2687,9 +2704,6 @@ public static partial class Library_SpriteStudio6
 					TRSMaster.CleanUp();
 					TRSSlave.CleanUp();
 
-					/* Clean up Sprite/Mesh Buffer */
-					ParameterSprite.CleanUp();
-
 					/* Boot up for each part feature */
 					switch(instanceRoot.DataAnimation.TableParts[idParts].Feature)
 					{
@@ -2702,7 +2716,8 @@ public static partial class Library_SpriteStudio6
 							PrefabUnderControl = null;
 							InstanceGameObjectUnderControl = null;
 
-							if(false == ParameterSprite.DrawMesh.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2))
+							/* Clean up Sprite/Mesh Buffer */
+							if(false == ParameterSprite.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2))
 							{
 								goto BootUp_ErrorEnd;
 							}
@@ -2713,7 +2728,7 @@ public static partial class Library_SpriteStudio6
 							PrefabUnderControl = null;
 							InstanceGameObjectUnderControl = null;
 
-							if(false == ParameterSprite.DrawMesh.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR4))
+							if(false == ParameterSprite.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR4))
 							{
 								goto BootUp_ErrorEnd;
 							}
@@ -2796,6 +2811,13 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 					return(true);
+				}
+
+				internal void ShutDown()
+				{
+					ParameterSprite.ShutDown();
+
+					CleanUp();
 				}
 
 				internal void UpdateGameObject(Script_SpriteStudio6_Root instanceRoot, int idParts)
@@ -3008,6 +3030,7 @@ public static partial class Library_SpriteStudio6
 					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend> PartsColor;
 					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> VertexCorrection;
 
+					internal Material instanceMaterial;
 					internal Library_SpriteStudio6.Draw.BufferMesh DrawMesh;
 					#endregion Variables & Properties
 
@@ -3027,26 +3050,46 @@ public static partial class Library_SpriteStudio6
 						DataCellApply.CleanUp();
 						IndexVertexCollectionTable = 0;
 
-						DataCell.CleanUp();
-						DataCell.Value.CleanUp();
-						OffsetPivot.CleanUp();
-						OffsetPivot.Value = Vector2.zero;
-						SizeMeshForce.CleanUp();
-						SizeMeshForce.Value = Vector2.zero;
-						ScalingTexture.CleanUp();
-						ScalingTexture.Value = Vector2.one;
-						PositionTexture.CleanUp();
-						PositionTexture.Value = Vector2.zero;
-						RotationTexture.CleanUp();
-						RotationTexture.Value = 0.0f;
-						RateOpacity.CleanUp();
-						RateOpacity.Value = 1.0f;
-						PartsColor.CleanUp();
-						PartsColor.Value.BootUp();	/* CleanUp() */
-						VertexCorrection.CleanUp();
-						VertexCorrection.Value.BootUp();	/* .CleanUp(); */
+						DataCell.CleanUp();	DataCell.Value.CleanUp();
+						OffsetPivot.CleanUp();	OffsetPivot.Value = Vector2.zero;
+						SizeMeshForce.CleanUp();	SizeMeshForce.Value = Vector2.zero;
+						ScalingTexture.CleanUp();	ScalingTexture.Value = Vector2.one;
+						PositionTexture.CleanUp();	PositionTexture.Value = Vector2.zero;
+						RotationTexture.CleanUp();	RotationTexture.Value = 0.0f;
+						RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
+						PartsColor.CleanUp();	PartsColor.Value.CleanUp();
+						VertexCorrection.CleanUp();	VertexCorrection.Value.CleanUp();
 
 						DrawMesh.CleanUp();
+					}
+
+					internal bool BootUp(int countVertex)
+					{
+						CleanUp();
+
+						PartsColor.Value.BootUp();
+						VertexCorrection.Value.BootUp();
+
+						if(false == DrawMesh.BootUp(countVertex))
+						{
+							return(false);
+						}
+						return(true);
+					}
+
+					internal void ShutDown()
+					{
+						DrawMesh.ShutDown();
+
+						if(null != instanceMaterial)
+						{
+							UnityEngine.Object.Destroy(instanceMaterial);
+							instanceMaterial = null;
+						}
+
+//						PartsColor.Value.CleanUp();
+//						VertexCorrection.Value.CleanUp();
+						CleanUp();
 					}
 
 					internal void StatusSet(ref Library_SpriteStudio6.Data.Animation.Attribute.Status status)
@@ -3523,6 +3566,17 @@ public static partial class Library_SpriteStudio6
 				return(false);
 			}
 
+			internal void ShutDown()
+			{
+				if(null != InstanceMesh)
+				{
+					UnityEngine.Object.Destroy(InstanceMesh);
+					InstanceMesh = null;
+				}
+
+				CleanUp();
+			}
+
 			public void Exec(Transform transform, Material material, int layer)
 			{
 				InstanceMesh.vertices = Coordinate;
@@ -3673,7 +3727,7 @@ public static partial class Library_SpriteStudio6
 				{	/* Renew Force */
 					if(null != gameObject)
 					{	/* Exist */
-						Object.DestroyImmediate(gameObject);
+						UnityEngine.Object.DestroyImmediate(gameObject);
 					}
 					gameObject = null;
 				}
