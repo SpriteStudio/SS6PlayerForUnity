@@ -37,7 +37,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		return(TableParts.Length);
 	}
 
-	public int CountGetPartsDraw()
+	public int CountGetPartsSprite()
 	{
 		int countParts = TableParts.Length;
 		int count = 0;
@@ -47,13 +47,13 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			{
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 					count++;
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 					break;
 			}
 		}

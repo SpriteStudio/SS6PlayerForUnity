@@ -27,7 +27,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			return(0 != (Status & FlagBitStatus.VALID));
 		}
 	}
-	internal bool StatusIsCellMapChang
+	internal bool StatusIsCellMapChange
 	{
 		get
 		{
@@ -137,7 +137,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	void LateUpdate()
 	{
-		if(null == ScriptRootParent)
+		if(null == InstanceRootParent)
 		{
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
@@ -198,24 +198,19 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
 	}
 
-	void OnDestroy()
-	{
-		if(null != TableControlParts)
-		{
-			int countControlParts = TableControlParts.Length;
-			for(int i=0; i<countControlParts; i++)
-			{
-				TableControlParts[i].ShutDown();
-			}
-		}
-
-//		BaseOnDestroy();
-	}
+//	void OnPostRender()
+//	{
+//		/* Clear Holding-Materials */
+//		HolderMaterial.MaterialFree();
+//	}
+//	void OnDestroy()
+//	{
+//	}
 	#endregion MonoBehaviour-Functions
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
-	/* ******************************************************** */
+	/* ********************************************************* */
 	//! Get Material
 	/*!
 	@param	indexCellMap

@@ -12,7 +12,7 @@ public partial class Script_SpriteStudio6_Root
 {
 	/* ----------------------------------------------- Functions */
 	#region Functions
-	/* ******************************************************** */
+	/* ********************************************************* */
 	//! Get animation count
 	/*!
 	@param	
@@ -28,7 +28,7 @@ public partial class Script_SpriteStudio6_Root
 		return((null == DataAnimation) ? -1 : DataAnimation.CountGetAnimation());
 	}
 
-	/* ******************************************************** */
+	/* ********************************************************* */
 	//! Get animation index
 	/*!
 	@param	name
@@ -47,7 +47,7 @@ public partial class Script_SpriteStudio6_Root
 		return((null == DataAnimation) ? -1 : DataAnimation.IndexGetAnimation(Name));
 	}
 
-	/* ******************************************************** */
+	/* ********************************************************* */
 	//! Start playing the animation
 	/*!
 	@param	indexTrack
@@ -216,6 +216,9 @@ public partial class Script_SpriteStudio6_Root
 																	frameRangeOffsetEnd
 																);
 
+		/* Update Status */
+		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
+
 		/* Start Playing */
 		return(TableControlTrack[indexTrack].Start(	this,
 													indexAnimation,
@@ -234,7 +237,7 @@ public partial class Script_SpriteStudio6_Root
 		return(false);
 	}
 
-	/* ******************************************************** */
+	/* ********************************************************* */
 	//! Stop playing the animation
 	/*!
 	@param	indexTrack
@@ -272,7 +275,7 @@ public partial class Script_SpriteStudio6_Root
 		}
 	}
 
-	/* ******************************************************** */
+	/* ********************************************************* */
 	//! Set the pause-status of the animation
 	/*!
 	@param	indexTrack
@@ -319,7 +322,7 @@ public partial class Script_SpriteStudio6_Root
 		return(flagSuccess);
 	}
 
-	/* ******************************************************** */
+	/* ********************************************************* */
 	//! Changing animations' playing speed
 	/*!
 	@param	indexTrack

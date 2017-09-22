@@ -2048,7 +2048,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* Sort (Bubble) */
 							/* When the same priority, parts that has larger ID (part-index) drawed later. */
 							int countIndexPartsSort = listIndexPartsSort.Count;
-							for(int i=0; i<countIndexPartsSort; i++)
+							for(int i=0; i<(countIndexPartsSort - 1); i++)
 							{
 								for(int j=(countIndexPartsSort - 1); j>i; j--)
 								{
@@ -2056,6 +2056,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									if((listPrioritySort[j] < listPrioritySort[k])
 										|| ((listPrioritySort[j] == listPrioritySort[k]) && (listIndexPartsSort[j] < listIndexPartsSort[k]))
 										)
+//									if((listPrioritySort[j] > listPrioritySort[k])
+//										|| ((listPrioritySort[j] == listPrioritySort[k]) && (listIndexPartsSort[j] > listIndexPartsSort[k]))
+//										)
 									{
 										float tempFloat = listPrioritySort[j];
 										int tempInt = listIndexPartsSort[j];

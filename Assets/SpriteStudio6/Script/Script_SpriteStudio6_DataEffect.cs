@@ -16,7 +16,7 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	public KindVersion Version;
 
 	public FlagBit FlagData;
-	public bool IsLockSeedRandom
+	public bool StatusIsLockSeedRandom
 	{
 		get
 		{
@@ -40,6 +40,16 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	public void CleanUp()
 	{
 		Version = (KindVersion)(-1);
+	}
+
+	public int CountGetParts()
+	{
+		return((null != TableParts) ? TableParts.Length : -1);
+	}
+
+	public int CountGetEmitter()
+	{
+		return((null != TableEmitter) ? TableEmitter.Length : -1);
 	}
 	#endregion Functions
 

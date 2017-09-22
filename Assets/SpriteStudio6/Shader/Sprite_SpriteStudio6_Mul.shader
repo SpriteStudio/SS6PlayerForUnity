@@ -19,6 +19,7 @@ Shader "Custom/SpriteStudio6/Mul" {
 				"Queue"="Transparent"
 				"IgnoreProjector"="True"
 				"RenderType"="Transparent"
+//				"DisableBatching" = "True"
 		}
 
 		Pass	{
