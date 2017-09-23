@@ -26,6 +26,8 @@ public static partial class Library_SpriteStudio6
 
 			internal uint Seed;
 			internal uint SeedOffset;
+
+			internal Matrix4x4 MatrixRoot;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -42,6 +44,8 @@ public static partial class Library_SpriteStudio6
 
 				Seed = 0;
 				SeedOffset = 0;
+
+				MatrixRoot = Matrix4x4.identity;
 			}
 
 			internal void ParticleReset()	/* ?????????? */
@@ -133,6 +137,9 @@ public static partial class Library_SpriteStudio6
 					DurationFull = (frameGlobal > DurationFull) ? frameGlobal : DurationFull;
 				}
 
+				/* Reset Transform */
+				MatrixRoot = Matrix4x4.identity;
+
 				Status |= FlagBitStatus.RUNNING;
 
 				return(true);
@@ -146,6 +153,8 @@ public static partial class Library_SpriteStudio6
 			{
 				/* Clear Draw-Pool (for Particle) */
 				ParticleReset();
+
+				MatrixRoot = instanceRoot.transform.localToWorldMatrix;
 
 				/* Emitters' Random-Seed Refresh */
 				int frame = (int)(instanceRoot.Frame);
@@ -543,6 +552,23 @@ public static partial class Library_SpriteStudio6
 					InstanceMaterialDraw = null;
 					return(false);
 				}
+
+				internal bool DrawParticle(ref Matrix4x4 matrixTransform, ref Color ColorVertex, float rateOpacity)
+				{
+					DrawMeshParticle.ColorOverlay[(int)Library_SpriteStudio6.KindVertex.LU] = 
+					DrawMeshParticle.ColorOverlay[(int)Library_SpriteStudio6.KindVertex.RU] = 
+					DrawMeshParticle.ColorOverlay[(int)Library_SpriteStudio6.KindVertex.RD] = 
+					DrawMeshParticle.ColorOverlay[(int)Library_SpriteStudio6.KindVertex.LU] = ColorVertex;
+
+					DrawMeshParticle.UV2[(int)Library_SpriteStudio6.KindVertex.LU].x = 
+					DrawMeshParticle.UV2[(int)Library_SpriteStudio6.KindVertex.RU].x = 
+					DrawMeshParticle.UV2[(int)Library_SpriteStudio6.KindVertex.RD].x = 
+					DrawMeshParticle.UV2[(int)Library_SpriteStudio6.KindVertex.LD].x = rateOpacity;
+
+					DrawMeshParticle.Exec(ref matrixTransform, InstanceMaterialDraw, Layer);
+
+					return(true);
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -643,11 +669,11 @@ public static partial class Library_SpriteStudio6
 							)
 						{	/* Draw */
 							Vector2 scaleLayout = instanceRoot.DataEffect.ScaleLayout;
-							Matrix4x4 matrixTransform = Matrix4x4.TRS(	new Vector3((PositionX * scaleLayout.x), (PositionY * scaleLayout.y), 0.0f),
-																		Quaternion.Euler(0.0f, 0.0f, (RotateZ + Direction)),
-																		Scale
-																	);
-							emitter.DrawMeshParticle.Exec(ref matrixTransform, emitter.InstanceMaterialDraw, emitter.Layer);
+							Matrix4x4 matrixTransform = controlEffect.MatrixRoot * Matrix4x4.TRS(	new Vector3((PositionX * scaleLayout.x), (PositionY * scaleLayout.y), 0.0f),
+																									Quaternion.Euler(0.0f, 0.0f, (RotateZ + Direction)),
+																									Scale
+																								);
+							emitter.DrawParticle(ref matrixTransform, ref ColorVertex, instanceRoot.RateOpacity);
 						}
 					}
 

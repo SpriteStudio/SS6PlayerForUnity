@@ -179,7 +179,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	*/
 	public Material MaterialGet(int indexCellMap, Library_SpriteStudio6.KindOperationBlendEffect operationBlend)
 	{
-		const int CountLength = (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+		const int CountLength = (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
 		if(	(0 <= indexCellMap)
 			&& ((null != TableMaterial) && ((TableMaterial.Length / CountLength) > indexCellMap))
 			&& (Library_SpriteStudio6.KindOperationBlendEffect.NON < operationBlend) && (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR > operationBlend)
