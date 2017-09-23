@@ -1414,6 +1414,16 @@ public static partial class Library_SpriteStudio6
 				Graphics.DrawMesh(InstanceMesh, transform.localToWorldMatrix, material, layer);
 			}
 
+			public void Exec(ref Matrix4x4 matrixTransform, Material material, int layer)
+			{
+				InstanceMesh.vertices = Coordinate;
+				InstanceMesh.uv = UV;
+				InstanceMesh.uv2 = UV2;
+				InstanceMesh.colors32 = ColorOverlay;
+
+				Graphics.DrawMesh(InstanceMesh, matrixTransform, material, layer);
+			}
+
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */

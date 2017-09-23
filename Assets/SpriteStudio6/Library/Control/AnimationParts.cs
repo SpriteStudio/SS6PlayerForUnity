@@ -607,8 +607,6 @@ public static partial class Library_SpriteStudio6
 						dataAnimationParts.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.RateOpacity, ref argumentContainer); 
 
 						/* Calculate Texture-UV */
-#if true
-#if false
 						if(0 != (dataAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE))
 						{	/* No Transform (Ordinary rectangle) */
 							Vector2 uLR = new Vector2(positionMapping.x, positionMapping.x + sizeMapping.x);
@@ -630,7 +628,6 @@ public static partial class Library_SpriteStudio6
 							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.LD].y = vUD.y;
 						}
 						else
-#endif
 						{	/* Transform Texure */
 							bool flagUpdateMatrixTexrure = false;
 							flagUpdateMatrixTexrure |= dataAnimationParts.Plain.PositionTexture.Function.ValueGet(ref PositionTexture.Value, ref PositionTexture.FrameKey, dataAnimationParts.Plain.PositionTexture, ref argumentContainer);
@@ -656,27 +653,6 @@ public static partial class Library_SpriteStudio6
 								DrawMesh.UV[i] = MatrixTexture.MultiplyPoint3x4(Library_SpriteStudio6.Draw.BufferMesh.TableUVMapping[i]);
 							}
 						}
-#else
-						{
-							Vector2 uLR = new Vector2(positionMapping.x, positionMapping.x + sizeMapping.x);
-							float mappingYInverse = SizeTexture.y - positionMapping.y;
-							Vector2 vUD = new Vector2(mappingYInverse, mappingYInverse - sizeMapping.y);
-							uLR /= SizeTexture.x;
-							vUD /= SizeTexture.y;
-
-							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.LU].x = uLR.x;
-							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.LU].y = vUD.x;
-
-							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.RU].x = uLR.y;
-							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.RU].y = vUD.x;
-
-							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.RD].x = uLR.y;
-							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.RD].y = vUD.y;
-
-							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.LD].x = uLR.x;
-							DrawMesh.UV[(int)Library_SpriteStudio6.KindVertex.LD].y = vUD.y;
-						}
-#endif
 
 						/* Set Parts-Color */
 //						if(null != DataPartsColorOverwrite)

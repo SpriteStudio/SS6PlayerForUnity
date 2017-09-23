@@ -38,6 +38,13 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			Status = (true == value) ? (Status | FlagBitStatus.PLAYING_INFINITY) : (Status & ~FlagBitStatus.PLAYING_INFINITY);
 		}
 	}
+	internal bool StatusIsChangeCellMap
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+		}
+	}
 
 	/* MEMO: Status of animation's play-track are diverted. (Since useless of redefine same content) */
 	/* MEMO: "Effect" have no multi-track playing capcity. */
@@ -144,14 +151,34 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 
 		/* Clear transient status */
+		StatusPlaying &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;
+		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
 	}
 	#endregion MonoBehaviour-Functions
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
-	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_RootEffect scriptRoot)
+	/* ********************************************************* */
+	//! Get Material
+	/*!
+	@param	indexCellMap
+		Serial-number of using Cell-Map
+	@param	operationBlend
+		Color-Blend Operation for the target
+	@retval	Return-Value
+		Material
+	*/
+	public Material MaterialGet(int indexCellMap, Library_SpriteStudio6.KindOperationBlendEffect operationBlend)
 	{
-		return(Time.deltaTime);
+		const int CountLength = (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+		if(	(0 <= indexCellMap)
+			&& ((null != TableMaterial) && ((TableMaterial.Length / CountLength) > indexCellMap))
+			&& (Library_SpriteStudio6.KindOperationBlendEffect.NON < operationBlend) && (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR > operationBlend)
+			)
+		{
+			return(TableMaterial[(indexCellMap * CountLength) + (int)operationBlend]);
+		}
+		return(null);
 	}
 
 	public static Library_SpriteStudio6.Utility.Random.Generator InstanceCreateRandom()
@@ -169,6 +196,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		System.TimeSpan SecNow = TimeNow - TimeUnixEpoch;
 		
 		return(RandomKeyMakeID + (uint)SecNow.TotalSeconds);
+	}
+
+	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_RootEffect scriptRoot)
+	{
+		return(Time.deltaTime);
 	}
 	#endregion Functions
 

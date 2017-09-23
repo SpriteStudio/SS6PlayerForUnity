@@ -22,7 +22,7 @@ public static partial class Library_SpriteStudio6
 			internal int CountMeshParticle;
 
 			internal Script_SpriteStudio6_RootEffect InstanceRootEffect;
-			internal int EffectDurationFull;
+			internal int DurationFull;
 
 			internal uint Seed;
 			internal uint SeedOffset;
@@ -38,7 +38,7 @@ public static partial class Library_SpriteStudio6
 				CountMeshParticle = 0;
 
 				InstanceRootEffect = null;
-				EffectDurationFull = -1;
+				DurationFull = -1;
 
 				Seed = 0;
 				SeedOffset = 0;
@@ -119,7 +119,7 @@ public static partial class Library_SpriteStudio6
 
 				/* Get Effect's length */
 				int frameGlobal;
-				EffectDurationFull = 0;
+				DurationFull = 0;
 				for (int i=0; i<countEmitter; i++)
 				{
 					indexEmitterParent = TableEmitter[i].IndexParent;
@@ -130,7 +130,7 @@ public static partial class Library_SpriteStudio6
 					}
 					TableEmitter[i].FrameGlobal = frameGlobal;
 
-					EffectDurationFull = (frameGlobal > EffectDurationFull) ? frameGlobal : EffectDurationFull;
+					DurationFull = (frameGlobal > DurationFull) ? frameGlobal : DurationFull;
 				}
 
 				Status |= FlagBitStatus.RUNNING;
@@ -142,6 +142,57 @@ public static partial class Library_SpriteStudio6
 				return(false);
 			}
 
+			internal bool Update(Script_SpriteStudio6_RootEffect instanceRoot)
+			{
+				/* Clear Draw-Pool (for Particle) */
+				ParticleReset();
+
+				/* Emitters' Random-Seed Refresh */
+				int frame = (int)(instanceRoot.Frame);
+				int frameTarget = frame;
+				int countLoop = 0;
+				if(0 == (Status & FlagBitStatus.INFINITE))
+				{
+					if(0 != (Status & FlagBitStatus.LOOP))
+					{
+						if(frame > DurationFull)
+						{
+							frameTarget = frame % DurationFull;
+							countLoop = frame / DurationFull;
+							SeedOffsetSet((uint)countLoop);
+						}
+					}
+				}
+
+				/* Update Emitters */
+				int countEmitter = TableEmitter.Length;
+				bool flagChangeCellTable = instanceRoot.StatusIsChangeCellMap;
+				for(int i=0; i<countEmitter; i++)
+				{
+					if(true == flagChangeCellTable)
+					{
+						TableEmitter[i].CellPresetParticle(instanceRoot);
+					}
+				}
+
+				/* Update Emitters */
+				int indexEmitterParent;
+				for(int i=0; i<countEmitter; i++)
+				{
+					TableEmitter[i].SeedOffset = SeedOffset;	/* Update Random-Seed-Offset */
+
+					indexEmitterParent = TableEmitter[i].IndexParent;
+					if(0 <= indexEmitterParent)
+					{   /* Has Parent-Emitter */
+						TableEmitter[indexEmitterParent].UpdateSubEmitters(frameTarget, instanceRoot, ref this, indexEmitterParent, ref TableEmitter[i]);
+					}
+					else
+					{	/* Has no Parent-Emitter */
+						TableEmitter[i].Update(frameTarget, instanceRoot, ref this , -1);
+					}
+				}
+				return(true);
+			}
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */
@@ -172,17 +223,16 @@ public static partial class Library_SpriteStudio6
 				internal int IDParts;
 				internal int IndexEmitter;
 
-				internal int IndexCellMapParticle;
-				internal int IndexCellParticle;
+				internal int IndexCellMap;
+				internal int IndexCell;
 				internal int IndexCellMapOverwrite;
 				internal int IndexCellOverwrite;
-				internal Vector3[] CoordinateMeshParticle;
-				internal Vector2[] UVMeshParticle;
 
-				internal Library_SpriteStudio6.Utility.Random.Generator InstanceRandom;
+				internal Library_SpriteStudio6.Utility.Random.Generator Random;
 				internal Library_SpriteStudio6.Data.Effect.Emitter.PatternEmit[] TablePatternEmit;
 				internal int[] TablePatternOffset;
 				internal long[] TableSeedParticle;
+				internal Library_SpriteStudio6.Control.Effect.Particle.Activity[] TableActivityParticle;
 
 				internal uint SeedRandom;
 				internal uint SeedOffset;
@@ -191,17 +241,21 @@ public static partial class Library_SpriteStudio6
 				internal Vector2 Position;
 				internal int FrameGlobal;
 
-				internal Library_SpriteStudio6.Control.Effect.Particle.PatternGenerate[] TablePatternGenerate;
+				internal Library_SpriteStudio6.Control.Effect.Particle ParticleTempolary2;	/* (mainly) for TurnToDirection (mainly) */
+				internal Library_SpriteStudio6.Control.Effect.Particle ParticleTempolary;	/* (mainly) for Parent */
+				internal Library_SpriteStudio6.Control.Effect.Particle Particle;
 
-//				internal ParameterParticle InstanceParameterParticleTempolary2;	/* (mainly) for TurnToDirection (mainly) */
-//				internal ParameterParticle InstanceParameterParticleTempolary;	/* (mainly) for Parent */
-//				internal ParameterParticle InstanceParameterParticle;
+				internal Material InstanceMaterialDraw;
+				internal int Layer;
+				internal Library_SpriteStudio6.Draw.BufferMesh DrawMeshParticle;
 
 				internal int FrameFull
 				{
 					get
 					{
-						return(DataEffect.TableEmitter[IndexEmitter].DurationEmitter + (int)(DataEffect.TableEmitter[IndexEmitter].DurationParticle.Main + DataEffect.TableEmitter[IndexEmitter].DurationParticle.Sub));
+						return(	DataEffect.TableEmitter[IndexEmitter].DurationEmitter
+								+ (int)(DataEffect.TableEmitter[IndexEmitter].DurationParticle.Main + DataEffect.TableEmitter[IndexEmitter].DurationParticle.Sub)
+							);
 					}
 				}
 				#endregion Variables & Properties
@@ -217,19 +271,15 @@ public static partial class Library_SpriteStudio6
 					IDParts = -1;
 					IndexEmitter = -1;
 
-					IndexCellMapParticle = -1;
-					IndexCellParticle = -1;
-					if(0 == (Status & FlagBitStatus.OVERWRITE_CELL_IGNOREATTRIBUTE))
-					{
-						IndexCellMapOverwrite = -1;
-						IndexCellOverwrite = -1;
-					}
-					CoordinateMeshParticle = null;
-					UVMeshParticle = null;
+					IndexCellMap = -1;
+					IndexCell = -1;
+					IndexCellMapOverwrite = -1;
+					IndexCellOverwrite = -1;
 
-					InstanceRandom = null;
+					Random = null;
 					TablePatternEmit = null;
 					TableSeedParticle = null;
+					TableActivityParticle = null;
 
 					SeedRandom = (uint)Library_SpriteStudio6.Data.Effect.Emitter.Constant.SEED_MAGIC;
 					SeedOffset = 0;
@@ -238,7 +288,9 @@ public static partial class Library_SpriteStudio6
 					Position = Vector2.zero;
 					FrameGlobal = 0;
 
-					TablePatternGenerate = null;
+					InstanceMaterialDraw = null;
+					Layer = -1;
+					DrawMeshParticle.CleanUp();
 				}
 
 				internal bool BootUp(	Script_SpriteStudio6_RootEffect instanceRoot,
@@ -246,7 +298,7 @@ public static partial class Library_SpriteStudio6
 										int idParts,
 										int indexDataEmitter,
 										int indexParent,
-										ref Library_SpriteStudio6.Control.Effect instanceControl
+										ref Library_SpriteStudio6.Control.Effect controlEffect
 									)
 				{
 					Status = FlagBitStatus.CLEAR;
@@ -257,15 +309,13 @@ public static partial class Library_SpriteStudio6
 					IndexParent = indexParent;
 
 					/* Initialize Random */
-					if(null == InstanceRandom)
+					if(null == Random)
 					{
-						InstanceRandom = Script_SpriteStudio6_RootEffect.InstanceCreateRandom();
+						Random = Script_SpriteStudio6_RootEffect.InstanceCreateRandom();
 					}
 
-					Library_SpriteStudio6.Data.Effect.Emitter.FlagBit flagData = DataEffect.TableEmitter[IndexEmitter].FlagData;
-
-					SeedRandom = instanceControl.Seed;
-					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SEEDRANDOM))
+					SeedRandom = controlEffect.Seed;
+					if(0 != (DataEffect.TableEmitter[IndexEmitter].FlagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SEEDRANDOM))
 					{	/* Overwrite Seed */
 						/* MEMO: Overwritten to the Emitter's Seed. */
 						SeedRandom = (uint)DataEffect.TableEmitter[IndexEmitter].SeedRandom + (uint)Library_SpriteStudio6.Data.Effect.Emitter.Constant.SEED_MAGIC;
@@ -287,20 +337,27 @@ public static partial class Library_SpriteStudio6
 					{	/* Calculate on Runtime ... Not Fixed Random-Seed */
 						DataEffect.TableEmitter[IndexEmitter].TableGetPatternEmit(	ref TablePatternEmit,
 																					ref TableSeedParticle,
-																					InstanceRandom,
+																					Random,
 																					SeedRandom
 																				);
 					}
 
-					/* Calculate Particle's UV */
-//					ParticleCellSet(instanceRoot);
+					/* Set Particle's UV */
+					if(false == DrawMeshParticle.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2))
+					{
+						goto BootUp_ErrorEnd;
+					}
+					if(false == CellPresetParticle(instanceRoot))
+					{
+						goto BootUp_ErrorEnd;
+					}
 
 					/* Create Generating-Particle WorkArea */
 					int countParticleMax = DataEffect.TableEmitter[IndexEmitter].CountParticleMax;
-					TablePatternGenerate = new Library_SpriteStudio6.Control.Effect.Particle.PatternGenerate[countParticleMax];
+					TableActivityParticle = new Library_SpriteStudio6.Control.Effect.Particle.Activity[countParticleMax];
 					for(int i=0; i<countParticleMax; i++)
 					{
-						TablePatternGenerate[i].CleanUp();
+						TableActivityParticle[i].CleanUp();
 					}
 
 					/* Set Duration */
@@ -309,6 +366,182 @@ public static partial class Library_SpriteStudio6
 					Status |= (FlagBitStatus.VALID | FlagBitStatus.RUNNING);
 
 					return(true);
+
+				BootUp_ErrorEnd:;
+					CleanUp();
+					return(false);
+				}
+
+				internal bool Update(	float frame,
+										Script_SpriteStudio6_RootEffect instanceRoot,
+										ref Library_SpriteStudio6.Control.Effect controlEffect,
+										int indexEmitterParent
+									)
+				{
+					if((0 > IndexEmitter) || (0 > IDParts))
+					{
+						return(false);
+					}
+
+					/* Update Particles-Activity */
+					int countParticle = TablePatternEmit.Length;
+					int countOffset = TablePatternOffset.Length;
+					int frameNow = (int)frame;
+					uint slide = (0 > indexEmitterParent) ? 0 : (uint)ParticleTempolary.ID;
+					slide = slide * (uint)Library_SpriteStudio6.Data.Effect.Emitter.Constant.SEED_MAGIC;
+					uint indexSlide;
+					for(int i=0; i<countOffset; i++)
+					{
+						indexSlide = ((uint)i + slide) % (uint)countParticle;
+						TableActivityParticle[i].Update(	frameNow,
+															ref this,
+															ref DataEffect.TableEmitter[IndexEmitter],
+															TablePatternEmit[i],
+															TablePatternOffset[i],
+															TablePatternEmit[indexSlide]
+														);
+					}
+
+					/* Calculate & Draw Particles */
+					countParticle = DataEffect.TableEmitter[IndexEmitter].CountParticleMax;
+					for(int i=0; i<countParticle; i++)
+					{
+						Particle.Exec(	frameNow,
+										i,
+										instanceRoot,
+										ref controlEffect,
+										ref this,
+										ref TableActivityParticle[i],
+										indexEmitterParent,
+										ref ParticleTempolary
+									); 
+					}
+					return(true);
+				}
+
+				internal bool UpdateSubEmitters(	float frame,
+													Script_SpriteStudio6_RootEffect instanceRoot,
+													ref Library_SpriteStudio6.Control.Effect controlEffect,
+													int indexEmitter,
+													ref Emitter emitterTarget
+												)
+				{
+					/* Update Particles-Activity */
+					int countParticle = TablePatternEmit.Length;
+					int countOffset = TablePatternOffset.Length;
+					for(int i=0; i<countOffset; i++)
+					{
+						/* MEMO: Slide is always 0. */
+						TableActivityParticle[i].Update(	(int)frame,
+															ref this,
+															ref DataEffect.TableEmitter[IndexEmitter],
+															TablePatternEmit[i],
+															TablePatternOffset[i],
+															TablePatternEmit[i]
+														);
+					}
+
+					/* Update Sub-Emitters */
+					int FrameTop;
+					countParticle = DataEffect.TableEmitter[IndexEmitter].CountParticleMax;
+					for(int i=0; i<countParticle; i++)
+					{
+						if(0 != (TableActivityParticle[i].Status & Library_SpriteStudio6.Control.Effect.Particle.Activity.FlagBitStatus.BORN))
+						{
+							/* MEMO: "ParticleTempolary" is parent's parameter. */
+							FrameTop = TableActivityParticle[i].FrameStart;
+							emitterTarget.ParticleTempolary.FrameStart = FrameTop;
+							emitterTarget.ParticleTempolary.Direction = TableActivityParticle[i].FrameEnd;
+							emitterTarget.ParticleTempolary.ID = i;
+							emitterTarget.ParticleTempolary.IDParent = 0;
+
+							/* CAUTION: "ParticleTempolary" will be broken. */
+							emitterTarget.Update(	(frame - (float)FrameTop),
+													instanceRoot,
+													ref controlEffect,
+													indexEmitter
+												);
+						}
+					}
+
+					return(true);
+				}
+
+				internal bool CellPresetParticle(Script_SpriteStudio6_RootEffect instanceRoot)
+				{
+					Layer = instanceRoot.gameObject.layer;
+
+					int indexCellMap = IndexCellMapOverwrite;
+					int indexCell = IndexCellOverwrite;
+					if((0 > indexCellMap) || (0 > indexCell))
+					{
+						IndexCellMapOverwrite = -1;
+						IndexCellOverwrite = -1;
+
+						indexCellMap = DataEffect.TableEmitter[IndexEmitter].IndexCellMap;
+						indexCell = DataEffect.TableEmitter[IndexEmitter].IndexCell;
+					}
+
+					Library_SpriteStudio6.Data.CellMap dataCellMap = instanceRoot.DataGetCellMap(indexCellMap);
+					if(null == dataCellMap)
+					{
+						goto CellPresetParticle_ErrorEnd;
+					}
+					else
+					{
+						if((0 > indexCell) || (dataCellMap.CountGetCell() <= indexCell))
+						{
+							goto CellPresetParticle_ErrorEnd;
+						}
+						else
+						{
+							IndexCellMap = indexCellMap;
+							IndexCell = indexCell;
+							InstanceMaterialDraw = instanceRoot.MaterialGet(IndexCellMap, DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget);
+
+							float pivotXCell = dataCellMap.TableCell[indexCell].Pivot.x;
+							float pivotYCell = dataCellMap.TableCell[indexCell].Pivot.y;
+							float coordinateLUx = -pivotXCell;
+							float coordinateLUy = pivotYCell;
+							float coordinateRDx = dataCellMap.TableCell[indexCell].Rectangle.width - pivotXCell;
+							float coordinateRDy = -(dataCellMap.TableCell[indexCell].Rectangle.height - pivotYCell);
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x = 
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x = coordinateLUx;
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].y = 
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].y = coordinateLUy;
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].x = 
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].x = coordinateRDx;
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y = 
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].y = coordinateRDy;
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].z = 
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].z = 
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].z = 
+							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].z = 0.0f;
+
+							float sizeXTexture = dataCellMap.SizeOriginal.x;
+							float sizeYTexture = dataCellMap.SizeOriginal.y;
+							coordinateLUx = dataCellMap.TableCell[indexCell].Rectangle.xMin / sizeXTexture;	/* L */
+							coordinateRDx = dataCellMap.TableCell[indexCell].Rectangle.xMax / sizeXTexture;	/* R */
+							coordinateLUy = (sizeYTexture - dataCellMap.TableCell[indexCell].Rectangle.yMin) / sizeYTexture;	/* U */
+							coordinateRDy = (sizeYTexture - dataCellMap.TableCell[indexCell].Rectangle.yMax) / sizeYTexture;	/* D */
+							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.LU].x = 
+							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.LD].x = coordinateLUx;
+							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.LU].y = 
+							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.RU].y = coordinateLUy;
+							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.RU].x = 
+							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.RD].x = coordinateRDx;
+							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.RD].y = 
+							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.LD].y = coordinateRDy;
+						}
+					}
+
+					return(true);
+
+				CellPresetParticle_ErrorEnd:;
+					IndexCellMap = -1;
+					IndexCell = -1;
+					InstanceMaterialDraw = null;
+					return(false);
 				}
 				#endregion Functions
 
@@ -320,24 +553,392 @@ public static partial class Library_SpriteStudio6
 					VALID = 0x40000000,
 					RUNNING = 0x20000000,
 
-					OVERWRITE_CELL_UNREFLECTED = 0x00080000,
-					OVERWRITE_CELL_IGNOREATTRIBUTE = 0x00040000,
-
 					CLEAR = 0x00000000
 				}
 				#endregion Classes, Structs & Interfaces
 			}
 
-			internal static class Particle
+			internal struct Particle
 			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				internal int ID;
+				internal int IDParent;
+				internal int FrameStart;
+				internal int FrameEnd;
+
+				internal float PositionX;
+				internal float PositionY;
+				internal float RotateZ;
+				internal float Direction;
+
+				internal Color ColorVertex;
+				internal Vector3 Scale;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				internal void CleanUp()
+				{
+					ID = -1;
+					IDParent = -1;
+					FrameStart = -1;
+					FrameEnd = -1;
+
+//					PositionX = 
+//					PositionY = 
+//					RotateZ = 
+//					Direction = 
+
+//					ColorVertex = 
+//					Scale = 
+				}
+
+				internal bool Exec(	float frame,
+									int Index,
+									Script_SpriteStudio6_RootEffect instanceRoot,
+									ref Library_SpriteStudio6.Control.Effect controlEffect,
+									ref Library_SpriteStudio6.Control.Effect.Emitter emitter,
+									ref Activity activity,
+									int indexEmitterParent,
+									ref Particle particleParent
+								)
+				{	/* CAUTION: "calculateParent" will be broken. */
+					Activity.FlagBitStatus flagStatusActivity = activity.Status;
+					if(0 == (flagStatusActivity & Activity.FlagBitStatus.BORN))
+					{
+						return(true);
+					}
+
+					float frameTarget = frame;
+					FrameStart = activity.FrameStart;
+					FrameEnd = activity.FrameEnd;
+					ID = Index + activity.Cycle;
+					IDParent = (0 <= indexEmitterParent) ? particleParent.ID : 0;
+
+					if(0 != (flagStatusActivity & Activity.FlagBitStatus.EXIST))
+					{
+						if(0 <= indexEmitterParent)
+						{	/* Has Parent */
+							particleParent.PositionX = particleParent.PositionY = 0.0f;
+
+							particleParent.Calculate(	(FrameStart + particleParent.FrameStart),
+														instanceRoot,
+														ref controlEffect,
+														ref controlEffect.TableEmitter[indexEmitterParent],
+														ref controlEffect.TableEmitter[indexEmitterParent].DataEffect.TableEmitter[indexEmitterParent],
+														false
+													);
+							emitter.Position.x = particleParent.PositionX;
+							emitter.Position.y = particleParent.PositionY;
+						}
+
+						if(true == Calculate(	frameTarget,
+												instanceRoot,
+												ref controlEffect,
+												ref emitter,
+												ref emitter.DataEffect.TableEmitter[emitter.IndexEmitter],
+												false
+											)
+							)
+						{	/* Draw */
+							Vector2 scaleLayout = instanceRoot.DataEffect.ScaleLayout;
+							Matrix4x4 matrixTransform = Matrix4x4.TRS(	new Vector3((PositionX * scaleLayout.x), (PositionY * scaleLayout.y), 0.0f),
+																		Quaternion.Euler(0.0f, 0.0f, (RotateZ + Direction)),
+																		Scale
+																	);
+							emitter.DrawMeshParticle.Exec(ref matrixTransform, emitter.InstanceMaterialDraw, emitter.Layer);
+						}
+					}
+
+					return(true);
+				}
+
+				private bool Calculate(	float Frame,
+										Script_SpriteStudio6_RootEffect instanceRoot,
+										ref Library_SpriteStudio6.Control.Effect controlEffect,
+										ref Library_SpriteStudio6.Control.Effect.Emitter emitter,
+										ref Library_SpriteStudio6.Data.Effect.Emitter dataEmitter,
+										bool flagSimplicity = false
+									)
+				{
+					Library_SpriteStudio6.Utility.Random.Generator random = emitter.Random;
+					float frameRelative = (Frame - (float)FrameStart);
+					float framePower2 = frameRelative * frameRelative;
+					float life = (float)(FrameEnd - FrameStart);
+					if(0.0f >= life)	/* (0 == life) */
+					{
+						return(false);
+					}
+
+					float rateLife = frameRelative / life;
+					long seedParticle = emitter.TableSeedParticle[ID % emitter.TableSeedParticle.Length];
+					random.InitSeed((uint)(	(ulong)seedParticle
+											+ (ulong)emitter.SeedRandom
+											+ (ulong)IDParent
+											+ (ulong)emitter.SeedOffset
+										)
+								);
+
+					/* Calc Parameters */
+					Library_SpriteStudio6.Data.Effect.Emitter.FlagBit flagData = dataEmitter.FlagData;
+
+					float radianSub = dataEmitter.Angle.Sub * Mathf.Deg2Rad;
+					float radian = random.RandomFloat(radianSub);
+					radian = radian - (radianSub * 0.5f);
+					radian += ((dataEmitter.Angle.Main + 90.0f) * Mathf.Deg2Rad);
+
+					float speed = dataEmitter.Speed.Main + random.RandomFloat(dataEmitter.Speed.Sub);
+
+					float radianOffset = 0;
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.TANGENTIALACCELATION))
+					{
+						float accel = dataEmitter.RateTangentialAcceleration.Main + random.RandomFloat(dataEmitter.RateTangentialAcceleration.Sub);
+						float speedTemp = speed;
+						speedTemp = (0.0f >= speedTemp) ? 0.1f : speedTemp;
+						radianOffset = (accel / (3.14f * (life * speedTemp * 0.2f))) * frameRelative;
+					}
+
+					float angleTemp = radian + radianOffset;
+					float cos = Mathf.Cos(angleTemp);
+					float sin = Mathf.Sin(angleTemp);
+					float speedX = cos * speed;
+					float speedY = sin * speed;
+					float x = speedX * frameRelative;
+					float y = speedY * frameRelative;
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SPEED_FLUCTUATION))
+					{
+						float SpeedFluctuation = dataEmitter.SpeedFluctuation.Main + random.RandomFloat(dataEmitter.SpeedFluctuation.Sub);
+						float SpeedOffset = SpeedFluctuation / life;
+
+						x = (((cos * SpeedOffset) * frameRelative) + speedX) * ((frameRelative + 1.0f) * 0.5f);
+						y = (((sin * SpeedOffset) * frameRelative) + speedY) * ((frameRelative + 1.0f) * 0.5f);
+					}
+
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.GRAVITY_DIRECTION))
+					{
+						x += (0.5f * dataEmitter.GravityDirectional.x * framePower2);
+						y += (0.5f * dataEmitter.GravityDirectional.y * framePower2);
+					}
+					float offsetX = 0.0f;
+					float offsetY = 0.0f;
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.POSITION))
+					{
+						offsetX = dataEmitter.Position.Main.x + random.RandomFloat(dataEmitter.Position.Sub.x);
+						offsetY = dataEmitter.Position.Main.y + random.RandomFloat(dataEmitter.Position.Sub.y);
+					}
+
+					RotateZ = 0.0f;
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.ROTATION))
+					{
+						RotateZ = dataEmitter.Rotation.Main + random.RandomFloat(dataEmitter.Rotation.Sub);
+
+						float RotationFluctuation = dataEmitter.RotationFluctuation.Main + random.RandomFloat(dataEmitter.RotationFluctuation.Sub);
+						if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.ROTATION_FLUCTUATION))
+						{
+							float FrameLast = life * dataEmitter.RotationFluctuationRateTime;
+
+							float RateRotationFluctuation = 0.0f;
+							if(0.0f >= FrameLast)	/* Minus??? */
+							{
+								RotateZ += (RotationFluctuation * dataEmitter.RotationFluctuationRate) * frameRelative;
+							}
+							else
+							{
+								RateRotationFluctuation = ((RotationFluctuation * dataEmitter.RotationFluctuationRate) - RotationFluctuation) / FrameLast;
+
+								float frameModuration = frameRelative - FrameLast;
+								frameModuration = (0.0f > frameModuration) ? 0.0f : frameModuration;
+
+								float frameRelativeNow = frameRelative;
+								frameRelativeNow = (frameRelativeNow > FrameLast) ? FrameLast : frameRelativeNow;
+
+								float rotateOffsetTemp = RateRotationFluctuation * frameRelativeNow;
+								rotateOffsetTemp += RotationFluctuation;
+								float rotateOffset = (rotateOffsetTemp + RotationFluctuation) * (frameRelativeNow + 1.0f) * 0.5f;
+								rotateOffset -= RotationFluctuation;
+								rotateOffset += (frameModuration * rotateOffsetTemp);
+								RotateZ += rotateOffset;
+							}
+						}
+						else
+						{
+							RotateZ += (RotationFluctuation * frameRelative);
+						}
+					}
+
+					/* ColorVertex/AlphaFade */
+					{
+						ColorVertex.r =
+						ColorVertex.g =
+						ColorVertex.b =
+						ColorVertex.a = 1.0f;
+
+						if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.COLORVERTEX))
+						{
+							ColorVertex.a = dataEmitter.ColorVertex.Main.a + random.RandomFloat(dataEmitter.ColorVertex.Sub.a);
+							ColorVertex.r = dataEmitter.ColorVertex.Main.r + random.RandomFloat(dataEmitter.ColorVertex.Sub.r);
+							ColorVertex.g = dataEmitter.ColorVertex.Main.g + random.RandomFloat(dataEmitter.ColorVertex.Sub.g);
+							ColorVertex.b = dataEmitter.ColorVertex.Main.b + random.RandomFloat(dataEmitter.ColorVertex.Sub.b);
+						}
+						if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.COLORVERTEX_FLUCTUATION))
+						{
+							Color ColorFluctuation;
+							ColorFluctuation.a = dataEmitter.ColorVertexFluctuation.Main.a + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.a);
+							ColorFluctuation.r = dataEmitter.ColorVertexFluctuation.Main.r + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.r);
+							ColorFluctuation.g = dataEmitter.ColorVertexFluctuation.Main.g + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.g);
+							ColorFluctuation.b = dataEmitter.ColorVertexFluctuation.Main.b + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.b);
+
+							ColorVertex = Color.Lerp(ColorVertex, ColorFluctuation, rateLife);
+						}
+
+						if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.FADEALPHA))
+						{
+							float RateStart = dataEmitter.AlphaFadeStart;
+							float RateEnd = dataEmitter.AlphaFadeEnd;
+							if(rateLife < RateStart)
+							{
+								ColorVertex.a *= (1.0f - ((RateStart - rateLife) / RateStart));
+							}
+							else
+							{
+								if(rateLife > RateEnd)
+								{
+									if(1.0f <= RateEnd)
+									{
+										ColorVertex.a = 0.0f;
+									}
+									else
+									{
+										float Alpha = (rateLife - RateEnd) / (1.0f - RateEnd);
+										Alpha = (1.0f <= Alpha) ? 1.0f : Alpha;
+										ColorVertex.a *= (1.0f - Alpha);
+									}
+								}
+							}
+						}
+					}
+
+					Scale.x = 
+					Scale.y = 1.0f;
+//					Scale.z = 1.0f;
+					float scaleRate = 1.0f;
+
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SCALE_START))
+					{
+						Scale.x = dataEmitter.ScaleStart.Main.x + random.RandomFloat(dataEmitter.ScaleStart.Sub.x);
+						Scale.y = dataEmitter.ScaleStart.Main.y + random.RandomFloat(dataEmitter.ScaleStart.Sub.y);
+						scaleRate = dataEmitter.ScaleRateStart.Main + random.RandomFloat(dataEmitter.ScaleRateStart.Sub);
+					}
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SCALE_END))
+					{
+						Vector3 scaleEnd;
+						float scaleRateEnd;
+						scaleEnd.x = dataEmitter.ScaleEnd.Main.x + random.RandomFloat(dataEmitter.ScaleEnd.Sub.x);
+						scaleEnd.y = dataEmitter.ScaleEnd.Main.y + random.RandomFloat(dataEmitter.ScaleEnd.Sub.y);
+						scaleEnd.z = 1.0f;
+						scaleRateEnd = dataEmitter.ScaleRateEnd.Main + random.RandomFloat(dataEmitter.ScaleRateEnd.Sub);
+
+						Scale = Vector2.Lerp(Scale, scaleEnd, rateLife);
+						scaleRate = Mathf.Lerp(scaleRate, scaleRateEnd, rateLife);
+					}
+					Scale *= scaleRate;
+					Scale.z = 1.0f;	/* Overwrite, force */
+
+					PositionX = x + (emitter.Position.x + offsetX);
+					PositionY = y + (emitter.Position.y + offsetY);
+
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.GRAVITY_POINT))
+					{
+						Vector2 vectorPosition;
+						float positionXGravity = dataEmitter.GravityPointPosition.x;
+						float positionYGravity = dataEmitter.GravityPointPosition.y;
+						vectorPosition.x = positionXGravity - (offsetX + PositionX);
+						vectorPosition.y = positionYGravity - (offsetY + PositionY);
+						Vector2 vectorNormal = vectorPosition.normalized;
+						float gravityPower = dataEmitter.GravityPointPower;
+						if(0.0f < gravityPower)
+						{
+							float eFrame = (vectorPosition.magnitude / gravityPower) * 0.9f;
+							float gFrame = (Frame >= (int)eFrame) ? (eFrame * 0.9f) : Frame;
+
+							vectorNormal = vectorNormal * gravityPower * gFrame;
+							PositionX += vectorNormal.x;
+							PositionY += vectorNormal.y;
+
+							float Blend = OutQuad(gFrame, eFrame, 0.9f, 0.0f);
+							Blend += (Frame / life * 0.1f);
+
+							PositionX = PositionX + ((positionXGravity - PositionX) * Blend);	/* CAUTION!: Don't use "Mathf.Lerp" */
+							PositionY = PositionY + ((positionYGravity - PositionY) * Blend);	/* CAUTION!: Don't use "Mathf.Lerp" */
+						}
+						else
+						{
+							/* MEMO: In the case negative power, Simply repulsion. Attenuation due to distance is not taken into account. */
+							vectorNormal = vectorNormal * gravityPower * Frame;
+							PositionX += vectorNormal.x;
+							PositionY += vectorNormal.y;
+						}
+					}
+
+					Direction = 0.0f;
+					if((0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.TURNDIRECTION)) && (false == flagSimplicity))
+					{
+						emitter.ParticleTempolary2 = this;
+						emitter.ParticleTempolary2.Calculate(	(Frame + 1.0f),	/* (Frame + 0.1f), */
+																instanceRoot,
+																ref controlEffect,
+																ref emitter,
+																ref emitter.DataEffect.TableEmitter[emitter.IndexEmitter],
+																true
+															);
+						float RadianDirection = AngleGetCCW(	new Vector2(1.0f, 0.0f),
+																new Vector2((PositionX - emitter.ParticleTempolary2.PositionX), (PositionY - emitter.ParticleTempolary2.PositionY))
+															);
+						Direction = (RadianDirection * Mathf.Rad2Deg) + 90.0f + dataEmitter.TurnDirectionFluctuation;
+					}
+
+					return (true);
+				}
+				private static float OutQuad(float time, float timeFull, float valueMax, float valueMin)
+				{
+					if(0.0f >= timeFull)
+					{
+						return(0.0f);
+					}
+					if(time > timeFull)
+					{
+						time = timeFull;
+					}
+
+					valueMax -= valueMin;
+					time /= timeFull;
+					return(-valueMax * time * (time - 2.0f) + valueMin);
+				}
+				private static float AngleGetCCW(Vector2 start, Vector2 end)
+				{
+					Vector2 startNormalized = start.normalized;
+					Vector2 endNormalized = end.normalized;
+
+					float dot = Vector2.Dot(startNormalized, endNormalized);
+					dot = Mathf.Clamp(dot, -1.0f, 1.0f);
+
+					float angle = Mathf.Acos(dot);
+					float cross = (startNormalized.x * endNormalized.y) - (endNormalized.x * startNormalized.y);
+					angle = (0.0f > cross) ? ((2.0f * Mathf.PI) - angle) : angle;
+
+					return(angle);
+				}
+				#endregion Functions
+
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
 				#region Classes, Structs & Interfaces
-				internal struct PatternGenerate
+				internal struct Activity
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
 					internal FlagBitStatus Status;
-					internal int ID;
+//					internal int ID;
 					internal int Cycle;
 					internal int FrameStart;
 					internal int FrameEnd;
@@ -348,7 +949,7 @@ public static partial class Library_SpriteStudio6
 					internal void CleanUp()
 					{
 						Status = FlagBitStatus.CLEAR;
-						ID = -1;
+//						ID = -1;
 						Cycle = -1;
 						FrameStart = -1;
 						FrameEnd = -1;
