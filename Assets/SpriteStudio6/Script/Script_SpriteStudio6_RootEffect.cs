@@ -18,6 +18,8 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	#region Variables & Properties
 	public Script_SpriteStudio6_DataEffect DataEffect;
 
+	public Library_SpriteStudio6.Control.Effect ControlEffect;
+
 	public int LimitParticleDraw;
 	private FlagBitStatus Status;
 	internal bool StatusIsValid
@@ -94,10 +96,17 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Start Base-Class */
 		BaseStart();
 
-		/* えみっとパターンからフレーム長を作る */
-//		FrameRange = これ、エミットパターンからできる
+		/* Boot up control */
+		ControlEffect.BootUp(this);
+		FrameRange = (float)ControlEffect.DurationFull;
 
 		Status |= FlagBitStatus.VALID;
+
+		/* Play Animation Initialize */
+		if(null == InstanceRootParent)
+		{
+			AnimationPlay();
+		}
 
 		return;
 
@@ -121,7 +130,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	}
 	internal void LateUpdateMain(float timeElapsed)
 	{
-		if(0 != (Status & FlagBitStatus.VALID))
+		if(0 == (Status & FlagBitStatus.VALID))
 		{
 			return;
 		}
@@ -147,8 +156,8 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			Frame = Mathf.Clamp(Frame, 0.0f, FrameRange);
 		}
 
-		/* Update & Draw Emitters */
-
+		/* Update & Draw Effect */
+		ControlEffect.Update(this);
 
 		/* Clear transient status */
 		StatusPlaying &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;

@@ -2056,9 +2056,6 @@ public static partial class LibraryEditor_SpriteStudio6
 									if((listPrioritySort[j] < listPrioritySort[k])
 										|| ((listPrioritySort[j] == listPrioritySort[k]) && (listIndexPartsSort[j] < listIndexPartsSort[k]))
 										)
-//									if((listPrioritySort[j] > listPrioritySort[k])
-//										|| ((listPrioritySort[j] == listPrioritySort[k]) && (listIndexPartsSort[j] > listIndexPartsSort[k]))
-//										)
 									{
 										float tempFloat = listPrioritySort[j];
 										int tempInt = listIndexPartsSort[j];

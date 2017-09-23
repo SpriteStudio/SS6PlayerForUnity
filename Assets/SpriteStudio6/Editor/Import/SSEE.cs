@@ -344,9 +344,14 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationEmitter.CleanUp();
 
 				/* Get Base Datas */
+				string nameDirectoryCellMap;
+				string nameFileBodyCellMap;
+				string nameFileExtentionCellMap;
+				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out nameDirectoryCellMap, out nameFileBodyCellMap, out nameFileExtentionCellMap, nameCellMap);	/* Remove ".ssce" */
+
 				informationEmitter.Data.FlagData = Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.CLEAR;
 				informationEmitter.Data.OperationBlendTarget = operationBlendTarget;
-				informationEmitter.NameCellMap = nameCellMap;
+				informationEmitter.NameCellMap = nameFileBodyCellMap;
 				informationEmitter.NameCell = nameCell;
 
 				string valueText = "";
