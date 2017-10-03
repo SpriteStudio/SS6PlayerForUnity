@@ -49,7 +49,7 @@ Shader "Custom/SpriteStudio6/Effect/Add" {
 
 				fixed4	Pixel = tex2D(_MainTex, Input.Texture00UV.xy);
 				Pixel *= Input.ColorMain;
-				Pixel *= Pixel.a;
+//				Pixel *= Pixel.a;
 //				Pixel.a = 1.0f;
 				Output = Pixel;
 

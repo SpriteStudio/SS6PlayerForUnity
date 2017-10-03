@@ -30,7 +30,7 @@ Shader "Custom/SpriteStudio6/Effect/Add2"	{
 			CGPROGRAM
 			#pragma vertex VS_main
 			#pragma fragment PS_main
-
+ 
 			#include "UnityCG.cginc"
 
 			#include "Base/ShaderVertex_Particle_SpriteStudio6.cginc"

@@ -16,10 +16,17 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	#region Variables & Properties
 	public Script_SpriteStudio6_DataAnimation DataAnimation;
 
+	internal int CountPartsSprite = 0;
+	internal int CountSpriteMax = 0;	/* use only Highest-Parent-Root */
+	internal int CountParticleMax = 0;	/* use only Highest-Parent-Root */
+
+	public int LimitTrack;
+	internal Library_SpriteStudio6.Control.Animation.Track[] TableControlTrack = null;
+
 	public InformationPlay[] TableInformationPlay;
 	public Library_SpriteStudio6.Control.Animation.Parts[] TableControlParts;
 
-	private FlagBitStatus Status;
+	private FlagBitStatus Status = FlagBitStatus.CLEAR;
 	internal bool StatusIsValid
 	{
 		get
@@ -49,9 +56,6 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	}
 	internal Library_SpriteStudio6.CallBack.FunctionPlayEnd CallBackFunctionPlayEnd = null;
 	internal Library_SpriteStudio6.CallBack.FunctionUserData CallBackFunctionUserData = null;
-
-	public int LimitTrack;
-	internal Library_SpriteStudio6.Control.Animation.Track[] TableControlTrack;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -75,6 +79,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			goto Start_ErrorEnd;
 		}
 
+		/* Get Counts */
+		CountPartsSprite  = DataAnimation.CountGetPartsSprite();
+		CountSpriteMax = 0;	/* Set in ClusterBootUpDraw */
+		CountParticleMax = 0;	/* Set in ClusterBootUpDraw */
+
 		/* Start Base-Class */
 		if(false == BaseStart())
 		{
@@ -95,7 +104,13 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Boot up Parts-Control */
-		if(false == ControlBootUpParts())
+		if(false == ControlBootUpParts(CountSpriteMax))
+		{
+			goto Start_ErrorEnd;
+		}
+
+		/* Boot up Draw-Cluster */
+		if(false == ClusterBootUpDraw(CountSpriteMax))
 		{
 			goto Start_ErrorEnd;
 		}
@@ -141,10 +156,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		{
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
-			LateUpdateMain(FunctionTimeElapse(this));
+			Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
+			LateUpdateMain(FunctionTimeElapse(this), ref matrixInverseMeshRenderer);
 		}
 	}
-	internal void LateUpdateMain(float timeElapsed)
+	internal void LateUpdateMain(float timeElapsed, ref Matrix4x4 matrixCorrection)
 	{
 		if(0 == (Status & FlagBitStatus.VALID))
 		{
@@ -158,7 +174,6 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		if(null == TableControlTrack)
 		{	/* Lost */
 			ControlBootUpTrack();
-//			return;
 		}
 		int countControlTrack = TableControlTrack.Length;
 		for(int i=0; i<countControlTrack; i++)
@@ -173,14 +188,39 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			TableControlParts[i].UpdateGameObject(this, i);
 		}
 
-		/* Draw Parts */
-		if(false == FlagHideForce)
+		/* Combine & Draw Mesh */
+		/* MEMO: Execute combining and drawing only at Highest-Parent-Root. */
+		if((null == InstanceRootParent) && (false == FlagHideForce))
 		{
+			if(null == ClusterDraw)
+			{	/* Lost */
+				if(false == ClusterBootUpDraw(CountPartsSprite))
+				{	/* Recovery failure */
+					return;
+				}
+			}
+			ClusterDraw.DataPurge();
+
+			if(false == RendererBootUpDraw(false))
+			{	/* Recovery failure */
+				return;
+			}
+
 			int idPartsDrawNext = TableControlParts[0].IDPartsDrawNext;
 			while(0 <= idPartsDrawNext)
 			{
-				TableControlParts[idPartsDrawNext].UpdateDraw(this, idPartsDrawNext);
+				TableControlParts[idPartsDrawNext].UpdateDraw(this, idPartsDrawNext, ref matrixCorrection);
 				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsDrawNext;
+			}
+
+			if(null != MeshCombined)	/* && (null == InstanceRootParent) */
+			{
+				Material[] tableMaterialCombine = ClusterDraw.MeshCombine(MeshCombined);
+				if(null != tableMaterialCombine)
+				{
+					InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
+					InstanceMeshFilter.sharedMesh = MeshCombined;
+				}
 			}
 		}
 
@@ -283,6 +323,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	}
 	private static void FunctionBootUpDataAnimationSignature()
 	{
+		/* Dummy-Function */
 	}
 
 	private int ControlBootUpTrack()
@@ -325,7 +366,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		return(false);
 	}
 
-	private bool ControlBootUpParts()
+	private bool ControlBootUpParts(int countPartsSprite)
 	{
 		int countParts;
 		if(null == TableControlParts)
@@ -341,7 +382,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 		for(int i=0; i<countParts; i++)
 		{
-			if(false == TableControlParts[i].BootUp(this, i))
+			if(false == TableControlParts[i].BootUp(this, i, countPartsSprite))
 			{
 				goto ControlBootUpParts_ErrorEnd;
 			}
@@ -352,15 +393,98 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		return(false);
 	}
 
-	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_Root scriptRoot)
+	private bool ClusterBootUpDraw(int countPartsSprite)
 	{
-		return(Time.deltaTime);
+		Script_SpriteStudio6_Root instanceRootHighest = RootGetHighest();
+		CountSpriteMax = 0;
+		CountParticleMax = 0;
+
+		if(null != instanceRootHighest)
+		{	/* Child */
+			ClusterDraw = instanceRootHighest.ClusterDraw;
+		}
+		else
+		{	/* Highest-Root */
+			if(false == CountGetDrawMesh(ref CountSpriteMax, ref CountParticleMax))
+			{
+				goto ClusterBootUpDraw_ErrorEnd;
+			}
+
+			ClusterDraw = new Library_SpriteStudio6.Draw.Cluster();
+			if(null == ClusterDraw)
+			{
+				goto ClusterBootUpDraw_ErrorEnd;
+			}
+			if(false == ClusterDraw.BootUp(CountSpriteMax, CountParticleMax))
+			{
+				goto ClusterBootUpDraw_ErrorEnd;
+			}
+		}
+
+		return(true);
+
+	ClusterBootUpDraw_ErrorEnd:;
+		CountSpriteMax = 0;
+		CountParticleMax = 0;
+		ClusterDraw = null;
+		return(false);
+	}
+
+	internal bool CountGetDrawMesh(ref int countSprite, ref int countParticle)
+	{
+		if((null == DataAnimation) || (null == TableControlParts))
+		{
+			return(false);
+		}
+
+		countSprite += DataAnimation.CountGetPartsSprite();
+
+		int countParts = DataAnimation.TableParts.Length;
+		for(int i=0; i<countParts; i++)
+		{
+			switch(DataAnimation.TableParts[i].Feature)
+			{
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+					{
+						Script_SpriteStudio6_Root rootUnderControl = TableControlParts[i].InstanceRootUnderControl;
+						if(null != rootUnderControl)
+						{
+							/* MEMO: "Instance" can be nested. */
+							rootUnderControl.CountGetDrawMesh(ref countSprite, ref countParticle);
+						}
+					}
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+					{
+						Script_SpriteStudio6_RootEffect rootUnderControl = TableControlParts[i].InstanceRootEffectUnderControl;
+						if(null != rootUnderControl)
+						{
+							/* MEMO: "Effect" cannot control any animation-object. */
+							countParticle += rootUnderControl.CountGetDrawMesh();
+						}
+					}
+					break;
+			}
+		}
+		return(true);
 	}
 
 	/* Part: SpriteStudio6/Script/Root/FunctionAnimation.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionPlayTrack.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionCellChange.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionColorBlend.cs */
+
+	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_Root scriptRoot)
+	{
+		return(Time.deltaTime);
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */

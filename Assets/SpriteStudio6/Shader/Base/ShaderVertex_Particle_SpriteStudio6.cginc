@@ -5,17 +5,10 @@
 //	All rights reserved.
 //
 
-float4	_OverlayParameter_Non;
-float4	_OverlayParameter_Mix;
-float4	_OverlayParameter_Add;
-float4	_OverlayParameter_Sub;
-float4	_OverlayParameter_Mul;
-
 struct	InputVS	{
 	float4	vertex : POSITION;
 	float4	color : COLOR0;
 	float4	texcoord : TEXCOORD0;
-	float4	texcoord1 : TEXCOORD1;
 };
 
 struct	InputPS	{
@@ -39,9 +32,7 @@ InputPS	VS_main(InputVS Input)
 	Temp.w = 0.0f;
 	Output.Texture00UV = Temp;
 
-	Temp = Input.color;
-	Temp.w *= Input.texcoord1.x;
-	Output.ColorMain = Temp;
+	Output.ColorMain = Input.color;
 
 	Temp = Input.vertex;
 	Temp = UnityObjectToClipPos(Temp);

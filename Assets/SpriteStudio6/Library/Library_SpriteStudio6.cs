@@ -6,6 +6,7 @@
 */
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static partial class Library_SpriteStudio6
@@ -1166,42 +1167,33 @@ public static partial class Library_SpriteStudio6
 			public bool FlagHideForce;
 
 			internal float RateOpacity = 1.0f;
+
+			internal Library_SpriteStudio6.Draw.Cluster ClusterDraw = null;	/* refer to Highest-Parent-Root's ClusterDraw */
+			internal MeshRenderer InstanceMeshRenderer = null;
+			internal MeshFilter InstanceMeshFilter = null;
+			internal Mesh MeshCombined = null;	/* use only Highest-Parent-Root */
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
 			#region Functions
 			protected bool BaseAwake()
 			{
-#if true
 				/* Reassignment for shader lost */
 				/* MEMO: Memory leak occasionally, so normally no reassign. */
 				if(true == FlagReassignMaterialForce)
 				{
 					int countTableMaterial = (null != TableMaterial) ? TableMaterial.Length : 0;
-					Material instanceMaterial = null;
+					Material material = null;
 					for(int i=0; i<countTableMaterial; i++)
 					{
-						instanceMaterial = TableMaterial[i];
-						if(null != instanceMaterial)
+						material = TableMaterial[i];
+						if(null != material)
 						{
-							instanceMaterial.shader = Shader.Find(instanceMaterial.shader.name);
+							material.shader = Shader.Find(material.shader.name);
 						}
 					}
-					instanceMaterial = null;
+					material = null;
 				}
-#else
-					int countTableMaterial = (null != TableMaterial) ? TableMaterial.Length : 0;
-					Material materialOriginal = null;
-					for(int i=0; i<countTableMaterial; i++)
-					{
-						materialOriginal = TableMaterial[i];
-						if(null != materialOriginal)
-						{
-							TableMaterial[i] = new Material(materialOriginal);
-						}
-					}
-					materialOriginal = null;
-#endif
 
 				return(true);
 			}
@@ -1210,6 +1202,12 @@ public static partial class Library_SpriteStudio6
 			{
 				/* Generate CellMap table */
 				if(false == CellMapBootUp())
+				{
+					return(false);
+				}
+
+				/* SetUp Mesh-Renderer & Combined-Mesh */
+				if(false == RendererBootUpDraw(true))
 				{
 					return(false);
 				}
@@ -1229,6 +1227,18 @@ public static partial class Library_SpriteStudio6
 				}
 
 				return(true);
+			}
+
+			public Script_SpriteStudio6_Root RootGetHighest()
+			{
+				Script_SpriteStudio6_Root root = null;
+				Script_SpriteStudio6_Root rootParent = InstanceRootParent;
+				while(null != rootParent)
+				{
+					root = rootParent;
+					rootParent = root.InstanceRootParent;
+				}
+				return(root);
 			}
 
 			public int CountGetCellMap()
@@ -1319,6 +1329,75 @@ public static partial class Library_SpriteStudio6
 
 				return(true);
 			}
+
+			protected bool RendererBootUpDraw(bool flagStart)
+			{
+				if(true == flagStart)
+				{
+					if(null != InstanceRootParent)
+					{	/* Boot up */
+						InstanceMeshRenderer = gameObject.GetComponent<MeshRenderer>();
+						if(null != InstanceMeshRenderer)
+						{
+							InstanceMeshRenderer.enabled = false;
+						}
+
+//						InstanceMeshRenderer = gameObject.GetComponent<Fileter>();
+//						if(null != InstanceMeshRenderer)
+//						{
+//						}
+
+						MeshCombined = null;
+
+						return(true);
+					}
+				}
+				else
+				{	/* Recover */
+					if(null != InstanceRootParent)
+					{
+						return(true);
+					}
+				}
+
+				/* MEMO: Since can not solve by "RequireComponent" unconditionally, use "AddComponent" depending on situation. */
+				InstanceMeshFilter = gameObject.GetComponent<MeshFilter>();
+				if(null == InstanceMeshFilter)
+				{
+					InstanceMeshFilter = gameObject.AddComponent<MeshFilter>();
+					if(null == InstanceMeshFilter)
+					{
+						goto RendererBootUpDraw_ErrorEnd;
+					}
+				}
+
+				InstanceMeshRenderer = gameObject.GetComponent<MeshRenderer>();
+				if(null == InstanceMeshRenderer)
+				{
+					InstanceMeshRenderer = gameObject.AddComponent<MeshRenderer>();
+					if(null == InstanceMeshRenderer)
+					{
+						goto RendererBootUpDraw_ErrorEnd;
+					}
+				}
+
+				if(null == MeshCombined)
+				{
+					MeshCombined = new Mesh();
+					if(null == MeshCombined)
+					{
+						goto RendererBootUpDraw_ErrorEnd;
+					}
+					MeshCombined.Clear();
+				}
+				return(true);
+
+			RendererBootUpDraw_ErrorEnd:;
+				InstanceMeshFilter = null;
+				InstanceMeshRenderer = null;
+				MeshCombined = null;
+				return(false);
+			}
 			#endregion Functions
 		}
 		#endregion Classes, Structs & Interfaces
@@ -1328,74 +1407,90 @@ public static partial class Library_SpriteStudio6
 	{
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
 		#region Classes, Structs & Interfaces
-		internal struct BufferMesh
+		internal class Cluster
 		{
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
-			internal Vector3[] Coordinate;
-			internal Color32[] ColorOverlay;
-			internal Vector2[] UV;
-			internal Vector2[] UV2;
+			internal Chain ChainTop;
+			internal Chain ChainLast;
+			internal int Count;
 
-			internal Mesh InstanceMesh;
+			internal List<Vector3> ListCoordinate;
+			internal List<Color32> ListColorParts;
+			internal List<Vector2> ListUVTexture;
+			internal List<Vector2> ListParameterBlend;
+			internal List<int> ListIndexVertex;
+
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
 			#region Functions
 			internal void CleanUp()
 			{
-				Coordinate = null;
-				ColorOverlay = null;
-				UV = null;
-				UV2 = null;
+				ChainTop = null;
+				ChainLast = null;
+				Count = 0;
 
-				InstanceMesh = null;
+				ListCoordinate = null;
+				ListColorParts = null;
+				ListUVTexture = null;
+				ListParameterBlend = null;
+				ListIndexVertex = null;
 			}
 
-			internal bool BootUp(int countVertex)
+			internal bool BootUp(int countSpriteMax, int countParticleMax)
 			{
-				Coordinate = new Vector3[countVertex];
-				if(null == Coordinate)
+				/* MEMO: Buffer length is added up as "Sprite is Triangle-4" and "Effect is Triangle-2". */
+				int countVertex =	(countSpriteMax * (int)Library_SpriteStudio6.KindVertex.TERMINATOR4)
+									+ (countParticleMax * (int)Library_SpriteStudio6.KindVertex.TERMINATOR2);
+				int countIndexVertex =	(countSpriteMax * Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle4.Length)
+										+ (countParticleMax * Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle2.Length);
+				if(null == ListCoordinate)
 				{
-					goto BootUp_ErrorEnd;
+					ListCoordinate = new List<Vector3>(countVertex);
+					if(null == ListCoordinate)
+					{
+						goto BootUp_ErrorEnd;
+					}
+					ListCoordinate.Clear();
 				}
-				ColorOverlay = new Color32[countVertex];
-				if(null == ColorOverlay)
+				if(null == ListColorParts)
 				{
-					goto BootUp_ErrorEnd;
+					ListColorParts = new List<Color32>(countVertex);
+					if(null == ListColorParts)
+					{
+						goto BootUp_ErrorEnd;
+					}
+					ListColorParts.Clear();
 				}
-				UV = new Vector2[countVertex];
-				if(null == UV)
+				if(null == ListUVTexture)
 				{
-					goto BootUp_ErrorEnd;
+					ListUVTexture = new List<Vector2>(countVertex);
+					if(null == ListUVTexture)
+					{
+						goto BootUp_ErrorEnd;
+					}
+					ListUVTexture.Clear();
 				}
-				UV2 = new Vector2[countVertex];
-				if(null == UV2)
+				if(null == ListParameterBlend)
 				{
-					goto BootUp_ErrorEnd;
+					ListParameterBlend = new List<Vector2>(countVertex);
+					if(null == ListParameterBlend)
+					{
+						goto BootUp_ErrorEnd;
+					}
+					ListParameterBlend.Clear();
 				}
-				InstanceMesh = new Mesh();
-				if(null == InstanceMesh)
-				{
-					goto BootUp_ErrorEnd;
-				}
-				InstanceMesh.Clear();
 
-				Vector2 PartsColor = new Vector2((float)((int)Library_SpriteStudio6.KindOperationBlend.NON + 1), 1.0f);
-				for(int i=0; i<countVertex; i++)
+				if(null == ListIndexVertex)
 				{
-					ColorOverlay[i] = TableColor32[i];
-					Coordinate[i] = TableCoordinate[i];
-					UV[i] = TableUVMapping[i];
-					UV2[i] = PartsColor;
+					ListIndexVertex = new List<int>(countIndexVertex);
+					if(null == ListIndexVertex)
+					{
+						goto BootUp_ErrorEnd;
+					}
+					ListIndexVertex.Clear();
 				}
-
-				InstanceMesh.vertices = Coordinate;
-				InstanceMesh.uv = UV;
-				InstanceMesh.uv2 = UV2;
-				InstanceMesh.colors32 = ColorOverlay;
-				InstanceMesh.normals = null;	/* Disused */
-				InstanceMesh.triangles = ((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == countVertex) ? TableIndexVertex_Triangle4 : TableIndexVertex_Triangle2;
 
 				return(true);
 
@@ -1404,43 +1499,286 @@ public static partial class Library_SpriteStudio6
 				return(false);
 			}
 
-			public void Exec(Transform transform, Material material, int layer)
+			internal void DataPurge()
 			{
-				InstanceMesh.vertices = Coordinate;
-				InstanceMesh.uv = UV;
-				InstanceMesh.uv2 = UV2;
-				InstanceMesh.colors32 = ColorOverlay;
+				ChainTop = null;
+				ChainLast = null;
+				Count = 0;
 
-				Graphics.DrawMesh(InstanceMesh, transform.localToWorldMatrix, material, layer);
+				ListCoordinate.Clear();
+				ListColorParts.Clear();
+				ListUVTexture.Clear();
+				ListParameterBlend.Clear();
+				ListIndexVertex.Clear();
 			}
 
-			public void Exec(ref Matrix4x4 matrixTransform, Material material, int layer)
+			private bool ChainAdd(Chain chain)
 			{
-				InstanceMesh.vertices = Coordinate;
-				InstanceMesh.uv = UV;
-				InstanceMesh.uv2 = UV2;
-				InstanceMesh.colors32 = ColorOverlay;
+				if(null == ChainTop)
+				{
+					ChainTop = chain;
+				}
+				if(null != ChainLast)
+				{
+					ChainLast.ChainNext = chain;
+				}
+				ChainLast = chain;
+				Count++;
 
-				Graphics.DrawMesh(InstanceMesh, matrixTransform, material, layer);
+				return(true);
 			}
 
+			internal bool ClusterAdd(Chain chain, Library_SpriteStudio6.Draw.Cluster cluster)
+			{
+				chain.DataPurge();
+				chain.MaterialDraw = null;
+				chain.ClusterSub = cluster;
+
+				ChainAdd(chain);
+
+				return(true);
+			}
+
+			internal Chain VertexAdd(	Chain chain,
+										int countVertex,
+										Vector3[] tableCoordinate,
+										Color32[] tableColorParts,
+										Vector2[] tableUVTexture,
+										Vector2[] tableParameterBlend,
+										Material material,
+										int priority = -1
+									)
+			{
+				int countCoordinate = ListCoordinate.Count;
+				if((countCoordinate + countVertex) > ListCoordinate.Capacity)
+				{	/* Capacity Over */
+					return(null);
+				}
+
+				/* Decide Chain */
+				/* MEMO: Do not unite Sub-Cluster calls. */
+				if((null != ChainLast) && (null == ChainLast.ClusterSub) && (material == ChainLast.MaterialDraw))
+				{	/* Same Material (Use exist Chain) */
+					chain = ChainLast;
+				}
+				else
+				{	/* Use new Chain */
+					chain.DataPurge();
+					chain.MaterialDraw = material;
+					chain.Priority = priority;
+					ChainAdd(chain);
+				}
+
+				/* Add Vertex data */
+				for(int i=0; i<countVertex; i++)
+				{
+					ListCoordinate.Add(tableCoordinate[i]);
+					ListColorParts.Add(tableColorParts[i]);
+					ListUVTexture.Add(tableUVTexture[i]);
+					ListParameterBlend.Add(tableParameterBlend[i]);
+				}
+
+				/* Add Vertex-Index data */
+				int[] tableIndexVertex = null;
+				if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == countVertex)
+				{
+					tableIndexVertex = Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle4;
+				}
+				else
+				{
+					tableIndexVertex = Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle2;
+				}
+				int countIndex = tableIndexVertex.Length;
+				int indexVertexTop = ListIndexVertex.Count;
+				for(int i=0; i<countIndex; i++)
+				{
+					ListIndexVertex.Add(tableIndexVertex[i] + countCoordinate);
+				}
+
+				chain.Add(indexVertexTop, countIndex);
+
+				return(chain);
+			}
+
+			internal int Fix()
+			{
+				int count = 0;
+				Cluster cluster = null;
+				Chain chain = ChainTop;
+				Chain chainPrevious = null;
+				while(null != chain)
+				{
+					if(null != chain.ClusterSub)
+					{	/* Sub-Cluster */
+						cluster = chain.ClusterSub;
+						if(null == chainPrevious)
+						{	/* Top Chain */
+							ChainTop = cluster.ChainTop;
+						}
+						cluster.ChainLast.ChainNext = chain.ChainNext;
+						if(chain == ChainLast)
+						{	/* Solvin Chain-Last */
+							ChainLast = cluster.ChainLast;
+						}
+						Count--;	/* Delete Sub-Cluster */
+						Count += cluster.Count;	/* Add Sub-Cluster's Chain */
+
+						chain = cluster.ChainTop;
+
+						/* MEMO: Jump to loop-top, taking into consideration case where Sub-Cluster is nested. */
+						continue;
+					}
+
+					count += chain.Count;	/* MEMO: Even when integrate chains, ChainPrevious.Count has already been added. */
+
+					if((null != chainPrevious) && (chainPrevious.MaterialDraw == chain.MaterialDraw))
+					{	/* Same Material ... Integrate Chain */
+						chainPrevious.CountVertex += chain.CountVertex;
+						chainPrevious.Count += chain.Count;
+						chainPrevious.ChainNext = chain.ChainNext;
+						if(chain == ChainLast)
+						{
+							ChainLast = chainPrevious;
+						}
+						Count--;
+						chain = chainPrevious;
+					}
+
+					chainPrevious = chain;
+					chain = chain.ChainNext;
+				}
+
+				return(count);
+			}
+
+			internal Material[] MeshCombine(Mesh mesh)
+			{	/* MEMO: Combine meshes by own processing in avoiding overhead. (unuse "Mesh.CombineMeshes") */
+				int countMaterial = Count;
+				Material[] tableMaterial = null;
+
+				mesh.Clear();
+				mesh.name = NameBatchedMesh;
+				if(0 < countMaterial)
+				{
+					tableMaterial = new Material[countMaterial];
+
+					mesh.SetVertices(ListCoordinate);
+					mesh.SetUVs(0, ListUVTexture);
+					mesh.SetUVs(1, ListParameterBlend);
+					mesh.SetColors(ListColorParts);
+
+					Chain chain = ChainTop;
+					if(1 < countMaterial)
+					{	/* Multi-Materials */
+						mesh.subMeshCount = countMaterial;
+
+						int indexMaterial = 0;
+						List<int> listIndexVertexChain = null;
+						while(null != chain)
+						{
+							listIndexVertexChain = new List<int>(ListIndexVertex.Skip(chain.IndexVertex).Take(chain.CountVertex));
+							mesh.SetTriangles(listIndexVertexChain, indexMaterial);
+							listIndexVertexChain.Clear();
+							listIndexVertexChain = null;
+
+							tableMaterial[indexMaterial] = chain.MaterialDraw;
+
+							indexMaterial++;
+							chain = chain.ChainNext;
+						}
+					}
+					else
+					{	/* Single-Material */
+						mesh.SetTriangles(ListIndexVertex, 0);
+						tableMaterial[0] = chain.MaterialDraw;
+					}
+				}
+
+				return(tableMaterial);
+			}
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
-			private readonly static int[] TableIndexVertex_Triangle2 =
+			private const string NameBatchedMesh = "Batched Mesh";
+			#endregion Enums & Constants
+
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+			internal class Chain
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				internal Chain ChainNext;
+				internal Library_SpriteStudio6.Draw.Cluster ClusterSub;
+
+				internal Material MaterialDraw;
+				internal int Priority;
+
+				internal int Count;
+				internal int IndexVertex;
+				internal int CountVertex;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				internal void CleanUp()
+				{
+					DataPurge();
+				}
+
+				internal bool BootUp()
+				{
+					DataPurge();
+					return(true);
+				}
+
+				internal void DataPurge()
+				{
+					ChainNext = null;
+					ClusterSub = null;
+
+					MaterialDraw = null;
+					Priority = -1;
+
+					Count = 0;
+					IndexVertex = 0;
+					CountVertex = 0;
+				}
+
+				internal bool Add(int indexVertex, int countVertex)
+				{
+					if(1 > CountVertex)
+					{
+						IndexVertex = indexVertex;
+					}
+					CountVertex += countVertex;
+					Count++;
+
+					return(true);
+				}
+				#endregion Functions
+			}
+			#endregion Classes, Structs & Interfaces
+		}
+
+		internal static class Model
+		{
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			internal readonly static int[] TableIndexVertex_Triangle2 =
 			{
 				(int)Library_SpriteStudio6.KindVertex.LU, (int)Library_SpriteStudio6.KindVertex.RU, (int)Library_SpriteStudio6.KindVertex.RD,
 				(int)Library_SpriteStudio6.KindVertex.RD, (int)Library_SpriteStudio6.KindVertex.LD, (int)Library_SpriteStudio6.KindVertex.LU
 			};
-			private readonly static int[] TableIndexVertex_Triangle4 =
+			internal readonly static int[] TableIndexVertex_Triangle4 =
 			{
 				(int)Library_SpriteStudio6.KindVertex.C, (int)Library_SpriteStudio6.KindVertex.LU, (int)Library_SpriteStudio6.KindVertex.RU,
 				(int)Library_SpriteStudio6.KindVertex.C, (int)Library_SpriteStudio6.KindVertex.RU, (int)Library_SpriteStudio6.KindVertex.RD,
 				(int)Library_SpriteStudio6.KindVertex.C, (int)Library_SpriteStudio6.KindVertex.RD, (int)Library_SpriteStudio6.KindVertex.LD,
 				(int)Library_SpriteStudio6.KindVertex.C, (int)Library_SpriteStudio6.KindVertex.LD, (int)Library_SpriteStudio6.KindVertex.LU,
 			};
-			public readonly static Vector3[] TableUVMapping = new Vector3[]
+			internal readonly static Vector3[] TableUVMapping = new Vector3[]
 			{	/* MEMO: Used externally */
 				/* LU */	new Vector3(-0.5f, 0.5f, 0.0f),
 				/* RU */	new Vector3(0.5f, 0.5f, 0.0f),
@@ -1448,15 +1786,7 @@ public static partial class Library_SpriteStudio6
 				/* LD */	new Vector3(-0.5f, -0.5f, 0.0f),
 				/* C */		new Vector3(0.0f, 0.0f, 0.0f)
 			};
-//			private readonly static Vector3[] TableNormal = new Vector3[]
-//			{
-//				/* LU */	new Vector3(0.0f, 0.0f, 1.0f),
-//				/* RU */	new Vector3(0.0f, 0.0f, 1.0f),
-//				/* RD */	new Vector3(0.0f, 0.0f, 1.0f),
-//				/* LD */	new Vector3(0.0f, 0.0f, 1.0f),
-//				/* C */		new Vector3(0.0f, 0.0f, 1.0f)
-//			};
-			private readonly static Vector3[] TableCoordinate = new Vector3[]
+			internal readonly static Vector3[] TableCoordinate = new Vector3[]
 			{
 				/* LU */	new Vector3(-0.5f, 0.5f, 0.0f),
 				/* RU */	new Vector3(0.5f, 0.5f, 0.0f),
@@ -1464,7 +1794,7 @@ public static partial class Library_SpriteStudio6
 				/* LD */	new Vector3(-0.5f, -0.5f, 0.0f),
 				/* C */		new Vector3(0.0f, 0.0f, 0.0f)
 			};
-			private readonly static Color32[] TableColor32 = new Color32[]
+			internal readonly static Color32[] TableColor32 = new Color32[]
 			{
 				/* LU */	new Color32(0xff, 0xff, 0xff, 0xff),
 				/* RU */	new Color32(0xff, 0xff, 0xff, 0xff),

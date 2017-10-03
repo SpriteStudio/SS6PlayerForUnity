@@ -24,6 +24,9 @@ public static partial class Library_SpriteStudio6
 			internal Script_SpriteStudio6_RootEffect InstanceRootEffect;
 			internal int DurationFull;
 
+			internal int LimitParticleDraw;
+			internal int CountParticleDraw;
+
 			internal uint Seed;
 			internal uint SeedOffset;
 
@@ -42,15 +45,13 @@ public static partial class Library_SpriteStudio6
 				InstanceRootEffect = null;
 				DurationFull = -1;
 
+				LimitParticleDraw = 0;
+				CountParticleDraw = 0;
+
 				Seed = 0;
 				SeedOffset = 0;
 
 				MatrixRoot = Matrix4x4.identity;
-			}
-
-			internal void ParticleReset()	/* ?????????? */
-			{
-				CountMeshParticle = 0;
 			}
 
 			internal void SeedSet(uint seed)
@@ -140,6 +141,10 @@ public static partial class Library_SpriteStudio6
 				/* Reset Transform */
 				MatrixRoot = Matrix4x4.identity;
 
+				/* Set Limit drawing particle */
+				LimitParticleDraw = instanceRoot.CountParticleMax;
+				CountParticleDraw = 0;
+
 				Status |= FlagBitStatus.RUNNING;
 
 				return(true);
@@ -149,12 +154,16 @@ public static partial class Library_SpriteStudio6
 				return(false);
 			}
 
-			internal bool Update(Script_SpriteStudio6_RootEffect instanceRoot)
+			internal bool Update(Script_SpriteStudio6_RootEffect instanceRoot, ref Matrix4x4 matrixCorrection)
 			{
-				/* Clear Draw-Pool (for Particle) */
-				ParticleReset();
+				/* Check WorkArea lost */
+				if(null == TableEmitter)
+				{
+					BootUp(instanceRoot);
+				}
 
-				MatrixRoot = instanceRoot.transform.localToWorldMatrix;
+				MatrixRoot = matrixCorrection * instanceRoot.transform.localToWorldMatrix;
+				CountParticleDraw = 0;
 
 				/* Emitters' Random-Seed Refresh */
 				int frame = (int)(instanceRoot.Frame);
@@ -197,7 +206,10 @@ public static partial class Library_SpriteStudio6
 					}
 					else
 					{	/* Has no Parent-Emitter */
-						TableEmitter[i].Update(frameTarget, instanceRoot, ref this , -1);
+						if(false == TableEmitter[i].Update(frameTarget, instanceRoot, ref this , -1))
+						{	/* Draw-Limit Over */
+							return(true);
+						}
 					}
 				}
 				return(true);
@@ -254,9 +266,14 @@ public static partial class Library_SpriteStudio6
 				internal Library_SpriteStudio6.Control.Effect.Particle ParticleTempolary;	/* (mainly) for Parent */
 				internal Library_SpriteStudio6.Control.Effect.Particle Particle;
 
-				internal Material InstanceMaterialDraw;
+				internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDraw;
+				internal Material MaterialDraw;
 				internal int Layer;
-				internal Library_SpriteStudio6.Draw.BufferMesh DrawMeshParticle;
+				internal Vector3[] CoordinateTransformDraw;
+				internal Vector3[] CoordinateDraw;
+				internal Color32[] ColorVertexDraw;
+				internal Vector2[] ParameterBlendDraw;
+				internal Vector2[] UVTextureDraw;
 
 				internal int FrameFull
 				{
@@ -297,9 +314,14 @@ public static partial class Library_SpriteStudio6
 					Position = Vector2.zero;
 					FrameGlobal = 0;
 
-					InstanceMaterialDraw = null;
+					ChainDraw = null;
+					MaterialDraw = null;
 					Layer = -1;
-					DrawMeshParticle.CleanUp();
+					CoordinateTransformDraw = null;
+					CoordinateDraw = null;
+					ColorVertexDraw = null;
+					ParameterBlendDraw = null;
+					UVTextureDraw = null;
 				}
 
 				internal bool BootUp(	Script_SpriteStudio6_RootEffect instanceRoot,
@@ -351,11 +373,27 @@ public static partial class Library_SpriteStudio6
 																				);
 					}
 
-					/* Set Particle's UV */
-					if(false == DrawMeshParticle.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2))
+					/* Create Draw-Temporary */
+					ChainDraw = new Draw.Cluster.Chain();
+					if(null == ChainDraw)
 					{
 						goto BootUp_ErrorEnd;
 					}
+//					ChainDraw.CleanUp();
+					ChainDraw.BootUp();
+
+					CoordinateTransformDraw = new Vector3[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+					if(null == CoordinateTransformDraw)
+					{
+						goto BootUp_ErrorEnd;
+					}
+					ColorVertexDraw = new Color32[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+					if(null == ColorVertexDraw)
+					{
+						goto BootUp_ErrorEnd;
+					}
+
+					/* Set Particle's UV */
 					if(false == CellPresetParticle(instanceRoot))
 					{
 						goto BootUp_ErrorEnd;
@@ -415,15 +453,19 @@ public static partial class Library_SpriteStudio6
 					countParticle = DataEffect.TableEmitter[IndexEmitter].CountParticleMax;
 					for(int i=0; i<countParticle; i++)
 					{
-						Particle.Exec(	frameNow,
-										i,
-										instanceRoot,
-										ref controlEffect,
-										ref this,
-										ref TableActivityParticle[i],
-										indexEmitterParent,
-										ref ParticleTempolary
-									); 
+						if(false == Particle.Exec(	frameNow,
+													i,
+													instanceRoot,
+													ref controlEffect,
+													ref this,
+													ref TableActivityParticle[i],
+													indexEmitterParent,
+													ref ParticleTempolary
+												)
+							)
+						{	/* Draw-Limit Over */
+							return(false);
+						}
 					}
 					return(true);
 				}
@@ -465,11 +507,15 @@ public static partial class Library_SpriteStudio6
 							emitterTarget.ParticleTempolary.IDParent = 0;
 
 							/* CAUTION: "ParticleTempolary" will be broken. */
-							emitterTarget.Update(	(frame - (float)FrameTop),
-													instanceRoot,
-													ref controlEffect,
-													indexEmitter
-												);
+							if(false == emitterTarget.Update(	(frame - (float)FrameTop),
+																instanceRoot,
+																ref controlEffect,
+																indexEmitter
+														)
+								)
+							{
+								return(false);
+							}
 						}
 					}
 
@@ -506,7 +552,7 @@ public static partial class Library_SpriteStudio6
 						{
 							IndexCellMap = indexCellMap;
 							IndexCell = indexCell;
-							InstanceMaterialDraw = instanceRoot.MaterialGet(IndexCellMap, DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget);
+							MaterialDraw = instanceRoot.MaterialGet(IndexCellMap, DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget);
 
 							float pivotXCell = dataCellMap.TableCell[indexCell].Pivot.x;
 							float pivotYCell = dataCellMap.TableCell[indexCell].Pivot.y;
@@ -514,18 +560,26 @@ public static partial class Library_SpriteStudio6
 							float coordinateLUy = pivotYCell;
 							float coordinateRDx = dataCellMap.TableCell[indexCell].Rectangle.width - pivotXCell;
 							float coordinateRDy = -(dataCellMap.TableCell[indexCell].Rectangle.height - pivotYCell);
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x = 
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x = coordinateLUx;
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].y = 
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].y = coordinateLUy;
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].x = 
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].x = coordinateRDx;
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y = 
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].y = coordinateRDy;
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].z = 
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].z = 
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].z = 
-							DrawMeshParticle.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].z = 0.0f;
+							if(null == CoordinateDraw)
+							{
+								CoordinateDraw = new Vector3[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+								if(null == CoordinateDraw)
+								{
+									goto CellPresetParticle_ErrorEnd;
+								}
+							}
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD].x = 
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU].x = coordinateLUx;
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU].y = 
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU].y = coordinateLUy;
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD].x = 
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU].x = coordinateRDx;
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD].y = 
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD].y = coordinateRDy;
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU].z = 
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU].z = 
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD].z = 
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD].z = 0.0f;
 
 							float sizeXTexture = dataCellMap.SizeOriginal.x;
 							float sizeYTexture = dataCellMap.SizeOriginal.y;
@@ -533,14 +587,36 @@ public static partial class Library_SpriteStudio6
 							coordinateRDx = dataCellMap.TableCell[indexCell].Rectangle.xMax / sizeXTexture;	/* R */
 							coordinateLUy = (sizeYTexture - dataCellMap.TableCell[indexCell].Rectangle.yMin) / sizeYTexture;	/* U */
 							coordinateRDy = (sizeYTexture - dataCellMap.TableCell[indexCell].Rectangle.yMax) / sizeYTexture;	/* D */
-							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.LU].x = 
-							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.LD].x = coordinateLUx;
-							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.LU].y = 
-							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.RU].y = coordinateLUy;
-							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.RU].x = 
-							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.RD].x = coordinateRDx;
-							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.RD].y = 
-							DrawMeshParticle.UV[(int)Library_SpriteStudio6.KindVertex.LD].y = coordinateRDy;
+							if(null == UVTextureDraw)
+							{
+								UVTextureDraw = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+								if(null == UVTextureDraw)
+								{
+									goto CellPresetParticle_ErrorEnd;
+								}
+							}
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LU].x = 
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LD].x = coordinateLUx;
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LU].y = 
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RU].y = coordinateLUy;
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RU].x = 
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RD].x = coordinateRDx;
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RD].y = 
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LD].y = coordinateRDy;
+
+							if(null == ParameterBlendDraw)
+							{
+								ParameterBlendDraw = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+								if(null == ParameterBlendDraw)
+								{
+									goto CellPresetParticle_ErrorEnd;
+								}
+
+								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.LU] = 
+								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.RU] = 
+								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.RD] = 
+								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.LD] = Vector2.zero;
+							}
 						}
 					}
 
@@ -549,23 +625,30 @@ public static partial class Library_SpriteStudio6
 				CellPresetParticle_ErrorEnd:;
 					IndexCellMap = -1;
 					IndexCell = -1;
-					InstanceMaterialDraw = null;
+					MaterialDraw = null;
 					return(false);
 				}
 
-				internal bool DrawParticle(ref Matrix4x4 matrixTransform, ref Color ColorVertex, float rateOpacity)
+				internal bool DrawParticle(Library_SpriteStudio6.Draw.Cluster clusterDraw, ref Matrix4x4 matrixTransform, ref Color ColorVertex)
 				{
-					DrawMeshParticle.ColorOverlay[(int)Library_SpriteStudio6.KindVertex.LU] = 
-					DrawMeshParticle.ColorOverlay[(int)Library_SpriteStudio6.KindVertex.RU] = 
-					DrawMeshParticle.ColorOverlay[(int)Library_SpriteStudio6.KindVertex.RD] = 
-					DrawMeshParticle.ColorOverlay[(int)Library_SpriteStudio6.KindVertex.LU] = ColorVertex;
+					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.LU] = 
+					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.RU] = 
+					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.RD] = 
+					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.LD] = ColorVertex;
 
-					DrawMeshParticle.UV2[(int)Library_SpriteStudio6.KindVertex.LU].x = 
-					DrawMeshParticle.UV2[(int)Library_SpriteStudio6.KindVertex.RU].x = 
-					DrawMeshParticle.UV2[(int)Library_SpriteStudio6.KindVertex.RD].x = 
-					DrawMeshParticle.UV2[(int)Library_SpriteStudio6.KindVertex.LD].x = rateOpacity;
-
-					DrawMeshParticle.Exec(ref matrixTransform, InstanceMaterialDraw, Layer);
+					for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
+					{
+						CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(CoordinateDraw[i]);
+					}
+					clusterDraw.VertexAdd(	ChainDraw,
+											(int)Library_SpriteStudio6.KindVertex.TERMINATOR2,
+											CoordinateTransformDraw,
+											ColorVertexDraw,
+											UVTextureDraw,
+											ParameterBlendDraw,
+											MaterialDraw
+//											-1
+										);
 
 					return(true);
 				}
@@ -668,12 +751,20 @@ public static partial class Library_SpriteStudio6
 											)
 							)
 						{	/* Draw */
+							controlEffect.CountParticleDraw++;
+							if(controlEffect.LimitParticleDraw <= controlEffect.CountParticleDraw)
+							{	/* Draw-Limit Over */
+								return(false);
+							}
+
 							Vector2 scaleLayout = instanceRoot.DataEffect.ScaleLayout;
 							Matrix4x4 matrixTransform = controlEffect.MatrixRoot * Matrix4x4.TRS(	new Vector3((PositionX * scaleLayout.x), (PositionY * scaleLayout.y), 0.0f),
 																									Quaternion.Euler(0.0f, 0.0f, (RotateZ + Direction)),
 																									Scale
 																								);
-							emitter.DrawParticle(ref matrixTransform, ref ColorVertex, instanceRoot.RateOpacity);
+							Color colorVertex = ColorVertex;
+							colorVertex.a *= instanceRoot.RateOpacity;
+							emitter.DrawParticle(instanceRoot.ClusterDraw, ref matrixTransform, ref ColorVertex);
 						}
 					}
 
@@ -794,57 +885,56 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* ColorVertex/AlphaFade */
+					ColorVertex.r =
+					ColorVertex.g =
+					ColorVertex.b =
+					ColorVertex.a = 1.0f;
+
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.COLORVERTEX))
 					{
-						ColorVertex.r =
-						ColorVertex.g =
-						ColorVertex.b =
-						ColorVertex.a = 1.0f;
+						ColorVertex.a = dataEmitter.ColorVertex.Main.a + random.RandomFloat(dataEmitter.ColorVertex.Sub.a);
+						ColorVertex.r = dataEmitter.ColorVertex.Main.r + random.RandomFloat(dataEmitter.ColorVertex.Sub.r);
+						ColorVertex.g = dataEmitter.ColorVertex.Main.g + random.RandomFloat(dataEmitter.ColorVertex.Sub.g);
+						ColorVertex.b = dataEmitter.ColorVertex.Main.b + random.RandomFloat(dataEmitter.ColorVertex.Sub.b);
+					}
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.COLORVERTEX_FLUCTUATION))
+					{
+						Color ColorFluctuation;
+						ColorFluctuation.a = dataEmitter.ColorVertexFluctuation.Main.a + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.a);
+						ColorFluctuation.r = dataEmitter.ColorVertexFluctuation.Main.r + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.r);
+						ColorFluctuation.g = dataEmitter.ColorVertexFluctuation.Main.g + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.g);
+						ColorFluctuation.b = dataEmitter.ColorVertexFluctuation.Main.b + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.b);
 
-						if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.COLORVERTEX))
+						ColorVertex = Color.Lerp(ColorVertex, ColorFluctuation, rateLife);
+					}
+
+					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.FADEALPHA))
+					{
+						float RateStart = dataEmitter.AlphaFadeStart;
+						float RateEnd = dataEmitter.AlphaFadeEnd;
+						if(rateLife < RateStart)
 						{
-							ColorVertex.a = dataEmitter.ColorVertex.Main.a + random.RandomFloat(dataEmitter.ColorVertex.Sub.a);
-							ColorVertex.r = dataEmitter.ColorVertex.Main.r + random.RandomFloat(dataEmitter.ColorVertex.Sub.r);
-							ColorVertex.g = dataEmitter.ColorVertex.Main.g + random.RandomFloat(dataEmitter.ColorVertex.Sub.g);
-							ColorVertex.b = dataEmitter.ColorVertex.Main.b + random.RandomFloat(dataEmitter.ColorVertex.Sub.b);
+							ColorVertex.a *= (1.0f - ((RateStart - rateLife) / RateStart));
 						}
-						if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.COLORVERTEX_FLUCTUATION))
+						else
 						{
-							Color ColorFluctuation;
-							ColorFluctuation.a = dataEmitter.ColorVertexFluctuation.Main.a + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.a);
-							ColorFluctuation.r = dataEmitter.ColorVertexFluctuation.Main.r + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.r);
-							ColorFluctuation.g = dataEmitter.ColorVertexFluctuation.Main.g + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.g);
-							ColorFluctuation.b = dataEmitter.ColorVertexFluctuation.Main.b + random.RandomFloat(dataEmitter.ColorVertexFluctuation.Sub.b);
-
-							ColorVertex = Color.Lerp(ColorVertex, ColorFluctuation, rateLife);
-						}
-
-						if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.FADEALPHA))
-						{
-							float RateStart = dataEmitter.AlphaFadeStart;
-							float RateEnd = dataEmitter.AlphaFadeEnd;
-							if(rateLife < RateStart)
+							if(rateLife > RateEnd)
 							{
-								ColorVertex.a *= (1.0f - ((RateStart - rateLife) / RateStart));
-							}
-							else
-							{
-								if(rateLife > RateEnd)
+								if(1.0f <= RateEnd)
 								{
-									if(1.0f <= RateEnd)
-									{
-										ColorVertex.a = 0.0f;
-									}
-									else
-									{
-										float Alpha = (rateLife - RateEnd) / (1.0f - RateEnd);
-										Alpha = (1.0f <= Alpha) ? 1.0f : Alpha;
-										ColorVertex.a *= (1.0f - Alpha);
-									}
+									ColorVertex.a = 0.0f;
+								}
+								else
+								{
+									float Alpha = (rateLife - RateEnd) / (1.0f - RateEnd);
+									Alpha = (1.0f <= Alpha) ? 1.0f : Alpha;
+									ColorVertex.a *= (1.0f - Alpha);
 								}
 							}
 						}
 					}
 
+					/* Scale */
 					Scale.x = 
 					Scale.y = 1.0f;
 //					Scale.z = 1.0f;
@@ -871,6 +961,7 @@ public static partial class Library_SpriteStudio6
 					Scale *= scaleRate;
 					Scale.z = 1.0f;	/* Overwrite, force */
 
+					/* Position/Gravity */
 					PositionX = x + (emitter.Position.x + offsetX);
 					PositionY = y + (emitter.Position.y + offsetY);
 
@@ -907,6 +998,7 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 
+					/* Turn-Direction */
 					Direction = 0.0f;
 					if((0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.TURNDIRECTION)) && (false == flagSimplicity))
 					{
@@ -964,7 +1056,6 @@ public static partial class Library_SpriteStudio6
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
 					internal FlagBitStatus Status;
-//					internal int ID;
 					internal int Cycle;
 					internal int FrameStart;
 					internal int FrameEnd;
@@ -975,7 +1066,6 @@ public static partial class Library_SpriteStudio6
 					internal void CleanUp()
 					{
 						Status = FlagBitStatus.CLEAR;
-//						ID = -1;
 						Cycle = -1;
 						FrameStart = -1;
 						FrameEnd = -1;

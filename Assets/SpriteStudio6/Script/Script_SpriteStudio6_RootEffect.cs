@@ -21,6 +21,8 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	public Library_SpriteStudio6.Control.Effect ControlEffect;
 
 	public int LimitParticleDraw;
+	internal int CountParticleMax = 0;	/* use only Highest-Parent-Root */
+
 	private FlagBitStatus Status;
 	internal bool StatusIsValid
 	{
@@ -96,8 +98,18 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Start Base-Class */
 		BaseStart();
 
-		/* Boot up control */
-		ControlEffect.BootUp(this);
+		/* Boot up Draw-Cluster */
+		/* MEMO: Need to run before "ControlEffect.BootUp". */
+		if(false == ClusterBootUpDraw())
+		{
+			goto Start_ErrorEnd;
+		}
+
+		/* Boot up Effect-Control */
+		if(false == ControlEffect.BootUp(this))
+		{
+			goto Start_ErrorEnd;
+		}
 		FrameRange = (float)ControlEffect.DurationFull;
 
 		Status |= FlagBitStatus.VALID;
@@ -125,10 +137,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		{
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
-			LateUpdateMain(FunctionTimeElapse(this));
+			Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
+			LateUpdateMain(FunctionTimeElapse(this), ref matrixInverseMeshRenderer);
 		}
 	}
-	internal void LateUpdateMain(float timeElapsed)
+	internal void LateUpdateMain(float timeElapsed, ref Matrix4x4 matrixCorrection)
 	{
 		if(0 == (Status & FlagBitStatus.VALID))
 		{
@@ -156,8 +169,42 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			Frame = Mathf.Clamp(Frame, 0.0f, FrameRange);
 		}
 
+		/* Clear Draw-Cluster */
+		bool flagDraw = ((null == InstanceRootParent) && (false == FlagHideForce)) ? true : false;
+		if(true == flagDraw)
+		{
+			if(null == ClusterDraw)
+			{	/* Lost */
+				if(false == ClusterBootUpDraw())
+				{	/* Recovery failure */
+					return;
+				}
+			}
+			ClusterDraw.DataPurge();
+		}
+
 		/* Update & Draw Effect */
-		ControlEffect.Update(this);
+		ControlEffect.Update(this, ref matrixCorrection);
+
+		/* Combine & Draw Mesh */
+		/* MEMO: Execute combining and drawing only at Highest-Parent-Root. */
+		if(true == flagDraw)
+		{
+			if(false == RendererBootUpDraw(false))
+			{	/* Recovery failure */
+				return;
+			}
+
+			if(null != MeshCombined)	/* && (null == InstanceRootParent) */
+			{
+				Material[] tableMaterialCombine = ClusterDraw.MeshCombine(MeshCombined);
+				if(null != tableMaterialCombine)
+				{
+					InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
+					InstanceMeshFilter.sharedMesh = MeshCombined;
+				}
+			}
+		}
 
 		/* Clear transient status */
 		StatusPlaying &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;
@@ -188,6 +235,41 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			return(TableMaterial[(indexCellMap * CountLength) + (int)operationBlend]);
 		}
 		return(null);
+	}
+
+	private bool ClusterBootUpDraw()
+	{
+		Script_SpriteStudio6_Root instanceRootHighest = RootGetHighest();
+		CountParticleMax = CountGetDrawMesh();
+
+		if(null != instanceRootHighest)
+		{	/* Child */
+			ClusterDraw = instanceRootHighest.ClusterDraw;
+		}
+		else
+		{	/* Highest-Root */
+			ClusterDraw = new Library_SpriteStudio6.Draw.Cluster();
+			if(null == ClusterDraw)
+			{
+				goto ClusterBootUpDraw_ErrorEnd;
+			}
+			if(false == ClusterDraw.BootUp(0, CountParticleMax))
+			{
+				goto ClusterBootUpDraw_ErrorEnd;
+			}
+		}
+
+		return(true);
+
+	ClusterBootUpDraw_ErrorEnd:;
+		CountParticleMax = 0;
+		ClusterDraw = null;
+		return(false);
+	}
+
+	internal int CountGetDrawMesh()
+	{
+		return((0 == LimitParticleDraw) ? (int)Defaults.LIMIT_PARTICLEDRAW : LimitParticleDraw);
 	}
 
 	public static Library_SpriteStudio6.Utility.Random.Generator InstanceCreateRandom()
