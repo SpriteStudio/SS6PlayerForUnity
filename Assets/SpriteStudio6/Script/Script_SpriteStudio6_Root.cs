@@ -42,20 +42,20 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 	}
 
-	private Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionTimeElapse = FunctionTimeElapseDefault;
-	internal Library_SpriteStudio6.CallBack.FunctionTimeElapse CallBackFunctionTimeElapse
+	private Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionExecTimeElapse = FunctionTimeElapseDefault;
+	internal Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionTimeElapse
 	{
 		get
 		{
-			return(FunctionTimeElapse);
+			return(FunctionExecTimeElapse);
 		}
 		set
 		{
-			FunctionTimeElapse = (null != value) ? value : FunctionTimeElapseDefault;
+			FunctionExecTimeElapse = (null != value) ? value : FunctionTimeElapseDefault;
 		}
 	}
-	internal Library_SpriteStudio6.CallBack.FunctionPlayEnd CallBackFunctionPlayEnd = null;
-	internal Library_SpriteStudio6.CallBack.FunctionUserData CallBackFunctionUserData = null;
+	internal Library_SpriteStudio6.CallBack.FunctionPlayEnd FunctionPlayEnd = null;
+	internal Library_SpriteStudio6.CallBack.FunctionUserData FunctionUserData = null;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -110,7 +110,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Boot up Draw-Cluster */
-		if(false == ClusterBootUpDraw(CountSpriteMax))
+		/* MEMO: CAUTION. Caution that Parent-"Root" is not necessarily initialized earlier in generation order of GameObjects on the scene. */
+		/*       ("ClusterDraw" is set null if before the parent's start)                                                                    */
+		if(false == ClusterBootUpDraw())
 		{
 			goto Start_ErrorEnd;
 		}
@@ -157,15 +159,17 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
 			Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
-			LateUpdateMain(FunctionTimeElapse(this), ref matrixInverseMeshRenderer);
+			LateUpdateMain(FunctionExecTimeElapse(this), false, ref matrixInverseMeshRenderer);
 		}
 	}
-	internal void LateUpdateMain(float timeElapsed, ref Matrix4x4 matrixCorrection)
+	internal void LateUpdateMain(float timeElapsed, bool flagHideDefault, ref Matrix4x4 matrixCorrection)
 	{
 		if(0 == (Status & FlagBitStatus.VALID))
 		{
 			return;
 		}
+
+		bool flagHide = flagHideDefault | FlagHideForce;
 
 		/* Update Base */
 		BaseLateUpdate(timeElapsed);
@@ -181,45 +185,71 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			TableControlTrack[i].Update(timeElapsed);
 		}
 
-		/* Update Parts' GameObject(TRS) */
+		/* Update Parts' Common-Parameters (GameObject etc.) */
 		int countControlParts = TableControlParts.Length;
 		for(int i=0; i<countControlParts; i++)
 		{
-			TableControlParts[i].UpdateGameObject(this, i);
+			TableControlParts[i].Update(this, i);
 		}
 
-		/* Combine & Draw Mesh */
-		/* MEMO: Execute combining and drawing only at Highest-Parent-Root. */
-		if((null == InstanceRootParent) && (false == FlagHideForce))
-		{
-			if(null == ClusterDraw)
-			{	/* Lost */
-				if(false == ClusterBootUpDraw(CountPartsSprite))
-				{	/* Recovery failure */
-					return;
-				}
+		/* Recover Draw-Cluster & Component for Rendering */
+		if(null == ClusterDraw)
+		{	/* Lost */
+			if(false == ClusterBootUpDraw())
+			{	/* Recovery failure */
+				return;
 			}
+		}
+
+		/* MEMO: Execute combining and drawing only at Highest-Parent-Root. */
+		/* Clean Draw-Cluster & Component for Rendering */
+		if(null == InstanceRootParent)
+		{
 			ClusterDraw.DataPurge();
 
 			if(false == RendererBootUpDraw(false))
 			{	/* Recovery failure */
 				return;
 			}
+		}
 
-			int idPartsDrawNext = TableControlParts[0].IDPartsDrawNext;
-			while(0 <= idPartsDrawNext)
-			{
-				TableControlParts[idPartsDrawNext].UpdateDraw(this, idPartsDrawNext, ref matrixCorrection);
-				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsDrawNext;
-			}
+		/* Exec Drawing */
+		/* MEMO: Caution that "Instance" and "Effect" are update in draw. */
+		/* MEMO: Hidden "Normal" parts are not processed.(Not included in the Draw-Order-Chain) */
+		int idPartsDrawNext = TableControlParts[0].IDPartsDrawNext;
+		while(0 <= idPartsDrawNext)
+		{
+			TableControlParts[idPartsDrawNext].Draw(this, idPartsDrawNext, flagHide, ref matrixCorrection);
+			idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsDrawNext;
+		}
 
-			if(null != MeshCombined)	/* && (null == InstanceRootParent) */
+		/* Mesh Combine & Set to Renderer */
+		if(null == InstanceRootParent)
+		{
+			if(false == flagHide)
 			{
-				Material[] tableMaterialCombine = ClusterDraw.MeshCombine(MeshCombined);
-				if(null != tableMaterialCombine)
+				if(null != MeshCombined)	/* && (null == InstanceRootParent) */
 				{
-					InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
-					InstanceMeshFilter.sharedMesh = MeshCombined;
+					Material[] tableMaterialCombine = ClusterDraw.MeshCombine(MeshCombined);
+#if false
+					if(null == tableMaterialCombine)
+					{
+						InstanceMeshRenderer.sharedMaterials = null;
+						InstanceMeshFilter.sharedMesh = null;
+					}
+					else
+					{
+						InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
+						InstanceMeshFilter.sharedMesh = MeshCombined;
+					}
+#else
+					/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
+					if(null != tableMaterialCombine)
+					{
+						InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
+						InstanceMeshFilter.sharedMesh = MeshCombined;
+					}
+#endif
 				}
 			}
 		}
@@ -393,15 +423,13 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		return(false);
 	}
 
-	private bool ClusterBootUpDraw(int countPartsSprite)
+	private bool ClusterBootUpDraw()
 	{
-		Script_SpriteStudio6_Root instanceRootHighest = RootGetHighest();
 		CountSpriteMax = 0;
 		CountParticleMax = 0;
-
-		if(null != instanceRootHighest)
+		if(null != InstanceRootParent)
 		{	/* Child */
-			ClusterDraw = instanceRootHighest.ClusterDraw;
+			ClusterDraw = InstanceRootParent.ClusterDraw;
 		}
 		else
 		{	/* Highest-Root */

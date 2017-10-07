@@ -194,19 +194,23 @@ public static partial class Library_SpriteStudio6
 				}
 
 				/* Update Emitters */
+				int[] tableIndexEmitter = instanceRoot.DataEffect.TableIndexEmitterOrderDraw;
+				int indexEmitter;
 				int indexEmitterParent;
 				for(int i=0; i<countEmitter; i++)
 				{
-					TableEmitter[i].SeedOffset = SeedOffset;	/* Update Random-Seed-Offset */
+					indexEmitter = tableIndexEmitter[i];
 
-					indexEmitterParent = TableEmitter[i].IndexParent;
+					TableEmitter[indexEmitter].SeedOffset = SeedOffset;	/* Update Random-Seed-Offset */
+
+					indexEmitterParent = TableEmitter[indexEmitter].IndexParent;
 					if(0 <= indexEmitterParent)
 					{   /* Has Parent-Emitter */
-						TableEmitter[indexEmitterParent].UpdateSubEmitters(frameTarget, instanceRoot, ref this, indexEmitterParent, ref TableEmitter[i]);
+						TableEmitter[indexEmitterParent].UpdateSubEmitters(frameTarget, instanceRoot, ref this, indexEmitterParent, ref TableEmitter[indexEmitter]);
 					}
 					else
 					{	/* Has no Parent-Emitter */
-						if(false == TableEmitter[i].Update(frameTarget, instanceRoot, ref this , -1))
+						if(false == TableEmitter[indexEmitter].Update(frameTarget, instanceRoot, ref this , -1))
 						{	/* Draw-Limit Over */
 							return(true);
 						}
@@ -647,7 +651,6 @@ public static partial class Library_SpriteStudio6
 											UVTextureDraw,
 											ParameterBlendDraw,
 											MaterialDraw
-//											-1
 										);
 
 					return(true);

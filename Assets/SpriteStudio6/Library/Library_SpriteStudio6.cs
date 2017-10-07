@@ -543,7 +543,7 @@ public static partial class Library_SpriteStudio6
 				public int Interval;
 				public RangeFloat DurationParticle;
 
-				public float PriorityParticle;
+//				public float PriorityParticle;
 				public int CountParticleMax;
 				public int CountParticleEmit;
 
@@ -621,7 +621,7 @@ public static partial class Library_SpriteStudio6
 					DurationParticle.Main = 15.0f;
 					DurationParticle.Sub = 15.0f;
 
-					PriorityParticle = 64.0f;
+//					PriorityParticle = 64.0f;
 					CountParticleEmit = 2;
 					CountParticleMax = 32;
 
@@ -679,7 +679,7 @@ public static partial class Library_SpriteStudio6
 					Interval = original.Interval;
 					DurationParticle = original.DurationParticle;
 
-					PriorityParticle = original.PriorityParticle;
+//					PriorityParticle = original.PriorityParticle;
 					CountParticleMax = original.CountParticleMax;
 					CountParticleEmit = original.CountParticleEmit;
 
@@ -1161,7 +1161,8 @@ public static partial class Library_SpriteStudio6
 			public Script_SpriteStudio6_DataCellMap DataCellMap;
 			internal Library_SpriteStudio6.Data.CellMap[] TableCellMap = null;
 
-			internal Script_SpriteStudio6_Root InstanceRootParent = null;
+			/* MEMO: Do not define "InstanceRootParent" to "internal" in order to remember parent-"Root" even after be instantiated on scene. */
+			public Script_SpriteStudio6_Root InstanceRootParent;
 
 			public bool FlagReassignMaterialForce;
 			public bool FlagHideForce;
@@ -1420,7 +1421,6 @@ public static partial class Library_SpriteStudio6
 			internal List<Vector2> ListUVTexture;
 			internal List<Vector2> ListParameterBlend;
 			internal List<int> ListIndexVertex;
-
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1528,25 +1528,13 @@ public static partial class Library_SpriteStudio6
 				return(true);
 			}
 
-			internal bool ClusterAdd(Chain chain, Library_SpriteStudio6.Draw.Cluster cluster)
-			{
-				chain.DataPurge();
-				chain.MaterialDraw = null;
-				chain.ClusterSub = cluster;
-
-				ChainAdd(chain);
-
-				return(true);
-			}
-
 			internal Chain VertexAdd(	Chain chain,
 										int countVertex,
 										Vector3[] tableCoordinate,
 										Color32[] tableColorParts,
 										Vector2[] tableUVTexture,
 										Vector2[] tableParameterBlend,
-										Material material,
-										int priority = -1
+										Material material
 									)
 			{
 				int countCoordinate = ListCoordinate.Count;
@@ -1555,9 +1543,14 @@ public static partial class Library_SpriteStudio6
 					return(null);
 				}
 
+//				if(null == material)
+//				{	/* Material Invalid */
+//					return(null);
+//				}
+
 				/* Decide Chain */
 				/* MEMO: Do not unite Sub-Cluster calls. */
-				if((null != ChainLast) && (null == ChainLast.ClusterSub) && (material == ChainLast.MaterialDraw))
+				if((null != ChainLast) && (material == ChainLast.MaterialDraw))
 				{	/* Same Material (Use exist Chain) */
 					chain = ChainLast;
 				}
@@ -1565,7 +1558,6 @@ public static partial class Library_SpriteStudio6
 				{	/* Use new Chain */
 					chain.DataPurge();
 					chain.MaterialDraw = material;
-					chain.Priority = priority;
 					ChainAdd(chain);
 				}
 
@@ -1603,32 +1595,10 @@ public static partial class Library_SpriteStudio6
 			internal int Fix()
 			{
 				int count = 0;
-				Cluster cluster = null;
 				Chain chain = ChainTop;
 				Chain chainPrevious = null;
 				while(null != chain)
 				{
-					if(null != chain.ClusterSub)
-					{	/* Sub-Cluster */
-						cluster = chain.ClusterSub;
-						if(null == chainPrevious)
-						{	/* Top Chain */
-							ChainTop = cluster.ChainTop;
-						}
-						cluster.ChainLast.ChainNext = chain.ChainNext;
-						if(chain == ChainLast)
-						{	/* Solvin Chain-Last */
-							ChainLast = cluster.ChainLast;
-						}
-						Count--;	/* Delete Sub-Cluster */
-						Count += cluster.Count;	/* Add Sub-Cluster's Chain */
-
-						chain = cluster.ChainTop;
-
-						/* MEMO: Jump to loop-top, taking into consideration case where Sub-Cluster is nested. */
-						continue;
-					}
-
 					count += chain.Count;	/* MEMO: Even when integrate chains, ChainPrevious.Count has already been added. */
 
 					if((null != chainPrevious) && (chainPrevious.MaterialDraw == chain.MaterialDraw))
@@ -1676,7 +1646,7 @@ public static partial class Library_SpriteStudio6
 						List<int> listIndexVertexChain = null;
 						while(null != chain)
 						{
-							listIndexVertexChain = new List<int>(ListIndexVertex.Skip(chain.IndexVertex).Take(chain.CountVertex));
+							listIndexVertexChain = ListIndexVertex.GetRange(chain.IndexVertex, chain.CountVertex);	/* GC Alloc, at GetRange */
 							mesh.SetTriangles(listIndexVertexChain, indexMaterial);
 							listIndexVertexChain.Clear();
 							listIndexVertexChain = null;
@@ -1710,10 +1680,8 @@ public static partial class Library_SpriteStudio6
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
 				internal Chain ChainNext;
-				internal Library_SpriteStudio6.Draw.Cluster ClusterSub;
 
 				internal Material MaterialDraw;
-				internal int Priority;
 
 				internal int Count;
 				internal int IndexVertex;
@@ -1736,10 +1704,8 @@ public static partial class Library_SpriteStudio6
 				internal void DataPurge()
 				{
 					ChainNext = null;
-					ClusterSub = null;
 
 					MaterialDraw = null;
-					Priority = -1;
 
 					Count = 0;
 					IndexVertex = 0;

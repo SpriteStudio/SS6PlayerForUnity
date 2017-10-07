@@ -55,41 +55,6 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
 					#region Classes, Structs & Interfaces
-#if false
-					public static class PackAttribute
-					{
-						/* ----------------------------------------------- Classes, Structs & Interfaces */
-						#region Classes, Structs & Interfaces
-						public interface Container<_Type>
-						{
-							/* ----------------------------------------------- Functions */
-							#region Functions
-							bool Pack(	string nameAttribute,
-										int countFrame,
-										Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
-										int[] tableOrderDraw,
-										params _Type[] listKeyData
-									);
-							#endregion Functions
-						}
-
-						public interface ContainerBool : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool> {}
-						public interface ContainerInt : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt> {}
-						public interface ContainerFloat : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat> {}
-						public interface ContainerStatus : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool> {}
-						public interface ContainerCell : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell> {}
-						public interface ContainerColorBlend : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend> {}
-						public interface ContainerVertexCorrection : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection> {}
-						public interface ContainerUserData : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData> {}
-						public interface ContainerInstance : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance> {}
-						public interface ContainerEffect : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect> {}
-						public interface ContainerCoordinateFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix> {}
-						public interface ContainerColorBlendFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix> {}
-						public interface ContainerUVFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix> {}
-						#endregion Classes, Structs & Interfaces
-					}
-#endif
-
 					public class AttributeBool : Attribute<bool>
 					{
 						/* ----------------------------------------------- Functions */
@@ -808,7 +773,10 @@ public static partial class Library_SpriteStudio6
 						}
 
 						public void KeyDataAdjustTopFrame()
-						{
+						{	/* MEMO: Usually, use this to adjust top frame's key data.                                              */
+							/*       When no key data, attribute is unused.                                                         */
+							/*       When there are key datas, if extra frames at the top, same value as closest key datas are set. */
+							/*       However, interpolation is not performed.                                                       */
 							if(0 >= ListKey.Count)
 							{	/* No Keys */
 								return;
@@ -831,27 +799,37 @@ public static partial class Library_SpriteStudio6
 							}
 						}
 
-						public void KeyDataAdjustTopFrame(_Type valueDefault)
-						{
+						public void KeyDataAdjustTopFrame(_Type valueDefault, bool flagNoKeyIsNoData)
+						{	/* MEMO: This function is for attributes with special specifications to adjust top frame's key data. */
+							/*       - When no key data, interpret as default value is set                                       */
+							/*       - When no key data in frame 0, default value is forcibly set                                */
 							if(0 >= ListKey.Count)
 							{	/* No Keys */
-								return;
+								if(true == flagNoKeyIsNoData)
+								{	/* Interpret as no data */
+									return;
+								}
+							}
+							else
+							{	/* Has Keys */
+								if(0 == ListKey[0].Frame)
+								{	/* Has data at frame 0 */
+									return;
+								}
 							}
 
-							if(0 < ListKey[0].Frame)
-							{
-								/* Create Top Key-Data */
-								KeyData KeyDataTopFrame = new KeyData();
-								KeyDataTopFrame.Frame = 0;
-								KeyDataTopFrame.Value = valueDefault;
-								KeyDataTopFrame.Formula = Utility.Interpolation.KindFormula.NON;
-								KeyDataTopFrame.FrameCurveStart = 0.0f;
-								KeyDataTopFrame.ValueCurveStart = 0.0f;
-								KeyDataTopFrame.FrameCurveEnd = 0.0f;
-								KeyDataTopFrame.ValueCurveEnd = 0.0f;
+							/* Create Top Key-Data */
+							KeyData KeyDataTopFrame = new KeyData();
+							KeyDataTopFrame.Frame = 0;
+							KeyDataTopFrame.Value = valueDefault;
+							KeyDataTopFrame.Formula = Utility.Interpolation.KindFormula.NON;
+							KeyDataTopFrame.FrameCurveStart = 0.0f;
+							KeyDataTopFrame.ValueCurveStart = 0.0f;
+							KeyDataTopFrame.FrameCurveEnd = 0.0f;
+							KeyDataTopFrame.ValueCurveEnd = 0.0f;
 
-								ListKey.Insert(0, KeyDataTopFrame);
-							}
+							ListKey.Insert(0, KeyDataTopFrame);
+							return;
 						}
 						#endregion Functions
 

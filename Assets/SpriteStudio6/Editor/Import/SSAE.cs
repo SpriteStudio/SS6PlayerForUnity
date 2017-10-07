@@ -1540,7 +1540,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				informationAnimationParts.FlipX.KeyDataAdjustTopFrame();
 				informationAnimationParts.FlipY.KeyDataAdjustTopFrame();
-				informationAnimationParts.Hide.KeyDataAdjustTopFrame(true);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
+				informationAnimationParts.Hide.KeyDataAdjustTopFrame(true, true);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
 
 				informationAnimationParts.ColorBlend.KeyDataAdjustTopFrame();
 				informationAnimationParts.VertexCorrection.KeyDataAdjustTopFrame();
@@ -1563,9 +1563,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				informationAnimationParts.RadiusCollision.KeyDataAdjustTopFrame();
 
-/* 				informationAnimationParts.UserData.KeyDataAdjustTopFrame(); *//* Not Adjust */
-				informationAnimationParts.Instance.KeyDataAdjustTopFrame();
-				informationAnimationParts.Effect.KeyDataAdjustTopFrame();
+// 				informationAnimationParts.UserData.KeyDataAdjustTopFrame();	/* Not Adjust */
+				/* MEMO: Do not set at here. Set in processing for each part type. */
+//				informationAnimationParts.Instance.KeyDataAdjustTopFrame();
+//				informationAnimationParts.Effect.KeyDataAdjustTopFrame();
 
 				/* Delete attributes that should not exist */
 				informationAnimationParts.AnchorPositionX.ListKey.Clear();	/* Unsupported */
@@ -1636,6 +1637,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.TextureFlipX.ListKey.Clear();
 						informationAnimationParts.TextureFlipY.ListKey.Clear();
 
+						if(0 == (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+						{
+							informationAnimationParts.Instance.KeyDataAdjustTopFrame(Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false);
+						}
+
 						informationAnimationParts.Effect.ListKey.Clear();
 						break;
 
@@ -1661,6 +1667,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.TextureScalingY.ListKey.Clear();
 						informationAnimationParts.TextureFlipX.ListKey.Clear();
 						informationAnimationParts.TextureFlipY.ListKey.Clear();
+
+						if(0 == (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+						{
+							informationAnimationParts.Effect.KeyDataAdjustTopFrame(Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false);
+						}
 
 						informationAnimationParts.Instance.ListKey.Clear();
 						break;
@@ -2034,13 +2045,38 @@ public static partial class LibraryEditor_SpriteStudio6
 							for(int i=0; i<countIndexPartsDraw; i++)
 							{
 								int indexParts = listIndexPartsDraw[i];
+								parts = informationSSAE.TableParts[indexParts];
 								animationParts = TableParts[indexParts];
 								if(0 == (animationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.HIDE_FULL))
 								{
-									if(false == animationParts.TableHide[frame])
+									switch(parts.Data.Feature)
 									{
-										listIndexPartsSort.Add(indexParts);
-										listPrioritySort.Add(tableDrawPriority[indexParts][frame]);
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+											/* MEMO: No reach here. */
+											break;
+
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+											/* MEMO: Not be added to list at when hide state. */
+											if(false == animationParts.TableHide[frame])
+											{
+												listIndexPartsSort.Add(indexParts);
+												listPrioritySort.Add(tableDrawPriority[indexParts][frame]);
+											}
+											break;
+
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+											/* MEMO: "Instance"-parts and "Effect"-parts are always updated regardless of hide state, so unconditionally added to list. */
+											listIndexPartsSort.Add(indexParts);
+											listPrioritySort.Add(tableDrawPriority[indexParts][frame]);
+											break;
+
+										default:
+											/* MEMO: No reach here. */
+											break;
 									}
 								}
 							}

@@ -33,6 +33,7 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 
 	public Library_SpriteStudio6.Data.Parts.Effect[] TableParts;
 	public Library_SpriteStudio6.Data.Effect.Emitter[] TableEmitter;
+	public int[] TableIndexEmitterOrderDraw;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */

@@ -142,6 +142,14 @@ public static partial class Library_SpriteStudio6
 									_TypeContainer container,
 									ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 								);
+					bool ValueGetIndex(	ref _TypeValue outValue,
+										ref int outFrameKey,
+										int index,
+										_TypeContainer container,
+										ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+									);
+					int CountGetValue(_TypeContainer container);
+
 					bool Pack(	_TypeContainer container,
 								string nameAttribute,
 								int countFrame,

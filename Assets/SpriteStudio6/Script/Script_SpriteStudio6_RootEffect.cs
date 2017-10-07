@@ -61,19 +61,19 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	internal float FrameRange;
 	internal float FramePerSecond;
 
-	private Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionTimeElapse = FunctionTimeElapseDefault;
-	internal Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect CallBackFunctionTimeElapse
+	private Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionExecTimeElapse = FunctionTimeElapseDefault;
+	internal Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionTimeElapse
 	{
 		get
 		{
-			return(FunctionTimeElapse);
+			return(FunctionExecTimeElapse);
 		}
 		set
 		{
-			FunctionTimeElapse = (null != value) ? value : FunctionTimeElapseDefault;
+			FunctionExecTimeElapse = (null != value) ? value : FunctionTimeElapseDefault;
 		}
 	}
-	internal Library_SpriteStudio6.CallBack.FunctionPlayEndEffect CallBackFunctionPlayEnd = null;
+	internal Library_SpriteStudio6.CallBack.FunctionPlayEndEffect FunctionPlayEnd = null;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -138,15 +138,17 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
 			Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
-			LateUpdateMain(FunctionTimeElapse(this), ref matrixInverseMeshRenderer);
+			LateUpdateMain(FunctionExecTimeElapse(this), false, ref matrixInverseMeshRenderer);
 		}
 	}
-	internal void LateUpdateMain(float timeElapsed, ref Matrix4x4 matrixCorrection)
+	internal void LateUpdateMain(float timeElapsed, bool flagHideDefault, ref Matrix4x4 matrixCorrection)
 	{
 		if(0 == (Status & FlagBitStatus.VALID))
 		{
 			return;
 		}
+
+		bool flagHide = flagHideDefault | FlagHideForce;
 
 		/* Update Base */
 		BaseLateUpdate(timeElapsed);
@@ -158,7 +160,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 		TimeElapsed += (	(0 != (StatusPlaying & Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PAUSING))
 							|| (0 != (StatusPlaying & Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START))
-						) ? 0.0f : timeElapsed;
+						) ? 0.0f : (timeElapsed * RateTime);
 		Frame = TimeElapsed * FramePerSecond;
 		if(0 != (Status & FlagBitStatus.PLAYING_INFINITY))
 		{	/* Independent */
@@ -169,39 +171,57 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			Frame = Mathf.Clamp(Frame, 0.0f, FrameRange);
 		}
 
-		/* Clear Draw-Cluster */
-		bool flagDraw = ((null == InstanceRootParent) && (false == FlagHideForce)) ? true : false;
-		if(true == flagDraw)
-		{
-			if(null == ClusterDraw)
-			{	/* Lost */
-				if(false == ClusterBootUpDraw())
-				{	/* Recovery failure */
-					return;
-				}
+		/* Recover Draw-Cluster & Component for Rendering */
+		if(null == ClusterDraw)
+		{	/* Lost */
+			if(false == ClusterBootUpDraw())
+			{	/* Recovery failure */
+				return;
 			}
-			ClusterDraw.DataPurge();
 		}
 
-		/* Update & Draw Effect */
-		ControlEffect.Update(this, ref matrixCorrection);
-
-		/* Combine & Draw Mesh */
 		/* MEMO: Execute combining and drawing only at Highest-Parent-Root. */
-		if(true == flagDraw)
+		/* Clean Draw-Cluster & Component for Rendering */
+		if(null == InstanceRootParent)
 		{
+			ClusterDraw.DataPurge();
+
 			if(false == RendererBootUpDraw(false))
 			{	/* Recovery failure */
 				return;
 			}
+		}
 
-			if(null != MeshCombined)	/* && (null == InstanceRootParent) */
+		/* Update & Draw Effect */
+		if(false == flagHide)
+		{
+			ControlEffect.Update(this, ref matrixCorrection);
+
+			/* Mesh Combine & Set to Renderer */
+			if(null == InstanceRootParent)
 			{
-				Material[] tableMaterialCombine = ClusterDraw.MeshCombine(MeshCombined);
-				if(null != tableMaterialCombine)
+				if(null != MeshCombined)	/* && (null == InstanceRootParent) */
 				{
-					InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
-					InstanceMeshFilter.sharedMesh = MeshCombined;
+					Material[] tableMaterialCombine = ClusterDraw.MeshCombine(MeshCombined);
+#if false
+					if(null == tableMaterialCombine)
+					{
+						InstanceMeshRenderer.sharedMaterials = null;
+						InstanceMeshFilter.sharedMesh = null;
+					}
+					else
+					{
+						InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
+						InstanceMeshFilter.sharedMesh = MeshCombined;
+					}
+#else
+					/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
+					if(null != tableMaterialCombine)
+					{
+						InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
+						InstanceMeshFilter.sharedMesh = MeshCombined;
+					}
+#endif
 				}
 			}
 		}
@@ -209,6 +229,10 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Clear transient status */
 		StatusPlaying &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;
 		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
+	}
+	internal void TimeElapse(float time, bool flagReverseParent)
+	{	/* MEMO: In principle, This Function is for calling from "Library_SpriteStudio6.Control.Animation.Parts.DrawEffect". */
+		TimeElapsed = time;
 	}
 	#endregion MonoBehaviour-Functions
 
@@ -239,12 +263,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 	private bool ClusterBootUpDraw()
 	{
-		Script_SpriteStudio6_Root instanceRootHighest = RootGetHighest();
 		CountParticleMax = CountGetDrawMesh();
 
-		if(null != instanceRootHighest)
+		if(null != InstanceRootParent)
 		{	/* Child */
-			ClusterDraw = instanceRootHighest.ClusterDraw;
+			ClusterDraw = InstanceRootParent.ClusterDraw;
 		}
 		else
 		{	/* Highest-Root */
@@ -270,6 +293,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	internal int CountGetDrawMesh()
 	{
 		return((0 == LimitParticleDraw) ? (int)Defaults.LIMIT_PARTICLEDRAW : LimitParticleDraw);
+	}
+
+	internal void SeedOffsetSet(uint seed)
+	{
+		ControlEffect.SeedOffsetSet(seed);
 	}
 
 	public static Library_SpriteStudio6.Utility.Random.Generator InstanceCreateRandom()

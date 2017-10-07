@@ -219,6 +219,16 @@ public partial class Script_SpriteStudio6_Root
 		/* Update Status */
 		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
 
+		/* Refresh Control-Parts */
+		int countControlParts = TableControlParts.Length;
+		for(int i=0; i<countControlParts; i++)
+		{
+			if(TableControlParts[i].IndexControlTrack == indexTrack)
+			{
+				TableControlParts[i].AnimationRefresh();
+			}
+		}
+
 		/* Start Playing */
 		return(TableControlTrack[indexTrack].Start(	this,
 													indexAnimation,

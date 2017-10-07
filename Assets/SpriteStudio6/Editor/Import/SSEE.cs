@@ -378,7 +378,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAttribute, "priority", managerNameSpace);
 								if(false == string.IsNullOrEmpty(valueText))
 								{
-									informationEmitter.Data.PriorityParticle = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueText);
+									informationEmitter.PriorityParticle = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueText);
 								}
 
 								valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAttribute, "maximumParticle", managerNameSpace);
@@ -828,6 +828,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public Library_SpriteStudio6.Data.Parts.Effect[] TablePartsSS6PU;
 				public Library_SpriteStudio6.Data.Effect.Emitter[] TableEmitterSS6PU;
+				public int[] TableIndexEmitterOrderDrawSS6PU;
 
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataEffect> DataEffectSS6PU;
 				public LibraryEditor_SpriteStudio6.Import.Assets<Object> PrefabEffectSS6PU;
@@ -853,6 +854,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					TablePartsSS6PU = null;
 					TableEmitterSS6PU = null;
+					TableIndexEmitterOrderDrawSS6PU = null;
 
 					DataEffectSS6PU.CleanUp();
 					DataEffectSS6PU.BootUp(1);	/* Always 1 */
@@ -923,6 +925,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						#region Variables & Properties
 						public Library_SpriteStudio6.Data.Effect.Emitter Data;
 
+						public float PriorityParticle;
 						public string NameCellMap;
 						public string NameCell;
 						#endregion Variables & Properties
@@ -933,6 +936,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							Data.CleanUp();
 
+							PriorityParticle = 64.0f;
 							NameCellMap = "";
 							NameCell = "";
 						}
@@ -1009,6 +1013,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					dataEffect.Version = Script_SpriteStudio6_DataEffect.KindVersion.SUPPORT_LATEST;
 					dataEffect.TableParts = informationSSEE.TablePartsSS6PU;
 					dataEffect.TableEmitter = informationSSEE.TableEmitterSS6PU;
+					dataEffect.TableIndexEmitterOrderDraw = informationSSEE.TableIndexEmitterOrderDrawSS6PU;
 
 					dataEffect.FlagData = Script_SpriteStudio6_DataEffect.FlagBit.CLEAR;
 					dataEffect.FlagData |= (true == informationSSEE.FlagLockSeed) ? Script_SpriteStudio6_DataEffect.FlagBit.SEEDRANDOM_LOCK : Script_SpriteStudio6_DataEffect.FlagBit.CLEAR;
@@ -1201,12 +1206,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					/* Tidy up & Create "Emitter"s for Runtime */
+					WorkAreaBuildDrawOrderConvertData[] tableDrawOrderEmitter = new WorkAreaBuildDrawOrderConvertData[countEmitter];
 					Library_SpriteStudio6.Data.Effect.Emitter[] tableDataEmitter = new Library_SpriteStudio6.Data.Effect.Emitter[countEmitter];
 					Information.Parts.Emitter[] tableEmitter = new Information.Parts.Emitter[countEmitter];
 					Information.Parts.Emitter emitterOriginal = null;
 					for(int i=0; i<countEmitter; i++)
 					{
 						tableEmitter[i] = null;
+						tableDrawOrderEmitter[i].CleanUp();
 					}
 					for(int i=0; i<countPartsRebuild; i++)
 					{
@@ -1234,6 +1241,10 @@ public static partial class LibraryEditor_SpriteStudio6
 								tableDataEmitter[indexPartsTemp].IndexCell = -1;
 							}
 						}
+
+						/* Correct Priority */
+						tableDrawOrderEmitter[indexPartsTemp].IndexEmitter = indexPartsTemp;
+						tableDrawOrderEmitter[indexPartsTemp].PriorityParticle = emitterOriginal.PriorityParticle;
 					}
 					informationSSEE.TableEmitterSS6PU = tableDataEmitter;
 
@@ -1252,6 +1263,36 @@ public static partial class LibraryEditor_SpriteStudio6
 						LogError(messageLogPrefix, "Failure to Generate PatternEmit Datas", informationSSEE.FileNameGetFullPath(), informationSSPJ);
 						goto ConvertSS6PU_ErroeEnd;
 					}
+
+					/* Create Draw-Order */
+					List<WorkAreaBuildDrawOrderConvertData> listDrawOrderEmitter = new List<WorkAreaBuildDrawOrderConvertData>();
+					listDrawOrderEmitter.Clear();
+					ConvertDataDrawOrderSortLayerParts(listDrawOrderEmitter, tableDrawOrderEmitter, informationSSEE.TablePartsSS6PU, 0);
+					int countDrawOrderSort = listDrawOrderEmitter.Count;
+					WorkAreaBuildDrawOrderConvertData tempDrawOrder;
+					for(int i=0; i<(countDrawOrderSort - 1); i++)
+					{
+						for(int j=(countDrawOrderSort - 1); j>i; j--)
+						{
+							int k = j - 1;
+							if(listDrawOrderEmitter[j].PriorityParticle < listDrawOrderEmitter[k].PriorityParticle)
+							{
+								tempDrawOrder = listDrawOrderEmitter[j];
+								listDrawOrderEmitter[j] = listDrawOrderEmitter[k];
+								listDrawOrderEmitter[k] = tempDrawOrder;
+							}
+						}
+					}
+					int[] tableIndexEmitterOrderDraw = new int[countDrawOrderSort];
+					for(int i=0; i<countDrawOrderSort; i++)
+					{
+						tableIndexEmitterOrderDraw[i] = listDrawOrderEmitter[i].IndexEmitter;
+					}
+					informationSSEE.TableIndexEmitterOrderDrawSS6PU = tableIndexEmitterOrderDraw;
+					tableIndexEmitterOrderDraw = null;
+					tableDrawOrderEmitter = null;
+					listDrawOrderEmitter.Clear();
+					listDrawOrderEmitter = null;
 
 					return(true);
 
@@ -1318,6 +1359,28 @@ public static partial class LibraryEditor_SpriteStudio6
 //				ConvertDataCalculateInAdvance_ErrorEnd:;
 //					return(false);
 				}
+				private static void ConvertDataDrawOrderSortLayerParts(	List<WorkAreaBuildDrawOrderConvertData> listOutput,
+																		WorkAreaBuildDrawOrderConvertData[] tableInput,
+																		Library_SpriteStudio6.Data.Parts.Effect[] tableParts,
+																		int indexParts
+																	)
+				{
+					/* MEMO: Need to add child emitters after parent emitters. */
+					int[] indexPartsChild = tableParts[indexParts].TableIDChild;
+					int indexEmitter;
+
+					for(int i=0; i<indexPartsChild.Length; i++)
+					{
+						indexEmitter = tableParts[indexPartsChild[i]].IndexEmitter;
+						listOutput.Add(tableInput[indexEmitter]);
+					}
+
+					for(int i=0; i<indexPartsChild.Length; i++)
+					{
+						ConvertDataDrawOrderSortLayerParts(listOutput, tableInput, tableParts, indexPartsChild[i]);
+					}
+				}
+
 				#endregion Functions
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -1338,6 +1401,24 @@ public static partial class LibraryEditor_SpriteStudio6
 						IndexParts = -1;
 						IndexPartsChildParicle = -1;
 						IndexEmitter = -1;
+					}
+					#endregion Functions
+				}
+
+				private struct WorkAreaBuildDrawOrderConvertData
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public int IndexEmitter;
+					public float PriorityParticle;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						IndexEmitter = -1;
+						PriorityParticle = float.NaN;
 					}
 					#endregion Functions
 				}

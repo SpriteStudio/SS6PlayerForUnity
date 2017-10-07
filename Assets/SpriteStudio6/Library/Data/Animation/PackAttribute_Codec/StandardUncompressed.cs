@@ -82,6 +82,21 @@ public static partial class Library_SpriteStudio6
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
 						}
 
+						public bool ValueGetIndex(	ref int outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container)
+						{
+							return(container.TableValue.Length);
+						}
+
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
 											string nameAttribute,
 											int countFrame,
@@ -137,6 +152,21 @@ public static partial class Library_SpriteStudio6
 											)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+						}
+
+						public bool ValueGetIndex(	ref float outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container)
+						{
+							return(container.TableValue.Length);
 						}
 
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
@@ -197,6 +227,21 @@ public static partial class Library_SpriteStudio6
 											)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+						}
+
+						public bool ValueGetIndex(	ref Vector2 outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container)
+						{
+							return(container.TableValue.Length);
 						}
 
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
@@ -263,6 +308,21 @@ public static partial class Library_SpriteStudio6
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
 						}
 
+						public bool ValueGetIndex(	ref Vector3 outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container)
+						{
+							return(container.TableValue.Length);
+						}
+
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
 											string nameAttribute,
 											int countFrame,
@@ -318,6 +378,21 @@ public static partial class Library_SpriteStudio6
 											)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+						}
+
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.Status outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container)
+						{
+							return(container.TableValue.Length);
 						}
 
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container,
@@ -390,6 +465,21 @@ public static partial class Library_SpriteStudio6
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
 						}
 
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.Cell outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container)
+						{
+							return(container.TableValue.Length);
+						}
+
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container,
 											string nameAttribute,
 											int countFrame,
@@ -429,6 +519,21 @@ public static partial class Library_SpriteStudio6
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
 						}
 
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container)
+						{
+							return(container.TableValue.Length);
+						}
+
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container,
 											string nameAttribute,
 											int countFrame,
@@ -466,6 +571,21 @@ public static partial class Library_SpriteStudio6
 											)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+						}
+
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container)
+						{
+							return(container.TableValue.Length);
 						}
 
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
@@ -514,6 +634,21 @@ public static partial class Library_SpriteStudio6
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
 						}
 
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container)
+						{
+							return(container.TableValue.Length);
+						}
+
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container,
 											string nameAttribute,
 											int countFrame,
@@ -553,6 +688,21 @@ public static partial class Library_SpriteStudio6
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
 						}
 
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container)
+						{
+							return(container.TableValue.Length);
+						}
+
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container,
 											string nameAttribute,
 											int countFrame,
@@ -590,6 +740,21 @@ public static partial class Library_SpriteStudio6
 											)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+						}
+
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.UVFix outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container)
+						{
+							return(container.TableValue.Length);
 						}
 
 						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container,

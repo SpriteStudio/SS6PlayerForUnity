@@ -22,6 +22,13 @@ public static partial class Library_SpriteStudio6
 				#region Variables & Properties
 				internal KindMode Mode;
 				internal FlagBitStatus Status;
+				internal bool StatusIsValid
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.VALID));
+					}
+				}
 				internal bool StatusIsPlaying
 				{
 					get
@@ -36,6 +43,70 @@ public static partial class Library_SpriteStudio6
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING)));
 					}
 				}
+				internal bool StatusIsPlayStylePingpong
+				{
+					get
+					{
+						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.STYLE_PINGPONG) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.STYLE_PINGPONG)));
+					}
+				}
+				internal bool StatusIsPlayStyleReverse
+				{
+					get
+					{
+						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.STYLE_REVERSE) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.STYLE_REVERSE)));
+					}
+				}
+				internal bool StatusIsPlayingStart
+				{
+					get
+					{
+						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_START) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_START)));
+					}
+				}
+				internal bool StatusIsPlayingReverse
+				{
+					get
+					{
+						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_REVERSE) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_REVERSE)));
+					}
+				}
+				internal bool StatusIsPlayingReversePrevious
+				{
+					get
+					{
+//						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_REVERSEPREVIOUS) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_REVERSEPREVIOUS)));
+						return(0 != (Status & FlagBitStatus.PLAYING_REVERSEPREVIOUS));
+					}
+				}
+				internal bool StatusIsPlayingTurn
+				{
+					get
+					{
+						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_TURN) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_TURN)));
+					}
+				}
+				internal bool StatusIsDecodeAttribute
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.DECODE_ATTRIBUTE));
+					}
+				}
+				internal bool StatusIsIgnoreUserData
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.IGNORE_USERDATA));
+					}
+				}
+				internal bool StatusIsIgnoreSkipLoop
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.IGNORE_SKIPLOOP));
+					}
+				}
 
 				internal Library_SpriteStudio6.CallBack.FunctionControlEndTrackPlay FunctionPlayEnd;
 
@@ -43,6 +114,7 @@ public static partial class Library_SpriteStudio6
 
 				internal float TimeDelay;
 				internal float TimeElapsed;
+				internal float TimeElapsedNow;
 				internal float RateTime;
 
 				internal int TimesPlay;
@@ -79,6 +151,7 @@ public static partial class Library_SpriteStudio6
 					TimeDelay = 0.0f;
 					TimeElapsed = 0.0f;
 					RateTime = 1.0f;
+					TimeElapsedNow = 0.0f;
 
 					TimesPlay = -1;
 					TimesPlayNow = -1;
@@ -167,6 +240,7 @@ public static partial class Library_SpriteStudio6
 
 					CountLoop = 0;
 					TimeElapsed = (ArgumentContainer.Frame - FrameStart) * TimePerFrame;
+					TimeElapsedNow = 0.0f;
 					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, FrameStart, FrameEnd);
 
 					Status |= FlagBitStatus.PLAYING;
@@ -220,6 +294,7 @@ public static partial class Library_SpriteStudio6
 				public bool Update(float timeElapsed)
 				{
 					timeElapsed *= RateTime;
+					TimeElapsedNow = timeElapsed;
 
 					if((FlagBitStatus.VALID | FlagBitStatus.PLAYING) != (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)))
 					{	/* Not-Playing */
@@ -497,7 +572,123 @@ public static partial class Library_SpriteStudio6
 //				}
 
 				public void TimeElapse(float time, bool flagReverseParent, bool flagRangeEnd)
-				{	/* MEMO: In principle, This Function is for calling from "UpdateInstance". */
+				{	/* MEMO: In principle, This Function is for calling from "DrawInstance". */
+					if(0.0f > time)
+					{	/* Wait Infinity */
+						TimeDelay = -1.0f;
+						return;
+					}
+
+					bool flagPongPong = (0 != (Status & FlagBitStatus.STYLE_PINGPONG)) ? true : false;
+					bool flagReverseStyle = (0 != (Status & FlagBitStatus.STYLE_REVERSE)) ? true : false;
+					float timeLoop = TimeRange * ((true == flagPongPong) ? 2.0f : 1.0f);
+					float timeCursor = time;
+					int countLoop = 0;
+
+					/* Loop-Count Get */
+					while(timeLoop <= timeCursor)
+					{
+						timeCursor -= timeLoop;
+						countLoop++;
+					}
+
+					/* Solving Play-Count */
+					if(0 >= TimesPlayNow)
+					{	/* Infinite-Loop */
+						/* MEMO: "TimesPlayNow" does not change. */
+						countLoop = 0;
+						TimeDelay = 0.0f;
+					}
+					else
+					{	/* Limited-Loop */
+						if(0 >= countLoop)
+						{	/* No-Wrap-Around */
+							/* MEMO: "TimesPlayNow" does not change. */
+							countLoop = 0;
+							TimeDelay = 0.0f;
+						}
+						else
+						{	/* Wrap-Around */
+							if(TimesPlayNow <= countLoop)
+							{	/* Over */
+								if(true == flagReverseParent)
+								{	/* Reverse ... Play-Delay */
+									/* MEMO: "TimesPlayNow" does not change. */
+									TimeDelay = ((float)(countLoop - TimesPlayNow) * timeLoop) + timeCursor;
+									timeCursor = timeLoop;
+								}
+								else
+								{	/* Foward ... Play-End */
+									TimeDelay = 0.0f;
+									TimesPlayNow = 0;
+
+									if(true == flagPongPong)
+									{	/* Play-Style: PingPong */
+										timeCursor = (0 != (Status & FlagBitStatus.STYLE_REVERSE)) ? TimeRange : 0.0f;
+									}
+									else
+									{	/* Play-Style: OneWay */
+										timeCursor = (0 != (Status & FlagBitStatus.STYLE_REVERSE)) ? 0.0f : TimeRange;
+									}
+
+									Stop(false);
+								}
+							}
+							else
+							{   /* In-Range */
+								TimesPlayNow -= countLoop;
+							}
+						}
+					}
+
+					/* Time Adjust */
+					if(true == flagPongPong)
+					{	/* Play-Style: PingPong */
+						Status &= ~FlagBitStatus.PLAYING_REVERSE;
+						if(true == flagReverseStyle)
+						{	/* Play-Stype: PingPong & Reverse */
+							if(TimeRange <= timeCursor)
+							{	/* Start: Foward */
+								timeCursor -= TimeRange;
+//								Status &= ~FlagBitStatus.PLAYING_REVERSE;
+							}
+							else
+							{	/* Start: Reverse */
+								Status |= FlagBitStatus.PLAYING_REVERSE;
+							}
+						}
+						else
+						{	/* Play-Style: PingPong & Foward */
+							if(TimeRange <= timeCursor)
+							{	/* Start: Reverse */
+								timeCursor -= TimeRange;
+								timeCursor = TimeRange - timeCursor;
+								Status |= FlagBitStatus.PLAYING_REVERSE;
+							}
+							else
+							{	/* Start: Foward */
+//								Status &= ~FlagBitStatus.PLAYING_REVERSE;
+							}
+						}
+					}
+					else
+					{	/* Play-Style: One-Way */
+						Status &= ~FlagBitStatus.PLAYING_REVERSE;
+						if(true == flagReverseStyle)
+						{	/* Play-Stype: One-Way & Reverse */
+							Status |= FlagBitStatus.PLAYING_REVERSE;
+						}
+						else
+						{	/* Play-Stype: One-Way & Foward */
+//							Status &= ~FlagBitStatus.PLAYING_REVERSE;
+						}
+						timeCursor = (true == flagRangeEnd) ? (TimeRange - timeCursor) : timeCursor;
+					}
+
+					TimeElapsed = timeCursor;
+					ArgumentContainer.Frame = (int)(TimeElapsed / TimePerFrame);
+					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, 0, (FrameRange - 1));
+					ArgumentContainer.Frame += FrameStart;
 				}
 				#endregion Functions
 
