@@ -20,11 +20,17 @@ public static partial class LibraryEditor_SpriteStudio6
 			/* ----------------------------------------------- Functions */
 			#region Functions
 			public static bool Exec(	ref Setting settingBatchImporter,
-										ref LibraryEditor_SpriteStudio6.Import.Setting settingImport,
+										ref LibraryEditor_SpriteStudio6.Import.Setting settingImportInitial,
 										string nameFileList,
 										string nameFileLog
 									)
 			{
+//				LibraryEditor_SpriteStudio6.Import.Setting settingImport = settingImportInitial;
+
+				/* 初期ディレクトリを抽出 */
+					/* 外部のベースディレクトリは、リストファイルのディレクトリ */
+
+
 				return(true);
 			}
 			#endregion Functions

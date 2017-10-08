@@ -799,7 +799,7 @@ public static partial class Library_SpriteStudio6
 							}
 						}
 
-						public void KeyDataAdjustTopFrame(_Type valueDefault, bool flagNoKeyIsNoData)
+						public bool KeyDataAdjustTopFrame(_Type valueDefault, bool flagNoKeyIsNoData)
 						{	/* MEMO: This function is for attributes with special specifications to adjust top frame's key data. */
 							/*       - When no key data, interpret as default value is set                                       */
 							/*       - When no key data in frame 0, default value is forcibly set                                */
@@ -807,14 +807,14 @@ public static partial class Library_SpriteStudio6
 							{	/* No Keys */
 								if(true == flagNoKeyIsNoData)
 								{	/* Interpret as no data */
-									return;
+									return(false);	/* Has no Keys */
 								}
 							}
 							else
 							{	/* Has Keys */
 								if(0 == ListKey[0].Frame)
 								{	/* Has data at frame 0 */
-									return;
+									return(true);	/* Has Keys */
 								}
 							}
 
@@ -829,7 +829,7 @@ public static partial class Library_SpriteStudio6
 							KeyDataTopFrame.ValueCurveEnd = 0.0f;
 
 							ListKey.Insert(0, KeyDataTopFrame);
-							return;
+							return(true);	/* Has Keys */
 						}
 						#endregion Functions
 

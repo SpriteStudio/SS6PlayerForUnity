@@ -35,7 +35,8 @@ public static partial class Library_SpriteStudio6
 				internal Script_SpriteStudio6_RootEffect InstanceRootEffectUnderControl;
 				internal int FramePreviousUpdateUnderControl;
 
-				public Collider InstanceComponentCollider;
+				public Script_SpriteStudio6_Collider InstanceScriptCollider;
+				internal int FramePreviousUpdateRadiusCollision;
 
 				internal Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus StatusAnimationParts;
 				private int FrameKeyStatusAnimationFrame;
@@ -52,7 +53,6 @@ public static partial class Library_SpriteStudio6
 				internal BufferTRS TRSSlave;
 
 				internal BufferParameterSprite ParameterSprite;
-				/* Mesh Buffer */
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -73,7 +73,8 @@ public static partial class Library_SpriteStudio6
 					InstanceRootEffectUnderControl = null;
 					FramePreviousUpdateUnderControl = -1;
 
-//					InstanceComponentCollider =
+//					InstanceScriptCollider =
+					FramePreviousUpdateRadiusCollision = -1;
 
 					StatusAnimationParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.CLEAR;
 					FrameKeyStatusAnimationFrame = -1;
@@ -227,7 +228,14 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Update Transform (GameObject) & Spatus */
+					/* MEMO: For reseting at animation switching, "UpdateGameObject" is always called. */
 					UpdateGameObject(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+
+					/* Check Unused part */
+					if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+					{
+						return;
+					}
 
 					/* Update UserData */
 					UpdateUserData(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
@@ -370,8 +378,7 @@ public static partial class Library_SpriteStudio6
 					{	/* Has no UserData-s */
 						return;
 					}
-//					if((true == controlTrack.StatusIsIgnoreUserData) || (true == controlTrack.StatusIsDecodeAttribute) || (null == instanceRoot.FunctionUserData))
-					if((true == controlTrack.StatusIsIgnoreUserData) || (null == instanceRoot.FunctionUserData))
+					if((true == controlTrack.StatusIsIgnoreUserData) || (true == controlTrack.StatusIsDecodeAttribute) || (null == instanceRoot.FunctionUserData))
 					{	/* No Need to decode UserData-s */
 						return;
 					}
@@ -702,18 +709,46 @@ public static partial class Library_SpriteStudio6
 														ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 														ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 													)
-				{	/* NORMAL2 / NORMAL4 */
+				{
+					/* MEMO: Possible to reach here only when parts are "NORMAL2" and "NORMAL4" */
+					if(null == InstanceScriptCollider)
+					{
+						return;
+					}
+
+					if(0 != (ParameterSprite.Status & BufferParameterSprite.FlagBitStatus.UPDATE_COORDINATE))
+					{
+						InstanceScriptCollider.ColliderSetRectangle(ref ParameterSprite.SizeSprite, ref ParameterSprite.PivotSprite);
+					}
 				}
 				private void UpdateColliderRadius(	Script_SpriteStudio6_Root instanceRoot,
 													int idParts,
 													ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 													ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 												)
-				{	/* ROOT / NULL / INSTANCE / EFFECT */
+				{
+					if(null == InstanceScriptCollider)
+					{
+						return;
+					}
+
+					float radius = 0.0f;
+					int frameKey = FramePreviousUpdateRadiusCollision;
+					if(true == dataAnimationParts.RadiusCollision.Function.ValueGet(ref radius, ref frameKey, dataAnimationParts.RadiusCollision, ref controlTrack.ArgumentContainer))
+					{   /* New Valid Data */
+						FramePreviousUpdateRadiusCollision = frameKey;
+						InstanceScriptCollider.ColliderSetRadius(radius);
+					}
 				}
 
 				internal void Draw(Script_SpriteStudio6_Root instanceRoot, int idParts, bool flagHideDefault, ref Matrix4x4 matrixCorrection)
 				{
+					/* Check Unused part */
+					if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+					{
+						return;
+					}
+
 					int indexTrack = IndexControlTrack;
 					int indexAnimation = instanceRoot.TableControlTrack[indexTrack].ArgumentContainer.IndexAnimation;
 					if(0 <= indexAnimation)
@@ -815,7 +850,7 @@ public static partial class Library_SpriteStudio6
 						/* Decode data */
 						Library_SpriteStudio6.Data.Animation.Attribute.Instance dataInstance = new Library_SpriteStudio6.Data.Animation.Attribute.Instance();
 						if(true == dataAnimationParts.Instance.Function.ValueGet(ref dataInstance, ref frameKey, dataAnimationParts.Instance, ref controlTrack.ArgumentContainer))
-						{   /* Valid Data */
+						{   /* New Valid Data */
 							if(FramePreviousUpdateUnderControl != frameKey)
 							{	/* Different attribute */
 								bool flagPlayReverseInstanceData = (0.0f > dataInstance.RateTime) ? true : false;
@@ -933,7 +968,7 @@ public static partial class Library_SpriteStudio6
 						/* Decode data */
 						Library_SpriteStudio6.Data.Animation.Attribute.Effect dataEffect = new Library_SpriteStudio6.Data.Animation.Attribute.Effect();
 						if(true == dataAnimationParts.Effect.Function.ValueGet(ref dataEffect, ref frameKey, dataAnimationParts.Effect, ref controlTrack.ArgumentContainer))
-						{   /* Valid Data */
+						{   /* New Valid Data */
 							if(FramePreviousUpdateUnderControl != frameKey)
 							{	/* Different attribute */
 								/* Wait Set */
@@ -975,6 +1010,7 @@ public static partial class Library_SpriteStudio6
 							);
 
 					FramePreviousUpdateUnderControl = -1;
+					FramePreviousUpdateRadiusCollision = -1;
 				}
 				#endregion Functions
 
@@ -1054,7 +1090,7 @@ public static partial class Library_SpriteStudio6
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
 					/* MEMO: Common */
-					private FlagBitStatus Status;
+					internal FlagBitStatus Status;
 					internal Vector2 RateScaleMesh;
 					internal Vector2 RateScaleTexture;
 
@@ -1611,7 +1647,7 @@ public static partial class Library_SpriteStudio6
 					/* ----------------------------------------------- Enums & Constants */
 					#region Enums & Constants
 					[System.Flags]
-					private enum FlagBitStatus
+					internal enum FlagBitStatus
 					{
 						UPDATE_COORDINATE = 0x00000001,
 						UPDATE_UVTEXTURE = 0x00000002,

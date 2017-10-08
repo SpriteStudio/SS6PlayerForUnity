@@ -75,6 +75,9 @@ public static partial class Library_SpriteStudio6
 		public delegate bool FunctionPlayEndEffect(Script_SpriteStudio6_RootEffect scriptRoot);
 		public delegate void FunctionUserData(Script_SpriteStudio6_Root scriptRoot, string nameParts, int indexParts, int indexAnimation, int frameDecode, int frameKeyData, ref Library_SpriteStudio6.Data.Animation.Attribute.UserData userData, bool flagWayBack);
 
+		public delegate void FunctionCallBackCollider(Script_SpriteStudio6_Root instanceRoot, string nameParts, int idParts, Collider collider, Collider pair);
+		public delegate void FunctionCallBackCollision(Script_SpriteStudio6_Root instanceRoot, string nameParts, int idParts, Collider collider, Collision contacts);
+
 		public delegate float FunctionTimeElapse(Script_SpriteStudio6_Root scriptRoot);
 		public delegate float FunctionTimeElapseEffect(Script_SpriteStudio6_RootEffect scriptRoot);
 

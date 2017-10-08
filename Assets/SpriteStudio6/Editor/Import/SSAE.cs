@@ -1639,6 +1639,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						if(0 == (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
 						{
+							/* MEMO: If "NOT_USED" is set, interpret that "Instance" attribute is not used. */
+							/*       Because "Hide" attribute is also unused.                               */
+							/*       (Since "Hide" attribute's default is "true", all frames are hidden)    */
 							informationAnimationParts.Instance.KeyDataAdjustTopFrame(Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false);
 						}
 
@@ -1670,6 +1673,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						if(0 == (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
 						{
+							/* MEMO: If "NOT_USED" is set, interpret that "Effect" attribute is not used. */
+							/*       Because "Hide" attribute is also unused.                             */
+							/*       (Since "Hide" attribute's default is "true", all frames are hidden)  */
 							informationAnimationParts.Effect.KeyDataAdjustTopFrame(Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false);
 						}
 
@@ -2647,13 +2653,117 @@ public static partial class LibraryEditor_SpriteStudio6
 					tableControlParts[0].InstanceGameObject = gameObjectRoot;
 
 					GameObject gameObjectParent = null;
+					GameObject gameObjectParts = null;
+					Script_SpriteStudio6_Collider scriptCollider = null;
 					int indexPartsParent;
-					for(int i=1; i<countParts; i++)
+					bool flagAttachCollider;
+					for(int i=0; i<countParts; i++)
 					{
-						indexPartsParent = informationSSAE.TableParts[i].Data.IDParent;
-						gameObjectParent = (0 <= indexPartsParent) ? tableControlParts[indexPartsParent].InstanceGameObject : null;
-						tableControlParts[i].InstanceGameObject = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(informationSSAE.TableParts[i].Data.Name, true, gameObjectParent);
-						tableControlParts[i].InstanceGameObject.name = informationSSAE.TableParts[i].Data.Name;
+						if(0 >= i)
+						{	/* "Root" */
+							indexPartsParent = -1;
+							gameObjectParent = null;
+							gameObjectParts = gameObjectRoot;
+//							gameObjectParts.name = 
+//							tableControlParts[0].InstanceGameObject = gameObjectParts;
+						}
+						else
+						{	/* Not "Root" */
+							indexPartsParent = informationSSAE.TableParts[i].Data.IDParent;
+							gameObjectParent = (0 <= indexPartsParent) ? tableControlParts[indexPartsParent].InstanceGameObject : null;
+							gameObjectParts = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(informationSSAE.TableParts[i].Data.Name, true, gameObjectParent);
+							gameObjectParts.name = informationSSAE.TableParts[i].Data.Name;
+							tableControlParts[i].InstanceGameObject = gameObjectParts;
+						}
+
+						scriptCollider = null;
+						flagAttachCollider = false;
+						if(null != gameObjectParts)
+						{
+							switch(informationSSAE.TableParts[i].Data.ShapeCollision)
+							{
+								case Library_SpriteStudio6.Data.Parts.Animation.KindCollision.NON:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindCollision.SQUARE:
+									/* Attach Script */
+									scriptCollider = gameObjectParts.AddComponent<Script_SpriteStudio6_Collider>();
+									tableControlParts[i].InstanceScriptCollider = scriptCollider;
+									if(null != scriptCollider)
+									{
+										scriptCollider.InstanceRoot = scriptRoot;
+										scriptCollider.IDParts = i;
+
+										BoxCollider collider = gameObjectParts.AddComponent<BoxCollider>();
+										if(null != collider)
+										{
+											collider.enabled = true;
+											collider.size = new Vector3(1.0f, 1.0f, setting.Collider.SizeZ);
+											collider.center = Vector2.zero;
+											collider.isTrigger = false;
+
+											scriptCollider.InstanceColliderBox = collider;
+
+											flagAttachCollider = true;
+										}
+									}
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindCollision.AABB:
+									/* MEMO: Not Supported */
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindCollision.CIRCLE:
+									scriptCollider = gameObjectParts.AddComponent<Script_SpriteStudio6_Collider>();
+									tableControlParts[i].InstanceScriptCollider = scriptCollider;
+									if(null != scriptCollider)
+									{
+										scriptCollider.InstanceRoot = scriptRoot;
+										scriptCollider.IDParts = i;
+
+										CapsuleCollider collider = gameObjectParts.AddComponent<CapsuleCollider>();
+										if(null != collider)
+										{
+											collider.enabled = true;
+											collider.radius = 1.0f;
+											collider.height = setting.Collider.SizeZ;
+											collider.direction = 2;
+											collider.isTrigger = false;
+
+											scriptCollider.InstanceColliderCapsule = collider;
+
+											flagAttachCollider = true;
+										}
+									}
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindCollision.CIRCLE_SCALEMINIMUM:
+									/* MEMO: Not Supported */
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindCollision.CIRCLE_SCALEMAXIMUM:
+									/* MEMO: Not Supported */
+									break;
+							}
+							if(true == flagAttachCollider)
+							{
+								if(true == setting.Collider.FlagAttachRigidBody)
+								{
+									/* Attach Rigid-Body */
+									Rigidbody rigidbody = gameObjectParts.AddComponent<Rigidbody>();
+									rigidbody.isKinematic = false;
+									rigidbody.useGravity = false;
+								}
+							}
+							else
+							{
+								if(null != scriptCollider)
+								{
+									/* Remove Script */
+									UnityEngine.Object.Destroy(scriptCollider);
+								}
+							}
+						}
 					}
 
 					/* Datas Set */
