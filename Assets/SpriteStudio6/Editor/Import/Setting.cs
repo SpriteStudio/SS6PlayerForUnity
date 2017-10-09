@@ -709,7 +709,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagMaterialEffect = PrefsKeyPrefix + KeyFlagMaterialEffect;
 				private const string PrefsKeyFlagTexture = PrefsKeyPrefix + KeyFlagTexture;
 
-				private readonly static GroupConfirmOverWrite Default = new GroupConfirmOverWrite(
+				internal readonly static GroupConfirmOverWrite Default = new GroupConfirmOverWrite(
 					false,	/* FlagPrefabAnimation */
 					false,	/* FlagPrefabEffect */
 					false,	/* FlagDataCellMap */
@@ -945,7 +945,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagInvalidSSAE = PrefsKeyPrefix + KeyFlagInvalidSSAE;
 				private const string PrefsKeyFlagInvalidSSEE = PrefsKeyPrefix + KeyFlagInvalidSSEE;
 
-				private readonly static GroupCheckVersion Default = new GroupCheckVersion(
+				internal readonly static GroupCheckVersion Default = new GroupCheckVersion(
 					false,	/* FlagInvalidSSPJ */
 					false,	/* FlagInvalidSSCE */
 					false,	/* FlagInvalidSSAE */

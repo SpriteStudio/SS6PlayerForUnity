@@ -15,7 +15,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	#region Variables & Properties
 	private static LibraryEditor_SpriteStudio6.Import.Setting SettingImport;
 	private static Setting SettingOption;
-	private static PullDownPackAttribute PullDownPackAttributeAnimation;	// = new PullDownPackAttribute();
+	private static PullDownPackAttribute PullDownPackAttributeAnimation;	/* = new PullDownPackAttribute(); */
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
@@ -58,65 +58,117 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		if(true == GUILayout.Button("Import"))
 		{
-			string nameBaseAssetPath = LibraryEditor_SpriteStudio6.Utility.File.AssetPathGetSelected();
-			if(false == string.IsNullOrEmpty(nameBaseAssetPath))
-			{
-				LibraryEditor_SpriteStudio6.Utility.Log.StreamExternal = null;	/* Log-File not output */
+			if(LibraryEditor_SpriteStudio6.Import.Setting.KindMode.BATCH_IMPORTER == SettingImport.Mode)
+			{	/* Batch-Import */
+				string nameFileList = "";
+				string nameFileLog = "";
 
-//				SettingOption.Save();
-				switch(SettingImport.Mode)
+				string nameDirectoryList;
+				string nameFileBodyList;
+				string nameFileExtensionList;
+				if(true == LibraryEditor_SpriteStudio6.Utility.File.NamesGetFileDialogLoad(	out nameDirectoryList,
+																							out nameFileBodyList,
+																							out nameFileExtensionList,
+																							SettingOption.ModeBatchImporter.NameFolderList,
+																							"Select Batch-Importing list file",
+																							"sspj"
+																						)
+					)
 				{
-					case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
-					case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+					nameFileList = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryList + "/" + nameFileBodyList + nameFileExtensionList);
+
+					SettingOption.ModeBatchImporter.NameFolderList = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryList);
+					SettingOption.ModeBatchImporter.NameFileList = nameFileBodyList;
+
+					string nameDirectoryLog;
+					string nameFileBodyLog;
+					string nameFileExtensionLog;
+					if(true == LibraryEditor_SpriteStudio6.Utility.File.NamesGetFileDialogSave(	out nameDirectoryLog,
+																								out nameFileBodyLog,
+																								out nameFileExtensionLog,
+																								SettingOption.ModeBatchImporter.NameFolderLog,
+																								SettingOption.ModeBatchImporter.NameFileLog,
+																								"Select Batch-Importing log file",
+																								"txt"
+																							)
+						)
+					{
+						nameFileLog = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryLog + "/" + nameFileBodyLog + nameFileExtensionLog);
+
+						SettingOption.ModeBatchImporter.NameFolderLog = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryLog);
+						SettingOption.ModeBatchImporter.NameFileLog = nameFileBodyLog;
+					}
+
+					/* Import */
+					if(false == string.IsNullOrEmpty(nameFileList))
+					{
+						SettingOption.Save();
+
+						if(false == LibraryEditor_SpriteStudio6.Import.Batch.Exec(	ref SettingOption.ModeBatchImporter.Setting,
+																					ref SettingImport,
+																					nameFileList,
+																					nameFileLog
+																				)
+							)
 						{
-							string nameDirectory;
-							string nameFileBody;
-							string nameFileExtension;
-							if(true == LibraryEditor_SpriteStudio6.Utility.File.NamesGetFileDialog(	out nameDirectory,
-																									out nameFileBody,
-																									out nameFileExtension,
-																									"Select Importing SSPJ-File",
-																									"sspj"
-																								)
-								)
-							{
-//								SettingImport.Save();
-
-								string nameFile = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectory + "/" + nameFileBody + nameFileExtension);
-								if(false == LibraryEditor_SpriteStudio6.Import.Exec(	ref SettingImport,
-																						nameFile,
-																						nameBaseAssetPath,
-																						true
-																					)
-									)
-								{
-									EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
-																	"Import Interrupted! Check Error on Console.",
-															 		"OK"
-																);
-								}
-
-								Close();
-							}
+							EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+															"Batch-Import Interrupted! Check Error on Console.",
+													 		"OK"
+														);
 						}
-						break;
 
-					case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.BATCH_IMPORTER:
-						{
-//							LibraryEditor_SpriteStudio6.Import.Batch.Exec(ref SettingImport);
-						}
-						break;
-
-					default:
-						break;
+						Close();
+					}
 				}
 			}
 			else
-			{	/* Error (No selected) */
-				EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
-												"Select Asset-Folder you want to store in before import, on the \"Project\" window.",
-										 		"OK"
-											);
+			{	/* Single File Import */
+				string nameBaseAssetPath = LibraryEditor_SpriteStudio6.Utility.File.AssetPathGetSelected();
+				if(false == string.IsNullOrEmpty(nameBaseAssetPath))
+				{
+					LibraryEditor_SpriteStudio6.Utility.Log.StreamExternal = null;	/* Log-File not output */
+
+					string nameDirectory;
+					string nameFileBody;
+					string nameFileExtension;
+					if(true == LibraryEditor_SpriteStudio6.Utility.File.NamesGetFileDialogLoad(	out nameDirectory,
+																								out nameFileBody,
+																								out nameFileExtension,
+																								SettingOption.NameFolderImportPrevious,
+																								"Select Importing SSPJ-File",
+																								"sspj"
+																							)
+						)
+					{
+						string nameFile = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectory + "/" + nameFileBody + nameFileExtension);
+						SettingOption.NameFolderImportPrevious = nameDirectory;
+
+						SettingOption.Save();
+						SettingImport.Save();
+
+						if(false == LibraryEditor_SpriteStudio6.Import.Exec(	ref SettingImport,
+																				nameFile,
+																				nameBaseAssetPath,
+																				true
+																			)
+							)
+						{
+							EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+															"Import Interrupted! Check Error on Console.",
+													 		"OK"
+														);
+						}
+
+						Close();
+					}
+				}
+				else
+				{	/* Error (No selected) */
+					EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+													"Select Asset-Folder you want to store in before import, on the \"Project\" window.",
+											 		"OK"
+												);
+				}
 			}
 		}
 
@@ -147,7 +199,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			if(true == GUILayout.Button("Save to Text-File"))
 			{
 //				SettingImport.Save();
-//				SettingOption.Save();
 
 				string nameFile = EditorUtility.SaveFilePanel(	"Save \"" + LibraryEditor_SpriteStudio6.NameAsset + "\" Import Setting file",
 																"",
@@ -776,6 +827,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public GroupUnityNative ModeUnityNative;
 		public GroupBatchImporter ModeBatchImporter;
 
+		public string NameFolderImportPrevious;
+
 		public bool FlagFoldOutSettingBackUp;
 		public GroupSettingBackUp SettingBackUp;
 		#endregion Variables & Properties
@@ -784,6 +837,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		#region Functions
 		public void CleanUp()
 		{
+			NameFolderImportPrevious = DefaultNameFolderImportPrevious;
 			FlagFoldOutSettingBackUp = DefaultFlagFoldOutSettingBackUp;
 
 			ModeSS6PU.CleanUp();
@@ -794,6 +848,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		public bool Load()
 		{
+			NameFolderImportPrevious = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderImportPrevious, DefaultNameFolderImportPrevious);
 			FlagFoldOutSettingBackUp = EditorPrefs.GetBool(PrefsKeyFlagFoldOutSettingBackUp, DefaultFlagFoldOutSettingBackUp);
 
 			ModeSS6PU.Load();
@@ -806,6 +861,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		public bool Save()
 		{
+			LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderImportPrevious, NameFolderImportPrevious);
 			EditorPrefs.SetBool(PrefsKeyFlagFoldOutSettingBackUp, FlagFoldOutSettingBackUp);
 
 			ModeSS6PU.Save();
@@ -820,8 +876,10 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		/* ----------------------------------------------- Enums & Constants */
 		#region Enums & Constants
 		private const string PrefsKeyPrefix = "SS6PU_ToolImporter_";
+		private const string PrefsKeyNameFolderImportPrevious = PrefsKeyPrefix + "NameFolderImportPrevious";
 		private const string PrefsKeyFlagFoldOutSettingBackUp = PrefsKeyPrefix + "FlagFoldOutSettingBackUp";
 
+		private const string DefaultNameFolderImportPrevious = "";
 		private const bool DefaultFlagFoldOutSettingBackUp = false;
 		#endregion Enums & Constants
 
@@ -1052,7 +1110,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		{
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
+			public string NameFolderList;
 			public string NameFileList;
+			public string NameFolderLog;
 			public string NameFileLog;
 
 			public bool FlagFoldOptions;
@@ -1069,17 +1129,25 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			public void CleanUp()
 			{
+				NameFolderList = DefaultNameFolderList;
 				NameFileList = DefaultNameFileList;
+				NameFolderLog = DefaultNameFolderLog;
 				NameFileLog = DefaultNameFileLog;
+
 				FlagFoldOptions = DefaultFlagFoldOptions;
+
 				Setting.CleanUp();
 			}
 
 			public bool Load()
 			{
+				NameFolderList = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderList, DefaultNameFolderList);
 				NameFileList = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFileList, DefaultNameFileList);
+				NameFolderLog = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderLog, DefaultNameFolderLog);
 				NameFileLog = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFileLog, DefaultNameFileLog);
+
 				FlagFoldOptions = EditorPrefs.GetBool(PrefsKeyFlagFoldOptions, DefaultFlagFoldOptions);
+
 				Setting.Load();
 
 				return(true);
@@ -1087,9 +1155,18 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			public bool Save()
 			{
+				if(true == string.IsNullOrEmpty(NameFileLog))
+				{
+					NameFileLog = DefaultNameFileLog;
+				}
+
+				LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderList, NameFolderList);
 				LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFileList, NameFileList);
+				LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderLog, NameFolderLog);
 				LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFileLog, NameFileLog);
+
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOptions, FlagFoldOptions);
+
 				Setting.Save();
 
 				return(true);
@@ -1099,12 +1176,16 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
 			private const string PrefsKeyPrefix = "SS6PU_ToolImporter_BatchImporter_";
+			private const string PrefsKeyNameFolderList = PrefsKeyPrefix + "NameFolderList";
 			private const string PrefsKeyNameFileList = PrefsKeyPrefix + "NameFileList";
+			private const string PrefsKeyNameFolderLog = PrefsKeyPrefix + "NameFolderLog";
 			private const string PrefsKeyNameFileLog = PrefsKeyPrefix + "NameFileLog";
 			private const string PrefsKeyFlagFoldOptions = PrefsKeyPrefix + "FoldOptions";
 
+			private const string DefaultNameFolderList = "";
 			private const string DefaultNameFileList = "";
-			private const string DefaultNameFileLog = "";
+			private const string DefaultNameFolderLog = "";
+			private const string DefaultNameFileLog = "LogSS6PU_BatchImport";
 			private const bool DefaultFlagFoldOptions = false;
 			#endregion Enums & Constants
 		}

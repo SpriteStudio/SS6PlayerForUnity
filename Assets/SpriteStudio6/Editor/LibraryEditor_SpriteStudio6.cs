@@ -832,14 +832,21 @@ public static partial class LibraryEditor_SpriteStudio6
 		{
 			/* ----------------------------------------------- Functions */
 			#region Functions
-			public static bool NamesGetFileDialog(out string nameDirectory, out string nameFileBody, out string nameFileExtension, string textTitleDialog, string filterExtension)
+			public static bool NamesGetFileDialogLoad(	out string nameDirectory,
+														out string nameFileBody,
+														out string nameFileExtension,
+														string nameDirectoryPrevious,
+														string textTitleDialog,
+														string filterExtension
+													)
 			{
-				/* Get Previous Folder-Name */
-				string directoryPrevious = "";
-				LibraryEditor_SpriteStudio6.Import.Setting.FolderLoadPrevious(out directoryPrevious);
+				if(true == string.IsNullOrEmpty(nameDirectoryPrevious))
+				{
+					nameDirectoryPrevious = "";
+				}
 
-				/* Choose Import-File */
-				string fileNameFullPath = EditorUtility.OpenFilePanel(textTitleDialog, directoryPrevious, filterExtension);
+				/* Choose file */
+				string fileNameFullPath = EditorUtility.OpenFilePanel(textTitleDialog, nameDirectoryPrevious, filterExtension);
 				if(0 == fileNameFullPath.Length)
 				{	/* Cancelled */
 					nameDirectory = "";
@@ -848,12 +855,31 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(false);
 				}
-				bool rv = PathSplit(out nameDirectory, out nameFileBody, out nameFileExtension, fileNameFullPath);
 
-				/* Save Folder-Name */
-				LibraryEditor_SpriteStudio6.Import.Setting.FolderSavePrevious(nameDirectory);
+				return(PathSplit(out nameDirectory, out nameFileBody, out nameFileExtension, fileNameFullPath));
+			}
 
-				return(rv);
+			public static bool NamesGetFileDialogSave(	out string nameDirectory,
+														out string nameFileBody,
+														out string nameFileExtension,
+														string nameDirectoryPrevious,
+														string nameFilePrevious,
+														string textTitleDialog,
+														string nameExtension
+													)
+			{
+				/* Choose file */
+				string fileNameFullPath = EditorUtility.SaveFilePanel(textTitleDialog, nameDirectoryPrevious, nameFilePrevious, nameExtension);
+				if(0 == fileNameFullPath.Length)
+				{	/* Cancelled */
+					nameDirectory = "";
+					nameFileBody = "";
+					nameFileExtension = "";
+
+					return(false);
+				}
+
+				return(PathSplit(out nameDirectory, out nameFileBody, out nameFileExtension, fileNameFullPath));
 			}
 
 			internal static bool PermissionGetConfirmDialogueOverwrite(ref bool flagSwitchSetting, string nameAsset, string nameTypeAsset)
@@ -1037,6 +1063,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				return(namePathNative);
 			}
+
+			public static bool PathCheckRoot(string namePath)
+			{	/* MEMO: Create another function separately, since possibility that can not be checked with IsPathRooted. */
+				return(System.IO.Path.IsPathRooted(namePath));
+			}
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */
@@ -1047,8 +1078,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				'\\',
 			};
 
-			private readonly static string NamePathRootNative = Application.dataPath;
-			private const string NamePathRootAsset = "Assets";
+			internal readonly static string NamePathRootNative = Application.dataPath;
+			internal const string NamePathRootAsset = "Assets";
 			#endregion Enums & Constants
 		}
 
@@ -1285,11 +1316,36 @@ public static partial class LibraryEditor_SpriteStudio6
 				if(null != textArgument)
 				{
 					int count = textArgument.Length;
+					int countValid = 0;
 					for(int i=0; i<count; i++)
 					{
 						textArgument[i] = textArgument[i].Trim(PrefixChangeCommand);
 						textArgument[i] = TextTrim(textArgument[i]);
+						if(true == string.IsNullOrEmpty(textArgument[i]))
+						{	/* Empty */
+							textArgument[i] = null;
+						}
+						else
+						{	/* Exist */
+							countValid++;
+						}
 					}
+					if(0 >= countValid)
+					{
+						return(null);
+					}
+
+					string[] textArgumentValid = new string[countValid];
+					countValid = 0;
+					for(int i=0; i<count; i++)
+					{
+						if(null != textArgument[i])
+						{
+							textArgumentValid[countValid] = textArgument[i];
+							countValid++;
+						}
+					}
+					textArgument = textArgumentValid;
 				}
 				return(textArgument);
 			}
