@@ -423,7 +423,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	{
 		EditorGUI.indentLevel = levelIndent;
 
-		SettingImport.Basic.FlagAttachControlGameObject = EditorGUILayout.ToggleLeft("Create Control-Prefab", SettingImport.Basic.FlagAttachControlGameObject);
+		SettingImport.Basic.FlagCreateControlGameObject = EditorGUILayout.ToggleLeft("Create Control-Prefab", SettingImport.Basic.FlagCreateControlGameObject);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("\"Control-Prefab\" is GameObject attached the script for Auto-Instantiate Body-Prefab.");
 		EditorGUILayout.LabelField(" (\"Script_SpriteStudio_ControlPrefab.cs\")");
@@ -508,13 +508,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;
 
-		SettingImport.Collider.FlagAttachRigidBody = EditorGUILayout.ToggleLeft("Set Rigid-Body", SettingImport.Collider.FlagAttachRigidBody);
+		SettingImport.Collider.FlagAttachRigidBody = EditorGUILayout.ToggleLeft("Attach Rigid-Body", SettingImport.Collider.FlagAttachRigidBody);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Add \"Rigid-Body\" component when \"Collider\" component is attached to the GameObject of part.");
 		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;
 
-		SettingImport.Collider.FlagAttachCollider = EditorGUILayout.ToggleLeft("Attach Collider", SettingImport.Collider.FlagAttachCollider);
 		SettingImport.Collider.SizeZ = EditorGUILayout.FloatField("Collider Size-Z", SettingImport.Collider.SizeZ);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("\"Collider\"'s size of local Z-axis.");
@@ -578,6 +577,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		EditorGUILayout.LabelField("For each type to output, you can specify prefix to asset name.");
 		EditorGUILayout.LabelField("The prohibited characters are \":\", \"/\", \"\\\", \".\", \"*\", \"?\", Space and Tab.");
+		EditorGUILayout.Space();
+
+		EditorGUILayout.LabelField("- Asset-Name Prifix (Common)");
+		EditorGUI.indentLevel = levelIndent + 1;
+		SettingImport.RuleNameAsset.NamePrefixTexture = EditorGUILayout.TextField("Texture", SettingImport.RuleNameAsset.NamePrefixTexture);
+		EditorGUI.indentLevel = levelIndent;
 		EditorGUILayout.Space();
 
 		switch(SettingImport.Mode)
@@ -691,10 +696,16 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("The prohibited characters are \":\", \"/\", \"\\\", \".\", \"*\", \"?\", Space and Tab.");
 		EditorGUILayout.Space();
 
+		EditorGUILayout.LabelField("- Asset Folder Name (Common)");
+		EditorGUI.indentLevel = levelIndent + 1;
+		SettingImport.RuleNameAssetFolder.NameFolderTexture = EditorGUILayout.TextField("Texture", SettingImport.RuleNameAssetFolder.NameFolderTexture);
+		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.Space();
+
 		switch(SettingImport.Mode)
 		{
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
-				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"SS6Player for Unity\")");
+				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"SS6Player for Unity\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationSS6PU = EditorGUILayout.TextField("Prefab-Animation", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationSS6PU);
 				SettingImport.RuleNameAssetFolder.NameFolderPrefabEffectSS6PU = EditorGUILayout.TextField("Prefab-Effect", SettingImport.RuleNameAssetFolder.NameFolderPrefabEffectSS6PU);
@@ -706,7 +717,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
-				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
+				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimatorUnityNative);
 				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative);
@@ -760,6 +771,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Status, "Status", ref PullDownPackAttributeAnimation.Status);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Position, "Position", ref PullDownPackAttributeAnimation.Position);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Rotation, "Rotation", ref PullDownPackAttributeAnimation.Rotation);
+		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Scaling, "Scaling", ref PullDownPackAttributeAnimation.Scaling);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RateOpacity, "RateOpacity", ref PullDownPackAttributeAnimation.RateOpacity);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionAnchor, "PositionAnchor", ref PullDownPackAttributeAnimation.PositionAnchor);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.SizeForce, "SizeForce", ref PullDownPackAttributeAnimation.SizeForce);
@@ -784,7 +796,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixCoordinate, "Coordinate", ref PullDownPackAttributeAnimation.FixCoordinate);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixColorBlend, "ColorBlend", ref PullDownPackAttributeAnimation.FixColorBlend);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixUV0, "UV0", ref PullDownPackAttributeAnimation.FixUV0);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
 		EditorGUILayout.Space();

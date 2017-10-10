@@ -1,0 +1,463 @@
+* ==========================================
+* Batch-Importer List-File Sample & Document
+* ==========================================
+* 
+*	SpriteStudio6 Player for Unity
+* 
+*	Copyright(C) Web Technology Corp. 
+*	All rights reserved.
+* 
+* ------------------------------------------
+* [Usage]
+* 
+* The character at the beginning of the line, there are those that have a special meaning.
+* 
+* "*" ... Remarks.
+*         Lines beginning with this character, is ignored.
+* 
+* "?" ... Change Import Setting.
+*         In instruction written after this character, you can change the settings at the time of import.
+*         You can change settings even the middle of the list .
+* 
+* Blank-Line ... Blank-Line is ignored.
+* 
+* Other ... InputFileName(.sspj)
+*           Attention to following when specify relative path from current directory.
+*           - Do not start file name with "/". (interpreted as Root-directory)
+*           - Do not specify relative path including a drive letter. (e.g. "C: sample.sspj")
+*           *) The above limitations are not applied when absolute path.
+* 
+* ------------------------------------------
+* [Caution]
+* - Please describe only Single-Byte-Characters only.
+*   (If you use Multi-Byte-Characters, you may difference of Character-Code in each environment to interfere with the processing.)
+* 
+* 
+* ------------------------------------------
+* [Instructions] (Starting text of line is "?")
+* 
+* ---------------------
+* NameBaseFolderAsset > AssetFolderName
+*   AssetFolderName ... "Current folder" for storing asset data after import.
+*                       Default is "Assets/".
+* 
+* Imported datas will be stored under this Asset-Folder.
+* Do not specify a folder higher than "Assets/" folder by relative path specification.
+* 
+* e.g.:
+*  NameBaseFolderAsset > /Imported_Data
+*  *) Set "Assets/Imported_Data" (When start with "/", absolute path designation of Asset-Folder)
+* 
+*  NameBaseFolderAsset > Imported_Data
+*  *) Set "Imported_Data" folder 1 hierarchy lower from current.
+* 
+*  NameBaseFolderAsset > ../Imported_Data
+*  *) Set "Imported_Data" folder 1 hierarchy higher from current.
+* 
+*  NameBaseFolderAsset > /
+*  *) Set root folder ("Assets/")
+* 
+*  NameBaseFolderAsset >
+*  *) Set default ("Assets/")
+* 
+* ---------------------
+* NameBaseFolderData > FolderName
+*   FolderName ... "Current directory" that stored SS6 data (sspj) to be imported.
+*                  Default is folder where this list file is stored.
+* 
+* SS6-datas for importing are stored under this Folder.
+* Do not specify invalid folder.
+* 
+* e.g.:
+*  NameBaseFolderData > D:/SS6_Data
+*  *) Set "D:/SS6_Data"
+* 
+*  NameBaseFolderData > /SS6_Data
+*   *) Set "//SS6_Data" (When start with "/", absolute path designation on current drive)
+* 
+*  NameBaseFolderData > SS6_Data
+*   *) Set "SS6_Data" folder 1 hierarchy lower from current.
+* 
+*  NameBaseFolderData > ../SS6_Data
+*   *) Set "SS6_Data" folder 1 hierarchy higher from current.
+* 
+*  NameBaseFolderData > /
+*   *) Set current drive's root folder
+* 
+*  NameBaseFolderData >
+*   *) Set default (Folder where this list file is stored)
+* 
+* ---------------------
+* NameBaseFolderSetting > FolderName
+*   FolderName ... "Current directory" that stored setting-files that decoding with "Setting" command.
+*                  Default is folder where this list file is stored.
+* 
+* Importer's setting-files are stored under this Folder.
+* Do not specify invalid folder.
+* 
+* e.g.:
+*  (Method of describing "FolderName" is the same as "NameBaseFolderData" command.
+* 
+* ---------------------
+* SettingFile > FileName
+*   FileName ... File's path in which setting of the importer is described.
+* 
+* Load the import setting from the file.
+* This file can usually be saved from importer dialog, and almost all settings that can be set in the dialog are described.
+* Setting are described using same as batch-importer's command.
+* However, setting specified not to output by option when saving file is not described as command in the setting-file.
+* In case, be aware that settings will not be overwritten by setting-file load with this command.
+* 
+* The setting of "Enable Confirm OverWrite settings" and "Checking SSxx Version settings" in the importer dialog
+*  will be overwritten to importer setting decoded with this command.
+* 
+* To overwrite settings loaded with this command using, write  commands after this command.
+* 
+* e.g.:
+*  SettingFile > file.txt
+*   *) Load "file.txt" in current folder.
+* 
+*  SettingFile > ../file.txt
+*   *) Load "file.txt" of folder 1-hierarchy higher than current.
+* 
+*  SettingFile > Setting/file.txt
+*   *) Load "file.txt" from "Setting" folder in current folder.
+* 
+*  SettingFile > D:/Setting/file.txt
+*   *) Load "D:/Setting/file.txt"
+* 
+* ---------------------
+* MEMO: Below commands are the same as setting-commands used in file saved by importer.
+* ---------------------
+* Common_Mode > Mode
+*   Mode ... Import Mode
+*            SS6PU == "SpriteStudio6 Player" Mode 
+*            UNITY_NATIVE == "Convert To Unity-Native" Mode
+* 
+* This is same function as "Import Mode" option in the import settings.
+* 
+* e.g.:
+*  Common_Mode > SS6PU
+* 
+* ---------------------
+* Basic_FlagCreateControlGameObject > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: Basic > Create Control-Prefab" option in the import settings.
+* 
+* e.g.:
+*  Basic_FlagCreateControlGameObject > false
+*
+* ---------------------
+* Basic_FlagCreateProjectFolder > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: Basic > Create Project Folder" option in the import settings.
+* 
+* e.g.:
+*  Basic_FlagCreateProjectFolder > true
+*
+* ---------------------
+* Basic_FlagInvisibleToHideAll > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: Basic > Invisible part to Hide attribute" option in the import settings.
+* 
+* e.g.:
+*  Basic_FlagInvisibleToHideAll > true
+*
+* ---------------------
+* PreCalculation_FlagFixMesh > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: PreCalculation > Fix Mesh" option in the import settings.
+* 
+* e.g.:
+*  PreCalculation_FlagFixMesh > true
+*
+* ---------------------
+* PreCalculation_FlagTrimTransparentPixelsCell > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: PreCalculation > Trim transparent-pixels" option in the import settings.
+* 
+* e.g.:
+*  PreCalculation_FlagTrimTransparentPixelsCell > false
+*
+* ---------------------
+* PreCalculation_FlagTrimTransparentPixelsCell > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: PreCalculation > Trim transparent-pixels" option in the import settings.
+* 
+* e.g.:
+*  PreCalculation_FlagTrimTransparentPixelsCell > false
+*
+* ---------------------
+* ConfirmOverWrite_FlagPrefabAnimation > Flag
+* ConfirmOverWrite_FlagPrefabEffect > Flag
+* ConfirmOverWrite_FlagDataCellMap > Flag
+* ConfirmOverWrite_FlagDataAnimation > Flag
+* ConfirmOverWrite_FlagDataEffect > Flag
+* ConfirmOverWrite_FlagMaterialAnimation > Flag
+* ConfirmOverWrite_FlagMaterialEffect > Flag
+* ConfirmOverWrite_FlagTexture > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as ...
+* - "Options: Overwrite Confirm > Prefab-Animation"
+* - "Options: Overwrite Confirm > Prefab-Effect"
+* - "Options: Overwrite Confirm > Data-CellMap"
+* - "Options: Overwrite Confirm > Data-Animation"
+* - "Options: Overwrite Confirm > Data-Effect"
+* - "Options: Overwrite Confirm > Materials for Animation"
+* - "Options: Overwrite Confirm > Materials for Effect"
+* - "Options: Overwrite Confirm > Textures"
+* ... options in the import settings.
+* 
+* e.g.:
+*  ConfirmOverWrite_FlagPrefabAnimation > true
+*
+* ---------------------
+* Collider_FlagAttachCollider > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: Collider > Attach Collider" option in the import settings.
+* 
+* e.g.:
+*  Collider_FlagAttachCollider > true
+*
+* ---------------------
+* Collider_FlagAttachRigidBody > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: Collider > Attach Rigid-Body" option in the import settings.
+* 
+* e.g.:
+*  Collider_FlagAttachRigidBody > false
+*
+* ---------------------
+* Collider_SizeZ > Size
+*   Size ... collider's Z-axis size of local coordinate system
+*            Size need to be 0.0 or more
+* 
+* This is same function as "Options: Collider > Collider Size-Z" option in the import settings.
+* 
+* e.g.:
+*  Collider_SizeZ > 1.0
+*
+* ---------------------
+* CheckVersion_FlagInvalidSSPJ > Flag
+* CheckVersion_FlagInvalidSSCE > Flag
+* CheckVersion_FlagInvalidSSAE > Flag
+* CheckVersion_FlagInvalidSSEE > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as ...
+* - "Options: Checking SSxx Version > SSPJ (Project)"
+* - "Options: Checking SSxx Version > SSCE (CellMap)"
+* - "Options: Checking SSxx Version > SSAE (Animation)"
+* - "Options: Checking SSxx Version > SSEE (Effect)""
+* ... options in the import settings.
+* 
+* e.g.:
+*  CheckVersion_FlagInvalidSSPJ > true
+*
+* ---------------------
+* RuleNameAsset_FlagAttachSpecificNameSSPJ > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Advanced Options > Advanced Options: Naming Assets > Add SSPJ-Name" option in the import settings.
+* 
+* e.g.:
+*  RuleNameAsset_FlagAttachSpecificNameSSPJ > true
+*
+* ---------------------
+* RuleNameAsset_NamePrefixTexture > PrefixName
+* RuleNameAsset_NamePrefixPrefabAnimationSS6PU >  PrefixName
+* RuleNameAsset_NamePrefixPrefabEffectSS6PU > PrefixName
+* RuleNameAsset_NamePrefixDataCellMapSS6PU > PrefixName
+* RuleNameAsset_NamePrefixDataAnimationSS6PU > PrefixName
+* RuleNameAsset_NamePrefixDataEffectSS6PU > PrefixName
+* RuleNameAsset_NamePrefixMaterialAnimationSS6PU > PrefixName
+* RuleNameAsset_NamePrefixMaterialEffectSS6PU > PrefixName
+* RuleNameAsset_NamePrefixPrefabAnimatorUnityNative > PrefixName
+* RuleNameAsset_NamePrefixPrefabParticleUnityNative > PrefixName
+* RuleNameAsset_NamePrefixAnimationClipUnityNative > PrefixName
+* RuleNameAsset_NamePrefixMaterialAnimatorUnityNative > PrefixName
+* RuleNameAsset_NamePrefixMaterialParticleUnityNative > PrefixName
+*   PrefixName ... Filename's prefix text
+*                  (Empty) == No prefix
+* 
+* This is same function as ...
+* - "Advanced Options > Advanced Options: Naming Assets > Texture"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Assets > Prefab-Animation"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Assets > Prefab-Effect"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Assets > Data-CellMap"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Assets > Data-Animation"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Assets > Data-Effect"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Assets > Material-Animation"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Assets > Material-Effect"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Assets > Prefab-Sprite2D"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Assets > Prefab-Particle"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Assets > Animation Clip"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Assets > Material-Sprite2D"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Assets > Material-Particle"
+* ... options in the import settings.
+* 
+* e.g.:
+*  RuleNameAsset_NamePrefixPrefabEffectSS6PU > pe_
+*  *) Append the prefix "pe_" to "Effect"'s prefab file name in "SpriteStudio6 Player" mode.
+*  
+*  RuleNameAsset_NamePrefixPrefabParticleUnityNative >
+*  *) no prefix to "Particle"'s prefab file name in "Convert To Unity-Native" mode.
+*
+* ---------------------
+* RuleNameAssetFolder_NameFolderTexture > FolderName
+* RuleNameAssetFolder_NameFolderPrefabAnimationSS6PU > FolderName
+* RuleNameAssetFolder_NameFolderPrefabEffectSS6PU > FolderName
+* RuleNameAssetFolder_NameFolderDataCellMapSS6PU > FolderName
+* RuleNameAssetFolder_NameFolderDataAnimationSS6PU > FolderName
+* RuleNameAssetFolder_NameFolderDataEffectSS6PU > FolderName
+* RuleNameAssetFolder_NameFolderMaterialAnimationSS6PU > FolderName
+* RuleNameAssetFolder_NameFolderMaterialEffectSS6PU > FolderName
+* RuleNameAssetFolder_NameFolderPrefabAnimatorUnityNative > FolderName
+* RuleNameAssetFolder_NameFolderPrefabParticleUnityNative > FolderName
+* RuleNameAssetFolder_NameFolderAnimationClipUnityNative > FolderName
+* RuleNameAssetFolder_NameFolderMaterialAnimatorUnityNative > FolderName
+* RuleNameAssetFolder_NameFolderMaterialParticleUnityNative > FolderName
+*   FolderName ... Sub-Folder Name
+* 
+* This is same function as ...
+* - "Advanced Options > Advanced Options: Naming Asset-Folders > Texture"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Asset-Folders > Prefab-Animation"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Asset-Folders > Prefab-Effect"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Asset-Folders > Data-CellMap"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Asset-Folders > Data-Animation"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Asset-Folders > Data-Effect"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Asset-Folders > Material-Animation"
+* - Mode[SpriteStudio6 Player] "Advanced Options > Advanced Options: Naming Asset-Folders > Material-Effect"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Asset-Folders > Prefab-Sprite2D"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Asset-Folders > Prefab-Particle"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Asset-Folders > Animation Clip"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Asset-Folders > Material-Sprite2D"
+* - Mode[Convert To Unity-Native] "Advanced Options > Advanced Options: Naming Asset-Folders > Material-Particle"
+* ... options in the import settings.
+* 
+* e.g.:
+*  RuleNameAssetFolder_NameFolderDataAnimationSS6PU > DataAnimation
+*  *) Set subfolder name that stores asset-file for "Data-Animation" of "SpriteStudio 6 Player" mode to "DataAnimation".
+*
+* ---------------------
+* PackAttributeAnimation_Status > FormatName
+* PackAttributeAnimation_Position > FormatName
+* PackAttributeAnimation_Rotation > FormatName
+* PackAttributeAnimation_Scaling > FormatName
+* PackAttributeAnimation_RateOpacity > FormatName
+* PackAttributeAnimation_PositionAnchor > FormatName
+* PackAttributeAnimation_SizeForce > FormatName
+* PackAttributeAnimation_UserData > FormatName
+* PackAttributeAnimation_Instance > FormatName
+* PackAttributeAnimation_Effect > FormatName
+* PackAttributeAnimation_RadiusCollision > FormatName
+* PackAttributeAnimation_PlainCell > FormatName
+* PackAttributeAnimation_PlainColorBlend > FormatName
+* PackAttributeAnimation_PlainVertexCorrection > FormatName
+* PackAttributeAnimation_PlainOffsetPivot > FormatName
+* PackAttributeAnimation_PlainPositionTexture > FormatName
+* PackAttributeAnimation_PlainScalingTexture > FormatName
+* PackAttributeAnimation_PlainRotationTexture > FormatName
+* PackAttributeAnimation_FixIndexCellMap > FormatName
+* PackAttributeAnimation_FixCoordinate > FormatName
+* PackAttributeAnimation_FixColorBlend > FormatName
+* PackAttributeAnimation_FixUV0 > FormatName
+* PackAttributeAnimation_FixSizeCollision > FormatName
+* PackAttributeAnimation_FixPivotCollision > FormatName
+*   FormatName ... Data format name
+*                  StandardUncompressed == format "Standard Uncompressed"
+*                  StandardCPE == format "Standard CPE"
+*                  CPE_GOFFlyweight == format "CPE & GOF Flyweight"
+* 
+* This is same function as ...
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Status"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Position"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Rotation"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Scaling"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RateOpacity"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]PositionAnchor"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]SizeForce"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]UserData"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Instance"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Effect"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RadiusCollision"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]Cell"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]ColorBlend"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]VertexCorrection"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]OffsetPivot"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]PositionTexture"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]ScalingTexture"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]RotationTexture"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]IndexCellMap"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]Coordinate"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]ColorBlend"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]UV0"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]SizeCollision"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]PivotCollision"
+* ... options in the import settings.
+* 
+* Caution!
+*  Set those commands with sufficient knowledge of data formats supported by SS6PU.
+*  Particularly in data formats other than "Standard CPE",
+*   there is a high possibility that attributes are not supported, so if mistake setting, malfunction will occur.
+* 
+* e.g.:
+*  PackAttributeAnimation_PlainPositionTexture > StandardCPE
+*  *) Set data format of the attribute "Plain.PositionTexture" to "Standard CPE".
+*
+* ---------------------
+
+* ++++++++++++++++++++++++++++++++++++++++
+* Setting-File's folder is list-file's folder
+	? NameBaseFolderSetting > 
+* Base SS5Data's Folder is "D:/SpriteStudio_Data/"
+	? NameBaseFolderData > D:/SpriteStudio_Data/
+* Base Asset-Folder is "Assets/Graphic/Menu"
+	? NameBaseFolderAsset > /Graphic/Menu
+
+? SettingFile > Setting/Setting01.txt
+? Common_Mode > UNITY_NATIVE
+
+Menu/Confirm.sspj
+Nowloading/NowLoading.sspj
+
+* ++++++++++++++++++++++++++++++++++++++++
+* Base SS5Data's Folder is "D:/SpriteStudio_Data/UI/"
+	? NameBaseFolderData > UI
+? NameBaseFolderAsset > /Graphic/Character
+? Common_Mode > SS6PU
+
+Character01.sspj
+Character02.sspj
+
