@@ -13,13 +13,13 @@
 * The character at the beginning of the line, there are those that have a special meaning.
 * 
 * "*" ... Remarks.
-*         Lines beginning with this character, is ignored.
-* 
-* "?" ... Change Import Setting.
-*         In instruction written after this character, you can change the settings at the time of import.
-*         You can change settings even the middle of the list .
+*         Lines begun with this character, is ignored.
 * 
 * Blank-Line ... Blank-Line is ignored.
+* 
+* "?" ... Change Import Setting.
+*         In instruction written after this character, you can change the settings at importing.
+*         You can change settings even the middle of the list .
 * 
 * Other ... InputFileName(.sspj)
 *           Attention to following when specify relative path from current directory.
@@ -27,15 +27,19 @@
 *           - Do not specify relative path including a drive letter. (e.g. "C: sample.sspj")
 *           *) The above limitations are not applied when absolute path.
 * 
+* [MEMO]
+* Command lines are always processed from top to bottom.
+* Processing order are never change and never in parallel.
+* 
+* 
 * ------------------------------------------
 * [Caution]
-* - Please describe only Single-Byte-Characters only.
-*   (If you use Multi-Byte-Characters, you may difference of Character-Code in each environment to interfere with the processing.)
+* - Describe only Half-Width characters (ASCII characters: 0x20-0x7e) only.
+*   If you use Full-Width characters, you may difference of Character-Code in each environment to interfere with the processing.
 * 
 * 
 * ------------------------------------------
 * [Instructions] (Starting text of line is "?")
-* 
 * ---------------------
 * NameBaseFolderAsset > AssetFolderName
 *   AssetFolderName ... "Current folder" for storing asset data after import.
