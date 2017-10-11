@@ -71,7 +71,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 																							out nameFileExtensionList,
 																							SettingOption.ModeBatchImporter.NameFolderList,
 																							"Select Batch-Importing list file",
-																							"sspj"
+																							"txt"
 																						)
 					)
 				{

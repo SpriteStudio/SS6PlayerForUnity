@@ -137,8 +137,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		{
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
-			Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
-			LateUpdateMain(FunctionExecTimeElapse(this), false, ref matrixInverseMeshRenderer);
+			if(true == RendererBootUpDraw(false))
+			{
+				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
+				LateUpdateMain(FunctionExecTimeElapse(this), false, ref matrixInverseMeshRenderer);
+			}
 		}
 	}
 	internal void LateUpdateMain(float timeElapsed, bool flagHideDefault, ref Matrix4x4 matrixCorrection)
@@ -186,10 +189,10 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		{
 			ClusterDraw.DataPurge();
 
-			if(false == RendererBootUpDraw(false))
-			{	/* Recovery failure */
-				return;
-			}
+//			if(false == RendererBootUpDraw(false))
+//			{	/* Recovery failure */
+//				return;
+//			}
 		}
 
 		/* Update & Draw Effect */

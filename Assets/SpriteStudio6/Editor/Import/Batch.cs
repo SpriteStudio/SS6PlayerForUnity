@@ -25,6 +25,8 @@ public static partial class LibraryEditor_SpriteStudio6
 			private static string NameBaseFolderSetting = "";
 			private static string NameBaseFolderAsset = "";
 			private static string NameBaseFolderData = "";
+
+			private static LibraryEditor_SpriteStudio6.Import.Setting.KindMode Mode;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -55,7 +57,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				string nameExternal;
 				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out NameFolderBaseExternal, out nameFile, out nameExternal, nameFileList);
 #endif
-				NameFolderRootAsset = LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset;
+				NameFolderBaseExternal = PathNormalizeDelimiter(NameFolderBaseExternal, true);
+
+				NameFolderRootAsset = "/";
+				NameFolderRootAsset = PathNormalizeDelimiter(NameFolderRootAsset, true);
 
 				NameBaseFolderSetting = string.Copy(NameFolderBaseExternal);
 				NameBaseFolderAsset = string.Copy(NameFolderRootAsset);
@@ -73,6 +78,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				System.IO.StreamReader streamList = new System.IO.StreamReader(nameFileList, System.Text.Encoding.Default);
 
 				/* Decode List-File (1 Line) */
+				Mode = LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU;
 				int indexLine = 0;
 				string textLine = "";
 				string textLineValid = "";
@@ -92,7 +98,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case LibraryEditor_SpriteStudio6.Utility.ExternalText.KindType.NORMAL:
 							/* File-Name to import */
-							flagValid = ImportFile(ref settingBatchImporter, ref settingImport, indexLine, textLineValid);
+//							flagValid = ImportFile(ref settingBatchImporter, ref settingImport, indexLine, textLineValid);
 							break;
 
 						case LibraryEditor_SpriteStudio6.Utility.ExternalText.KindType.IGNORE:
@@ -141,7 +147,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						else
 						{
-							NameBaseFolderSetting = PathGetNormalizedFull(textSplit[1], NameFolderBaseExternal, true);
+							NameBaseFolderSetting = PathGetNormalizedAbsolute(textSplit[1], NameBaseFolderSetting, true);
 							if(null == NameBaseFolderSetting)
 							{	/* Error */
 								LogError("Path contains illegal characters. [" + textSplit[1] + "]", indexLine);
@@ -158,7 +164,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						else
 						{
-							NameBaseFolderAsset = PathGetNormalizedFull(textSplit[1], NameFolderRootAsset, true);
+							NameBaseFolderAsset = PathGetNormalizedAbsolute(textSplit[1], NameBaseFolderAsset, true);
 							if(null == NameBaseFolderAsset)
 							{	/* Error */
 								LogError("Path contains illegal characters. [" + textSplit[1] + "]", indexLine);
@@ -175,7 +181,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						else
 						{
-							NameBaseFolderData = PathGetNormalizedFull(textSplit[1], NameFolderBaseExternal, true);
+							NameBaseFolderData = PathGetNormalizedAbsolute(textSplit[1], NameBaseFolderData, true);
 							if(null == NameBaseFolderData)
 							{	/* Error */
 								LogError("Path contains illegal characters. [" + textSplit[1] + "]", indexLine);
@@ -187,7 +193,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					case TextKeyNameBaseSettingFile:
 						{
-							string nameSettingFile = PathGetNormalizedFull(textSplit[1], NameBaseFolderSetting , false);
+							string nameSettingFile = PathGetNormalizedAbsolute(textSplit[1], NameBaseFolderSetting , false);
 							if(true == settingImport.ImportFile(nameSettingFile))
 							{
 								/* MEMO: Overwrite only when decoding is successful. */
@@ -196,6 +202,21 @@ public static partial class LibraryEditor_SpriteStudio6
 							else
 							{	/* Error */
 								LogError("Setting File Not Found [" + textSplit[1] + "]", indexLine);
+								return(false);
+							}
+						}
+						return(true);
+
+					case LibraryEditor_SpriteStudio6.Import.Setting.TextKeyMode:
+						{
+							LibraryEditor_SpriteStudio6.Import.Setting.KindMode mode = LibraryEditor_SpriteStudio6.Import.Setting.ImportCommonMode(textSplit[1]);
+							if(LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU <= mode)
+							{	/* Valid */
+								Mode = mode;
+							}
+							else
+							{	/* Invalid */
+								LogError("Invalid Import-Mode [" + textSplit[1] + "]", indexLine);
 								return(false);
 							}
 						}
@@ -219,43 +240,66 @@ public static partial class LibraryEditor_SpriteStudio6
 										)
 			{
 				string nameFile = string.Copy(textLine);
-				nameFile = PathGetNormalizedFull(textLine, NameBaseFolderData, false);
-				return(LibraryEditor_SpriteStudio6.Import.Exec(	ref settingImport,
-																nameFile,
-																NameBaseFolderAsset,
-																true
-															)
-					);
+				nameFile = PathGetNormalizedAbsolute(textLine, NameBaseFolderData, false);
+
+				/* Import SSPJ */
+				settingImport.Mode = Mode;	/* Overwrite */
+				bool flagSuccess = LibraryEditor_SpriteStudio6.Import.Exec(	ref settingImport,
+																			nameFile,
+																			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + NameBaseFolderAsset,	/* Caution that absolute path in Assets (start at "/") */
+																			true
+																		);
+
+				/* Clean up memory (Garbage-Collection) */
+				System.GC.Collect();
+
+				return(flagSuccess);
 			}
 
-			private static string PathGetNormalizedFull(string namePath, string namePathBase, bool flagDirectory)
+			private static string PathNormalizeDelimiter(string namePath, bool flagDirectory)
 			{
 				if(true == string.IsNullOrEmpty(namePath))
-				{
-					return(null);
+				{	/* become root if add "/" to end of empty... */
+					return("");
 				}
 
-				string namePathNormalized;
-				if(false == LibraryEditor_SpriteStudio6.Utility.File.PathCheckRoot(namePath))
-				{
-					namePathNormalized = namePathBase + namePath;
-				}
-				else
-				{
-					namePathNormalized = string.Copy(namePath);
-				}
-				namePathNormalized = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(namePathNormalized);
-				namePathNormalized = System.IO.Path.GetFullPath(namePathNormalized);
-
+				string namePathNormalized = namePath.Replace("\\", "/");	/* "\" -> "/" */
 				if(true == flagDirectory)
 				{
-					if(false == namePath.EndsWith("/"))
+					if(false == namePathNormalized.EndsWith("/"))
 					{
 						namePathNormalized += "/";
 					}
 				}
-
 				return(namePathNormalized);
+			}
+
+			private static string PathGetNormalizedAbsolute(string namePath, string namePathBase, bool flagDirectory)
+			{
+				/* MEMO: "System.IO.GetFullPath" can not normalize path normally if path points to machines on LAN.   */
+				/*       ("../" etc. are ignored. e.g. "//machine/folder1/../aaa.txt" -> "//machine/folder1/aaa.txt") */
+				/* MEMO: If "namePathBase" is a relative path, "System.URI" misinterpret the first folder name */
+				/*        as machine name and converted to lowercase. (e.g. "Assets/" -> "file://assets/)      */
+				/* MEMO: If "file: //" does not exist, "System.Uri"'s constructor fails with directory specification such as "/". */
+				/*       However, if add "file: //", always be treated as root. So need to delete it at the end.                  */
+				bool flagPathBaseIsRooted = LibraryEditor_SpriteStudio6.Utility.File.PathCheckRoot(namePathBase);
+				System.Uri uriBase = new System.Uri(PathNormalizeDelimiter("file://" + namePathBase, true));
+				System.Uri uri = new System.Uri(uriBase, PathNormalizeDelimiter(namePath, flagDirectory));
+				string namePathNormalized = PathNormalizeDelimiter(uri.LocalPath, flagDirectory);	/* LocalPath's delimiter is "\". */
+				if(false == flagPathBaseIsRooted)
+				{
+					if(true == namePathNormalized.StartsWith("//"))
+					{
+						namePathNormalized = namePathNormalized.Remove(0, 2);
+					}
+				}
+				return(namePathNormalized);
+			}
+
+			private static string PathGetNormalizedRelative(string namePath, string namePathBase, bool flagDirectory)
+			{
+				/* MEMO: Code at a later date. */
+				return(null);
 			}
 
 			private static void LogError(string message, int indexLine)

@@ -241,12 +241,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				switch(textArgument[0])
 				{
 					case TextKeyMode:
-						for(int i=0; i<TextArgumentMode.Length; i++)
 						{
-							if(textArgument[1] == TextArgumentMode[i])
-							{
-								Mode = (KindMode)i;
-								break;
+							KindMode mode = ImportCommonMode(textArgument[1]);
+							if(KindMode.SS6PU <= mode)
+							{	/* Valid */
+								Mode = mode;
 							}
 						}
 						return(true);
@@ -258,6 +257,17 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 				}
 				return(false);
+			}
+			public static KindMode ImportCommonMode(string text)
+			{
+				for(int i=0; i<TextArgumentMode.Length; i++)
+				{
+					if(text == TextArgumentMode[i])
+					{
+						return((KindMode)i);
+					}
+				}
+				return((KindMode)(-1));
 			}
 
 			public bool ExportFile(	string nameFile,
@@ -404,15 +414,14 @@ public static partial class LibraryEditor_SpriteStudio6
 				MATERIAL_EFFECT_UNITYNATIVE,
 			}
 
-			public const string PrefsKeyPrefix = "SS6PU_ImportSetting_";	/* Common for all settings */
-
 			private const string KeyMode = "Mode";
 			private const string KeyFolderPrevious = "FolderPrevious";
 
 			private const string TextKeyPrefixCommon = "Common_";
-			private const string TextKeyMode = TextKeyPrefixCommon + KeyMode;
+			internal const string TextKeyMode = TextKeyPrefixCommon + KeyMode;	/* Referenced from batch-importer */
 			private const string TextKeyFolderPrevious = TextKeyPrefixCommon + KeyFolderPrevious;
 
+			public const string PrefsKeyPrefix = "SS6PU_ImportSetting_";	/* Common for all settings */
 			private const string PrefsKeyPrefixCommon = PrefsKeyPrefix + TextKeyPrefixCommon;
 			private const string PrefsKeyMode = PrefsKeyPrefixCommon + KeyMode;
 			private const string PrefsKeyFolderPrevious = PrefsKeyPrefixCommon + KeyFolderPrevious;

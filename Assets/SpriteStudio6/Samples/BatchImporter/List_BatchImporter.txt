@@ -10,7 +10,7 @@
 * ------------------------------------------
 * [Usage]
 * 
-* The character at the beginning of the line, there are those that have a special meaning.
+* The character at starting of line, have a special meaning.
 * 
 * "*" ... Remarks.
 *         Lines begun with this character, is ignored.
@@ -43,46 +43,50 @@
 * ---------------------
 * NameBaseFolderAsset > AssetFolderName
 *   AssetFolderName ... "Current folder" for storing asset data after import.
-*                       Default is "Assets/".
+*                       Omit "Assets/" indicating root asset folder of project. ("Assets/" is root)
+*                       Automatically complemented, if no "/" at the end.
+*                       Default is "/" (actually "Assets/")
 * 
 * Imported datas will be stored under this Asset-Folder.
-* Do not specify a folder higher than "Assets/" folder by relative path specification.
 * 
 * e.g.:
 *  NameBaseFolderAsset > /Imported_Data
-*  *) Set "Assets/Imported_Data" (When start with "/", absolute path designation of Asset-Folder)
+*  *) Set "(Assets)/Imported_Data"
 * 
-*  NameBaseFolderAsset > Imported_Data
+*  NameBaseFolderAsset > /Assets/
+*  *) Set "(Assets)/Assets/")
+* 
+*  NameBaseFolderAsset > Imported_Data/
 *  *) Set "Imported_Data" folder 1 hierarchy lower from current.
 * 
 *  NameBaseFolderAsset > ../Imported_Data
 *  *) Set "Imported_Data" folder 1 hierarchy higher from current.
 * 
 *  NameBaseFolderAsset > /
-*  *) Set root folder ("Assets/")
+*  *) Set "(Assets)/"
 * 
 *  NameBaseFolderAsset >
-*  *) Set default ("Assets/")
+*  *) Set default ("(Assets)/")
 * 
 * ---------------------
 * NameBaseFolderData > FolderName
 *   FolderName ... "Current directory" that stored SS6 data (sspj) to be imported.
+*                  Automatically complemented, if no "/" at the end.
 *                  Default is folder where this list file is stored.
 * 
 * SS6-datas for importing are stored under this Folder.
-* Do not specify invalid folder.
 * 
 * e.g.:
 *  NameBaseFolderData > D:/SS6_Data
 *  *) Set "D:/SS6_Data"
 * 
-*  NameBaseFolderData > /SS6_Data
+*  NameBaseFolderData > /SS6_Data/
 *   *) Set "//SS6_Data" (When start with "/", absolute path designation on current drive)
 * 
 *  NameBaseFolderData > SS6_Data
 *   *) Set "SS6_Data" folder 1 hierarchy lower from current.
 * 
-*  NameBaseFolderData > ../SS6_Data
+*  NameBaseFolderData > ../SS6_Data/
 *   *) Set "SS6_Data" folder 1 hierarchy higher from current.
 * 
 *  NameBaseFolderData > /
@@ -94,6 +98,7 @@
 * ---------------------
 * NameBaseFolderSetting > FolderName
 *   FolderName ... "Current directory" that stored setting-files that decoding with "Setting" command.
+*                  Automatically complemented, if no "/" at the end.
 *                  Default is folder where this list file is stored.
 * 
 * Importer's setting-files are stored under this Folder.
@@ -104,19 +109,22 @@
 * 
 * ---------------------
 * SettingFile > FileName
-*   FileName ... File's path in which setting of the importer is described.
+*   FileName ... File's path in which setting of importer is described. (Include extension)
 * 
 * Load the import setting from the file.
 * This file can usually be saved from importer dialog, and almost all settings that can be set in the dialog are described.
+* 
 * Setting are described using same as batch-importer's command.
 * However, setting specified not to output by option when saving file is not described as command in the setting-file.
 * In case, be aware that settings will not be overwritten by setting-file load with this command.
 * 
-* The setting of "Enable Confirm OverWrite settings" and "Checking SSxx Version settings" in the importer dialog
+* Settings of "Enable Confirm OverWrite settings" and "Checking SSxx Version settings" in the importer dialog
 *  will be overwritten to importer setting decoded with this command.
 * 
-* To overwrite settings loaded with this command using, write  commands after this command.
+* To overwrite settings loaded with this command using, write commands after this command.
 * 
+* This command can not be nested. (In setting-file, you can not use this command)
+*
 * e.g.:
 *  SettingFile > file.txt
 *   *) Load "file.txt" in current folder.
@@ -130,19 +138,33 @@
 *  SettingFile > D:/Setting/file.txt
 *   *) Load "D:/Setting/file.txt"
 * 
-* ---------------------
-* MEMO: Below commands are the same as setting-commands used in file saved by importer.
+*  SettingFile > D:/Setting/file.txt
+*  ConfirmOverWrite_FlagTexture > true
+*   *) "ConfirmOverWrite_FlagTexture" are applied. (Correct method)
+* 
+*  ConfirmOverWrite_FlagTexture > true
+*  SettingFile > D:/Setting/file.txt
+*   *) "ConfirmOverWrite_FlagTexture" are not applied depending on batch-importer's setting or setting-file. (Wrong method)
+* 
+* 
 * ---------------------
 * Common_Mode > Mode
 *   Mode ... Import Mode
 *            SS6PU == "SpriteStudio6 Player" Mode 
 *            UNITY_NATIVE == "Convert To Unity-Native" Mode
+*            Default is "SS6PU".
 * 
-* This is same function as "Import Mode" option in the import settings.
+* Change import mode.
+* The same command can also be written in setting-file, but ignored by the batch-importer.
+* You must use this command explicitly to switch import mode.
+* (Mode will not be changed by loaded setting file)
 * 
 * e.g.:
 *  Common_Mode > SS6PU
 * 
+* 
+* ---------------------
+* MEMO: Below commands are the same as setting-commands used in file saved by importer.
 * ---------------------
 * Basic_FlagCreateControlGameObject > Flag
 *   Flag ... true / false (bool)
@@ -447,7 +469,7 @@
 	? NameBaseFolderSetting > 
 * Base SS5Data's Folder is "D:/SpriteStudio_Data/"
 	? NameBaseFolderData > D:/SpriteStudio_Data/
-* Base Asset-Folder is "Assets/Graphic/Menu"
+* Base Asset-Folder is "(Assets)/Graphic/Menu"
 	? NameBaseFolderAsset > /Graphic/Menu
 
 ? SettingFile > Setting/Setting01.txt
