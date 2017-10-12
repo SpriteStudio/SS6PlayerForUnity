@@ -21,6 +21,10 @@ public static partial class Library_SpriteStudio6
 		ADD,
 		SUB,
 		MUL,
+		MUL_NA,
+		SCR,
+		EXC,
+		INV,
 
 		TERMINATOR,
 	}
@@ -31,7 +35,7 @@ public static partial class Library_SpriteStudio6
 
 		MIX = 0,
 		ADD,
-		ADD2,
+		ADD_PA,
 
 		TERMINATOR,
 		TERMINATOR_KIND = ADD,
@@ -268,20 +272,20 @@ public static partial class Library_SpriteStudio6
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus Status;
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Position;	/* Always Compressed */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;	/* Always Compressed */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;	/* Always Compressed */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Position;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;	/* Reserved */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;	/* Trigger (Always Compressed) */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;	/* Trigger (Always Compressed) */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect Effect;	/* Trigger (Always Compressed) */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect Effect;
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;	/* for Sphere-Collider *//* Always Compressed */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;	/* for Sphere-Collider */
 
 				public AttributeGroupPlain Plain;
 				public AttributeGroupFix Fix;
@@ -362,7 +366,7 @@ public static partial class Library_SpriteStudio6
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell Cell;	/* Always Compressed */
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell Cell;
 
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend ColorBlend;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
@@ -384,8 +388,8 @@ public static partial class Library_SpriteStudio6
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix ColorBlend;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix UV0;
 
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeCollision;	/* for Box-Collider *//* Always Compressed */
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PivotCollision;	/* for Box-Collider *//* Always Compressed */
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeCollision;	/* for Box-Collider */
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PivotCollision;	/* for Box-Collider */
 					#endregion Variables & Properties
 				}
 				#endregion Classes, Structs & Interfaces
@@ -1112,17 +1116,21 @@ public static partial class Library_SpriteStudio6
 			#region Enums & Constants
 			public readonly static UnityEngine.Shader[] TableSprite = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
 			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sub"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Mul")
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Subtract"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Multiple"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/MultipleNA"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Screen"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Exclude"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Inverse")
 			};
 
 			public readonly static UnityEngine.Shader[] TableEffect = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/Effect/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/Effect/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Effect/Add2"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/Effect/AddPA"),
 			};
 			#endregion Enums & Constants
 		}
@@ -1167,7 +1175,6 @@ public static partial class Library_SpriteStudio6
 			/* MEMO: Do not define "InstanceRootParent" to "internal" in order to remember parent-"Root" even after be instantiated on scene. */
 			public Script_SpriteStudio6_Root InstanceRootParent;
 
-			public bool FlagReassignMaterialForce;
 			public bool FlagHideForce;
 
 			internal float RateOpacity = 1.0f;
@@ -1182,23 +1189,6 @@ public static partial class Library_SpriteStudio6
 			#region Functions
 			protected bool BaseAwake()
 			{
-				/* Reassignment for shader lost */
-				/* MEMO: Memory leak occasionally, so normally no reassign. */
-				if(true == FlagReassignMaterialForce)
-				{
-					int countTableMaterial = (null != TableMaterial) ? TableMaterial.Length : 0;
-					Material material = null;
-					for(int i=0; i<countTableMaterial; i++)
-					{
-						material = TableMaterial[i];
-						if(null != material)
-						{
-							material.shader = Shader.Find(material.shader.name);
-						}
-					}
-					material = null;
-				}
-
 				return(true);
 			}
 

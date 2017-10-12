@@ -14,7 +14,7 @@ Shader "Custom/SpriteStudio6/Effect/Mix" {
 				"Queue"="Transparent"
 				"IgnoreProjector"="True"
 				"RenderType"="Transparent"
-		}
+			}
 
 		Pass	{
 			Lighting Off
@@ -32,9 +32,9 @@ Shader "Custom/SpriteStudio6/Effect/Mix" {
 
 			#include "UnityCG.cginc"
 
-			#include "Base/ShaderVertex_Particle_SpriteStudio6.cginc"
+			#include "Base/ShaderVertex_Effect_SpriteStudio6.cginc"
 
-			#include "Base/ShaderPixel_Particle_SpriteStudio6.cginc"
+			#include "Base/ShaderPixel_Effect_SpriteStudio6.cginc"
 
 			ENDCG
 

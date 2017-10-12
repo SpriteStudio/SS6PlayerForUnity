@@ -15,6 +15,8 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	#region Variables & Properties
 	public KindVersion Version;
 
+	public Material[] TableMaterial;
+
 	public FlagBit FlagData;
 	public bool StatusIsLockSeedRandom
 	{
@@ -34,6 +36,9 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	public Library_SpriteStudio6.Data.Parts.Effect[] TableParts;
 	public Library_SpriteStudio6.Data.Effect.Emitter[] TableEmitter;
 	public int[] TableIndexEmitterOrderDraw;
+
+	/* MEMO: Use "delegate" instead of bool because value is cleared each compiling. */
+	internal FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
@@ -51,6 +56,25 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	public int CountGetEmitter()
 	{
 		return((null != TableEmitter) ? TableEmitter.Length : -1);
+	}
+
+	internal void BootUpTableMaterial()
+	{
+#if UNITY_EDITOR
+		/* Reassignment for shader lost */
+		/* MEMO: This process will not work unless on editor. */
+		int countTableMaterial = (null != TableMaterial) ? TableMaterial.Length : 0;
+		Material material = null;
+		for(int i=0; i<countTableMaterial; i++)
+		{
+			material = TableMaterial[i];
+			if(null != material)
+			{
+				material.shader = Shader.Find(material.shader.name);
+			}
+		}
+		material = null;
+#endif
 	}
 	#endregion Functions
 
@@ -73,4 +97,9 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 		CLEAR = 0x00000000
 	}
 	#endregion Enums & Constants
+
+	/* ----------------------------------------------- Deligates */
+	#region Deligates
+	internal delegate void FunctionSignatureBootUpFunction();
+	#endregion Deligates
 }

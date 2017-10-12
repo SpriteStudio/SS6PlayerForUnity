@@ -4,7 +4,7 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-Shader "Custom/SpriteStudio6/Mix" {
+Shader "Custom/SpriteStudio6/Sprite/Mix" {
 	Properties	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_OverlayParameter_Non ("Parameter(Non)", Vector) = (1.0, 0.0, -1.0, 0.0)

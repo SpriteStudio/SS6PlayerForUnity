@@ -2554,7 +2554,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					Script_SpriteStudio6_Root.InformationPlay[] informationPlayRoot = null;
 					string[] nameAnimation = null;
 					bool flagHideForce = false;
-					bool flagReassignMaterialForce = false;
 					int limitTrack = 0;
 					int indexAnimation;
 
@@ -2576,7 +2575,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(null != scriptRoot)
 						{
 							flagHideForce = scriptRoot.FlagHideForce;
-							flagReassignMaterialForce = scriptRoot.FlagReassignMaterialForce;
 							limitTrack = scriptRoot.LimitTrack;
 
 							if(null != scriptRoot.TableInformationPlay)
@@ -2775,7 +2773,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					tableControlParts = null;
 
 					scriptRoot.FlagHideForce = flagHideForce;
-					scriptRoot.FlagReassignMaterialForce = flagReassignMaterialForce;
 
 					int countLimitTrack = scriptRoot.LimitGetTrack();
 					scriptRoot.TableInformationPlay = new Script_SpriteStudio6_Root.InformationPlay[countLimitTrack];

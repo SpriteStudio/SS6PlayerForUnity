@@ -89,11 +89,15 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Clear Status */
 		Status = FlagBitStatus.CLEAR;
 
-		/* Check master datas */
+		/* Boot up master datas */
+		/* MEMO: Reason why initial setting of ScriptableObject is done here     */
+		/*        (without processing with ScriptableObject's Awake or OnEnable) */
+		/*        is to stabilize execution such when re-compile.                */
 		if((null == DataCellMap) || (null == DataEffect))
 		{
 			goto Start_ErrorEnd;
 		}
+		FunctionBootUpDataEffect();
 
 		/* Start Base-Class */
 		BaseStart();
@@ -241,27 +245,25 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
-	/* ********************************************************* */
-	//! Get Material
-	/*!
-	@param	indexCellMap
-		Serial-number of using Cell-Map
-	@param	operationBlend
-		Color-Blend Operation for the target
-	@retval	Return-Value
-		Material
-	*/
-	public Material MaterialGet(int indexCellMap, Library_SpriteStudio6.KindOperationBlendEffect operationBlend)
+	private void FunctionBootUpDataEffect()
 	{
-		const int CountLength = (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
-		if(	(0 <= indexCellMap)
-			&& ((null != TableMaterial) && ((TableMaterial.Length / CountLength) > indexCellMap))
-			&& (Library_SpriteStudio6.KindOperationBlendEffect.NON < operationBlend) && (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR > operationBlend)
-			)
+		if(null == DataEffect)
 		{
-			return(TableMaterial[(indexCellMap * CountLength) + (int)operationBlend]);
+			return;
 		}
-		return(null);
+		if(null != DataEffect.SignatureBootUpFunction)
+		{
+			return;
+		}
+
+		DataEffect.SignatureBootUpFunction = FunctionBootUpDataEffectignature;
+
+		/* Recover Material */
+		DataEffect.BootUpTableMaterial();
+	}
+	private static void FunctionBootUpDataEffectignature()
+	{
+		/* Dummy-Function */
 	}
 
 	private bool ClusterBootUpDraw()

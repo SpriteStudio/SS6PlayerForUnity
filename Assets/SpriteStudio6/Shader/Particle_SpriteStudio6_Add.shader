@@ -13,7 +13,7 @@ Shader "Custom/SpriteStudio6/Effect/Add" {
 		Tags {
 				"Queue"="Transparent"
 				"IgnoreProjector"="True"
-				"RenderType"="Transparent"
+				"RenderT ype"="Transparent"
 		}
 
 		Pass	{
@@ -34,9 +34,9 @@ Shader "Custom/SpriteStudio6/Effect/Add" {
 
 			#include "UnityCG.cginc"
 
-			#include "Base/ShaderVertex_Particle_SpriteStudio6.cginc"
+			#include "Base/ShaderVertex_Effect_SpriteStudio6.cginc"
 
-//			#include "Base/ShaderPixel_Particle_SpriteStudio6.cginc"
+//			#include "Base/ShaderPixel_Effect_SpriteStudio6.cginc"
 			#define	LIMIT_ALPHA	0.0038
 			sampler2D	_MainTex;
 #ifdef SV_Target

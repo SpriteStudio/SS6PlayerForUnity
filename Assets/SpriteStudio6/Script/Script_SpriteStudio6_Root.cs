@@ -78,14 +78,15 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	{
 		Status = FlagBitStatus.CLEAR;
 
-		/* Check master datas */
-		FunctionBootUpDataAnimation();
-
-		/* Check master datas */
+		/* Boot up master datas */
+		/* MEMO: Reason why initial setting of ScriptableObject is done here     */
+		/*        (without processing with ScriptableObject's Awake or OnEnable) */
+		/*        is to stabilize execution such when re-compile.                */
 		if((null == DataCellMap) || (null == DataAnimation))
 		{
 			goto Start_ErrorEnd;
 		}
+		FunctionBootUpDataAnimation();
 
 		/* Get Counts */
 		CountPartsSprite  = DataAnimation.CountGetPartsSprite();
@@ -291,29 +292,6 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
-	/* ********************************************************* */
-	//! Get Material
-	/*!
-	@param	indexCellMap
-		Serial-number of using Cell-Map
-	@param	operationBlend
-		Color-Blend Operation for the target
-	@retval	Return-Value
-		Material
-	*/
-	public Material MaterialGet(int indexCellMap, Library_SpriteStudio6.KindOperationBlend operationBlend)
-	{
-		const int CountLength = (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
-		if(	(0 <= indexCellMap)
-			&& ((null != TableMaterial) && ((TableMaterial.Length / CountLength) > indexCellMap))
-			&& (Library_SpriteStudio6.KindOperationBlend.NON < operationBlend) && (Library_SpriteStudio6.KindOperationBlend.TERMINATOR > operationBlend)
-			)
-		{
-			return(TableMaterial[(indexCellMap * CountLength) + (int)operationBlend]);
-		}
-		return(null);
-	}
-
 	private void FunctionBootUpDataAnimation()
 	{
 		if((null == DataAnimation) || (null == DataAnimation.TableParts) || (null == DataAnimation.TableAnimation))
@@ -324,43 +302,14 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		{
 			return;
 		}
+
 		DataAnimation.SignatureBootUpFunction = FunctionBootUpDataAnimationSignature;
 
-		int countAnimation = DataAnimation.TableAnimation.Length;
-		int countParts = DataAnimation.TableParts.Length;
+		/* Recover Material */
+		DataAnimation.BootUpTableMaterial();
 
-		for(int i=0; i<countAnimation; i++)
-		{
-			for(int j=0; j<countParts; j++)
-			{
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionStatus(DataAnimation.TableAnimation[i].TableParts[j].Status);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(DataAnimation.TableAnimation[i].TableParts[j].Position);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(DataAnimation.TableAnimation[i].TableParts[j].Rotation);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(DataAnimation.TableAnimation[i].TableParts[j].Scaling);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(DataAnimation.TableAnimation[i].TableParts[j].RateOpacity);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(DataAnimation.TableAnimation[i].TableParts[j].PositionAnchor);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(DataAnimation.TableAnimation[i].TableParts[j].SizeForce);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUserData(DataAnimation.TableAnimation[i].TableParts[j].UserData);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInstance(DataAnimation.TableAnimation[i].TableParts[j].Instance);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionEffect(DataAnimation.TableAnimation[i].TableParts[j].Effect);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(DataAnimation.TableAnimation[i].TableParts[j].RadiusCollision);
-
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(DataAnimation.TableAnimation[i].TableParts[j].Plain.Cell);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlend(DataAnimation.TableAnimation[i].TableParts[j].Plain.ColorBlend);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(DataAnimation.TableAnimation[i].TableParts[j].Plain.VertexCorrection);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(DataAnimation.TableAnimation[i].TableParts[j].Plain.OffsetPivot);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(DataAnimation.TableAnimation[i].TableParts[j].Plain.PositionTexture);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(DataAnimation.TableAnimation[i].TableParts[j].Plain.ScalingTexture);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(DataAnimation.TableAnimation[i].TableParts[j].Plain.RotationTexture);
-
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(DataAnimation.TableAnimation[i].TableParts[j].Fix.IndexCellMap);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(DataAnimation.TableAnimation[i].TableParts[j].Fix.Coordinate);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlendFix(DataAnimation.TableAnimation[i].TableParts[j].Fix.ColorBlend);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUVFix(DataAnimation.TableAnimation[i].TableParts[j].Fix.UV0);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(DataAnimation.TableAnimation[i].TableParts[j].Fix.SizeCollision);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(DataAnimation.TableAnimation[i].TableParts[j].Fix.PivotCollision);
-			}
-		}
+		/* Set Attribute-Interface */
+		DataAnimation.BootUpInterfaceAttribute();
 	}
 	private static void FunctionBootUpDataAnimationSignature()
 	{

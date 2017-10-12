@@ -1044,7 +1044,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					int limitParticleLimit = 0;
 					float rateTime = 1.0f;
 					bool flagHideForce = false;
-					bool flagReassignMaterialForce = false;
 
 					/* Create? Update? */
 					if(null == informationSSEE.PrefabEffectSS6PU.TableData[0])
@@ -1065,7 +1064,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							limitParticleLimit = scriptRoot.LimitParticleDraw;
 							flagHideForce = scriptRoot.FlagHideForce;
-							flagReassignMaterialForce = scriptRoot.FlagReassignMaterialForce;
 							rateTime = scriptRoot.RateTime;
 						}
 
@@ -1094,7 +1092,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					scriptRoot.LimitParticleDraw = limitParticleLimit;
 					scriptRoot.FlagHideForce = flagHideForce;
-					scriptRoot.FlagReassignMaterialForce = flagReassignMaterialForce;
 					scriptRoot.RateTime = rateTime;
 
 					gameObjectRoot.SetActive(true);
