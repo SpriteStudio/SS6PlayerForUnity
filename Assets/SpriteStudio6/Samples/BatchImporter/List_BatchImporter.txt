@@ -467,8 +467,8 @@
 * ++++++++++++++++++++++++++++++++++++++++
 * Setting-File's folder is list-file's folder
 	? NameBaseFolderSetting > 
-* Base SS5Data's Folder is "D:/SpriteStudio_Data/"
-	? NameBaseFolderData > D:/SpriteStudio_Data/
+* Base SS5Data's Folder is "E:/SpriteStudio_Data/"
+	? NameBaseFolderData > E:/SpriteStudio_Data/
 * Base Asset-Folder is "(Assets)/Graphic/Menu"
 	? NameBaseFolderAsset > /Graphic/Menu
 
@@ -478,12 +478,12 @@
 Menu/Confirm.sspj
 Nowloading/NowLoading.sspj
 
-* ++++++++++++++++++++++++++++++++++++++++
-* Base SS5Data's Folder is "D:/SpriteStudio_Data/UI/"
-	? NameBaseFolderData > UI
-? NameBaseFolderAsset > /Graphic/Character
-? Common_Mode > SS6PU
-
-Character01.sspj
-Character02.sspj
+** ++++++++++++++++++++++++++++++++++++++++
+** Base SS5Data's Folder is "D:/SpriteStudio_Data/UI/"
+*	? NameBaseFolderData > UI
+*? NameBaseFolderAsset > /Graphic/Character
+*? Common_Mode > SS6PU
+*
+*Character01.sspj
+*Character02.sspj
 

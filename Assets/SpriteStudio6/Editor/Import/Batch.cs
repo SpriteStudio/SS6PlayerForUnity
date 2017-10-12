@@ -98,7 +98,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case LibraryEditor_SpriteStudio6.Utility.ExternalText.KindType.NORMAL:
 							/* File-Name to import */
-//							flagValid = ImportFile(ref settingBatchImporter, ref settingImport, indexLine, textLineValid);
+							flagValid = ImportFile(ref settingBatchImporter, ref settingImport, indexLine, textLineValid);
 							break;
 
 						case LibraryEditor_SpriteStudio6.Utility.ExternalText.KindType.IGNORE:
@@ -278,10 +278,10 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* MEMO: "System.IO.GetFullPath" can not normalize path normally if path points to machines on LAN.   */
 				/*       ("../" etc. are ignored. e.g. "//machine/folder1/../aaa.txt" -> "//machine/folder1/aaa.txt") */
-				/* MEMO: If "namePathBase" is a relative path, "System.URI" misinterpret the first folder name */
+				/* MEMO: If "namePathBase" is a relative path, "System.Uri" misinterpret the first folder name */
 				/*        as machine name and converted to lowercase. (e.g. "Assets/" -> "file://assets/)      */
-				/* MEMO: If "file: //" does not exist, "System.Uri"'s constructor fails with directory specification such as "/". */
-				/*       However, if add "file: //", always be treated as root. So need to delete it at the end.                  */
+				/* MEMO: If "file://" does not exist, "System.Uri"'s constructor fails with directory specification such as "/". */
+				/*       However, if add "file://", always be treated as root. So need to delete it at the end.                  */
 				bool flagPathBaseIsRooted = LibraryEditor_SpriteStudio6.Utility.File.PathCheckRoot(namePathBase);
 				System.Uri uriBase = new System.Uri(PathNormalizeDelimiter("file://" + namePathBase, true));
 				System.Uri uri = new System.Uri(uriBase, PathNormalizeDelimiter(namePath, flagDirectory));
