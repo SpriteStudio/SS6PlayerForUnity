@@ -666,7 +666,7 @@ public static partial class LibraryEditor_SpriteStudio6
 													LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
 												)
 				{	/* Convert-SS6PU Pass-1 ... Transfer necessary data from the temporary. */
-					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* ÅhUnityEngine.TextureÅh and my "Texture", class-names are conflict unless fully-qualified. */
+					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* ‚ÄùUnityEngine.Texture‚Äù and my "Texture", class-names are conflict unless fully-qualified. */
 					if(0 <= informationSSCE.IndexTexture)
 					{
 						informationTexture = informationSSPJ.TableInformationTexture[informationSSCE.IndexTexture];

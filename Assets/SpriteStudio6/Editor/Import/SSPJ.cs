@@ -715,9 +715,9 @@ public static partial class LibraryEditor_SpriteStudio6
 													string nameOutputAssetFolderBase
 												)
 				{
-					/* Yuzu.: ƒIƒvƒVƒ‡ƒ“‚ª‚È‚¢ê‡‚ÍA–¼‘O‚ÅÆ‡ */
-					/* Yuzu.: ƒIƒvƒVƒ‡ƒ“‚ª‚ ‚éê‡‚ÍASpriteStudio_Root/RootEffect‚©‚çg—p‚µ‚Ä‚¢‚éƒf[ƒ^‚ğ’Ç‚¢‚©‚¯‚é */
-						/* Yuzu.: SpriteStudio_Root/RootEffect‚ª‚È‚¢ê‡‚Í–¼‘O‚ÅÆ‡‚µ‚Ä‚¢‚­ */
+					/* Yuzu.: ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãŒãªã„å ´åˆã¯ã€åå‰ã§ç…§åˆ */
+					/* Yuzu.: ã‚ªãƒ—ã‚·ãƒ§ãƒ³ãŒã‚ã‚‹å ´åˆã¯ã€SpriteStudio_Root/RootEffectã‹ã‚‰ä½¿ç”¨ã—ã¦ã„ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’è¿½ã„ã‹ã‘ã‚‹ */
+						/* Yuzu.: SpriteStudio_Root/RootEffectãŒãªã„å ´åˆã¯åå‰ã§ç…§åˆã—ã¦ã„ã */
 
 					/* SSAEs */
 					int countSSAE = informationSSPJ.TableInformationSSAE.Length;
