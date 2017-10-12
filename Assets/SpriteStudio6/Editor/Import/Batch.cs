@@ -228,7 +228,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* MEMO: Interpret as change of individual setting of Importer when not command dedicated to Batch-Importer. */
 				/* MEMO: When individual setting change, not overwrite with Batch-Importer setting. */
-				settingImport.Import(textLine);
+				if(false == settingImport.Import(textLine))
+				{
+					LogError("Unknown Command [" + textLine + "]", indexLine);
+					return(false);
+				}
 
 				return(true);
 			}
