@@ -477,7 +477,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 
 					case "mul":
-						informationParts.Data.OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.MUL;
+						informationParts.Data.OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.MUL_NA;
 						break;
 
 					case "add":
@@ -486,6 +486,25 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					case "sub":
 						informationParts.Data.OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.SUB;
+						break;
+
+					case "mulalpha":
+						/* MEMO: In SS5PU, "mul" was handled as Alpha-Multiply.                            */
+						/*       From SS6PU, "mul" and "mulalpha" are devided so it is handled separately. */
+						/*       ("mul": Non-Alpha-Multiply / "mulalpha": Alpha-Multiply)                  */
+						informationParts.Data.OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.MUL;
+						break;
+
+					case "screen":
+						informationParts.Data.OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.SCR;
+						break;
+
+					case "exclusion":
+						informationParts.Data.OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.EXC;
+						break;
+
+					case "invert":
+						informationParts.Data.OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.INV;
 						break;
 
 					default:
@@ -2532,6 +2551,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						tableAnimationRuntime[i] = informationSSAE.TableAnimation[i].Data;
 					}
 					dataAnimation.TableAnimation = tableAnimationRuntime;
+
+					dataAnimation.TableMaterial = informationSSPJ.TableMaterialAnimationSS6PU;	/* Back up original */
 
 					EditorUtility.SetDirty(dataAnimation);
 					AssetDatabase.SaveAssets();

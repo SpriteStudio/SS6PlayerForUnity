@@ -1023,6 +1023,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					dataEffect.VersionRenderer = informationSSEE.VersionRenderer;
 					dataEffect.CountMaxParticle = 0;
 
+					dataEffect.TableMaterial = informationSSPJ.TableMaterialEffectSS6PU;
+
 					EditorUtility.SetDirty(dataEffect);
 					AssetDatabase.SaveAssets();
 
