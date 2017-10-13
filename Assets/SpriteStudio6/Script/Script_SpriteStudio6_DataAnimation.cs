@@ -17,7 +17,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 	public Material[] TableMaterial;
 
-	/* MEMO: 念のため、セットアップポーズも入れておく */
 	public Library_SpriteStudio6.Data.Parts.Animation[] TableParts;
 	public Library_SpriteStudio6.Data.Animation[] TableAnimation;
 
