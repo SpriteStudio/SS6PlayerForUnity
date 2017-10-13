@@ -31,7 +31,7 @@ public static partial class Library_SpriteStudio6
 					false,		/* Effect (Trigger) *//* Always Compressed */
 					false,		/* RadiusCollision *//* Always Compressed */
 					false,		/* Plain.Cell */
-					false,		/* Plain.ColorBlend */
+					false,		/* Plain.PartsColor */
 					false,		/* Plain.VertexCorrection */
 					false,		/* Plain.OffsetPivot */
 					false,		/* Plain.PositionTexture */
@@ -39,7 +39,7 @@ public static partial class Library_SpriteStudio6
 					false,		/* Plain.RotationTexture */
 					false,		/* Fix.IndexCellMap */
 					false,		/* Fix.Coordinate */
-					false,		/* Fix.ColorBlend */
+					false,		/* Fix.PartsColor */
 					false,		/* Fix.UV0 */
 					false,		/* Fix.SizeCollision *//* Always Compressed */
 					false		/* Fix.PivotCollision *//* Always Compressed */
@@ -99,9 +99,9 @@ public static partial class Library_SpriteStudio6
 																				ContainerCell,
 																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell
 																			> {}
-				public interface InterfaceContainerColorBlend : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend,
-																						ContainerColorBlend,
-																						Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend
+				public interface InterfaceContainerPartsColor: InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.PartsColor,
+																						ContainerPartsColor,
+																						Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor
 																				> {}
 				public interface InterfaceContainerVertexCorrection : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection,
 																							ContainerVertexCorrection,
@@ -123,9 +123,9 @@ public static partial class Library_SpriteStudio6
 																							ContainerCoordinateFix,
 																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix
 																					> {}
-				public interface InterfaceContainerColorBlendFix : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix,
-																							ContainerColorBlendFix,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix
+				public interface InterfaceContainerPartsColorFix : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix,
+																							ContainerPartsColorFix,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix
 																					> {}
 				public interface InterfaceContainerUVFix : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.UVFix,
 																				ContainerUVFix,
@@ -295,11 +295,11 @@ public static partial class Library_SpriteStudio6
 							return(0 != (FlagsPlain & FlagBitPlain.CELL));
 						}
 					}
-					public bool PlainColorBlend
+					public bool PlainPartsColor
 					{
 						get
 						{
-							return(0 != (FlagsPlain & FlagBitPlain.COLOR_BLEND));
+							return(0 != (FlagsPlain & FlagBitPlain.PARTS_COLOR));
 						}
 					}
 					public bool PlainVertexCorrection
@@ -352,11 +352,11 @@ public static partial class Library_SpriteStudio6
 							return(0 != (FlagsFix & FlagBitFix.COORDINATE));
 						}
 					}
-					public bool FixColorBlend
+					public bool FixPartsColor
 					{
 						get
 						{
-							return(0 != (FlagsFix & FlagBitFix.COLOR_BLEND));
+							return(0 != (FlagsFix & FlagBitFix.PARTS_COLOR));
 						}
 					}
 					public bool FixUV0
@@ -396,7 +396,7 @@ public static partial class Library_SpriteStudio6
 												bool effect,
 												bool radiusCollision,
 												bool plainCell,
-												bool plainColorBlend,
+												bool plainPartsColor,
 												bool plainVertexCorrection,
 												bool plainOffsetPivot,
 												bool plainPositionTexture,
@@ -404,7 +404,7 @@ public static partial class Library_SpriteStudio6
 												bool plainRotationTexture,
 												bool fixIndexCellMap,
 												bool fixCoordinate,
-												bool fixColorBlend,
+												bool fixPartsColor,
 												bool fixUV0,
 												bool fixSizeCollision,
 												bool fixPivotCollision
@@ -425,7 +425,7 @@ public static partial class Library_SpriteStudio6
 
 						FlagsPlain = 0;
 						FlagsPlain |= (true == plainCell) ? FlagBitPlain.CELL : (FlagBitPlain)0;
-						FlagsPlain |= (true == plainColorBlend) ? FlagBitPlain.COLOR_BLEND : (FlagBitPlain)0;
+						FlagsPlain |= (true == plainPartsColor) ? FlagBitPlain.PARTS_COLOR : (FlagBitPlain)0;
 						FlagsPlain |= (true == plainVertexCorrection) ? FlagBitPlain.VERTEX_CORRECTION : (FlagBitPlain)0;
 						FlagsPlain |= (true == plainOffsetPivot) ? FlagBitPlain.OFFSET_PIVOT : (FlagBitPlain)0;
 						FlagsPlain |= (true == plainPositionTexture) ? FlagBitPlain.POSITION_TEXTURE : (FlagBitPlain)0;
@@ -435,7 +435,7 @@ public static partial class Library_SpriteStudio6
 						FlagsFix = 0;
 						FlagsFix |= (true == fixIndexCellMap) ? FlagBitFix.INDEX_CELL_MAP : (FlagBitFix)0;
 						FlagsFix |= (true == fixCoordinate) ? FlagBitFix.COORDINATE : (FlagBitFix)0;
-						FlagsFix |= (true == fixColorBlend) ? FlagBitFix.COLOR_BLEND : (FlagBitFix)0;
+						FlagsFix |= (true == fixPartsColor) ? FlagBitFix.PARTS_COLOR : (FlagBitFix)0;
 						FlagsFix |= (true == fixUV0) ? FlagBitFix.UV0 : (FlagBitFix)0;
 						FlagsFix |= (true == fixSizeCollision) ? FlagBitFix.SIZE_COLLISION : (FlagBitFix)0;
 						FlagsFix |= (true == fixPivotCollision) ? FlagBitFix.PIVOT_COLLISION : (FlagBitFix)0;
@@ -464,7 +464,7 @@ public static partial class Library_SpriteStudio6
 					private enum FlagBitPlain
 					{
 						CELL = 0x00000001,
-						COLOR_BLEND = 0x00000002,
+						PARTS_COLOR = 0x00000002,
 						VERTEX_CORRECTION = 0x00000004,
 						OFFSET_PIVOT = 0x00000008,
 						POSITION_TEXTURE = 0x00000010,
@@ -477,7 +477,7 @@ public static partial class Library_SpriteStudio6
 					{
 						INDEX_CELL_MAP = 0x00000001,
 						COORDINATE = 0x00000002,
-						COLOR_BLEND = 0x00000004,
+						PARTS_COLOR = 0x00000004,
 						UV0 = 0x00000008,
 						SIZE_COLLISION = 0x00000010,
 						PIVOT_COLLISION = 0x00000020,

@@ -783,7 +783,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		EditorGUILayout.LabelField("[Plain]");
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainCell, "Cell", ref PullDownPackAttributeAnimation.PlainCell);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainColorBlend, "ColorBlend", ref PullDownPackAttributeAnimation.PlainColorBlend);
+		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PlainPartsColor);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainVertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.PlainVertexCorrection);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainOffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.PlainOffsetPivot);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPositionTexture, "PositionTexture", ref PullDownPackAttributeAnimation.PlainPositionTexture);
@@ -794,7 +794,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("[Fix]");
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixIndexCellMap, "IndexCellMap", ref PullDownPackAttributeAnimation.FixIndexCellMap);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixCoordinate, "Coordinate", ref PullDownPackAttributeAnimation.FixCoordinate);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixColorBlend, "ColorBlend", ref PullDownPackAttributeAnimation.FixColorBlend);
+		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPartsColor, "PartsColor", ref PullDownPackAttributeAnimation.FixPartsColor);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixUV0, "UV0", ref PullDownPackAttributeAnimation.FixUV0);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
 		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
@@ -1327,7 +1327,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute RadiusCollision;
 
 		public Attribute PlainCell;
-		public Attribute PlainColorBlend;
+		public Attribute PlainPartsColor;
 		public Attribute PlainVertexCorrection;
 		public Attribute PlainOffsetPivot;
 		public Attribute PlainPositionTexture;
@@ -1336,7 +1336,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		public Attribute FixIndexCellMap;
 		public Attribute FixCoordinate;
-		public Attribute FixColorBlend;
+		public Attribute FixPartsColor;
 		public Attribute FixUV0;
 		public Attribute FixSizeCollision;
 		public Attribute FixPivotCollision;
@@ -1359,7 +1359,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			RadiusCollision.CleanUp();
 
 			PlainCell.CleanUp();
-			PlainColorBlend.CleanUp();
+			PlainPartsColor.CleanUp();
 			PlainVertexCorrection.CleanUp();
 			PlainOffsetPivot.CleanUp();
 			PlainPositionTexture.CleanUp();
@@ -1368,7 +1368,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			
 			FixIndexCellMap.CleanUp();
 			FixCoordinate.CleanUp();
-			FixColorBlend.CleanUp();
+			FixPartsColor.CleanUp();
 			FixUV0.CleanUp();
 			FixSizeCollision.CleanUp();
 			FixPivotCollision.CleanUp();
@@ -1464,9 +1464,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainColorBlend;
+				tableFlagEnablePack[i] = capacityPack[i].PlainPartsColor;
 			}
-			PlainColorBlend.BootUp(tableFlagEnablePack);
+			PlainPartsColor.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{
@@ -1512,9 +1512,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
-				tableFlagEnablePack[i] = capacityPack[i].FixColorBlend;
+				tableFlagEnablePack[i] = capacityPack[i].FixPartsColor;
 			}
-			FixColorBlend.BootUp(tableFlagEnablePack);
+			FixPartsColor.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{

@@ -188,16 +188,16 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
-				public static void BootUpFunctionColorBlend(ContainerColorBlend container)
+				public static void BootUpFunctionPartsColor(ContainerPartsColor container)
 				{
 					switch(container.TypePack)
 					{
 						case KindTypePack.STANDARD_UNCOMPRESSED:
-							container.Function = StandardUncompressed.FunctionColorBlend;
+							container.Function = StandardUncompressed.FunctionPartsColor;
 							break;
 
 						case KindTypePack.STANDARD_CPE:
-							container.Function = StandardCPE.FunctionColorBlend;
+							container.Function = StandardCPE.FunctionPartsColor;
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
@@ -311,16 +311,16 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
-				public static void BootUpFunctionColorBlendFix(ContainerColorBlendFix container)
+				public static void BootUpFunctionPartsColorFix(ContainerPartsColorFix container)
 				{
 					switch(container.TypePack)
 					{
 						case KindTypePack.STANDARD_UNCOMPRESSED:
-							container.Function = StandardUncompressed.FunctionColorBlendFix;
+							container.Function = StandardUncompressed.FunctionPartsColorFix;
 							break;
 
 						case KindTypePack.STANDARD_CPE:
-							container.Function = StandardCPE.FunctionColorBlendFix;
+							container.Function = StandardCPE.FunctionPartsColorFix;
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:

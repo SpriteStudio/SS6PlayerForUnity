@@ -38,7 +38,7 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributeRadiusCollision = "RadiusCollision";
 
 					public const string NameAttributePlainCell = "Plain_Cell";
-					public const string NameAttributePlainColorBlend = "Plain_ColorBlend";
+					public const string NameAttributePlainPartsColor = "Plain_PartsColor";
 					public const string NameAttributePlainVertexCorrection = "Plain_VertexCorrection";
 					public const string NameAttributePlainOffsetPivot = "Plain_OffsetPivot";
 					public const string NameAttributePlainPositionTexture = "Plain_PositionTexture";
@@ -47,7 +47,7 @@ public static partial class Library_SpriteStudio6
 
 					public const string NameAttributeFixIndexCellMap = "Fix_IndexCellMap";
 					public const string NameAttributeFixCoordinate = "Fix_Coordinate";
-					public const string NameAttributeFixColorBlend = "Fix_ColorBlend";
+					public const string NameAttributeFixPartsColor = "Fix_PartsColor";
 					public const string NameAttributeFixUV0 = "Fix_UV0";
 					public const string NameAttributeFixSizeCollision = "Fix_SizeCollision";
 					public const string NameAttributeFixPivotCollision = "Fix_PivotCollision";
@@ -362,11 +362,11 @@ public static partial class Library_SpriteStudio6
 						}
 						#endregion Functions
 					}
-					public class AttributeColorBlend : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend>
+					public class AttributePartsColor : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor>
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend valueOutput, int frame)
+						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.PartsColor valueOutput, int frame)
 						{
 							int count = (int)Library_SpriteStudio6.KindVertex.TERMINATOR2;
 							int indexStart = IndexGetFramePrevious(frame);
@@ -483,7 +483,7 @@ public static partial class Library_SpriteStudio6
 							return(true);
 
 						ValueGet_ErrorEnd:;
-							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultColorBlend;
+							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor;
 							return(false);
 						}
 						#endregion Functions
@@ -626,11 +626,11 @@ public static partial class Library_SpriteStudio6
 						}
 						#endregion Functions
 					}
-					public class AttributeColorBlendFix : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix>
+					public class AttributePartsColorFix : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix>
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix valueOutput, int frame)
+						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix valueOutput, int frame)
 						{	/* MEMO: This attribute has keyframes in all frames. */
 							int count = CountGetKey();
 							if((0 >= count) || (0 > frame))
@@ -651,7 +651,7 @@ public static partial class Library_SpriteStudio6
 							return(true);
 	
 						ValueGet_ErrorEnd:;
-							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultColorBlendFix;
+							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColorFix;
 							return(false);
 						}
 						#endregion Functions

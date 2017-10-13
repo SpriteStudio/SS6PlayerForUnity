@@ -467,7 +467,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	/* Part: SpriteStudio6/Script/Root/FunctionAnimation.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionPlayTrack.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionCellChange.cs */
-	/* Part: SpriteStudio6/Script/Root/FunctionColorBlend.cs */
+	/* Part: SpriteStudio6/Script/Root/FunctionPartsColor.cs */
 
 	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_Root scriptRoot)
 	{

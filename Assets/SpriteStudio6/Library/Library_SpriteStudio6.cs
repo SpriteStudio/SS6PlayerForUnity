@@ -21,12 +21,14 @@ public static partial class Library_SpriteStudio6
 		ADD,
 		SUB,
 		MUL,
+
 		MUL_NA,
 		SCR,
 		EXC,
 		INV,
 
 		TERMINATOR,
+		TERMINATOR_PARTSCOLOR = MUL_NA,
 	}
 
 	public enum KindOperationBlendEffect
@@ -316,7 +318,7 @@ public static partial class Library_SpriteStudio6
 					RadiusCollision = null;
 
 					Plain.Cell = null;
-					Plain.ColorBlend = null;
+					Plain.PartsColor = null;
 					Plain.VertexCorrection = null;
 					Plain.OffsetPivot = null;
 					Plain.PositionTexture = null;
@@ -325,7 +327,7 @@ public static partial class Library_SpriteStudio6
 
 					Fix.IndexCellMap = null;
 					Fix.Coordinate = null;
-					Fix.ColorBlend = null;
+					Fix.PartsColor = null;
 					Fix.UV0 = null;
 					Fix.SizeCollision = null;
 					Fix.PivotCollision = null;
@@ -368,7 +370,7 @@ public static partial class Library_SpriteStudio6
 					#region Variables & Properties
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell Cell;
 
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend ColorBlend;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 OffsetPivot;
 
@@ -385,7 +387,7 @@ public static partial class Library_SpriteStudio6
 					#region Variables & Properties
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt IndexCellMap;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix Coordinate;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix ColorBlend;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix PartsColor;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix UV0;
 
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeCollision;	/* for Box-Collider */
@@ -469,7 +471,7 @@ public static partial class Library_SpriteStudio6
 				[System.Serializable]
 				public class ContainerCell : Container<Library_SpriteStudio6.Data.Animation.Attribute.Cell, InterfaceContainerCell> {}
 				[System.Serializable]
-				public class ContainerColorBlend : Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend, InterfaceContainerColorBlend> {}
+				public class ContainerPartsColor : Container<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor, InterfaceContainerPartsColor> {}
 				[System.Serializable]
 				public class ContainerVertexCorrection : Container<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection, InterfaceContainerVertexCorrection> {}
 				[System.Serializable]
@@ -481,7 +483,7 @@ public static partial class Library_SpriteStudio6
 				[System.Serializable]
 				public class ContainerCoordinateFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix, InterfaceContainerCoordinateFix> {}
 				[System.Serializable]
-				public class ContainerColorBlendFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix, InterfaceContainerColorBlendFix> {}
+				public class ContainerPartsColorFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix, InterfaceContainerPartsColorFix> {}
 				[System.Serializable]
 				public class ContainerUVFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.UVFix, InterfaceContainerUVFix> {}
 				#endregion Classes, Structs & Interfaces
@@ -1148,7 +1150,7 @@ public static partial class Library_SpriteStudio6
 			/* Part: SpriteStudio6/Library/Control/AnimationTrack.cs */
 			/* Part: SpriteStudio6/Library/Control/AnimationParts.cs */
 
-			public class ColorBlend
+			public class PartsColor
 			{
 			}
 			#endregion Classes, Structs & Interfaces

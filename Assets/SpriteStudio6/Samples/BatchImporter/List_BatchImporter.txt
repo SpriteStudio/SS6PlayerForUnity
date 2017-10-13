@@ -409,7 +409,7 @@
 * PackAttributeAnimation_Effect > FormatName
 * PackAttributeAnimation_RadiusCollision > FormatName
 * PackAttributeAnimation_PlainCell > FormatName
-* PackAttributeAnimation_PlainColorBlend > FormatName
+* PackAttributeAnimation_PlainPartsColor > FormatName
 * PackAttributeAnimation_PlainVertexCorrection > FormatName
 * PackAttributeAnimation_PlainOffsetPivot > FormatName
 * PackAttributeAnimation_PlainPositionTexture > FormatName
@@ -417,7 +417,7 @@
 * PackAttributeAnimation_PlainRotationTexture > FormatName
 * PackAttributeAnimation_FixIndexCellMap > FormatName
 * PackAttributeAnimation_FixCoordinate > FormatName
-* PackAttributeAnimation_FixColorBlend > FormatName
+* PackAttributeAnimation_FixPartsColor > FormatName
 * PackAttributeAnimation_FixUV0 > FormatName
 * PackAttributeAnimation_FixSizeCollision > FormatName
 * PackAttributeAnimation_FixPivotCollision > FormatName
@@ -439,7 +439,7 @@
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Effect"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RadiusCollision"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]Cell"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]ColorBlend"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]PartsColor"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]VertexCorrection"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]OffsetPivot"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]PositionTexture"
@@ -447,7 +447,7 @@
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]RotationTexture"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]IndexCellMap"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]Coordinate"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]ColorBlend"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]PartsColor"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]UV0"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]SizeCollision"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]PivotCollision"

@@ -1095,9 +1095,9 @@ public static partial class LibraryEditor_SpriteStudio6
 								}
 								break;
 
-							case "VCOL":
+							case "PCOL":
 								{
-									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend.KeyData();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor.KeyData();
 									data.Value.CleanUp();
 									data.Value.VertexColor = new Color[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
 									data.Value.RatePixelAlpha = new float[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
@@ -1132,7 +1132,7 @@ public static partial class LibraryEditor_SpriteStudio6
 											break;
 
 										default:
-										LogWarning(messageLogPrefix, "Unknown ColorBlend-Operation \"" + valueText + "\" Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+										LogWarning(messageLogPrefix, "Unknown PartsColor-Operation \"" + valueText + "\" Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 											data.Value.Operation = Library_SpriteStudio6.KindOperationBlend.NON;
 											break;
 									}
@@ -1149,7 +1149,7 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.OVERALL;
 
-												ParseAnimationAttributeColorBlend(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/color", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/color", managerNameSpace);
 												for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 												{
 													data.Value.VertexColor[i].r = colorR;
@@ -1165,28 +1165,28 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.VERTEX;
 
-												ParseAnimationAttributeColorBlend(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/LT", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/LT", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].a = colorA;
 												data.Value.RatePixelAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = ratePixel;
 
-												ParseAnimationAttributeColorBlend(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/RT", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/RT", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].a = colorA;
 												data.Value.RatePixelAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = ratePixel;
 
-												ParseAnimationAttributeColorBlend(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/RB", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/RB", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].a = colorA;
 												data.Value.RatePixelAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = ratePixel;
 
-												ParseAnimationAttributeColorBlend(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/LB", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/LB", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].b = colorB;
@@ -1197,7 +1197,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 										default:
 											{
-												LogWarning(messageLogPrefix, "Unknown ColorBlend-Bound \"" + valueText + "\" Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+												LogWarning(messageLogPrefix, "Unknown PartsColor-Bound \"" + valueText + "\" Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.OVERALL;
 												for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 												{
@@ -1212,7 +1212,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									/* Add Key-Data */
-									informationAnimationParts.ColorBlend.ListKey.Add(data);
+									informationAnimationParts.PartsColor.ListKey.Add(data);
 								}
 								break;
 
@@ -1479,7 +1479,11 @@ public static partial class LibraryEditor_SpriteStudio6
 							case "IMGH":
 							case "ORFX":
 							case "ORFY":
-								LogWarning(messageLogPrefix, "No-Longer-Used Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+								LogWarning(messageLogPrefix, "No-Longer-Used attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+								break;
+
+							case "VCOL":
+								LogWarning(messageLogPrefix, "Deprecated attribute \"Color Blend\" (Data is ignored. Please use \"Parts Color\") Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 								break;
 
 							/* Unknown Attributes */
@@ -1508,7 +1512,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			ParseAnimationAttribute_ErrorEnd:;
 				return(false);
 			}
-			private static void ParseAnimationAttributeColorBlend(	out float colorA,
+			private static void ParseAnimationAttributePartsColor(	out float colorA,
 																	out float colorR,
 																	out float colorG,
 																	out float colorB,
@@ -1561,7 +1565,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationAnimationParts.FlipY.KeyDataAdjustTopFrame();
 				informationAnimationParts.Hide.KeyDataAdjustTopFrame(true, true);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
 
-				informationAnimationParts.ColorBlend.KeyDataAdjustTopFrame();
+				informationAnimationParts.PartsColor.KeyDataAdjustTopFrame();
 				informationAnimationParts.VertexCorrection.KeyDataAdjustTopFrame();
 
 				informationAnimationParts.PivotOffsetX.KeyDataAdjustTopFrame();
@@ -1596,7 +1600,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 						informationAnimationParts.Cell.ListKey.Clear();
 
-						informationAnimationParts.ColorBlend.ListKey.Clear();
+						informationAnimationParts.PartsColor.ListKey.Clear();
 						informationAnimationParts.VertexCorrection.ListKey.Clear();
 
 						informationAnimationParts.PivotOffsetX.ListKey.Clear();
@@ -1639,7 +1643,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.FlipX.ListKey.Clear();
 						informationAnimationParts.FlipY.ListKey.Clear();
 
-						informationAnimationParts.ColorBlend.ListKey.Clear();
+						informationAnimationParts.PartsColor.ListKey.Clear();
 						informationAnimationParts.VertexCorrection.ListKey.Clear();
 
 						informationAnimationParts.PivotOffsetX.ListKey.Clear();
@@ -1673,7 +1677,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.FlipX.ListKey.Clear();
 						informationAnimationParts.FlipY.ListKey.Clear();
 
-						informationAnimationParts.ColorBlend.ListKey.Clear();
+						informationAnimationParts.PartsColor.ListKey.Clear();
 						informationAnimationParts.VertexCorrection.ListKey.Clear();
 
 						informationAnimationParts.PivotOffsetX.ListKey.Clear();
@@ -1972,7 +1976,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA;
 								}
 
-								if(0 >= animationParts.ColorBlend.CountGetKey())
+								if(0 >= animationParts.PartsColor.CountGetKey())
 								{
 									animationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_PARTSCOLOR;
 								}
@@ -2199,7 +2203,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool FlipY;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool Hide;
 
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend ColorBlend;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor PartsColor;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection VertexCorrection;
 
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat PivotOffsetX;
@@ -2227,7 +2231,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt FixIndexCellMap;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix FixCoordinate;
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix FixColorBlend;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix FixPartsColor;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix FixUV;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat FixSizeCollisionX;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat FixSizeCollisionY;
@@ -2276,8 +2280,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							Hide = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool();
 							Hide.CleanUp();
 
-							ColorBlend = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend();
-							ColorBlend.CleanUp();
+							PartsColor = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor();
+							PartsColor.CleanUp();
 							VertexCorrection = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection();
 							VertexCorrection.CleanUp();
 
@@ -2325,8 +2329,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							FixIndexCellMap.CleanUp();
 							FixCoordinate = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix();
 							FixCoordinate.CleanUp();
-							FixColorBlend = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix();
-							FixColorBlend.CleanUp();
+							FixPartsColor = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix();
+							FixPartsColor.CleanUp();
 							FixUV = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix();
 							FixUV.CleanUp();
 							FixSizeCollisionX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
@@ -2363,7 +2367,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlipY.BootUp();
 							Hide.BootUp();
 
-							ColorBlend.BootUp();
+							PartsColor.BootUp();
 							VertexCorrection.BootUp();
 
 							PivotOffsetX.BootUp();
@@ -2391,7 +2395,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							FixIndexCellMap.BootUp();
 							FixCoordinate.BootUp();
-							FixColorBlend.BootUp();
+							FixPartsColor.BootUp();
 							FixUV.BootUp();
 							FixSizeCollisionX.BootUp();
 							FixSizeCollisionY.BootUp();
@@ -2425,7 +2429,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlipY.ShutDown();
 							Hide.ShutDown();
 
-							ColorBlend.ShutDown();
+							PartsColor.ShutDown();
 							VertexCorrection.ShutDown();
 
 							PivotOffsetX.ShutDown();
@@ -2453,7 +2457,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							FixIndexCellMap.ShutDown();
 							FixCoordinate.ShutDown();
-							FixColorBlend.ShutDown();
+							FixPartsColor.ShutDown();
 							FixUV.ShutDown();
 							FixSizeCollisionX.ShutDown();
 							FixSizeCollisionY.ShutDown();
@@ -3102,7 +3106,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* MEMO: Just create, even if do not use.                            */
 							/*       (Because pack format at instantiate becomes inappropriate.) */
 							dataAnimation.TableParts[j].Plain.Cell = PackAttribute.FactoryCell(setting.PackAttributeAnimation.PlainCell);
-							dataAnimation.TableParts[j].Plain.ColorBlend = PackAttribute.FactoryColorBlend(setting.PackAttributeAnimation.PlainColorBlend);
+							dataAnimation.TableParts[j].Plain.PartsColor = PackAttribute.FactoryPartsColor(setting.PackAttributeAnimation.PlainPartsColor);
 							dataAnimation.TableParts[j].Plain.VertexCorrection = PackAttribute.FactoryVertexCorrection(setting.PackAttributeAnimation.PlainVertexCorrection);
 							dataAnimation.TableParts[j].Plain.OffsetPivot = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainOffsetPivot);
 							dataAnimation.TableParts[j].Plain.PositionTexture = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainPositionTexture);
@@ -3111,7 +3115,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							dataAnimation.TableParts[j].Fix.IndexCellMap = PackAttribute.FactoryInt(setting.PackAttributeAnimation.FixIndexCellMap);
 							dataAnimation.TableParts[j].Fix.Coordinate = PackAttribute.FactoryCoordinateFix(setting.PackAttributeAnimation.FixCoordinate);
-							dataAnimation.TableParts[j].Fix.ColorBlend = PackAttribute.FactoryColorBlendFix(setting.PackAttributeAnimation.FixColorBlend);
+							dataAnimation.TableParts[j].Fix.PartsColor = PackAttribute.FactoryPartsColorFix(setting.PackAttributeAnimation.FixPartsColor);
 							dataAnimation.TableParts[j].Fix.UV0 = PackAttribute.FactoryUVFix(setting.PackAttributeAnimation.FixUV0);
 							dataAnimation.TableParts[j].Fix.SizeCollision = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.FixSizeCollision);
 							dataAnimation.TableParts[j].Fix.PivotCollision = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.FixPivotCollision);
@@ -3130,14 +3134,14 @@ public static partial class LibraryEditor_SpriteStudio6
 										goto ConvertData_ErrorEnd;
 									}
 
-									if(false == dataAnimation.TableParts[j].Plain.ColorBlend.Function.Pack(	dataAnimation.TableParts[j].Plain.ColorBlend,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainColorBlend, countFrame,
+									if(false == dataAnimation.TableParts[j].Plain.PartsColor.Function.Pack(	dataAnimation.TableParts[j].Plain.PartsColor,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPartsColor, countFrame,
 																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																											informationAnimationParts.ColorBlend
+																											informationAnimationParts.PartsColor
 																										)
 										)
 									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.ColorBlend\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.PartsColor\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
@@ -3223,14 +3227,14 @@ public static partial class LibraryEditor_SpriteStudio6
 										goto ConvertData_ErrorEnd;
 									}
 
-									if(false == dataAnimation.TableParts[j].Fix.ColorBlend.Function.Pack(	dataAnimation.TableParts[j].Fix.ColorBlend,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixColorBlend, countFrame,
+									if(false == dataAnimation.TableParts[j].Fix.PartsColor.Function.Pack(	dataAnimation.TableParts[j].Fix.PartsColor,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPartsColor, countFrame,
 																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																											informationAnimationParts.FixColorBlend
+																											informationAnimationParts.FixPartsColor
 																									)
 										)
 									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.ColorBlend\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.PartsColor\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
@@ -3338,11 +3342,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						return(container);
 					}
 
-					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend FactoryColorBlend(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor FactoryPartsColor(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend();
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor();
 						container.TypePack = pack;
-						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlend(container);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(container);
 						return(container);
 					}
 
@@ -3386,11 +3390,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						return(container);
 					}
 
-					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix FactoryColorBlendFix(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
+					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix FactoryPartsColorFix(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
 					{
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix();
+						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix();
 						container.TypePack = pack;
-						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlendFix(container);
+						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColorFix(container);
 						return(container);
 					}
 

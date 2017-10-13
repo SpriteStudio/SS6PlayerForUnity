@@ -18,7 +18,7 @@ public partial class Script_SpriteStudio6_RootEffect
 	@param	indexCellMap
 		Serial-number of using Cell-Map
 	@param	operationBlend
-		Color-Blend Operation for the target
+		Blend Operation for the target
 	@retval	Return-Value
 		Material
 	*/

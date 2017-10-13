@@ -1123,7 +1123,7 @@ public static partial class Library_SpriteStudio6
 					internal BufferAttribute<Vector2> PositionTexture;
 					internal BufferAttribute<float> RotationTexture;
 					internal BufferAttribute<float> RateOpacity;
-					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend> PartsColor;
+					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> PartsColor;
 					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> VertexCorrection;
 					#endregion Variables & Properties
 
@@ -1472,14 +1472,14 @@ public static partial class Library_SpriteStudio6
 						/* Set Parts-Color */
 //						if(null != DataPartsColorOverwrite)
 //						{
-//							if(KindColorOperation.NON != DataColorBlendOverwrite.Operation))
+//							if(KindColorOperation.NON != DataPartsColorOverwrite.Operation))
 //							{
 //								goto Plain_PartColor_Clear;
 //							}
 //						}
 //						else
 						{
-							flagUpdateValueAttribute = dataAnimationParts.Plain.ColorBlend.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.ColorBlend, ref argumentContainer);
+							flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
 							if(true == flagUpdateValueAttribute)
 							{
 								Status |= FlagBitStatus.UPDATE_COLORPARTS;

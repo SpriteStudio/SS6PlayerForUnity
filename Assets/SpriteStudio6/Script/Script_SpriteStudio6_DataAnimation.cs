@@ -143,7 +143,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RadiusCollision);
 
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(TableAnimation[i].TableParts[j].Plain.Cell);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlend(TableAnimation[i].TableParts[j].Plain.ColorBlend);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(TableAnimation[i].TableParts[j].Plain.PartsColor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(TableAnimation[i].TableParts[j].Plain.VertexCorrection);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.OffsetPivot);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.PositionTexture);
@@ -152,7 +152,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(TableAnimation[i].TableParts[j].Fix.IndexCellMap);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(TableAnimation[i].TableParts[j].Fix.Coordinate);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionColorBlendFix(TableAnimation[i].TableParts[j].Fix.ColorBlend);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColorFix(TableAnimation[i].TableParts[j].Fix.PartsColor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUVFix(TableAnimation[i].TableParts[j].Fix.UV0);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Fix.SizeCollision);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Fix.PivotCollision);

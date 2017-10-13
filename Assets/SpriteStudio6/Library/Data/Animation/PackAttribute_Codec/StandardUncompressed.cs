@@ -35,7 +35,7 @@ public static partial class Library_SpriteStudio6
 						false,		/* Effect (Trigger) *//* Not Supported */
 						false,		/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
 						true,		/* Plain.Cell */
-						true,		/* Plain.ColorBlend */
+						true,		/* Plain.PartsColor */
 						true,		/* Plain.VertexCorrection */
 						true,		/* Plain.OffsetPivot */
 						true,		/* Plain.PositionTexture */
@@ -43,7 +43,7 @@ public static partial class Library_SpriteStudio6
 						true,		/* Plain.RotationTexture */
 						true,		/* Fix.IndexCellMap */
 						true,		/* Fix.Coordinate */
-						true,		/* Fix.ColorBlend */
+						true,		/* Fix.PartsColor */
 						true,		/* Fix.UV0 */
 						false,		/* Fix.SizeCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false		/* Fix.PivotCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
@@ -57,13 +57,13 @@ public static partial class Library_SpriteStudio6
 					internal readonly static InterfaceFunctionVector3 FunctionVector3 = new InterfaceFunctionVector3();
 					internal readonly static InterfaceFunctionStatus FunctionStatus = new InterfaceFunctionStatus();
 					internal readonly static InterfaceFunctionCell FunctionCell = new InterfaceFunctionCell();
-					internal readonly static InterfaceFunctionColorBlend FunctionColorBlend = new InterfaceFunctionColorBlend();
+					internal readonly static InterfaceFunctionPartsColor FunctionPartsColor = new InterfaceFunctionPartsColor();
 					internal readonly static InterfaceFunctionVertexCorrection FunctionVertexCorrection = new InterfaceFunctionVertexCorrection();
 //					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
 					internal readonly static InterfaceFunctionCoordinateFix FunctionCoordinateFix = new InterfaceFunctionCoordinateFix();
-					internal readonly static InterfaceFunctionColorBlendFix FunctionColorBlendFix = new InterfaceFunctionColorBlendFix();
+					internal readonly static InterfaceFunctionPartsColorFix FunctionPartsColorFix = new InterfaceFunctionPartsColorFix();
 					internal readonly static InterfaceFunctionUVFix FunctionUVFix = new InterfaceFunctionUVFix();
 					#endregion Enums & Constants
 
@@ -506,51 +506,51 @@ public static partial class Library_SpriteStudio6
 						#endregion Functions
 					}
 
-					public class InterfaceFunctionColorBlend : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerColorBlend
+					public class InterfaceFunctionPartsColor : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerPartsColor
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend outValue,
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColor outValue,
 												ref int outFrameKey,
-												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend outValue,
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColor outValue,
 													ref int outFrameKey,
 													int index,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
 						}
 
-						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container)
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container)
 						{
 							return(container.TableValue.Length);
 						}
 
-						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlend container,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container,
 											string nameAttribute,
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
-											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlend[] listKeyData
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							if(0 >= listKeyData[0].CountGetKey())
 							{
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend[0];
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColor[0];
 								return(true);
 							}
 
-							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.ColorBlend[countFrame];
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColor[countFrame];
 							for(int i=0; i<countFrame; i++)
 							{
 								listKeyData[0].ValueGet(out container.TableValue[i], i);
@@ -675,51 +675,51 @@ public static partial class Library_SpriteStudio6
 						#endregion Functions
 					}
 
-					public class InterfaceFunctionColorBlendFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerColorBlendFix
+					public class InterfaceFunctionPartsColorFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerPartsColorFix
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix outValue,
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix outValue,
 												ref int outFrameKey,
-												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix outValue,
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix outValue,
 													ref int outFrameKey,
 													int index,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
 						}
 
-						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container)
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container)
 						{
 							return(container.TableValue.Length);
 						}
 
-						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerColorBlendFix container,
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
 											string nameAttribute,
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
-											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeColorBlendFix[] listKeyData
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							if(0 >= listKeyData[0].CountGetKey())
 							{
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix[0];
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix[0];
 								return(true);
 							}
 
-							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.ColorBlendFix[countFrame];
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix[countFrame];
 							for(int i=0; i<countFrame; i++)
 							{
 								listKeyData[0].ValueGet(out container.TableValue[i], i);

@@ -50,24 +50,24 @@ public static partial class Library_SpriteStudio6
 					Vector2.zero,
 				};
 				public readonly static VertexCorrection DefaultVertexCorrection = new VertexCorrection(TableCoordinateVertexCorrectionDefault);
-				private readonly static Color[] TableVertexColorColorBlendDefault = new Color[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				private readonly static Color[] TableVertexColorPartsColorDefault = new Color[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
 				{
 					Color.white,
 					Color.white,
 					Color.white,
 					Color.white
 				};
-				private readonly static float[] TableRatePixelAlphaColorBlendDefault = new float[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				private readonly static float[] TableRatePixelAlphaPartsColorDefault = new float[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
 				{
 					1.0f,
 					1.0f,
 					1.0f,
 					1.0f
 				};
-				public readonly static ColorBlend DefaultColorBlend = new ColorBlend(	Library_SpriteStudio6.KindBoundBlend.NON,
+				public readonly static PartsColor DefaultPartsColor = new PartsColor(	Library_SpriteStudio6.KindBoundBlend.NON,
 																						Library_SpriteStudio6.KindOperationBlend.MIX,
-																						TableVertexColorColorBlendDefault,
-																						TableRatePixelAlphaColorBlendDefault
+																						TableVertexColorPartsColorDefault,
+																						TableRatePixelAlphaPartsColorDefault
 																					);
 
 				public const float DefaultPivotOffsetX = 0.0f;
@@ -119,21 +119,21 @@ public static partial class Library_SpriteStudio6
 				};
 				public readonly static UVFix DefaultUVFix = new UVFix(TableUVUVFixDefault);
 
-				private readonly static Vector2[] TableUVColorBlendFixDefault = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				private readonly static Vector2[] TableUVPartsColorFixDefault = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
 				{
 					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.NON + 0.01f),
 					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.NON + 0.01f),
 					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.NON + 0.01f),
 					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.NON + 0.01f),
 				};
-				private readonly static Color32[] TableColorColorBlendFixDefault = new Color32[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				private readonly static Color32[] TableColorPartsColorFixDefault = new Color32[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
 				{
 					Color.white,
 					Color.white,
 					Color.white,
 					Color.white
 				};
-				public readonly static ColorBlendFix DefaultColorBlendFix = new ColorBlendFix(TableUVColorBlendFixDefault, TableColorColorBlendFixDefault);
+				public readonly static PartsColorFix DefaultPartsColorFix = new PartsColorFix(TableUVPartsColorFixDefault, TableColorPartsColorFixDefault);
 				#endregion Enums & Constants
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -368,7 +368,7 @@ public static partial class Library_SpriteStudio6
 				}
 
 				[System.Serializable]
-				public struct ColorBlend
+				public struct PartsColor
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
@@ -380,7 +380,7 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
-					public ColorBlend(	Library_SpriteStudio6.KindBoundBlend bound,
+					public PartsColor(	Library_SpriteStudio6.KindBoundBlend bound,
 										Library_SpriteStudio6.KindOperationBlend operation,
 										Color[] vertexColor,
 										float[] ratePixelAlpha
@@ -416,7 +416,7 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 
-					public void Duplicate(ColorBlend original)
+					public void Duplicate(PartsColor original)
 					{
 						Bound = original.Bound;
 						Operation = original.Operation;
@@ -434,7 +434,7 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 
-						ColorBlend targetData = (ColorBlend)target;
+						PartsColor targetData = (PartsColor)target;
 
 						if((Bound != targetData.Bound) || (Operation != targetData.Operation))
 						{
@@ -884,7 +884,7 @@ public static partial class Library_SpriteStudio6
 				}
 
 				[System.Serializable]
-				public struct ColorBlendFix
+				public struct PartsColorFix
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
@@ -894,7 +894,7 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
-					public ColorBlendFix(Vector2[] tableUV, Color32[] tableColorOverlay)
+					public PartsColorFix(Vector2[] tableUV, Color32[] tableColorOverlay)
 					{
 						TableUV = tableUV;
 						TableColorOverlay = tableColorOverlay;
@@ -906,7 +906,7 @@ public static partial class Library_SpriteStudio6
 						TableColorOverlay = null;
 					}
 
-					public void Duplicate(ColorBlendFix original)
+					public void Duplicate(PartsColorFix original)
 					{
 						int count = original.TableUV.Length;
 						TableUV = new Vector2[count];
@@ -930,7 +930,7 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 
-						ColorBlendFix targetData = (ColorBlendFix)target;
+						PartsColorFix targetData = (PartsColorFix)target;
 						int count = TableUV.Length;
 						if(count != targetData.TableUV.Length)
 						{
