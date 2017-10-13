@@ -198,11 +198,15 @@ public static partial class LibraryEditor_SpriteStudio6
 				foreach(System.Xml.XmlNode nodeAnimation in listNode)
 				{
 					/* Check "SetUp" animation */
-					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "name", managerNameSpace);
-					if(NameAnimationSetup == valueText)
+					/* MEMO: When judging "Setup"-animation, do not judge by name. (Be sure, use "isSetup" tag's value.)                      */
+					/*       Especially, if SS5's SSAE including same name animation is migrated to SS6, "Setup"-animation's name is changed. */
+					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "isSetup", managerNameSpace);
+					if(false == string.IsNullOrEmpty(valueText))
 					{
-						flagHasSetup = true;
-						break;
+						if(0 < LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText))
+						{
+							flagHasSetup = true;
+						}
 					}
 				}
 				int countAnimation = listNode.Count;
@@ -659,11 +663,16 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Get Base Datas */
 				string valueText;
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "name", managerNameSpace);
-				if(LibraryEditor_SpriteStudio6.Import.SSAE.NameAnimationSetup == valueText)
-				{
-					flagIsSetup = true;
-				}
 				informationAnimation.Data.Name = string.Copy(valueText);
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "isSetup", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					if(0 < LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText))
+					{
+						flagIsSetup = true;
+					}
+				}
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "settings/fps", managerNameSpace);
 				informationAnimation.Data.FramePerSecond = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
@@ -1793,8 +1802,6 @@ public static partial class LibraryEditor_SpriteStudio6
 			};
 
 			private const string ExtentionFile = ".ssae";
-
-			internal const string NameAnimationSetup = "Setup";
 			#endregion Enums & Constants
 
 			/* ----------------------------------------------- Classes, Structs & Interfaces */

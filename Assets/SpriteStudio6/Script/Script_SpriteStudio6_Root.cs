@@ -298,22 +298,19 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		{
 			return;
 		}
-		if(null != DataAnimation.SignatureBootUpFunction)
+		if(true == DataAnimation.StatusIsBootup)
 		{
 			return;
 		}
-
-		DataAnimation.SignatureBootUpFunction = FunctionBootUpDataAnimationSignature;
 
 		/* Recover Material */
 		DataAnimation.BootUpTableMaterial();
 
 		/* Set Attribute-Interface */
 		DataAnimation.BootUpInterfaceAttribute();
-	}
-	private static void FunctionBootUpDataAnimationSignature()
-	{
-		/* Dummy-Function */
+
+		/* Set Signature-Bootup */
+		DataAnimation.StatusIsBootup = true;
 	}
 
 	private int ControlBootUpTrack()

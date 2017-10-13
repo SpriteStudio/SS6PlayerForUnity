@@ -38,7 +38,25 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	public int[] TableIndexEmitterOrderDraw;
 
 	/* MEMO: Use "delegate" instead of bool because value is cleared each compiling. */
-	internal FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
+	private FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
+	internal bool StatusIsBootup
+	{
+		get
+		{
+			return((null != SignatureBootUpFunction) ? true : false);
+		}
+		set
+		{
+			if(true == value)
+			{
+				SignatureBootUpFunction = FunctionBootUpSignature;
+			}
+			else
+			{
+				SignatureBootUpFunction = null;
+			}
+		}
+	}
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
@@ -76,6 +94,11 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 		material = null;
 #endif
 	}
+
+	private static void FunctionBootUpSignature()
+	{
+		/* Dummy-Function */
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */
@@ -100,6 +123,6 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 
 	/* ----------------------------------------------- Deligates */
 	#region Deligates
-	internal delegate void FunctionSignatureBootUpFunction();
+	private delegate void FunctionSignatureBootUpFunction();
 	#endregion Deligates
 }

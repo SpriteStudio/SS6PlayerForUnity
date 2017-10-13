@@ -20,8 +20,29 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	public Library_SpriteStudio6.Data.Parts.Animation[] TableParts;
 	public Library_SpriteStudio6.Data.Animation[] TableAnimation;
 
+	public Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer CapacitySetup;
+	public AttributeSetup Setup;
+
 	/* MEMO: Use "delegate" instead of bool because value is cleared each compiling. */
-	internal FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
+	private FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
+	internal bool StatusIsBootup
+	{
+		get
+		{
+			return((null != SignatureBootUpFunction) ? true : false);
+		}
+		set
+		{
+			if(true == value)
+			{
+				SignatureBootUpFunction = FunctionBootUpSignature;
+			}
+			else
+			{
+				SignatureBootUpFunction = null;
+			}
+		}
+	}
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
@@ -29,8 +50,15 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	public void CleanUp()
 	{
 		Version = (KindVersion)(-1);
+		TableMaterial = null;
+
 		TableParts = null;
 		TableAnimation = null;
+
+		CapacitySetup = null;
+		Setup.CleanUp();
+
+		SignatureBootUpFunction = null;
 	}
 
 	public int CountGetParts()
@@ -158,6 +186,11 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			}
 		}
 	}
+
+	private static void FunctionBootUpSignature()
+	{
+		/* Dummy-Function */
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */
@@ -172,8 +205,111 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	}
 	#endregion Enums & Constants
 
+	/* ----------------------------------------------- Classes, Structs & Interfaces */
+	#region Classes, Structs & Interfaces
+	[System.Serializable]
+	public struct AttributeSetup
+	{
+		/* ----------------------------------------------- Variables & Properties */
+		#region Variables & Properties
+		public Library_SpriteStudio6.Data.Animation.Attribute.Status Status;
+
+		public Vector3 Position;
+		public Vector3 Rotation;
+		public Vector2 Scaling;
+
+		public float RateOpacity;
+
+		public Vector2 PositionAnchor;
+		public Vector2 SizeForce;
+
+		public Library_SpriteStudio6.Data.Animation.Attribute.UserData UserData;
+		public Library_SpriteStudio6.Data.Animation.Attribute.Instance Instance;
+		public Library_SpriteStudio6.Data.Animation.Attribute.Effect Effect;
+
+		public float RadiusCollision;
+
+		public AttributeGroupPlain Plain;
+		public AttributeGroupFix Fix;
+		#endregion Variables & Properties
+
+		/* ----------------------------------------------- Functions */
+		#region Functions
+		public void CleanUp()
+		{
+			Status.CleanUp();
+
+			Position = Vector3.zero;
+			Rotation = Vector3.zero;
+			Scaling = Vector2.one;
+
+			RateOpacity = 0.0f;
+
+			PositionAnchor = Vector2.zero;
+			SizeForce = Vector2.zero;
+
+			UserData.CleanUp();
+			Instance.CleanUp();
+			Effect.CleanUp();
+
+			RadiusCollision = 0.0f;
+
+			Plain.Cell.CleanUp();
+			Plain.PartsColor.CleanUp();
+			Plain.VertexCorrection.CleanUp();
+			Plain.OffsetPivot = Vector2.zero;
+			Plain.PositionTexture = Vector2.zero;
+			Plain.ScalingTexture = Vector2.one;
+			Plain.RotationTexture = 0.0f;
+
+			Fix.IndexCellMap = -1;
+			Fix.Coordinate.CleanUp();
+			Fix.PartsColor.CleanUp();
+			Fix.UV0.CleanUp();
+			Fix.SizeCollision = Vector2.zero;
+			Fix.PivotCollision = Vector2.zero;
+		}
+		#endregion Functions
+
+		/* ----------------------------------------------- Classes, Structs & Interfaces */
+		#region Classes, Structs & Interfaces
+		[System.Serializable]
+		public struct AttributeGroupPlain
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			public Library_SpriteStudio6.Data.Animation.Attribute.Cell Cell;
+
+			public Library_SpriteStudio6.Data.Animation.Attribute.PartsColor PartsColor;
+			public Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection VertexCorrection;
+			public Vector2 OffsetPivot;
+
+			public Vector2 PositionTexture;
+			public Vector2 ScalingTexture;
+			public float RotationTexture;
+			#endregion Variables & Properties
+		}
+
+		[System.Serializable]
+		public struct AttributeGroupFix
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			public int IndexCellMap;
+			public Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix Coordinate;
+			public Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix PartsColor;
+			public Library_SpriteStudio6.Data.Animation.Attribute.UVFix UV0;
+
+			public Vector2 SizeCollision;
+			public Vector2 PivotCollision;
+			#endregion Variables & Properties
+		}
+		#endregion Classes, Structs & Interfaces
+	}
+	#endregion Classes, Structs & Interfaces
+
 	/* ----------------------------------------------- Deligates */
 	#region Deligates
-	internal delegate void FunctionSignatureBootUpFunction();
+	private delegate void FunctionSignatureBootUpFunction();
 	#endregion Deligates
 }

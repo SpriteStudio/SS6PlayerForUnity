@@ -251,15 +251,16 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		{
 			return;
 		}
-		if(null != DataEffect.SignatureBootUpFunction)
+		if(true == DataEffect.StatusIsBootup)
 		{
 			return;
 		}
 
-		DataEffect.SignatureBootUpFunction = FunctionBootUpDataEffectignature;
-
 		/* Recover Material */
 		DataEffect.BootUpTableMaterial();
+
+		/* Set Signature-Bootup */
+		DataEffect.StatusIsBootup = true;
 	}
 	private static void FunctionBootUpDataEffectignature()
 	{

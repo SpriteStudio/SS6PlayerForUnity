@@ -202,6 +202,7 @@ public static partial class Library_SpriteStudio6
 					#endregion Functions
 				}
 
+				[System.Serializable]
 				public class CapacityContainer
 				{
 					/* ----------------------------------------------- Variables & Properties */
