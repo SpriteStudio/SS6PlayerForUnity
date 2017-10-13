@@ -192,7 +192,26 @@ public static partial class LibraryEditor_SpriteStudio6
 					LogError(messageLogPrefix, "AnimationList-Node Not Found", nameFile, informationSSPJ);
 					goto Parse_ErrorEnd;
 				}
-				informationSSAE.TableAnimation = new Information.Animation[listNode.Count];
+
+				bool flagHasSetup = false;
+				string valueText;
+				foreach(System.Xml.XmlNode nodeAnimation in listNode)
+				{
+					/* Check "SetUp" animation */
+					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "name", managerNameSpace);
+					if(NameAnimationSetup == valueText)
+					{
+						flagHasSetup = true;
+						break;
+					}
+				}
+				int countAnimation = listNode.Count;
+				if(true == flagHasSetup)
+				{
+					/* MEMO: If has "Setup", should not be countAnimation negative. */
+					countAnimation--;
+				}
+				informationSSAE.TableAnimation = new Information.Animation[countAnimation];
 				if(null == informationSSAE.TableAnimation)
 				{
 					LogError(messageLogPrefix, "Not Enough Memory (Animation-Data WorkArea)", nameFile, informationSSPJ);
@@ -200,27 +219,38 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 
 				int indexAnimation = 0;
+				Information.Animation informationAnimation = null;
 				foreach(System.Xml.XmlNode nodeAnimation in listNode)
 				{
 					/* Animation (& Parts' Key-Frames) Get */
-					informationSSAE.TableAnimation[indexAnimation] = ParseAnimation(	ref setting,
-																						informationSSPJ,
-																						nodeAnimation,
-																						managerNameSpace,
-																						informationSSAE,
-																						indexAnimation,
-																						nameFile
-																					);
-					if(null == informationSSAE.TableAnimation[indexAnimation])
+					flagHasSetup = false;	/* recycling */
+					informationAnimation = ParseAnimation(	ref setting,
+															out flagHasSetup,
+															informationSSPJ,
+															nodeAnimation,
+															managerNameSpace,
+															informationSSAE,
+															indexAnimation,
+															nameFile
+														);
+					if(null == informationAnimation)
 					{
 						goto Parse_ErrorEnd;
 					}
 
-					indexAnimation++;
+					if(true == flagHasSetup)
+					{	/* "Setup" animation */
+						informationSSAE.AnimationSetup = informationAnimation;
+					}
+					else
+					{	/* Normal animation */
+						informationSSAE.TableAnimation[indexAnimation] = informationAnimation;
+						indexAnimation++;
+					}
 				}
 
 				/* Set secondary parameters */
-				int countAnimation = informationSSAE.TableAnimation.Length;
+				/* MEMO: This process is unnecessary, since "Setup" animation has only attributes' initial values. */
 				for(int i=0; i<countAnimation; i++)
 				{
 					/* Set Part-Status */
@@ -605,6 +635,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 
 			private static Information.Animation ParseAnimation(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																	out bool flagIsSetup,
 																	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 																	System.Xml.XmlNode nodeAnimation,
 																	System.Xml.XmlNamespaceManager managerNameSpace,
@@ -614,6 +645,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																)
 			{
 				const string messageLogPrefix = "Parse SSAE(Animation)";
+
+				flagIsSetup = false;
 
 				Information.Animation informationAnimation = new Information.Animation();
 				if(null == informationAnimation)
@@ -626,6 +659,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Get Base Datas */
 				string valueText;
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "name", managerNameSpace);
+				if(LibraryEditor_SpriteStudio6.Import.SSAE.NameAnimationSetup == valueText)
+				{
+					flagIsSetup = true;
+				}
 				informationAnimation.Data.Name = string.Copy(valueText);
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "settings/fps", managerNameSpace);
@@ -691,7 +728,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* MEMO: All animation part information is created here. Because parts-animation that has no key-data are not recorded in SSAE. */
 				for(int i=0; i<countParts; i++)
 				{
-					informationAnimation.TableParts[i] =new Information.Animation.Parts();
+					informationAnimation.TableParts[i] = new Information.Animation.Parts();
 					if(null == informationAnimation.TableParts[i])
 					{
 						LogError(messageLogPrefix, "Not Enough Memory (Animation Attribute WorkArea) Animation-Name[" + indexAnimation.ToString() + "]", nameFileSSAE, informationSSPJ);
@@ -726,6 +763,7 @@ public static partial class LibraryEditor_SpriteStudio6
 															informationSSAE,
 															informationAnimation,
 															indexParts,
+															flagIsSetup,
 															nameFileSSAE
 														)
 						)
@@ -747,6 +785,7 @@ public static partial class LibraryEditor_SpriteStudio6
 															Information informationSSAE,
 															Information.Animation informationAnimation,
 															int indexParts,
+															bool flagIsSetup,
 															string nameFileSSAE
 														)
 			{
@@ -1100,7 +1139,6 @@ public static partial class LibraryEditor_SpriteStudio6
 									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor.KeyData();
 									data.Value.CleanUp();
 									data.Value.VertexColor = new Color[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
-									data.Value.RatePixelAlpha = new float[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
 
 									/* Set Interpolation-Data */
 									data.Formula = formula;
@@ -1141,7 +1179,6 @@ public static partial class LibraryEditor_SpriteStudio6
 									float colorR = 0.0f;
 									float colorG = 0.0f;
 									float colorB = 0.0f;
-									float ratePixel = 0.0f;
 									valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeKey, "value/target", managerNameSpace);
 									switch(valueText)
 									{
@@ -1149,14 +1186,13 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.OVERALL;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/color", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/color", managerNameSpace);
 												for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 												{
 													data.Value.VertexColor[i].r = colorR;
 													data.Value.VertexColor[i].g = colorG;
 													data.Value.VertexColor[i].b = colorB;
 													data.Value.VertexColor[i].a = colorA;
-													data.Value.RatePixelAlpha[i] = ratePixel;
 												}
 											}
 											break;
@@ -1165,33 +1201,29 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.VERTEX;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/LT", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/LT", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].a = colorA;
-												data.Value.RatePixelAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = ratePixel;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/RT", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/RT", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].a = colorA;
-												data.Value.RatePixelAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = ratePixel;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/RB", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/RB", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].a = colorA;
-												data.Value.RatePixelAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = ratePixel;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out ratePixel, nodeKey, "value/LB", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/LB", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].a = colorA;
-												data.Value.RatePixelAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = ratePixel;
 											}
 											break;
 
@@ -1205,7 +1237,6 @@ public static partial class LibraryEditor_SpriteStudio6
 													data.Value.VertexColor[i].g = 0.0f;
 													data.Value.VertexColor[i].b = 0.0f;
 													data.Value.VertexColor[i].a = 0.0f;
-													data.Value.RatePixelAlpha[i] = 1.0f;
 												}
 											}
 											break;
@@ -1484,7 +1515,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "VCOL":
 								LogWarning(messageLogPrefix, "Deprecated attribute \"Color Blend\" (Data is ignored. Please use \"Parts Color\") Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-								break;
+								goto case "PCOL";
+//								break;
 
 							/* Unknown Attributes */
 							default:
@@ -1495,18 +1527,23 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 
 				/* Solve Attributes */
-				if(false == ParseAnimationAttributeSolve(	ref setting,
-															informationSSPJ,
-															informationSSAE,
-															informationAnimation,
-															informationAnimationParts,
-															indexParts,
-															nameFileSSAE
-														)
-					)
+				/* MEMO: Do not "ParseAnimationAttributeSolve", since "Setup" animation has only initial value. */
+				if(false == flagIsSetup)
 				{
-					goto ParseAnimationAttribute_ErrorEnd;
+					if(false == ParseAnimationAttributeSolve(	ref setting,
+																informationSSPJ,
+																informationSSAE,
+																informationAnimation,
+																informationAnimationParts,
+																indexParts,
+																nameFileSSAE
+															)
+						)
+					{
+						goto ParseAnimationAttribute_ErrorEnd;
+					}
 				}
+
 				return(true);
 
 			ParseAnimationAttribute_ErrorEnd:;
@@ -1516,7 +1553,6 @@ public static partial class LibraryEditor_SpriteStudio6
 																	out float colorR,
 																	out float colorG,
 																	out float colorB,
-																	out float ratePixel,
 																	System.Xml.XmlNode NodeKey,
 																	string NameTagBase,
 																	System.Xml.XmlNamespaceManager ManagerNameSpace
@@ -1526,13 +1562,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(NodeKey, NameTagBase + "/rgba", ManagerNameSpace);
 				uint ARGB = LibraryEditor_SpriteStudio6.Utility.Text.HexToUInt(valueText);
-				ratePixel = (float)((ARGB >> 24) & 0xff) / 255.0f;
+				colorA = (float)((ARGB >> 24) & 0xff) / 255.0f;
 				colorR = (float)((ARGB >> 16) & 0xff) / 255.0f;
 				colorG = (float)((ARGB >> 8) & 0xff) / 255.0f;
 				colorB = (float)(ARGB & 0xff) / 255.0f;
 
-				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(NodeKey, NameTagBase + "/rate", ManagerNameSpace);
-				colorA = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetDouble(valueText));
+				/* MEMO: Currently, discard "/rate" because meaningless parameter. */
 			}
 
 			private static bool ParseAnimationAttributeSolve(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
@@ -1546,50 +1581,59 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				const string messageLogPrefix = "Parse SSAE(Attributes)";
 
+				Information.Animation.Parts informationPartsSetup = null;
+				if(null != informationSSAE.AnimationSetup)
+				{	/* Has Setup animation */
+					if(null != informationSSAE.AnimationSetup.TableParts)
+					{	/* Has Animation-Parts table */
+						informationPartsSetup = informationSSAE.AnimationSetup.TableParts[indexParts];
+					}
+				}
+
 				/* Adjust Top-Frame Key-Data */
-				informationAnimationParts.Cell.KeyDataAdjustTopFrame();
+				informationAnimationParts.Cell.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Cell);
 
-				informationAnimationParts.PositionX.KeyDataAdjustTopFrame();
-				informationAnimationParts.PositionY.KeyDataAdjustTopFrame();
-				informationAnimationParts.PositionZ.KeyDataAdjustTopFrame();
-				informationAnimationParts.RotationX.KeyDataAdjustTopFrame();
-				informationAnimationParts.RotationY.KeyDataAdjustTopFrame();
-				informationAnimationParts.RotationZ.KeyDataAdjustTopFrame();
-				informationAnimationParts.ScalingX.KeyDataAdjustTopFrame();
-				informationAnimationParts.ScalingY.KeyDataAdjustTopFrame();
+				informationAnimationParts.PositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionX);
+				informationAnimationParts.PositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionY);
+				informationAnimationParts.PositionZ.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionZ);
+				informationAnimationParts.RotationX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationX);
+				informationAnimationParts.RotationY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationY);
+				informationAnimationParts.RotationZ.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationZ);
+				informationAnimationParts.ScalingX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingX);
+				informationAnimationParts.ScalingY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingY);
 
-				informationAnimationParts.RateOpacity.KeyDataAdjustTopFrame();
-				informationAnimationParts.Priority.KeyDataAdjustTopFrame();
+				informationAnimationParts.RateOpacity.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RateOpacity);
+				informationAnimationParts.Priority.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Priority);
 
-				informationAnimationParts.FlipX.KeyDataAdjustTopFrame();
-				informationAnimationParts.FlipY.KeyDataAdjustTopFrame();
-				informationAnimationParts.Hide.KeyDataAdjustTopFrame(true, true);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
+				informationAnimationParts.FlipX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipX);
+				informationAnimationParts.FlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipY);
+				informationAnimationParts.Hide.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Hide, true, true);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
 
-				informationAnimationParts.PartsColor.KeyDataAdjustTopFrame();
-				informationAnimationParts.VertexCorrection.KeyDataAdjustTopFrame();
+				informationAnimationParts.PartsColor.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PartsColor);
+				informationAnimationParts.VertexCorrection.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.VertexCorrection);
 
-				informationAnimationParts.PivotOffsetX.KeyDataAdjustTopFrame();
-				informationAnimationParts.PivotOffsetY.KeyDataAdjustTopFrame();
+				informationAnimationParts.PivotOffsetX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PivotOffsetX);
+				informationAnimationParts.PivotOffsetY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PivotOffsetY);
 
-				informationAnimationParts.AnchorPositionX.KeyDataAdjustTopFrame();
-				informationAnimationParts.AnchorPositionY.KeyDataAdjustTopFrame();
-				informationAnimationParts.SizeForceX.KeyDataAdjustTopFrame();
-				informationAnimationParts.SizeForceY.KeyDataAdjustTopFrame();
+				informationAnimationParts.AnchorPositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.AnchorPositionX);
+				informationAnimationParts.AnchorPositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.AnchorPositionY);
+				informationAnimationParts.SizeForceX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.SizeForceX);
+				informationAnimationParts.SizeForceY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.SizeForceY);
 
-				informationAnimationParts.TexturePositionX.KeyDataAdjustTopFrame();
-				informationAnimationParts.TexturePositionY.KeyDataAdjustTopFrame();
-				informationAnimationParts.TextureRotation.KeyDataAdjustTopFrame();
-				informationAnimationParts.TextureScalingX.KeyDataAdjustTopFrame();
-				informationAnimationParts.TextureScalingY.KeyDataAdjustTopFrame();
-				informationAnimationParts.TextureFlipX.KeyDataAdjustTopFrame();
-				informationAnimationParts.TextureFlipY.KeyDataAdjustTopFrame();
+				informationAnimationParts.TexturePositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TexturePositionX);
+				informationAnimationParts.TexturePositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TexturePositionY);
+				informationAnimationParts.TextureRotation.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureRotation);
+				informationAnimationParts.TextureScalingX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureScalingX);
+				informationAnimationParts.TextureScalingY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureScalingY);
+				informationAnimationParts.TextureFlipX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureFlipX);
+				informationAnimationParts.TextureFlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureFlipY);
 
-				informationAnimationParts.RadiusCollision.KeyDataAdjustTopFrame();
+				informationAnimationParts.RadiusCollision.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RadiusCollision);
 
-// 				informationAnimationParts.UserData.KeyDataAdjustTopFrame();	/* Not Adjust */
+// 				informationAnimationParts.UserData.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.UserData);	/* Not Adjust */
 				/* MEMO: Do not set at here. Set in processing for each part type. */
-//				informationAnimationParts.Instance.KeyDataAdjustTopFrame();
-//				informationAnimationParts.Effect.KeyDataAdjustTopFrame();
+//				informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance);
+//				informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect);
 
 				/* Delete attributes that should not exist */
 				informationAnimationParts.AnchorPositionX.ListKey.Clear();	/* Unsupported */
@@ -1665,7 +1709,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* MEMO: If "NOT_USED" is set, interpret that "Instance" attribute is not used. */
 							/*       Because "Hide" attribute is also unused.                               */
 							/*       (Since "Hide" attribute's default is "true", all frames are hidden)    */
-							informationAnimationParts.Instance.KeyDataAdjustTopFrame(Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false);
+							informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance, Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false);
 						}
 
 						informationAnimationParts.Effect.ListKey.Clear();
@@ -1699,7 +1743,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* MEMO: If "NOT_USED" is set, interpret that "Effect" attribute is not used. */
 							/*       Because "Hide" attribute is also unused.                             */
 							/*       (Since "Hide" attribute's default is "true", all frames are hidden)  */
-							informationAnimationParts.Effect.KeyDataAdjustTopFrame(Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false);
+							informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect, Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false);
 						}
 
 						informationAnimationParts.Instance.ListKey.Clear();
@@ -1749,6 +1793,8 @@ public static partial class LibraryEditor_SpriteStudio6
 			};
 
 			private const string ExtentionFile = ".ssae";
+
+			internal const string NameAnimationSetup = "Setup";
 			#endregion Enums & Constants
 
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -1766,6 +1812,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Parts[] TableParts;
 				public int[] TableIndexCellMap;
 				public Animation[] TableAnimation;
+				public Animation AnimationSetup;
 
 				public Library_SpriteStudio6.Data.Animation.Parts.KindFormat FormatSS6PU;
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataAnimation> DataAnimationSS6PU;
@@ -1785,6 +1832,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					TableParts = null;
 					TableIndexCellMap = null;
 					TableAnimation = null;
+					AnimationSetup = null;
 
 					DataAnimationSS6PU.CleanUp();
 					DataAnimationSS6PU.BootUp(1);	/* Always 1 */

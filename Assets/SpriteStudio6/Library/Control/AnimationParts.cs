@@ -1500,18 +1500,16 @@ public static partial class Library_SpriteStudio6
 							Color sumColor = Color.black;
 							float sumPower = 0.0f;
 
-							float[] tableAlpha = PartsColor.Value.RatePixelAlpha;
 							Color[] tableColor = PartsColor.Value.VertexColor;
 							for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 							{
 								ParameterBlendDraw[i].x = operation;
-								ParameterBlendDraw[i].y = tableAlpha[i] * RateOpacity.Value;
+								ParameterBlendDraw[i].y = RateOpacity.Value;
 								sumPower += ParameterBlendDraw[i].y;
 
 								ColorPartsDraw[i] = tableColor[i];
 								sumColor += tableColor[i];
 							}
-							tableAlpha = null;
 							tableColor = null;
 
 							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)

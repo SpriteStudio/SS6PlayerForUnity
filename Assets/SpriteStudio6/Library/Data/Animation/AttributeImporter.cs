@@ -397,7 +397,6 @@ public static partial class Library_SpriteStudio6
 							valueOutput.Bound = ListKey[indexStart].Value.Bound;
 							valueOutput.Operation = ListKey[indexStart].Value.Operation;
 							valueOutput.VertexColor = new Color[count];
-							valueOutput.RatePixelAlpha = new float[count];
 							for(int i=0; i<count; i++)
 							{
 #if false
@@ -477,7 +476,6 @@ public static partial class Library_SpriteStudio6
 								valueOutput.VertexColor[i].g = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].g, ListKey[indexStart].Value.VertexColor[i].g, rate);
 								valueOutput.VertexColor[i].b = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].b, ListKey[indexStart].Value.VertexColor[i].b, rate);
 								valueOutput.VertexColor[i].a = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].a, ListKey[indexStart].Value.VertexColor[i].a, rate);
-								valueOutput.RatePixelAlpha[i] = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.RatePixelAlpha[i], ListKey[indexStart].Value.RatePixelAlpha[i], rate);
 #endif
 							}
 							return(true);
@@ -772,42 +770,79 @@ public static partial class Library_SpriteStudio6
 							return(-1);
 						}
 
-						public void KeyDataAdjustTopFrame()
-						{	/* MEMO: Usually, use this to adjust top frame's key data.                                              */
-							/*       When no key data, attribute is unused.                                                         */
-							/*       When there are key datas, if extra frames at the top, same value as closest key datas are set. */
-							/*       However, interpolation is not performed.                                                       */
+						public void KeyDataAdjustTopFrame(Attribute<_Type> setup)
+						{	/* MEMO: Usually, use this to adjust top frame's key data.                      */
+							/*       When no key data, attribute is unused.                                 */
+							/*       When there are key datas, if extra frames at the top ...               */
+							/*        - When has "Setup" value, same value as "Setup" value.                */
+							/*        - When has no "Setup" value, same value as closest key datas are set. */
+							/*       However, interpolation is not performed.                               */
+							bool flagHasSetup = false;
+							if(null != setup)
+							{
+								if(null != setup)
+								{
+									flagHasSetup = (0 < setup.CountGetKey()) ? true : false;
+								}
+							}
+
 							if(0 >= ListKey.Count)
 							{	/* No Keys */
-								return;
+								if(false == flagHasSetup)
+								{	/* No Setup-Key */
+									return;
+								}
 							}
 
 							if(0 < ListKey[0].Frame)
 							{
 								/* Create Top Key-Data */
-								/* MEMO: Same value. However, "frame = 0" and "no interpolation". */
 								KeyData KeyDataTopFrame = new KeyData();
 								KeyDataTopFrame.Frame = 0;
-								KeyDataTopFrame.Value = ListKey[0].Value;
 								KeyDataTopFrame.Formula = Utility.Interpolation.KindFormula.NON;
 								KeyDataTopFrame.FrameCurveStart = 0.0f;
 								KeyDataTopFrame.ValueCurveStart = 0.0f;
 								KeyDataTopFrame.FrameCurveEnd = 0.0f;
 								KeyDataTopFrame.ValueCurveEnd = 0.0f;
+								if(false == flagHasSetup)
+								{	/* No Setup-Key */
+									KeyDataTopFrame.Value = ListKey[0].Value;
+								}
+								else
+								{	/* Setup-Key */
+									KeyDataTopFrame.Value = setup.ListKey[0].Value;
+								}
+
+								/* MEMO: Same value. However, "frame = 0" and "no interpolation". */
 
 								ListKey.Insert(0, KeyDataTopFrame);
 							}
 						}
 
-						public bool KeyDataAdjustTopFrame(_Type valueDefault, bool flagNoKeyIsNoData)
+						public bool KeyDataAdjustTopFrame(Attribute<_Type> setup, _Type valueDefault, bool flagNoKeyIsNoData)
 						{	/* MEMO: This function is for attributes with special specifications to adjust top frame's key data. */
 							/*       - When no key data, interpret as default value is set                                       */
-							/*       - When no key data in frame 0, default value is forcibly set                                */
+							/*       - When no key data in frame 0 ...                                                           */
+							/*         - When has "Setup" value, same value as "Setup" value.                                    */
+							/*         - When has no "Setup" value, default value is forcibly set.                               */
+							/*       However, interpolation is not performed.                                                    */
+							bool flagHasSetup = false;
+							if(null != setup)
+							{
+								if(null != setup)
+								{
+									flagHasSetup = (0 < setup.CountGetKey()) ? true : false;
+								}
+							}
+
 							if(0 >= ListKey.Count)
 							{	/* No Keys */
-								if(true == flagNoKeyIsNoData)
-								{	/* Interpret as no data */
-									return(false);	/* Has no Keys */
+								if(false == flagHasSetup)
+								{	/* No Setup-Key */
+									if(true == flagNoKeyIsNoData)
+									{	/* Interpret as no data */
+										return(false);	/* Has no Keys */
+									}
 								}
 							}
 							else
@@ -821,12 +856,19 @@ public static partial class Library_SpriteStudio6
 							/* Create Top Key-Data */
 							KeyData KeyDataTopFrame = new KeyData();
 							KeyDataTopFrame.Frame = 0;
-							KeyDataTopFrame.Value = valueDefault;
 							KeyDataTopFrame.Formula = Utility.Interpolation.KindFormula.NON;
 							KeyDataTopFrame.FrameCurveStart = 0.0f;
 							KeyDataTopFrame.ValueCurveStart = 0.0f;
 							KeyDataTopFrame.FrameCurveEnd = 0.0f;
 							KeyDataTopFrame.ValueCurveEnd = 0.0f;
+							if(false == flagHasSetup)
+							{	/* No Setup-Key */
+								KeyDataTopFrame.Value = valueDefault;
+							}
+							else
+							{	/* Setup-Key */
+								KeyDataTopFrame.Value = setup.ListKey[0].Value;
+							}
 
 							ListKey.Insert(0, KeyDataTopFrame);
 							return(true);	/* Has Keys */

@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+// #define ATTRIBUTE_DUPLICATE_DEEP
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -57,17 +59,9 @@ public static partial class Library_SpriteStudio6
 					Color.white,
 					Color.white
 				};
-				private readonly static float[] TableRatePixelAlphaPartsColorDefault = new float[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
-				{
-					1.0f,
-					1.0f,
-					1.0f,
-					1.0f
-				};
 				public readonly static PartsColor DefaultPartsColor = new PartsColor(	Library_SpriteStudio6.KindBoundBlend.NON,
 																						Library_SpriteStudio6.KindOperationBlend.MIX,
-																						TableVertexColorPartsColorDefault,
-																						TableRatePixelAlphaPartsColorDefault
+																						TableVertexColorPartsColorDefault
 																					);
 
 				public const float DefaultPivotOffsetX = 0.0f;
@@ -331,10 +325,16 @@ public static partial class Library_SpriteStudio6
 
 					public void Duplicate(VertexCorrection original)
 					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
 						for(int i=0; i<Coordinate.Length; i++)
 						{
 							Coordinate[i] = original.Coordinate[i];
 						}
+#else
+						/* MEMO: Shallow copy */
+						Coordinate = original.Coordinate;
+#endif
 					}
 
 					public override bool Equals(System.Object target)
@@ -375,21 +375,18 @@ public static partial class Library_SpriteStudio6
 					public Library_SpriteStudio6.KindBoundBlend Bound;
 					public Library_SpriteStudio6.KindOperationBlend Operation;
 					public Color[] VertexColor;
-					public float[] RatePixelAlpha;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
 					public PartsColor(	Library_SpriteStudio6.KindBoundBlend bound,
 										Library_SpriteStudio6.KindOperationBlend operation,
-										Color[] vertexColor,
-										float[] ratePixelAlpha
+										Color[] vertexColor
 									)
 					{
 						Bound = bound;
 						Operation = operation;
 						VertexColor = vertexColor;
-						RatePixelAlpha = ratePixelAlpha;
 					}
 
 					public void CleanUp()
@@ -397,7 +394,6 @@ public static partial class Library_SpriteStudio6
 						Bound = Library_SpriteStudio6.KindBoundBlend.NON;
 						Operation = Library_SpriteStudio6.KindOperationBlend.MIX;
 						VertexColor = null;
-						RatePixelAlpha = null;
 					}
 
 					public void BootUp()
@@ -408,11 +404,9 @@ public static partial class Library_SpriteStudio6
 						int count = (int)Library_SpriteStudio6.KindVertex.TERMINATOR2;
 
 						VertexColor = new Color[count];
-						RatePixelAlpha = new float[count];
 						for(int i=0; i<count; i++)
 						{
 							VertexColor[i] = Color.white;
-							RatePixelAlpha[i] = 1.0f;
 						}
 					}
 
@@ -420,11 +414,16 @@ public static partial class Library_SpriteStudio6
 					{
 						Bound = original.Bound;
 						Operation = original.Operation;
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
 						for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 						{
 							VertexColor[i] = original.VertexColor[i];
-							RatePixelAlpha[i] = original.RatePixelAlpha[i];
 						}
+#else
+						/* MEMO: Shallow copy */
+						VertexColor = original.VertexColor;
+#endif
 					}
 
 					public override bool Equals(System.Object target)
@@ -440,13 +439,13 @@ public static partial class Library_SpriteStudio6
 						{
 							return(false);
 						}
-						if((VertexColor.Length != targetData.VertexColor.Length) || (RatePixelAlpha.Length != targetData.RatePixelAlpha.Length))
+						if(VertexColor.Length != targetData.VertexColor.Length)
 						{
 							return(false);
 						}
 						for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 						{
-							if((VertexColor[i] != targetData.VertexColor[i]) || (RatePixelAlpha[i] != targetData.RatePixelAlpha[i]))
+							if(VertexColor[i] != targetData.VertexColor[i])
 							{
 								return(false);
 							}
@@ -538,11 +537,21 @@ public static partial class Library_SpriteStudio6
 
 					public void Duplicate(UserData original)
 					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
 						Flags = original.Flags;
 						NumberInt = original.NumberInt;
 						Rectangle = original.Rectangle;
 						Coordinate = original.Coordinate;
 						Text = (true == string.IsNullOrEmpty(original.Text)) ? "" : string.Copy(original.Text);
+#else
+						/* MEMO: Shallow copy */
+						Flags = original.Flags;
+						NumberInt = original.NumberInt;
+						Rectangle = original.Rectangle;
+						Coordinate = original.Coordinate;
+						Text = (true == string.IsNullOrEmpty(original.Text)) ? "" : original.Text;
+#endif
 					}
 
 					public override bool Equals(System.Object target)
@@ -639,6 +648,8 @@ public static partial class Library_SpriteStudio6
 
 					public void Duplicate(Instance original)
 					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
 						Flags = original.Flags;
 						PlayCount = original.PlayCount;
 						RateTime = original.RateTime;
@@ -646,6 +657,16 @@ public static partial class Library_SpriteStudio6
 						OffsetEnd = original.OffsetEnd;
 						LabelStart = string.Copy(original.LabelStart);
 						LabelEnd = string.Copy(original.LabelEnd);
+#else
+						/* MEMO: Shallow copy */
+						Flags = original.Flags;
+						PlayCount = original.PlayCount;
+						RateTime = original.RateTime;
+						OffsetStart = original.OffsetStart;
+						OffsetEnd = original.OffsetEnd;
+						LabelStart = original.LabelStart;
+						LabelEnd = original.LabelEnd;
+#endif
 					}
 
 					public override bool Equals(System.Object target)
@@ -785,12 +806,18 @@ public static partial class Library_SpriteStudio6
 
 					public void Duplicate(CoordinateFix original)
 					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
 						int count = original.TableCoordinate.Length;
 						TableCoordinate = new Vector3[count];
 						for(int i=0; i<count; i++)
 						{
 							TableCoordinate[i] = original.TableCoordinate[i];
 						}
+#else
+						/* MEMO: Shallow copy */
+						TableCoordinate = original.TableCoordinate;
+#endif
 					}
 
 					public override bool Equals(System.Object target)
@@ -845,12 +872,18 @@ public static partial class Library_SpriteStudio6
 
 					public void Duplicate(UVFix original)
 					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
 						int count = original.TableUV.Length;
 						TableUV = new Vector2[count];
 						for(int i=0; i<count; i++)
 						{
 							TableUV[i] = original.TableUV[i];
 						}
+#else
+						/* MEMO: Shallow copy */
+						TableUV = original.TableUV;
+#endif
 					}
 
 					public override bool Equals(System.Object target)
@@ -908,6 +941,8 @@ public static partial class Library_SpriteStudio6
 
 					public void Duplicate(PartsColorFix original)
 					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
 						int count = original.TableUV.Length;
 						TableUV = new Vector2[count];
 						for(int i=0; i<count; i++)
@@ -921,6 +956,11 @@ public static partial class Library_SpriteStudio6
 						{
 							TableColorOverlay[i] = original.TableColorOverlay[i];
 						}
+#else
+						/* MEMO: Shallow copy */
+						TableUV = original.TableUV;
+						TableColorOverlay = original.TableColorOverlay;
+#endif
 					}
 
 					public override bool Equals(System.Object target)
