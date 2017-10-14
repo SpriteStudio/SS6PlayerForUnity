@@ -546,6 +546,28 @@ public static partial class LibraryEditor_SpriteStudio6
 						goto case "mix";
 				}
 
+				/* Get Parts Show(Hide) */
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "show", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationParts.FlagHide = !(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText));	/* Show -> Hide */
+				}
+				else
+				{	/* Legacy format */
+					informationParts.FlagHide = false;
+				}
+
+				/* Get Mask-Targeting */
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "maskInfluence", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationParts.FlagMasking = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
+				}
+				else
+				{	/* Legacy format */
+					informationParts.FlagMasking = false;
+				}
+
 				/* UnderControl Data Get */
 				/* MEMO: Type of data under control is determined uniquely according to Part-Type. (Mutually exclusive) */
 				switch(informationParts.Data.Feature)
@@ -691,6 +713,38 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 					default:
 						goto case "prio";
+				}
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "settings/startFrame", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationAnimation.Data.FrameValidStart = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+				}
+				else
+				{
+					informationAnimation.Data.FrameValidStart = 0;
+				}
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "settings/endFrame", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationAnimation.Data.FrameValidEnd = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+				}
+				else
+				{
+					informationAnimation.Data.FrameValidEnd = informationAnimation.Data.CountFrame - 1;
+				}
+
+				informationAnimation.Data.CountFrameValid = (informationAnimation.Data.FrameValidEnd - informationAnimation.Data.FrameValidStart) + 1;
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "settings/ik_depth", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationAnimation.Data.DepthIK = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+				}
+				else
+				{
+					informationAnimation.Data.DepthIK = 3;	/* Default */
 				}
 
 				/* Get Labels */
@@ -1616,7 +1670,26 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				informationAnimationParts.FlipX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipX);
 				informationAnimationParts.FlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipY);
-				informationAnimationParts.Hide.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Hide, true, true);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
+				if((true == setting.Basic.FlagInvisibleToHideAll) && (true == informationSSAE.TableParts[indexParts].FlagHide))
+				{	/* Parts Hide (for Editing), convert to All-Frame-Hide */
+					informationAnimationParts.Hide.CleanUp();
+
+					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool.KeyData();
+					data.Formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;
+					data.FrameCurveStart = 0.0f;
+					data.ValueCurveStart = 0.0f;
+					data.FrameCurveEnd = 0.0f;
+					data.ValueCurveEnd = 0.0f;
+					data.Frame = 0;
+					data.Value = true;
+					informationAnimationParts.Hide.ListKey.Add(data);
+
+					informationAnimationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.HIDE_FULL;
+				}
+				else
+				{
+					informationAnimationParts.Hide.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Hide, true, true);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
+				}
 
 				informationAnimationParts.PartsColor.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PartsColor);
 				informationAnimationParts.VertexCorrection.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.VertexCorrection);
@@ -1881,6 +1954,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					public List<int> ListIndexPartsChild;
 
+					public bool FlagHide;
+					public bool FlagMasking;
+
 					/* MEMO: UnderControl == Instance, Effect */
 					public string NameUnderControl;
 					public string NameAnimationUnderControl;
@@ -1897,6 +1973,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						ListIndexPartsChild = new List<int>();
 						ListIndexPartsChild.Clear();
+
+						FlagHide = false;
+						FlagMasking = false;
 
 						NameUnderControl = "";
 					}

@@ -104,6 +104,12 @@ public static partial class Library_SpriteStudio6
 			public int FramePerSecond;
 			public int CountFrame;
 
+			public int FrameValidStart;
+			public int FrameValidEnd;
+			public int CountFrameValid;
+
+			public int DepthIK;
+
 			public Label[] TableLabel;
 			public Parts[] TableParts;
 			#endregion Variables & Properties
@@ -115,6 +121,12 @@ public static partial class Library_SpriteStudio6
 				Name = "";
 				FramePerSecond = 0;
 				CountFrame = 0;
+
+				FrameValidStart = 0;
+				FrameValidEnd = 0;
+				CountFrameValid = 0;
+
+				DepthIK = 0;
 
 				TableLabel = null;
 				TableParts = null;
@@ -213,7 +225,8 @@ public static partial class Library_SpriteStudio6
 										string labelEnd, int frameOffsetEnd
 									)
 			{
-				int frameEnd = CountFrame - 1;
+				int frameStart = FrameValidStart;	/* 0 */
+				int frameEnd = FrameValidEnd;	/* CountFrame - 1 */
 				string label;
 				int indexLabel;
 
@@ -228,14 +241,14 @@ public static partial class Library_SpriteStudio6
 				}
 
 				frameRangeStart = FrameGetLabel(indexLabel);
-				if(0 > frameRangeStart)
+				if(frameStart > frameRangeStart)
 				{
-					frameRangeStart = 0;
+					frameRangeStart = frameStart;
 				}
 				frameRangeStart += frameOffsetStart;
-				if((0 > frameRangeStart) || (frameEnd < frameRangeStart))
+				if((frameStart > frameRangeStart) || (frameEnd < frameRangeStart))
 				{
-					frameRangeStart = 0;
+					frameRangeStart = frameStart;
 				}
 
 				/* Get End frame */
@@ -249,12 +262,12 @@ public static partial class Library_SpriteStudio6
 				}
 
 				frameRangeEnd = FrameGetLabel(indexLabel);
-				if(0 > frameRangeEnd)
+				if(frameStart > frameRangeEnd)
 				{
 					frameRangeEnd = frameEnd;
 				}
 				frameRangeEnd += frameOffsetEnd;
-				if((0 > frameRangeEnd) || (frameEnd < frameRangeEnd))
+				if((frameStart > frameRangeEnd) || (frameEnd < frameRangeEnd))
 				{
 					frameRangeEnd = frameEnd;
 				}
