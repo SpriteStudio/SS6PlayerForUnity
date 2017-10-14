@@ -1233,8 +1233,8 @@ public static partial class LibraryEditor_SpriteStudio6
 											break;
 
 										default:
-										LogWarning(messageLogPrefix, "Unknown PartsColor-Operation \"" + valueText + "\" Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-											data.Value.Operation = Library_SpriteStudio6.KindOperationBlend.NON;
+											LogWarning(messageLogPrefix, "Unknown PartsColor-Operation \"" + valueText + "\" Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+											data.Value.Operation = Library_SpriteStudio6.KindOperationBlend.MIX;
 											break;
 									}
 
@@ -1296,10 +1296,7 @@ public static partial class LibraryEditor_SpriteStudio6
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.OVERALL;
 												for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 												{
-													data.Value.VertexColor[i].r = 0.0f;
-													data.Value.VertexColor[i].g = 0.0f;
-													data.Value.VertexColor[i].b = 0.0f;
-													data.Value.VertexColor[i].a = 0.0f;
+													data.Value.VertexColor[i] = Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear;
 												}
 											}
 											break;

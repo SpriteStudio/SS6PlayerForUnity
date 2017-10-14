@@ -4,23 +4,25 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-Shader "Custom/SpriteStudio6/Effect/AddPA"	{
-	Properties{
+Shader "Custom/SpriteStudio6/SS6PU/Effect/AddPA"
+{
+	Properties
+	{
 		_MainTex("Base (RGB)", 2D) = "white" {}
 	}
 
-	SubShader{
-		Tags{
+	SubShader
+	{
+		Tags
+		{
 			"Queue" = "Transparent"
 			"IgnoreProjector" = "True"
-			"RenderType" = "Transparent"
+			"RenderT ype" = "Transparent"
 		}
 
-		Pass{
-			// MEMO: Blend "Add", "Straight-Alpha"
-			Lighting Off
-			Fog{ Mode off }
-
+		Pass
+		{
+			// MEMO: Blend "AddPA", "PreMultiplied-Alpha"
 			Cull Off
 			ZTest LEqual
 			ZWRITE Off
@@ -28,20 +30,32 @@ Shader "Custom/SpriteStudio6/Effect/AddPA"	{
 			Blend SrcAlpha One
 
 			CGPROGRAM
-#pragma vertex VS_main
-#pragma fragment PS_main
+			#pragma vertex VS_main
+			#pragma fragment PS_main
 
-#include "UnityCG.cginc"
+			#include "UnityCG.cginc"
 
-#include "Base/ShaderVertex_Effect_SpriteStudio6.cginc"
+			#include "Base/ShaderVertex_Effect_SpriteStudio6.cginc"
+//			#include "Base/ShaderPixel_Effect_SpriteStudio6.cginc"
+			sampler2D	_MainTex;
 
-#include "Base/ShaderPixel_Effect_SpriteStudio6.cginc"
-			ENDCG
+#ifdef SV_Target
+			fixed4 PS_main(InputPS Input) : SV_Target
+#else
+			fixed4 PS_main(InputPS Input) : COLOR0
+#endif
+			{
+				fixed4 output;
 
-			SetTexture[_MainTex]{
-				Combine Texture, Texture
+				fixed4	pixel = tex2D(_MainTex, Input.Texture00UV.xy);
+				pixel *= Input.ColorMain;
+				pixel *= pixel.a;
+				output = pixel;
+
+				return(output);
 			}
+			ENDCG
 		}
 	}
-	FallBack Off
+		FallBack Off
 }

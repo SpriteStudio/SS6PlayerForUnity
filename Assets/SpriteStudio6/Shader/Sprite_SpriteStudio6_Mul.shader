@@ -4,27 +4,24 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-Shader "Custom/SpriteStudio6/Sprite/Multiple" {
-	Properties	{
+Shader "Custom/SpriteStudio6/SS6PU/Sprite/Multiple"
+{
+	Properties
+	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_OverlayParameter_Non ("Parameter(Non)", Vector) = (1.0, 0.0, -1.0, 0.0)
-		_OverlayParameter_Mix ("Parameter(Mix)", Vector) = (1.0, 1.0, -1.0, 1.0)
-		_OverlayParameter_Add ("Parameter(Add)", Vector) = (1.0, 0.0, -1.0, 1.0)
-		_OverlayParameter_Sub ("Parameter(Sub)", Vector) = (1.0, 0.0, -1.0, -1.0)
-		_OverlayParameter_Mul ("Parameter(Mul)", Vector) = (1.0, 1.0, 1.0, 1.0)
 	}
 
-	SubShader	{
-		Tags {
-				"Queue"="Transparent"
-				"IgnoreProjector"="True"
-				"RenderType"="Transparent"
+	SubShader
+	{
+		Tags
+		{
+			"Queue"="Transparent"
+			"IgnoreProjector"="True"
+			"RenderType"="Transparent"
 		}
 
-		Pass	{
-			Lighting Off
-			Fog { Mode off }
-
+		Pass
+		{
 			Cull Off
 			ZTest LEqual
 			ZWRITE Off
@@ -38,43 +35,38 @@ Shader "Custom/SpriteStudio6/Sprite/Multiple" {
 			#include "UnityCG.cginc"
 
 			#include "Base/ShaderVertex_Sprite_SpriteStudio6.cginc"
-
 //			#include "Base/ShaderPixel_Sprite_SpriteStudio6.cginc"
-			#define	LIMIT_ALPHA	0.0038
+			sampler2D _MainTex;
 
-			sampler2D	_MainTex;
 #ifdef SV_Target
-			fixed4	PS_main(InputPS Input) : SV_Target
+			fixed4 PS_main(InputPS input) : SV_Target
 #else
-			fixed4	PS_main(InputPS Input) : COLOR0
+			fixed4 PS_main(InputPS input) : COLOR0
 #endif
 			{
-				fixed4	Output;
+				fixed4 output;
 
-				fixed4	Pixel = tex2D(_MainTex, Input.Texture00UV.xy);
-				Pixel *= Input.ColorMain;
+				fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
+				pixel *= input.ColorMain;
 
-				fixed4	OverlayParameter = Input.ParameterOverlay;
-				fixed4	ColorOverlay = Input.ColorOverlay;
-				fixed	ColorAlpha = ColorOverlay.a;
-				fixed	PixelAlpha = Pixel.a;
+				fixed4 color[4];
+				float pixelA = pixel.a;
+				float rate = input.ColorOverlay.a;
+				float rateInverse = 1.0f - rate;
+				color[0] = (pixel * rateInverse) + (input.ColorOverlay * rate);	/* Mix */
+				color[1] = (pixel * rateInverse) + ((pixel * input.ColorOverlay) * rate);	/* Multiple */
+				color[2] = pixel + (input.ColorOverlay * rate);	/* Add */
+				color[3] = pixel - (input.ColorOverlay * rate);	/* Subtract */
 
-				fixed4	PixelCoefficientColorOvelay = ((0.0f > OverlayParameter.z) ? fixed4(1.0f, 1.0f, 1.0f, 1.0f) : (Pixel * OverlayParameter.z));
-				ColorOverlay *= ColorAlpha;
+				pixel = color[input.Texture00UV.z];
+				pixel *= pixelA;											/* Blend-Multiple Only. */
+				pixel += fixed4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0 - pixelA);	/* Blend-Multiple Only. */
+				pixel.a = 1.0f;												/* Blend-Multiple Only. */
+				output = pixel;
 
-				Pixel = ((Pixel * (1.0f - (ColorAlpha * OverlayParameter.y))) * OverlayParameter.x) + (PixelCoefficientColorOvelay * ColorOverlay * OverlayParameter.w);
-				Pixel *= PixelAlpha;											// Mul Only.
-				Pixel += fixed4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0 - PixelAlpha);	// Mul Only.
-				Pixel.w = 1.0f;													// Mul Only.
-				Output = Pixel;
-
-				return(Output);
+				return(output);
 			}
 			ENDCG
-
-			SetTexture [_MainTex]	{
-				Combine Texture, Texture
-			}
 		}
 	}
 	FallBack Off

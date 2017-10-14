@@ -1131,21 +1131,21 @@ public static partial class Library_SpriteStudio6
 			#region Enums & Constants
 			public readonly static UnityEngine.Shader[] TableSprite = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
 			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Subtract"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Multiple"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/MultipleNA"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Screen"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Exclude"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Sprite/Inverse")
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Subtract"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Multiple"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/MultipleNA"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Screen"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Exclude"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Inverse")
 			};
 
 			public readonly static UnityEngine.Shader[] TableEffect = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
 			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Effect/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Effect/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/Effect/AddPA"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/AddPA"),
 			};
 			#endregion Enums & Constants
 		}

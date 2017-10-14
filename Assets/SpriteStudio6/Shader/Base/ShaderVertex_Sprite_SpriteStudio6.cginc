@@ -4,58 +4,46 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-float4	_OverlayParameter_Non;
-float4	_OverlayParameter_Mix;
-float4	_OverlayParameter_Add;
-float4	_OverlayParameter_Sub;
-float4	_OverlayParameter_Mul;
-
-struct	InputVS	{
-	float4	vertex : POSITION;
-	float4	color : COLOR0;
-	float4	texcoord : TEXCOORD0;
-	float4	texcoord1 : TEXCOORD1;
-};
-
-struct	InputPS	{
-#ifdef SV_POSITION
-	float4	Position : SV_POSITION;
-#else
-	float4	Position : POSITION;
-#endif
-	float4	ColorMain : COLOR0;
-	float4	ColorOverlay : COLOR1;
-	float4	Texture00UV : TEXCOORD0;
-	float4	ParameterOverlay : TEXCOORD1;
-	float4	PositionDraw : TEXCOORD7;
-};
-
-InputPS	VS_main(InputVS Input)
+struct InputVS
 {
-	InputPS	Output;
-	float4	Temp;
+	float4 vertex : POSITION;
+	float4 color : COLOR0;
+	float4 texcoord : TEXCOORD0;
+	float4 texcoord1 : TEXCOORD1;
+};
 
-	Temp.xy = Input.texcoord.xy;
-	Temp.z = 0.0f;
-	Temp.w = 0.0f;
-	Output.Texture00UV = Temp;
+struct InputPS
+{
+#ifdef SV_POSITION
+	float4 Position : SV_POSITION;
+#else
+	float4 Position : POSITION;
+#endif
+	float4 ColorMain : COLOR0;
+	float4 ColorOverlay : COLOR1;
+	float4 Texture00UV : TEXCOORD0;
+	float4 PositionDraw : TEXCOORD7;
+};
 
-	Temp = float4(1.0f, 1.0f, 1.0f, Input.texcoord1.y);
-	Output.ColorMain = Temp;
+InputPS VS_main(InputVS input)
+{
+	InputPS output;
+	float4 temp;
 
-	Output.ColorOverlay = Input.color;
+	temp.xy = input.texcoord.xy;
+	temp.z = floor(input.texcoord1.x);
+	temp.w = 0.0f;
+	output.Texture00UV = temp;
 
-	float Index = Input.texcoord1.x;
-	Temp = (0.1f > Index) ? _OverlayParameter_Non
-							: ((3.0f > Index) ? ((2.0f > Index) ? _OverlayParameter_Mix : _OverlayParameter_Add)
-												: ((4.0 > Index) ? _OverlayParameter_Sub : _OverlayParameter_Mul)
-							);
-	Output.ParameterOverlay = Temp;
+	temp = float4(1.0f, 1.0f, 1.0f, input.texcoord1.y);
+	output.ColorMain = temp;
 
-	Temp = Input.vertex;
-	Temp = UnityObjectToClipPos(Temp);
-	Output.PositionDraw = Temp;
-	Output.Position = Temp;
+	output.ColorOverlay = input.color;
 
-	return Output;
+	temp = input.vertex;
+	temp = UnityObjectToClipPos(temp);
+	output.PositionDraw = temp;
+	output.Position = temp;
+
+	return(output);
 }

@@ -4,31 +4,31 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-#define	LIMIT_ALPHA	0.0038
-sampler2D	_MainTex;
+sampler2D _MainTex;
 
 #ifdef SV_Target
-fixed4	PS_main(InputPS Input) : SV_Target
+fixed4 PS_main(InputPS input) : SV_Target
 #else
-fixed4	PS_main(InputPS Input) : COLOR0
+fixed4 PS_main(InputPS input) : COLOR0
 #endif
 {
-	fixed4	Output;
+	fixed4 output;
 
-	fixed4	Pixel = tex2D(_MainTex, Input.Texture00UV.xy);
-	Pixel *= Input.ColorMain;
+	fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
+	pixel *= input.ColorMain;
 
-	fixed4	OverlayParameter = Input.ParameterOverlay;
-	fixed4	ColorOverlay = Input.ColorOverlay;
-	fixed	ColorAlpha = ColorOverlay.a;
-	fixed	PixelAlpha = Pixel.a;
+	fixed4 color[4];
+	float pixelA = pixel.a;
+	float rate = input.ColorOverlay.a;
+	float rateInverse = 1.0f - rate;
+	color[0] = (pixel * rateInverse) + (input.ColorOverlay * rate);	/* Mix */
+	color[1] = (pixel * rateInverse) + ((pixel * input.ColorOverlay) * rate);	/* Multiple */
+	color[2] = pixel + (input.ColorOverlay * rate);	/* Add */
+	color[3] = pixel - (input.ColorOverlay * rate);	/* Subtract */
 
-	fixed4	PixelCoefficientColorOvelay = ((0.0f > OverlayParameter.z) ? fixed4(1.0f, 1.0f, 1.0f, 1.0f) : (Pixel * OverlayParameter.z));
-	ColorOverlay *= ColorAlpha;
+	pixel = color[input.Texture00UV.z];
+	pixel.a = pixelA;
+	output = pixel;
 
-	Pixel = ((Pixel * (1.0f - (ColorAlpha * OverlayParameter.y))) * OverlayParameter.x) + (PixelCoefficientColorOvelay * ColorOverlay * OverlayParameter.w);
-	Pixel.a = PixelAlpha;
-	Output = Pixel;
-
-	return(Output);
+	return(output);
 }

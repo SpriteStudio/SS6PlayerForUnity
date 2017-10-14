@@ -4,27 +4,24 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-Shader "Custom/SpriteStudio6/Sprite/Add" {
-	Properties	{
+Shader "Custom/SpriteStudio6/SS6PU/Sprite/Add"
+{
+	Properties
+	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_OverlayParameter_Non ("Parameter(Non)", Vector) = (1.0, 0.0, -1.0, 0.0)
-		_OverlayParameter_Mix ("Parameter(Mix)", Vector) = (1.0, 1.0, -1.0, 1.0)
-		_OverlayParameter_Add ("Parameter(Add)", Vector) = (1.0, 0.0, -1.0, 1.0)
-		_OverlayParameter_Sub ("Parameter(Sub)", Vector) = (1.0, 0.0, -1.0, -1.0)
-		_OverlayParameter_Mul ("Parameter(Mul)", Vector) = (1.0, 1.0, 1.0, 1.0)
 	}
 
-	SubShader	{
-		Tags {
-				"Queue"="Transparent"
-				"IgnoreProjector"="True"
-				"RenderType"="Transparent"
+	SubShader
+	{
+		Tags
+		{
+			"Queue"="Transparent"
+			"IgnoreProjector"="True"
+			"RenderType"="Transparent"
 		}
 
-		Pass	{
-			Lighting Off
-			Fog { Mode off }
-
+		Pass
+		{
 			Cull Off
 			ZTest LEqual
 			ZWRITE Off
@@ -38,14 +35,8 @@ Shader "Custom/SpriteStudio6/Sprite/Add" {
 			#include "UnityCG.cginc"
 
 			#include "Base/ShaderVertex_Sprite_SpriteStudio6.cginc"
-
 			#include "Base/ShaderPixel_Sprite_SpriteStudio6.cginc"
-
 			ENDCG
-
-			SetTexture [_MainTex]	{
-				Combine Texture, Texture
-			}
 		}
 	}
 	FallBack Off

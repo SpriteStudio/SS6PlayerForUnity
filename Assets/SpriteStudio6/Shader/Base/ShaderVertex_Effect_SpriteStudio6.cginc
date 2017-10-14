@@ -4,40 +4,41 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-
-struct	InputVS	{
-	float4	vertex : POSITION;
-	float4	color : COLOR0;
-	float4	texcoord : TEXCOORD0;
-};
-
-struct	InputPS	{
-#ifdef SV_POSITION
-	float4	Position : SV_POSITION;
-#else
-	float4	Position : POSITION;
-#endif
-	float4	ColorMain : COLOR0;
-	float4	Texture00UV : TEXCOORD0;
-	float4	PositionDraw : TEXCOORD7;
-};
-
-InputPS	VS_main(InputVS Input)
+struct InputVS
 {
-	InputPS	Output;
-	float4	Temp;
+	float4 vertex : POSITION;
+	float4 color : COLOR0;
+	float4 texcoord : TEXCOORD0;
+};
 
-	Temp.xy = Input.texcoord.xy;
-	Temp.z = 0.0f;
-	Temp.w = 0.0f;
-	Output.Texture00UV = Temp;
+struct InputPS
+{
+#ifdef SV_POSITION
+	float4 Position : SV_POSITION;
+#else
+	float4 Position : POSITION;
+#endif
+	float4 ColorMain : COLOR0;
+	float4 Texture00UV : TEXCOORD0;
+	float4 PositionDraw : TEXCOORD7;
+};
 
-	Output.ColorMain = Input.color;
+InputPS VS_main(InputVS input)
+{
+	InputPS	output;
+	float4	temp;
 
-	Temp = Input.vertex;
-	Temp = UnityObjectToClipPos(Temp);
-	Output.PositionDraw = Temp;
-	Output.Position = Temp;
+	temp.xy = input.texcoord.xy;
+	temp.z = 0.0f;
+	temp.w = 0.0f;
+	output.Texture00UV = temp;
 
-	return Output;
+	output.ColorMain = input.color;
+
+	temp = input.vertex;
+	temp = UnityObjectToClipPos(temp);
+	output.PositionDraw = temp;
+	output.Position = temp;
+
+	return(output);
 }

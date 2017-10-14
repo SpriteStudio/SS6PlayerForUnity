@@ -4,22 +4,24 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-Shader "Custom/SpriteStudio6/Effect/Mix" {
-	Properties	{
+Shader "Custom/SpriteStudio6/SS6PU/Effect/Mix"
+{
+	Properties
+	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 	}
 
-	SubShader	{
-		Tags {
-				"Queue"="Transparent"
-				"IgnoreProjector"="True"
-				"RenderType"="Transparent"
-			}
+	SubShader
+	{
+		Tags
+		{
+			"Queue"="Transparent"
+			"IgnoreProjector"="True"
+			"RenderType"="Transparent"
+		}
 
-		Pass	{
-			Lighting Off
-			Fog { Mode off }
-
+		Pass
+		{
 			Cull Off
 			ZTest LEqual
 			ZWRITE Off
@@ -33,14 +35,8 @@ Shader "Custom/SpriteStudio6/Effect/Mix" {
 			#include "UnityCG.cginc"
 
 			#include "Base/ShaderVertex_Effect_SpriteStudio6.cginc"
-
 			#include "Base/ShaderPixel_Effect_SpriteStudio6.cginc"
-
 			ENDCG
-
-			SetTexture [_MainTex]	{
-				Combine Texture, Texture
-			}
 		}
 	}
 	FallBack Off

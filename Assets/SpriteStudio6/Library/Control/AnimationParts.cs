@@ -1494,10 +1494,9 @@ public static partial class Library_SpriteStudio6
 								}
 							}
 
-							float operation = (Library_SpriteStudio6.KindBoundBlend.NON == PartsColor.Value.Bound)
-												? (float)((int)Library_SpriteStudio6.KindOperationBlend.NON) + 1.01f	/* "+1.0f" for -1->0 *//* "+0.01f" for Rounding-off-Error */
-												: (float)((int)PartsColor.Value.Operation) + 1.01f;	/* "+1.0f" for -1->0 *//* "+0.01f" for Rounding-off-Error */
-							Color sumColor = Color.black;
+							float operation = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear;
+
 							float sumPower = 0.0f;
 
 							Color[] tableColor = PartsColor.Value.VertexColor;
@@ -1528,7 +1527,8 @@ public static partial class Library_SpriteStudio6
 					Plain_PartColor_Clear:;
 						for(int i=0; i<CountVertex; i++)
 						{
-							ParameterBlendDraw[i].x = (float)((int)Library_SpriteStudio6.KindOperationBlend.NON) + 1.01f;	/* "+1.0f" for -1->0 *//* "+0.01f" for Rounding-off-Error */
+							ParameterBlendDraw[i].x = (float)((int)Library_SpriteStudio6.KindOperationBlend.MIX) + 0.01f;	/* "+1.0f" for -1->0 *//* "+0.01f" for Rounding-off-Error */
+							ColorPartsDraw[i] = Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear;
 							ParameterBlendDraw[i].y = RateOpacity.Value;	/* Opacity */
 						}
 					Plain_PartColor_End:;
