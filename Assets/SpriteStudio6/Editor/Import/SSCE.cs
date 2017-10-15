@@ -104,7 +104,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* Get Texture Pixel-Size */
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "pixelSize", managerNameSpace);
-				string[] valueTextSprit = null;
+				string[] valueTextSplit = null;
 				if(true == string.IsNullOrEmpty(valueText))
 				{	/* Get directly from texture */
 					informationSSCE.SizePixelX = -1;
@@ -112,9 +112,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				else
 				{	/* Synchronized with Cell size */
-					valueTextSprit = valueText.Split(' ');
-					informationSSCE.SizePixelX = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSprit[0]);
-					informationSSCE.SizePixelY = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSprit[1]);
+					valueTextSplit = valueText.Split(' ');
+					informationSSCE.SizePixelX = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[0]);
+					informationSSCE.SizePixelY = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[1]);
 				}
 
 				/* Get Texture Addressing */
@@ -183,7 +183,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				listCell.Clear();
 
-				System.Xml.XmlNodeList listNode= LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "cells/cell", managerNameSpace);
+				System.Xml.XmlNodeList listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "cells/cell", managerNameSpace);
 				if(null == listNode)
 				{
 					LogError(messageLogPrefix, "Cells-Node Not Found", nameFile, informationSSPJ);
@@ -204,28 +204,38 @@ public static partial class LibraryEditor_SpriteStudio6
 					cell.CleanUp();
 
 					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeCell, "name", managerNameSpace);
-					cell.Name = string.Copy(valueText);
+					cell.Data.Name = string.Copy(valueText);
 
 					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeCell, "pos", managerNameSpace);
-					valueTextSprit = valueText.Split(' ');
-					cell.Area.x = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSprit[0]));
-					cell.Area.y = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSprit[1]));
+					valueTextSplit = valueText.Split(' ');
+					cell.Data.Rectangle.x = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[0]));
+					cell.Data.Rectangle.y = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[1]));
 
 					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeCell, "size", managerNameSpace);
-					valueTextSprit = valueText.Split(' ');
-					cell.Area.width = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSprit[0]));
-					cell.Area.height = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSprit[1]));
+					valueTextSplit = valueText.Split(' ');
+					cell.Data.Rectangle.width = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[0]));
+					cell.Data.Rectangle.height = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[1]));
 
 					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeCell, "pivot", managerNameSpace);
-					valueTextSprit = valueText.Split(' ');
-					pivotNormalizeX = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetDouble(valueTextSprit[0]);
-					pivotNormalizeY = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetDouble(valueTextSprit[1]);
-					cell.Pivot.x = (float)((double)cell.Area.width * (pivotNormalizeX + 0.5));
-					cell.Pivot.y = (float)((double)cell.Area.height * (-pivotNormalizeY + 0.5));
+					valueTextSplit = valueText.Split(' ');
+					pivotNormalizeX = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetDouble(valueTextSplit[0]);
+					pivotNormalizeY = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetDouble(valueTextSplit[1]);
+					cell.Data.Pivot.x = (float)((double)cell.Data.Rectangle.width * (pivotNormalizeX + 0.5));
+					cell.Data.Pivot.y = (float)((double)cell.Data.Rectangle.height * (-pivotNormalizeY + 0.5));
 
 					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeCell, "rotated", managerNameSpace);
 					cell.Rotate = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
 
+					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeCell, "ismesh", managerNameSpace);
+					if(true == LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText))
+					{	/* Has Mesh */
+						cell.Data.Mesh.TableVertex = TableGetPointList(nodeCell, "meshPointList", managerNameSpace);
+						cell.Data.Mesh.TableIndexVertex = TableGetTriangleList(nodeCell, "meshTriList", managerNameSpace);
+					}
+					else
+					{
+						cell.Data.Mesh.CleanUp();
+					}
 					listCell.Add(cell);
 				}
 				informationSSCE.TableCell = listCell.ToArray();
@@ -239,6 +249,57 @@ public static partial class LibraryEditor_SpriteStudio6
 					informationSSCE.CleanUp();
 				}
 				return(null);
+			}
+			private static Vector2[] TableGetPointList(System.Xml.XmlNode node, string namePath, System.Xml.XmlNamespaceManager manager)
+			{
+				System.Xml.XmlNodeList listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(node, namePath + "/value", manager);
+				if(null == listNode)
+				{
+					return(null);
+				}
+
+				int count = listNode.Count;
+				Vector2[] tablePointList = new Vector2[count];
+				string valueText;
+				string[] valueTextSplit;
+				for(int i=0; i<count; i++)
+				{
+					valueText = listNode[i].InnerText;
+					if(false == string.IsNullOrEmpty(valueText))
+					{
+						valueTextSplit = valueText.Split(' ');
+						tablePointList[i].x = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueTextSplit[0]);
+						tablePointList[i].y = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueTextSplit[1]);
+					}
+				}
+
+				return(tablePointList);
+			}
+			private static int[] TableGetTriangleList(System.Xml.XmlNode node, string namePath, System.Xml.XmlNamespaceManager manager)
+			{
+				System.Xml.XmlNodeList listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(node, namePath + "/value", manager);
+				if(null == listNode)
+				{
+					return(null);
+				}
+
+				int count = listNode.Count;
+				int[] tableIndexList = new int[count * (int)Library_SpriteStudio6.Data.CellMap.Cell.DataMesh.Constants.COUNT_VERTEX_SURFACE];
+				string valueText;
+				string[] valueTextSplit;
+				for(int i=0; i<count; i++)
+				{
+					valueText = listNode[i].InnerText;
+					if(false == string.IsNullOrEmpty(valueText))
+					{
+						valueTextSplit = valueText.Split(' ');
+						tableIndexList[(i * 3)] = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[0]);
+						tableIndexList[(i * 3) + 1] = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[1]);
+						tableIndexList[(i * 3) + 2] = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[2]);
+					}
+				}
+
+				return(tableIndexList);
 			}
 
 			private static void LogError(string messagePrefix, string message, string nameFile, LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ)
@@ -329,7 +390,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						int count = TableCell.Length;
 						for(int i=0; i<count; i++)
 						{
-							if(name == TableCell[i].Name)
+							if(name == TableCell[i].Data.Name)
 							{
 								return(i);
 							}
@@ -356,9 +417,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
-					public string Name;
-					public Rect Area;
-					public Vector2 Pivot;
+					public Library_SpriteStudio6.Data.CellMap.Cell Data;
 					public float Rotate;
 					#endregion Variables & Properties
 
@@ -366,9 +425,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					#region Functions
 					public void CleanUp()
 					{
-						Name = "";
-						Area = Rect.zero;
-						Pivot = Vector2.zero;
+						Data.CleanUp();
 						Rotate = 0.0f;
 					}
 					#endregion Functions
@@ -677,15 +734,10 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationSSCE.Data.SizeOriginal.y = (float)informationTexture.SizeY;
 						informationSSCE.Data.TableCell = new Library_SpriteStudio6.Data.CellMap.Cell[countCell];
 
-						Library_SpriteStudio6.Data.CellMap.Cell informationCell = new Library_SpriteStudio6.Data.CellMap.Cell();
 						for(int i=0; i<countCell; i++)
 						{
-							informationCell.CleanUp();
-							informationCell.Name = string.Copy(informationSSCE.TableCell[i].Name);
-							informationCell.Rectangle = informationSSCE.TableCell[i].Area;
-							informationCell.Pivot = informationSSCE.TableCell[i].Pivot;
-
-							informationSSCE.Data.TableCell[i] = informationCell;
+							informationSSCE.Data.TableCell[i].CleanUp();
+							informationSSCE.Data.TableCell[i] = informationSSCE.TableCell[i].Data;
 						}
 						informationSSCE.TableCell = null;	/* Purge WorkArea */
 					}

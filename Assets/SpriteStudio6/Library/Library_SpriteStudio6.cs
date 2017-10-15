@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+// #define STATICDATA_DUPLICATE_DEEP
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -951,6 +953,14 @@ public static partial class Library_SpriteStudio6
 				public string Name;
 				public Rect Rectangle;
 				public Vector2 Pivot;
+				public DataMesh Mesh;
+				public bool IsMesh
+				{
+					get
+					{
+						return(0 < Mesh.TableVertex.Length);
+					}
+				}
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -963,6 +973,7 @@ public static partial class Library_SpriteStudio6
 					Rectangle.width = 0.0f;
 					Rectangle.height = 0.0f;
 					Pivot = Vector2.zero;
+					Mesh.CleanUp();
 				}
 
 				public void Duplicate(Cell original)
@@ -970,8 +981,103 @@ public static partial class Library_SpriteStudio6
 					Name = string.Copy(original.Name);
 					Rectangle = original.Rectangle;
 					Pivot = original.Pivot;
+					Mesh = original.Mesh;
 				}
 				#endregion Functions
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				[System.Serializable]
+				public struct DataMesh
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public Vector2[] TableVertex;
+					public int[] TableIndexVertex;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						TableVertex = null;
+						TableIndexVertex = null;
+					}
+
+					public bool BootUp(int countVertex, int countTriangle)
+					{
+						if((0 >= countVertex) || (0 >= countTriangle))
+						{
+							CleanUp();
+							return(true);
+						}
+
+						TableVertex = new Vector2[countVertex];
+						if(null == TableVertex)
+						{
+							goto BootUp_ErrorEnd;
+						}
+
+						TableIndexVertex = new int[countTriangle * (int)Constants.COUNT_VERTEX_SURFACE];
+						if(null == TableVertex)
+						{
+							goto BootUp_ErrorEnd;
+						}
+
+						return(true);
+
+					BootUp_ErrorEnd:;
+						CleanUp();
+						return(false);
+					}
+
+					public void Duplicate(DataMesh original)
+					{
+#if STATICDATA_DUPLICATE_DEEP
+						int count;
+						if(null != original.TableVertex)
+						{
+							count = original.TableVertex.Length;
+							TableVertex = new Vector2[count];
+							for(int i=0; i<count; i++)
+							{
+								TableVertex[i] = original.TableVertex[i];
+							}
+						}
+						else
+						{
+							TableVertex = null;
+						}
+
+						if(null != original.TableIndexVertex)
+						{
+							count = original.TableIndexVertex.Length;
+							TableIndexVertex = new int[count];
+							for(int i=0; i<count; i++)
+							{
+								TableIndexVertex[i] = original.TableIndexVertex[i];
+							}
+						}
+						else
+						{
+							TableIndexVertex = null;
+						}
+#else
+						TableVertex = original.TableVertex;
+						TableIndexVertex = original.TableIndexVertex;
+#endif
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
+					public enum Constants
+					{
+						COUNT_VERTEX_SURFACE = 3,	/* Vertice count per plane (Triangle only) */
+					}
+					#endregion Enums & Constants
+				}
+				#endregion Classes, Structs & Interfaces
 			}
 			#endregion Classes, Structs & Interfaces
 		}
