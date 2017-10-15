@@ -226,16 +226,17 @@ public static partial class LibraryEditor_SpriteStudio6
 					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeCell, "rotated", managerNameSpace);
 					cell.Rotate = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
 
+					cell.Data.Mesh.CleanUp();
 					valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeCell, "ismesh", managerNameSpace);
-					if(true == LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText))
-					{	/* Has Mesh */
-						cell.Data.Mesh.TableVertex = TableGetPointList(nodeCell, "meshPointList", managerNameSpace);
-						cell.Data.Mesh.TableIndexVertex = TableGetTriangleList(nodeCell, "meshTriList", managerNameSpace);
+					if(false == string.IsNullOrEmpty(valueText))
+					{	/* "ismesh"tag is exist (SS5's SSCE has no "ismesh") */
+						if(true == LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText))
+						{	/* Has Mesh */
+							cell.Data.Mesh.TableVertex = TableGetPointList(nodeCell, "meshPointList", managerNameSpace);
+							cell.Data.Mesh.TableIndexVertex = TableGetTriangleList(nodeCell, "meshTriList", managerNameSpace);
+						}
 					}
-					else
-					{
-						cell.Data.Mesh.CleanUp();
-					}
+
 					listCell.Add(cell);
 				}
 				informationSSCE.TableCell = listCell.ToArray();
