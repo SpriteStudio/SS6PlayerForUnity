@@ -89,7 +89,7 @@ public static partial class Library_SpriteStudio6
 		public delegate float FunctionTimeElapse(Script_SpriteStudio6_Root scriptRoot);
 		public delegate float FunctionTimeElapseEffect(Script_SpriteStudio6_RootEffect scriptRoot);
 
-		public delegate bool FunctionControlEndTrackPlay(Script_SpriteStudio6_Root scriptRoot, int indexTrackPlay);
+		public delegate void FunctionControlEndTrackPlay(Script_SpriteStudio6_Root scriptRoot, int indexTrackPlay, int indexTrackSlave, int indexAnimation, int indexAnimationSlave);
 		#endregion Delegates
 	}
 
@@ -1295,6 +1295,7 @@ public static partial class Library_SpriteStudio6
 
 			/* MEMO: Do not define "InstanceRootParent" to "internal" in order to remember parent-"Root" even after be instantiated on scene. */
 			public Script_SpriteStudio6_Root InstanceRootParent;
+			public GameObject InstanceGameObjectControl;
 
 			public bool FlagHideForce;
 

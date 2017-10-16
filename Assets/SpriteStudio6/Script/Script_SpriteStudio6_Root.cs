@@ -22,6 +22,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	public int LimitTrack;
 	internal Library_SpriteStudio6.Control.Animation.Track[] TableControlTrack = null;
+	internal Library_SpriteStudio6.CallBack.FunctionControlEndTrackPlay[] FunctionPlayEndTrack = null;
 
 	public InformationPlay[] TableInformationPlay;
 	public Library_SpriteStudio6.Control.Animation.Parts[] TableControlParts;
@@ -267,22 +268,71 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Clear transient status */
+		int indexTrackSlave = -1;
+		bool flagRequestTransitionEnd;
+		bool flagRequestPlayEnd;
+		bool flagAnimationPlayAnyTrack = true;
+		bool flagTrackPlay;
+		int indexAnimation;
 		for(int i=0; i<countControlTrack; i++)
 		{
-			/* Check Play-End */
-
-
-			/* Check Transition-End */
-			if(true == TableControlTrack[i].StatusIsRequestTransitionEnd)
+			flagTrackPlay = TableControlTrack[i].StatusIsPlaying;
+			flagAnimationPlayAnyTrack |= flagTrackPlay;
+			if(true == flagTrackPlay)
 			{
-				int indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
-				if(0 <= indexTrackSlave)
+				flagRequestPlayEnd = TableControlTrack[i].StatusIsRequestPlayEnd;
+				flagRequestTransitionEnd = TableControlTrack[i].StatusIsRequestTransitionEnd;
+				indexAnimation = TableControlTrack[i].ArgumentContainer.IndexAnimation;
+
+				/* Check Transition-End */
+				if(true == flagRequestTransitionEnd)
 				{
-					/* Track Copy */
-					TableControlTrack[i].Stop(false);
+					indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
+					if(0 <= indexTrackSlave)
+					{
+						/* Take over playing status */
+
+						/* Copy Track playing datas */
+						/* MEMO: Since track-control manages only playing-frame, copy all. */
+						/* MEMO: If destination-animation has ended at transition complete, will callback. */
+						TableControlTrack[i] = TableControlTrack[indexTrackSlave];
+
+						/* Clear Transition */
+						TableControlTrack[i].StatusIsRequestTransitionEnd = false;
+						TableControlTrack[i].StatusIsStartAfterTransition = false;
+						TableControlTrack[i].StatusIsPausingDuringTransition = false;
+						TableControlTrack[i].Transition(-1, 0.0f, false);
+						flagRequestPlayEnd = TableControlTrack[i].StatusIsRequestPlayEnd;	/* Re-get */
+
+						/* Stop Slave */
+						TableControlTrack[indexTrackSlave].Stop(false);
+
+						/* Exec CallBack */
+						if((null != FunctionPlayEndTrack) && (null != FunctionPlayEndTrack[i]))
+						{
+							FunctionPlayEndTrack[i](	this,
+														i,
+														indexTrackSlave,
+														indexAnimation,
+														TableControlTrack[i].ArgumentContainer.IndexAnimation
+													);
+						}
+					}
 				}
+
+				/* Check Track Play-End */
+				if(true == flagRequestPlayEnd)
+				{
+					/* MEMO: At Play-End callback, "indexTrackSlave" is always -1. */
+					if((null != FunctionPlayEndTrack) && (null != FunctionPlayEndTrack[i]))
+					{
+						FunctionPlayEndTrack[i](this, i, -1, indexAnimation, -1);
+					}
+				}
+
+				TableControlTrack[i].StatusIsRequestPlayEnd = false;
+				TableControlTrack[i].StatusIsRequestTransitionEnd = false;
 			}
-			TableControlTrack[i].StatusIsRequestTransitionEnd = false;
 
 			/* MEMO: Originally should call function, but directly process (taking call-cost into account). */
 			/* MEMO: Since clear bits only, VALID is not judged.                                  */
@@ -292,17 +342,38 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.DECODE_ATTRIBUTE
 											);
 		}
-		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
-	}
 
-//	void OnPostRender()
-//	{
-//		/* Clear Holding-Materials */
-//		HolderMaterial.MaterialFree();
-//	}
-//	void OnDestroy()
-//	{
-//	}
+		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
+
+		/* Callback Play-End */
+		if((0 != (Status & FlagBitStatus.PLAYING)) && (false == flagAnimationPlayAnyTrack))
+		{
+			if(null != FunctionPlayEnd)
+			{
+				if(false == FunctionPlayEnd(this, InstanceGameObjectControl))
+				{
+					/* MEMO: When "FunctionPlayEnd" returns false, destroy self. */
+					/*       If have "Control-Object", will destroy as well.     */
+					if(null != InstanceGameObjectControl)
+					{
+						UnityEngine.Object.Destroy(InstanceGameObjectControl);
+					}
+					else
+					{
+						UnityEngine.Object.Destroy(gameObject);
+					}
+				}
+			}
+		}
+		if(false == flagAnimationPlayAnyTrack)
+		{
+			Status &= ~FlagBitStatus.PLAYING;
+		}
+		else
+		{
+			Status |= FlagBitStatus.PLAYING;
+		}
+	}
 	#endregion MonoBehaviour-Functions
 
 	/* ----------------------------------------------- Functions */
@@ -336,12 +407,19 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		{
 			goto ControlBootUpTrack_ErrorEnd;
 		}
+
+		FunctionPlayEndTrack = new Library_SpriteStudio6.CallBack.FunctionControlEndTrackPlay[countTrack];
+		if(null == FunctionPlayEndTrack)
+		{
+			goto ControlBootUpTrack_ErrorEnd;
+		}
 		for(int i=0; i<countTrack; i++)
 		{
 			if(false == TableControlTrack[i].BootUp())
 			{
 				goto ControlBootUpTrack_ErrorEnd;
 			}
+			FunctionPlayEndTrack[i] = null;
 		}
 
 		return(countTrack);
@@ -498,6 +576,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	private enum FlagBitStatus
 	{
 		VALID = 0x40000000,
+		PLAYING = 0x20000000,
 
 		CHANGE_CELLMAP = 0x08000000,
 

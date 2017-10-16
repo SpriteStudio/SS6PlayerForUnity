@@ -169,6 +169,7 @@ public partial class Script_SpriteStudio6_Root
 		}
 
 		/* Update Status */
+		Status |= FlagBitStatus.PLAYING;
 		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
 
 		/* Refresh Control-Parts */

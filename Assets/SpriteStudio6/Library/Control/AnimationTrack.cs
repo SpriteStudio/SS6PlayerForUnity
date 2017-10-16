@@ -179,8 +179,6 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
-				internal Library_SpriteStudio6.CallBack.FunctionControlEndTrackPlay FunctionPlayEnd;
-
 				internal Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer ArgumentContainer;
 
 				internal float TimeDelay;
@@ -214,8 +212,6 @@ public static partial class Library_SpriteStudio6
 				public void CleanUp()
 				{
 					Status = FlagBitStatus.CLEAR;
-
-					FunctionPlayEnd = null;
 
 					ArgumentContainer.CleanUp();
 
