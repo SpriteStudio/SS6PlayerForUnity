@@ -1685,7 +1685,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				else
 				{
-					informationAnimationParts.Hide.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Hide, true, true);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
+					informationAnimationParts.Hide.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Hide, true, true, false);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
 				}
 
 				informationAnimationParts.PartsColor.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PartsColor);
@@ -1709,7 +1709,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				informationAnimationParts.RadiusCollision.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RadiusCollision);
 
-// 				informationAnimationParts.UserData.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.UserData);	/* Not Adjust */
+				informationAnimationParts.UserData.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.UserData, Library_SpriteStudio6.Data.Animation.Attribute.DefaultUseData, false, true);
 				/* MEMO: Do not set at here. Set in processing for each part type. */
 //				informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance);
 //				informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect);
@@ -1788,7 +1788,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* MEMO: If "NOT_USED" is set, interpret that "Instance" attribute is not used. */
 							/*       Because "Hide" attribute is also unused.                               */
 							/*       (Since "Hide" attribute's default is "true", all frames are hidden)    */
-							informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance, Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false);
+							informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance, Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false, false);
 						}
 
 						informationAnimationParts.Effect.ListKey.Clear();
@@ -1822,7 +1822,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* MEMO: If "NOT_USED" is set, interpret that "Effect" attribute is not used. */
 							/*       Because "Hide" attribute is also unused.                             */
 							/*       (Since "Hide" attribute's default is "true", all frames are hidden)  */
-							informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect, Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false);
+							informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect, Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false, false);
 						}
 
 						informationAnimationParts.Instance.ListKey.Clear();

@@ -780,10 +780,7 @@ public static partial class Library_SpriteStudio6
 							bool flagHasSetup = false;
 							if(null != setup)
 							{
-								if(null != setup)
-								{
-									flagHasSetup = (0 < setup.CountGetKey()) ? true : false;
-								}
+								flagHasSetup = (0 < setup.CountGetKey()) ? true : false;
 							}
 
 							if(0 >= ListKey.Count)
@@ -819,7 +816,7 @@ public static partial class Library_SpriteStudio6
 							}
 						}
 
-						public bool KeyDataAdjustTopFrame(Attribute<_Type> setup, _Type valueDefault, bool flagNoKeyIsNoData)
+						public bool KeyDataAdjustTopFrame(Attribute<_Type> setup, _Type valueDefault, bool flagNoKeyIsNoData, bool flagNotRetroactivelyComplement)
 						{	/* MEMO: This function is for attributes with special specifications to adjust top frame's key data. */
 							/*       - When no key data, interpret as default value is set                                       */
 							/*       - When no key data in frame 0 ...                                                           */
@@ -829,10 +826,7 @@ public static partial class Library_SpriteStudio6
 							bool flagHasSetup = false;
 							if(null != setup)
 							{
-								if(null != setup)
-								{
-									flagHasSetup = (0 < setup.CountGetKey()) ? true : false;
-								}
+								flagHasSetup = (0 < setup.CountGetKey()) ? true : false;
 							}
 
 							if(0 >= ListKey.Count)
@@ -863,7 +857,10 @@ public static partial class Library_SpriteStudio6
 							KeyDataTopFrame.ValueCurveEnd = 0.0f;
 							if(false == flagHasSetup)
 							{	/* No Setup-Key */
-								KeyDataTopFrame.Value = valueDefault;
+								if(false == flagNotRetroactivelyComplement)
+								{
+									KeyDataTopFrame.Value = valueDefault;
+								}
 							}
 							else
 							{	/* Setup-Key */

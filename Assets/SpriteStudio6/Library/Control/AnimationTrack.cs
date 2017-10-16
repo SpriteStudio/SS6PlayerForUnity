@@ -20,7 +20,6 @@ public static partial class Library_SpriteStudio6
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
-				internal KindMode Mode;
 				internal FlagBitStatus Status;
 				internal bool StatusIsValid
 				{
@@ -41,6 +40,42 @@ public static partial class Library_SpriteStudio6
 					get
 					{
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING)));
+					}
+				}
+				internal bool StatusIsStartAfterTransition
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.START_AFTER_TRANSITION));
+					}
+					set
+					{
+						if(true == value)
+						{
+							Status |= FlagBitStatus.START_AFTER_TRANSITION;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.START_AFTER_TRANSITION;
+						}
+					}
+				}
+				internal bool StatusIsPausingDuringTransition
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.PAUSE_DURING_TRANSITION));
+					}
+					set
+					{
+						if(true == value)
+						{
+							Status |= FlagBitStatus.PAUSE_DURING_TRANSITION;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.PAUSE_DURING_TRANSITION;
+						}
 					}
 				}
 				internal bool StatusIsPlayStylePingpong
@@ -107,6 +142,42 @@ public static partial class Library_SpriteStudio6
 						return(0 != (Status & FlagBitStatus.IGNORE_SKIPLOOP));
 					}
 				}
+				internal bool StatusIsRequestPlayEnd
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.REQUEST_PLAYEND));
+					}
+					set
+					{
+						if(true == value)
+						{
+							Status |= FlagBitStatus.REQUEST_PLAYEND;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.REQUEST_PLAYEND;
+						}
+					}
+				}
+				internal bool StatusIsRequestTransitionEnd
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.REQUEST_TRANSITIONEND));
+					}
+					set
+					{
+						if(true == value)
+						{
+							Status |= FlagBitStatus.REQUEST_TRANSITIONEND;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.REQUEST_TRANSITIONEND;
+						}
+					}
+				}
 
 				internal Library_SpriteStudio6.CallBack.FunctionControlEndTrackPlay FunctionPlayEnd;
 
@@ -131,8 +202,9 @@ public static partial class Library_SpriteStudio6
 				internal int FrameRange;
 				internal float TimeRange;
 
-				internal float RateBlend;
-				internal float RateBlendNormalized;
+				internal float TimeElapsedTransition;
+				internal float TimeLimitTransition;
+				internal float RateTransition;
 
 				internal int IndexTrackSlave;
 				#endregion Variables & Properties
@@ -141,7 +213,6 @@ public static partial class Library_SpriteStudio6
 				#region Functions
 				public void CleanUp()
 				{
-					Mode = KindMode.NORMAL;
 					Status = FlagBitStatus.CLEAR;
 
 					FunctionPlayEnd = null;
@@ -167,8 +238,9 @@ public static partial class Library_SpriteStudio6
 					FrameRange = 0;
 					TimeRange = 0.0f;
 
-					RateBlend = 1.0f;
-					RateBlendNormalized = 1.0f;
+					TimeElapsedTransition = 0.0f;
+					TimeLimitTransition = 0.0f;
+					RateTransition = 0.0f;
 
 					IndexTrackSlave = -1;
 				}
@@ -193,7 +265,6 @@ public static partial class Library_SpriteStudio6
 									bool flagPingpong,
 									int timesPlay
 								)
-									
 				{
 					/* Check booted-up */
 					if(0 == (Status & FlagBitStatus.VALID))
@@ -253,6 +324,22 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
+				public bool Transition(int indexTrackSlave, float time, bool flagTimeAffectedRateTime)
+				{
+					if(0 == (Status & FlagBitStatus.VALID))
+					{
+						return(false);
+					}
+
+					IndexTrackSlave = indexTrackSlave;
+
+					TimeElapsedTransition = 0.0f;
+					TimeLimitTransition = (true == flagTimeAffectedRateTime) ? time : (time * RateTime);
+					RateTransition = 0.0f;
+
+					return(true);
+				}
+
 				public bool Stop(bool flagJumpEnd)
 				{
 					if(0 == (Status & FlagBitStatus.VALID))
@@ -296,14 +383,29 @@ public static partial class Library_SpriteStudio6
 					timeElapsed *= RateTime;
 					TimeElapsedNow = timeElapsed;
 
-					if((FlagBitStatus.VALID | FlagBitStatus.PLAYING) != (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)))
-					{	/* Not-Playing */
+					if(0 == (Status & FlagBitStatus.VALID))
+					{
 						return(false);
 					}
-					if((0 != (Status & FlagBitStatus.PAUSING)) && (0 == (Status & FlagBitStatus.PLAYING_START)))
-					{	/* Play & Pausing (Through, Right-After-Starting) */
-						return(true);
+					if(0 == (Status & FlagBitStatus.PLAYING))
+					{	/* Not-Playing */
+						/* MEMO: Even if the animation has ended, there are cases when you are transitioning. */
+						goto AnimationUpdate_UpdateTransition;
 					}
+
+					if(0 == (Status & FlagBitStatus.PLAYING_START))
+					{	/* (Not Right-After-Starting) */
+						if(0 != (Status & FlagBitStatus.PAUSING))
+						{	/* Play & Pausing */
+							/* MEMO: Transition does not progress during paused. */
+							return(true);
+						}
+						if(0 != (Status & FlagBitStatus.PAUSE_DURING_TRANSITION))
+						{
+							goto AnimationUpdate_UpdateTransition;
+						}
+					}
+
 					if(0.0f > TimeDelay)
 					{	/* Wait Infinite */
 						TimeDelay = -1.0f;
@@ -544,6 +646,23 @@ public static partial class Library_SpriteStudio6
 					{
 						Status |= FlagBitStatus.DECODE_ATTRIBUTE;
 					}
+//					goto AnimationUpdate_UpdateTransition;
+
+				AnimationUpdate_UpdateTransition:;
+					Status &= ~FlagBitStatus.REQUEST_TRANSITIONEND;
+					if(0 <= IndexTrackSlave)
+					{
+						TimeElapsedTransition += timeElapsed;
+						if(TimeLimitTransition <= TimeElapsedTransition)
+						{	/* End */
+							RateTransition = 1.0f;	/* Clip */
+							Status |= FlagBitStatus.REQUEST_TRANSITIONEND;
+						}
+						else
+						{
+							RateTransition = Mathf.Lerp(0.0f, TimeLimitTransition, TimeElapsedTransition);
+						}
+					}
 					return(true);
 
 				AnimationUpdate_PlayEnd_Foward:;
@@ -551,14 +670,14 @@ public static partial class Library_SpriteStudio6
 					Status |= (FlagBitStatus.REQUEST_PLAYEND | FlagBitStatus.DECODE_ATTRIBUTE);
 					TimeElapsed = TimeRange;
 					ArgumentContainer.Frame = FrameEnd;
-					return(true);
+					goto AnimationUpdate_UpdateTransition;
 
 				AnimationUpdate_PlayEnd_Reverse:;
 					TimesPlayNow = 0;	/* Clip */
 					Status |= (FlagBitStatus.REQUEST_PLAYEND | FlagBitStatus.DECODE_ATTRIBUTE);
 					TimeElapsed = 0.0f;
 					ArgumentContainer.Frame = FrameStart;
-					return(true);
+					goto AnimationUpdate_UpdateTransition;
 				}
 
 				/* MEMO: Originally should be function, but call-cost is high(taking processing content into account). */
@@ -701,8 +820,10 @@ public static partial class Library_SpriteStudio6
 					PLAYING = 0x20000000,
 					PAUSING = 0x10000000,
 
-					STYLE_PINGPONG = 0x08000000,
-					STYLE_REVERSE = 0x04000000,
+					START_AFTER_TRANSITION = 0x08000000,
+					PAUSE_DURING_TRANSITION = 0x04000000,
+					STYLE_PINGPONG = 0x02000000,
+					STYLE_REVERSE = 0x01000000,
 
 					PLAYING_START = 0x00800000,
 					PLAYING_REVERSE = 0x00400000,
@@ -715,14 +836,9 @@ public static partial class Library_SpriteStudio6
 					IGNORE_SKIPLOOP = 0x00004000,
 
 					REQUEST_PLAYEND = 0x00000080,
+					REQUEST_TRANSITIONEND = 0x00000010,
 
 					CLEAR = 0x00000000,
-				}
-
-				internal enum KindMode
-				{
-					NORMAL = 0,
-					SLAVE,	/* Fade destination when bridging animation */
 				}
 				#endregion Enums & Constants
 			}

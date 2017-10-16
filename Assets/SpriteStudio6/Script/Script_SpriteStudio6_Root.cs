@@ -269,6 +269,21 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* Clear transient status */
 		for(int i=0; i<countControlTrack; i++)
 		{
+			/* Check Play-End */
+
+
+			/* Check Transition-End */
+			if(true == TableControlTrack[i].StatusIsRequestTransitionEnd)
+			{
+				int indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
+				if(0 <= indexTrackSlave)
+				{
+					/* Track Copy */
+					TableControlTrack[i].Stop(false);
+				}
+			}
+			TableControlTrack[i].StatusIsRequestTransitionEnd = false;
+
 			/* MEMO: Originally should call function, but directly process (taking call-cost into account). */
 			/* MEMO: Since clear bits only, VALID is not judged.                                  */
 			/*       (Even if clearing those bits of stopping track, processing is not affected.) */
