@@ -292,8 +292,10 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Position;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacityLocal;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
@@ -301,6 +303,9 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect Effect;
+
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt IDPartsMask;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateMask;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;	/* for Sphere-Collider */
 
@@ -320,8 +325,10 @@ public static partial class Library_SpriteStudio6
 					Position = null;
 					Rotation = null;
 					Scaling = null;
+					ScalingLocal = null;
 
 					RateOpacity = null;
+					RateOpacityLocal = null;
 
 					PositionAnchor = null;
 					SizeForce = null;
@@ -331,6 +338,7 @@ public static partial class Library_SpriteStudio6
 					Effect = null;
 
 					RadiusCollision = null;
+					RateMask = null;
 
 					Plain.Cell = null;
 					Plain.PartsColor = null;
@@ -1158,8 +1166,27 @@ public static partial class Library_SpriteStudio6
 					INSTANCE,
 					EFFECT,
 
+					MASK,
+					CLEARSTENCIL,	/* Player (for Unity) only */
+
+					JOINT,
+					ARMATURE,
+					MOVENODE,
+					CONSTRAINT,
+					BONEPOINT,
+
 					TERMINATOR,
 					NORMAL = TERMINATOR	/* NORMAL_TRIANGLE2 or NORMAL_TRIANGLE4 *//* only during import */
+				}
+
+				public enum KindCollision
+				{
+					NON = 0,
+					SQUARE,
+					AABB,
+					CIRCLE,
+					CIRCLE_SCALEMINIMUM,
+					CIRCLE_SCALEMAXIMUM
 				}
 
 				public enum KindColorLabel
@@ -1172,16 +1199,6 @@ public static partial class Library_SpriteStudio6
 					BLUE,
 					VIOLET,
 					GRAY,
-				}
-
-				public enum KindCollision
-				{
-					NON = 0,
-					SQUARE,
-					AABB,
-					CIRCLE,
-					CIRCLE_SCALEMINIMUM,
-					CIRCLE_SCALEMAXIMUM
 				}
 				#endregion Enums & Constants
 			}
@@ -1235,23 +1252,42 @@ public static partial class Library_SpriteStudio6
 		{
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
-			public readonly static UnityEngine.Shader[] TableSprite = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
+			public readonly static UnityEngine.Shader[] TableSpriteThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
 			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Subtract"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Multiple"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/MultipleNA"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Screen"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Exclude"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Inverse")
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Subtract"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Multiple"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/MultipleNA"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Screen"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Exclude"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Inverse")
 			};
 
-			public readonly static UnityEngine.Shader[] TableEffect = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
+			public readonly static UnityEngine.Shader[] TableSpriteMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
 			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/AddPA"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Subtract"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Multiple"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/MultipleNA"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Screen"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Exclude"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Inverse")
+			};
+
+			public readonly static UnityEngine.Shader[] TableEffectThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
+			{
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/AddPA"),
+			};
+
+			public readonly static UnityEngine.Shader[] TableEffectMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
+			{
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/AddPA"),
 			};
 			#endregion Enums & Constants
 		}

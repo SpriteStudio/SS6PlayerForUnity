@@ -157,6 +157,16 @@ public static partial class Library_SpriteStudio6
 								goto BootUp_ErrorEnd;
 							}
 							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+							break;
 					}
 
 					AnimationRefresh();
@@ -259,6 +269,16 @@ public static partial class Library_SpriteStudio6
 							/* Update Effect */
 							/* MEMO: No processing */
 //							UpdateEffect(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 							break;
 					}
 
@@ -760,10 +780,12 @@ public static partial class Library_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 								break;
+
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 								DrawNormal(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack], flagHideDefault, ref matrixCorrection);
 								break;
+
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 								/* Update Instance */
 								DrawInstance(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack], flagHideDefault, ref matrixCorrection);
@@ -771,6 +793,16 @@ public static partial class Library_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 								/* Update Effect */
 								DrawEffect(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack], flagHideDefault, ref matrixCorrection);
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 								break;
 						}
 					}

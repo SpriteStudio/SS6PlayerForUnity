@@ -676,7 +676,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					material = informationTexture.MaterialAnimationSS6PU.TableData[indexOperationTarget];
 					if(null == material)
 					{
-						material = new Material(Library_SpriteStudio6.Data.Shader.TableSprite[indexOperationTarget]);
+						material = new Material(Library_SpriteStudio6.Data.Shader.TableSpriteThrough[indexOperationTarget]);
 						AssetDatabase.CreateAsset(material, informationTexture.MaterialAnimationSS6PU.TableName[indexOperationTarget]);
 						informationTexture.MaterialAnimationSS6PU.TableData[indexOperationTarget] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexOperationTarget]);
 					}
@@ -704,7 +704,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					material = informationTexture.MaterialEffectSS6PU.TableData[indexOperationTarget];
 					if(null == material)
 					{
-						material = new Material(Library_SpriteStudio6.Data.Shader.TableEffect[indexOperationTarget]);
+						material = new Material(Library_SpriteStudio6.Data.Shader.TableEffectThrough[indexOperationTarget]);
 						AssetDatabase.CreateAsset(material, informationTexture.MaterialEffectSS6PU.TableName[indexOperationTarget]);
 						informationTexture.MaterialEffectSS6PU.TableData[indexOperationTarget] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexOperationTarget]);
 					}

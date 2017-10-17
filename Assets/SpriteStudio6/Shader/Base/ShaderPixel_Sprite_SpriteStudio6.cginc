@@ -16,7 +16,7 @@ fixed4 PS_main(InputPS input) : COLOR0
 
 	fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
 	pixel *= input.ColorMain;
-	if (0.0f >= pixel.a)
+	if(0.0f >= pixel.a)
 	{
 		discard;
 	}

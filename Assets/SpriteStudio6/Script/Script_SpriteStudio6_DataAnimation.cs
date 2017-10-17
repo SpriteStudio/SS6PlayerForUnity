@@ -84,6 +84,16 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+					break;
 			}
 		}
 		return(count);

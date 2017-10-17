@@ -326,6 +326,30 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT;
 						break;
 
+					case "mask":
+						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK;
+						break;
+
+					case "joint":
+						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT;
+						break;
+
+					case "armature":
+						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE;
+						break;
+
+					case "movenode":
+						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE;
+						break;
+
+					case "constraint":
+						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT;
+						break;
+
+					case "bonepoint":
+						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT;
+						break;
+
 					default:
 						LogWarning(messageLogPrefix, "Unknown Parts-Type \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
 						goto case "null";
@@ -1828,6 +1852,20 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.Instance.ListKey.Clear();
 						break;
 
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+						break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+						break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+						break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+						break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+						break;
+
 					default:
 						break;
 				}
@@ -2186,6 +2224,16 @@ public static partial class LibraryEditor_SpriteStudio6
 									listIndexPartsDraw.Add(i);
 									break;
 
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+									break;
+
 								default:
 									/* MEMO: No reach here. */
 									break;
@@ -2232,6 +2280,16 @@ public static partial class LibraryEditor_SpriteStudio6
 											/* MEMO: "Instance"-parts and "Effect"-parts are always updated regardless of hide state, so unconditionally added to list. */
 											listIndexPartsSort.Add(indexParts);
 											listPrioritySort.Add(tableDrawPriority[indexParts][frame]);
+											break;
+
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+											break;
+
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 											break;
 
 										default:
@@ -3067,6 +3125,16 @@ public static partial class LibraryEditor_SpriteStudio6
 										informationParts.Data.PrefabUnderControl = informationSSPJ.TableInformationSSEE[indexUnderControl].PrefabEffectSS6PU.TableData[0];
 									}
 								}
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 								break;
 
 							default:

@@ -549,6 +549,16 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 						}
 					}
 					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+					break;
 			}
 		}
 		return(true);
