@@ -1158,9 +1158,6 @@ public static partial class Library_SpriteStudio6
 					INSTANCE,
 					EFFECT,
 
-//					JOINT,
-//					ARMATURE,
-
 					TERMINATOR,
 					NORMAL = TERMINATOR	/* NORMAL_TRIANGLE2 or NORMAL_TRIANGLE4 *//* only during import */
 				}

@@ -26,9 +26,9 @@ fixed4 PS_main(InputPS input) : COLOR0
 	float rate = input.ColorOverlay.a;
 	float rateInverse = 1.0f - rate;
 	color[0] = (pixel * rateInverse) + (input.ColorOverlay * rate);	/* Mix */
-	color[1] = pixel + (input.ColorOverlay * rate);	/* Add */
-	color[2] = pixel - (input.ColorOverlay * rate);	/* Subtract */
-	color[3] = (pixel * rateInverse) + ((pixel * input.ColorOverlay) * rate);	/* Multiple */
+	color[1] = (pixel * rateInverse) + ((pixel * input.ColorOverlay) * rate);	/* Multiple */
+	color[2] = pixel + (input.ColorOverlay * rate);	/* Add */
+	color[3] = pixel - (input.ColorOverlay * rate);	/* Subtract */
 
 	pixel = color[input.Texture00UV.z];
 	pixel.a = pixelA;

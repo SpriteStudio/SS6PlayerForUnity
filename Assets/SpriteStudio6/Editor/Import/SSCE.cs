@@ -117,10 +117,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					informationSSCE.SizePixelY = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplit[1]);
 				}
 
-				/* Get Texture Premultified-Alpha */
-				informationSSCE.flagConvertImagePremultipliedAlpha = informationSSPJ.flagConvertImagePremultipliedAlpha;
-				informationSSCE.flagBlendImagePremultipliedAlpha = informationSSPJ.flagBlendImagePremultipliedAlpha;
-
 				/* Get Texture Addressing */
 				informationSSCE.WrapTexture = informationSSPJ.WrapTexture;
 				informationSSCE.FilterTexture = informationSSPJ.FilterTexture;
@@ -360,8 +356,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				public int SizePixelY;	/* Temporary */
 				public Library_SpriteStudio6.Data.Texture.KindWrap WrapTexture;
 				public Library_SpriteStudio6.Data.Texture.KindFilter FilterTexture;
-				public bool flagConvertImagePremultipliedAlpha;
-				public bool flagBlendImagePremultipliedAlpha;
 
 				public Cell[] TableCell;
 				#endregion Variables & Properties
@@ -381,8 +375,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					IndexTexture = -1;
 					WrapTexture = (Library_SpriteStudio6.Data.Texture.KindWrap)(-1);
 					FilterTexture = (Library_SpriteStudio6.Data.Texture.KindFilter)(-1);
-					flagConvertImagePremultipliedAlpha = false;
-					flagBlendImagePremultipliedAlpha = false;
 
 					TableCell = null;
 				}
