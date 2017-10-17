@@ -1502,41 +1502,26 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Set Parts-Color */
-//						if(null != DataPartsColorOverwrite)
-//						{
-//							if(KindColorOperation.NON != DataPartsColorOverwrite.Operation))
-//							{
-//								goto Plain_PartColor_Clear;
-//							}
-//						}
-//						else
+						flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
+						if(true == flagUpdateValueAttribute)
 						{
-							flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
-							if(true == flagUpdateValueAttribute)
-							{
-								Status |= FlagBitStatus.UPDATE_COLORPARTS;
-							}
-							if(0 != (Status & FlagBitStatus.UPDATE_COLORPARTS))
-							{
-								Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+							Status |= FlagBitStatus.UPDATE_COLORPARTS;
+						}
+						if(0 != (Status & FlagBitStatus.UPDATE_COLORPARTS))
+						{
+							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+						}
 
-								if(Library_SpriteStudio6.KindBoundBlend.NON == PartsColor.Value.Bound)
-								{
-									goto Plain_PartColor_Clear;
-								}
-							}
-
+						if(0 != (Status & FlagBitStatus.UPDATE_COLORPARTS))
+						{
 							float operation = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
 							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear;
-
-							float sumPower = 0.0f;
-
 							Color[] tableColor = PartsColor.Value.VertexColor;
+
 							for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 							{
 								ParameterBlendDraw[i].x = operation;
 								ParameterBlendDraw[i].y = RateOpacity.Value;
-								sumPower += ParameterBlendDraw[i].y;
 
 								ColorPartsDraw[i] = tableColor[i];
 								sumColor += tableColor[i];
@@ -1546,24 +1531,11 @@ public static partial class Library_SpriteStudio6
 							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
 							{
 								sumColor *= 0.25f;
-								sumPower *= 0.25f;
 
 								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].x = operation;
-								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].y = sumPower;
-								ColorPartsDraw[(int)Library_SpriteStudio6.KindVertex.C] = sumColor;
+								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].y = RateOpacity.Value;
 							}
 						}
-
-						goto Plain_PartColor_End;
-
-					Plain_PartColor_Clear:;
-						for(int i=0; i<CountVertex; i++)
-						{
-							ParameterBlendDraw[i].x = (float)((int)Library_SpriteStudio6.KindOperationBlend.MIX) + 0.01f;	/* "+1.0f" for -1->0 *//* "+0.01f" for Rounding-off-Error */
-							ColorPartsDraw[i] = Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear;
-							ParameterBlendDraw[i].y = RateOpacity.Value;	/* Opacity */
-						}
-					Plain_PartColor_End:;
 
 						/* Calculate Mesh coordinates */
 						float left = (-pivotSprite.x) * RateScaleMesh.x;
