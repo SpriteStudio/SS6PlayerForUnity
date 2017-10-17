@@ -121,6 +121,18 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 				}
 
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/convertImageToPMA", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationSSPJ.flagConvertImagePremultipliedAlpha = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
+				}
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/blendImageAsPMA", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationSSPJ.flagBlendImagePremultipliedAlpha = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
+				}
+
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/filterMode", managerNameSpace);
 				switch(valueText)
 				{
@@ -262,6 +274,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public Library_SpriteStudio6.Data.Texture.KindWrap WrapTexture;
 				public Library_SpriteStudio6.Data.Texture.KindFilter FilterTexture;
+				public bool flagConvertImagePremultipliedAlpha;
+				public bool flagBlendImagePremultipliedAlpha;
+
 				public string NameDirectoryBaseTexture;
 				public LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture[] TableInformationTexture;
 				public List<string> ListNameTexture;	/* Temporary ... Accumulating list for determine TableNameTexture. Valid during analyzing SSxx-s. */
@@ -296,6 +311,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					WrapTexture = Library_SpriteStudio6.Data.Texture.KindWrap.CLAMP;
 					FilterTexture = Library_SpriteStudio6.Data.Texture.KindFilter.NEAREST;
+					flagConvertImagePremultipliedAlpha = false;
+					flagBlendImagePremultipliedAlpha = false;
 					NameDirectoryBaseTexture = "";
 					ListNameTexture = null;
 					TableInformationTexture = null;

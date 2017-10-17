@@ -26,7 +26,8 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite/Screen"
 			ZTest LEqual
 			ZWRITE Off
 
-			Blend OneMinusDstColor OneMinusSrcAlpha
+//			Blend OneMinusDstColor OneMinusSrcAlpha
+			Blend OneMinusDstColor One
 
 			CGPROGRAM
 			#pragma vertex VS_main
