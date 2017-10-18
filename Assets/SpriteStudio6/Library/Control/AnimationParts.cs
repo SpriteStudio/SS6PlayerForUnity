@@ -1512,7 +1512,8 @@ public static partial class Library_SpriteStudio6
 							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
 						}
 
-						if(0 != (Status & FlagBitStatus.UPDATE_COLORPARTS))
+						float rateOpacity = instanceRoot.RateOpacity * RateOpacity.Value;
+						if(0 != (Status & (FlagBitStatus.UPDATE_COLORPARTS | FlagBitStatus.UPDATE_PARAMETERBLEND)))
 						{
 							float operation = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
 							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear;
@@ -1521,7 +1522,7 @@ public static partial class Library_SpriteStudio6
 							for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 							{
 								ParameterBlendDraw[i].x = operation;
-								ParameterBlendDraw[i].y = RateOpacity.Value;
+								ParameterBlendDraw[i].y = rateOpacity;
 
 								ColorPartsDraw[i] = tableColor[i];
 								sumColor += tableColor[i];
@@ -1530,10 +1531,10 @@ public static partial class Library_SpriteStudio6
 
 							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
 							{
-								sumColor *= 0.25f;
-
 								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].x = operation;
-								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].y = RateOpacity.Value;
+								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].y = rateOpacity;
+
+								ColorPartsDraw[(int)Library_SpriteStudio6.KindVertex.C] = sumColor * 0.25f;
 							}
 						}
 
@@ -1605,7 +1606,10 @@ public static partial class Library_SpriteStudio6
 //						}
 						if(0 != (Status & FlagBitStatus.UPDATE_UVTEXTURE))
 						{
-							MaterialDraw = instanceRoot.MaterialGet(IndexCellMapDraw, instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget);
+							MaterialDraw = instanceRoot.MaterialGet(	IndexCellMapDraw,
+																		instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
+																		Library_SpriteStudio6.KindMasking.THROUGH
+																	);
 						}
 //						if(0 != (Status & FlagBitStatus.UPDATE_COLORPARTS))
 //						{

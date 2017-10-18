@@ -39,10 +39,9 @@ public static partial class Library_SpriteStudio6
 
 		MIX = 0,
 		ADD,
-		ADD_PA,
+//		ADD_PA,
 
 		TERMINATOR,
-		TERMINATOR_KIND = ADD,
 	}
 
 	public enum KindBoundBlend
@@ -70,6 +69,14 @@ public static partial class Library_SpriteStudio6
 		NO_CHANGE = -1,
 		NORMAL = 0,
 		PINGPONG = 1,
+	}
+
+	public enum KindMasking
+	{
+		THROUGH = 0,
+		MASK,
+
+		TERMINATOR
 	}
 	#endregion Enums & Constants
 
@@ -1280,14 +1287,14 @@ public static partial class Library_SpriteStudio6
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/AddPA"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/AddPA"),
 			};
 
 			public readonly static UnityEngine.Shader[] TableEffectMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/AddPA"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/AddPA"),
 			};
 			#endregion Enums & Constants
 		}

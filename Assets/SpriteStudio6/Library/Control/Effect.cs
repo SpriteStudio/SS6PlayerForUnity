@@ -556,7 +556,10 @@ public static partial class Library_SpriteStudio6
 						{
 							IndexCellMap = indexCellMap;
 							IndexCell = indexCell;
-							MaterialDraw = instanceRoot.MaterialGet(IndexCellMap, DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget);
+							MaterialDraw = instanceRoot.MaterialGet(	IndexCellMap,
+																		DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget,
+																		Library_SpriteStudio6.KindMasking.THROUGH
+																	);
 
 							float pivotXCell = dataCellMap.TableCell[indexCell].Pivot.x;
 							float pivotYCell = dataCellMap.TableCell[indexCell].Pivot.y;

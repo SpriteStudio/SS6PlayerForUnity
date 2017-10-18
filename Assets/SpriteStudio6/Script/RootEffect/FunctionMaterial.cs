@@ -21,33 +21,36 @@ public partial class Script_SpriteStudio6_RootEffect
 		Blend Operation for the target
 	@retval	Return-Value
 		Material
+
+	Get specified material in TableMaterial.
 	*/
-	public Material MaterialGet(int indexCellMap, Library_SpriteStudio6.KindOperationBlendEffect operationBlend)
+	public Material MaterialGet(	int indexCellMap,
+										Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
+										Library_SpriteStudio6.KindMasking masking
+									)
 	{
-		const int CountLength = (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
-		if(	(0 <= indexCellMap)
-			&& ((null != TableMaterial) && ((TableMaterial.Length / CountLength) > indexCellMap))
-			&& (Library_SpriteStudio6.KindOperationBlendEffect.NON < operationBlend) && (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR > operationBlend)
-			)
+		int indexMaterial = IndexGetMaterialTable(indexCellMap, operationBlend, masking);
+		if(0 > indexMaterial)
 		{
-			return(TableMaterial[(indexCellMap * CountLength) + (int)operationBlend]);
+			return(null);
 		}
-		return(null);
+		return(TableMaterial[indexMaterial]);
 	}
 
 	/* ********************************************************* */
 	//! Get Material-Table length
 	/*!
-	@param	countCellMap
-		Number of CellMap-s<br>
-		0 == Currently set Material-Table length<br>
-		-1 == Original Material-Table length
+	@param	flagInUse
+		true == TableMaterial's length of Currently in use<br>
+		false == TableMaterial's length of original animation data
 	@retval	Return-Value
 		Material-Table length
+
+	Get TableMaterial's length.
 	*/
-	public int CountGetMaterialTable(int countCellMap)
+	public int CountGetMaterialTable(bool flagInUse=true)
 	{
-		if(0 > countCellMap)
+		if(false == flagInUse)
 		{	/* Original */
 			if((null == DataEffect) || (null == DataEffect.TableMaterial))
 			{
@@ -57,17 +60,32 @@ public partial class Script_SpriteStudio6_RootEffect
 			return(DataEffect.TableMaterial.Length);
 		}
 
-		if(0 == countCellMap)
+		if(null == TableMaterial)
 		{
-			if(null == TableMaterial)
-			{
-				return(-1);
-			}
-
-			return(TableMaterial.Length);
+			return(-1);
 		}
 
-		return(countCellMap * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_KIND);
+			return(TableMaterial.Length);
+	}
+
+	/* ********************************************************* */
+	//! Get Material-Table length
+	/*!
+	@param	countCellMap
+		Number of CellMap-s
+	@retval	Return-Value
+		Material-Table length
+
+	If give positive number to "countCellMap", returns length of materials needed to store.
+	*/
+	public static int CountGetMaterialTable(int countCellMap)
+	{
+		if(0 > countCellMap)
+		{
+			return(-1);
+		}
+
+		return(countCellMap * ((int)Library_SpriteStudio6.KindMasking.TERMINATOR * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR));
 	}
 
 	/* ********************************************************* */
@@ -75,14 +93,28 @@ public partial class Script_SpriteStudio6_RootEffect
 	/*!
 	@param	indexCellMap
 		index of CellMap
-	@param	blend
+	@param	operationBlend
 		Kind of Blending
+	@param	masking
+		Kind of Masking
 	@retval	Return-Value
 		index of Material-Table
+
+	Get material's index in TableMaterial.
 	*/
-	public int IndexGetMaterialTable(int indexCellMap, Library_SpriteStudio6.KindOperationBlendEffect blend)
+	public int IndexGetMaterialTable(	int indexCellMap,
+										Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
+										Library_SpriteStudio6.KindMasking masking
+									)
 	{
-		return((indexCellMap * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_KIND) + (int)blend);
+		if((0 > indexCellMap) || (TableCellMap.Length <= indexCellMap)
+				|| (Library_SpriteStudio6.KindOperationBlendEffect.NON >= operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend)
+				|| (Library_SpriteStudio6.KindMasking.THROUGH > masking) || (Library_SpriteStudio6.KindMasking.TERMINATOR <= masking)
+			)
+		{
+			return(-1);
+		}
+		return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR) + (int)operationBlend);
 	}
 	#endregion Functions
 }

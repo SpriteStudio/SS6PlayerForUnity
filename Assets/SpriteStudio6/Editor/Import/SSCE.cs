@@ -479,10 +479,14 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						PrefabTexture.CleanUp();
 						PrefabTexture.BootUp(1);	/* Always 1 */
+
+						int countMaterial;
 						MaterialAnimationSS6PU.CleanUp();
-						MaterialAnimationSS6PU.BootUp((int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR);
+						countMaterial = Script_SpriteStudio6_Root.CountGetMaterialTable(1);
+						MaterialAnimationSS6PU.BootUp(countMaterial);
 						MaterialEffectSS6PU.CleanUp();
-						MaterialEffectSS6PU.BootUp((int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR);
+						countMaterial = Script_SpriteStudio6_RootEffect.CountGetMaterialTable(1);
+						MaterialEffectSS6PU.BootUp(countMaterial);
 					}
 
 					public string FileNameGetFullPath()
@@ -620,10 +624,11 @@ public static partial class LibraryEditor_SpriteStudio6
 																		Information.Texture informationTexture,
 																		string nameOutputAssetFolderBase,
 																		Library_SpriteStudio6.KindOperationBlend operationTarget,
+																		Library_SpriteStudio6.KindMasking masking,
 																		Material materialOverride
 																	)
 				{
-					int indexTable = (int)operationTarget;
+					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(0, operationTarget, masking);
 					if(null != materialOverride)
 					{	/* Specified */
 						informationTexture.MaterialAnimationSS6PU.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
@@ -632,7 +637,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					else
 					{	/* Default */
 						informationTexture.MaterialAnimationSS6PU.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, nameOutputAssetFolderBase)
-																							+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, informationTexture.NameFileBody, informationSSPJ.NameFileBody) + "_" + operationTarget.ToString()
+																							+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, informationTexture.NameFileBody, informationSSPJ.NameFileBody)
+																								+ "_" + NameKindMasking[(int)masking]
+																								+ "_" + operationTarget.ToString()
 																							+ LibraryEditor_SpriteStudio6.Import.NameExtentionMaterial;
 						informationTexture.MaterialAnimationSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
 					}
@@ -648,10 +655,11 @@ public static partial class LibraryEditor_SpriteStudio6
 																	Information.Texture informationTexture,
 																	string nameOutputAssetFolderBase,
 																	Library_SpriteStudio6.KindOperationBlendEffect operationTarget,
+																	Library_SpriteStudio6.KindMasking masking,
 																	Material materialOverride
 																)
 				{
-					int indexTable = (int)operationTarget;
+					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(0, operationTarget, masking);
 					if(null != materialOverride)
 					{	/* Specified */
 						informationTexture.MaterialEffectSS6PU.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
@@ -660,7 +668,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					else
 					{	/* Default */
 						informationTexture.MaterialEffectSS6PU.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, nameOutputAssetFolderBase)
-																						+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, informationTexture.NameFileBody, informationSSPJ.NameFileBody) + "_" + operationTarget.ToString()
+																						+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, informationTexture.NameFileBody, informationSSPJ.NameFileBody)
+																							+ "_" + NameKindMasking[(int)masking]
+																							+ "_" + operationTarget.ToString()
 																						+ LibraryEditor_SpriteStudio6.Import.NameExtentionMaterial;
 						informationTexture.MaterialEffectSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexTable]);
 					}
@@ -674,19 +684,31 @@ public static partial class LibraryEditor_SpriteStudio6
 				public static bool AssetCreateMaterialAnimation(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 																	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 																	Information.Texture informationTexture,
-																	Library_SpriteStudio6.KindOperationBlend operationTarget
+																	Library_SpriteStudio6.KindOperationBlend operationTarget,
+																	Library_SpriteStudio6.KindMasking masking
 																)
 				{
 					const string messageLogPrefix = "Create Asset(Material-Animation)";
-					int indexOperationTarget = (int)operationTarget;
+					int indexOperation = (int)operationTarget;
+					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(0, operationTarget, masking);
 
 					Material material = null;
-					material = informationTexture.MaterialAnimationSS6PU.TableData[indexOperationTarget];
+					material = informationTexture.MaterialAnimationSS6PU.TableData[indexTable];
 					if(null == material)
 					{
-						material = new Material(Library_SpriteStudio6.Data.Shader.TableSpriteThrough[indexOperationTarget]);
-						AssetDatabase.CreateAsset(material, informationTexture.MaterialAnimationSS6PU.TableName[indexOperationTarget]);
-						informationTexture.MaterialAnimationSS6PU.TableData[indexOperationTarget] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexOperationTarget]);
+						switch(masking)
+						{
+							case Library_SpriteStudio6.KindMasking.THROUGH:
+								material = new Material(Library_SpriteStudio6.Data.Shader.TableSpriteThrough[indexOperation]);
+								break;
+
+							case Library_SpriteStudio6.KindMasking.MASK:
+								material = new Material(Library_SpriteStudio6.Data.Shader.TableSpriteMask[indexOperation]);
+								break;
+						}
+
+						AssetDatabase.CreateAsset(material, informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
+						informationTexture.MaterialAnimationSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
 					}
 
 					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
@@ -702,19 +724,31 @@ public static partial class LibraryEditor_SpriteStudio6
 				public static bool AssetCreateMaterialEffect(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 																LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 																Information.Texture informationTexture,
-																Library_SpriteStudio6.KindOperationBlendEffect operationTarget
+																Library_SpriteStudio6.KindOperationBlendEffect operationTarget,
+																Library_SpriteStudio6.KindMasking masking
 															)
 				{
 					const string messageLogPrefix = "Create Asset(Material-Effect)";
-					int indexOperationTarget = (int)operationTarget;
+					int indexOperation = (int)operationTarget;
+					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(0, operationTarget, masking);
 
 					Material material = null;
-					material = informationTexture.MaterialEffectSS6PU.TableData[indexOperationTarget];
+					material = informationTexture.MaterialEffectSS6PU.TableData[indexTable];
 					if(null == material)
 					{
-						material = new Material(Library_SpriteStudio6.Data.Shader.TableEffectThrough[indexOperationTarget]);
-						AssetDatabase.CreateAsset(material, informationTexture.MaterialEffectSS6PU.TableName[indexOperationTarget]);
-						informationTexture.MaterialEffectSS6PU.TableData[indexOperationTarget] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexOperationTarget]);
+						switch(masking)
+						{
+							case Library_SpriteStudio6.KindMasking.THROUGH:
+								material = new Material(Library_SpriteStudio6.Data.Shader.TableEffectThrough[indexOperation]);
+								break;
+
+							case Library_SpriteStudio6.KindMasking.MASK:
+								material = new Material(Library_SpriteStudio6.Data.Shader.TableEffectMask[indexOperation]);
+								break;
+						}
+
+						AssetDatabase.CreateAsset(material, informationTexture.MaterialEffectSS6PU.TableName[indexTable]);
+						informationTexture.MaterialEffectSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexTable]);
 					}
 
 					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
@@ -767,6 +801,15 @@ public static partial class LibraryEditor_SpriteStudio6
 //					return(false);
 				}
 				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				private readonly static string[] NameKindMasking = new string[(int)Library_SpriteStudio6.KindMasking.TERMINATOR]
+				{
+					"T",
+					"M"
+				};
+				#endregion Enums & Constants
 			}
 			#endregion Classes, Structs & Interfaces
 		}

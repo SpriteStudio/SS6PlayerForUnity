@@ -787,6 +787,16 @@ public static partial class LibraryEditor_SpriteStudio6
 																												informationSSPJ.TableInformationTexture[i],
 																												nameOutputAssetFolderBase,
 																												(Library_SpriteStudio6.KindOperationBlend)j,
+																												Library_SpriteStudio6.KindMasking.THROUGH,
+																												null
+																											);
+
+							LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideMaterialAnimation(	ref setting,
+																												informationSSPJ,
+																												informationSSPJ.TableInformationTexture[i],
+																												nameOutputAssetFolderBase,
+																												(Library_SpriteStudio6.KindOperationBlend)j,
+																												Library_SpriteStudio6.KindMasking.MASK,
 																												null
 																											);
 						}
@@ -799,6 +809,16 @@ public static partial class LibraryEditor_SpriteStudio6
 																												informationSSPJ.TableInformationTexture[i],
 																												nameOutputAssetFolderBase,
 																												(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																												Library_SpriteStudio6.KindMasking.THROUGH,
+																												null
+																											);
+
+							LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideMaterialEffect(	ref setting,
+																												informationSSPJ,
+																												informationSSPJ.TableInformationTexture[i],
+																												nameOutputAssetFolderBase,
+																												(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																												Library_SpriteStudio6.KindMasking.MASK,
 																												null
 																											);
 						}
@@ -831,8 +851,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					else
 					{	/* Default */
 						informationSSPJ.DataCellMapSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU, nameOutputAssetFolderBase)
-																	+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU, informationSSPJ.NameFileBody, informationSSPJ.NameFileBody)
-																	+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
+																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU, informationSSPJ.NameFileBody, informationSSPJ.NameFileBody)
+																		+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
 						informationSSPJ.DataCellMapSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataCellMap>(informationSSPJ.DataCellMapSS6PU.TableName[0]);
 					}
 
@@ -878,8 +898,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					const string messageLogPrefix = "Pick up Materials";
 
 					int indexTexture;
+					int indexMaterial;
 					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
-					int countMaterial = countSSCE * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+					int countMaterial = Script_SpriteStudio6_Root.CountGetMaterialTable(countSSCE);
 					informationSSPJ.TableMaterialAnimationSS6PU = new Material[countMaterial];
 					if(null == informationSSPJ.TableMaterialAnimationSS6PU)
 					{
@@ -891,11 +912,29 @@ public static partial class LibraryEditor_SpriteStudio6
 						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
 						{
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							informationSSPJ.TableMaterialAnimationSS6PU[(i * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR) + j] = (0 > indexTexture) ? null : informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[j];
+							indexMaterial =  LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(	i,
+																																(Library_SpriteStudio6.KindOperationBlend)j,
+																																Library_SpriteStudio6.KindMasking.THROUGH
+																															);
+							informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = (0 > indexTexture)
+																							? null
+																							: informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[j];
+						}
+
+						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+						{
+							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
+							indexMaterial =  LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(	i,
+																																(Library_SpriteStudio6.KindOperationBlend)j,
+																																Library_SpriteStudio6.KindMasking.MASK
+																															);
+							informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = (0 > indexTexture)
+																							 ? null
+																							: informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[(int)(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR + j];
 						}
 					}
 
-					countMaterial = countSSCE * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
+					countMaterial = Script_SpriteStudio6_RootEffect.CountGetMaterialTable(countSSCE);
 					informationSSPJ.TableMaterialEffectSS6PU = new Material[countMaterial];
 					if(null == informationSSPJ.TableMaterialEffectSS6PU)
 					{
@@ -907,7 +946,25 @@ public static partial class LibraryEditor_SpriteStudio6
 						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
 						{
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							informationSSPJ.TableMaterialEffectSS6PU[(i * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR) + j] = (0 > indexTexture) ? null : informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[j];
+							indexMaterial =  LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(	i,
+																															(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																															Library_SpriteStudio6.KindMasking.THROUGH
+																														);
+							informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = (0 > indexTexture)
+																						? null
+																						: informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[j];
+						}
+
+						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+						{
+							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
+							indexMaterial = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(	i,
+																															(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																															Library_SpriteStudio6.KindMasking.MASK
+																														);
+							informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = (0 > indexTexture)
+																						? null
+																						: informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR + j];
 						}
 					}
 
@@ -918,7 +975,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				#endregion Functions
 			}
-		#endregion Classes, Structs & Interfaces
+			#endregion Classes, Structs & Interfaces
 		}
 	}
 }

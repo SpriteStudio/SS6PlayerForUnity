@@ -348,10 +348,22 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(true == flagCreateAssetData)
 						{
 							if(false == SSCE.ModeSS6PU.AssetCreateMaterialAnimation(	ref setting,
-																					informationSSPJ,
-																					informationTexture,
-																					(Library_SpriteStudio6.KindOperationBlend)j
-																				)
+																						informationSSPJ,
+																						informationTexture,
+																						(Library_SpriteStudio6.KindOperationBlend)j,
+																						Library_SpriteStudio6.KindMasking.THROUGH
+																					)
+								)
+							{
+								goto ExecSS6PU_ErrorEnd;
+							}
+
+							if(false == SSCE.ModeSS6PU.AssetCreateMaterialAnimation(	ref setting,
+																						informationSSPJ,
+																						informationTexture,
+																						(Library_SpriteStudio6.KindOperationBlend)j,
+																						Library_SpriteStudio6.KindMasking.MASK
+																					)
 								)
 							{
 								goto ExecSS6PU_ErrorEnd;
@@ -403,7 +415,19 @@ public static partial class LibraryEditor_SpriteStudio6
 							if(false == SSCE.ModeSS6PU.AssetCreateMaterialEffect(	ref setting,
 																					informationSSPJ,
 																					informationTexture,
-																					(Library_SpriteStudio6.KindOperationBlendEffect)j
+																					(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																					Library_SpriteStudio6.KindMasking.THROUGH
+																				)
+								)
+							{
+								goto ExecSS6PU_ErrorEnd;
+							}
+
+							if(false == SSCE.ModeSS6PU.AssetCreateMaterialEffect(	ref setting,
+																					informationSSPJ,
+																					informationTexture,
+																					(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																					Library_SpriteStudio6.KindMasking.MASK
 																				)
 								)
 							{
@@ -1422,6 +1446,25 @@ public static partial class LibraryEditor_SpriteStudio6
 			private const string ArgumentBoolTrue = "true";
 			private const string ArgumentBoolFalse = "false";
 			#endregion Enums & Constants
+		}
+
+		public static partial class TableMaterial
+		{
+			public static int IndexGetMaterialTableAnimation(	int indexCellMap,
+																Library_SpriteStudio6.KindOperationBlend operationBlend,
+																Library_SpriteStudio6.KindMasking masking
+															)
+			{
+				return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR) + (int)operationBlend);
+			}
+
+			public static int IndexGetMaterialTableEffect(	int indexCellMap,
+															Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
+															Library_SpriteStudio6.KindMasking masking
+														)
+			{
+				return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR) + (int)operationBlend);
+			}
 		}
 
 		public static partial class Log

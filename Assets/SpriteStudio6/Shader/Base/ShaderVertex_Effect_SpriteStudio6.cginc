@@ -14,7 +14,9 @@ InputPS VS_main(InputVS input)
 	temp.w = 0.0f;
 	output.Texture00UV = temp;
 
-	output.ColorMain = input.color;
+	temp = input.color;
+	output.ColorMain = temp;
+	output.ColorOverlay = temp;	/* Unused */
 
 	temp = input.vertex;
 	temp = UnityObjectToClipPos(temp);
