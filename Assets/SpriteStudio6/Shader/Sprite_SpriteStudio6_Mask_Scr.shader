@@ -33,7 +33,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite/Mask/Screen"
 				Pass Keep
 			}
 
-			Blend OneMinusDstColor OneMinusSrcAlpha
+			Blend OneMinusDstColor One
 
 			CGPROGRAM
 			#pragma vertex VS_main
