@@ -1634,6 +1634,7 @@ public static partial class Library_SpriteStudio6
 			internal List<Vector2> ListUVTexture;
 			internal List<Vector2> ListParameterBlend;
 			internal List<int> ListIndexVertex;
+			internal List<int> ListIndexVertexSplit;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1649,6 +1650,7 @@ public static partial class Library_SpriteStudio6
 				ListUVTexture = null;
 				ListParameterBlend = null;
 				ListIndexVertex = null;
+				ListIndexVertexSplit = null;
 			}
 
 			internal bool BootUp(int countSpriteMax, int countParticleMax)
@@ -1704,6 +1706,15 @@ public static partial class Library_SpriteStudio6
 					}
 					ListIndexVertex.Clear();
 				}
+				if(null == ListIndexVertexSplit)
+				{
+					ListIndexVertexSplit = new List<int>(countIndexVertex);
+					if(null == ListIndexVertexSplit)
+					{
+						goto BootUp_ErrorEnd;
+					}
+					ListIndexVertexSplit.Clear();
+				}
 
 				return(true);
 
@@ -1723,6 +1734,7 @@ public static partial class Library_SpriteStudio6
 				ListUVTexture.Clear();
 				ListParameterBlend.Clear();
 				ListIndexVertex.Clear();
+				ListIndexVertexSplit.Clear();
 			}
 
 			private bool ChainAdd(Chain chain)
@@ -1784,14 +1796,10 @@ public static partial class Library_SpriteStudio6
 				}
 
 				/* Add Vertex-Index data */
-				int[] tableIndexVertex = null;
+				int[] tableIndexVertex = Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle2;
 				if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == countVertex)
 				{
 					tableIndexVertex = Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle4;
-				}
-				else
-				{
-					tableIndexVertex = Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle2;
 				}
 				int countIndex = tableIndexVertex.Length;
 				int indexVertexTop = ListIndexVertex.Count;
@@ -1853,9 +1861,12 @@ public static partial class Library_SpriteStudio6
 					Chain chain = ChainTop;
 					if(1 < countMaterial)
 					{	/* Multi-Materials */
+						/* MEMO: Caution that "SetTriangles(array, n)" consumes managed-heap. ("SetTriangles(List<int>, n)" does not) */
 						mesh.subMeshCount = countMaterial;
 
 						int indexMaterial = 0;
+#if false
+						/* MEMO: "LINQ" is as a of course, also "GetRange" and etc consumes managed-heap. */
 						List<int> listIndexVertexChain = null;
 						while(null != chain)
 						{
@@ -1869,6 +1880,29 @@ public static partial class Library_SpriteStudio6
 							indexMaterial++;
 							chain = chain.ChainNext;
 						}
+#else
+						/* MEMO: Excepting manually copying "List", I don't know the way to split list without consuming managed-heap. */
+						/*       Time to copy is waste, but seem that CPU-load is light.                                               */
+						int indexVertexTop;
+						int indexVertexLast;
+						while(null != chain)
+						{
+							ListIndexVertexSplit.Clear();
+
+							indexVertexTop = chain.IndexVertex;
+							indexVertexLast = indexVertexTop + chain.CountVertex;
+							for(int i= indexVertexTop; i<indexVertexLast; i++)
+							{
+								ListIndexVertexSplit.Add(ListIndexVertex[i]);
+							}
+							mesh.SetTriangles(ListIndexVertexSplit, indexMaterial);
+
+							tableMaterial[indexMaterial] = chain.MaterialDraw;
+
+							indexMaterial++;
+							chain = chain.ChainNext;
+						}
+#endif
 					}
 					else
 					{	/* Single-Material */
