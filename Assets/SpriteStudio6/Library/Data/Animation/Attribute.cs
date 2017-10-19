@@ -181,12 +181,21 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.FLIP_TEXTURE_Y));
 						}
 					}
-					public int IDPartsNext
+					public int IDPartsNextDraw
 					{
 						get
 						{
-							FlagBit data = Flags & FlagBit.ID_PARTS_DRAWNEXT;
-							return((FlagBit.ID_PARTS_DRAWNEXT == data) ? (-1) : (int)data);
+							FlagBit data = Flags & FlagBit.ID_PARTS_NEXTDRAW;
+//							return((FlagBit.ID_PARTS_DRAWNEXT == data) ? (-1) : (int)data >> (int)ShiftFlagBit.ID_PARTS_NEXTDRAW);
+							return((FlagBit.ID_PARTS_NEXTDRAW == data) ? (-1) : (int)data);
+						}
+					}
+					public int IDPartsNextPredraw
+					{
+						get
+						{
+							FlagBit data = Flags & FlagBit.ID_PARTS_NEXTPREDRAW;
+							return((FlagBit.ID_PARTS_NEXTPREDRAW == data) ? (-1) : (int)data >> (int)ShiftFlagBit.ID_PARTS_NEXTPREDRAW);
 						}
 					}
 					#endregion Variables & Properties
@@ -238,10 +247,17 @@ public static partial class Library_SpriteStudio6
 						FLIP_TEXTURE_X = 0x02000000,
 						FLIP_TEXTURE_Y = 0x01000000,
 
-						ID_PARTS_DRAWNEXT = 0x0000ffff,
+						ID_PARTS_NEXTDRAW = 0x00000fff,
+						ID_PARTS_NEXTPREDRAW = 0x00fff000,
 
 						CLEAR = 0x00000000,
-						MASK = (VALID | HIDE | FLIP_X | FLIP_Y | FLIP_TEXTURE_X | FLIP_TEXTURE_Y | ID_PARTS_DRAWNEXT),
+						MASK = (VALID | HIDE | FLIP_X | FLIP_Y | FLIP_TEXTURE_X | FLIP_TEXTURE_Y | ID_PARTS_NEXTPREDRAW | ID_PARTS_NEXTDRAW),
+					}
+
+					public enum ShiftFlagBit
+					{
+						ID_PARTS_NEXTDRAW = 0,
+						ID_PARTS_NEXTPREDRAW = 12,
 					}
 					#endregion Enums & Constants
 				}

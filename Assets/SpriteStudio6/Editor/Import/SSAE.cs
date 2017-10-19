@@ -637,43 +637,56 @@ public static partial class LibraryEditor_SpriteStudio6
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "colorLabel", managerNameSpace);
 				if(null == valueText)
 				{
-					informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.NON;
+					informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.NON);
 				}
 				else
 				{
 					switch(valueText)
 					{
 						case "Red":
-							informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.RED;
+							informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.RED);
 							break;
 
 						case "Orange":
-							informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.ORANGE;
+							informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.ORANGE);
 							break;
 
 						case "Yellow":
-							informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.YELLOW;
+							informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.YELLOW);
 							break;
 
 						case "Green":
-							informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.GREEN;
+							informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.GREEN);
 							break;
 
 						case "Blue":
-							informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.BLUE;
+							informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.BLUE);
 							break;
 
 						case "Violet":
-							informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.RED;
+							informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.VIOLET);
 							break;
 
 						case "Gray":
-							informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.GRAY;
+							informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.GRAY);
 							break;
 
 						default:
-							LogWarning(messageLogPrefix, "Unknown Color-Label Kind \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
-							informationParts.Data.ColorLabel = Library_SpriteStudio6.Data.Parts.Animation.KindColorLabel.NON;
+							{
+								float ColorA;
+								float ColorR;
+								float ColorG;
+								float ColorB;
+								if(false == LibraryEditor_SpriteStudio6.Utility.Text.TextToColor(out ColorA, out ColorR, out ColorG, out ColorB, valueText))
+								{
+									LogWarning(messageLogPrefix, "Unknown Color-Label Kind \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
+									informationParts.Data.LabelColor.Set(Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.NON);
+								}
+								else
+								{
+									informationParts.Data.LabelColor.Set(new Color(ColorR, ColorG, ColorB, ColorA));
+								}
+							}
 							break;
 					}
 				}
@@ -1106,8 +1119,17 @@ public static partial class LibraryEditor_SpriteStudio6
 							case "SCLY":
 								attributeFloat = informationAnimationParts.ScalingY;
 								goto case "_ValueFloat_";
+							case "LSCX":
+								attributeFloat = informationAnimationParts.ScalingXLocal;
+								goto case "_ValueFloat_";
+							case "LSCY":
+								attributeFloat = informationAnimationParts.ScalingYLocal;
+								goto case "_ValueFloat_";
 							case "ALPH":
 								attributeFloat = informationAnimationParts.RateOpacity;
+								goto case "_ValueFloat_";
+							case "LALP":
+								attributeFloat = informationAnimationParts.RateOpacityLocal;
 								goto case "_ValueFloat_";
 							case "PVTX":
 								attributeFloat = informationAnimationParts.PivotOffsetX;
@@ -1144,6 +1166,9 @@ public static partial class LibraryEditor_SpriteStudio6
 								goto case "_ValueFloat_";
 							case "BNDR":
 								attributeFloat = informationAnimationParts.RadiusCollision;
+								goto case "_ValueFloat_";
+							case "MASK":
+								attributeFloat = informationAnimationParts.PowerMask;
 								goto case "_ValueFloat_";
 
 							case "_ValueFloat_":
@@ -1645,11 +1670,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				string valueText = "";
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(NodeKey, NameTagBase + "/rgba", ManagerNameSpace);
-				uint ARGB = LibraryEditor_SpriteStudio6.Utility.Text.HexToUInt(valueText);
-				colorA = (float)((ARGB >> 24) & 0xff) / 255.0f;
-				colorR = (float)((ARGB >> 16) & 0xff) / 255.0f;
-				colorG = (float)((ARGB >> 8) & 0xff) / 255.0f;
-				colorB = (float)(ARGB & 0xff) / 255.0f;
+				LibraryEditor_SpriteStudio6.Utility.Text.TextToColor(out colorA, out colorR, out colorG, out colorB, valueText);
 
 				/* MEMO: Currently, discard "/rate" because meaningless parameter. */
 			}
@@ -1685,8 +1706,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationAnimationParts.RotationZ.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationZ);
 				informationAnimationParts.ScalingX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingX);
 				informationAnimationParts.ScalingY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingY);
+				informationAnimationParts.ScalingXLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingXLocal);
+				informationAnimationParts.ScalingYLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingYLocal);
 
 				informationAnimationParts.RateOpacity.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RateOpacity);
+				informationAnimationParts.RateOpacityLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RateOpacityLocal);
 				informationAnimationParts.Priority.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Priority);
 
 				informationAnimationParts.FlipX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipX);
@@ -1732,6 +1756,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationAnimationParts.TextureFlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureFlipY);
 
 				informationAnimationParts.RadiusCollision.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RadiusCollision);
+				informationAnimationParts.PowerMask.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PowerMask);
 
 				informationAnimationParts.UserData.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.UserData, Library_SpriteStudio6.Data.Animation.Attribute.DefaultUseData, false, true);
 				/* MEMO: Do not set at here. Set in processing for each part type. */
@@ -1764,6 +1789,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.TextureFlipX.ListKey.Clear();
 						informationAnimationParts.TextureFlipY.ListKey.Clear();
 
+						informationAnimationParts.PowerMask.ListKey.Clear();
+
 						informationAnimationParts.Instance.ListKey.Clear();
 						informationAnimationParts.Effect.ListKey.Clear();
 						break;
@@ -1779,6 +1806,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							informationSSAE.TableParts[indexParts].Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
 						}
+
+						informationAnimationParts.PowerMask.ListKey.Clear();
 
 						informationAnimationParts.Instance.ListKey.Clear();
 						informationAnimationParts.Effect.ListKey.Clear();
@@ -1806,6 +1835,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.TextureScalingY.ListKey.Clear();
 						informationAnimationParts.TextureFlipX.ListKey.Clear();
 						informationAnimationParts.TextureFlipY.ListKey.Clear();
+
+						informationAnimationParts.PowerMask.ListKey.Clear();
 
 						if(0 == (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
 						{
@@ -1841,6 +1872,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.TextureFlipX.ListKey.Clear();
 						informationAnimationParts.TextureFlipY.ListKey.Clear();
 
+						informationAnimationParts.PowerMask.ListKey.Clear();
+
 						if(0 == (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
 						{
 							/* MEMO: If "NOT_USED" is set, interpret that "Effect" attribute is not used. */
@@ -1853,6 +1886,17 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+						if(0 >= informationAnimationParts.VertexCorrection.CountGetKey())
+						{
+							informationSSAE.TableParts[indexParts].Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2;
+						}
+						else
+						{
+							informationSSAE.TableParts[indexParts].Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
+						}
+
+						informationAnimationParts.Instance.ListKey.Clear();
+						informationAnimationParts.Effect.ListKey.Clear();
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -2384,8 +2428,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat RotationZ;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat ScalingX;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat ScalingY;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat ScalingXLocal;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat ScalingYLocal;
 
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat RateOpacity;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat RateOpacityLocal;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt Priority;
 
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool FlipX;
@@ -2412,6 +2459,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool TextureFlipY;
 
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat RadiusCollision;
+						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat PowerMask;	/* AttributeInt */
 
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData UserData;
 
@@ -2456,9 +2504,15 @@ public static partial class LibraryEditor_SpriteStudio6
 							ScalingX.CleanUp();
 							ScalingY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							ScalingY.CleanUp();
+							ScalingXLocal = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
+							ScalingXLocal.CleanUp();
+							ScalingYLocal = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
+							ScalingYLocal.CleanUp();
 
 							RateOpacity = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							RateOpacity.CleanUp();
+							RateOpacityLocal = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
+							RateOpacityLocal.CleanUp();
 							Priority = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt();
 							Priority.CleanUp();
 
@@ -2505,6 +2559,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							RadiusCollision = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
 							RadiusCollision.CleanUp();
+							PowerMask = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
+							PowerMask.CleanUp();
 
 							UserData = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData();
 							UserData.CleanUp();
@@ -2548,8 +2604,11 @@ public static partial class LibraryEditor_SpriteStudio6
 							RotationZ.BootUp();
 							ScalingX.BootUp();
 							ScalingY.BootUp();
+							ScalingXLocal.BootUp();
+							ScalingYLocal.BootUp();
 
 							RateOpacity.BootUp();
+							RateOpacityLocal.BootUp();
 							Priority.BootUp();
 
 							FlipX.BootUp();
@@ -2576,6 +2635,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							TextureFlipY.BootUp();
 
 							RadiusCollision.BootUp();
+							PowerMask.BootUp();
 
 							UserData.BootUp();
 
@@ -2610,8 +2670,11 @@ public static partial class LibraryEditor_SpriteStudio6
 							RotationZ.ShutDown();
 							ScalingX.ShutDown();
 							ScalingY.ShutDown();
+							ScalingXLocal.ShutDown();
+							ScalingYLocal.ShutDown();
 
 							RateOpacity.ShutDown();
+							RateOpacityLocal.ShutDown();
 							Priority.ShutDown();
 
 							FlipX.ShutDown();
@@ -2638,6 +2701,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							TextureFlipY.ShutDown();
 
 							RadiusCollision.ShutDown();
+							PowerMask.ShutDown();
 
 							UserData.ShutDown();
 
@@ -3167,8 +3231,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							dataAnimation.TableParts[j].Status = PackAttribute.FactoryStatus(setting.PackAttributeAnimation.Status);
 							if(false == dataAnimation.TableParts[j].Status.Function.Pack(	dataAnimation.TableParts[j].Status,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeStatus, countFrame,
-																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeStatus,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
 																							informationAnimationParts.Hide,
 																							informationAnimationParts.FlipX,
 																							informationAnimationParts.FlipY,
@@ -3183,8 +3249,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							dataAnimation.TableParts[j].Position = PackAttribute.FactoryVector3(setting.PackAttributeAnimation.Position);
 							if(false == dataAnimation.TableParts[j].Position.Function.Pack(	dataAnimation.TableParts[j].Position,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePosition, countFrame,
-																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePosition,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
 																							informationAnimationParts.PositionX,
 																							informationAnimationParts.PositionY,
 																							informationAnimationParts.PositionZ
@@ -3196,8 +3264,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 							dataAnimation.TableParts[j].Rotation = PackAttribute.FactoryVector3(setting.PackAttributeAnimation.Rotation);
 							if(false == dataAnimation.TableParts[j].Rotation.Function.Pack(	dataAnimation.TableParts[j].Rotation,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRotation, countFrame,
-																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRotation,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
 																							informationAnimationParts.RotationX,
 																							informationAnimationParts.RotationY,
 																							informationAnimationParts.RotationZ
@@ -3208,8 +3278,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 							dataAnimation.TableParts[j].Scaling = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.Scaling);
 							if(false == dataAnimation.TableParts[j].Scaling.Function.Pack(	dataAnimation.TableParts[j].Scaling,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScaling, countFrame,
-																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScaling,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
 																							informationAnimationParts.ScalingX,
 																							informationAnimationParts.ScalingY
 																						)
@@ -3218,23 +3290,62 @@ public static partial class LibraryEditor_SpriteStudio6
 								LogError(messageLogPrefix, "Failure Packing Attribute \"Rotation\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
-
-							dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
-							if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
-																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity, countFrame,
-																								informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																								informationAnimationParts.RateOpacity
+							dataAnimation.TableParts[j].ScalingLocal = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.ScalingLocal);
+							if(false == dataAnimation.TableParts[j].ScalingLocal.Function.Pack(	dataAnimation.TableParts[j].ScalingLocal,
+																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScalingLocal,
+																								countFrame,
+																								informationAnimationParts.StatusParts,
+																								informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.ScalingXLocal,
+																								informationAnimationParts.ScalingYLocal
 																							)
 								)
 							{
-								LogError(messageLogPrefix, "Failure Packing Attribute \"Scaling\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								LogError(messageLogPrefix, "Failure Packing Attribute \"Rotation\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
+							}
+
+							/* MEMO: "RateOpacity" and "RateOpacityLocal" never work at parallel. ("RateOpacityLocal" has priority) */
+							/*       If "RateOpacityLocal" has a key, "RateOpacity" will only be valid as inheritance parameter.    */
+							if(0 >= informationAnimationParts.RateOpacity.CountGetKey())
+							{	/* RateOpacity */
+								dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
+								if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity,
+																									countFrame,
+																									informationAnimationParts.StatusParts,
+																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.RateOpacity
+																								)
+									)
+								{
+									LogError(messageLogPrefix, "Failure Packing Attribute \"RateOpacity\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+									goto ConvertData_ErrorEnd;
+								}
+							}
+							else
+							{	/* RateOpacity-Local */
+								dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
+								if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacityLocal,
+																									countFrame,
+																									informationAnimationParts.StatusParts,
+																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.RateOpacityLocal
+																								)
+									)
+								{
+									LogError(messageLogPrefix, "Failure Packing Attribute \"RateOpacity\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+									goto ConvertData_ErrorEnd;
+								}
 							}
 
 							dataAnimation.TableParts[j].PositionAnchor = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PositionAnchor);
 							if(false == dataAnimation.TableParts[j].PositionAnchor.Function.Pack(	dataAnimation.TableParts[j].PositionAnchor,
-																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePositionAnchor, countFrame,
-																									informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePositionAnchor,
+																									countFrame,
+																									informationAnimationParts.StatusParts,
+																									informationAnimationParts.TableOrderDraw,
 																									informationAnimationParts.AnchorPositionX,
 																									informationAnimationParts.AnchorPositionY
 																								)
@@ -3245,8 +3356,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 							dataAnimation.TableParts[j].SizeForce = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.SizeForce);
 							if(false == dataAnimation.TableParts[j].SizeForce.Function.Pack(	dataAnimation.TableParts[j].SizeForce,
-																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeSizeForce, countFrame,
-																								informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeSizeForce,
+																								countFrame,
+																								informationAnimationParts.StatusParts,
+																								informationAnimationParts.TableOrderDraw,
 																								informationAnimationParts.SizeForceX,
 																								informationAnimationParts.SizeForceY
 																							)
@@ -3256,10 +3369,40 @@ public static partial class LibraryEditor_SpriteStudio6
 								goto ConvertData_ErrorEnd;
 							}
 
+							dataAnimation.TableParts[j].RadiusCollision = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RadiusCollision);
+							if(false == dataAnimation.TableParts[j].RadiusCollision.Function.Pack(	dataAnimation.TableParts[j].RadiusCollision,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRadiusCollision,
+																									countFrame,
+																									informationAnimationParts.StatusParts,
+																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.RadiusCollision
+																								)
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"RadiusCollision\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
+
+							dataAnimation.TableParts[j].PowerMask = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.PowerMask);
+							if(false == dataAnimation.TableParts[j].PowerMask.Function.Pack(	dataAnimation.TableParts[j].PowerMask,
+																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePowerMask,
+																								countFrame,
+																								informationAnimationParts.StatusParts,
+																								informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.PowerMask
+																							)
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"PowerMask\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
+
 							dataAnimation.TableParts[j].UserData = PackAttribute.FactoryUserData(setting.PackAttributeAnimation.UserData);
 							if(false == dataAnimation.TableParts[j].UserData.Function.Pack(	dataAnimation.TableParts[j].UserData,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeUserData, countFrame,
-																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeUserData,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
 																							informationAnimationParts.UserData
 																						)
 								)
@@ -3269,8 +3412,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 							dataAnimation.TableParts[j].Instance = PackAttribute.FactoryInstance(setting.PackAttributeAnimation.Instance);
 							if(false == dataAnimation.TableParts[j].Instance.Function.Pack(	dataAnimation.TableParts[j].Instance,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeInstance, countFrame,
-																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeInstance,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
 																							informationAnimationParts.Instance
 																						)
 								)
@@ -3280,25 +3425,15 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 							dataAnimation.TableParts[j].Effect = PackAttribute.FactoryEffect(setting.PackAttributeAnimation.Effect);
 							if(false == dataAnimation.TableParts[j].Effect.Function.Pack(	dataAnimation.TableParts[j].Effect,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeEffect, countFrame,
-																							informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeEffect,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
 																							informationAnimationParts.Effect
 																					)
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"Effect\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-								goto ConvertData_ErrorEnd;
-							}
-
-							dataAnimation.TableParts[j].RadiusCollision = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RadiusCollision);
-							if(false == dataAnimation.TableParts[j].RadiusCollision.Function.Pack(	dataAnimation.TableParts[j].RadiusCollision,
-																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRadiusCollision, countFrame,
-																									informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
-																									informationAnimationParts.RadiusCollision
-																								)
-								)
-							{
-								LogError(messageLogPrefix, "Failure Packing Attribute \"RadiusCollision\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
 
@@ -3323,8 +3458,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
 									if(false ==  dataAnimation.TableParts[j].Plain.Cell.Function.Pack(	dataAnimation.TableParts[j].Plain.Cell,
-																										Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainCell, countFrame,
-																										informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																										Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainCell,
+																										countFrame,
+																										informationAnimationParts.StatusParts,
+																										informationAnimationParts.TableOrderDraw,
 																										informationAnimationParts.Cell
 																									)
 										)
@@ -3334,8 +3471,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Plain.PartsColor.Function.Pack(	dataAnimation.TableParts[j].Plain.PartsColor,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPartsColor, countFrame,
-																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPartsColor,
+																											countFrame,
+																											informationAnimationParts.StatusParts,
+																											informationAnimationParts.TableOrderDraw,
 																											informationAnimationParts.PartsColor
 																										)
 										)
@@ -3345,8 +3484,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Plain.VertexCorrection.Function.Pack(	dataAnimation.TableParts[j].Plain.VertexCorrection,
-																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainVertexCorrection, countFrame,
-																													informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainVertexCorrection,
+																													countFrame,
+																													informationAnimationParts.StatusParts,
+																													informationAnimationParts.TableOrderDraw,
 																													informationAnimationParts.VertexCorrection
 																											)
 										)
@@ -3356,8 +3497,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Plain.OffsetPivot.Function.Pack(	dataAnimation.TableParts[j].Plain.OffsetPivot,
-																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainOffsetPivot, countFrame,
-																												informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainOffsetPivot,
+																												countFrame,
+																												informationAnimationParts.StatusParts,
+																												informationAnimationParts.TableOrderDraw,
 																												informationAnimationParts.PivotOffsetX,
 																												informationAnimationParts.PivotOffsetY
 																										)
@@ -3368,8 +3511,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Plain.PositionTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.PositionTexture,
-																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPositionTexture, countFrame,
-																													informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPositionTexture,
+																													countFrame,
+																													informationAnimationParts.StatusParts,
+																													informationAnimationParts.TableOrderDraw,
 																													informationAnimationParts.TexturePositionX,
 																													informationAnimationParts.TexturePositionY
 																											)
@@ -3380,8 +3525,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Plain.ScalingTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.ScalingTexture,
-																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingTexture, countFrame,
-																												informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingTexture,
+																												countFrame,
+																												informationAnimationParts.StatusParts,
+																												informationAnimationParts.TableOrderDraw,
 																												informationAnimationParts.TextureScalingX,
 																												informationAnimationParts.TextureScalingY
 																											)
@@ -3392,8 +3539,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Plain.RotationTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.RotationTexture,
-																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainRotationTexture, countFrame,
-																													informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainRotationTexture,
+																													countFrame,
+																													informationAnimationParts.StatusParts,
+																													informationAnimationParts.TableOrderDraw,
 																													informationAnimationParts.TextureRotation
 																											)
 										)
@@ -3405,8 +3554,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 								case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
 									if(false == dataAnimation.TableParts[j].Fix.IndexCellMap.Function.Pack(	dataAnimation.TableParts[j].Fix.IndexCellMap,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixIndexCellMap, countFrame,
-																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixIndexCellMap,
+																											countFrame,
+																											informationAnimationParts.StatusParts,
+																											informationAnimationParts.TableOrderDraw,
 																											informationAnimationParts.FixIndexCellMap
 																										)
 										)
@@ -3416,8 +3567,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Fix.Coordinate.Function.Pack(	dataAnimation.TableParts[j].Fix.Coordinate,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixCoordinate, countFrame,
-																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixCoordinate,
+																											countFrame,
+																											informationAnimationParts.StatusParts,
+																											informationAnimationParts.TableOrderDraw,
 																											informationAnimationParts.FixCoordinate
 																									)
 										)
@@ -3427,8 +3580,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Fix.PartsColor.Function.Pack(	dataAnimation.TableParts[j].Fix.PartsColor,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPartsColor, countFrame,
-																											informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPartsColor,
+																											countFrame,
+																											informationAnimationParts.StatusParts,
+																											informationAnimationParts.TableOrderDraw,
 																											informationAnimationParts.FixPartsColor
 																									)
 										)
@@ -3438,8 +3593,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Fix.UV0.Function.Pack(	dataAnimation.TableParts[j].Fix.UV0,
-																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixUV0, countFrame,
-																									informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixUV0,
+																									countFrame,
+																									informationAnimationParts.StatusParts,
+																									informationAnimationParts.TableOrderDraw,
 																									informationAnimationParts.FixUV
 																								)
 										)
@@ -3449,8 +3606,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Fix.SizeCollision.Function.Pack(	dataAnimation.TableParts[j].Fix.SizeCollision,
-																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixSizeCollision, countFrame,
-																												informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixSizeCollision,
+																												countFrame,
+																												informationAnimationParts.StatusParts,
+																												informationAnimationParts.TableOrderDraw,
 																												informationAnimationParts.FixSizeCollisionX,
 																												informationAnimationParts.FixSizeCollisionY
 																										)
@@ -3461,8 +3620,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									if(false == dataAnimation.TableParts[j].Fix.PivotCollision.Function.Pack(	dataAnimation.TableParts[j].Fix.PivotCollision,
-																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPivotCollision, countFrame,
-																												informationAnimationParts.StatusParts, informationAnimationParts.TableOrderDraw,
+																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPivotCollision,
+																												countFrame,
+																												informationAnimationParts.StatusParts,
+																												informationAnimationParts.TableOrderDraw,
 																												informationAnimationParts.FixPivotCollisionX,
 																												informationAnimationParts.FixPivotCollisionY
 																										)

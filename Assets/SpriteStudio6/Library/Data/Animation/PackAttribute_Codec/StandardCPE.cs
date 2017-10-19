@@ -27,13 +27,15 @@ public static partial class Library_SpriteStudio6
 						true,	/* Position */
 						true,	/* Rotation */
 						true,	/* Scaling */
+						true,	/* ScalingLocal */
 						true,	/* RateOpacity */
 						true,	/* PositionAnchor */
 						true,	/* SizeForce */
+						true,	/* RadiusCollision */
+						true,	/* PowerMask */
 						true,	/* UserData (Trigger) */
 						true,	/* Instance (Trigger) */
 						true,	/* Effect (Trigger) */
-						true,	/* RadiusCollision */
 						true,	/* Plain.Cell */
 						true,	/* Plain.PartsColor */
 						true,	/* Plain.VertexCorrection */

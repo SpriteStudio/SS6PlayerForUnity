@@ -1184,6 +1184,16 @@ public static partial class LibraryEditor_SpriteStudio6
 				return(rv);
 			}
 
+			public static bool TextToColor(out float colorA, out float colorR, out float colorG, out float colorB, string text)
+			{
+				uint ARGB = LibraryEditor_SpriteStudio6.Utility.Text.HexToUInt(text);
+				colorA = (float)((ARGB >> 24) & 0xff) / 255.0f;
+				colorR = (float)((ARGB >> 16) & 0xff) / 255.0f;
+				colorG = (float)((ARGB >> 8) & 0xff) / 255.0f;
+				colorB = (float)(ARGB & 0xff) / 255.0f;
+				return(true);
+			}
+
 			public static int TextToVersion(string text)
 			{	/* MEMO: Text = "Major:1"."Minor:2"."Revison:2" */
 				string[] item = text.Split('.');

@@ -29,13 +29,16 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributePosition = "Position";
 					public const string NameAttributeRotation = "Rotation";
 					public const string NameAttributeScaling = "Scaling";
+					public const string NameAttributeScalingLocal = "ScalingLocal";
 					public const string NameAttributeRateOpacity = "RateOpacity";
+					public const string NameAttributeRateOpacityLocal = "RateOpacityLocal";
 					public const string NameAttributePositionAnchor = "PositionAnchor";
 					public const string NameAttributeSizeForce = "SizeForce";
 					public const string NameAttributeUserData = "UserData";
 					public const string NameAttributeInstance = "Instance";
 					public const string NameAttributeEffect = "Effect";
 					public const string NameAttributeRadiusCollision = "RadiusCollision";
+					public const string NameAttributePowerMask = "PowerMask";
 
 					public const string NameAttributePlainCell = "Plain_Cell";
 					public const string NameAttributePlainPartsColor = "Plain_PartsColor";
@@ -790,30 +793,34 @@ public static partial class Library_SpriteStudio6
 									return;
 								}
 							}
-
-							if(0 < ListKey[0].Frame)
-							{
-								/* Create Top Key-Data */
-								KeyData KeyDataTopFrame = new KeyData();
-								KeyDataTopFrame.Frame = 0;
-								KeyDataTopFrame.Formula = Utility.Interpolation.KindFormula.NON;
-								KeyDataTopFrame.FrameCurveStart = 0.0f;
-								KeyDataTopFrame.ValueCurveStart = 0.0f;
-								KeyDataTopFrame.FrameCurveEnd = 0.0f;
-								KeyDataTopFrame.ValueCurveEnd = 0.0f;
-								if(false == flagHasSetup)
-								{	/* No Setup-Key */
-									KeyDataTopFrame.Value = ListKey[0].Value;
+							else
+							{	/* Has Keys */
+								if(0 == ListKey[0].Frame)
+								{	/* Has data at frame 0 */
+									return;
 								}
-								else
-								{	/* Setup-Key */
-									KeyDataTopFrame.Value = setup.ListKey[0].Value;
-								}
-
-								/* MEMO: Same value. However, "frame = 0" and "no interpolation". */
-
-								ListKey.Insert(0, KeyDataTopFrame);
 							}
+
+							/* Create Top Key-Data */
+							KeyData KeyDataTopFrame = new KeyData();
+							KeyDataTopFrame.Frame = 0;
+							KeyDataTopFrame.Formula = Utility.Interpolation.KindFormula.NON;
+							KeyDataTopFrame.FrameCurveStart = 0.0f;
+							KeyDataTopFrame.ValueCurveStart = 0.0f;
+							KeyDataTopFrame.FrameCurveEnd = 0.0f;
+							KeyDataTopFrame.ValueCurveEnd = 0.0f;
+							if(false == flagHasSetup)
+							{	/* No Setup-Key */
+								KeyDataTopFrame.Value = ListKey[0].Value;
+							}
+							else
+							{	/* Setup-Key */
+								KeyDataTopFrame.Value = setup.ListKey[0].Value;
+							}
+
+							/* MEMO: Same value. However, "frame = 0" and "no interpolation". */
+
+							ListKey.Insert(0, KeyDataTopFrame);
 						}
 
 						public bool KeyDataAdjustTopFrame(Attribute<_Type> setup, _Type valueDefault, bool flagNoKeyIsNoData, bool flagNotRetroactivelyComplement)
@@ -847,6 +854,11 @@ public static partial class Library_SpriteStudio6
 								}
 							}
 
+							if((false == flagHasSetup) && (true == flagNotRetroactivelyComplement))
+							{	/* Has no Setup-Key & Not Retroactively Complement */
+								return(true);
+							}
+
 							/* Create Top Key-Data */
 							KeyData KeyDataTopFrame = new KeyData();
 							KeyDataTopFrame.Frame = 0;
@@ -857,10 +869,7 @@ public static partial class Library_SpriteStudio6
 							KeyDataTopFrame.ValueCurveEnd = 0.0f;
 							if(false == flagHasSetup)
 							{	/* No Setup-Key */
-								if(false == flagNotRetroactivelyComplement)
-								{
-									KeyDataTopFrame.Value = valueDefault;
-								}
+								KeyDataTopFrame.Value = valueDefault;
 							}
 							else
 							{	/* Setup-Key */

@@ -768,39 +768,41 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField("[Common]");
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Status, "Status", ref PullDownPackAttributeAnimation.Status);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Position, "Position", ref PullDownPackAttributeAnimation.Position);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Rotation, "Rotation", ref PullDownPackAttributeAnimation.Rotation);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Scaling, "Scaling", ref PullDownPackAttributeAnimation.Scaling);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RateOpacity, "RateOpacity", ref PullDownPackAttributeAnimation.RateOpacity);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionAnchor, "PositionAnchor", ref PullDownPackAttributeAnimation.PositionAnchor);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.SizeForce, "SizeForce", ref PullDownPackAttributeAnimation.SizeForce);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.UserData, "UserData", ref PullDownPackAttributeAnimation.UserData);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Instance, "Instance", ref PullDownPackAttributeAnimation.Instance);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Effect, "Effect", ref PullDownPackAttributeAnimation.Effect);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RadiusCollision, "RadiusCollision", ref PullDownPackAttributeAnimation.RadiusCollision);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Status, "Status", ref PullDownPackAttributeAnimation.Status);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Position, "Position", ref PullDownPackAttributeAnimation.Position);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Rotation, "Rotation", ref PullDownPackAttributeAnimation.Rotation);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Scaling, "Scaling", ref PullDownPackAttributeAnimation.Scaling);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.ScalingLocal, "ScalingLocal", ref PullDownPackAttributeAnimation.ScalingLocal);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RateOpacity, "RateOpacity", ref PullDownPackAttributeAnimation.RateOpacity);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionAnchor, "PositionAnchor", ref PullDownPackAttributeAnimation.PositionAnchor);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.SizeForce, "SizeForce", ref PullDownPackAttributeAnimation.SizeForce);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RadiusCollision, "RadiusCollision", ref PullDownPackAttributeAnimation.RadiusCollision);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PowerMask, "PowerMask", ref PullDownPackAttributeAnimation.PowerMask);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.UserData, "UserData", ref PullDownPackAttributeAnimation.UserData);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Instance, "Instance", ref PullDownPackAttributeAnimation.Instance);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Effect, "Effect", ref PullDownPackAttributeAnimation.Effect);
 		EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField("[Plain]");
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainCell, "Cell", ref PullDownPackAttributeAnimation.PlainCell);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PlainPartsColor);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainVertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.PlainVertexCorrection);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainOffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.PlainOffsetPivot);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPositionTexture, "PositionTexture", ref PullDownPackAttributeAnimation.PlainPositionTexture);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainScalingTexture, "ScalingTexture", ref PullDownPackAttributeAnimation.PlainScalingTexture);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainRotationTexture, "RotationTexture", ref PullDownPackAttributeAnimation.PlainRotationTexture);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainCell, "Cell", ref PullDownPackAttributeAnimation.PlainCell);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PlainPartsColor);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainVertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.PlainVertexCorrection);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainOffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.PlainOffsetPivot);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPositionTexture, "PositionTexture", ref PullDownPackAttributeAnimation.PlainPositionTexture);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainScalingTexture, "ScalingTexture", ref PullDownPackAttributeAnimation.PlainScalingTexture);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainRotationTexture, "RotationTexture", ref PullDownPackAttributeAnimation.PlainRotationTexture);
 		EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField("[Fix]");
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixIndexCellMap, "IndexCellMap", ref PullDownPackAttributeAnimation.FixIndexCellMap);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixCoordinate, "Coordinate", ref PullDownPackAttributeAnimation.FixCoordinate);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPartsColor, "PartsColor", ref PullDownPackAttributeAnimation.FixPartsColor);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixUV0, "UV0", ref PullDownPackAttributeAnimation.FixUV0);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
-		FoldOutExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixIndexCellMap, "IndexCellMap", ref PullDownPackAttributeAnimation.FixIndexCellMap);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixCoordinate, "Coordinate", ref PullDownPackAttributeAnimation.FixCoordinate);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPartsColor, "PartsColor", ref PullDownPackAttributeAnimation.FixPartsColor);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixUV0, "UV0", ref PullDownPackAttributeAnimation.FixUV0);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
 		EditorGUILayout.Space();
 	}
-	private void FoldOutExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)
+	private void PullDownExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)
 	{
 		if(0 >= dataPopup.TableKindTypePack.Length)
 		{
@@ -1318,13 +1320,15 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute Position;
 		public Attribute Rotation;
 		public Attribute Scaling;
+		public Attribute ScalingLocal;
 		public Attribute RateOpacity;
 		public Attribute PositionAnchor;
 		public Attribute SizeForce;
+		public Attribute RadiusCollision;
+		public Attribute PowerMask;
 		public Attribute UserData;
 		public Attribute Instance;
 		public Attribute Effect;
-		public Attribute RadiusCollision;
 
 		public Attribute PlainCell;
 		public Attribute PlainPartsColor;
@@ -1350,13 +1354,15 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			Position.CleanUp();
 			Rotation.CleanUp();
 			Scaling.CleanUp();
+			ScalingLocal.CleanUp();
 			RateOpacity.CleanUp();
 			PositionAnchor.CleanUp();
 			SizeForce.CleanUp();
+			RadiusCollision.CleanUp();
+			PowerMask.CleanUp();
 			UserData.CleanUp();
 			Instance.CleanUp();
 			Effect.CleanUp();
-			RadiusCollision.CleanUp();
 
 			PlainCell.CleanUp();
 			PlainPartsColor.CleanUp();
@@ -1416,6 +1422,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
+				tableFlagEnablePack[i] = capacityPack[i].ScalingLocal;
+			}
+			ScalingLocal.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
 				tableFlagEnablePack[i] = capacityPack[i].RateOpacity;
 			}
 			RateOpacity.BootUp(tableFlagEnablePack);
@@ -1434,6 +1446,18 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
+				tableFlagEnablePack[i] = capacityPack[i].RadiusCollision;
+			}
+			RadiusCollision.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].PowerMask;
+			}
+			PowerMask.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
 				tableFlagEnablePack[i] = capacityPack[i].UserData;
 			}
 			UserData.BootUp(tableFlagEnablePack);
@@ -1449,12 +1473,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].Effect;
 			}
 			Effect.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].RadiusCollision;
-			}
-			RadiusCollision.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{

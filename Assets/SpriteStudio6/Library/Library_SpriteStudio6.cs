@@ -302,19 +302,16 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacityLocal;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
 
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;	/* for Sphere-Collider */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat PowerMask;
+
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect Effect;
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt IDPartsMask;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateMask;
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;	/* for Sphere-Collider */
 
 				public AttributeGroupPlain Plain;
 				public AttributeGroupFix Fix;
@@ -335,7 +332,6 @@ public static partial class Library_SpriteStudio6
 					ScalingLocal = null;
 
 					RateOpacity = null;
-					RateOpacityLocal = null;
 
 					PositionAnchor = null;
 					SizeForce = null;
@@ -345,7 +341,7 @@ public static partial class Library_SpriteStudio6
 					Effect = null;
 
 					RadiusCollision = null;
-					RateMask = null;
+					PowerMask = null;
 
 					Plain.Cell = null;
 					Plain.PartsColor = null;
@@ -1130,7 +1126,7 @@ public static partial class Library_SpriteStudio6
 				public int IDParent;
 				public int[] TableIDChild;
 				public KindFeature Feature;
-				public KindColorLabel ColorLabel;
+				public ColorLabel LabelColor;
 				public Library_SpriteStudio6.KindOperationBlend OperationBlendTarget;
 
 				public KindCollision ShapeCollision;
@@ -1151,7 +1147,7 @@ public static partial class Library_SpriteStudio6
 
 					Feature = (KindFeature)(-1);
 					OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.NON;
-					ColorLabel = KindColorLabel.NON;
+					LabelColor.CleanUp();
 
 					ShapeCollision = KindCollision.NON;
 					SizeCollisionZ = 0.0f;
@@ -1173,7 +1169,8 @@ public static partial class Library_SpriteStudio6
 					INSTANCE,
 					EFFECT,
 
-					MASK,
+					MASK_TRIANGLE2,	/* No use Vertex-Collection Mask-Parts */
+					MASK_TRIANGLE4,	/* Use Vertex-Collection Mask-Parts */
 					CLEARSTENCIL,	/* Player (for Unity) only */
 
 					JOINT,
@@ -1183,7 +1180,8 @@ public static partial class Library_SpriteStudio6
 					BONEPOINT,
 
 					TERMINATOR,
-					NORMAL = TERMINATOR	/* NORMAL_TRIANGLE2 or NORMAL_TRIANGLE4 *//* only during import */
+					NORMAL = TERMINATOR,	/* NORMAL_TRIANGLE2 or NORMAL_TRIANGLE4 *//* only during import */
+					MASK,	/* MASK_TRIANGLE2 or MASK_TRIANGLE4 *//* only during import */
 				}
 
 				public enum KindCollision
@@ -1195,19 +1193,76 @@ public static partial class Library_SpriteStudio6
 					CIRCLE_SCALEMINIMUM,
 					CIRCLE_SCALEMAXIMUM
 				}
-
-				public enum KindColorLabel
-				{
-					NON = 0,
-					RED,
-					ORANGE,
-					YELLOW,
-					GREEN,
-					BLUE,
-					VIOLET,
-					GRAY,
-				}
 				#endregion Enums & Constants
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				public struct ColorLabel
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public KindForm Form;
+					public Color32 Color;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public ColorLabel(KindForm form, Color color)
+					{
+						Form = form;
+						Color = color;
+					}
+
+					public void CleanUp()
+					{
+						this = TableDefault[(int)KindForm.NON];
+					}
+
+					public void Set(KindForm form)
+					{
+						this = TableDefault[(int)form];
+					}
+
+					public void Set(Color color)
+					{
+						Form = KindForm.CUSTOM;
+						Color = color;
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
+					public enum KindForm
+					{
+						NON = 0,
+
+						RED,
+						ORANGE,
+						YELLOW,
+						GREEN,
+						BLUE,
+						VIOLET,
+						GRAY,
+
+						TERMINATOR,
+						CUSTOM = TERMINATOR,
+					}
+
+					private readonly static ColorLabel[] TableDefault = new ColorLabel[(int)KindForm.TERMINATOR]
+					{
+						new ColorLabel(KindForm.NON, new Color(0.0f, 0.0f, 0.0f, 0.0f)),
+
+						new ColorLabel(KindForm.RED, new Color(1.0f, 0.46f, 0.43f, 1.0f)),
+						new ColorLabel(KindForm.ORANGE, new Color(0.98f, 0.65f, 0.33f, 1.0f)),
+						new ColorLabel(KindForm.YELLOW, new Color(0.89f, 0.85f, 0.37f, 1.0f)),
+						new ColorLabel(KindForm.GREEN, new Color(0.58f, 0.87f, 0.49f, 1.0f)),
+						new ColorLabel(KindForm.BLUE, new Color(0.54f, 0.74f, 0.97f, 1.0f)),
+						new ColorLabel(KindForm.VIOLET, new Color(0.64f, 0.55f, 0.87f, 1.0f)),
+						new ColorLabel(KindForm.GRAY, new Color(0.67f, 0.67f, 0.67f, 1.0f)),
+					};
+					#endregion Enums & Constants
+				}
+				#endregion Classes, Structs & Interfaces
 			}
 
 			[System.Serializable]

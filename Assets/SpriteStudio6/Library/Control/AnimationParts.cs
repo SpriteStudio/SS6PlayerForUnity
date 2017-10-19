@@ -41,11 +41,11 @@ public static partial class Library_SpriteStudio6
 				internal Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus StatusAnimationParts;
 				private int FrameKeyStatusAnimationFrame;
 				private Library_SpriteStudio6.Data.Animation.Attribute.Status StatusAnimationFrame;
-				internal int IDPartsDrawNext
+				internal int IDPartsNextDraw
 				{
 					get
 					{
-						return(StatusAnimationFrame.IDPartsNext);
+						return(StatusAnimationFrame.IDPartsNextDraw);
 					}
 				}
 
@@ -1123,6 +1123,9 @@ public static partial class Library_SpriteStudio6
 					#region Variables & Properties
 					/* MEMO: Common */
 					internal FlagBitStatus Status;
+
+					internal BufferAttribute<Vector2> ScaleLocal;
+
 					internal Vector2 RateScaleMesh;
 					internal Vector2 RateScaleTexture;
 
@@ -1163,10 +1166,6 @@ public static partial class Library_SpriteStudio6
 					#region Functions
 					internal void CleanUp()
 					{
-						Status = FlagBitStatus.CLEAR;
-						RateScaleMesh = Vector2.one;
-						RateScaleTexture = Vector2.one;
-
 						MaterialDraw = null;
 						CoordinateDraw = null;
 						CoordinateTransformDraw = null;
@@ -1174,6 +1173,18 @@ public static partial class Library_SpriteStudio6
 						UVTextureDraw = null;
 						ParameterBlendDraw = null;
 						ChainDraw = null;
+
+						AnimationChange();
+					}
+
+					internal void AnimationChange()
+					{
+						Status = FlagBitStatus.CLEAR;
+
+						ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
+
+						RateScaleMesh = Vector2.one;
+						RateScaleTexture = Vector2.one;
 
 						IndexCellMapDraw = -1;
 						IndexCellDraw = -1;
@@ -1189,7 +1200,7 @@ public static partial class Library_SpriteStudio6
 
 						DataCell.CleanUp();	DataCell.Value.CleanUp();
 						OffsetPivot.CleanUp();	OffsetPivot.Value = Vector2.zero;
-						SizeForce.CleanUp();	SizeForce.Value = Vector2.zero;
+						SizeForce.CleanUp();	SizeForce.Value = -Vector2.one;
 						ScalingTexture.CleanUp();	ScalingTexture.Value = Vector2.one;
 						PositionTexture.CleanUp();	PositionTexture.Value = Vector2.zero;
 						RotationTexture.CleanUp();	RotationTexture.Value = 0.0f;
@@ -1380,41 +1391,48 @@ public static partial class Library_SpriteStudio6
 						Vector2 pivotSprite = PivotCell;
 
 						/* Correct Sprite data (by attributes) */
+						bool flagRecalcSizeSprite = false;
 						flagUpdateValueAttribute = dataAnimationParts.Plain.OffsetPivot.Function.ValueGet(ref OffsetPivot.Value, ref OffsetPivot.FrameKey, dataAnimationParts.Plain.OffsetPivot, ref argumentContainer);
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
+							flagRecalcSizeSprite |= true;
 						}
-						pivotSprite.x += (sizeSprite.x * OffsetPivot.Value.x) * RateScaleMesh.x;
-						pivotSprite.y -= (sizeSprite.y * OffsetPivot.Value.y) * RateScaleMesh.y;
 
 						flagUpdateValueAttribute = dataAnimationParts.SizeForce.Function.ValueGet(ref SizeForce.Value, ref SizeForce.FrameKey, dataAnimationParts.SizeForce, ref argumentContainer);
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
+							flagRecalcSizeSprite |= true;
 						}
-						if(0 <= SizeForce.FrameKey)
+
+						if(true == flagRecalcSizeSprite)
 						{
 							float ratePivot;
 							float size;
+
 							size = SizeForce.Value.x;
 							if(0.0f <= size)
 							{
-								ratePivot = pivotSprite.x / sizeSprite.x;
+								ratePivot = (pivotSprite.x / sizeSprite.x) + OffsetPivot.Value.x;
 								sizeSprite.x = size;
 								pivotSprite.x = size * ratePivot;
 							}
+
 							size = SizeForce.Value.y;
 							if(0.0f <= size)
 							{
-								ratePivot = pivotSprite.y / sizeSprite.y;
+								ratePivot = (pivotSprite.y / sizeSprite.y) + OffsetPivot.Value.y;
 								sizeSprite.y = size;
 								pivotSprite.y = size * ratePivot;
 							}
 						}
 
-						SizeSprite = sizeSprite;
-						PivotSprite = pivotSprite;
+						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
+						{	/* Re-Set Sprite's Size & Pivot (only when coordinates updateed) */
+							SizeSprite = sizeSprite;
+							PivotSprite = pivotSprite;
+						}
 						return(true);
 					}
 					internal bool UpdateSpriteSizeFix(	Script_SpriteStudio6_Root instanceRoot,
@@ -1538,62 +1556,73 @@ public static partial class Library_SpriteStudio6
 							}
 						}
 
+						/* Get Local-Scale */
+						if(true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref argumentContainer))
+						{
+							Status |= FlagBitStatus.UPDATE_COORDINATE;
+						}
+
 						/* Calculate Mesh coordinates */
-						float left = (-pivotSprite.x) * RateScaleMesh.x;
-						float right = (sizeSprite.x - pivotSprite.x) * RateScaleMesh.x;
-						float top = -((-pivotSprite.y) * RateScaleMesh.y);	/* * -1.0f ... Y-Axis Inverse */
-						float bottom = -((sizeSprite.y - pivotSprite.y) * RateScaleMesh.y);	/* * -1.0f ... Y-Axis Inverse */
+						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
+						{
+							float ScaleMeshX = RateScaleMesh.x * ScaleLocal.Value.x;
+							float ScaleMeshY = -(RateScaleMesh.y * ScaleLocal.Value.y);	/* * -1.0f ... Y-Axis Inverse */
+							float left = (-pivotSprite.x) * ScaleMeshX;
+							float right = (sizeSprite.x - pivotSprite.x) * ScaleMeshX;
+							float top = (-pivotSprite.y) * ScaleMeshY;
+							float bottom = (sizeSprite.y - pivotSprite.y) * ScaleMeshY;
 
-						if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
-						{	/* 4-Triangles Mesh */
-							/* Set Mapping (Center) */
-							Vector2 uv2C = UVTextureDraw[0];
-							uv2C += UVTextureDraw[1];
-							uv2C += UVTextureDraw[2];
-							uv2C += UVTextureDraw[3];
-							uv2C *= 0.25f;
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.C] = uv2C;
+							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
+							{	/* 4-Triangles Mesh */
+								/* Set Mapping (Center) */
+								Vector2 uv2C = UVTextureDraw[0];
+								uv2C += UVTextureDraw[1];
+								uv2C += UVTextureDraw[2];
+								uv2C += UVTextureDraw[3];
+								uv2C *= 0.25f;
+								UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.C] = uv2C;
 
-							/* Set Coordinates */
-							dataAnimationParts.Plain.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.Plain.VertexCorrection, ref argumentContainer);
-							int indexVertex;
-							int[] tableIndex = TableIndexVertexCorrectionOrder[IndexVertexCollectionTable];
-							Vector2[] tableCoordinate = VertexCorrection.Value.Coordinate;
+								/* Set Coordinates */
+								dataAnimationParts.Plain.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.Plain.VertexCorrection, ref argumentContainer);
+								int indexVertex;
+								int[] tableIndex = TableIndexVertexCorrectionOrder[IndexVertexCollectionTable];
+								Vector2[] tableCoordinate = VertexCorrection.Value.Coordinate;
 
-							indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.LU];
-							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] = new Vector3((left + tableCoordinate[indexVertex].x), (top + tableCoordinate[indexVertex].y), 0.0f);
+								indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.LU];
+								CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] = new Vector3((left + tableCoordinate[indexVertex].x), (top + tableCoordinate[indexVertex].y), 0.0f);
 
-							indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.RU];
-							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU] = new Vector3((right + tableCoordinate[indexVertex].x), (top + tableCoordinate[indexVertex].y), 0.0f);
+								indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.RU];
+								CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU] = new Vector3((right + tableCoordinate[indexVertex].x), (top + tableCoordinate[indexVertex].y), 0.0f);
 
-							indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.RD];
-							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD] = new Vector3((right + tableCoordinate[indexVertex].x), (bottom + tableCoordinate[indexVertex].y), 0.0f);
+								indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.RD];
+								CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD] = new Vector3((right + tableCoordinate[indexVertex].x), (bottom + tableCoordinate[indexVertex].y), 0.0f);
 
-							indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.LD];
-							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD] = new Vector3((left + tableCoordinate[indexVertex].x), (bottom + tableCoordinate[indexVertex].y), 0.0f);
+								indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.LD];
+								CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD] = new Vector3((left + tableCoordinate[indexVertex].x), (bottom + tableCoordinate[indexVertex].y), 0.0f);
 
-							/* MEMO: Centering on intersection of diagonals of the 4 sides' midpoints. (not 4 vertices.) */
-							Vector3 coordinateLURU = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU]) * 0.5f;
-							Vector3 coordinateLULD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD]) * 0.5f;
-							Vector3 coordinateLDRD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD]) * 0.5f;
-							Vector3 coordinateRURD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD]) * 0.5f;
-							Library_SpriteStudio6.Utility.Math.CoordinateGetDiagonalIntersection(	out CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.C],
-																									ref coordinateLURU,
-																									ref coordinateRURD,
-																									ref coordinateLULD,
-																									ref coordinateLDRD
-																								);
+								/* MEMO: Centering on intersection of diagonals of the 4 sides' midpoints. (not 4 vertices.) */
+								Vector3 coordinateLURU = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU]) * 0.5f;
+								Vector3 coordinateLULD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD]) * 0.5f;
+								Vector3 coordinateLDRD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD]) * 0.5f;
+								Vector3 coordinateRURD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD]) * 0.5f;
+								Library_SpriteStudio6.Utility.Math.CoordinateGetDiagonalIntersection(	out CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.C],
+																										ref coordinateLURU,
+																										ref coordinateRURD,
+																										ref coordinateLULD,
+																										ref coordinateLDRD
+																									);
+							}
+							else
+							{	/* 2-Triangles Mesh */
+								/* Set Coordinates */
+								CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] = new Vector3(left, top, 0.0f);
+								CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU] = new Vector3(right, top, 0.0f);
+								CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD] = new Vector3(right, bottom, 0.0f);
+								CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD] = new Vector3(left, bottom, 0.0f);
+							}
 						}
-						else
-						{	/* 2-Triangles Mesh */
-							/* Set Coordinates */
-							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] = new Vector3(left, top, 0.0f);
-							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU] = new Vector3(right, top, 0.0f);
-							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD] = new Vector3(right, bottom, 0.0f);
-							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD] = new Vector3(left, bottom, 0.0f);
-						}
 
-						/* Draw */
+						/* Transform Coordinates */
 						/* MEMO: Prevent double effect MeshRenderer's world-matrix and InstanceTransform's world-matrix. */
 						Matrix4x4 matrixTransform = matrixCorrection * instanceTransform.localToWorldMatrix;
 						for(int i=0; i<CountVertex; i++)
@@ -1601,6 +1630,7 @@ public static partial class Library_SpriteStudio6
 							CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(CoordinateDraw[i]);
 						}
 
+						/* Update datas for draw */
 //						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
 //						{
 //						}
@@ -1618,6 +1648,7 @@ public static partial class Library_SpriteStudio6
 //						{
 //						}
 
+						/* Set to Draw-Cluster */
 						Library_SpriteStudio6.Draw.Cluster cluster = instanceRoot.ClusterDraw;
 						cluster.VertexAdd(	ChainDraw,
 											CountVertex,

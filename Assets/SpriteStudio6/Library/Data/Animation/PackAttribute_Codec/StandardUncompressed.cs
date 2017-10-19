@@ -27,13 +27,15 @@ public static partial class Library_SpriteStudio6
 						false,		/* Position *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* Rotation *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* Scaling *//* Use only in front stage of other pack formats, since performance is very poor. */
+						true,		/* ScalingLocal */
 						true,		/* RateOpacity */
 						true,		/* PositionAnchor */
 						true,		/* SizeForce */
+						false,		/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
+						true,		/* MaskPower */
 						false,		/* UserData (Trigger) *//* Not Supported */
 						false,		/* Instance (Trigger) *//* Not Supported */
 						false,		/* Effect (Trigger) *//* Not Supported */
-						false,		/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
 						true,		/* Plain.Cell */
 						true,		/* Plain.PartsColor */
 						true,		/* Plain.VertexCorrection */
@@ -186,11 +188,31 @@ public static partial class Library_SpriteStudio6
 							switch(nameAttribute)
 							{
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity:
-									/* MEMO: Attribute"RateOpacity" inherits value. */
+									/* MEMO: Attribute"RateOpacity" inherits value. (Caution that "RateOpacityLocal" no-inherit value) */
 									for(int i=0; i<countFrame; i++)
 									{
 										Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetFloatMultiple(out value, listKeyData[0], i, 1.0f);
 										container.TableValue[i] = value;
+									}
+									break;
+
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePowerMask:
+									/* MEMO: Caution                                                                   */
+									/*       Key-Data has 0.0 to 255.0 value, interpolating precision is with integer. */
+									/*       Runtime-Data has 0.0 to 1.0 value.                                        */
+									if(0 >= listKeyData[0].CountGetKey())
+									{
+										container.TableValue = new float[0];
+										return(true);
+									}
+
+									for(int i=0; i<countFrame; i++)
+									{
+										if(false == listKeyData[0].ValueGet(out value, i))
+										{
+											value = 0.0f;
+										}
+										container.TableValue[i] = Mathf.Floor(value) * (1.0f / 255.0f);
 									}
 									break;
 
@@ -260,13 +282,19 @@ public static partial class Library_SpriteStudio6
 								return(true);
 							}
 
-							/* MEMO: For attributes of the scales, default value when has no key is 1.0f. */
 							float valueDefault = 0.0f;
 							switch(nameAttribute)
 							{
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScaling: 
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScalingLocal: 
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingTexture: 
+									/* MEMO: Attribute for scales, default value when has no key is 1.0f. */
 									valueDefault = 1.0f;
+									break;
+
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeSizeForce:
+									/* MEMO: "SizeForce", default value when has no key is -1.0f(No change). */
+									valueDefault = -1.0f;
 									break;
 
 								default:
@@ -444,8 +472,8 @@ public static partial class Library_SpriteStudio6
 								container.TableValue[i].Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_Y : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
 
 								container.TableValue[i].Flags |= (null != tableOrderDraw)
-																	? (Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit)tableOrderDraw[i] & Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_DRAWNEXT
-																	: Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_DRAWNEXT;	/* -1 */
+																	? (Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit)tableOrderDraw[i] & Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTDRAW
+																	: Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTDRAW;	/* -1 */
 							}
 							return(true);
 						}

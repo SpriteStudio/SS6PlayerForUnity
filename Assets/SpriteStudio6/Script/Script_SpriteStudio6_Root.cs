@@ -229,11 +229,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* Exec Drawing */
 		/* MEMO: Caution that "Instance" and "Effect" are update in draw. */
 		/* MEMO: Hidden "Normal" parts are not processed.(Not included in the Draw-Order-Chain) */
-		int idPartsDrawNext = TableControlParts[0].IDPartsDrawNext;
+		int idPartsDrawNext = TableControlParts[0].IDPartsNextDraw;
 		while(0 <= idPartsDrawNext)
 		{
 			TableControlParts[idPartsDrawNext].Draw(this, idPartsDrawNext, flagHide, ref matrixCorrection);
-			idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsDrawNext;
+			idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
 		}
 
 		/* Mesh Combine & Set to Renderer */

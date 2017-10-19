@@ -86,6 +86,8 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+					/* MEMO: "Mask"s are drawn twice(Predraw + Draw). */
+					count += 2;
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -171,6 +173,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(TableAnimation[i].TableParts[j].Position);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(TableAnimation[i].TableParts[j].Rotation);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Scaling);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].ScalingLocal);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RateOpacity);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].PositionAnchor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].SizeForce);
@@ -178,6 +181,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInstance(TableAnimation[i].TableParts[j].Instance);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionEffect(TableAnimation[i].TableParts[j].Effect);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RadiusCollision);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].PowerMask);
 
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(TableAnimation[i].TableParts[j].Plain.Cell);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(TableAnimation[i].TableParts[j].Plain.PartsColor);
