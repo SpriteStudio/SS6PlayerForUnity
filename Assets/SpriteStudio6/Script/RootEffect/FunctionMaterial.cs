@@ -85,7 +85,7 @@ public partial class Script_SpriteStudio6_RootEffect
 			return(-1);
 		}
 
-		return(countCellMap * ((int)Library_SpriteStudio6.KindMasking.TERMINATOR * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR));
+		return(countCellMap * ((int)Library_SpriteStudio6.KindMasking.TERMINATOR * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL));
 	}
 
 	/* ********************************************************* */
@@ -108,13 +108,13 @@ public partial class Script_SpriteStudio6_RootEffect
 									)
 	{
 		if((0 > indexCellMap) || (TableCellMap.Length <= indexCellMap)
-				|| (Library_SpriteStudio6.KindOperationBlendEffect.NON >= operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend)
+				|| (Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL >= operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL <= operationBlend)
 				|| (Library_SpriteStudio6.KindMasking.THROUGH > masking) || (Library_SpriteStudio6.KindMasking.TERMINATOR <= masking)
 			)
 		{
 			return(-1);
 		}
-		return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR) + (int)operationBlend);
+		return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL) + ((int)operationBlend + (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL));
 	}
 	#endregion Functions
 }

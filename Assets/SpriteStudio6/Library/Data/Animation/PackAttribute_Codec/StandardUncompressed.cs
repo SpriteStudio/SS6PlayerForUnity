@@ -104,6 +104,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
@@ -176,6 +177,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -271,6 +273,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 2 (X, Y) *//* MEMO: No inheritance is related to attribute stored in this type. */
@@ -356,6 +359,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 3 (X, Y, Z) *//* MEMO: No inheritance is related to attribute stored in this type. */
@@ -428,6 +432,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 5 (Hide, FlipX, FlipY, FlipTextureX, FlipTextureY) */
@@ -472,8 +477,17 @@ public static partial class Library_SpriteStudio6
 								container.TableValue[i].Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_Y : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
 
 								container.TableValue[i].Flags |= (null != tableOrderDraw)
+//																	? (Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit)(tableOrderDraw[i]
+//																		<< (int)Library_SpriteStudio6.Data.Animation.Attribute.Status.ShiftFlagBit.ID_PARTS_NEXTDRAW
+//																		) & Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTDRAW
 																	? (Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit)tableOrderDraw[i] & Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTDRAW
 																	: Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTDRAW;	/* -1 */
+
+								container.TableValue[i].Flags |= (null != tableOrderPreDraw)
+																	? (Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit)(tableOrderPreDraw[i]
+																		<< (int)Library_SpriteStudio6.Data.Animation.Attribute.Status.ShiftFlagBit.ID_PARTS_NEXTPREDRAW
+																		) & Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTPREDRAW
+																	: Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTPREDRAW;	/* -1 */
 							}
 							return(true);
 						}
@@ -513,6 +527,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
@@ -567,6 +582,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
@@ -621,6 +637,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
@@ -682,6 +699,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
@@ -736,6 +754,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
@@ -790,6 +809,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */

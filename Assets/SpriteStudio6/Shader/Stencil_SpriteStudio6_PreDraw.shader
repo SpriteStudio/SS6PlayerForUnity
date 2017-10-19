@@ -4,16 +4,16 @@
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
 //
-Shader "Custom/SpriteStudio6/SS6PU/Stencil/Clear"
+Shader "Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"
 {
 	Properties
 	{
 		_MainTex("Base (RGB)", 2D) = "white" {}
 	}
 
-	SubShader
-	{
-		Tags
+		SubShader
+		{
+			Tags
 		{
 			"Queue" = "Transparent"
 			"IgnoreProjector" = "True"
@@ -28,8 +28,8 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/Clear"
 			Stencil
 			{
 				Ref 1
-				Comp Always
-				Pass Invert
+			Comp Always
+			Pass IncrWrap
 			}
 			ColorMask 0
 
@@ -53,16 +53,16 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/Clear"
 #endif
 			{
 				fixed4 output = 0;
-				fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
-				if(input.Texture00UV.z >= pixel.a)
-				{
-					discard;
-				}
-
-				return(output);
+			fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
+			if (input.Texture00UV.z >= pixel.a)
+			{
+				discard;
 			}
-			ENDCG
+
+			return(output);
+			}
+				ENDCG
+			}
 		}
-	}
 		FallBack Off
 }

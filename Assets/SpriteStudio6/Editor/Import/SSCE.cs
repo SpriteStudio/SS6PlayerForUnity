@@ -689,23 +689,13 @@ public static partial class LibraryEditor_SpriteStudio6
 																)
 				{
 					const string messageLogPrefix = "Create Asset(Material-Animation)";
-					int indexOperation = (int)operationTarget;
 					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(0, operationTarget, masking);
 
 					Material material = null;
 					material = informationTexture.MaterialAnimationSS6PU.TableData[indexTable];
 					if(null == material)
 					{
-						switch(masking)
-						{
-							case Library_SpriteStudio6.KindMasking.THROUGH:
-								material = new Material(Library_SpriteStudio6.Data.Shader.TableSpriteThrough[indexOperation]);
-								break;
-
-							case Library_SpriteStudio6.KindMasking.MASK:
-								material = new Material(Library_SpriteStudio6.Data.Shader.TableSpriteMask[indexOperation]);
-								break;
-						}
+						material = new Material(Library_SpriteStudio6.Data.Shader.ShaderGetAnimation(operationTarget, masking));
 
 						AssetDatabase.CreateAsset(material, informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
 						informationTexture.MaterialAnimationSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
@@ -729,23 +719,13 @@ public static partial class LibraryEditor_SpriteStudio6
 															)
 				{
 					const string messageLogPrefix = "Create Asset(Material-Effect)";
-					int indexOperation = (int)operationTarget;
 					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(0, operationTarget, masking);
 
 					Material material = null;
 					material = informationTexture.MaterialEffectSS6PU.TableData[indexTable];
 					if(null == material)
 					{
-						switch(masking)
-						{
-							case Library_SpriteStudio6.KindMasking.THROUGH:
-								material = new Material(Library_SpriteStudio6.Data.Shader.TableEffectThrough[indexOperation]);
-								break;
-
-							case Library_SpriteStudio6.KindMasking.MASK:
-								material = new Material(Library_SpriteStudio6.Data.Shader.TableEffectMask[indexOperation]);
-								break;
-						}
+						material = new Material(Library_SpriteStudio6.Data.Shader.ShaderGetEffect(operationTarget, masking));
 
 						AssetDatabase.CreateAsset(material, informationTexture.MaterialEffectSS6PU.TableName[indexTable]);
 						informationTexture.MaterialEffectSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexTable]);

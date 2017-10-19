@@ -2214,6 +2214,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						LibraryEditor_SpriteStudio6.Import.SSAE.Information.Parts parts = null;
 
 						/* Prepare parts to process */
+						/* MEMO: "Draw" is for normal drawing.                                                   */
+						/*       "PreDraw" is for drawing initial mask.                                          */
+						/*        When focusing on "Mask" parts only, "Draw" and "PreDraw" are in reverse order. */
 						List<int> listIndexPartsDraw = new List<int>(countParts);
 						listIndexPartsDraw.Clear();
 						float[][] tableDrawPriority = new float[countParts][];
@@ -2227,11 +2230,13 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								/* Non draw parts */
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
-									/* MEMO: Create table in "Root"part so that can get first drawing part's index. */
+									/* MEMO: Create table in "Root"part so that can get first drawing part's index. (for "Draw" and "PreDraw") */
 									animationParts.TableOrderDraw = new int[countFrame];
+									animationParts.TableOrderPreDraw = new int[countFrame];
 									for(int j=0; j<countFrame; j++)
 									{
 										animationParts.TableOrderDraw[j] = -1;
+										animationParts.TableOrderPreDraw[j] = -1;
 									}
 									break;
 
@@ -2244,6 +2249,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+									/* MEMO: Normal rendering parts only draw on "Draw". */
 									/* Create Draw-Order table */
 									animationParts.TableOrderDraw = new int[countFrame];
 									for(int j=0; j<countFrame; j++)
@@ -2269,6 +2275,15 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+									/* Create Draw-Order table */
+									/* MEMO:  Since "Mask" draws twice on "Draw" and "PreDraw", both tables are necessary. */
+									animationParts.TableOrderDraw = new int[countFrame];
+									animationParts.TableOrderPreDraw = new int[countFrame];
+									for(int j=0; j<countFrame; j++)
+									{
+										animationParts.TableOrderDraw[j] = -1;
+										animationParts.TableOrderPreDraw[j] = -1;
+									}
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -2289,6 +2304,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						int countIndexPartsDraw = listIndexPartsDraw.Count;
 						List<int> listIndexPartsSort = new List<int>(countIndexPartsDraw);
 						listIndexPartsSort.Clear();
+						List<int> listIndexPartsSortPreDraw = new List<int>(countIndexPartsDraw);
+						listIndexPartsSortPreDraw.Clear();
 						List<float> listPrioritySort = new List<float>(countIndexPartsDraw);
 						listPrioritySort.Clear();
 						for(int frame=0; frame<countFrame; frame++)
@@ -2368,14 +2385,65 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 							listPrioritySort.Clear();
 
-							/* Set Order */
+							/* Create Order for "PreDraw" */
+							/* MEMO: Enough to add in reverse order  to "listIndexPartsSortPreDraw",           */
+							/*        since "listIndexPartsSort" has already been sorted in the drawing order. */
+							listIndexPartsSortPreDraw.Clear();
+							for(int i=(countIndexPartsSort-1); i<=0 ; i--)
+							{
+								int indexParts = listIndexPartsSort[i];
+								parts = informationSSAE.TableParts[indexParts];
+								animationParts = TableParts[indexParts];
+									switch(parts.Data.Feature)
+								{
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+										/* MEMO: No reach here. */
+										break;
+
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+										break;
+
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+										/* MEMO: Add "Mask"parts only */
+										listIndexPartsSortPreDraw.Add(indexParts);
+										break;
+
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+										break;
+
+									default:
+										/* MEMO: No reach here. */
+										break;
+								}
+							}
+
+							/* Set Order for "Draw" */
 							/* MEMO: In "Root"part, first-drawing part's index is stored. */
 							TableParts[0].TableOrderDraw[frame] = (0 < countIndexPartsSort) ? listIndexPartsSort[0] : -1;
 							for(int i=1; i<countIndexPartsSort; i++)
 							{
 								TableParts[listIndexPartsSort[i - 1]].TableOrderDraw[frame] = listIndexPartsSort[i];
 							}
+
+							/* Set Order for "PreDraw" */
+							countIndexPartsSort = listIndexPartsSortPreDraw.Count;
+							TableParts[0].TableOrderPreDraw[frame] = (0 < countIndexPartsSort) ? listIndexPartsSortPreDraw[0] : -1;
+							for(int i=1; i<countIndexPartsSort; i++)
+							{
+								TableParts[listIndexPartsSortPreDraw[i - 1]].TableOrderPreDraw[frame] = listIndexPartsSortPreDraw[i];
+							}
+
 							listIndexPartsSort.Clear();
+							listIndexPartsSortPreDraw.Clear();
 						}
 
 						return(true);
@@ -2478,6 +2546,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						public Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus StatusParts;
 						public bool[] TableHide;	/* Expand "Hide"attribute in order to drawing state optimize. */
 						public int[] TableOrderDraw;
+						public int[] TableOrderPreDraw;
 
 						#endregion Variables & Properties
 
@@ -2590,6 +2659,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
 							TableHide = null;
 							TableOrderDraw = null;
+							TableOrderPreDraw = null;
 						}
 
 						public bool BootUp()
@@ -2654,6 +2724,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
 							TableHide = null;
 							TableOrderDraw = null;
+							TableOrderPreDraw = null;
 
 							return(true);
 						}
@@ -2720,6 +2791,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.CLEAR;
 							TableHide = null;
 							TableOrderDraw = null;
+							TableOrderPreDraw = null;
 						}
 						#endregion Functions
 					}
@@ -3235,6 +3307,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							countFrame,
 																							informationAnimationParts.StatusParts,
 																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
 																							informationAnimationParts.Hide,
 																							informationAnimationParts.FlipX,
 																							informationAnimationParts.FlipY,
@@ -3253,6 +3326,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							countFrame,
 																							informationAnimationParts.StatusParts,
 																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
 																							informationAnimationParts.PositionX,
 																							informationAnimationParts.PositionY,
 																							informationAnimationParts.PositionZ
@@ -3268,6 +3342,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							countFrame,
 																							informationAnimationParts.StatusParts,
 																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
 																							informationAnimationParts.RotationX,
 																							informationAnimationParts.RotationY,
 																							informationAnimationParts.RotationZ
@@ -3282,6 +3357,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							countFrame,
 																							informationAnimationParts.StatusParts,
 																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
 																							informationAnimationParts.ScalingX,
 																							informationAnimationParts.ScalingY
 																						)
@@ -3296,6 +3372,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																								countFrame,
 																								informationAnimationParts.StatusParts,
 																								informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.TableOrderPreDraw,
 																								informationAnimationParts.ScalingXLocal,
 																								informationAnimationParts.ScalingYLocal
 																							)
@@ -3315,6 +3392,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																									countFrame,
 																									informationAnimationParts.StatusParts,
 																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.TableOrderPreDraw,
 																									informationAnimationParts.RateOpacity
 																								)
 									)
@@ -3331,6 +3409,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																									countFrame,
 																									informationAnimationParts.StatusParts,
 																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.TableOrderPreDraw,
 																									informationAnimationParts.RateOpacityLocal
 																								)
 									)
@@ -3346,6 +3425,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																									countFrame,
 																									informationAnimationParts.StatusParts,
 																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.TableOrderPreDraw,
 																									informationAnimationParts.AnchorPositionX,
 																									informationAnimationParts.AnchorPositionY
 																								)
@@ -3360,6 +3440,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																								countFrame,
 																								informationAnimationParts.StatusParts,
 																								informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.TableOrderPreDraw,
 																								informationAnimationParts.SizeForceX,
 																								informationAnimationParts.SizeForceY
 																							)
@@ -3375,6 +3456,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																									countFrame,
 																									informationAnimationParts.StatusParts,
 																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.TableOrderPreDraw,
 																									informationAnimationParts.RadiusCollision
 																								)
 								)
@@ -3389,6 +3471,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																								countFrame,
 																								informationAnimationParts.StatusParts,
 																								informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.TableOrderPreDraw,
 																								informationAnimationParts.PowerMask
 																							)
 								)
@@ -3403,6 +3486,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							countFrame,
 																							informationAnimationParts.StatusParts,
 																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
 																							informationAnimationParts.UserData
 																						)
 								)
@@ -3416,6 +3500,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							countFrame,
 																							informationAnimationParts.StatusParts,
 																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
 																							informationAnimationParts.Instance
 																						)
 								)
@@ -3429,6 +3514,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							countFrame,
 																							informationAnimationParts.StatusParts,
 																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
 																							informationAnimationParts.Effect
 																					)
 								)
@@ -3462,6 +3548,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																										countFrame,
 																										informationAnimationParts.StatusParts,
 																										informationAnimationParts.TableOrderDraw,
+																										informationAnimationParts.TableOrderPreDraw,
 																										informationAnimationParts.Cell
 																									)
 										)
@@ -3475,6 +3562,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																											countFrame,
 																											informationAnimationParts.StatusParts,
 																											informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.TableOrderPreDraw,
 																											informationAnimationParts.PartsColor
 																										)
 										)
@@ -3488,6 +3576,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																													countFrame,
 																													informationAnimationParts.StatusParts,
 																													informationAnimationParts.TableOrderDraw,
+																													informationAnimationParts.TableOrderPreDraw,
 																													informationAnimationParts.VertexCorrection
 																											)
 										)
@@ -3501,6 +3590,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																												countFrame,
 																												informationAnimationParts.StatusParts,
 																												informationAnimationParts.TableOrderDraw,
+																												informationAnimationParts.TableOrderPreDraw,
 																												informationAnimationParts.PivotOffsetX,
 																												informationAnimationParts.PivotOffsetY
 																										)
@@ -3515,6 +3605,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																													countFrame,
 																													informationAnimationParts.StatusParts,
 																													informationAnimationParts.TableOrderDraw,
+																													informationAnimationParts.TableOrderPreDraw,
 																													informationAnimationParts.TexturePositionX,
 																													informationAnimationParts.TexturePositionY
 																											)
@@ -3529,6 +3620,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																												countFrame,
 																												informationAnimationParts.StatusParts,
 																												informationAnimationParts.TableOrderDraw,
+																												informationAnimationParts.TableOrderPreDraw,
 																												informationAnimationParts.TextureScalingX,
 																												informationAnimationParts.TextureScalingY
 																											)
@@ -3543,6 +3635,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																													countFrame,
 																													informationAnimationParts.StatusParts,
 																													informationAnimationParts.TableOrderDraw,
+																													informationAnimationParts.TableOrderPreDraw,
 																													informationAnimationParts.TextureRotation
 																											)
 										)
@@ -3558,6 +3651,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																											countFrame,
 																											informationAnimationParts.StatusParts,
 																											informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.TableOrderPreDraw,
 																											informationAnimationParts.FixIndexCellMap
 																										)
 										)
@@ -3571,6 +3665,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																											countFrame,
 																											informationAnimationParts.StatusParts,
 																											informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.TableOrderPreDraw,
 																											informationAnimationParts.FixCoordinate
 																									)
 										)
@@ -3584,6 +3679,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																											countFrame,
 																											informationAnimationParts.StatusParts,
 																											informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.TableOrderPreDraw,
 																											informationAnimationParts.FixPartsColor
 																									)
 										)
@@ -3597,6 +3693,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																									countFrame,
 																									informationAnimationParts.StatusParts,
 																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.TableOrderPreDraw,
 																									informationAnimationParts.FixUV
 																								)
 										)
@@ -3610,6 +3707,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																												countFrame,
 																												informationAnimationParts.StatusParts,
 																												informationAnimationParts.TableOrderDraw,
+																												informationAnimationParts.TableOrderPreDraw,
 																												informationAnimationParts.FixSizeCollisionX,
 																												informationAnimationParts.FixSizeCollisionY
 																										)
@@ -3624,6 +3722,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																												countFrame,
 																												informationAnimationParts.StatusParts,
 																												informationAnimationParts.TableOrderDraw,
+																												informationAnimationParts.TableOrderPreDraw,
 																												informationAnimationParts.FixPivotCollisionX,
 																												informationAnimationParts.FixPivotCollisionY
 																										)

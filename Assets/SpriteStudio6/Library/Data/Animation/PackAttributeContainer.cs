@@ -157,6 +157,7 @@ public static partial class Library_SpriteStudio6
 								int countFrame,
 								Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 								int[] tableOrderDraw,
+								int[] tableOrderPreDraw,
 								params _TypeSource[] listKeyData
 							);
 					#endregion Functions

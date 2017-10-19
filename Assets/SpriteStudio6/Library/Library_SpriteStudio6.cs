@@ -17,6 +17,12 @@ public static partial class Library_SpriteStudio6
 	#region Enums & Constants
 	public enum KindOperationBlend
 	{
+		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR_TABLEMATERIAL,	/* - (-x) = +(x) */
+		TERMINATOR_PARTSCOLOR = MUL_NA,
+		INITIATOR_TABLEMATERIAL = MASK_PRE,
+
+		MASK_PRE = -2,
+		MASK = -1,
 		NON = -1,
 
 		MIX = 0,
@@ -30,11 +36,13 @@ public static partial class Library_SpriteStudio6
 		INV,
 
 		TERMINATOR,
-		TERMINATOR_PARTSCOLOR = MUL_NA,
 	}
 
 	public enum KindOperationBlendEffect
 	{
+		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR_TABLEMATERIAL,	/* - (-x) = +(x) */
+		INITIATOR_TABLEMATERIAL = MIX,
+
 		NON = -1,
 
 		MIX = 0,
@@ -1312,10 +1320,57 @@ public static partial class Library_SpriteStudio6
 
 		public static partial class Shader
 		{
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public static UnityEngine.Shader ShaderGetAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking)
+			{
+				if((Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
+				{
+					return(null);
+				}
+
+				switch(masking)
+				{
+					case Library_SpriteStudio6.KindMasking.THROUGH:
+						return(TableSpriteThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL]);
+
+					case Library_SpriteStudio6.KindMasking.MASK:
+						return(TableSpriteMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL]);
+
+					default:
+						break;
+				}
+				return(null);
+			}
+
+			public static UnityEngine.Shader ShaderGetEffect(Library_SpriteStudio6.KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking)
+			{
+				if((Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend))
+				{
+					return(null);
+				}
+
+				switch(masking)
+				{
+					case Library_SpriteStudio6.KindMasking.THROUGH:
+						return(TableEffectThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL]);
+
+					case Library_SpriteStudio6.KindMasking.MASK:
+						return(TableEffectMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL]);
+
+					default:
+						break;
+				}
+				return(null);
+			}
+			#endregion Functions
+
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
-			public readonly static UnityEngine.Shader[] TableSpriteThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
+			public readonly static UnityEngine.Shader[] TableSpriteThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
 			{
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/Draw"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Add"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Subtract"),
@@ -1326,8 +1381,10 @@ public static partial class Library_SpriteStudio6
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Inverse")
 			};
 
-			public readonly static UnityEngine.Shader[] TableSpriteMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
+			public readonly static UnityEngine.Shader[] TableSpriteMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
 			{
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/Draw"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Add"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Subtract"),
@@ -1861,7 +1918,7 @@ public static partial class Library_SpriteStudio6
 					Chain chain = ChainTop;
 					if(1 < countMaterial)
 					{	/* Multi-Materials */
-						/* MEMO: Caution that "SetTriangles(array, n)" consumes managed-heap. ("SetTriangles(List<int>, n)" does not) */
+						/* MEMO: Caution that "SetXXXXX(array, n)" consumes managed-heap. ("SetXXXXX(List<int>, n)" does not) */
 						mesh.subMeshCount = countMaterial;
 
 						int indexMaterial = 0;
@@ -1881,8 +1938,8 @@ public static partial class Library_SpriteStudio6
 							chain = chain.ChainNext;
 						}
 #else
-						/* MEMO: Excepting manually copying "List", I don't know the way to split list without consuming managed-heap. */
-						/*       Time to copy is waste, but seem that CPU-load is light.                                               */
+						/* MEMO: Excepting manually copying "List", I don't know ways to split list without consuming managed-heap. */
+						/*       Time to copy is waste, but seem that CPU-load is light.                                            */
 						int indexVertexTop;
 						int indexVertexLast;
 						while(null != chain)

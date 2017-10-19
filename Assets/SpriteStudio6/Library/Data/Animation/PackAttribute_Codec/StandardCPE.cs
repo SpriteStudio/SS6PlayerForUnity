@@ -121,6 +121,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -128,7 +129,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -176,6 +177,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -183,7 +185,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -231,6 +233,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 2 (X, Y) */
@@ -238,7 +241,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -282,6 +285,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 3 (X, Y, Z) */
@@ -289,7 +293,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -337,6 +341,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 5 (Hide, FlipX, FlipY, FlipTextureX, FlipTextureY) */
@@ -344,7 +349,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionStatus(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -392,6 +397,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -399,7 +405,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -447,6 +453,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -454,7 +461,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -502,6 +509,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -509,7 +517,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -557,6 +565,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -624,6 +633,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -691,6 +701,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -758,6 +769,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -765,7 +777,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -813,6 +825,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -820,7 +833,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColorFix(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
@@ -868,6 +881,7 @@ public static partial class Library_SpriteStudio6
 											int countFrame,
 											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
 											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix[] listKeyData
 										)
 						{	/* MEMO: "ListKeyData.Length" is always 1 */
@@ -875,7 +889,7 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUVFix(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, listKeyData);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}

@@ -314,59 +314,57 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* Create Materials */
 				SSCE.Information.Texture informationTexture = null;
+				int indexMaterial;
 				for(int i=0; i<countTexture; i++)
 				{
 					informationTexture = informationSSPJ.TableInformationTexture[i];
-					for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+					for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
 					{
-						flagCreateAssetData = true;
-
-						/* Create-Asset */
-						if(null == informationTexture.MaterialAnimationSS6PU.TableData[j])
-						{	/* New */
-							/* Create Output Asset-Folder */
-							LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
-																				informationTexture.MaterialAnimationSS6PU.TableName[j]
-																			);
-							if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
-							{
-								LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-								goto ExecSS6PU_ErrorEnd;
-							}
-						}
-						else
-						{	/* Exist */
-							if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialAnimation,
-																														informationTexture.MaterialAnimationSS6PU.TableName[j],
-																														"Material Animation"
-																													)
-								)
-							{	/* Not overwrite */
-								flagCreateAssetData = false;
-							}
-						}
-						if(true == flagCreateAssetData)
+						for(int k=0; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
 						{
-							if(false == SSCE.ModeSS6PU.AssetCreateMaterialAnimation(	ref setting,
-																						informationSSPJ,
-																						informationTexture,
-																						(Library_SpriteStudio6.KindOperationBlend)j,
-																						Library_SpriteStudio6.KindMasking.THROUGH
-																					)
-								)
-							{
-								goto ExecSS6PU_ErrorEnd;
+							flagCreateAssetData = true;
+							indexMaterial = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(	0,
+																																(Library_SpriteStudio6.KindOperationBlend)j,
+																																(Library_SpriteStudio6.KindMasking)k
+																															);
+
+							/* Create-Asset */
+							if(null == informationTexture.MaterialAnimationSS6PU.TableData[indexMaterial])
+							{	/* New */
+								/* Create Output Asset-Folder */
+								LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																					informationTexture.MaterialAnimationSS6PU.TableName[indexMaterial]
+																				);
+								if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+								{
+									LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+									goto ExecSS6PU_ErrorEnd;
+								}
+							}
+							else
+							{	/* Exist */
+								if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialAnimation,
+																															informationTexture.MaterialAnimationSS6PU.TableName[indexMaterial],
+																															"Material Animation"
+																														)
+									)
+								{	/* Not overwrite */
+									flagCreateAssetData = false;
+								}
 							}
 
-							if(false == SSCE.ModeSS6PU.AssetCreateMaterialAnimation(	ref setting,
-																						informationSSPJ,
-																						informationTexture,
-																						(Library_SpriteStudio6.KindOperationBlend)j,
-																						Library_SpriteStudio6.KindMasking.MASK
-																					)
-								)
+							if(true == flagCreateAssetData)
 							{
-								goto ExecSS6PU_ErrorEnd;
+								if(false == SSCE.ModeSS6PU.AssetCreateMaterialAnimation(	ref setting,
+																							informationSSPJ,
+																							informationTexture,
+																							(Library_SpriteStudio6.KindOperationBlend)j,
+																							(Library_SpriteStudio6.KindMasking)k
+																						)
+									)
+								{
+									goto ExecSS6PU_ErrorEnd;
+								}
 							}
 						}
 					}
@@ -379,59 +377,57 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* Create Materials */
 				SSCE.Information.Texture informationTexture = null;
+				int indexMaterial;
 				for(int i=0; i<countTexture; i++)
 				{
 					informationTexture = informationSSPJ.TableInformationTexture[i];
-					for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+					for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL; j++)
 					{
-						flagCreateAssetData = true;
-
-						/* Create-Asset */
-						if(null == informationTexture.MaterialEffectSS6PU.TableData[j])
-						{	/* New */
-							/* Create Output Asset-Folder */
-							LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
-																				informationTexture.MaterialEffectSS6PU.TableName[j]
-																			);
-							if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
-							{
-								LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-								goto ExecSS6PU_ErrorEnd;
-							}
-						}
-						else
-						{	/* Exist */
-							if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialEffect,
-																														informationTexture.MaterialEffectSS6PU.TableName[j],
-																														"Material Effect"
-																													)
-								)
-							{	/* Not overwrite */
-								flagCreateAssetData = false;
-							}
-						}
-						if(true == flagCreateAssetData)
+						for(int k=0; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
 						{
-							if(false == SSCE.ModeSS6PU.AssetCreateMaterialEffect(	ref setting,
-																					informationSSPJ,
-																					informationTexture,
-																					(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																					Library_SpriteStudio6.KindMasking.THROUGH
-																				)
-								)
-							{
-								goto ExecSS6PU_ErrorEnd;
+							flagCreateAssetData = true;
+							indexMaterial = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(	0,
+																															(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																															(Library_SpriteStudio6.KindMasking)k
+																														);
+
+							/* Create-Asset */
+							if(null == informationTexture.MaterialEffectSS6PU.TableData[indexMaterial])
+							{	/* New */
+								/* Create Output Asset-Folder */
+								LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																					informationTexture.MaterialEffectSS6PU.TableName[indexMaterial]
+																				);
+								if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+								{
+									LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+									goto ExecSS6PU_ErrorEnd;
+								}
+							}
+							else
+							{	/* Exist */
+								if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialEffect,
+																															informationTexture.MaterialEffectSS6PU.TableName[indexMaterial],
+																															"Material Effect"
+																														)
+									)
+								{	/* Not overwrite */
+									flagCreateAssetData = false;
+								}
 							}
 
-							if(false == SSCE.ModeSS6PU.AssetCreateMaterialEffect(	ref setting,
-																					informationSSPJ,
-																					informationTexture,
-																					(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																					Library_SpriteStudio6.KindMasking.MASK
-																				)
-								)
+							if(true == flagCreateAssetData)
 							{
-								goto ExecSS6PU_ErrorEnd;
+								if(false == SSCE.ModeSS6PU.AssetCreateMaterialEffect(	ref setting,
+																						informationSSPJ,
+																						informationTexture,
+																						(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																						Library_SpriteStudio6.KindMasking.THROUGH
+																					)
+									)
+								{
+									goto ExecSS6PU_ErrorEnd;
+								}
 							}
 						}
 					}
@@ -1465,7 +1461,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																Library_SpriteStudio6.KindMasking masking
 															)
 			{
-				return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR) + (int)operationBlend);
+				return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL) + ((int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL));
 			}
 
 			public static int IndexGetMaterialTableEffect(	int indexCellMap,
@@ -1473,7 +1469,7 @@ public static partial class LibraryEditor_SpriteStudio6
 															Library_SpriteStudio6.KindMasking masking
 														)
 			{
-				return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR) + (int)operationBlend);
+				return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL) + ((int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL));
 			}
 		}
 
