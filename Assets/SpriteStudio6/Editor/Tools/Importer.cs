@@ -766,6 +766,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("Don't manipulate this setting without reason.");
 		EditorGUILayout.LabelField("Understand amply the implementation of SS6PU data format before setting.");
 		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("\"RateOpacity\" is shared for \"RateOpacity\", \"RateOpacityLocal\" and \"PowerMask\".");
+		EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField("[Common]");
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Status, "Status", ref PullDownPackAttributeAnimation.Status);
@@ -777,7 +779,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionAnchor, "PositionAnchor", ref PullDownPackAttributeAnimation.PositionAnchor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.SizeForce, "SizeForce", ref PullDownPackAttributeAnimation.SizeForce);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RadiusCollision, "RadiusCollision", ref PullDownPackAttributeAnimation.RadiusCollision);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PowerMask, "PowerMask", ref PullDownPackAttributeAnimation.PowerMask);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.UserData, "UserData", ref PullDownPackAttributeAnimation.UserData);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Instance, "Instance", ref PullDownPackAttributeAnimation.Instance);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Effect, "Effect", ref PullDownPackAttributeAnimation.Effect);
@@ -1325,7 +1326,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute PositionAnchor;
 		public Attribute SizeForce;
 		public Attribute RadiusCollision;
-		public Attribute PowerMask;
 		public Attribute UserData;
 		public Attribute Instance;
 		public Attribute Effect;
@@ -1359,7 +1359,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			PositionAnchor.CleanUp();
 			SizeForce.CleanUp();
 			RadiusCollision.CleanUp();
-			PowerMask.CleanUp();
 			UserData.CleanUp();
 			Instance.CleanUp();
 			Effect.CleanUp();
@@ -1449,12 +1448,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].RadiusCollision;
 			}
 			RadiusCollision.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PowerMask;
-			}
-			PowerMask.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{

@@ -28,7 +28,6 @@ public static partial class Library_SpriteStudio6
 					false,		/* PositionAnchor */
 					false,		/* SizeForce */
 					false,		/* RadiusCollision */
-					false,		/* PowerMask */
 					false,		/* UserData (Trigger) */
 					false,		/* Instance (Trigger) */
 					false,		/* Effect (Trigger) */
@@ -298,13 +297,6 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.RADIUS_COLLISION));
 						}
 					}
-					public bool PowerMask
-					{
-						get
-						{
-							return(0 != (Flags & FlagBit.POWER_MASK));
-						}
-					}
 
 					public bool PlainCell
 					{
@@ -411,7 +403,6 @@ public static partial class Library_SpriteStudio6
 												bool positionAnchor,
 												bool sizeForce,
 												bool radiusCollision,
-												bool powerMask,
 												bool userData,
 												bool instance,
 												bool effect,
@@ -440,7 +431,6 @@ public static partial class Library_SpriteStudio6
 						Flags |= (true == positionAnchor) ? FlagBit.POSITION_ANCHOR : (FlagBit)0;
 						Flags |= (true == sizeForce) ? FlagBit.SIZE_FORCE : (FlagBit)0;
 						Flags |= (true == radiusCollision) ? FlagBit.RADIUS_COLLISION : (FlagBit)0;
-						Flags |= (true == powerMask) ? FlagBit.POWER_MASK : (FlagBit)0;
 						Flags |= (true == userData) ? FlagBit.USER_DATA : (FlagBit)0;
 						Flags |= (true == instance) ? FlagBit.INSTANCE : (FlagBit)0;
 						Flags |= (true == effect) ? FlagBit.EFFECT : (FlagBit)0;
@@ -478,10 +468,9 @@ public static partial class Library_SpriteStudio6
 						POSITION_ANCHOR = 0x00000040,
 						SIZE_FORCE = 0x00000080,
 						RADIUS_COLLISION = 0x00000100,
-						POWER_MASK = 0x00000200,
-						USER_DATA = 0x00000400,
-						INSTANCE = 0x00000800,
-						EFFECT = 0x00001000,
+						USER_DATA = 0x00000200,
+						INSTANCE = 0x00000400,
+						EFFECT = 0x00000800,
 					}
 
 					[System.Flags]

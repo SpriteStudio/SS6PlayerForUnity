@@ -32,7 +32,6 @@ public static partial class Library_SpriteStudio6
 						true,	/* PositionAnchor */
 						true,	/* SizeForce */
 						true,	/* RadiusCollision */
-						true,	/* PowerMask */
 						true,	/* UserData (Trigger) */
 						true,	/* Instance (Trigger) */
 						true,	/* Effect (Trigger) */

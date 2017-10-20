@@ -144,11 +144,21 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			if(true == RendererBootUpDraw(false))
 			{
 				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
-				LateUpdateMain(FunctionExecTimeElapse(this), false, ref matrixInverseMeshRenderer);
+				LateUpdateMain(	FunctionExecTimeElapse(this),
+								false,
+								true,
+								false,
+								ref matrixInverseMeshRenderer
+							);
 			}
 		}
 	}
-	internal void LateUpdateMain(float timeElapsed, bool flagHideDefault, ref Matrix4x4 matrixCorrection)
+	internal void LateUpdateMain(	float timeElapsed,
+									bool flagHideDefault,
+									bool flagValidMaskSetting,
+									bool flagForceMasking,
+									ref Matrix4x4 matrixCorrection
+								)
 	{
 		if(0 == (Status & FlagBitStatus.VALID))
 		{

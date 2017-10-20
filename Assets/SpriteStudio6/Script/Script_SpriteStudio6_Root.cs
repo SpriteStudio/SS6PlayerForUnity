@@ -171,12 +171,24 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			if(true == RendererBootUpDraw(false))
 			{
 				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
-				LateUpdateMain(FunctionExecTimeElapse(this), false, ref matrixInverseMeshRenderer);
+				LateUpdateMain(	FunctionExecTimeElapse(this),
+								false,
+								true,
+								false,
+								ref matrixInverseMeshRenderer
+							);
 			}
 		}
 	}
-	internal void LateUpdateMain(float timeElapsed, bool flagHideDefault, ref Matrix4x4 matrixCorrection)
+	internal void LateUpdateMain(	float timeElapsed,
+									bool flagHideDefault,
+									bool flagValidMaskSetting,
+									bool flagForceMasking,
+									ref Matrix4x4 matrixCorrection
+								)
 	{
+		/* MEMO: "flagForceMasking" is ignored when "flagValidMaskSetting" is true. */
+
 		if(0 == (Status & FlagBitStatus.VALID))
 		{
 			return;
@@ -226,13 +238,40 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 //			}
 		}
 
+		/* Exec Pre-Drawing */
+		/* MEMO: First render all "Mask"s.                                                                              */
+		/*       After that, render "Mask"s again according to priority at "Draw" timing. (Process of removing "Mask"s) */
+		/* MEMO: Caution that rendering "Mask"s is only Highest-Parent-Root. ("Instance"s and "Effect"s do not render "Mask"s) */
+		int idPartsDrawNext;
+		if(null == InstanceRootParent)
+		{
+			idPartsDrawNext = TableControlParts[0].IDPartsNextPreDraw;
+			while(0 <= idPartsDrawNext)
+			{
+				TableControlParts[idPartsDrawNext].PreDraw(	this,
+															idPartsDrawNext,
+															flagHide,
+															flagValidMaskSetting,
+															flagForceMasking,
+															ref matrixCorrection
+														);
+				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextPreDraw;
+			}
+		}
+
 		/* Exec Drawing */
 		/* MEMO: Caution that "Instance" and "Effect" are update in draw. */
 		/* MEMO: Hidden "Normal" parts are not processed.(Not included in the Draw-Order-Chain) */
-		int idPartsDrawNext = TableControlParts[0].IDPartsNextDraw;
+		idPartsDrawNext = TableControlParts[0].IDPartsNextDraw;
 		while(0 <= idPartsDrawNext)
 		{
-			TableControlParts[idPartsDrawNext].Draw(this, idPartsDrawNext, flagHide, ref matrixCorrection);
+			TableControlParts[idPartsDrawNext].Draw(	this,
+														idPartsDrawNext,
+														flagHide,
+														flagValidMaskSetting,
+														flagForceMasking,
+														ref matrixCorrection
+													);
 			idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
 		}
 
@@ -550,7 +589,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 					}
 					break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:

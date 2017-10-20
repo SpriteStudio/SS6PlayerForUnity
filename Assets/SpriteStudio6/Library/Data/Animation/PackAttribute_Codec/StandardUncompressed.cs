@@ -32,7 +32,6 @@ public static partial class Library_SpriteStudio6
 						true,		/* PositionAnchor */
 						true,		/* SizeForce */
 						false,		/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
-						true,		/* MaskPower */
 						false,		/* UserData (Trigger) *//* Not Supported */
 						false,		/* Instance (Trigger) *//* Not Supported */
 						false,		/* Effect (Trigger) *//* Not Supported */
@@ -201,7 +200,7 @@ public static partial class Library_SpriteStudio6
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePowerMask:
 									/* MEMO: Caution                                                                   */
 									/*       Key-Data has 0.0 to 255.0 value, interpolating precision is with integer. */
-									/*       Runtime-Data has 0.0 to 1.0 value.                                        */
+									/*       Runtime-Data has 1.0 to 0.0 value.                                        */
 									if(0 >= listKeyData[0].CountGetKey())
 									{
 										container.TableValue = new float[0];
@@ -214,7 +213,7 @@ public static partial class Library_SpriteStudio6
 										{
 											value = 0.0f;
 										}
-										container.TableValue[i] = Mathf.Floor(value) * (1.0f / 255.0f);
+										container.TableValue[i] = (255.0f - Mathf.Floor(value)) * (1.0f / 255.0f);
 									}
 									break;
 

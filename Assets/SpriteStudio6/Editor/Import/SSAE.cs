@@ -1695,6 +1695,17 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 				}
 
+				/* Set Masking */
+				/* MEMO: Caution that flag is inverted. (Difference between "Mask" and "No-Mask") */
+				if(true == informationSSAE.TableParts[indexParts].FlagMasking)
+				{
+					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING;
+				}
+				else
+				{
+					informationAnimationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING;
+				}
+
 				/* Adjust Top-Frame Key-Data */
 				informationAnimationParts.Cell.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Cell);
 
@@ -1886,6 +1897,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 						if(0 >= informationAnimationParts.VertexCorrection.CountGetKey())
 						{
 							informationSSAE.TableParts[indexParts].Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2;
@@ -2220,12 +2233,14 @@ public static partial class LibraryEditor_SpriteStudio6
 						List<int> listIndexPartsDraw = new List<int>(countParts);
 						listIndexPartsDraw.Clear();
 						float[][] tableDrawPriority = new float[countParts][];
+						bool flagAddList = false;
 						for(int i=0; i<countParts; i++)
 						{
 							animationParts = TableParts[i];
 							parts = informationSSAE.TableParts[i];
 							tableDrawPriority[i] = null;
 
+							flagAddList = false;
 							switch(parts.Data.Feature)
 							{
 								/* Non draw parts */
@@ -2246,9 +2261,9 @@ public static partial class LibraryEditor_SpriteStudio6
 								/* Draw parts */
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 									/* MEMO: Normal rendering parts only draw on "Draw". */
 									/* Create Draw-Order table */
 									animationParts.TableOrderDraw = new int[countFrame];
@@ -2257,23 +2272,11 @@ public static partial class LibraryEditor_SpriteStudio6
 										animationParts.TableOrderDraw[j] = -1;
 									}
 
-									/* Calculate all frames' priority. */
-									tableDrawPriority[i] = new float[countFrame];
-									switch(ModeSort)
-									{
-										case KindModeSort.PRIORITY:
-											DrawOrderCreatePriority(ref tableDrawPriority[i], informationSSPJ, informationSSAE, this, animationParts);
-											break;
-
-										case KindModeSort.POSITION_Z:
-//											DrawOrderCreatePositionZ(ref tableDrawPriority[i], informationSSPJ, informationSSAE, this, animationParts);
-											break;
-									}
-
-									/* Add as part to be processed */
-									listIndexPartsDraw.Add(i);
+									flagAddList = true;
 									break;
 
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 									/* Create Draw-Order table */
 									/* MEMO:  Since "Mask" draws twice on "Draw" and "PreDraw", both tables are necessary. */
@@ -2284,6 +2287,8 @@ public static partial class LibraryEditor_SpriteStudio6
 										animationParts.TableOrderDraw[j] = -1;
 										animationParts.TableOrderPreDraw[j] = -1;
 									}
+
+									flagAddList = true;
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -2296,6 +2301,24 @@ public static partial class LibraryEditor_SpriteStudio6
 								default:
 									/* MEMO: No reach here. */
 									break;
+							}
+							if(true == flagAddList)
+							{
+								/* Calculate all frames' priority. */
+								tableDrawPriority[i] = new float[countFrame];
+								switch(ModeSort)
+								{
+									case KindModeSort.PRIORITY:
+										DrawOrderCreatePriority(ref tableDrawPriority[i], informationSSPJ, informationSSAE, this, animationParts);
+										break;
+
+									case KindModeSort.POSITION_Z:
+//										DrawOrderCreatePositionZ(ref tableDrawPriority[i], informationSSPJ, informationSSAE, this, animationParts);
+										break;
+								}
+
+								/* Add as part to be processed */
+								listIndexPartsDraw.Add(i);
 							}
 						}
 
@@ -2343,7 +2366,15 @@ public static partial class LibraryEditor_SpriteStudio6
 											listPrioritySort.Add(tableDrawPriority[indexParts][frame]);
 											break;
 
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+											/* MEMO: Not be added to list at when hide state. */
+											if(false == animationParts.TableHide[frame])
+											{
+												listIndexPartsSort.Add(indexParts);
+												listPrioritySort.Add(tableDrawPriority[indexParts][frame]);
+											}
 											break;
 
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -2389,7 +2420,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* MEMO: Enough to add in reverse order  to "listIndexPartsSortPreDraw",           */
 							/*        since "listIndexPartsSort" has already been sorted in the drawing order. */
 							listIndexPartsSortPreDraw.Clear();
-							for(int i=(countIndexPartsSort-1); i<=0 ; i--)
+							for(int i=(countIndexPartsSort-1); i>=0 ; i--)
 							{
 								int indexParts = listIndexPartsSort[i];
 								parts = informationSSAE.TableParts[indexParts];
@@ -2408,6 +2439,8 @@ public static partial class LibraryEditor_SpriteStudio6
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 										break;
 
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 										/* MEMO: Add "Mask"parts only */
 										listIndexPartsSortPreDraw.Add(indexParts);
@@ -3263,7 +3296,8 @@ public static partial class LibraryEditor_SpriteStudio6
 								}
 								break;
 
-							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -3297,6 +3331,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						for(int j=0; j<countParts; j++)
 						{
+							informationParts = informationSSAE.TableParts[j];
 							informationAnimationParts = informationAnimation.TableParts[j];
 							dataAnimation.TableParts[j].StatusParts = informationAnimationParts.StatusParts;
 							dataAnimation.TableParts[j].Format = informationSSAE.FormatSS6PU;
@@ -3382,41 +3417,81 @@ public static partial class LibraryEditor_SpriteStudio6
 								goto ConvertData_ErrorEnd;
 							}
 
-							/* MEMO: "RateOpacity" and "RateOpacityLocal" never work at parallel. ("RateOpacityLocal" has priority) */
-							/*       If "RateOpacityLocal" has a key, "RateOpacity" will only be valid as inheritance parameter.    */
-							if(0 >= informationAnimationParts.RateOpacity.CountGetKey())
-							{	/* RateOpacity */
-								dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
-								if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
-																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity,
-																									countFrame,
-																									informationAnimationParts.StatusParts,
-																									informationAnimationParts.TableOrderDraw,
-																									informationAnimationParts.TableOrderPreDraw,
-																									informationAnimationParts.RateOpacity
-																								)
-									)
-								{
-									LogError(messageLogPrefix, "Failure Packing Attribute \"RateOpacity\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-									goto ConvertData_ErrorEnd;
-								}
-							}
-							else
-							{	/* RateOpacity-Local */
-								dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
-								if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
-																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacityLocal,
-																									countFrame,
-																									informationAnimationParts.StatusParts,
-																									informationAnimationParts.TableOrderDraw,
-																									informationAnimationParts.TableOrderPreDraw,
-																									informationAnimationParts.RateOpacityLocal
-																								)
-									)
-								{
-									LogError(messageLogPrefix, "Failure Packing Attribute \"RateOpacity\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-									goto ConvertData_ErrorEnd;
-								}
+							/* MEMO: "RateOpacity" and "RateOpacityLocal" never work in parallel. (always "RateOpacityLocal" takes precedence)           */
+							/*       Also, for "Mask"parts, "RateOpacity" and "RateOpacityLocal" does not work. Instead, "PowerMask" works.              */
+							/*       However, "RateOpacity" is always valid as an inheritance parameter for child-parts.                                 */
+							/*       For above reasons, "RateOpacity" is used as a common storage for "RateOpacity", "RateOpacityLocal" and "PowerMask". */
+							switch(informationParts.Data.Feature)
+							{
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+									if(0 >= informationAnimationParts.RateOpacity.CountGetKey())
+									{	/* RateOpacity */
+										dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
+										if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity,
+																											countFrame,
+																											informationAnimationParts.StatusParts,
+																											informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.TableOrderPreDraw,
+																											informationAnimationParts.RateOpacity
+																										)
+											)
+										{
+											LogError(messageLogPrefix, "Failure Packing Attribute \"RateOpacity\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+											goto ConvertData_ErrorEnd;
+										}
+									}
+									else
+									{	/* RateOpacity-Local */
+										dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
+										if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
+																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacityLocal,
+																											countFrame,
+																											informationAnimationParts.StatusParts,
+																											informationAnimationParts.TableOrderDraw,
+																											informationAnimationParts.TableOrderPreDraw,
+																											informationAnimationParts.RateOpacityLocal
+																										)
+											)
+										{
+											LogError(messageLogPrefix, "Failure Packing Attribute \"RateOpacityLocal\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+											goto ConvertData_ErrorEnd;
+										}
+									}
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+									dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
+									if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
+																										Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePowerMask,
+																										countFrame,
+																										informationAnimationParts.StatusParts,
+																										informationAnimationParts.TableOrderDraw,
+																										informationAnimationParts.TableOrderPreDraw,
+																										informationAnimationParts.PowerMask
+																									)
+										)
+									{
+										LogError(messageLogPrefix, "Failure Packing Attribute \"PowerMask\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+										goto ConvertData_ErrorEnd;
+									}
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+									break;
+
+								default:
+									break;
 							}
 
 							dataAnimation.TableParts[j].PositionAnchor = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PositionAnchor);
@@ -3462,21 +3537,6 @@ public static partial class LibraryEditor_SpriteStudio6
 								)
 							{
 								LogError(messageLogPrefix, "Failure Packing Attribute \"RadiusCollision\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-								goto ConvertData_ErrorEnd;
-							}
-
-							dataAnimation.TableParts[j].PowerMask = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.PowerMask);
-							if(false == dataAnimation.TableParts[j].PowerMask.Function.Pack(	dataAnimation.TableParts[j].PowerMask,
-																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePowerMask,
-																								countFrame,
-																								informationAnimationParts.StatusParts,
-																								informationAnimationParts.TableOrderDraw,
-																								informationAnimationParts.TableOrderPreDraw,
-																								informationAnimationParts.PowerMask
-																							)
-								)
-							{
-								LogError(messageLogPrefix, "Failure Packing Attribute \"PowerMask\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
 

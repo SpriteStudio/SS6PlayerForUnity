@@ -190,7 +190,7 @@ public static partial class Library_SpriteStudio6
 							return((FlagBit.ID_PARTS_NEXTDRAW == data) ? (-1) : (int)data);
 						}
 					}
-					public int IDPartsNextPredraw
+					public int IDPartsNextPreDraw
 					{
 						get
 						{

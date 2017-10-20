@@ -315,7 +315,6 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;	/* for Sphere-Collider */
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat PowerMask;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;
@@ -349,7 +348,6 @@ public static partial class Library_SpriteStudio6
 					Effect = null;
 
 					RadiusCollision = null;
-					PowerMask = null;
 
 					Plain.Cell = null;
 					Plain.PartsColor = null;
@@ -390,6 +388,7 @@ public static partial class Library_SpriteStudio6
 
 					NO_USERDATA = 0x00800000,
 					NO_PARTSCOLOR = 0x00400000,
+					NO_MASKING = 0x00200000,
 
 					CLEAR = 0x00000000
 				}

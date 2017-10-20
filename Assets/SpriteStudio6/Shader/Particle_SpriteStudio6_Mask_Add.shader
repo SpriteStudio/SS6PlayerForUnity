@@ -28,9 +28,9 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"
 			ZWRITE Off
 			Stencil
 			{
-				Ref 0
+				Ref 1
 				ReadMask 1
-				Comp Less
+				Comp Greater
 				Pass Keep
 			}
 

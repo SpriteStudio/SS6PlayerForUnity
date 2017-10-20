@@ -28,8 +28,8 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"
 			Stencil
 			{
 				Ref 1
-			Comp Always
-			Pass IncrWrap
+				Comp Always
+				Pass IncrWrap
 			}
 			ColorMask 0
 
@@ -54,7 +54,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"
 			{
 				fixed4 output = 0;
 			fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
-			if (input.Texture00UV.z >= pixel.a)
+			if (input.ColorMain.a >= pixel.a)
 			{
 				discard;
 			}

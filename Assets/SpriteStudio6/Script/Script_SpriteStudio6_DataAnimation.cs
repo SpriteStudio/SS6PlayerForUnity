@@ -74,18 +74,21 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		{
 			switch(TableParts[i].Feature)
 			{
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+					break;
+
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 					count++;
 					break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 					break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 					/* MEMO: "Mask"s are drawn twice(Predraw + Draw). */
 					count += 2;
 					break;
@@ -181,7 +184,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInstance(TableAnimation[i].TableParts[j].Instance);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionEffect(TableAnimation[i].TableParts[j].Effect);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RadiusCollision);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].PowerMask);
 
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(TableAnimation[i].TableParts[j].Plain.Cell);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(TableAnimation[i].TableParts[j].Plain.PartsColor);
