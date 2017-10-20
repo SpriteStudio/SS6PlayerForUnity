@@ -1728,7 +1728,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationAnimationParts.FlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipY);
 				if((true == setting.Basic.FlagInvisibleToHideAll) && (true == informationSSAE.TableParts[indexParts].FlagHide))
 				{	/* Parts Hide (for Editing), convert to All-Frame-Hide */
-					informationAnimationParts.Hide.CleanUp();
+					informationAnimationParts.Hide.CleanUpKey();
 
 					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool.KeyData();
 					data.Formula = Library_SpriteStudio6.Utility.Interpolation.KindFormula.NON;

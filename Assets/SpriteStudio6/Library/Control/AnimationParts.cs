@@ -914,19 +914,22 @@ public static partial class Library_SpriteStudio6
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
-								/* (Re)Draw Mask */
-								/* MEMO: Caution that "Mask"s re-draw only. */
-								/*       Updating is executed in "PreDraw". */
-								DrawMask(	instanceRoot,
-											idParts,
-											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
-											ref instanceRoot.TableControlTrack[indexTrack],
-											flagHideDefault,
-											flagValidMaskSetting,
-											flagForceMasking,
-											false,
-											ref matrixCorrection
-										);
+								if(null == instanceRoot.InstanceRootParent)
+								{
+									/* (Re)Draw Mask */
+									/* MEMO: Caution that "Mask"s re-draw only. */
+									/*       Updating is executed in "PreDraw". */
+									DrawMask(	instanceRoot,
+												idParts,
+												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+												ref instanceRoot.TableControlTrack[indexTrack],
+												flagHideDefault,
+												flagValidMaskSetting,
+												flagForceMasking,
+												false,
+												ref matrixCorrection
+											);
+								}
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -1125,8 +1128,8 @@ public static partial class Library_SpriteStudio6
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
 					InstanceRootUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																flagHide,
-																true,
 																false,
+																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? false : true,
 																ref matrixCorrection
 															);
 				}
@@ -1198,8 +1201,8 @@ public static partial class Library_SpriteStudio6
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
 					InstanceRootEffectUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																	flagHide,
-																	true,
 																	false,
+																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? false : true,
 																	ref matrixCorrection
 																);
 				}
@@ -1851,13 +1854,23 @@ public static partial class Library_SpriteStudio6
 							}
 							else
 							{
-								if(0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING))
+								bool flagMasking;
+								if(true == flagValidMaskSetting)
 								{
-									MaterialDraw = instanceRoot.MaterialGet(IndexCellMapDraw, instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget, Library_SpriteStudio6.KindMasking.THROUGH);
+									flagMasking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? false : true;
 								}
 								else
 								{
+									flagMasking = flagForceMasking;
+								}
+
+								if(true == flagMasking)
+								{	/* Mask */
 									MaterialDraw = instanceRoot.MaterialGet(IndexCellMapDraw, instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget, Library_SpriteStudio6.KindMasking.MASK);
+								}
+								else
+								{	/* Not Mask */
+									MaterialDraw = instanceRoot.MaterialGet(IndexCellMapDraw, instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget, Library_SpriteStudio6.KindMasking.THROUGH);
 								}
 							}
 

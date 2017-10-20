@@ -707,10 +707,20 @@ public static partial class Library_SpriteStudio6
 							Parent = null;
 						}
 
+						public bool CleanUpKey()
+						{	/* MEMO: Clear key without breaking parent-child relation. */
+							if(null == ListKey)
+							{
+								ListKey = new List<KeyData>();
+							}
+							ListKey.Clear();
+
+							return(true);
+						}
+
 						public bool BootUp()
 						{
-							ListKey = new List<KeyData>();
-							ListKey.Clear();
+							CleanUpKey();
 
 							Parent = null;
 

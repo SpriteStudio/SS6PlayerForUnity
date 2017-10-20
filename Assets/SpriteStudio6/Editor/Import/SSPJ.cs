@@ -936,7 +936,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																															);
 							indexMaterialTexture = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(	0,
 																																		(Library_SpriteStudio6.KindOperationBlend)j,
-																																		Library_SpriteStudio6.KindMasking.THROUGH
+																																		Library_SpriteStudio6.KindMasking.MASK
 																																);
 							informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = (0 > indexTexture)
 																							 ? null
@@ -978,7 +978,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																														);
 							indexMaterialTexture = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(	0,
 																																	(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																																	Library_SpriteStudio6.KindMasking.THROUGH
+																																	Library_SpriteStudio6.KindMasking.MASK
 																																);
 							informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = (0 > indexTexture)
 																						? null
