@@ -793,8 +793,7 @@ public static partial class Library_SpriteStudio6
 				internal void PreDraw(	Script_SpriteStudio6_Root instanceRoot,
 										int idParts,
 										bool flagHideDefault,
-										bool flagValidMaskSetting,
-										bool flagForceMasking,
+										Library_SpriteStudio6.KindMasking masking,
 										ref Matrix4x4 matrixCorrection
 									)
 				{
@@ -828,8 +827,7 @@ public static partial class Library_SpriteStudio6
 											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
 											ref instanceRoot.TableControlTrack[indexTrack],
 											flagHideDefault,
-											flagValidMaskSetting,
-											flagForceMasking,
+											masking,
 											true,
 											ref matrixCorrection
 										);
@@ -848,8 +846,7 @@ public static partial class Library_SpriteStudio6
 				internal void Draw(	Script_SpriteStudio6_Root instanceRoot,
 									int idParts,
 									bool flagHideDefault,
-									bool flagValidMaskSetting,
-									bool flagForceMasking,
+									Library_SpriteStudio6.KindMasking masking,
 									ref Matrix4x4 matrixCorrection
 								)
 				{
@@ -878,8 +875,7 @@ public static partial class Library_SpriteStudio6
 											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
 											ref instanceRoot.TableControlTrack[indexTrack],
 											flagHideDefault,
-											flagValidMaskSetting,
-											flagForceMasking,
+											masking,
 											false,
 											ref matrixCorrection
 										);
@@ -892,8 +888,7 @@ public static partial class Library_SpriteStudio6
 												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
 												ref instanceRoot.TableControlTrack[indexTrack],
 												flagHideDefault,
-												flagValidMaskSetting,
-												flagForceMasking,
+												masking,
 												false,
 												ref matrixCorrection
 											);
@@ -905,8 +900,7 @@ public static partial class Library_SpriteStudio6
 											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
 											ref instanceRoot.TableControlTrack[indexTrack],
 											flagHideDefault,
-											flagValidMaskSetting,
-											flagForceMasking,
+											masking,
 											false,
 											ref matrixCorrection
 										);
@@ -924,8 +918,7 @@ public static partial class Library_SpriteStudio6
 												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
 												ref instanceRoot.TableControlTrack[indexTrack],
 												flagHideDefault,
-												flagValidMaskSetting,
-												flagForceMasking,
+												masking,
 												false,
 												ref matrixCorrection
 											);
@@ -946,8 +939,7 @@ public static partial class Library_SpriteStudio6
 												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 												ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 												bool flagHideDefault,
-												bool flagValidMaskSetting,
-												bool flagForceMasking,
+												Library_SpriteStudio6.KindMasking masking,
 												bool flagPreDraw,
 												ref Matrix4x4 matrixCorrection
 											)
@@ -966,8 +958,7 @@ public static partial class Library_SpriteStudio6
 															idParts,
 															InstanceGameObject,
 															InstanceTransform,
-															flagValidMaskSetting,
-															flagForceMasking,
+															masking,
 															flagPreDraw,
 															ref matrixCorrection,
 															ref Status,
@@ -980,8 +971,7 @@ public static partial class Library_SpriteStudio6
 															idParts,
 															InstanceGameObject,
 															InstanceTransform,
-															flagValidMaskSetting,
-															flagForceMasking,
+															masking,
 															flagPreDraw,
 															ref matrixCorrection,
 															ref Status,
@@ -997,8 +987,7 @@ public static partial class Library_SpriteStudio6
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 											bool flagHideDefault,
-											bool flagValidMaskSetting,
-											bool flagForceMasking,
+											Library_SpriteStudio6.KindMasking masking,
 											bool flagPreDraw,
 											ref Matrix4x4 matrixCorrection
 										)
@@ -1128,8 +1117,7 @@ public static partial class Library_SpriteStudio6
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
 					InstanceRootUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																flagHide,
-																false,
-																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? false : true,
+																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																ref matrixCorrection
 															);
 				}
@@ -1138,8 +1126,7 @@ public static partial class Library_SpriteStudio6
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 											bool flagHideDefault,
-											bool flagValidMaskSetting,
-											bool flagForceMasking,
+											Library_SpriteStudio6.KindMasking masking,
 											bool flagPreDraw,
 											ref Matrix4x4 matrixCorrection
 										)
@@ -1201,8 +1188,7 @@ public static partial class Library_SpriteStudio6
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
 					InstanceRootEffectUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																	flagHide,
-																	false,
-																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? false : true,
+																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																	ref matrixCorrection
 																);
 				}
@@ -1211,8 +1197,7 @@ public static partial class Library_SpriteStudio6
 										ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 										ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 										bool flagHideDefault,
-										bool flagValidMaskSetting,
-										bool flagForceMasking,
+										Library_SpriteStudio6.KindMasking masking,
 										bool flagPreDraw,
 										ref Matrix4x4 matrixCorrection
 									)
@@ -1654,8 +1639,7 @@ public static partial class Library_SpriteStudio6
 												int idParts,
 												GameObject instanceGameObject,
 												Transform instanceTransform,
-												bool flagValidMaskSetting,
-												bool flagForceMasking,
+												Library_SpriteStudio6.KindMasking masking,
 												bool flagPreDraw,
 												ref Matrix4x4 matrixCorrection,
 												ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
@@ -1854,23 +1838,22 @@ public static partial class Library_SpriteStudio6
 							}
 							else
 							{
-								bool flagMasking;
-								if(true == flagValidMaskSetting)
+								switch(masking)
 								{
-									flagMasking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? false : true;
-								}
-								else
-								{
-									flagMasking = flagForceMasking;
-								}
+									case KindMasking.THROUGH:
+									case KindMasking.MASK:
+										MaterialDraw = instanceRoot.MaterialGet(	IndexCellMapDraw,
+																					instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
+																					masking
+																				);
+										break;
 
-								if(true == flagMasking)
-								{	/* Mask */
-									MaterialDraw = instanceRoot.MaterialGet(IndexCellMapDraw, instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget, Library_SpriteStudio6.KindMasking.MASK);
-								}
-								else
-								{	/* Not Mask */
-									MaterialDraw = instanceRoot.MaterialGet(IndexCellMapDraw, instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget, Library_SpriteStudio6.KindMasking.THROUGH);
+									case KindMasking.FOLLOW_DATA:
+										MaterialDraw = instanceRoot.MaterialGet(	IndexCellMapDraw,
+																					instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
+																					(0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK
+																				);
+										break;
 								}
 							}
 
@@ -1898,8 +1881,7 @@ public static partial class Library_SpriteStudio6
 											int idParts,
 											GameObject instanceGameObject,
 											Transform instanceTransform,
-											bool flagValidMaskSetting,
-											bool flagForceMasking,
+											Library_SpriteStudio6.KindMasking masking,
 											bool flagPreDraw,
 											ref Matrix4x4 matrixCorrection,
 											ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,

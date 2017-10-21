@@ -320,7 +320,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					informationTexture = informationSSPJ.TableInformationTexture[i];
 					for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
 					{
-						for(int k=0; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
+						for(int k=(int)Library_SpriteStudio6.KindMasking.THROUGH; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
 						{
 							flagCreateAssetData = true;
 							indexMaterial = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(	0,
@@ -383,7 +383,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					informationTexture = informationSSPJ.TableInformationTexture[i];
 					for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL; j++)
 					{
-						for(int k=0; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
+						for(int k=(int)Library_SpriteStudio6.KindMasking.THROUGH; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
 						{
 							flagCreateAssetData = true;
 							indexMaterial = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(	0,

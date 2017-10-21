@@ -173,8 +173,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
 				LateUpdateMain(	FunctionExecTimeElapse(this),
 								false,
-								true,
-								false,
+								Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
 								ref matrixInverseMeshRenderer
 							);
 			}
@@ -182,8 +181,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	}
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
-									bool flagValidMaskSetting,
-									bool flagForceMasking,
+									Library_SpriteStudio6.KindMasking masking,
 									ref Matrix4x4 matrixCorrection
 								)
 	{
@@ -251,8 +249,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				TableControlParts[idPartsDrawNext].PreDraw(	this,
 															idPartsDrawNext,
 															flagHide,
-															flagValidMaskSetting,
-															flagForceMasking,
+															masking,
 															ref matrixCorrection
 														);
 				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextPreDraw;
@@ -268,8 +265,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			TableControlParts[idPartsDrawNext].Draw(	this,
 														idPartsDrawNext,
 														flagHide,
-														flagValidMaskSetting,
-														flagForceMasking,
+														masking,
 														ref matrixCorrection
 													);
 			idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
@@ -282,26 +278,12 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			{
 				if(null != MeshCombined)	/* && (null == InstanceRootParent) */
 				{
-					Material[] tableMaterialCombine = ClusterDraw.MeshCombine(MeshCombined);
-#if false
-					if(null == tableMaterialCombine)
-					{
-						InstanceMeshRenderer.sharedMaterials = null;
-						InstanceMeshFilter.sharedMesh = null;
-					}
-					else
-					{
-						InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
-						InstanceMeshFilter.sharedMesh = MeshCombined;
-					}
-#else
 					/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
-					if(null != tableMaterialCombine)
+					if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
 					{
-						InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
+						InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
 						InstanceMeshFilter.sharedMesh = MeshCombined;
 					}
-#endif
 				}
 			}
 		}

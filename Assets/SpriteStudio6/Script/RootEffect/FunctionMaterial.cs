@@ -108,8 +108,8 @@ public partial class Script_SpriteStudio6_RootEffect
 									)
 	{
 		if((0 > indexCellMap) || (TableCellMap.Length <= indexCellMap)
-				|| (Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL >= operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL <= operationBlend)
-				|| (Library_SpriteStudio6.KindMasking.THROUGH > masking) || (Library_SpriteStudio6.KindMasking.TERMINATOR <= masking)
+			|| (Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL >= operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL <= operationBlend)
+			|| (Library_SpriteStudio6.KindMasking.THROUGH > masking) || (Library_SpriteStudio6.KindMasking.TERMINATOR <= masking)
 			)
 		{
 			return(-1);

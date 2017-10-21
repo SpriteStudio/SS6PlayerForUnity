@@ -84,7 +84,8 @@ public static partial class Library_SpriteStudio6
 		THROUGH = 0,
 		MASK,
 
-		TERMINATOR
+		TERMINATOR,
+		FOLLOW_DATA = TERMINATOR,
 	}
 	#endregion Enums & Constants
 
@@ -1458,7 +1459,8 @@ public static partial class Library_SpriteStudio6
 			internal Library_SpriteStudio6.Draw.Cluster ClusterDraw = null;	/* refer to Highest-Parent-Root's ClusterDraw */
 			internal MeshRenderer InstanceMeshRenderer = null;
 			internal MeshFilter InstanceMeshFilter = null;
-			internal Mesh MeshCombined = null;	/* use only Highest-Parent-Root */
+			protected Material[] TableMaterialCombined = null;	/* use only Highest-Parent-Root */
+			protected Mesh MeshCombined = null;	/* use only Highest-Parent-Root */
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1898,17 +1900,23 @@ public static partial class Library_SpriteStudio6
 				return(count);
 			}
 
-			internal Material[] MeshCombine(Mesh mesh)
+			internal bool MeshCombine(Mesh mesh, ref Material[] tableMaterial)
 			{	/* MEMO: Combine meshes by own processing in avoiding overhead. (unuse "Mesh.CombineMeshes") */
 				int countMaterial = Count;
-				Material[] tableMaterial = null;
 
+				/* Renew Material-array */
+				/* MEMO: do not consume managed-heap, when same table length. */
+				if((null == tableMaterial) || (countMaterial != tableMaterial.Length))
+				{
+					tableMaterial = new Material[countMaterial];
+				}
+
+				/* Create Mesh */
 				mesh.Clear();
 				mesh.name = NameBatchedMesh;
 				if(0 < countMaterial)
 				{
-					tableMaterial = new Material[countMaterial];
-
+					/* MEMO: Caution that "SetXXXXX(array, n)" consumes managed-heap. ("SetXXXXX(List<int>, n)" does not) */
 					mesh.SetVertices(ListCoordinate);
 					mesh.SetUVs(0, ListUVTexture);
 					mesh.SetUVs(1, ListParameterBlend);
@@ -1917,7 +1925,7 @@ public static partial class Library_SpriteStudio6
 					Chain chain = ChainTop;
 					if(1 < countMaterial)
 					{	/* Multi-Materials */
-						/* MEMO: Caution that "SetXXXXX(array, n)" consumes managed-heap. ("SetXXXXX(List<int>, n)" does not) */
+						/* MEMO: If have multi material, mesh is made with submesh in order to stabilize drawing order. */
 						mesh.subMeshCount = countMaterial;
 
 						int indexMaterial = 0;
@@ -1962,12 +1970,13 @@ public static partial class Library_SpriteStudio6
 					}
 					else
 					{	/* Single-Material */
+						/* MEMO: If have single material, mesh is made with no submeshes so that dynamic-batching is easy to apply. */
 						mesh.SetTriangles(ListIndexVertex, 0);
 						tableMaterial[0] = chain.MaterialDraw;
 					}
 				}
 
-				return(tableMaterial);
+				return(true);
 			}
 			#endregion Functions
 

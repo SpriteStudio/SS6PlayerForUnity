@@ -146,8 +146,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
 				LateUpdateMain(	FunctionExecTimeElapse(this),
 								false,
-								true,
-								false,
+								Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
 								ref matrixInverseMeshRenderer
 							);
 			}
@@ -155,8 +154,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	}
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
-									bool flagValidMaskSetting,
-									bool flagForceMasking,
+									Library_SpriteStudio6.KindMasking masking,
 									ref Matrix4x4 matrixCorrection
 								)
 	{
@@ -219,26 +217,12 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			{
 				if(null != MeshCombined)	/* && (null == InstanceRootParent) */
 				{
-					Material[] tableMaterialCombine = ClusterDraw.MeshCombine(MeshCombined);
-#if false
-					if(null == tableMaterialCombine)
-					{
-						InstanceMeshRenderer.sharedMaterials = null;
-						InstanceMeshFilter.sharedMesh = null;
-					}
-					else
-					{
-						InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
-						InstanceMeshFilter.sharedMesh = MeshCombined;
-					}
-#else
 					/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
-					if(null != tableMaterialCombine)
+					if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
 					{
-						InstanceMeshRenderer.sharedMaterials = tableMaterialCombine;
+						InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
 						InstanceMeshFilter.sharedMesh = MeshCombined;
 					}
-#endif
 				}
 			}
 		}
