@@ -3429,7 +3429,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
-									if(0 >= informationAnimationParts.RateOpacity.CountGetKey())
+									if(0 >= informationAnimationParts.RateOpacityLocal.CountGetKey())
 									{	/* RateOpacity */
 										dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
 										if(false == dataAnimation.TableParts[j].RateOpacity.Function.Pack(	dataAnimation.TableParts[j].RateOpacity,
