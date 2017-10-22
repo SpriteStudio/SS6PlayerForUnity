@@ -17,6 +17,11 @@ public partial class Script_SpriteStudio6_Root
 		return((0 < LimitTrack) ? LimitTrack : (int)Defaults.LIMIT_TRACK);
 	}
 
+	public int CountGetTrack()
+	{
+		return((null != TableControlTrack) ? TableControlTrack.Length : -1);
+	}
+
 	public bool TrackConnectParts(int idParts, int indexTrack, bool flagChildParts = false)
 	{
 		if((null == TableControlParts) || (null == DataAnimation))

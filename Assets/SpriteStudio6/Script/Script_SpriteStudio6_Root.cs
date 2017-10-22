@@ -272,18 +272,15 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Mesh Combine & Set to Renderer */
-		if(null == InstanceRootParent)
+		if(false == flagHide)
 		{
-			if(false == flagHide)
+			if((null == InstanceRootParent) && (null != MeshCombined))
 			{
-				if(null != MeshCombined)	/* && (null == InstanceRootParent) */
+				/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
+				if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
 				{
-					/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
-					if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
-					{
-						InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
-						InstanceMeshFilter.sharedMesh = MeshCombined;
-					}
+					InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
+					InstanceMeshFilter.sharedMesh = MeshCombined;
 				}
 			}
 		}
@@ -323,7 +320,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 						TableControlTrack[i].StatusIsStartAfterTransition = false;
 						TableControlTrack[i].StatusIsPausingDuringTransition = false;
 						TableControlTrack[i].Transition(-1, 0.0f, false);
-						flagRequestPlayEnd = TableControlTrack[i].StatusIsRequestPlayEnd;	/* Re-get */
+
+						flagRequestPlayEnd = TableControlTrack[i].StatusIsRequestPlayEnd;	/* Overwrite new value */
 
 						/* Stop Slave */
 						TableControlTrack[indexTrackSlave].Stop(false);
@@ -588,7 +586,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	/* Part: SpriteStudio6/Script/Root/FunctionAnimation.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionPlayTrack.cs */
-	/* Part: SpriteStudio6/Script/Root/FunctionCellChange.cs */
+	/* Part: SpriteStudio6/Script/Root/FunctionCell.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionPartsColor.cs */
 
 	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_Root scriptRoot)

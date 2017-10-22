@@ -17,7 +17,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect/Mask/AddPA"
 		{
 			"Queue" = "Transparent"
 			"IgnoreProjector" = "True"
-			"RenderT ype" = "Transparent"
+			"RenderType" = "Transparent"
 		}
 
 		Pass

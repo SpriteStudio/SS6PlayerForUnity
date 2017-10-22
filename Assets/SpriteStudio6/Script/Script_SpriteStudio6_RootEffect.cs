@@ -146,7 +146,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
 				LateUpdateMain(	FunctionExecTimeElapse(this),
 								false,
-								Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
+								Library_SpriteStudio6.KindMasking.THROUGH,	/* FOLLOW_DATA */
 								ref matrixInverseMeshRenderer
 							);
 			}
@@ -210,19 +210,16 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Update & Draw Effect */
 		if(false == flagHide)
 		{
-			ControlEffect.Update(this, ref matrixCorrection);
+			ControlEffect.Update(this, masking, ref matrixCorrection);
 
 			/* Mesh Combine & Set to Renderer */
-			if(null == InstanceRootParent)
+			if((null == InstanceRootParent) && (null != MeshCombined))
 			{
-				if(null != MeshCombined)	/* && (null == InstanceRootParent) */
+				/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
+				if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
 				{
-					/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
-					if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
-					{
-						InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
-						InstanceMeshFilter.sharedMesh = MeshCombined;
-					}
+					InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
+					InstanceMeshFilter.sharedMesh = MeshCombined;
 				}
 			}
 		}

@@ -12,5 +12,7 @@ public partial class Script_SpriteStudio6_Root
 {
 	/* ----------------------------------------------- Functions */
 	#region Functions
+//	public Library_SpriteStudio.Control.ColorBlendOverwrite ControlGetColorBlendOverwrite()
+//	public Library_SpriteStudio.Control.ColorBlendOverwrite ControlReleaseColorBlendOverwrite()
 	#endregion Functions
 }

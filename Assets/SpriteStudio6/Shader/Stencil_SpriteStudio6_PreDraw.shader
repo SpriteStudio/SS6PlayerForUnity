@@ -1,4 +1,4 @@
-﻿//
+//
 //	SpriteStudio5 Player for Unity
 //
 //	Copyright(C) Web Technology Corp.
@@ -11,9 +11,9 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"
 		_MainTex("Base (RGB)", 2D) = "white" {}
 	}
 
-		SubShader
-		{
-			Tags
+	SubShader
+	{
+		Tags
 		{
 			"Queue" = "Transparent"
 			"IgnoreProjector" = "True"
@@ -53,16 +53,16 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"
 #endif
 			{
 				fixed4 output = 0;
-			fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
-			if (input.ColorMain.a >= pixel.a)
-			{
-				discard;
-			}
+				fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
+				if (input.ColorMain.a >= pixel.a)
+				{
+					discard;
+				}
 
-			return(output);
+				return(output);
 			}
-				ENDCG
-			}
+			ENDCG
 		}
-		FallBack Off
+	}
+	FallBack Off
 }

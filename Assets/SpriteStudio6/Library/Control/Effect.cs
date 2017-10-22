@@ -30,6 +30,8 @@ public static partial class Library_SpriteStudio6
 			internal uint Seed;
 			internal uint SeedOffset;
 
+			internal Library_SpriteStudio6.KindMasking Masking;
+
 			internal Matrix4x4 MatrixRoot;
 			#endregion Variables & Properties
 
@@ -50,6 +52,8 @@ public static partial class Library_SpriteStudio6
 
 				Seed = 0;
 				SeedOffset = 0;
+
+				Masking = (Library_SpriteStudio6.KindMasking)(-1);
 
 				MatrixRoot = Matrix4x4.identity;
 			}
@@ -76,6 +80,10 @@ public static partial class Library_SpriteStudio6
 					return(false);
 				}
 
+				/* Set Masking */
+				/* MEMO: Tentatively, set initial to THROUGH. */
+				Masking = Library_SpriteStudio6.KindMasking.THROUGH;
+
 				/* Boot up Emitters */
 				Status = FlagBitStatus.CLEAR;
 
@@ -101,7 +109,6 @@ public static partial class Library_SpriteStudio6
 					indexEmitterParent = (0 >= indexEmitter) ? -1 : instanceRoot.DataEffect.TableParts[indexEmitter].IndexEmitter;	/* Root has no emitter */
 
 					indexEmitter = instanceRoot.DataEffect.TableParts[i].IndexEmitter;
-
 					TableEmitter[indexEmitter].CleanUp();
 					if(false == TableEmitter[indexEmitter].BootUp(	instanceRoot,
 																	instanceRoot.DataEffect,
@@ -154,7 +161,10 @@ public static partial class Library_SpriteStudio6
 				return(false);
 			}
 
-			internal bool Update(Script_SpriteStudio6_RootEffect instanceRoot, ref Matrix4x4 matrixCorrection)
+			internal void Update(	Script_SpriteStudio6_RootEffect instanceRoot,
+									Library_SpriteStudio6.KindMasking masking,
+									ref Matrix4x4 matrixCorrection
+								)
 			{
 				/* Check WorkArea lost */
 				if(null == TableEmitter)
@@ -182,41 +192,63 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
-				/* Update Emitters */
-				int countEmitter = TableEmitter.Length;
-				bool flagChangeCellTable = instanceRoot.StatusIsChangeCellMap;
-				for(int i=0; i<countEmitter; i++)
+				/* Check Masking & Update Cells */
+				bool flagUpdateCell = instanceRoot.StatusIsChangeCellMap;
+				if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
 				{
-					if(true == flagChangeCellTable)
-					{
-						TableEmitter[i].CellPresetParticle(instanceRoot);
-					}
+					masking = Library_SpriteStudio6.KindMasking.THROUGH;
+				}
+				if(Masking != masking)
+				{
+					Masking = masking;
+					flagUpdateCell |= true;
 				}
 
 				/* Update Emitters */
 				int[] tableIndexEmitter = instanceRoot.DataEffect.TableIndexEmitterOrderDraw;
+				int countEmitter = tableIndexEmitter.Length;
 				int indexEmitter;
 				int indexEmitterParent;
+				bool flagDrawAll;
 				for(int i=0; i<countEmitter; i++)
 				{
 					indexEmitter = tableIndexEmitter[i];
 
-					TableEmitter[indexEmitter].SeedOffset = SeedOffset;	/* Update Random-Seed-Offset */
+					/* Update Material & Cell */
+					if(true == flagUpdateCell)
+					{
+						TableEmitter[indexEmitter].CellPresetParticle(instanceRoot, Masking);
+					}
 
+					/* Update Random-Seed-Offset */
+					TableEmitter[indexEmitter].SeedOffset = SeedOffset;
+
+					/* Update Emitter */
 					indexEmitterParent = TableEmitter[indexEmitter].IndexParent;
 					if(0 <= indexEmitterParent)
 					{   /* Has Parent-Emitter */
-						TableEmitter[indexEmitterParent].UpdateSubEmitters(frameTarget, instanceRoot, ref this, indexEmitterParent, ref TableEmitter[indexEmitter]);
+						flagDrawAll = TableEmitter[indexEmitterParent].UpdateSubEmitters(	frameTarget,
+																							instanceRoot,
+																							ref this,
+																							indexEmitterParent,
+																							ref TableEmitter[indexEmitter]
+																						);
 					}
 					else
 					{	/* Has no Parent-Emitter */
-						if(false == TableEmitter[indexEmitter].Update(frameTarget, instanceRoot, ref this , -1))
-						{	/* Draw-Limit Over */
-							return(true);
-						}
+						flagDrawAll = TableEmitter[indexEmitter].Update(	frameTarget,
+																			instanceRoot,
+																			ref this,
+																			-1
+																		);
+					}
+
+					if(false == flagDrawAll)
+					{	/* Draw-Limit Over */
+						return;
 					}
 				}
-				return(true);
+				return;
 			}
 			#endregion Functions
 
@@ -270,14 +302,13 @@ public static partial class Library_SpriteStudio6
 				internal Library_SpriteStudio6.Control.Effect.Particle ParticleTempolary;	/* (mainly) for Parent */
 				internal Library_SpriteStudio6.Control.Effect.Particle Particle;
 
-				internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDraw;
 				internal Material MaterialDraw;
-				internal int Layer;
 				internal Vector3[] CoordinateTransformDraw;
 				internal Vector3[] CoordinateDraw;
 				internal Color32[] ColorVertexDraw;
 				internal Vector2[] ParameterBlendDraw;
 				internal Vector2[] UVTextureDraw;
+				internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDraw;
 
 				internal int FrameFull
 				{
@@ -318,14 +349,13 @@ public static partial class Library_SpriteStudio6
 					Position = Vector2.zero;
 					FrameGlobal = 0;
 
-					ChainDraw = null;
 					MaterialDraw = null;
-					Layer = -1;
 					CoordinateTransformDraw = null;
 					CoordinateDraw = null;
 					ColorVertexDraw = null;
 					ParameterBlendDraw = null;
 					UVTextureDraw = null;
+					ChainDraw = null;
 				}
 
 				internal bool BootUp(	Script_SpriteStudio6_RootEffect instanceRoot,
@@ -398,7 +428,7 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Set Particle's UV */
-					if(false == CellPresetParticle(instanceRoot))
+					if(false == CellPresetParticle(instanceRoot, controlEffect.Masking))
 					{
 						goto BootUp_ErrorEnd;
 					}
@@ -497,25 +527,25 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Update Sub-Emitters */
-					int FrameTop;
+					int frameTop;
 					countParticle = DataEffect.TableEmitter[IndexEmitter].CountParticleMax;
 					for(int i=0; i<countParticle; i++)
 					{
 						if(0 != (TableActivityParticle[i].Status & Library_SpriteStudio6.Control.Effect.Particle.Activity.FlagBitStatus.BORN))
 						{
 							/* MEMO: "ParticleTempolary" is parent's parameter. */
-							FrameTop = TableActivityParticle[i].FrameStart;
-							emitterTarget.ParticleTempolary.FrameStart = FrameTop;
+							frameTop = TableActivityParticle[i].FrameStart;
+							emitterTarget.ParticleTempolary.FrameStart = frameTop;
 							emitterTarget.ParticleTempolary.Direction = TableActivityParticle[i].FrameEnd;
 							emitterTarget.ParticleTempolary.ID = i;
 							emitterTarget.ParticleTempolary.IDParent = 0;
 
 							/* CAUTION: "ParticleTempolary" will be broken. */
-							if(false == emitterTarget.Update(	(frame - (float)FrameTop),
+							if(false == emitterTarget.Update(	(frame - (float)frameTop),
 																instanceRoot,
 																ref controlEffect,
 																indexEmitter
-														)
+															)
 								)
 							{
 								return(false);
@@ -526,10 +556,8 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
-				internal bool CellPresetParticle(Script_SpriteStudio6_RootEffect instanceRoot)
+				internal bool CellPresetParticle(Script_SpriteStudio6_RootEffect instanceRoot, Library_SpriteStudio6.KindMasking masking)
 				{
-					Layer = instanceRoot.gameObject.layer;
-
 					int indexCellMap = IndexCellMapOverwrite;
 					int indexCell = IndexCellOverwrite;
 					if((0 > indexCellMap) || (0 > indexCell))
@@ -558,7 +586,7 @@ public static partial class Library_SpriteStudio6
 							IndexCell = indexCell;
 							MaterialDraw = instanceRoot.MaterialGet(	IndexCellMap,
 																		DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget,
-																		Library_SpriteStudio6.KindMasking.THROUGH
+																		masking
 																	);
 
 							float pivotXCell = dataCellMap.TableCell[indexCell].Pivot.x;

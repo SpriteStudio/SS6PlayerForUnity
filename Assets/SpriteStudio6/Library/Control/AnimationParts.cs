@@ -797,6 +797,11 @@ public static partial class Library_SpriteStudio6
 										ref Matrix4x4 matrixCorrection
 									)
 				{
+//					if(null != instanceRoot.InstanceRootParent)
+//					{
+//						return;
+//					}
+
 					/* Check Unused part */
 					if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
 					{
@@ -1298,6 +1303,8 @@ public static partial class Library_SpriteStudio6
 					/* MEMO: Common */
 					internal FlagBitStatus Status;
 
+					internal Library_SpriteStudio6.KindMasking Masking;
+
 					internal BufferAttribute<Vector2> ScaleLocal;
 
 					internal Vector2 RateScaleMesh;
@@ -1357,6 +1364,8 @@ public static partial class Library_SpriteStudio6
 					internal void AnimationChange()
 					{
 						Status = FlagBitStatus.CLEAR;
+
+						Masking = (Library_SpriteStudio6.KindMasking)(-1);
 
 						ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
 
@@ -1456,6 +1465,7 @@ public static partial class Library_SpriteStudio6
 									| FlagBitStatus.UPDATE_UVTEXTURE
 									| FlagBitStatus.UPDATE_PARAMETERBLEND
 									| FlagBitStatus.UPDATE_COLORPARTS
+									| FlagBitStatus.UPDATE_MASKING
 								);
 
 						return(true);
@@ -1656,6 +1666,24 @@ public static partial class Library_SpriteStudio6
 						Vector2 sizeMapping = SizeCell;
 						Vector2 positionMapping = PositionCell;
 
+						/* Check Masking */
+						if(true == flagPreDraw)
+						{
+							masking = Library_SpriteStudio6.KindMasking.THROUGH;
+						}
+						else
+						{
+							if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
+							{
+								masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
+							}
+						}
+						if(Masking != masking)
+						{
+							Masking = masking;
+							Status |= FlagBitStatus.UPDATE_MASKING;
+						}
+
 						/* Get Rate-Opacity */
 						flagUpdateValueAttribute = dataAnimationParts.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.RateOpacity, ref argumentContainer); 
 						if(true == flagUpdateValueAttribute)
@@ -1826,7 +1854,7 @@ public static partial class Library_SpriteStudio6
 //						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
 //						{
 //						}
-						if(0 != (Status & FlagBitStatus.UPDATE_UVTEXTURE))
+						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
 						{
 							if(true == flagPreDraw)
 							{
@@ -1838,25 +1866,11 @@ public static partial class Library_SpriteStudio6
 							}
 							else
 							{
-								switch(masking)
-								{
-									case KindMasking.THROUGH:
-									case KindMasking.MASK:
-										MaterialDraw = instanceRoot.MaterialGet(	IndexCellMapDraw,
-																					instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
-																					masking
-																				);
-										break;
-
-									case KindMasking.FOLLOW_DATA:
-										MaterialDraw = instanceRoot.MaterialGet(	IndexCellMapDraw,
-																					instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
-																					(0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK
-																				);
-										break;
-								}
+								MaterialDraw = instanceRoot.MaterialGet(	IndexCellMapDraw,
+																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
+																			Masking
+																		);
 							}
-
 						}
 //						if(0 != (Status & FlagBitStatus.UPDATE_COLORPARTS))
 //						{
@@ -1874,6 +1888,7 @@ public static partial class Library_SpriteStudio6
 										| FlagBitStatus.UPDATE_UVTEXTURE
 										| FlagBitStatus.UPDATE_PARAMETERBLEND
 										| FlagBitStatus.UPDATE_COLORPARTS
+										| FlagBitStatus.UPDATE_MASKING
 								);
 					}
 
@@ -1913,6 +1928,8 @@ public static partial class Library_SpriteStudio6
 						UPDATE_UVTEXTURE = 0x00000002,
 						UPDATE_PARAMETERBLEND = 0x00000004,
 						UPDATE_COLORPARTS = 0x00000008,
+
+						UPDATE_MASKING = 0x00000010,
 
 						CLEAR = 0x00000000
 					}

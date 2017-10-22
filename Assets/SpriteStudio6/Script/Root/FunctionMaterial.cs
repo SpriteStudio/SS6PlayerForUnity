@@ -116,5 +116,12 @@ public partial class Script_SpriteStudio6_Root
 		}
 		return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL) + ((int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL));
 	}
+
+
+//	public Material[] TableCopyMaterialShallow()
+//	public Material[] TableCopyMaterialDeep()
+//	public int CountGetTextureTableMaterial()
+//	public bool TextureChangeTableMaterial(int index, Texture2D texture)
+//	public bool TableMaterialChange(Material[] tableMaterial, bool flagChangeInstance=false, Material[] tableMaterialInstance=null, bool flagChangeEffect=false, Material[] tableMaterialChangeEffect=null)
 	#endregion Functions
 }

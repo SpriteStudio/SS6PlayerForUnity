@@ -422,7 +422,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																						informationSSPJ,
 																						informationTexture,
 																						(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																						Library_SpriteStudio6.KindMasking.THROUGH
+																						(Library_SpriteStudio6.KindMasking)k
 																					)
 									)
 								{
