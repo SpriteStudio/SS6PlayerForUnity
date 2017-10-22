@@ -17,9 +17,9 @@ public static partial class Library_SpriteStudio6
 	#region Enums & Constants
 	public enum KindOperationBlend
 	{
-		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR_TABLEMATERIAL,	/* - (-x) = +(x) */
+		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR,	/* - (-x) = +(x) */
 		TERMINATOR_PARTSCOLOR = MUL_NA,
-		INITIATOR_TABLEMATERIAL = MASK_PRE,
+		INITIATOR = MASK_PRE,
 
 		MASK_PRE = -2,
 		MASK = -1,
@@ -40,8 +40,8 @@ public static partial class Library_SpriteStudio6
 
 	public enum KindOperationBlendEffect
 	{
-		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR_TABLEMATERIAL,	/* - (-x) = +(x) */
-		INITIATOR_TABLEMATERIAL = MIX,
+		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR,	/* - (-x) = +(x) */
+		INITIATOR = MIX,
 
 		NON = -1,
 
@@ -1324,7 +1324,7 @@ public static partial class Library_SpriteStudio6
 			#region Functions
 			public static UnityEngine.Shader ShaderGetAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking)
 			{
-				if((Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
+				if((Library_SpriteStudio6.KindOperationBlend.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
 				{
 					return(null);
 				}
@@ -1332,10 +1332,10 @@ public static partial class Library_SpriteStudio6
 				switch(masking)
 				{
 					case Library_SpriteStudio6.KindMasking.THROUGH:
-						return(TableSpriteThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL]);
+						return(TableSpriteThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR]);
 
 					case Library_SpriteStudio6.KindMasking.MASK:
-						return(TableSpriteMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR_TABLEMATERIAL]);
+						return(TableSpriteMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR]);
 
 					default:
 						break;
@@ -1345,7 +1345,7 @@ public static partial class Library_SpriteStudio6
 
 			public static UnityEngine.Shader ShaderGetEffect(Library_SpriteStudio6.KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking)
 			{
-				if((Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend))
+				if((Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend))
 				{
 					return(null);
 				}
@@ -1353,10 +1353,10 @@ public static partial class Library_SpriteStudio6
 				switch(masking)
 				{
 					case Library_SpriteStudio6.KindMasking.THROUGH:
-						return(TableEffectThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL]);
+						return(TableEffectThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR]);
 
 					case Library_SpriteStudio6.KindMasking.MASK:
-						return(TableEffectMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR_TABLEMATERIAL]);
+						return(TableEffectMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR]);
 
 					default:
 						break;
@@ -2089,7 +2089,7 @@ public static partial class Library_SpriteStudio6
 	{
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
 		#region Classes, Structs & Interfaces
-		public class Asset
+		public static partial class Asset
 		{
 			/* ----------------------------------------------- Functions */
 			#region Functions
@@ -2343,8 +2343,15 @@ public static partial class Library_SpriteStudio6
 			#endregion Enums & Constants
 		}
 
-		public static class Math
+		public static partial class Material
 		{
+			/* Part: SpriteStudio6/Library/Utility/Material.cs */
+		}
+
+		public static partial class Math
+		{
+			/* ----------------------------------------------- Functions */
+			#region Functions
 			public static void CoordinateGetDiagonalIntersection(out Vector3 intersection, ref Vector3 LU, ref Vector3 RU, ref Vector3 LD, ref Vector3 RD)
 			{
 				/* MEMO: Z-Values are ignored. */
@@ -2362,6 +2369,7 @@ public static partial class Library_SpriteStudio6
 					intersection.y = LU.y + ca * (RD.y - LU.y);
 				}
 			}
+			#endregion Functions
 		}
 
 		public static partial class Random

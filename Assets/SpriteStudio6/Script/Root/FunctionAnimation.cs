@@ -99,7 +99,7 @@ public partial class Script_SpriteStudio6_Root
 		int.MaxValue == Apply previous setting.<br>
 		default: int.MaxValue
 	@retval	Return-Value
-		true == Success <br>
+		true == Success<br>
 		false == Failure (Error)
 
 	The playing of animation begins. <br>
@@ -367,7 +367,7 @@ public partial class Script_SpriteStudio6_Root
 		int.MaxValue == Apply previous setting.<br>
 		default: int.MaxValue
 	@retval	Return-Value
-		true == Success <br>
+		true == Success<br>
 		false == Failure (Error)
 
 	Fades from the current playing state to first frame of the specified animation.<br>
@@ -572,7 +572,7 @@ public partial class Script_SpriteStudio6_Root
 		true == Set pause (Suspend)<br>
 		false == Rerease pause (Resume)
 	@retval	Return-Value
-		true == Success <br>
+		true == Success<br>
 		false == Failure (Error)
 
 	The playing of animation suspends or resumes.<br>
@@ -636,7 +636,7 @@ public partial class Script_SpriteStudio6_Root
 		Coefficient of time-passage of animation.<br>
 		Minus Value is given, Animation is played backwards.
 	@retval	Return-Value
-		true == Success <br>
+		true == Success<br>
 		false == Failure (Error)
 
 	Change speed of the animation during playing.<br>

@@ -482,10 +482,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						int countMaterial;
 						MaterialAnimationSS6PU.CleanUp();
-						countMaterial = Script_SpriteStudio6_Root.CountGetMaterialTable(1);
+						countMaterial = Script_SpriteStudio6_Root.Material.CountGetTableMaterial(1);
 						MaterialAnimationSS6PU.BootUp(countMaterial);
 						MaterialEffectSS6PU.CleanUp();
-						countMaterial = Script_SpriteStudio6_RootEffect.CountGetMaterialTable(1);
+						countMaterial = Script_SpriteStudio6_RootEffect.Material.CountGetTableMaterial(1);
 						MaterialEffectSS6PU.BootUp(countMaterial);
 					}
 
@@ -628,7 +628,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		Material materialOverride
 																	)
 				{
-					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(0, operationTarget, masking);
+					int indexTable = Script_SpriteStudio6_Root.Material.IndexGetTableMaterial(0, operationTarget, masking);
 					if(null != materialOverride)
 					{	/* Specified */
 						informationTexture.MaterialAnimationSS6PU.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
@@ -659,7 +659,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	Material materialOverride
 																)
 				{
-					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(0, operationTarget, masking);
+					int indexTable = Script_SpriteStudio6_RootEffect.Material.IndexGetTableMaterial(0, operationTarget, masking);
 					if(null != materialOverride)
 					{	/* Specified */
 						informationTexture.MaterialEffectSS6PU.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
@@ -689,7 +689,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																)
 				{
 					const string messageLogPrefix = "Create Asset(Material-Animation)";
-					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableAnimation(0, operationTarget, masking);
+					int indexTable = Script_SpriteStudio6_Root.Material.IndexGetTableMaterial(0, operationTarget, masking);
 
 					Material material = null;
 					material = informationTexture.MaterialAnimationSS6PU.TableData[indexTable];
@@ -719,7 +719,7 @@ public static partial class LibraryEditor_SpriteStudio6
 															)
 				{
 					const string messageLogPrefix = "Create Asset(Material-Effect)";
-					int indexTable = LibraryEditor_SpriteStudio6.Utility.TableMaterial.IndexGetMaterialTableEffect(0, operationTarget, masking);
+					int indexTable = Script_SpriteStudio6_RootEffect.Material.IndexGetTableMaterial(0, operationTarget, masking);
 
 					Material material = null;
 					material = informationTexture.MaterialEffectSS6PU.TableData[indexTable];
