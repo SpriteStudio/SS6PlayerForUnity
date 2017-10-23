@@ -23,7 +23,7 @@ public static partial class Library_SpriteStudio6
 
 		MASK_PRE = -2,
 		MASK = -1,
-		NON = -1,
+		NON = -1,	/* for Control.AdditionalColor */
 
 		MIX = 0,
 		ADD,
@@ -956,9 +956,35 @@ public static partial class Library_SpriteStudio6
 
 			public void Duplicate(CellMap original)
 			{
-				Name = string.Copy(original.Name);
+#if STATICDATA_DUPLICATE_DEEP
+				CopyDeep(original);
+#else
+				CopyShallow(original);
+#endif
+			}
+
+			public bool CopyShallow(CellMap original)
+			{
+				Name = original.Name;
 				SizeOriginal = original.SizeOriginal;
 				TableCell = original.TableCell;
+
+				return(true);
+			}
+
+			public bool CopyDeep(CellMap original)
+			{
+				Name = string.Copy(original.Name);
+				SizeOriginal = original.SizeOriginal;
+
+				int countCell = original.TableCell.Length;
+				TableCell = new Cell[countCell];
+				for(int i=0; i<countCell; i++)
+				{
+					TableCell[i].CopyDeep(ref original.TableCell[i]);
+				}
+
+				return(true);
 			}
 			#endregion Functions
 
@@ -997,10 +1023,31 @@ public static partial class Library_SpriteStudio6
 
 				public void Duplicate(Cell original)
 				{
+#if STATICDATA_DUPLICATE_DEEP
+					CopyDeep(ref original);
+#else
+					CopyShallow(ref original);
+#endif
+				}
+
+				public bool CopyShallow(ref Cell original)
+				{
 					Name = string.Copy(original.Name);
 					Rectangle = original.Rectangle;
 					Pivot = original.Pivot;
-					Mesh = original.Mesh;
+					Mesh.CopyShallow(ref original.Mesh);
+
+					return(true);
+				}
+
+				public bool CopyDeep(ref Cell original)
+				{
+					Name = original.Name;
+					Rectangle = original.Rectangle;
+					Pivot = original.Pivot;
+					Mesh.CopyDeep(ref original.Mesh);
+
+					return(true);
 				}
 				#endregion Functions
 
@@ -1053,6 +1100,22 @@ public static partial class Library_SpriteStudio6
 					public void Duplicate(DataMesh original)
 					{
 #if STATICDATA_DUPLICATE_DEEP
+						CopyDeep(ref original);
+#else
+						CopyShallow(ref original);
+#endif
+					}
+
+					public bool CopyShallow(ref DataMesh original)
+					{
+						TableVertex = original.TableVertex;
+						TableIndexVertex = original.TableIndexVertex;
+
+						return(true);
+					}
+
+					public bool CopyDeep(ref DataMesh original)
+					{
 						int count;
 						if(null != original.TableVertex)
 						{
@@ -1081,10 +1144,8 @@ public static partial class Library_SpriteStudio6
 						{
 							TableIndexVertex = null;
 						}
-#else
-						TableVertex = original.TableVertex;
-						TableIndexVertex = original.TableIndexVertex;
-#endif
+
+						return(true);
 					}
 					#endregion Functions
 
@@ -1419,18 +1480,162 @@ public static partial class Library_SpriteStudio6
 		#region Classes, Structs & Interfaces
 		public static partial class Animation
 		{
-			/* ----------------------------------------------- Classes, Structs & Interfaces */
-			#region Classes, Structs & Interfaces
 			/* Part: SpriteStudio6/Library/Control/AnimationTrack.cs */
 			/* Part: SpriteStudio6/Library/Control/AnimationParts.cs */
-
-			public class PartsColor
-			{
-			}
-			#endregion Classes, Structs & Interfaces
 		}
 
-		/* Part: SpriteStudio6/Library/Control/Effect.cs */
+//		public partial struct Effect
+//		{
+			/* Part: SpriteStudio6/Library/Control/Effect.cs */
+//		}
+
+		public class AdditionalColor
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			public Library_SpriteStudio6.KindOperationBlend OperationBlend;
+			public Color[] ColorVertex;
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public void CleanUp()
+			{
+				OperationBlend = (Library_SpriteStudio6.KindOperationBlend)(-1);
+				ColorVertex = null;
+			}
+
+			public bool BootUp()
+			{
+				CleanUp();
+
+				OperationBlend = Library_SpriteStudio6.KindOperationBlend.MIX;
+
+				int countVertex = (int)Library_SpriteStudio6.KindVertex.TERMINATOR2;
+				ColorVertex = new Color[countVertex];
+				if(null == ColorVertex)
+				{
+					return(false);
+				}
+
+				for(int i=0; i<countVertex; i++)
+				{
+					ColorVertex[i] = ColorClear[(int)Library_SpriteStudio6.KindOperationBlend.MIX];
+				}
+
+				return(true);
+			}
+
+			public void ShutDown()
+			{
+				CleanUp();
+			}
+
+			/* ******************************************************** */
+			//! Set single additional-color (Bounding: Overall)
+			/*!
+			@param	operationBlend
+				kind of Blending Operation (NON/MIX/ADD/SUB/MUL)<br>
+				Library_SpriteStudio6.KindOperationBlend.NON: Follow animation data
+			@param	color
+				Blending Color<br>
+				AdditionalColor.ColorClear[operationBlend]: Color as blending nothing
+			@retval	Return-Value
+				(none)
+
+			Set single additional-color.<br>
+			<br>
+			Do not set values other than NON, MIX, ADD, SUB or MUL to "operationBlend".<br>
+			<br>
+			When specify a "Library_SpriteStudio6.KindOperationBlend.NON" to "operationBlend", result will follow the setting of the original animation data.<br>
+			The color for invalidating affect differs for each blend and can be get using this class's "ColorClear[blend-type]".<br>
+			*/
+			public void SetOverall(Library_SpriteStudio6.KindOperationBlend operationBlend, Color32 color)
+			{
+				if(Library_SpriteStudio6.KindOperationBlend.NON == operationBlend)
+				{
+					OperationBlend = Library_SpriteStudio6.KindOperationBlend.NON;
+					return;
+				}
+
+				if((Library_SpriteStudio6.KindOperationBlend.NON >= operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR_PARTSCOLOR <= operationBlend))
+				{	/* Ignore (Error) */
+					return;
+				}
+
+				OperationBlend = operationBlend;
+				for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
+				{
+					ColorVertex[i] = color;
+				}
+			}
+
+			/* ******************************************************** */
+			//! Set separately additional-color of the 4-vertices (Bounding: Vertex)
+			/*!
+			@param	operationBlend
+				kind of Blending Operation (NON/MIX/ADD/SUB/MUL)<br>
+				Library_SpriteStudio6.KindOperationBlend.NON: Follow animation data
+			@param	colorLU
+				Blending Color for vertex left-top<br>
+				AdditionalColor.ColorClear[operationBlend]: Color as blending nothing
+			@param	colorRU
+				Blending Color for vertex right-top<br>
+				AdditionalColor.ColorClear[operationBlend]: Color as blending nothing
+			@param	colorRD
+				Blending Color for vertex right-bottom<br>
+				AdditionalColor.ColorClear[operationBlend]: Color as blending nothing
+			@param	colorLD
+				Blending Color for vertex left-bottom<br>
+				AdditionalColor.ColorClear[operationBlend]: Color as blending nothing
+			@retval	Return-Value
+				(none)
+
+			Set separately additional-color of the 4-vertices.<br>
+			<br>
+			Do not set values other than NON, MIX, ADD, SUB or MUL to "operationBlend".<br>
+			<br>
+			When specify a "Library_SpriteStudio6.KindOperationBlend.NON" to "operationBlend", result will follow the setting of the original animation data.<br>
+			The color for invalidating affect differs for each blend and can be get using this class's "ColorClear[blend-type]".<br>
+			*/
+			public void SetVertex(	Library_SpriteStudio6.KindOperationBlend operationBlend,
+									Color32 colorLU,
+									Color32 colorRU,
+									Color32 colorRD,
+									Color32 colorLD
+								)
+			{
+				if(Library_SpriteStudio6.KindOperationBlend.NON == operationBlend)
+				{
+					OperationBlend = Library_SpriteStudio6.KindOperationBlend.NON;
+					return;
+				}
+
+				if((Library_SpriteStudio6.KindOperationBlend.NON >= operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR_PARTSCOLOR <= operationBlend))
+				{	/* Ignore (Error) */
+					return;
+				}
+
+				OperationBlend = operationBlend;
+				ColorVertex[(int)Library_SpriteStudio6.KindVertex.LU] = colorLU;
+				ColorVertex[(int)Library_SpriteStudio6.KindVertex.RU] = colorRU;
+				ColorVertex[(int)Library_SpriteStudio6.KindVertex.RD] = colorRD;
+				ColorVertex[(int)Library_SpriteStudio6.KindVertex.LD] = colorLD;
+			}
+
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			public readonly static Color32[] ColorClear = new Color32[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_PARTSCOLOR]
+			{
+				/* MIX */	new Color(0.0f, 0.0f, 0.0f, 0.0f),
+				/* ADD */	new Color(0.0f, 0.0f, 0.0f, 0.0f),
+				/* SUB */	new Color(0.0f, 0.0f, 0.0f, 0.0f),
+				/* MUL */	new Color(0.0f, 0.0f, 0.0f, 0.0f)
+			};
+			#endregion Enums & Constants
+		}
 		#endregion Classes, Structs & Interfaces
 	}
 
@@ -1443,7 +1648,7 @@ public static partial class Library_SpriteStudio6
 		{
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
-			public Material[] TableMaterial;
+			public UnityEngine.Material[] TableMaterial;
 
 			public Script_SpriteStudio6_DataCellMap DataCellMap;
 			internal Library_SpriteStudio6.Data.CellMap[] TableCellMap = null;
@@ -1456,10 +1661,12 @@ public static partial class Library_SpriteStudio6
 
 			internal float RateOpacity = 1.0f;
 
+			internal Library_SpriteStudio6.Control.AdditionalColor AdditionalColor = null;
+
 			internal Library_SpriteStudio6.Draw.Cluster ClusterDraw = null;	/* refer to Highest-Parent-Root's ClusterDraw */
 			internal MeshRenderer InstanceMeshRenderer = null;
 			internal MeshFilter InstanceMeshFilter = null;
-			protected Material[] TableMaterialCombined = null;	/* use only Highest-Parent-Root */
+			protected UnityEngine.Material[] TableMaterialCombined = null;	/* use only Highest-Parent-Root */
 			protected Mesh MeshCombined = null;	/* use only Highest-Parent-Root */
 			#endregion Variables & Properties
 
@@ -1669,6 +1876,64 @@ public static partial class Library_SpriteStudio6
 				InstanceMeshRenderer = null;
 				MeshCombined = null;
 				return(false);
+			}
+
+			/* ******************************************************** */
+			//! Create "AdditionalColor" Parameter
+			/*!
+			@param
+				(None)
+			@retval	Return-Value
+				"AdditionalColor" Setting Buffer
+		
+			Get the Parameter-Buffer of "AdditionalColor" for instances of this class.<br>
+			AdditionalColor" perform additional color processing to instances of this class's derived class.
+			 ("Script_SpriteStudio6_Root", "Script_SpriteStudio6_RootEffect")<br>
+			Caution that the effect differs for each derived class.<br>
+			<br>
+			- Script_SpriteStudio 6_Root (Animation)<br>
+			Overwrite "Parts Color" attribute state for all sprite data used in animation. (No effect to "Mask")<br>
+			<br>
+			- Script_SpriteStudio6_RootEffect (Effect)<br>
+			Execute processing equivalent to animation's "Parts Color" attribute for all particles' vertex-color used in "Effect".<br>
+			(The result color is "particles' vertex-color processed with AdditionalColor" * "pixel of particle")<br>
+			<br>
+			When continue using AdditionalColor, need not to call this function more than once.<br>
+			<br>
+			The detail of how to set, refer to the commentary of "Library_SpriteStudio6.Control.AdditionalColor".<br>
+			*/
+			public Library_SpriteStudio6.Control.AdditionalColor AAdditionalColorCreate()
+			{
+				if(null == AdditionalColor)
+				{
+					AdditionalColor = new Library_SpriteStudio6.Control.AdditionalColor();
+					if(null == AdditionalColor)
+					{	/* Error */
+						return(null);
+					}
+					AdditionalColor.BootUp();
+				}
+
+				return(AdditionalColor);
+			}
+
+			/* ******************************************************** */
+			//! Release "AdditionalColor" Parameter
+			/*!
+			@param
+				(None)
+			@retval	Return-Value
+				(None)
+
+			Release the Parameter-Buffer of "AdditionalColor".<br>
+			And stop processing AdditionalColor.<br>
+			(Animation and "Effect"s return to state not using AdditionalColor)<br>
+			<br>
+			To use AdditionalColor again after using this function, use "AdditionalColorCreate" function and re-get parameter-buffer.<br>
+			*/
+			public void AdditionalColorRelease()
+			{
+				AdditionalColor = null;
 			}
 			#endregion Functions
 		}
@@ -2345,7 +2610,279 @@ public static partial class Library_SpriteStudio6
 
 		public static partial class Material
 		{
-			/* Part: SpriteStudio6/Library/Utility/Material.cs */
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public static UnityEngine.Material[] TableCopyShallow(UnityEngine.Material[] tableMaterial)
+			{
+				if(null == tableMaterial)
+				{
+					return(null);
+				}
+
+				int countMaterial = tableMaterial.Length;
+				UnityEngine.Material[] tableMaterialNew = new UnityEngine.Material[countMaterial];
+				if(null == tableMaterialNew)
+				{
+					return(null);
+				}
+
+				for(int i=0; i<countMaterial; i++)
+				{
+					tableMaterialNew[i] = tableMaterial[i];
+				}
+
+				return(tableMaterial);
+			}
+
+			public static UnityEngine.Material[] TableCopyDeep(UnityEngine.Material[] tableMaterial)
+			{
+				if(null == tableMaterial)
+				{
+					return(null);
+				}
+
+				int countMaterial = tableMaterial.Length;
+				UnityEngine.Material[] tableMaterialNew = new UnityEngine.Material[countMaterial];
+				if(null == tableMaterialNew)
+				{
+					return(null);
+				}
+
+				for(int i=0; i<countMaterial; i++)
+				{
+					tableMaterialNew[i] = new UnityEngine.Material(tableMaterial[i]);
+				}
+
+				return(tableMaterial);
+			}
+			#endregion Functions
+		}
+
+		public static partial class Cell
+		{
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public static Library_SpriteStudio6.Data.CellMap[] TableCopyMapShallow(Library_SpriteStudio6.Data.CellMap[] tableCellMap)
+			{
+				if(null == tableCellMap)
+				{
+					return(null);
+				}
+
+				int countCellMap = tableCellMap.Length;
+				Library_SpriteStudio6.Data.CellMap[] tableCellMapNew = new Library_SpriteStudio6.Data.CellMap[countCellMap];
+				if(null == tableCellMap)
+				{
+					return(null);
+				}
+
+				for(int i=0; i<countCellMap; i++)
+				{
+					tableCellMapNew[i] = MapCopyShallow(tableCellMap[i]);
+					if(null == tableCellMapNew[i])
+					{
+						tableCellMapNew = null;
+						return(null);
+					}
+				}
+				return(tableCellMapNew);
+			}
+
+			public static Library_SpriteStudio6.Data.CellMap[] TableCopyMapDeep(Library_SpriteStudio6.Data.CellMap[] tableCellMap)
+			{
+				if(null == tableCellMap)
+				{
+					return(null);
+				}
+
+				int countCellMap = tableCellMap.Length;
+				Library_SpriteStudio6.Data.CellMap[] tableCellMapNew = new Library_SpriteStudio6.Data.CellMap[countCellMap];
+				if(null == tableCellMap)
+				{
+					return(null);
+				}
+
+				for(int i=0; i<countCellMap; i++)
+				{
+					tableCellMapNew[i] = MapCopyDeep(tableCellMap[i]);
+					if(null == tableCellMapNew[i])
+					{
+						tableCellMapNew = null;
+						return(null);
+					}
+				}
+				return(tableCellMapNew);
+			}
+
+			public static Library_SpriteStudio6.Data.CellMap MapCopyShallow(Library_SpriteStudio6.Data.CellMap cellMap)
+			{
+				if(null == cellMap)
+				{
+					return(null);
+				}
+
+				Library_SpriteStudio6.Data.CellMap cellMapNew = new Library_SpriteStudio6.Data.CellMap();
+				if(null == cellMapNew)
+				{
+					return(null);
+				}
+
+				if(false == cellMapNew.CopyShallow(cellMap))
+				{
+					cellMapNew = null;
+				}
+
+				return(cellMapNew);
+			}
+
+			public static Library_SpriteStudio6.Data.CellMap MapCopyDeep(Library_SpriteStudio6.Data.CellMap cellMap)
+			{
+				if(null == cellMap)
+				{
+					return(null);
+				}
+
+				Library_SpriteStudio6.Data.CellMap cellMapNew = new Library_SpriteStudio6.Data.CellMap();
+				if(null == cellMapNew)
+				{
+					return(null);
+				}
+
+				if(false == cellMapNew.CopyDeep(cellMap))
+				{
+					cellMapNew = null;
+				}
+
+				return(cellMapNew);
+			}
+
+			public static bool CopyShallow(ref Library_SpriteStudio6.Data.CellMap.Cell cellOutput, ref Library_SpriteStudio6.Data.CellMap.Cell cell)
+			{
+				return(cellOutput.CopyShallow(ref cell));
+			}
+
+			public static bool CopyDeep(ref Library_SpriteStudio6.Data.CellMap.Cell cellOutput, ref Library_SpriteStudio6.Data.CellMap.Cell cell)
+			{
+				return(cellOutput.CopyDeep(ref cell));
+			}
+
+			public static bool CopyShallow(	Library_SpriteStudio6.Data.CellMap cellMapOutput,
+								int indexCellOutput,
+								ref Library_SpriteStudio6.Data.CellMap.Cell cell)
+			{
+				if((null == cellMapOutput) || (null == cellMapOutput.TableCell))
+				{
+					return(false);
+				}
+				if((0 > indexCellOutput) || (cellMapOutput.TableCell.Length <= indexCellOutput))
+				{
+					return(false);
+				}
+
+				return(cellMapOutput.TableCell[indexCellOutput].CopyShallow(ref cell));
+			}
+
+			public static bool CopyDeep(	Library_SpriteStudio6.Data.CellMap cellMapOutput,
+											int indexCellOutput,
+											ref Library_SpriteStudio6.Data.CellMap.Cell cell
+										)
+			{
+				if((null == cellMapOutput) || (null == cellMapOutput.TableCell))
+				{
+					return(false);
+				}
+				if((0 > indexCellOutput) || (cellMapOutput.TableCell.Length <= indexCellOutput))
+				{
+					return(false);
+				}
+
+				return(cellMapOutput.TableCell[indexCellOutput].CopyDeep(ref cell));
+			}
+
+			public static bool CopyShallow(	Library_SpriteStudio6.Data.CellMap cellMapOutput, 
+											int indexCellOutput,
+											Library_SpriteStudio6.Data.CellMap cellMap,
+											int indexCell,
+											int countCell
+										)
+			{
+				if((null == cellMapOutput) || (null == cellMapOutput.TableCell))
+				{
+					return(false);
+				}
+				if((null == cellMap) || (null == cellMap.TableCell))
+				{
+					return(false);
+				}
+
+				countCell = CountGetCopyCell(countCell, indexCell, cellMap.TableCell.Length, indexCellOutput, cellMapOutput.TableCell.Length);
+				if(0 > countCell)
+				{
+					return(false);
+				}
+
+				for(int i=0; i<countCell; i++)
+				{
+					cellMapOutput.TableCell[indexCellOutput + i].CopyShallow(ref cellMap.TableCell[indexCell + i]);
+				}
+
+				return(true);
+			}
+			private static int CountGetCopyCell(int countCell, int indexCellInput, int countCellInput, int indexCellOutput, int countCellOutput)
+			{
+				if((0 > indexCellOutput) || (countCellOutput <= indexCellOutput))
+				{
+					return(-1);
+				}
+				if((0 > indexCellInput) || (countCellInput <= indexCellInput))
+				{
+					return(-1);
+				}
+
+				if(0 > countCell)
+				{
+					countCell = countCellInput - indexCellInput;
+				}
+//				int indexLastInput = indexCellInput + countCell;
+				int indexLastOutput = indexCellOutput + countCell;
+				if(indexLastOutput >= countCellOutput)
+				{
+					countCell -= (indexLastOutput - countCellOutput) + 1;
+				}
+
+				return(countCell);
+			}
+
+			public static bool CopyDeep(	Library_SpriteStudio6.Data.CellMap cellMapOutput, 
+											int indexCellOutput,
+											Library_SpriteStudio6.Data.CellMap cellMap,
+											int indexCell,
+											int countCell
+										)
+			{
+				if((null == cellMapOutput) || (null == cellMapOutput.TableCell))
+				{
+					return(false);
+				}
+				if((null == cellMap) || (null == cellMap.TableCell))
+				{
+					return(false);
+				}
+
+				countCell = CountGetCopyCell(countCell, indexCell, cellMap.TableCell.Length, indexCellOutput, cellMapOutput.TableCell.Length);
+				if(0 > countCell)
+				{
+					return(false);
+				}
+
+				for(int i=0; i<countCell; i++)
+				{
+					cellMapOutput.TableCell[indexCellOutput + i].CopyDeep(ref cellMap.TableCell[indexCell + i]);
+				}
+
+				return(true);
+			}
+			#endregion Functions
 		}
 
 		public static partial class Math

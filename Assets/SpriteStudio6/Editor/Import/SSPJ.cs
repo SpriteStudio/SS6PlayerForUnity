@@ -901,7 +901,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					int indexMaterial;
 					int indexMaterialTexture;
 					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
-					int countMaterial = Script_SpriteStudio6_Root.Material.CountGetTableMaterial(countSSCE);
+					int countMaterial = Script_SpriteStudio6_Root.Material.CountGetTable(countSSCE);
 					informationSSPJ.TableMaterialAnimationSS6PU = new Material[countMaterial];
 					if(null == informationSSPJ.TableMaterialAnimationSS6PU)
 					{
@@ -913,8 +913,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
 						{
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTableMaterial(i, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							indexMaterialTexture = Script_SpriteStudio6_Root.Material.IndexGetTableMaterial(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
+							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
+							indexMaterialTexture = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
 							informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = (0 > indexTexture)
 																							? null
 																							: informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[indexMaterialTexture];
@@ -924,15 +924,15 @@ public static partial class LibraryEditor_SpriteStudio6
 						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
 						{
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTableMaterial(i, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
-							indexMaterialTexture = Script_SpriteStudio6_Root.Material.IndexGetTableMaterial(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
+							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
+							indexMaterialTexture = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
 							informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = (0 > indexTexture)
 																							 ? null
 																							: informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[indexMaterialTexture];
 						}
 					}
 
-					countMaterial = Script_SpriteStudio6_RootEffect.Material.CountGetTableMaterial(countSSCE);
+					countMaterial = Script_SpriteStudio6_RootEffect.Material.CountGetTable(countSSCE);
 					informationSSPJ.TableMaterialEffectSS6PU = new Material[countMaterial];
 					if(null == informationSSPJ.TableMaterialEffectSS6PU)
 					{
@@ -944,8 +944,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
 						{
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTableMaterial(i, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							indexMaterialTexture = Script_SpriteStudio6_RootEffect.Material.IndexGetTableMaterial(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
+							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
+							indexMaterialTexture = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
 							informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = (0 > indexTexture)
 																						? null
 																						: informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[indexMaterialTexture];
@@ -954,8 +954,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
 						{
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTableMaterial(i, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
-							indexMaterialTexture = Script_SpriteStudio6_RootEffect.Material.IndexGetTableMaterial(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
+							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
+							indexMaterialTexture = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
 							informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = (0 > indexTexture)
 																						? null
 																						: informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[indexMaterialTexture];

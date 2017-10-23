@@ -61,6 +61,8 @@ public partial class Script_SpriteStudio6_RootEffect
 		TimeElapsed = (0.0f > RateTime) ? (FrameRange * TimePerFrame) : 0.0f; 
 
 		/* Status Set */
+		Status |= FlagBitStatus.PLAYING;
+
 		StatusPlaying |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING;
 		StatusPlaying |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;
 
@@ -82,9 +84,9 @@ public partial class Script_SpriteStudio6_RootEffect
 	public void AnimationStop(bool flagJumpEnd = false)
 	{
 		/* Status Set */
-		StatusPlaying &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING;
+		Status &= ~FlagBitStatus.PLAYING;
 
-		return;
+		StatusPlaying &= ~(Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING | Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START);
 	}
 
 	/* ********************************************************* */

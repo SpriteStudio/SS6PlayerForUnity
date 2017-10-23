@@ -193,7 +193,7 @@ public static partial class Library_SpriteStudio6
 				}
 
 				/* Check Masking & Update Cells */
-				bool flagUpdateCell = instanceRoot.StatusIsChangeCellMap;
+				bool flagUpdateCell = instanceRoot.StatusIsChangeTableMaterial;
 				if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
 				{
 					masking = Library_SpriteStudio6.KindMasking.THROUGH;

@@ -323,7 +323,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						for(int k=(int)Library_SpriteStudio6.KindMasking.THROUGH; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
 						{
 							flagCreateAssetData = true;
-							indexMaterial = Script_SpriteStudio6_Root.Material.IndexGetTableMaterial(0, (Library_SpriteStudio6.KindOperationBlend)j, (Library_SpriteStudio6.KindMasking)k);
+							indexMaterial = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, (Library_SpriteStudio6.KindMasking)k);
 
 							/* Create-Asset */
 							if(null == informationTexture.MaterialAnimationSS6PU.TableData[indexMaterial])
@@ -383,7 +383,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						for(int k=(int)Library_SpriteStudio6.KindMasking.THROUGH; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
 						{
 							flagCreateAssetData = true;
-							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTableMaterial(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, (Library_SpriteStudio6.KindMasking)k);
+							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, (Library_SpriteStudio6.KindMasking)k);
 
 							/* Create-Asset */
 							if(null == informationTexture.MaterialEffectSS6PU.TableData[indexMaterial])

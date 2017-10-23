@@ -34,7 +34,7 @@ public partial class Script_SpriteStudio6_Root
 			return(null);
 		}
 
-		int indexMaterial = Material.IndexGetTableMaterial(indexCellMap, operationBlend, masking);
+		int indexMaterial = Material.IndexGetTable(indexCellMap, operationBlend, masking);
 		if(0 > indexMaterial)
 		{
 			return(null);
@@ -44,41 +44,296 @@ public partial class Script_SpriteStudio6_Root
 	}
 
 	/* ********************************************************* */
-	//! Get Material-Table length
+	//! Get TableMaterial's length
 	/*!
 	@param	flagInUse
 		true == TableMaterial's length of Currently in use<br>
 		false == TableMaterial's length of original animation data
 	@retval	Return-Value
-		Material-Table length
+		TableMaterial's length
 
 	Get TableMaterial's length.
 	*/
-	public int CountGetMaterialTable(bool flagInUse=true)
+	public int CountGetTableMaterial(bool flagInUse=true)
 	{
-		if(false == flagInUse)
-		{	/* Original */
-			if((null == DataAnimation) || (null == DataAnimation.TableMaterial))
-			{
-				return(-1);
-			}
-
-			return(DataAnimation.TableMaterial.Length);
-		}
-
-		if(null == TableMaterial)
+		UnityEngine.Material[]  tableMaterial = TableMaterialGet(flagInUse);
+		if(null != tableMaterial)
 		{
 			return(-1);
 		}
 
-		return(TableMaterial.Length);
+		return(tableMaterial.Length);
+	}
+	private UnityEngine.Material[] TableMaterialGet(bool flagInUse=true)
+	{
+		if(false == flagInUse)
+		{	/* Original */
+			if(null == DataAnimation)
+			{
+				return(null);
+			}
+			return(DataAnimation.TableMaterial);
+		}
+		return(TableMaterial);
+	}
+
+	/* ********************************************************* */
+	//! Shallow-Copy TableMaterial
+	/*!
+	@param	flagInUse
+		true == Currently in use TableMaterial<br>
+		false == TableMaterial in original animation data
+	@retval	Return-Value
+		New TableMaterial
+
+	Shallow-copy TableMaterial.<br>
+	In the newly created table, new table(array) is another instance,
+	 but the materials are the same as materials referred to in the original table.<br>
+	*/
+	public UnityEngine.Material[] TableMaterialCopyShallow(bool flagInUse=true)
+	{
+		return(Library_SpriteStudio6.Utility.Material.TableCopyShallow(TableMaterialGet(flagInUse)));
+	}
+
+	/* ********************************************************* */
+	//! Deep-Copy TableMaterial
+	/*!
+	@param	flagInUse
+		true == Currently in use TableMaterial<br>
+		false == TableMaterial in original animation data
+	@retval	Return-Value
+		New TableMaterial
+
+	Deep-copy TableMaterial.<br>
+	The newly created table, new table(array) is another instance and materials are new instance too.<br>
+	*/
+	public UnityEngine.Material[] TableMaterialCopyDeep(bool flagInUse=true)
+	{
+		return(Library_SpriteStudio6.Utility.Material.TableCopyDeep(TableMaterialGet(flagInUse)));
+	}
+
+	/* ********************************************************* */
+	//! Get Texture-count in TableMaterial
+	/*!
+	@param	flagInUse
+		true == Currently in use TableMaterial<br>
+		false == TableMaterial in original animation data
+	@retval	Return-Value
+		Number of textures that can be stored in TableMaterial
+
+	Get number of textures that can be stored in TableMaterial.
+	*/
+	public int CountGetTextureTableMaterial(bool flagInUse=true)
+	{
+		UnityEngine.Material[] tableMaterial = TableMaterialGet(flagInUse);
+		if(null == tableMaterial)
+		{
+			return(-1);
+		}
+		return(Material.CountGetTexture(tableMaterial));
+	}
+
+	/* ******************************************************** */
+	//! Change TableMaterial
+	/*!
+	@param	tableMaterial
+		New TableMaterial<br>
+		null == Revert to initial data
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Replace TableMaterial that is used in the Animation.<br>
+	Never overwrite "Script_SpriteStudio6_Root.TableMaterial" directly.<br>
+	<br>
+	"tableMaterial"'s length must be more than length of the initial data at least.<br>
+	More than value of "Script_SpriteStudio6_Root.Material.CountGetTable"function is needed. (Set number of using CellMaps to "countCellMap")<br>
+	And, get TableMaterial's index with using "Script_SpriteStudio6_Root.Material.IndexGetTable"function (and etc.)  when create TableMaterial.<br>
+	<br>
+	To change TableMaterial of "Instance" or "Effect" in animation, use "TableMaterialChangeInstance" or "TableMaterialChangeEffect".<br>
+	*/
+	public bool TableMaterialChange(UnityEngine.Material[] tableMaterial)
+	{
+		if(null == tableMaterial)
+		{	/* Revert */
+			if(null == DataAnimation)
+			{
+				return(false);
+			}
+
+			tableMaterial = DataAnimation.TableMaterial;
+			if(null == tableMaterial)
+			{
+				return(false);
+			}
+		}
+
+		TableMaterial = tableMaterial;
+		Status |= FlagBitStatus.CHANGE_TABLEMATERIAL;
+		return(true);
+	}
+
+	/* ******************************************************** */
+	//! Change "Instance"'s TableMaterial
+	/*!
+	@param	idParts
+		Instance-Part's ID<br>
+		-1 == Scan all parts
+	@param	tableMaterial
+		New TableMaterial<br>
+		null == Revert to initial data
+	@param	flagInvolveChildInstance
+		true == also set to child "Instance" of the specified "Instance"<br>
+		false == Only specified "Instance"
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Replace "Instance"'s TableMaterial that is used in the Animation.<br>
+	"idParts" is ID of part controlling "Instance".<br>
+	<br>
+	The other notes are the same as "TableMaterialChange".<br>
+	*/
+	public bool TableMaterialChangeInstance(int idParts, UnityEngine.Material[] tableMaterial, bool flagInvolveChildInstance=true)
+	{
+		if(null == tableMaterial)
+		{	/* Revert */
+			if(null == DataAnimation)
+			{
+				return(false);
+			}
+
+			tableMaterial = DataAnimation.TableMaterial;
+			if(null == tableMaterial)
+			{
+				return(false);
+			}
+		}
+
+		if(0 > idParts)
+		{
+			if(null != TableControlParts)
+			{
+				return(false);
+			}
+			int countParts = TableControlParts.Length;
+
+			bool flagSuccess = true;
+			for(int i=0; i<countParts; i++)
+			{
+				flagSuccess &= TableMaterialChangeInstanceMain(idParts, tableMaterial, flagInvolveChildInstance);
+			}
+
+			return(flagSuccess);
+		}
+
+		return(TableMaterialChangeInstanceMain(idParts, tableMaterial, flagInvolveChildInstance));
+	}
+	private bool TableMaterialChangeInstanceMain(int idParts, UnityEngine.Material[] tableMaterial, bool flagInvolveChildInstance=true)
+	{
+		Script_SpriteStudio6_Root instanceRootInstance = null;
+		bool flagSuccess = true;
+
+		if((null == TableControlParts) || (0 > idParts) || (TableControlParts.Length <= idParts))
+		{
+			return(false);
+		}
+
+		if(Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE == DataAnimation.TableParts[idParts].Feature)
+		{
+			instanceRootInstance = TableControlParts[idParts].InstanceRootUnderControl;
+			if(null == instanceRootInstance)
+			{
+				return(true);
+			}
+
+			flagSuccess &= instanceRootInstance.TableMaterialChange(tableMaterial);
+			if(true == flagInvolveChildInstance)
+			{
+				flagSuccess &= instanceRootInstance.TableMaterialChangeInstance(-1, tableMaterial, true);
+			}
+		}
+
+		return(true);
+	}
+
+	/* ******************************************************** */
+	//! Change "Effect"'s TableMaterial
+	/*!
+	@param	idParts
+		Effect-Part's ID<br>
+		-1 == Scan all parts
+	@param	tableMaterial
+		New TableMaterial<br>
+		null == Revert to initial data
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Replace "Effect"'s TableMaterial that is used in the Animation.<br>
+	"idParts" is ID of part controlling "Effect".<br>
+	<br>
+	The other notes are the same as "TableMaterialChange".<br>
+	*/
+	public bool TableMaterialChangeEffect(int idParts, UnityEngine.Material[] tableMaterial)
+	{
+		if(null == tableMaterial)
+		{	/* Revert */
+			if(null == DataAnimation)
+			{
+				return(false);
+			}
+
+			tableMaterial = DataAnimation.TableMaterial;
+			if(null == tableMaterial)
+			{
+				return(false);
+			}
+		}
+
+		if(0 > idParts)
+		{
+			if(null != TableControlParts)
+			{
+				return(false);
+			}
+			int countParts = TableControlParts.Length;
+
+			bool flagSuccess = true;
+			for(int i=0; i<countParts; i++)
+			{
+				flagSuccess &= TableMaterialChangeEffectMain(idParts, tableMaterial);
+			}
+
+			return(flagSuccess);
+		}
+
+		return(TableMaterialChangeEffectMain(idParts, tableMaterial));
+	}
+	private bool TableMaterialChangeEffectMain(int idParts, UnityEngine.Material[] tableMaterial)
+	{
+		Script_SpriteStudio6_RootEffect instanceRootEffect = null;
+		bool flagSuccess = true;
+
+		if((null == TableControlParts) || (0 > idParts) || (TableControlParts.Length <= idParts))
+		{
+			return(false);
+		}
+
+		if(Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE == DataAnimation.TableParts[idParts].Feature)
+		{
+			instanceRootEffect = TableControlParts[idParts].InstanceRootEffectUnderControl;
+			if(null == instanceRootEffect)
+			{
+				return(true);
+			}
+
+			flagSuccess &= instanceRootEffect.TableMaterialChange(tableMaterial);
+		}
+
+		return(true);
 	}
 	#endregion Functions
-//	public Material[] TableCopyMaterialShallow()
-//	public Material[] TableCopyMaterialDeep()
-//	public int CountGetTextureTableMaterial()
-//	public bool TextureChangeTableMaterial(int index, Texture2D texture)
-//	public bool TableMaterialChange(Material[] tableMaterial, bool flagChangeInstance=false, Material[] tableMaterialInstance=null, bool flagChangeEffect=false, Material[] tableMaterialChangeEffect=null)
 
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
 	#region Classes, Structs & Interfaces
@@ -87,7 +342,7 @@ public partial class Script_SpriteStudio6_Root
 		/* ----------------------------------------------- Functions */
 		#region Functions
 		/* ********************************************************* */
-		//! Get Material-Table length
+		//! Get Material-Table's length
 		/*!
 		@param	countCellMap
 			Number of CellMap-s
@@ -96,7 +351,7 @@ public partial class Script_SpriteStudio6_Root
 
 		If give positive number to "countCellMap", returns length of materials needed to store.
 		*/
-		public static int CountGetTableMaterial(int countCellMap)
+		public static int CountGetTable(int countCellMap)
 		{
 			if(0 > countCellMap)
 			{
@@ -118,13 +373,13 @@ public partial class Script_SpriteStudio6_Root
 		@retval	Return-Value
 			index of Material-Table
 
-		Get material's index in TableMaterial.<br>
+		Get material's index in Material-Table.<br>
 		Caution that this function does not check upper-limit of "indexCellMap".
 		*/
-		public static int IndexGetTableMaterial(	int indexCellMap,
-													Library_SpriteStudio6.KindOperationBlend operationBlend,
-													Library_SpriteStudio6.KindMasking masking
-											)
+		public static int IndexGetTable(	int indexCellMap,
+											Library_SpriteStudio6.KindOperationBlend operationBlend,
+											Library_SpriteStudio6.KindMasking masking
+										)
 		{
 			if(	(0 > indexCellMap)
 				|| (Library_SpriteStudio6.KindOperationBlend.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend)
@@ -138,14 +393,14 @@ public partial class Script_SpriteStudio6_Root
 		}
 
 		/* ********************************************************* */
-		//! Get Texture-count in Material-table
+		//! Get Texture-count in Material-Table
 		/*!
 		@param	tableMaterial
-			Material-table
+			Material-Table
 		@retval	Return-Value
-			Number of textures that can be stored in Material-table
+			Number of textures that can be stored in Material-Table
 
-		Get number of textures that can be stored in Material-table.
+		Get number of textures that can be stored in Material-Table.
 		*/
 		public static int CountGetTexture(UnityEngine.Material[] tableMaterial)
 		{
@@ -157,10 +412,10 @@ public partial class Script_SpriteStudio6_Root
 		}
 
 		/* ********************************************************* */
-		//! Change Texture in Material-table
+		//! Change Texture in Material-Table
 		/*!
 		@param	tableMaterial
-			Material-table
+			Material-Table
 		@param	indexCellMap
 			index of CellMap
 		@param	texture
@@ -173,13 +428,13 @@ public partial class Script_SpriteStudio6_Root
 			true == Success<br>
 			false == Failure(Error)
 
-		Change materials' texture corresponding to specified CellMap in material-table.<br>
+		Change materials' texture corresponding to specified CellMap in Material-Table.<br>
 		When "flagMaterialNew" is set true, new materials are created.<br>
 		When false, materials are overwritten.
 		*/
 		public static bool TextureChange(UnityEngine.Material[] tableMaterial, int indexCellMap, Texture2D texture, bool flagMaterialNew)
 		{
-			int indexTop = IndexGetTableMaterial(indexCellMap, Library_SpriteStudio6.KindOperationBlend.INITIATOR, Library_SpriteStudio6.KindMasking.THROUGH);
+			int indexTop = IndexGetTable(indexCellMap, Library_SpriteStudio6.KindOperationBlend.INITIATOR, Library_SpriteStudio6.KindMasking.THROUGH);
 			if(0 > indexTop)
 			{
 				return(false);
@@ -191,7 +446,7 @@ public partial class Script_SpriteStudio6_Root
 			{
 				for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
 				{
-					index = IndexGetTableMaterial(0, (Library_SpriteStudio6.KindOperationBlend)j, (Library_SpriteStudio6.KindMasking)i);
+					index = IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, (Library_SpriteStudio6.KindMasking)i);
 					index += indexTop;
 
 					material = tableMaterial[i];
@@ -225,7 +480,6 @@ public partial class Script_SpriteStudio6_Root
 			}
 
 			return(true);
-
 		}
 		#endregion Functions
 	}

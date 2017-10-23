@@ -1754,7 +1754,7 @@ public static partial class Library_SpriteStudio6
 						if(0 != (Status & (FlagBitStatus.UPDATE_COLORPARTS | FlagBitStatus.UPDATE_PARAMETERBLEND)))
 						{
 							float operation = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
-							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear;
+							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.ColorClear;
 							Color[] tableColor = PartsColor.Value.VertexColor;
 
 							for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)

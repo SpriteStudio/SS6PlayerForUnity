@@ -1345,7 +1345,7 @@ public static partial class LibraryEditor_SpriteStudio6
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.OVERALL;
 												for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 												{
-													data.Value.VertexColor[i] = Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear;
+													data.Value.VertexColor[i] = Library_SpriteStudio6.Data.Animation.Attribute.ColorClear;
 												}
 											}
 											break;

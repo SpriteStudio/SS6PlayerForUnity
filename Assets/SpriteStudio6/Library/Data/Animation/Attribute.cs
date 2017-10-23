@@ -20,6 +20,8 @@ public static partial class Library_SpriteStudio6
 			{
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
+				public readonly static Color ColorClear = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+
 				/* Default values when no Key-Data exists */
 				public const bool DefaultFlipX = false;
 				public const bool DefaultFlipY = false;
@@ -54,10 +56,10 @@ public static partial class Library_SpriteStudio6
 				public readonly static VertexCorrection DefaultVertexCorrection = new VertexCorrection(TableCoordinateVertexCorrectionDefault);
 				private readonly static Color[] TableVertexColorPartsColorDefault = new Color[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
 				{
-					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear,
+					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
+					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
+					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
+					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
 				};
 				public readonly static PartsColor DefaultPartsColor = new PartsColor(	Library_SpriteStudio6.KindBoundBlend.NON,
 																						Library_SpriteStudio6.KindOperationBlend.MIX,
@@ -122,10 +124,10 @@ public static partial class Library_SpriteStudio6
 				};
 				private readonly static Color32[] TableColorPartsColorFixDefault = new Color32[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
 				{
-					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor.ColorClear,
+					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
+					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
+					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
+					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
 				};
 				public readonly static PartsColorFix DefaultPartsColorFix = new PartsColorFix(TableUVPartsColorFixDefault, TableColorPartsColorFixDefault);
 				#endregion Enums & Constants
@@ -474,11 +476,6 @@ public static partial class Library_SpriteStudio6
 						return(base.GetHashCode());
 					}
 					#endregion Functions
-
-					/* ----------------------------------------------- Enums & Constants */
-					#region Enums & Constants
-					public readonly static Color ColorClear = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-					#endregion Enums & Constants
 				}
 
 				[System.Serializable]

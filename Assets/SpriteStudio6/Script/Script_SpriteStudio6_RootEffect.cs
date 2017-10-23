@@ -31,6 +31,13 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			return(0 != (Status & FlagBitStatus.VALID));
 		}
 	}
+	internal bool StatusIsPlaying
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.PLAYING));
+		}
+	}
 	internal bool StatusIsPlayingInfinity
 	{
 		get
@@ -42,11 +49,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			Status = (true == value) ? (Status | FlagBitStatus.PLAYING_INFINITY) : (Status & ~FlagBitStatus.PLAYING_INFINITY);
 		}
 	}
-	internal bool StatusIsChangeCellMap
+	internal bool StatusIsChangeTableMaterial
 	{
 		get
 		{
-			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+			return(0 != (Status & FlagBitStatus.CHANGE_TABLEMATERIAL));
 		}
 	}
 
@@ -171,8 +178,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Update Playing-Status */
 		if(0 == (StatusPlaying & Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING)) 
 		{	/* Not-Playing */
+			Status &= ~FlagBitStatus.PLAYING;
 			return;
 		}
+
+		Status |= FlagBitStatus.PLAYING;
 		TimeElapsed += (	(0 != (StatusPlaying & Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PAUSING))
 							|| (0 != (StatusPlaying & Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START))
 						) ? 0.0f : (timeElapsed * RateTime);
@@ -226,7 +236,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 		/* Clear transient status */
 		StatusPlaying &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;
-		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
+		Status &= ~FlagBitStatus.CHANGE_TABLEMATERIAL;
 	}
 	internal void TimeElapse(float time, bool flagReverseParent)
 	{	/* MEMO: In principle, This Function is for calling from "Library_SpriteStudio6.Control.Animation.Parts.DrawEffect". */
@@ -336,9 +346,10 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	private enum FlagBitStatus
 	{
 		VALID = 0x40000000,
+		PLAYING = 0x20000000,
 		PLAYING_INFINITY = 0x1000000,
 
-		CHANGE_CELLMAP = 0x08000000,
+		CHANGE_TABLEMATERIAL = 0x08000000,
 
 		CLEAR = 0x00000000,
 	}

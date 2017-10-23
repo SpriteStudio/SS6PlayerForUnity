@@ -35,11 +35,18 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			return(0 != (Status & FlagBitStatus.VALID));
 		}
 	}
-	internal bool StatusIsCellMapChange
+	internal bool StatusIsPlaying
 	{
 		get
 		{
-			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+			return(0 != (Status & FlagBitStatus.PLAYING));
+		}
+	}
+	internal bool StatusIsChangeTableMaterial
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CHANGE_TABLEMATERIAL));
 		}
 	}
 
@@ -362,7 +369,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 											);
 		}
 
-		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
+		Status &= ~FlagBitStatus.CHANGE_TABLEMATERIAL;
 
 		/* Callback Play-End */
 		if((0 != (Status & FlagBitStatus.PLAYING)) && (false == flagAnimationPlayAnyTrack))
@@ -608,7 +615,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		VALID = 0x40000000,
 		PLAYING = 0x20000000,
 
-		CHANGE_CELLMAP = 0x08000000,
+		CHANGE_TABLEMATERIAL = 0x08000000,
 
 		CLEAR = 0x00000000,
 	}

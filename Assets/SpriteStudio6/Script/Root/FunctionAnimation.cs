@@ -170,7 +170,7 @@ public partial class Script_SpriteStudio6_Root
 
 		/* Update Status */
 		Status |= FlagBitStatus.PLAYING;
-		Status &= ~FlagBitStatus.CHANGE_CELLMAP;
+		Status &= ~FlagBitStatus.CHANGE_TABLEMATERIAL;
 
 		/* Refresh Control-Parts */
 		int countControlParts = TableControlParts.Length;
@@ -535,6 +535,8 @@ public partial class Script_SpriteStudio6_Root
 			}
 			/* MEMO: Would be better not erasing parts table here. Better to unify when set tracks -1 at "AnimationPlay". */
 //			TrackConnectParts(-1, 0);
+
+			Status &= ~FlagBitStatus.PLAYING;
 		}
 		else
 		{	/* Specific track */
