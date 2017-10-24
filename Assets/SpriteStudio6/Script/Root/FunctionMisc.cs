@@ -12,5 +12,9 @@ public partial class Script_SpriteStudio6_Root
 {
 	/* ----------------------------------------------- Functions */
 	#region Functions
+//	IDGetParts
+//	HideSetForce
+//	InstanceChange
+//	EffectChange
 	#endregion Functions
 }

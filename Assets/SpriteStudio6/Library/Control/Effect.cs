@@ -193,7 +193,7 @@ public static partial class Library_SpriteStudio6
 				}
 
 				/* Check Masking & Update Cells */
-				bool flagUpdateCell = instanceRoot.StatusIsChangeTableMaterial;
+				bool flagUpdateCell = instanceRoot.StatusIsChangeCellMap;
 				if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
 				{
 					masking = Library_SpriteStudio6.KindMasking.THROUGH;
@@ -215,7 +215,7 @@ public static partial class Library_SpriteStudio6
 					indexEmitter = tableIndexEmitter[i];
 
 					/* Update Material & Cell */
-					if(true == flagUpdateCell)
+					if((true == flagUpdateCell) || (0 != (TableEmitter[indexEmitter].Status & Emitter.FlagBitStatus.CHANGE_CELL)))
 					{
 						TableEmitter[indexEmitter].CellPresetParticle(instanceRoot, Masking);
 					}
@@ -280,10 +280,7 @@ public static partial class Library_SpriteStudio6
 				internal int IDParts;
 				internal int IndexEmitter;
 
-				internal int IndexCellMap;
-				internal int IndexCell;
-				internal int IndexCellMapOverwrite;
-				internal int IndexCellOverwrite;
+				internal Library_SpriteStudio6.Data.Animation.Attribute.Cell DataCellApply;
 
 				internal Library_SpriteStudio6.Utility.Random.Generator Random;
 				internal Library_SpriteStudio6.Data.Effect.Emitter.PatternEmit[] TablePatternEmit;
@@ -332,10 +329,7 @@ public static partial class Library_SpriteStudio6
 					IDParts = -1;
 					IndexEmitter = -1;
 
-					IndexCellMap = -1;
-					IndexCell = -1;
-					IndexCellMapOverwrite = -1;
-					IndexCellOverwrite = -1;
+					DataCellApply.CleanUp();
 
 					Random = null;
 					TablePatternEmit = null;
@@ -558,16 +552,15 @@ public static partial class Library_SpriteStudio6
 
 				internal bool CellPresetParticle(Script_SpriteStudio6_RootEffect instanceRoot, Library_SpriteStudio6.KindMasking masking)
 				{
-					int indexCellMap = IndexCellMapOverwrite;
-					int indexCell = IndexCellOverwrite;
+					int indexCellMap = DataCellApply.IndexCellMap;
+					int indexCell = DataCellApply.IndexCell;
 					if((0 > indexCellMap) || (0 > indexCell))
 					{
-						IndexCellMapOverwrite = -1;
-						IndexCellOverwrite = -1;
-
 						indexCellMap = DataEffect.TableEmitter[IndexEmitter].IndexCellMap;
 						indexCell = DataEffect.TableEmitter[IndexEmitter].IndexCell;
 					}
+
+					Status &= ~FlagBitStatus.CHANGE_CELL;
 
 					Library_SpriteStudio6.Data.CellMap dataCellMap = instanceRoot.DataGetCellMap(indexCellMap);
 					if(null == dataCellMap)
@@ -582,9 +575,9 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{
-							IndexCellMap = indexCellMap;
-							IndexCell = indexCell;
-							MaterialDraw = instanceRoot.MaterialGet(	IndexCellMap,
+							DataCellApply.IndexCellMap = indexCellMap;
+							DataCellApply.IndexCell = indexCell;
+							MaterialDraw = instanceRoot.MaterialGet(	indexCellMap,
 																		DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget,
 																		masking
 																	);
@@ -658,8 +651,7 @@ public static partial class Library_SpriteStudio6
 					return(true);
 
 				CellPresetParticle_ErrorEnd:;
-					IndexCellMap = -1;
-					IndexCell = -1;
+					DataCellApply.CleanUp();
 					MaterialDraw = null;
 					return(false);
 				}
@@ -695,6 +687,8 @@ public static partial class Library_SpriteStudio6
 				{
 					VALID = 0x40000000,
 					RUNNING = 0x20000000,
+
+					CHANGE_CELL = 0x08000000,
 
 					CLEAR = 0x00000000
 				}

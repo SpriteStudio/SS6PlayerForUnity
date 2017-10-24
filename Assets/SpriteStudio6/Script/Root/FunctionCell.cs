@@ -36,7 +36,7 @@ public partial class Script_SpriteStudio6_Root
 			return(TableCellMap);
 		}
 
-		if(null == DataAnimation)
+		if(null == DataCellMap)
 		{
 			return(null);
 		}
@@ -352,7 +352,7 @@ public partial class Script_SpriteStudio6_Root
 	//! Change Part's-Cell
 	/*!
 	@param	idParts
-		IDParts(Part-Index)
+		Parts-ID(Part-Index)
 	@param	indexCellMap
 		Cell-Map Index<br>
 		-1 == Accorde to Animation-Data
@@ -375,7 +375,73 @@ public partial class Script_SpriteStudio6_Root
 	*/
 	public bool CellChangeParts(int idParts, int indexCellMap, int indexCell, bool flagIgnoreAttributeCell=false)
 	{
-		return(false);
+		if((null == DataAnimation) || (null == TableControlParts))
+		{
+			return(false);
+		}
+
+		if(0 > idParts)
+		{	/* All Parts */
+			int countParts = TableControlParts.Length;
+			for(int i=0; i<countParts; i++)
+			{
+				CellChangePartsMain(i, indexCellMap, indexCell, flagIgnoreAttributeCell);
+			}
+
+			return(true);
+		}
+
+		if(TableControlParts.Length <= idParts)
+		{
+			return(false);
+		}
+
+		return(CellChangePartsMain(idParts, indexCellMap, indexCell, flagIgnoreAttributeCell));
+	}
+	private bool CellChangePartsMain(int idParts, int indexCellMap, int indexCell, bool flagIgnoreAttributeCell)
+	{
+		switch(DataAnimation.TableParts[idParts].Feature)
+		{
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+				return(false);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+				return(false);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CLEARSTENCIL:
+				return(false);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+				return(false);
+		}
+
+		TableControlParts[idParts].ParameterSprite.DataCellApply.IndexCellMap = indexCellMap;
+		TableControlParts[idParts].ParameterSprite.DataCellApply.IndexCell = indexCell;
+		TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_UNREFLECTED;
+		if(true == flagIgnoreAttributeCell)
+		{
+			TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_IGNOREATTRIBUTE;
+		}
+		else
+		{
+			TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_IGNOREATTRIBUTE;
+		}
+
+		return(true);
 	}
 	#endregion Functions
 

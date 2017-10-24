@@ -1769,7 +1769,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationAnimationParts.RadiusCollision.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RadiusCollision);
 				informationAnimationParts.PowerMask.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PowerMask);
 
-				informationAnimationParts.UserData.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.UserData, Library_SpriteStudio6.Data.Animation.Attribute.DefaultUseData, false, true);
+				/* MEMO: UserData does not complement 0 frame. */
+//				informationAnimationParts.UserData.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.UserData, Library_SpriteStudio6.Data.Animation.Attribute.DefaultUseData, false, true);
 				/* MEMO: Do not set at here. Set in processing for each part type. */
 //				informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance);
 //				informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect);
