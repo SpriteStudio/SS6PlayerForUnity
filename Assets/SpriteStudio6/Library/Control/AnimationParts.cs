@@ -940,14 +940,14 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 				private void DrawNormal(	Script_SpriteStudio6_Root instanceRoot,
-												int idParts,
-												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
-												ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
-												bool flagHideDefault,
-												Library_SpriteStudio6.KindMasking masking,
-												bool flagPreDraw,
-												ref Matrix4x4 matrixCorrection
-											)
+											int idParts,
+											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
+											bool flagHideDefault,
+											Library_SpriteStudio6.KindMasking masking,
+											bool flagPreDraw,
+											ref Matrix4x4 matrixCorrection
+										)
 				{
 					controlTrack.ArgumentContainer.IDParts = idParts;
 

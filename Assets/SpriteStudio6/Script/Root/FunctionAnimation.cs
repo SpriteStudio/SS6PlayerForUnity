@@ -170,7 +170,7 @@ public partial class Script_SpriteStudio6_Root
 
 		/* Update Status */
 		Status |= FlagBitStatus.PLAYING;
-		Status &= ~FlagBitStatus.CHANGE_TABLEMATERIAL;
+		Status &= ~(FlagBitStatus.CHANGE_TABLEMATERIAL | FlagBitStatus.CHANGE_CELLMAP);
 
 		/* Refresh Control-Parts */
 		int countControlParts = TableControlParts.Length;
@@ -270,6 +270,7 @@ public partial class Script_SpriteStudio6_Root
 		/* Update play-Information */
 //		TableInformationPlay[indexTrack].FlagSetInitial = 
 //		TableInformationPlay[indexTrack].FlagStopInitial = 
+		TableInformationPlay[indexTrack].NameAnimation = DataAnimation.TableAnimation[indexAnimation].Name;
 		TableInformationPlay[indexTrack].IndexAnimation = indexAnimation;
 		TableInformationPlay[indexTrack].FlagPingPong = flagPingPong;
 		TableInformationPlay[indexTrack].LabelStart = labelRangeStart;	/* string.Copt(labelRangeStart); */

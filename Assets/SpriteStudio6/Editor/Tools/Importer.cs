@@ -448,9 +448,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	{	/* MEMO: only "SS6PU" Mode */
 		EditorGUI.indentLevel = levelIndent;
 
-		SettingImport.PreCalcualation.FlagFixMesh = EditorGUILayout.ToggleLeft("Fix Mesh", SettingImport.PreCalcualation.FlagFixMesh);
+		SettingImport.PreCalcualation.FlagFixMesh = EditorGUILayout.ToggleLeft("Fix Sprite", SettingImport.PreCalcualation.FlagFixMesh);
 		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("Deform of \"Mesh\" and \"Collider\" are calculated for improving execution speed of the runtime.");
+		EditorGUILayout.LabelField("Deform of \"Sprite\" and \"Collider\" are calculated for improving execution speed of the runtime.");
 		EditorGUILayout.LabelField("CAUTION: Data is increases. And some runtime-functions does not work.(Cell-Changing etc.)");
 		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;

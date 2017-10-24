@@ -308,14 +308,14 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Position;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;	/* Plain */
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;	/* Plain */
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;	/* Plain */
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;	/* for Sphere-Collider */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;
@@ -424,9 +424,9 @@ public static partial class Library_SpriteStudio6
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix PartsColor;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix UV0;
 
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeCollision;	/* for Box-Collider */
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PivotCollision;	/* for Box-Collider */
-					#endregion Variables & Properties
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeCollision;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PivotCollision;
+				#endregion Variables & Properties
 				}
 				#endregion Classes, Structs & Interfaces
 			}
@@ -2767,8 +2767,9 @@ public static partial class Library_SpriteStudio6
 			}
 
 			public static bool CopyShallow(	Library_SpriteStudio6.Data.CellMap cellMapOutput,
-								int indexCellOutput,
-								ref Library_SpriteStudio6.Data.CellMap.Cell cell)
+											int indexCellOutput,
+											ref Library_SpriteStudio6.Data.CellMap.Cell cell
+										)
 			{
 				if((null == cellMapOutput) || (null == cellMapOutput.TableCell))
 				{

@@ -49,6 +49,13 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			return(0 != (Status & FlagBitStatus.CHANGE_TABLEMATERIAL));
 		}
 	}
+	internal bool StatusIsChangeCellMap
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+		}
+	}
 
 	private Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionExecTimeElapse = FunctionTimeElapseDefault;
 	internal Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionTimeElapse
@@ -140,6 +147,21 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* MEMO: Initial animation only applies track 0.                                               */
 		/*       For simplify setting (as interface for setting affecting part tables is complicated). */
 		/*       And because animation blends are often controlled from scripts in many cases.         */
+		int indexAnimation = -1;
+		if(true == string.IsNullOrEmpty(TableInformationPlay[0].NameAnimation))
+		{
+			indexAnimation = 0;
+			TableInformationPlay[0].NameAnimation = DataAnimation.TableAnimation[indexAnimation].Name;
+		}
+		else
+		{
+			indexAnimation = IndexGetAnimation(TableInformationPlay[0].NameAnimation);
+			if(0 > indexAnimation)
+			{
+				indexAnimation = 0;
+				TableInformationPlay[0].NameAnimation = DataAnimation.TableAnimation[indexAnimation].Name;
+			}
+		}
 		AnimationPlay(	-1,
 						((0 <= TableInformationPlay[0].IndexAnimation) ? TableInformationPlay[0].IndexAnimation : 0),
 						TableInformationPlay[0].TimesPlay,
@@ -369,7 +391,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 											);
 		}
 
-		Status &= ~FlagBitStatus.CHANGE_TABLEMATERIAL;
+		Status &= ~(FlagBitStatus.CHANGE_TABLEMATERIAL | FlagBitStatus.CHANGE_CELLMAP);
 
 		/* Callback Play-End */
 		if((0 != (Status & FlagBitStatus.PLAYING)) && (false == flagAnimationPlayAnyTrack))
@@ -616,6 +638,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		PLAYING = 0x20000000,
 
 		CHANGE_TABLEMATERIAL = 0x08000000,
+		CHANGE_CELLMAP = 0x04000000,
 
 		CLEAR = 0x00000000,
 	}
@@ -631,7 +654,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		public bool FlagSetInitial;
 		public bool FlagStopInitial;
 
-		public int IndexAnimation;
+		public string NameAnimation;
+		internal int IndexAnimation;
 		public bool FlagPingPong;
 		public string LabelStart;
 		public int FrameOffsetStart;
@@ -649,6 +673,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			FlagSetInitial = false;
 			FlagStopInitial = false;
 
+			NameAnimation = "";
 			IndexAnimation = -1;
 			FlagPingPong = false;
 			LabelStart = "";

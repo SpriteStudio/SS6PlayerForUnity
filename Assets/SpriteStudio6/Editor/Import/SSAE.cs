@@ -2978,9 +2978,8 @@ public static partial class LibraryEditor_SpriteStudio6
 										informationPlayRoot[i].FlagSetInitial = scriptRoot.TableInformationPlay[i].FlagSetInitial;
 										informationPlayRoot[i].FlagStopInitial = scriptRoot.TableInformationPlay[i].FlagStopInitial;
 
-										indexAnimation = scriptRoot.TableInformationPlay[i].IndexAnimation;
-										nameAnimation[i] = (0 <= indexAnimation) ? scriptRoot.DataAnimation.TableAnimation[indexAnimation].Name : "";
-										informationPlayRoot[i].IndexAnimation = -1;
+										nameAnimation[i] = scriptRoot.TableInformationPlay[i].NameAnimation;
+										informationPlayRoot[i].NameAnimation = "";
 										informationPlayRoot[i].FlagPingPong = scriptRoot.TableInformationPlay[i].FlagPingPong;
 										informationPlayRoot[i].LabelStart = (false == string.IsNullOrEmpty(scriptRoot.TableInformationPlay[i].LabelStart)) ? string.Copy(scriptRoot.TableInformationPlay[i].LabelStart) : "";
 										informationPlayRoot[i].FrameOffsetStart = scriptRoot.TableInformationPlay[i].FrameOffsetStart;
@@ -3178,11 +3177,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						flagClearAnimation = false;
 						if(false == string.IsNullOrEmpty(nameAnimation[i]))
 						{
-							informationPlayRoot[i].IndexAnimation = scriptRoot.DataAnimation.IndexGetAnimation(nameAnimation[i]);
-							if(0 > informationPlayRoot[i].IndexAnimation)
+							indexAnimation = scriptRoot.DataAnimation.IndexGetAnimation(nameAnimation[i]);
+							if(0 > indexAnimation)
 							{
 								flagClearAnimation = true;
 							}
+							informationPlayRoot[i].NameAnimation = string.Copy(nameAnimation[i]);
 						}
 						else
 						{
@@ -3190,14 +3190,14 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						if(true == flagClearAnimation)
 						{
-							informationPlayRoot[i].IndexAnimation = -1;
+							informationPlayRoot[i].NameAnimation = string.Copy(scriptRoot.DataAnimation.TableAnimation[0].Name);
 							informationPlayRoot[i].LabelStart = "";
 							informationPlayRoot[i].FrameOffsetStart = 0;
 							informationPlayRoot[i].LabelEnd = "";
 							informationPlayRoot[i].FrameOffsetEnd = 0;
 						}
 
-						scriptRoot.TableInformationPlay[i].IndexAnimation = informationPlayRoot[i].IndexAnimation;
+						scriptRoot.TableInformationPlay[i].NameAnimation = informationPlayRoot[i].NameAnimation;
 						scriptRoot.TableInformationPlay[i].FlagPingPong = informationPlayRoot[i].FlagPingPong;
 						scriptRoot.TableInformationPlay[i].LabelStart = (false == string.IsNullOrEmpty(informationPlayRoot[i].LabelStart)) ? informationPlayRoot[i].LabelStart : "";
 						scriptRoot.TableInformationPlay[i].FrameOffsetStart = informationPlayRoot[i].FrameOffsetStart;

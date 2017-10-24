@@ -56,6 +56,13 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			return(0 != (Status & FlagBitStatus.CHANGE_TABLEMATERIAL));
 		}
 	}
+	internal bool StatusIsChangeCellMap
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+		}
+	}
 
 	/* MEMO: Status of animation's play-track are diverted. (Since useless of redefine same content) */
 	/* MEMO: "Effect" have no multi-track playing capcity. */
@@ -236,7 +243,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 		/* Clear transient status */
 		StatusPlaying &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;
-		Status &= ~FlagBitStatus.CHANGE_TABLEMATERIAL;
+		Status &= ~(FlagBitStatus.CHANGE_TABLEMATERIAL | FlagBitStatus.CHANGE_CELLMAP);
 	}
 	internal void TimeElapse(float time, bool flagReverseParent)
 	{	/* MEMO: In principle, This Function is for calling from "Library_SpriteStudio6.Control.Animation.Parts.DrawEffect". */
@@ -350,6 +357,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		PLAYING_INFINITY = 0x1000000,
 
 		CHANGE_TABLEMATERIAL = 0x08000000,
+		CHANGE_CELLMAP = 0x04000000,
 
 		CLEAR = 0x00000000,
 	}

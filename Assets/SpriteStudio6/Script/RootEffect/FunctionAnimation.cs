@@ -62,6 +62,7 @@ public partial class Script_SpriteStudio6_RootEffect
 
 		/* Status Set */
 		Status |= FlagBitStatus.PLAYING;
+		Status &= ~(FlagBitStatus.CHANGE_TABLEMATERIAL | FlagBitStatus.CHANGE_CELLMAP);
 
 		StatusPlaying |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING;
 		StatusPlaying |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;
