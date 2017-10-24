@@ -162,7 +162,7 @@ public partial class Script_SpriteStudio6_Root
 	public Library_SpriteStudio6.Data.CellMap CellMapGet(int indexCellMap, bool flagInUse=true)
 	{
 		Library_SpriteStudio6.Data.CellMap[]  tableCellMap = TableGetCellMap(flagInUse);
-		if(null != tableCellMap)
+		if(null == tableCellMap)
 		{
 			return(null);
 		}
@@ -431,14 +431,14 @@ public partial class Script_SpriteStudio6_Root
 
 		TableControlParts[idParts].ParameterSprite.DataCellApply.IndexCellMap = indexCellMap;
 		TableControlParts[idParts].ParameterSprite.DataCellApply.IndexCell = indexCell;
-		TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_UNREFLECTED;
+		TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
 		if(true == flagIgnoreAttributeCell)
 		{
-			TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_IGNOREATTRIBUTE;
+			TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNOREATTRIBUTE;
 		}
 		else
 		{
-			TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_IGNOREATTRIBUTE;
+			TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNOREATTRIBUTE;
 		}
 
 		return(true);

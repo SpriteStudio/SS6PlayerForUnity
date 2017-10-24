@@ -403,7 +403,7 @@ public partial class Script_SpriteStudio6_RootEffect
 
 		ControlEffect.TableEmitter[indexEmitter].DataCellApply.IndexCellMap = indexCellMap;
 		ControlEffect.TableEmitter[indexEmitter].DataCellApply.IndexCell = indexCell;
-		ControlEffect.TableEmitter[indexEmitter].Status |= Library_SpriteStudio6.Control.Effect.Emitter.FlagBitStatus.CHANGE_CELL;
+		ControlEffect.TableEmitter[indexEmitter].Status |= Library_SpriteStudio6.Control.Effect.Emitter.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
 
 		return(true);
 	}

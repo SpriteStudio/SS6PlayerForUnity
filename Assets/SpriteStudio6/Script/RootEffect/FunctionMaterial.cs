@@ -120,7 +120,7 @@ public partial class Script_SpriteStudio6_RootEffect
 	public int CountGetTableMaterial(bool flagInUse=true)
 	{
 		UnityEngine.Material[]  tableMaterial = TableGetMaterial(flagInUse);
-		if(null != tableMaterial)
+		if(null == tableMaterial)
 		{
 			return(-1);
 		}

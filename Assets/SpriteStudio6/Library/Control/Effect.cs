@@ -215,7 +215,7 @@ public static partial class Library_SpriteStudio6
 					indexEmitter = tableIndexEmitter[i];
 
 					/* Update Material & Cell */
-					if((true == flagUpdateCell) || (0 != (TableEmitter[indexEmitter].Status & Emitter.FlagBitStatus.CHANGE_CELL)))
+					if((true == flagUpdateCell) || (0 != (TableEmitter[indexEmitter].Status & Emitter.FlagBitStatus.CHANGE_CELL_UNREFLECTED)))
 					{
 						TableEmitter[indexEmitter].CellPresetParticle(instanceRoot, Masking);
 					}
@@ -560,7 +560,7 @@ public static partial class Library_SpriteStudio6
 						indexCell = DataEffect.TableEmitter[IndexEmitter].IndexCell;
 					}
 
-					Status &= ~FlagBitStatus.CHANGE_CELL;
+					Status &= ~FlagBitStatus.CHANGE_CELL_UNREFLECTED;
 
 					Library_SpriteStudio6.Data.CellMap dataCellMap = instanceRoot.DataGetCellMap(indexCellMap);
 					if(null == dataCellMap)
@@ -688,7 +688,7 @@ public static partial class Library_SpriteStudio6
 					VALID = 0x40000000,
 					RUNNING = 0x20000000,
 
-					CHANGE_CELL = 0x08000000,
+					CHANGE_CELL_UNREFLECTED = 0x08000000,
 
 					CLEAR = 0x00000000
 				}

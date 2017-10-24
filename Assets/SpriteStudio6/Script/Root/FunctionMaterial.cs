@@ -122,7 +122,7 @@ public partial class Script_SpriteStudio6_Root
 	public int CountGetTableMaterial(bool flagInUse=true)
 	{
 		UnityEngine.Material[]  tableMaterial = TableGetMaterial(flagInUse);
-		if(null != tableMaterial)
+		if(null == tableMaterial)
 		{
 			return(-1);
 		}
@@ -225,7 +225,7 @@ public partial class Script_SpriteStudio6_Root
 
 		if(0 > idParts)
 		{
-			if(null != TableControlParts)
+			if(null == TableControlParts)
 			{
 				return(false);
 			}
@@ -306,7 +306,7 @@ public partial class Script_SpriteStudio6_Root
 
 		if(0 > idParts)
 		{
-			if(null != TableControlParts)
+			if(null == TableControlParts)
 			{
 				return(false);
 			}

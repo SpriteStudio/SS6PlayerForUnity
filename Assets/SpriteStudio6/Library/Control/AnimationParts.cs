@@ -1242,8 +1242,8 @@ public static partial class Library_SpriteStudio6
 					REFRESH_TRANSFORM_ROTATION = 0x00200000,
 					REFRESH_TRANSFORM_POSITION = 0x00100000,
 
-					OVERWRITE_CELL_UNREFLECTED = 0x00080000,
-					OVERWRITE_CELL_IGNOREATTRIBUTE = 0x00040000,
+					CHANGE_CELL_UNREFLECTED = 0x00080000,
+					CHANGE_CELL_IGNOREATTRIBUTE = 0x00040000,
 
 					INSTANCE_VALID = 0x00008000,
 					INSTANCE_PLAYINDEPENDENT = 0x00004000,
@@ -1536,7 +1536,7 @@ public static partial class Library_SpriteStudio6
 						/* Create sprite data (from cell to use) */
 						if(true == dataAnimationParts.Plain.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Plain.Cell, ref argumentContainer))
 						{
-							if(0 == (statusControlParts & (Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_IGNOREATTRIBUTE | Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_UNREFLECTED)))
+							if(0 == (statusControlParts & (Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNOREATTRIBUTE | Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED)))
 							{	/* Use data in attribute. */
 								DataCellApply = DataCell.Value;
 
@@ -1545,13 +1545,13 @@ public static partial class Library_SpriteStudio6
 							}
 							else
 							{	/* Overwrite */
-								if(0 != (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_UNREFLECTED))
+								if(0 != (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED))
 								{	/* Unreflected */
 									Status |= FlagBitStatus.UPDATE_COORDINATE;
 									Status |= FlagBitStatus.UPDATE_UVTEXTURE;
 								}
 							}
-							statusControlParts &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.OVERWRITE_CELL_UNREFLECTED;
+							statusControlParts &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
 						}
 
 						IndexCellMapDraw = -1;

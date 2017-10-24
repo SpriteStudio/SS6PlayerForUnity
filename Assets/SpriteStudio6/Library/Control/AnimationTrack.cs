@@ -352,6 +352,9 @@ public static partial class Library_SpriteStudio6
 					{
 					}
 
+					Status &= ~FlagBitStatus.PLAYING;
+					Status &= ~FlagBitStatus.PLAYING_START;
+
 					return(true);
 				}
 

@@ -163,7 +163,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			}
 		}
 		AnimationPlay(	-1,
-						((0 <= TableInformationPlay[0].IndexAnimation) ? TableInformationPlay[0].IndexAnimation : 0),
+						indexAnimation,
 						TableInformationPlay[0].TimesPlay,
 						TableInformationPlay[0].Frame,
 						TableInformationPlay[0].RateTime,
@@ -614,9 +614,10 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	}
 
 	/* Part: SpriteStudio6/Script/Root/FunctionAnimation.cs */
-	/* Part: SpriteStudio6/Script/Root/FunctionPlayTrack.cs */
+	/* Part: SpriteStudio6/Script/Root/FunctionTrack.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionCell.cs */
-	/* Part: SpriteStudio6/Script/Root/FunctionPartsColor.cs */
+	/* Part: SpriteStudio6/Script/Root/FunctionMaterial.cs */
+	/* Part: SpriteStudio6/Script/Root/FunctionMisc.cs */
 
 	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_Root scriptRoot)
 	{
@@ -685,6 +686,21 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			RateTime = 1.0f;
 		}
 		#endregion Functions
+	}
+
+	public static partial class Cell
+	{
+		/* Part: SpriteStudio6/Script/Root/FunctionCell.cs */
+	}
+
+	public static partial class Material
+	{
+		/* Part: SpriteStudio6/Script/Root/FunctionMaterial.cs */
+	}
+
+	public static partial class Parts
+	{
+		/* Part: SpriteStudio6/Script/Root/FunctionMisc.cs */
 	}
 	#endregion Classes, Structs & Interfaces
 }
