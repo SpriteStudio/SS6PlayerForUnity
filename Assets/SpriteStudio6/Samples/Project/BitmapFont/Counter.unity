@@ -149,9 +149,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameObjectRoot: {fileID: 1012453775}
-  Value: 999
+  Value: 159999
   FlagPaddingZero: 0
---- !u!43 &394618750
+--- !u!43 &628130560
 Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -322,7 +322,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1012453775}
-  m_Mesh: {fileID: 394618750}
+  m_Mesh: {fileID: 628130560}
 --- !u!1001 &1056024912
 Prefab:
   m_ObjectHideFlags: 0

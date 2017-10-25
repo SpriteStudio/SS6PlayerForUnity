@@ -1322,8 +1322,6 @@ public static partial class Library_SpriteStudio6
 					internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDrawMask;	/* "Mask"'s Draw */
 
 					/* MEMO: Only "Data-Plain" */
-					internal int IndexCellMapDraw;
-					internal int IndexCellDraw;
 					internal Vector2 SizeSprite;
 					internal Vector2 PivotSprite;
 					internal Vector2 SizeTexture;
@@ -1372,8 +1370,6 @@ public static partial class Library_SpriteStudio6
 						RateScaleMesh = Vector2.one;
 						RateScaleTexture = Vector2.one;
 
-						IndexCellMapDraw = -1;
-						IndexCellDraw = -1;
 						SizeCell = Vector2.zero;
 						PivotCell = Vector2.zero;
 						SizeTexture = SizeTextureDefault;
@@ -1534,39 +1530,45 @@ public static partial class Library_SpriteStudio6
 						bool flagUpdateValueAttribute;
 
 						/* Create sprite data (from cell to use) */
-						if(true == dataAnimationParts.Plain.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Plain.Cell, ref argumentContainer))
+						/* MEMO: If do not always decode "Cell", malfunctions at restoration after cell-change. */
+						flagUpdateValueAttribute = dataAnimationParts.Plain.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Plain.Cell, ref argumentContainer);
+						if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED))
 						{
-							if(0 == (statusControlParts & (Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNOREATTRIBUTE | Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED)))
-							{	/* Use data in attribute. */
-								DataCellApply = DataCell.Value;
+							if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNOREATTRIBUTE))
+							{
+								if(true == flagUpdateValueAttribute)
+								{	/* New Data */
+									DataCellApply = DataCell.Value;
 
-								Status |= FlagBitStatus.UPDATE_COORDINATE;
-								Status |= FlagBitStatus.UPDATE_UVTEXTURE;
-							}
-							else
-							{	/* Overwrite */
-								if(0 != (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED))
-								{	/* Unreflected */
 									Status |= FlagBitStatus.UPDATE_COORDINATE;
 									Status |= FlagBitStatus.UPDATE_UVTEXTURE;
 								}
 							}
-							statusControlParts &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
 						}
+						else
+						{	/* New Value (Cell changed from script) */
+							if((0 > DataCellApply.IndexCellMap) || (0 > DataCellApply.IndexCell))
+							{
+								DataCellApply = DataCell.Value;
+							}
 
-						IndexCellMapDraw = -1;
-						IndexCellDraw = -1;
+							Status |= FlagBitStatus.UPDATE_COORDINATE;
+							Status |= FlagBitStatus.UPDATE_UVTEXTURE;
+						}
+						statusControlParts &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
+
+						int indexCellMap = DataCellApply.IndexCellMap;
+						int indexCell = DataCellApply.IndexCell;
 						Library_SpriteStudio6.Data.CellMap cellMap = instanceRoot.DataGetCellMap(DataCellApply.IndexCellMap);
 						if(null != cellMap)
 						{	/* CellMap Valid */
-							IndexCellDraw = DataCellApply.IndexCell;
-							if((0 <= IndexCellDraw) && (cellMap.CountGetCell() > IndexCellDraw))
-							{	/* Cell Valid */
-								IndexCellMapDraw = DataCellApply.IndexCellMap;
-								IndexCellDraw = DataCellApply.IndexCell;
+							if((0 > indexCell) || (cellMap.CountGetCell() <= indexCell))
+							{	/* Cell Invalid */
+								indexCellMap = -1;
+								indexCell = -1;
 							}
 						}
-						if(0 > IndexCellDraw)
+						if(0 > indexCellMap)
 						{	/* Invalid */
 							SizeTexture = SizeTextureDefault;
 
@@ -1578,11 +1580,11 @@ public static partial class Library_SpriteStudio6
 						{	/* Valid */
 							SizeTexture = cellMap.SizeOriginal;
 
-							SizeCell.x = cellMap.TableCell[IndexCellDraw].Rectangle.width;
-							SizeCell.y = cellMap.TableCell[IndexCellDraw].Rectangle.height;
-							PivotCell = cellMap.TableCell[IndexCellDraw].Pivot;
-							PositionCell.x = cellMap.TableCell[IndexCellDraw].Rectangle.xMin;
-							PositionCell.y = cellMap.TableCell[IndexCellDraw].Rectangle.yMin;
+							SizeCell.x = cellMap.TableCell[indexCell].Rectangle.width;
+							SizeCell.y = cellMap.TableCell[indexCell].Rectangle.height;
+							PivotCell = cellMap.TableCell[indexCell].Pivot;
+							PositionCell.x = cellMap.TableCell[indexCell].Rectangle.xMin;
+							PositionCell.y = cellMap.TableCell[indexCell].Rectangle.yMin;
 						}
 
 						Vector2 sizeSprite = SizeCell;
@@ -1861,12 +1863,13 @@ public static partial class Library_SpriteStudio6
 								/* MEMO: When "flagPreDraw" is true, only when "Mask"'s first time drawing. */
 								/*       Set fixed values.                                                  */
 								/* MEMO: Update material for "Draw" as well. */
-								MaterialDraw = instanceRoot.MaterialGet(IndexCellMapDraw, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, Library_SpriteStudio6.KindMasking.THROUGH);
-								MaterialDrawMask = instanceRoot.MaterialGet(IndexCellMapDraw, Library_SpriteStudio6.KindOperationBlend.MASK, Library_SpriteStudio6.KindMasking.THROUGH);
+								int indexCellMap = DataCellApply.IndexCellMap;
+								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, Library_SpriteStudio6.KindMasking.THROUGH);
+								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, Library_SpriteStudio6.KindMasking.THROUGH);
 							}
 							else
 							{
-								MaterialDraw = instanceRoot.MaterialGet(	IndexCellMapDraw,
+								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
 																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
 																			Masking
 																		);

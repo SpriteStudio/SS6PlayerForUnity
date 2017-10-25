@@ -25,18 +25,16 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 	private Script_SpriteStudio6_Root ScriptRoot = null;
 	private int[] TableIndexCell = new int[(int)KindCharacter.TERMINATOR];
 	private int[] TableIDPartsDigit = new int[(int)Constant.DIGIT_MAX];
-	private int ValuePrevious = int.MaxValue;
-	private bool FlagPaddingZeroPrevious;
 	private bool FlagInitialized = false;
+
+	private int ValuePrevious = int.MaxValue;
+	private bool FlagPaddingZeroPrevious = false;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
 	#region MonoBehaviour-Functions
 	void Start()
 	{
-		/* Initialize WorkArea */
-		FlagPaddingZeroPrevious = FlagPaddingZero;
-
 		/* Get(Cache) Animation Control Script-Component */
 		if(null == GameObjectRoot)
 		{	/* Error */
@@ -60,6 +58,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		ScriptRoot.AnimationStop(-1);
 
 		/* Get Digit-Parts */
+		/* MEMO: Get animation-parts for value's each digit. */
 		for(int i=0; i<(int)Constant.DIGIT_MAX; i++)
 		{
 			/* MEMO: Be careful. When part's name is not found, "-1" is assigned. */
@@ -67,18 +66,108 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		}
 
 		/* Get Characters' Cell Index */
-		/* MEMO: Since only 1 texture, specifying direct-value. (Cut corners ...) */
-		Library_SpriteStudio6.Data.CellMap cellMap = ScriptRoot.CellMapGet(0);
+		/* MEMO: Get cell index of bitmap font. */
+		Library_SpriteStudio6.Data.CellMap cellMap = ScriptRoot.CellMapGet(0);	/* Since only 1 texture, specifying direct-value. (Cut corners ...) */
 		for (int i=0; i<(int)KindCharacter.TERMINATOR; i++)
 		{
 			TableIndexCell[i] = cellMap.IndexGetCell(TableNameCells[i]);
 		}
+
+		/* Initialize Complete */
+		FlagInitialized = true;
 	}
 	
 	void Update ()
 	{
+		/* Check Validity */
+		if(false == FlagInitialized)
+		{	/* Failed to initialize */
+			return;
+		}
+
+		/* Clamp Value */
+		int valueDisplay = Mathf.Clamp(Value, ValueMin, ValueMax);
+
+		/* Check Update */
+		bool flagUpdate = false;
+		if(ValuePrevious != Value)
+		{
+			ValuePrevious = Value;
+			flagUpdate |= true;
+		}
+		if(FlagPaddingZeroPrevious != FlagPaddingZero)
+		{
+			FlagPaddingZeroPrevious = FlagPaddingZero;
+			flagUpdate |= true;
+		}
+
+		/* Update */
+		if(true == flagUpdate)
+		{
+			string textValue;
+
+			/* Get Text */
+			if(true == FlagPaddingZero)
+			{	/* Zero-padding */
+				textValue = valueDisplay.ToString("D" + ((int)(Constant.DIGIT_MAX)).ToString());
+			}
+			else
+			{	/* Right-alignment */
+				textValue = valueDisplay.ToString("D");
+			}
+
+			/* Update Animation */
+			{
+				/* Generate Text */
+				char[] charactersDigit = textValue.ToCharArray();	/* Split to digit */
+				int countDigit = charactersDigit.Length;
+				int idParts;
+				int indexCharacter;
+				for(int i=0; i<countDigit; i++)
+				{
+					idParts = TableIDPartsDigit[i];
+					if(0 < idParts)
+					{
+						/* Change Cell */
+						/* MEMO: Ignore Attribute "Cell" */
+						/* MEMO: (IndexCellMap == 0) Because this Animation has 1 Texture. */
+						indexCharacter = IndexGetCharacter(charactersDigit[(countDigit - 1) - i]);
+						ScriptRoot.CellChangeParts(idParts, 0, TableIndexCell[indexCharacter], true);
+				
+						/* Show Digit */
+						/* MEMO: Don't Effect to children */
+						ScriptRoot.HideSet(idParts, false, false);
+					}
+				}
+				for(int i=countDigit; i<(int)Constant.DIGIT_MAX; i++)
+				{
+					idParts = TableIDPartsDigit[i];
+					if(0 < idParts)
+					{
+						ScriptRoot.HideSet(idParts, true, false);
+					}
+				}
+			}
+		}
 	}
 	#endregion MonoBehaviour-Functions
+
+	/* ----------------------------------------------- MonoBehaviour-Functions */
+	#region Functions
+	private int IndexGetCharacter(char character)
+	{
+		int Count = (int)KindCharacter.TERMINATOR;
+		for(int i=0; i<Count; i++)
+		{
+			if(TableCharacters[i] == character)
+			{
+				return(i);
+			}
+		}
+
+		return(-1);
+	}
+	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */
 	#region Enums & Constants
@@ -163,20 +252,6 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		"Font1_Minus",
 		"Font1_Mul",
 		"Font1_Div",
-	};
-
-	/* [Constant] Others */
-	private enum KindFormat
-	{
-		NORMAL = 0,
-		PADDING_ZERO,
-
-		TERMINATOR
-	};
-	private static readonly string[] TableFormatToString = new string[(int)KindFormat.TERMINATOR]
-	{
-		"D",
-		"D" + ((int)(Constant.DIGIT_MAX)).ToString(),
 	};
 	#endregion Enums & Constants
 }

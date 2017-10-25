@@ -429,6 +429,11 @@ public partial class Script_SpriteStudio6_Root
 				return(false);
 		}
 
+		if((0 > indexCellMap) || (0 > indexCell))
+		{
+			indexCellMap = -1;
+			indexCell = -1;
+		}
 		TableControlParts[idParts].ParameterSprite.DataCellApply.IndexCellMap = indexCellMap;
 		TableControlParts[idParts].ParameterSprite.DataCellApply.IndexCell = indexCell;
 		TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
