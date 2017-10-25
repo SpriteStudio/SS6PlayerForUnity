@@ -235,7 +235,7 @@ public static partial class Library_SpriteStudio6
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
 				/* Seed for Emitter */
-				private static readonly uint[] ListSeedEffect = new uint[]
+				private readonly static uint[] ListSeedEffect = new uint[]
 				{
 					485,	583,	814,	907,	1311,	1901,	2236,	3051,	3676,	4338,
 					4671,	4775,	4928,	4960,	5228,	5591,	5755,	5825,	5885,	5967,	6014,	6056,

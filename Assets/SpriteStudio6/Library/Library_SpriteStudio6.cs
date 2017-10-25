@@ -1902,7 +1902,7 @@ public static partial class Library_SpriteStudio6
 			<br>
 			The detail of how to set, refer to the commentary of "Library_SpriteStudio6.Control.AdditionalColor".<br>
 			*/
-			public Library_SpriteStudio6.Control.AdditionalColor AAdditionalColorCreate()
+			public Library_SpriteStudio6.Control.AdditionalColor AdditionalColorCreate()
 			{
 				if(null == AdditionalColor)
 				{

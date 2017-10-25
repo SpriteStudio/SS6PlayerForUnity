@@ -818,7 +818,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 	/* ----------------------------------------------- Enums & Constants */
 	#region Enums & Constants
-	private static readonly string[] NameMode = new string[(int)LibraryEditor_SpriteStudio6.Import.Setting.KindMode.TERMINATOR + 1]
+	private readonly static string[] NameMode = new string[(int)LibraryEditor_SpriteStudio6.Import.Setting.KindMode.TERMINATOR + 1]
 	{
 		"SpriteStudio6 Player",
 		"Convert To Unity-Native",

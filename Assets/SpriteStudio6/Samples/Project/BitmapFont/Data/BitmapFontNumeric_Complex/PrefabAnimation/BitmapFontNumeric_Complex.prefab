@@ -313,7 +313,7 @@ MonoBehaviour:
   TableInformationPlay:
   - FlagSetInitial: 1
     FlagStopInitial: 0
-    NameAnimation: Digit08
+    NameAnimation: NoMove
     FlagPingPong: 0
     LabelStart: 
     FrameOffsetStart: 0

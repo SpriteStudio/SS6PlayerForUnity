@@ -129,7 +129,7 @@ public partial class Script_SpriteStudio6_RootEffect
 	public int IndexGetCellMap(string name, bool flagInUse=true)
 	{
 		Library_SpriteStudio6.Data.CellMap[]  tableCellMap = TableGetCellMap(flagInUse);
-		if(null != tableCellMap)
+		if(null == tableCellMap)
 		{
 			return(-1);
 		}

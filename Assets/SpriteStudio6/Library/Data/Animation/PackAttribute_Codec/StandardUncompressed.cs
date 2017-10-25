@@ -22,7 +22,7 @@ public static partial class Library_SpriteStudio6
 				{
 					/* ----------------------------------------------- Enums & Constants */
 					#region Enums & Constants
-					public static readonly Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer Capacity = new Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer(
+					public readonly static Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer Capacity = new Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer(
 						true,		/* Status */
 						false,		/* Position *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* Rotation *//* Use only in front stage of other pack formats, since performance is very poor. */

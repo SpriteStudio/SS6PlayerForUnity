@@ -10,6 +10,16 @@ using UnityEngine;
 
 public class Script_Sample_CounterSimple : MonoBehaviour
 {
+	/* ----------------------------------------------- Notes */
+	#region Notes
+	/* The points of this sample are as follows.                              */
+	/*                                                                        */
+	/* - How to play animation (Simple playing-method)                        */
+	/* - How to search for "Cells", "(Animation-Parts)                        */
+	/* - How to hide parts from script                                        */
+	/* - How to change part's cell from script (Cell-Change)                  */
+	#endregion Notes
+
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
 	/* Target Animation-Object */
@@ -23,19 +33,24 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 
 	/* WorkArea */
 	private Script_SpriteStudio6_Root ScriptRoot = null;
-	private int[] TableIndexCell = new int[(int)KindCharacter.TERMINATOR];
+
 	private int[] TableIDPartsDigit = new int[(int)Constant.DIGIT_MAX];
-	private bool FlagInitialized = false;
+	private int[] TableIndexCell = new int[(int)KindCharacter.TERMINATOR];
 
 	private int ValuePrevious = int.MaxValue;
 	private bool FlagPaddingZeroPrevious = false;
+
+	private bool FlagInitialized = false;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
 	#region MonoBehaviour-Functions
 	void Start()
 	{
-		/* Get(Cache) Animation Control Script-Component */
+		/* Initialize WorkArea */
+		FlagPaddingZeroPrevious = !FlagPaddingZero;	/* Since this value can not be set with initializer... */
+
+		/* Get Animation Control Script-Component */
 		if(null == GameObjectRoot)
 		{	/* Error */
 			return;
@@ -47,18 +62,20 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		}
 
 		/* Animation Start */
+		/* MEMO: Since animation without movement, no problem even if stops right after playing. */
+		/*       (no problem even if does not stop too.)                                         */
+		/*       However, stopped animation has less CPU load than  continue playing.            */
 		int indexAnimation = ScriptRoot.IndexGetAnimation("Digit08");
 		if(0 > indexAnimation)
-		{
+		{	/* Animation not found */
 			return;
 		}
-		/* MEMO: Since animation without movement, no problem even if  stops right after playing. */
-		/*       (no problem even if does not stop too.)                                          */
 		ScriptRoot.AnimationPlay(-1, indexAnimation, 1);
 		ScriptRoot.AnimationStop(-1);
 
 		/* Get Digit-Parts */
 		/* MEMO: Get animation-parts for value's each digit. */
+		/* MEMO: It is desirable that Animation's information are gotten after initialization of animation. */
 		for(int i=0; i<(int)Constant.DIGIT_MAX; i++)
 		{
 			/* MEMO: Be careful. When part's name is not found, "-1" is assigned. */
@@ -70,13 +87,13 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		Library_SpriteStudio6.Data.CellMap cellMap = ScriptRoot.CellMapGet(0);	/* Since only 1 texture, specifying direct-value. (Cut corners ...) */
 		for (int i=0; i<(int)KindCharacter.TERMINATOR; i++)
 		{
-			TableIndexCell[i] = cellMap.IndexGetCell(TableNameCells[i]);
+			TableIndexCell[i] = cellMap.IndexGetCell(TableNameCell[i]);
 		}
 
 		/* Initialize Complete */
 		FlagInitialized = true;
 	}
-	
+
 	void Update ()
 	{
 		/* Check Validity */
@@ -171,16 +188,16 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 
 	/* ----------------------------------------------- Enums & Constants */
 	#region Enums & Constants
-	/* [Constant] Number of digits, maximum-value and minimum-values */
+	/* Number of digits, maximum-value and minimum-values */
 	private enum Constant
 	{
 		DIGIT_MAX = 8,
 	};
 
-	private static readonly int ValueMax = (int)(Mathf.Pow(10.0f, (int)Constant.DIGIT_MAX)) - 1;
-	private static readonly int ValueMin = -((int)(Mathf.Pow(10.0f, (int)Constant.DIGIT_MAX - 1)) - 1);
+	private readonly static int ValueMax = (int)(Mathf.Pow(10.0f, (int)Constant.DIGIT_MAX)) - 1;
+	private readonly static int ValueMin = -((int)(Mathf.Pow(10.0f, (int)Constant.DIGIT_MAX - 1)) - 1);
 
-	/* [Constant] Characters defined */
+	/* Characters defined */
 	private enum KindCharacter
 	{
 		NUMBER_0 = 0,
@@ -202,7 +219,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 
 		TERMINATOR
 	};
-	private static readonly char[] TableCharacters = new char[(int)KindCharacter.TERMINATOR]
+	private readonly static char[] TableCharacters = new char[(int)KindCharacter.TERMINATOR]
 	{
 		'0',
 		'1',
@@ -222,8 +239,8 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		'/',
 	};
 
-	/* [Constant] Parts-Names and Cell-Names */
-	private static readonly string[] TableNameParts = new string[(int)Constant.DIGIT_MAX]
+	/* Parts-Names and Cell-Names */
+	private readonly static string[] TableNameParts = new string[(int)Constant.DIGIT_MAX]
 	{
 		"Digit00",
 		"Digit01",
@@ -234,7 +251,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		"Digit06",
 		"Digit07",
 	};
-	private static readonly string[] TableNameCells = new string[(int)KindCharacter.TERMINATOR]
+	private readonly static string[] TableNameCell = new string[(int)KindCharacter.TERMINATOR]
 	{
 		"Font1_0",
 		"Font1_1",
