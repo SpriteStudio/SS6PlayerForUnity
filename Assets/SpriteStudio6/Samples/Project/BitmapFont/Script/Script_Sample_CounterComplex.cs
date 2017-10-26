@@ -17,7 +17,6 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 	/* - Tips to change animation                                             */
 	/* - How to use AdditionalColor                                           */
 	/* - How to use UserData-callback                                         */
-	/* - How to use PlayEnd-callback                                          */
 	/* - How to change CellMap from script (CellMap-Change)                   */
 	/* - How to change TableMaterial from script (TableMaterial-Change)       */
 	/* - Tips to change Parts' Transform of animation parts from script       */
@@ -134,6 +133,21 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 			return;
 		}
 
+		/* Adjust Parameters */
+		if(0 >= SizePixelFontX)
+		{
+			SizePixelFontX = 28;	/* Default */
+		}
+
+		if(0 > IndexFont)
+		{
+			IndexFont = 0;
+		}
+		if((int)Constant.FONT_MAX <= IndexFont)
+		{
+			IndexFont = (int)Constant.FONT_MAX - 1;
+		}
+
 		/* Clamp Value */
 		int valueDisplay = Mathf.Clamp(Value, ValueMin, ValueMax);
 
@@ -238,20 +252,26 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 						/* Set Digit's position */
 						{
 							/* Get Pixel-Width */
-							/* MEMO: Spacing-width = (Previous digit's width + Now digit's width) / 2 */
 							int pixelSpaceNow = (true == FlagProportional) ? (int)(TableCellCharacter[IndexFont, indexCharacter].SizeCell.x) : SizePixelFontX;
-							pixelSpaceNow /= 2;
+							pixelSpaceNow /= 2;	/* Spacing-width = (Previous digit's width + Now digit's width) / 2 */
 
 							/* Adjust Position */
-							/* MEMO: The first digit is Fixed-Position) */
 							if(0 < i)
-							{
+							{	/* The 1st-digit is Fixed-Position */
 								positionPixelDigit -= pixelSpaceNow;
 
-								Transform InstanceTransformDigit = TablePartsDigit[i].Transform;
-								Vector3 LocalPositionDigit = InstanceTransformDigit.localPosition;
-								LocalPositionDigit.x = (float)positionPixelDigit;
-								InstanceTransformDigit.localPosition = LocalPositionDigit;
+								/* MEMO: There are conditions that must be met to successfully overwrite part's "Transform" from script. */
+								/*       1. When overwrite position, "X Position", "Y Position" and "Z Position"                         */
+								/*           must not have key-frame data in animation (and "Setup" animation).                          */
+								/*       2. When overwrite rotation, "X-axis Rotation", "Y-axis Rotation" and "Z-axis Rotation"          */
+								/*           must not have key-frame data in animation (and "Setup" animation).                          */
+								/*       3. When overwrite scaling, "X Scale" and "Y Scale"                                              */
+								/*           must not have key-frame data in animation (and "Setup" animation).                          */
+								/*           ("Local X Scale" and "Local Y Scale" can have key-frame datas)                              */
+								Transform transformDigit = TablePartsDigit[i].Transform;
+								Vector3 localPositionDigit = transformDigit.localPosition;
+								localPositionDigit.x = (float)positionPixelDigit;
+								transformDigit.localPosition = localPositionDigit;
 							}
 							positionPixelDigit -= pixelSpaceNow;
 						}
@@ -313,6 +333,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 			/* Get Part's Transform */
 #if false
 			/* MEMO: Since parts' GameObject name are the same as parts' name unless changed, "Transform.Find" can be used. */
+			/*       However, there are case when GameObject of same name is added, so not recommended much.                */
 			transform = transformRoot.Find(nameParts);
 #else
 			/* MEMO: If initialization of animation is guaranteed, can be get also with "ScriptRoot.InstanceTransform". */
@@ -422,6 +443,25 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 											bool flagWayBack
 										)
 	{
+		/* MEMO: "UserData"-callback are execute during animation updating process.                       */
+		/*       Therefore, do not change playing-status within "UserData"- callback processing function. */
+		/*       As much as possible, please caching values for the next operation                        */
+		/*        and perform processing with the next "MonoBehaviour.Update()".                          */
+		/* MEMO: "UserData"-callback is processed in the order of "1. part" and "2. frame".            */
+		/*       When many frames are skipped, please pay attention to the order of callback.          */
+		/*       (In parts by parts, Will be called back according to the order of the played-frames.) */
+		/* MEMO: "userData" is a shallow-copy of UserData in animation's master(original)-data.                                            */
+		/*       Therefore, overwriting "userData" risks affecting animations that use same master-data, so do not overwrite in principle. */
+		/*       (Since "userData.Text" is a "string", pay particular attention)                                                           */
+		/* MEMO: "userData" is original-data's shallow-copy, so can not guarantee that same "reference".      */
+		/*       Therefore, when judging whether same "UserData", judge by compare "scriptRoot","indexParts", */
+		/*        "indexAnimation" and "frameKeyData".                                                        */
+		/* MEMO: "flagWayBack" becomes true when direction-play is "way-back" during ping-pong(round-trip) playing. */
+		/*       Always false during normal(one-way) playback.                                                      */
+
+		/* MEMO: If you know exactly what values are stored in the "UserData",                                          */
+		/*        you can directly retrieve values from "NumberInt", "Rectangle", "Coordinate" or "Text".               */
+		/*       But usually "IsNumber", "IsRectangle"," IsCoordinate" or "IsText" are used to check values are stored. */
 		if((true == userData.IsText) && ("ColorChange" == userData.Text))
 		{
 			IndexColor++;
