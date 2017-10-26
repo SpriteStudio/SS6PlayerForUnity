@@ -422,6 +422,10 @@ public static partial class Library_SpriteStudio6
 												ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 											)
 				{
+					if(null != instanceRoot.InstanceRootParent)
+					{	/* "Instance" ignores UserData-s */
+						return;
+					}
 					if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA))
 					{	/* Has no UserData-s */
 						return;
