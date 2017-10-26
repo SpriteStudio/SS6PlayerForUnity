@@ -388,6 +388,7 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Reset status */
+					CountLoopNow = 0;
 					Status &= ~FlagBitStatus.PLAYING_TURN;
 					if(0 != (Status & FlagBitStatus.PLAYING_REVERSE))
 					{
@@ -402,7 +403,7 @@ public static partial class Library_SpriteStudio6
 					if(0 == (Status & FlagBitStatus.PLAYING))
 					{	/* Not-Playing */
 						/* MEMO: Even if the animation has ended, there are cases when you are transitioning. */
-						goto AnimationUpdate_UpdateTransition;
+						goto Update_UpdateTransition;
 					}
 
 					if(0 == (Status & FlagBitStatus.PLAYING_START))
@@ -414,7 +415,7 @@ public static partial class Library_SpriteStudio6
 						}
 						if(0 != (Status & FlagBitStatus.PAUSE_DURING_TRANSITION))
 						{
-							goto AnimationUpdate_UpdateTransition;
+							goto Update_UpdateTransition;
 						}
 					}
 
@@ -446,7 +447,7 @@ public static partial class Library_SpriteStudio6
 					{	/* Play & Right-After-Starting */
 						Status |= (FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);
 						timeElapsed = 0.0f;
-						goto AnimationUpdate_End;	/* Display the first frame, force */
+						goto Update_End;	/* Display the first frame, force */
 					}
 
 					/* Calculate New-Frame */
@@ -460,7 +461,7 @@ public static partial class Library_SpriteStudio6
 							TimeElapsed -= timeElapsed;
 							if((0.0f > TimeElapsed) && (true == FlagRangeOverPrevious))
 							{	/* Still Range-Over */
-								goto AnimationUpdate_End;
+								goto Update_End;
 							}
 						}
 						else
@@ -469,7 +470,7 @@ public static partial class Library_SpriteStudio6
 							TimeElapsed += timeElapsed;
 							if((TimeRange <= TimeElapsed) && (true == FlagRangeOverPrevious))
 							{	/* Still Range-Over */
-								goto AnimationUpdate_End;
+								goto Update_End;
 							}
 						}
 
@@ -509,7 +510,7 @@ public static partial class Library_SpriteStudio6
 												TimesPlayNow--;
 												if(0 >= TimesPlayNow)
 												{	/* End */
-													goto AnimationUpdate_PlayEnd_Foward;
+													goto Update_PlayEnd_Foward;
 												}
 											}
 
@@ -584,7 +585,7 @@ public static partial class Library_SpriteStudio6
 							TimeElapsed -= timeElapsed;
 							if((0.0f > TimeElapsed) && (true == FlagRangeOverPrevious))
 							{	/* Still Range-Over */
-								goto AnimationUpdate_End;
+								goto Update_End;
 							}
 
 							while(0.0f > TimeElapsed)
@@ -619,7 +620,7 @@ public static partial class Library_SpriteStudio6
 							TimeElapsed += timeElapsed;
 							if((TimeRange <= TimeElapsed) && (true == FlagRangeOverPrevious))
 							{	/* Still Range-Over */
-								goto AnimationUpdate_End;
+								goto Update_End;
 							}
 
 							while(TimeRange <= TimeElapsed)
@@ -638,7 +639,7 @@ public static partial class Library_SpriteStudio6
 										TimesPlayNow--;
 										if(0 >= TimesPlayNow)
 										{	/* End */
-											goto AnimationUpdate_PlayEnd_Foward;
+											goto Update_PlayEnd_Foward;
 										}
 									}
 
@@ -650,7 +651,7 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 
-				AnimationUpdate_End:;
+				Update_End:;
 					ArgumentContainer.Frame = (int)(TimeElapsed / TimePerFrame);
 					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, 0, (FrameRange - 1));
 					ArgumentContainer.Frame += FrameStart;
@@ -658,9 +659,9 @@ public static partial class Library_SpriteStudio6
 					{
 						Status |= FlagBitStatus.DECODE_ATTRIBUTE;
 					}
-//					goto AnimationUpdate_UpdateTransition;
+//					goto Update_UpdateTransition;
 
-				AnimationUpdate_UpdateTransition:;
+				Update_UpdateTransition:;
 					Status &= ~FlagBitStatus.REQUEST_TRANSITIONEND;
 					if(0 <= IndexTrackSlave)
 					{
@@ -677,19 +678,19 @@ public static partial class Library_SpriteStudio6
 					}
 					return(true);
 
-				AnimationUpdate_PlayEnd_Foward:;
+				Update_PlayEnd_Foward:;
 					TimesPlayNow = 0;	/* Clip */
 					Status |= (FlagBitStatus.REQUEST_PLAYEND | FlagBitStatus.DECODE_ATTRIBUTE);
 					TimeElapsed = TimeRange;
 					ArgumentContainer.Frame = FrameEnd;
-					goto AnimationUpdate_UpdateTransition;
+					goto Update_UpdateTransition;
 
 				AnimationUpdate_PlayEnd_Reverse:;
 					TimesPlayNow = 0;	/* Clip */
 					Status |= (FlagBitStatus.REQUEST_PLAYEND | FlagBitStatus.DECODE_ATTRIBUTE);
 					TimeElapsed = 0.0f;
 					ArgumentContainer.Frame = FrameStart;
-					goto AnimationUpdate_UpdateTransition;
+					goto Update_UpdateTransition;
 				}
 
 				/* MEMO: Originally should be function, but call-cost is high(taking processing content into account). */
@@ -702,7 +703,7 @@ public static partial class Library_SpriteStudio6
 //					}
 //				}
 
-				public void TimeElapse(float time, bool flagReverseParent, bool flagRangeEnd)
+				public void TimeSkip(float time, bool flagReverseParent, bool flagRangeEnd)
 				{	/* MEMO: In principle, This Function is for calling from "DrawInstance". */
 					if(0.0f > time)
 					{	/* Wait Infinity */

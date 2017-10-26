@@ -1062,20 +1062,20 @@ public static partial class Library_SpriteStudio6
 									{   /* Immediately */
 										timeOffset = (float)(frameKey - controlTrack.FrameStart);
 										timeOffset = controlTrack.TimeElapsed - (timeOffset * controlTrack.TimePerFrame);
-										InstanceRootUnderControl.TableControlTrack[0].TimeElapse(timeOffset, flagPlayReverse, flagTimeWrap);
+										InstanceRootUnderControl.TableControlTrack[0].TimeSkip(timeOffset, flagPlayReverse, flagTimeWrap);
 									}
 									else
 									{	/* Wait */
 										if(true == flagPlayReverseInstance)
 										{	/* Instance: Play-Reverse */
-											InstanceRootUnderControl.TableControlTrack[0].TimeElapse(0.0f, flagPlayReverse, flagTimeWrap);
+											InstanceRootUnderControl.TableControlTrack[0].TimeSkip(0.0f, flagPlayReverse, flagTimeWrap);
 											InstanceRootUnderControl.TableControlTrack[0].TimeDelay = 0.0f;
 											InstanceRootUnderControl.AnimationStop(-1, false);	/* ??? */
 										}
 										else
 										{	/* Instance: Play-Foward */
 											timeOffset = ((float)frameKey * controlTrack.TimePerFrame) - controlTrack.TimeElapsed;
-											InstanceRootUnderControl.TableControlTrack[0].TimeElapse(0.0f, flagPlayReverse, flagTimeWrap);
+											InstanceRootUnderControl.TableControlTrack[0].TimeSkip(0.0f, flagPlayReverse, flagTimeWrap);
 											InstanceRootUnderControl.TableControlTrack[0].TimeDelay = timeOffset;
 										}
 									}
@@ -1087,20 +1087,20 @@ public static partial class Library_SpriteStudio6
 									{   /* Immediately */
 										timeOffset = (float)(frameKey - controlTrack.FrameStart);
 										timeOffset = controlTrack.TimeElapsed - (timeOffset * controlTrack.TimePerFrame);
-										InstanceRootUnderControl.TableControlTrack[0].TimeElapse(timeOffset, flagPlayReverse, flagTimeWrap);
+										InstanceRootUnderControl.TableControlTrack[0].TimeSkip(timeOffset, flagPlayReverse, flagTimeWrap);
 									}
 									else
 									{	/* Wait */
 										if(true == flagPlayReverseInstance)
 										{	/* Instance: Play-Reverse */
-											InstanceRootUnderControl.TableControlTrack[0].TimeElapse(0.0f, flagPlayReverse, flagTimeWrap);
+											InstanceRootUnderControl.TableControlTrack[0].TimeSkip(0.0f, flagPlayReverse, flagTimeWrap);
 											InstanceRootUnderControl.TableControlTrack[0].TimeDelay = 0.0f;
 											InstanceRootUnderControl.AnimationStop(-1, false);	/* ??? */
 										}
 										else
 										{	/* Instance: Play-Foward */
 											timeOffset = ((float)frameKey * controlTrack.TimePerFrame) - controlTrack.TimeElapsed;
-											InstanceRootUnderControl.TableControlTrack[0].TimeElapse(0.0f, flagPlayReverse, flagTimeWrap);
+											InstanceRootUnderControl.TableControlTrack[0].TimeSkip(0.0f, flagPlayReverse, flagTimeWrap);
 											InstanceRootUnderControl.TableControlTrack[0].TimeDelay = timeOffset;
 										}
 									}
