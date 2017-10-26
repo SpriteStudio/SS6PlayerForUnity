@@ -133,7 +133,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 				textValue = valueDisplay.ToString("D");
 			}
 
-			/* Update Animation */
+			/* Update Digits */
 			{
 				/* Generate Text */
 				char[] charactersDigit = textValue.ToCharArray();	/* Split to digit */
@@ -142,14 +142,15 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 				int indexCharacter;
 				for(int i=0; i<countDigit; i++)
 				{
+					/* MEMO: Since "idParts == 0" is the "Root"-part, intentionally excluded.           */
+					/*       Setting HideSet's idParts to 0 is to control hidding the entire animation. */
 					idParts = TableIDPartsDigit[i];
 					if(0 < idParts)
 					{
 						/* Change Cell */
-						/* MEMO: Ignore Attribute "Cell" */
 						/* MEMO: (IndexCellMap == 0) Because this Animation has 1 Texture. */
 						indexCharacter = IndexGetCharacter(charactersDigit[(countDigit - 1) - i]);
-						ScriptRoot.CellChangeParts(idParts, 0, TableIndexCell[indexCharacter], true);
+						ScriptRoot.CellChangeParts(idParts, 0, TableIndexCell[indexCharacter], true);	/* Ignore Attribute "Cell" */
 				
 						/* Show Digit */
 						/* MEMO: Don't Effect to children */

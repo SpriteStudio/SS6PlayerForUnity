@@ -14,7 +14,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 	#region Notes
 	/* The points of this sample are as follows.                              */
 	/*                                                                        */
-	/* - How to change animation at real-time                                 */
+	/* - Tips to change animation                                             */
 	/* - How to use AdditionalColor                                           */
 	/* - How to use UserData-callback                                         */
 	/* - How to use PlayEnd-callback                                          */
@@ -44,6 +44,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 	/* WorkArea */
 	private Script_SpriteStudio6_Root ScriptRoot = null;
 	private Library_SpriteStudio6.Control.AdditionalColor AdditionalColor = null;
+	private int IndexColor = 0;
 
 	private int[] TableIndexAnimation = new int[(int)KindAnimation.TERMINATOR];
 	private InformationPartsDigit[] TablePartsDigit = new InformationPartsDigit[(int)Constant.DIGIT_MAX];
@@ -55,6 +56,8 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 //	private int SizePixelFontXPrevious;
 	private bool FlagProportionalPrevious;
 	private bool FlagChangeColorPrevious;
+	private bool FlagVibrationPrevious;
+	private int IndexColorPrevious = -1;
 
 	private KindAnimation KindAnimationPlay = KindAnimation.NON;
 
@@ -67,6 +70,9 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 	{
 		/* Initialize WorkArea */
 		FlagPaddingZeroPrevious = !FlagPaddingZero;	/* Since this value can not be set with initializer... */
+		FlagProportionalPrevious = !FlagProportional;
+		FlagChangeColorPrevious = !FlagChangeColorPrevious;
+		FlagVibrationPrevious = !FlagVibrationPrevious;
 
 		/* Get Animation Control Script-Component */
 		if(null == GameObjectRoot)
@@ -79,7 +85,15 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 			return;
 		}
 
+		/* Set UserData callback function */
+		/* MEMO: Set up function to handle UserData callback.                                     */
+		/*       To avoid receiving UserData callback, set "ScriptRoot.FunctionUserData" to null. */
+		ScriptRoot.FunctionUserData = FunctionCallBackUserData;
+
 		/* Get Animation Index */
+		/* MEMO: Collect animation-indexs ahead of time.                 */
+		/*       Every change animation, also you can get index by name. */
+		/*       But wasteful to search each time.                       */
 		TableIndexAnimation = AnimationIndexGet();
 		if(null == TableIndexAnimation)
 		{
@@ -114,6 +128,145 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 
 	void Update()
 	{
+		/* Check Validity */
+		if(false == FlagInitialized)
+		{	/* Failed to initialize */
+			return;
+		}
+
+		/* Clamp Value */
+		int valueDisplay = Mathf.Clamp(Value, ValueMin, ValueMax);
+
+		/* Check & Update Animation */
+		if(FlagVibrationPrevious != FlagVibration)
+		{
+			/* MEMO: Simply, If animation-change is reserved, postpone to update.                                    */
+			/*       This process does not matter because depend on the convenience for application's specification. */
+			if(KindAnimation.NON == KindAnimationPlay)
+			{	/* Not reserved */
+				KindAnimationPlay = (true == FlagVibration) ? KindAnimation.ANIMATION_VIBRATION : KindAnimation.ANIMATION_NOMOVE;
+				FlagVibrationPrevious = FlagVibration;
+			}
+			AnimationPlay();
+		}
+
+		/* Check & Update AdditionalColor */
+		/* MEMO: The reason for checking two types of updates, "IndexColor" and "FlagChangeColor",                                   */
+		/*        is that "FlagChangeColor" is updated from inspector and "IndexColor" is updated in the UserData-callback function. */
+		if((FlagChangeColorPrevious != FlagChangeColor) || (IndexColorPrevious != IndexColor))
+		{
+			FlagChangeColorPrevious = FlagChangeColor;
+			IndexColorPrevious = IndexColor;
+
+			if(null != AdditionalColor)
+			{
+				/* MEMO: Created "AdditionalColor"'s Parameter can continue to be used unless call "AdditionalColorRelease". */
+				/*       To temporarily-disable AdditionalColor, set "Library_SpriteStudio6.KindOperationBlend.NON".         */
+				AdditionalColor.SetOverall((true == FlagChangeColor) ? Library_SpriteStudio6.KindOperationBlend.MUL : Library_SpriteStudio6.KindOperationBlend.NON,
+											TableColorFont[IndexColor]
+										);
+			}
+		}
+
+		/* Check Update */
+		bool flagUpdateText = false;
+		if(ValuePrevious != Value)
+		{
+			ValuePrevious = Value;
+			flagUpdateText |= true;
+		}
+		if(IndexFontPrevious != IndexFont)
+		{
+			IndexFontPrevious = IndexFont;
+			flagUpdateText |= true;
+		}
+		if(FlagPaddingZeroPrevious != FlagPaddingZero)
+		{
+			FlagPaddingZeroPrevious = FlagPaddingZero;
+			flagUpdateText |= true;
+		}
+//		if(SizePixelFontXPrevious != SizePixelFontX)
+//		{
+//			SizePixelFontXPrevious = SizePixelFontX;
+//			flagUpdateText |= true;
+//		}
+		if(FlagProportionalPrevious != FlagProportional)
+		{
+			FlagProportionalPrevious = FlagProportional;
+			flagUpdateText |= true;
+		}
+
+		/* Update Text */
+		if(true == flagUpdateText)
+		{
+			string textValue;
+
+			/* Get Text */
+			if(true == FlagPaddingZero)
+			{	/* Zero-padding */
+				textValue = valueDisplay.ToString("D" + ((int)(Constant.DIGIT_MAX)).ToString());
+			}
+			else
+			{	/* Right-alignment */
+				textValue = valueDisplay.ToString("D");
+			}
+
+			/* Update Digits */
+			{
+				/* Generate Text */
+				char[] charactersDigit = textValue.ToCharArray();	/* Split to digit */
+				int countDigit = charactersDigit.Length;
+				int idParts;
+				int indexCharacter;
+				int positionPixelDigit = 0;
+				for(int i=0; i<countDigit; i++)
+				{
+					/* MEMO: Since "idParts == 0" is the "Root"-part, intentionally excluded.           */
+					/*       Setting HideSet's idParts to 0 is to control hidding the entire animation. */
+					idParts = TablePartsDigit[i].IDParts;
+					if(0 < idParts)
+					{
+						/* Change Cell */
+						/* MEMO: (IndexCellMap == 0) Because this Animation has 1 Texture. */
+						indexCharacter = IndexGetCharacter(charactersDigit[(countDigit - 1) - i]);
+						ScriptRoot.CellChangeParts(idParts, 0, TableCellCharacter[IndexFont, indexCharacter].IndexCell, true);	/* Ignore Attribute "Cell" */
+
+						/* Show Digit */
+						/* MEMO: Don't Effect to children */
+						ScriptRoot.HideSet(idParts, false, false);
+
+						/* Set Digit's position */
+						{
+							/* Get Pixel-Width */
+							/* MEMO: Spacing-width = (Previous digit's width + Now digit's width) / 2 */
+							int pixelSpaceNow = (true == FlagProportional) ? (int)(TableCellCharacter[IndexFont, indexCharacter].SizeCell.x) : SizePixelFontX;
+							pixelSpaceNow /= 2;
+
+							/* Adjust Position */
+							/* MEMO: The first digit is Fixed-Position) */
+							if(0 < i)
+							{
+								positionPixelDigit -= pixelSpaceNow;
+
+								Transform InstanceTransformDigit = TablePartsDigit[i].Transform;
+								Vector3 LocalPositionDigit = InstanceTransformDigit.localPosition;
+								LocalPositionDigit.x = (float)positionPixelDigit;
+								InstanceTransformDigit.localPosition = LocalPositionDigit;
+							}
+							positionPixelDigit -= pixelSpaceNow;
+						}
+					}
+				}
+				for(int i=countDigit; i<(int)Constant.DIGIT_MAX; i++)
+				{
+					idParts = TablePartsDigit[i].IDParts;
+					if(0 < idParts)
+					{
+						ScriptRoot.HideSet(idParts, true, false);
+					}
+				}
+			}
+		}
 	}
 	#endregion MonoBehaviour-Functions
 
@@ -166,7 +319,8 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 			transform = ScriptRoot.TableControlParts[idParts].InstanceGameObject.transform;
 #endif
 
-			table[i].Set(idParts, transform);
+			table[i].IDParts = idParts;
+			table[i].Transform = transform;
 		}
 
 		return(table);
@@ -207,10 +361,18 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 
 				/* MEMO: The cell's index stored in CellMap can be gotten from CellMap. */
 				indexCell = cellMap.IndexGetCell(TableNameCell[i][j]);
+				if((0 <= indexCell) || (cellMap.CountGetCell() > indexCell))
+				{	/* Valid Cell-index */
+					table[i, j].IndexCell = indexCell;
 
-				/* MEMO: Since caution-points when get Cell's informations are special, */
-				/*        annotate in separated function(InformationCellCharacter.Set). */
-				table[i, j].Set(indexCell, cellMap);
+					/* MEMO: Cell's Information in CellMap can be get with TableCell[cell's index].        */
+					/*       Do not change the contents of TableCell without reason.                       */
+					/*       Excepting deep-copied or built-from-scratch, will overwrite master-data       */
+					/*        of ScriptableObject(Script_SpriteStudio6_DataCellMap) which stores CellMaps. */
+					table[i, j].SizeCell.x = cellMap.TableCell[indexCell].Rectangle.width;
+					table[i, j].SizeCell.y = cellMap.TableCell[indexCell].Rectangle.height;
+				}
+
 			}
 		}
 
@@ -236,6 +398,36 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		return(true);
 	}
 
+	private int IndexGetCharacter(char character)
+	{
+		int Count = (int)KindCharacter.TERMINATOR;
+		for(int i=0; i<Count; i++)
+		{
+			if(TableCharacters[i] == character)
+			{
+				return(i);
+			}
+		}
+
+		return(-1);
+	}
+
+	private void FunctionCallBackUserData(	Script_SpriteStudio6_Root scriptRoot,
+											string nameParts,
+											int indexParts,
+											int indexAnimation,
+											int frameDecode,
+											int frameKeyData,
+											ref Library_SpriteStudio6.Data.Animation.Attribute.UserData userData,
+											bool flagWayBack
+										)
+	{
+		if((true == userData.IsText) && ("ColorChange" == userData.Text))
+		{
+			IndexColor++;
+			IndexColor %= TableColorFont.Length;
+		}
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */
@@ -436,12 +628,6 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 			IDParts = -1;
 			Transform = null;
 		}
-
-		internal void Set(int idParts, UnityEngine.Transform transform)
-		{
-			IDParts = idParts;
-			Transform = transform;
-		}
 	}
 
 	private struct InformationCellCharacter
@@ -465,29 +651,6 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 				}
 				return(true);
 			}
-		}
-
-		internal void Set(int indexCell, Library_SpriteStudio6.Data.CellMap cellMap)
-		{
-			if(null == cellMap)
-			{	/* Error */
-				CleanUp();
-				return;
-			}
-
-			if((0 > indexCell) || (cellMap.CountGetCell() <= indexCell))
-			{	/* Invalid Cell-index */
-				CleanUp();
-				return;
-			}
-
-			IndexCell = indexCell;
-			/* MEMO: Cell's Information in CellMap can be get with TableCell[cell's index].        */
-			/*       Do not change the contents of TableCell without reason.                       */
-			/*       Excepting deep-copied or built-from-scratch, will overwrite master-data       */
-			/*        of ScriptableObject(Script_SpriteStudio6_DataCellMap) which stores CellMaps. */
-			SizeCell.x = cellMap.TableCell[indexCell].Rectangle.width;
-			SizeCell.y = cellMap.TableCell[indexCell].Rectangle.height;
 		}
 	}
 	#endregion Classes, Structs & Interfaces

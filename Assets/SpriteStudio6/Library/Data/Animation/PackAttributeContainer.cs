@@ -23,15 +23,15 @@ public static partial class Library_SpriteStudio6
 					false,		/* Position */
 					false,		/* Rotation */
 					false,		/* Scaling */
-					false,		/* ScalingLocal */
-					false,		/* RateOpacity */
 					false,		/* PositionAnchor */
-					false,		/* SizeForce */
 					false,		/* RadiusCollision */
 					false,		/* UserData (Trigger) */
 					false,		/* Instance (Trigger) */
 					false,		/* Effect (Trigger) */
 					false,		/* Plain.Cell */
+					false,		/* Plain.ScalingLocal */
+					false,		/* Plain.RateOpacity */
+					false,		/* Plain.SizeForce */
 					false,		/* Plain.PartsColor */
 					false,		/* Plain.VertexCorrection */
 					false,		/* Plain.OffsetPivot */
@@ -241,32 +241,11 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.SCALING));
 						}
 					}
-					public bool ScalingLocal
-					{
-						get
-						{
-							return(0 != (Flags & FlagBit.SCALING_LOCAL));
-						}
-					}
-					public bool RateOpacity
-					{
-						get
-						{
-							return(0 != (Flags & FlagBit.RATE_OPACITY));
-						}
-					}
 					public bool PositionAnchor
 					{
 						get
 						{
 							return(0 != (Flags & FlagBit.POSITION_ANCHOR));
-						}
-					}
-					public bool SizeForce
-					{
-						get
-						{
-							return(0 != (Flags & FlagBit.SIZE_FORCE));
 						}
 					}
 					public bool UserData
@@ -303,6 +282,27 @@ public static partial class Library_SpriteStudio6
 						get
 						{
 							return(0 != (FlagsPlain & FlagBitPlain.CELL));
+						}
+					}
+					public bool PlainScalingLocal
+					{
+						get
+						{
+							return(0 != (FlagsPlain & FlagBitPlain.SCALING_LOCAL));
+						}
+					}
+					public bool PlainRateOpacity
+					{
+						get
+						{
+							return(0 != (FlagsPlain & FlagBitPlain.RATE_OPACITY));
+						}
+					}
+					public bool PlainSizeForce
+					{
+						get
+						{
+							return(0 != (FlagsPlain & FlagBitPlain.SIZE_FORCE));
 						}
 					}
 					public bool PlainPartsColor
@@ -398,15 +398,15 @@ public static partial class Library_SpriteStudio6
 												bool position,
 												bool rotation,
 												bool scaling,
-												bool scalingLocal,
-												bool rateOpacity,
 												bool positionAnchor,
-												bool sizeForce,
 												bool radiusCollision,
 												bool userData,
 												bool instance,
 												bool effect,
 												bool plainCell,
+												bool plainScalingLocal,
+												bool plainRateOpacity,
+												bool plainSizeForce,
 												bool plainPartsColor,
 												bool plainVertexCorrection,
 												bool plainOffsetPivot,
@@ -426,10 +426,7 @@ public static partial class Library_SpriteStudio6
 						Flags |= (true == position) ? FlagBit.POSITION : (FlagBit)0;
 						Flags |= (true == rotation) ? FlagBit.ROTATION : (FlagBit)0;
 						Flags |= (true == scaling) ? FlagBit.SCALING : (FlagBit)0;
-						Flags |= (true == scalingLocal) ? FlagBit.SCALING_LOCAL : (FlagBit)0;
-						Flags |= (true == rateOpacity) ? FlagBit.RATE_OPACITY : (FlagBit)0;
 						Flags |= (true == positionAnchor) ? FlagBit.POSITION_ANCHOR : (FlagBit)0;
-						Flags |= (true == sizeForce) ? FlagBit.SIZE_FORCE : (FlagBit)0;
 						Flags |= (true == radiusCollision) ? FlagBit.RADIUS_COLLISION : (FlagBit)0;
 						Flags |= (true == userData) ? FlagBit.USER_DATA : (FlagBit)0;
 						Flags |= (true == instance) ? FlagBit.INSTANCE : (FlagBit)0;
@@ -437,6 +434,9 @@ public static partial class Library_SpriteStudio6
 
 						FlagsPlain = 0;
 						FlagsPlain |= (true == plainCell) ? FlagBitPlain.CELL : (FlagBitPlain)0;
+						FlagsPlain |= (true == plainScalingLocal) ? FlagBitPlain.SCALING_LOCAL : (FlagBitPlain)0;
+						FlagsPlain |= (true == plainRateOpacity) ? FlagBitPlain.RATE_OPACITY : (FlagBitPlain)0;
+						FlagsPlain |= (true == plainSizeForce) ? FlagBitPlain.SIZE_FORCE : (FlagBitPlain)0;
 						FlagsPlain |= (true == plainPartsColor) ? FlagBitPlain.PARTS_COLOR : (FlagBitPlain)0;
 						FlagsPlain |= (true == plainVertexCorrection) ? FlagBitPlain.VERTEX_CORRECTION : (FlagBitPlain)0;
 						FlagsPlain |= (true == plainOffsetPivot) ? FlagBitPlain.OFFSET_PIVOT : (FlagBitPlain)0;
@@ -463,26 +463,26 @@ public static partial class Library_SpriteStudio6
 						POSITION = 0x00000002,
 						ROTATION = 0x00000004,
 						SCALING = 0x00000008,
-						SCALING_LOCAL = 0x00000010,
-						RATE_OPACITY = 0x00000020,
-						POSITION_ANCHOR = 0x00000040,
-						SIZE_FORCE = 0x00000080,
-						RADIUS_COLLISION = 0x00000100,
-						USER_DATA = 0x00000200,
-						INSTANCE = 0x00000400,
-						EFFECT = 0x00000800,
+						POSITION_ANCHOR = 0x00000010,
+						RADIUS_COLLISION = 0x00000020,
+						USER_DATA = 0x00000040,
+						INSTANCE = 0x00000080,
+						EFFECT = 0x00000100,
 					}
 
 					[System.Flags]
 					private enum FlagBitPlain
 					{
 						CELL = 0x00000001,
-						PARTS_COLOR = 0x00000002,
-						VERTEX_CORRECTION = 0x00000004,
-						OFFSET_PIVOT = 0x00000008,
-						POSITION_TEXTURE = 0x00000010,
-						SCALING_TEXTURE = 0x00000020,
-						ROTATION_TEXTURE = 0x00000040,
+						SCALING_LOCAL = 0x00000002,
+						RATE_OPACITY = 0x00000004,
+						SIZE_FORCE = 0x00000008,
+						PARTS_COLOR = 0x00000010,
+						VERTEX_CORRECTION = 0x00000020,
+						OFFSET_PIVOT = 0x00000040,
+						POSITION_TEXTURE = 0x00000080,
+						SCALING_TEXTURE = 0x00000100,
+						ROTATION_TEXTURE = 0x00000200,
 					}
 
 					[System.Flags]

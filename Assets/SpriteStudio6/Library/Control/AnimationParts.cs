@@ -197,7 +197,6 @@ public static partial class Library_SpriteStudio6
 					}
 
 					AnimationRefresh();
-					Status |= (FlagBitStatus.CHANGE_TRANSFORM_POSITION | FlagBitStatus.CHANGE_TRANSFORM_ROTATION | FlagBitStatus.CHANGE_TRANSFORM_SCALING);
 					Status |= FlagBitStatus.VALID;
 
 					return(true);
@@ -405,7 +404,7 @@ public static partial class Library_SpriteStudio6
 					}
 					else
 					{
-						if((FlagBitStatus.REFRESH_TRANSFORM_SCALING | FlagBitStatus.REFRESH_TRANSFORM_SCALING) == (Status & (FlagBitStatus.REFRESH_TRANSFORM_SCALING | FlagBitStatus.REFRESH_TRANSFORM_SCALING)))
+						if((FlagBitStatus.CHANGE_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_SCALING) == (Status & (FlagBitStatus.CHANGE_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_SCALING)))
 						{	/* Refresh */
 							transform.localScale = Vector3.one;
 						}
@@ -427,7 +426,7 @@ public static partial class Library_SpriteStudio6
 					{	/* Has no UserData-s */
 						return;
 					}
-					if((true == controlTrack.StatusIsIgnoreUserData) || (true == controlTrack.StatusIsDecodeAttribute) || (null == instanceRoot.FunctionUserData))
+					if((true == controlTrack.StatusIsIgnoreUserData) || (false == controlTrack.StatusIsDecodeAttribute) || (null == instanceRoot.FunctionUserData))
 					{	/* No Need to decode UserData-s */
 						return;
 					}
@@ -437,7 +436,7 @@ public static partial class Library_SpriteStudio6
 					{
 						countLoop = 0;
 					}
-					bool flagLoop = (0 < countLoop) ? true : false;
+					bool flagLoop = (0 < countLoop);
 					bool flagFirst = controlTrack.StatusIsPlayingStart;
 					bool flagReverse = controlTrack.StatusIsPlayingReverse;
 					bool flagReversePrevious = controlTrack.StatusIsPlayingReversePrevious;
@@ -600,7 +599,6 @@ public static partial class Library_SpriteStudio6
 						/* Decoding skipped frame */
 						if(true == flagReverse)
 						{	/* Backwards */
-//							if(true == flagLoop)
 							if(true == flagTurn)
 							{	/* Wrap-Around */
 								/* Part-Head */
@@ -622,7 +620,6 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{	/* Foward */
-//							if(true == flagLoop)
 							if(true == flagTurn)
 							{	/* Wrap-Around */
 								/* Part-Head */
@@ -1599,7 +1596,7 @@ public static partial class Library_SpriteStudio6
 							flagRecalcSizeSprite |= true;
 						}
 
-						flagUpdateValueAttribute = dataAnimationParts.SizeForce.Function.ValueGet(ref SizeForce.Value, ref SizeForce.FrameKey, dataAnimationParts.SizeForce, ref argumentContainer);
+						flagUpdateValueAttribute = dataAnimationParts.Plain.SizeForce.Function.ValueGet(ref SizeForce.Value, ref SizeForce.FrameKey, dataAnimationParts.Plain.SizeForce, ref argumentContainer);
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
@@ -1687,7 +1684,7 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Get Rate-Opacity */
-						flagUpdateValueAttribute = dataAnimationParts.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.RateOpacity, ref argumentContainer); 
+						flagUpdateValueAttribute = dataAnimationParts.Plain.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.Plain.RateOpacity, ref argumentContainer); 
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
@@ -1742,26 +1739,50 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Set Parts-Color */
+						bool flagUsePartsColor = true;
+						Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
 						flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
-						if(true == flagUpdateValueAttribute)
-						{
-							Status |= FlagBitStatus.UPDATE_COLORPARTS;
+						float operationBlend = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+						Color[] tableColor = PartsColor.Value.VertexColor;
+
+						if(null != additionalColor)
+						{	/* Has AdditionalColor */
+							if(Library_SpriteStudio6.KindOperationBlend.NON != additionalColor.OperationBlend)
+							{
+								if(0 != (additionalColor.Status & Library_SpriteStudio6.Control.AdditionalColor.FlagBitStatus.CHANGE))
+								{
+									operationBlend = (float)((int)additionalColor.OperationBlend) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+									tableColor = additionalColor.ColorVertex;
+
+									Status |= FlagBitStatus.UPDATE_COLORPARTS;
+									Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+								}
+
+								flagUsePartsColor = false;
+							}
 						}
-						if(0 != (Status & FlagBitStatus.UPDATE_COLORPARTS))
+						if(true == flagUsePartsColor)
 						{
-							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+							if((true == flagUpdateValueAttribute) || (0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS)))
+							{
+								Status |= FlagBitStatus.UPDATE_COLORPARTS;
+								Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+							}
+
+							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
+						}
+						else
+						{
+							Status |= FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
 						}
 
 						float rateOpacity = instanceRoot.RateOpacity * RateOpacity.Value;
 						if(0 != (Status & (FlagBitStatus.UPDATE_COLORPARTS | FlagBitStatus.UPDATE_PARAMETERBLEND)))
 						{
-							float operation = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
 							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.ColorClear;
-							Color[] tableColor = PartsColor.Value.VertexColor;
-
 							for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 							{
-								ParameterBlendDraw[i].x = operation;
+								ParameterBlendDraw[i].x = operationBlend;
 								ParameterBlendDraw[i].y = rateOpacity;
 
 								ColorPartsDraw[i] = tableColor[i];
@@ -1771,7 +1792,7 @@ public static partial class Library_SpriteStudio6
 
 							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
 							{
-								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].x = operation;
+								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].x = operationBlend;
 								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].y = rateOpacity;
 
 								ColorPartsDraw[(int)Library_SpriteStudio6.KindVertex.C] = sumColor * 0.25f;
@@ -1779,7 +1800,7 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Get Local-Scale */
-						if(true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref argumentContainer))
+						if(true == dataAnimationParts.Plain.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.Plain.ScalingLocal, ref argumentContainer))
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
 						}
@@ -1933,6 +1954,8 @@ public static partial class Library_SpriteStudio6
 						UPDATE_COLORPARTS = 0x00000008,
 
 						UPDATE_MASKING = 0x00000010,
+
+						USE_ADDITIONALCOLOR_PREVIOUS = 0x000000100,
 
 						CLEAR = 0x00000000
 					}

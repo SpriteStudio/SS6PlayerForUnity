@@ -386,6 +386,19 @@ public static partial class Library_SpriteStudio6
 					{
 						return(false);
 					}
+
+					/* Reset status */
+					Status &= ~FlagBitStatus.PLAYING_TURN;
+					if(0 != (Status & FlagBitStatus.PLAYING_REVERSE))
+					{
+						Status |= FlagBitStatus.PLAYING_REVERSEPREVIOUS;
+					}
+					else
+					{
+						Status &= ~FlagBitStatus.PLAYING_REVERSEPREVIOUS;
+					}
+
+					/* Check Playng status */
 					if(0 == (Status & FlagBitStatus.PLAYING))
 					{	/* Not-Playing */
 						/* MEMO: Even if the animation has ended, there are cases when you are transitioning. */

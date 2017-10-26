@@ -308,12 +308,8 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Position;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;	/* Plain */
-
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;	/* Plain */
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;	/* Plain */
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;
 
@@ -337,20 +333,19 @@ public static partial class Library_SpriteStudio6
 					Position = null;
 					Rotation = null;
 					Scaling = null;
-					ScalingLocal = null;
-
-					RateOpacity = null;
 
 					PositionAnchor = null;
-					SizeForce = null;
+
+					RadiusCollision = null;
 
 					UserData = null;
 					Instance = null;
 					Effect = null;
 
-					RadiusCollision = null;
-
 					Plain.Cell = null;
+					Plain.ScalingLocal = null;
+					Plain.RateOpacity = null;
+					Plain.SizeForce = null;
 					Plain.PartsColor = null;
 					Plain.VertexCorrection = null;
 					Plain.OffsetPivot = null;
@@ -404,6 +399,9 @@ public static partial class Library_SpriteStudio6
 					#region Variables & Properties
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell Cell;
 
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 OffsetPivot;
@@ -1493,6 +1491,7 @@ public static partial class Library_SpriteStudio6
 		{
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
+			internal FlagBitStatus Status;
 			public Library_SpriteStudio6.KindOperationBlend OperationBlend;
 			public Color[] ColorVertex;
 			#endregion Variables & Properties
@@ -1501,6 +1500,7 @@ public static partial class Library_SpriteStudio6
 			#region Functions
 			public void CleanUp()
 			{
+				Status = FlagBitStatus.CLEAR;
 				OperationBlend = (Library_SpriteStudio6.KindOperationBlend)(-1);
 				ColorVertex = null;
 			}
@@ -1522,6 +1522,8 @@ public static partial class Library_SpriteStudio6
 				{
 					ColorVertex[i] = ColorClear[(int)Library_SpriteStudio6.KindOperationBlend.MIX];
 				}
+
+				Status |= FlagBitStatus.VALID;
 
 				return(true);
 			}
@@ -1555,6 +1557,7 @@ public static partial class Library_SpriteStudio6
 				if(Library_SpriteStudio6.KindOperationBlend.NON == operationBlend)
 				{
 					OperationBlend = Library_SpriteStudio6.KindOperationBlend.NON;
+					Status |= FlagBitStatus.CHANGE;
 					return;
 				}
 
@@ -1568,6 +1571,8 @@ public static partial class Library_SpriteStudio6
 				{
 					ColorVertex[i] = color;
 				}
+
+				Status |= FlagBitStatus.CHANGE;
 			}
 
 			/* ******************************************************** */
@@ -1608,6 +1613,7 @@ public static partial class Library_SpriteStudio6
 				if(Library_SpriteStudio6.KindOperationBlend.NON == operationBlend)
 				{
 					OperationBlend = Library_SpriteStudio6.KindOperationBlend.NON;
+					Status |= FlagBitStatus.CHANGE;
 					return;
 				}
 
@@ -1621,12 +1627,22 @@ public static partial class Library_SpriteStudio6
 				ColorVertex[(int)Library_SpriteStudio6.KindVertex.RU] = colorRU;
 				ColorVertex[(int)Library_SpriteStudio6.KindVertex.RD] = colorRD;
 				ColorVertex[(int)Library_SpriteStudio6.KindVertex.LD] = colorLD;
+
+				Status |= FlagBitStatus.CHANGE;
 			}
 
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
+			internal enum FlagBitStatus
+			{
+				VALID = 0x40000000,
+				CHANGE = 0x20000000,
+
+				CLEAR = 0
+			}
+
 			public readonly static Color32[] ColorClear = new Color32[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_PARTSCOLOR]
 			{
 				/* MIX */	new Color(0.0f, 0.0f, 0.0f, 0.0f),

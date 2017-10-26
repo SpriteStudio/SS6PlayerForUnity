@@ -401,14 +401,15 @@
 * PackAttributeAnimation_Position > FormatName
 * PackAttributeAnimation_Rotation > FormatName
 * PackAttributeAnimation_Scaling > FormatName
-* PackAttributeAnimation_RateOpacity > FormatName
 * PackAttributeAnimation_PositionAnchor > FormatName
-* PackAttributeAnimation_SizeForce > FormatName
 * PackAttributeAnimation_UserData > FormatName
 * PackAttributeAnimation_Instance > FormatName
 * PackAttributeAnimation_Effect > FormatName
 * PackAttributeAnimation_RadiusCollision > FormatName
 * PackAttributeAnimation_PlainCell > FormatName
+* PackAttributeAnimation_PlainScalingLocal > FormatName
+* PackAttributeAnimation_PlainRateOpacity > FormatName
+* PackAttributeAnimation_PlainSizeForce > FormatName
 * PackAttributeAnimation_PlainPartsColor > FormatName
 * PackAttributeAnimation_PlainVertexCorrection > FormatName
 * PackAttributeAnimation_PlainOffsetPivot > FormatName
@@ -431,14 +432,15 @@
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Position"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Rotation"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Scaling"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RateOpacity"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]PositionAnchor"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]SizeForce"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]UserData"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Instance"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Effect"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RadiusCollision"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]Cell"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]ScalingLocal"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]RateOpacity"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]SizeForce"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]PartsColor"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]VertexCorrection"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]OffsetPivot"
