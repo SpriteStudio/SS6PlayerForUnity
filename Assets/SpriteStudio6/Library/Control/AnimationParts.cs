@@ -725,10 +725,10 @@ public static partial class Library_SpriteStudio6
 					switch(dataAnimationParts.Format)
 					{
 						case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
-							ParameterSprite.UpdateSpriteSizePlain(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
+							ParameterSprite.UpdatePlain(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
 							break;
 						case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
-							ParameterSprite.UpdateSpriteSizeFix(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
+							ParameterSprite.UpdateFix(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
 							break;
 					}
 				}
@@ -953,40 +953,39 @@ public static partial class Library_SpriteStudio6
 					controlTrack.ArgumentContainer.IDParts = idParts;
 
 					/* Draw Sprite */
-					/* MEMO: There are some parameters (mainly AdditionalColor) that must be updated in hidden, so do not judge hidden here. */
 					bool flagHide = flagHideDefault;
-					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
-
-					switch(dataAnimationParts.Format)
+					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE)));	/* ? true : false */
+					if(false == flagHide)
 					{
-						case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
-							ParameterSprite.DrawPlain(	instanceRoot,
-														idParts,
-														InstanceGameObject,
-														InstanceTransform,
-														masking,
-														flagPreDraw,
-														flagHide,
-														ref matrixCorrection,
-														ref Status,
-														ref dataAnimationParts,
-														ref controlTrack.ArgumentContainer
-													);
-							break;
-						case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
-							ParameterSprite.DrawFix(	instanceRoot,
-														idParts,
-														InstanceGameObject,
-														InstanceTransform,
-														masking,
-														flagPreDraw,
-														flagHide,
-														ref matrixCorrection,
-														ref Status,
-														ref dataAnimationParts,
-														ref controlTrack.ArgumentContainer
-													);
-							break;
+						switch(dataAnimationParts.Format)
+						{
+							case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
+								ParameterSprite.DrawPlain(	instanceRoot,
+															idParts,
+															InstanceGameObject,
+															InstanceTransform,
+															masking,
+															flagPreDraw,
+															ref matrixCorrection,
+															ref Status,
+															ref dataAnimationParts,
+															ref controlTrack.ArgumentContainer
+														);
+								break;
+							case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
+								ParameterSprite.DrawFix(	instanceRoot,
+															idParts,
+															InstanceGameObject,
+															InstanceTransform,
+															masking,
+															flagPreDraw,
+															ref matrixCorrection,
+															ref Status,
+															ref dataAnimationParts,
+															ref controlTrack.ArgumentContainer
+														);
+								break;
+						}
 					}
 				}
 				private void DrawInstance(	Script_SpriteStudio6_Root instanceRoot,
@@ -1527,15 +1526,16 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 
-					internal bool UpdateSpriteSizePlain(	Script_SpriteStudio6_Root instanceRoot,
-															int idParts,
-															GameObject instanceGameObject,
-															Transform instanceTransform,
-															ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
-															ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
-															ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
-														)
+					internal bool UpdatePlain(	Script_SpriteStudio6_Root instanceRoot,
+												int idParts,
+												GameObject instanceGameObject,
+												Transform instanceTransform,
+												ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
+												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
+											)
 					{
+						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
 						bool flagUpdateValueAttribute;
 
 						/* Create sprite data (from cell to use) */
@@ -1637,23 +1637,81 @@ public static partial class Library_SpriteStudio6
 							}
 						}
 
+						/* Get Local-Scale */
+						if(true == dataAnimationParts.Plain.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.Plain.ScalingLocal, ref argumentContainer))
+						{
+							Status |= FlagBitStatus.UPDATE_COORDINATE;
+						}
+
 						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
 						{	/* Re-Set Sprite's Size & Pivot (only when coordinates updateed) */
 							SizeSprite = sizeSprite;
 							PivotSprite = pivotSprite;
 						}
+
+						/* Get Rate-Opacity */
+						flagUpdateValueAttribute = dataAnimationParts.Plain.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.Plain.RateOpacity, ref argumentContainer); 
+						if(true == flagUpdateValueAttribute)
+						{
+							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+						}
+
+						/* Get Texture-Transform */
+						if(0 == (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE))
+						{	/* Transform Texure */
+							bool flagUpdateMatrixTexrure = dataAnimationParts.Plain.PositionTexture.Function.ValueGet(ref PositionTexture.Value, ref PositionTexture.FrameKey, dataAnimationParts.Plain.PositionTexture, ref argumentContainer);
+							flagUpdateMatrixTexrure |= dataAnimationParts.Plain.ScalingTexture.Function.ValueGet(ref ScalingTexture.Value, ref ScalingTexture.FrameKey, dataAnimationParts.Plain.ScalingTexture, ref argumentContainer);
+							flagUpdateMatrixTexrure |= dataAnimationParts.Plain.RotationTexture.Function.ValueGet(ref RotationTexture.Value, ref RotationTexture.FrameKey, dataAnimationParts.Plain.RotationTexture, ref argumentContainer);
+							if(true == flagUpdateMatrixTexrure)
+							{
+								Status |= FlagBitStatus.UPDATE_TRANSFORM_TEXTURE;
+							}
+						}
+
+						/* Get & Select PartsColor or AdditionalColor */
+						bool flagUseAdditionalColor = false;
+						if(0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR))
+						{
+							Status |= FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
+						}
+						flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
+						Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
+						if(null != additionalColor)
+						{	/* Has AdditionalColor */
+							if(Library_SpriteStudio6.KindOperationBlend.NON != additionalColor.OperationBlend)
+							{
+								if(0 != (additionalColor.Status & Library_SpriteStudio6.Control.AdditionalColor.FlagBitStatus.CHANGE))
+								{
+									Status |= FlagBitStatus.UPDATE_COLORPARTS;
+									Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+								}
+
+								flagUseAdditionalColor = true;
+							}
+						}
+						if(true == flagUseAdditionalColor)
+						{	/* Use AdditionalColor */
+							Status |= FlagBitStatus.USE_ADDITIONALCOLOR;
+						}
+						else
+						{	/* Use PartsColor */
+							/* MEMO: Update force when switching from AdditionalColor to PartColor.                             */
+							/*       (Otherwise AdditionalColor will continue remaining until next PartsColor data is detected) */
+							if((true == flagUpdateValueAttribute) || (0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS)))
+							{
+								Status |= FlagBitStatus.UPDATE_COLORPARTS;
+								Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+							}
+							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR;
+						}
+
+						/* Get Coordinates */
+						dataAnimationParts.Plain.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.Plain.VertexCorrection, ref argumentContainer);
 						return(true);
-					}
-					internal bool UpdateSpriteSizeFix(	Script_SpriteStudio6_Root instanceRoot,
-														int idParts,
-														GameObject instanceGameObject,
-														Transform instanceTransform,
-														ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
-														ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
-														ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
-													)
-					{
-						return(false);
 					}
 
 					internal void DrawPlain(	Script_SpriteStudio6_Root instanceRoot,
@@ -1662,20 +1720,12 @@ public static partial class Library_SpriteStudio6
 												Transform instanceTransform,
 												Library_SpriteStudio6.KindMasking masking,
 												bool flagPreDraw,
-												bool flagHide,
 												ref Matrix4x4 matrixCorrection,
 												ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
 												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
 											)
 					{
-						if(true == flagHide)
-						{
-							return;
-						}
-
-						bool flagUpdateValueAttribute;
-
 						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
 
 						Vector2 sizeSprite = SizeSprite;
@@ -1701,13 +1751,6 @@ public static partial class Library_SpriteStudio6
 							Status |= FlagBitStatus.UPDATE_MASKING;
 						}
 
-						/* Get Rate-Opacity */
-						flagUpdateValueAttribute = dataAnimationParts.Plain.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.Plain.RateOpacity, ref argumentContainer); 
-						if(true == flagUpdateValueAttribute)
-						{
-							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
-						}
-
 						/* Calculate Texture-UV */
 						if(0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE))
 						{	/* No Transform (Ordinary rectangle) */
@@ -1731,12 +1774,9 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{	/* Transform Texure */
-							bool flagUpdateMatrixTexrure = false;
-							flagUpdateMatrixTexrure |= dataAnimationParts.Plain.PositionTexture.Function.ValueGet(ref PositionTexture.Value, ref PositionTexture.FrameKey, dataAnimationParts.Plain.PositionTexture, ref argumentContainer);
-							flagUpdateMatrixTexrure |= dataAnimationParts.Plain.ScalingTexture.Function.ValueGet(ref ScalingTexture.Value, ref ScalingTexture.FrameKey, dataAnimationParts.Plain.ScalingTexture, ref argumentContainer);
-							flagUpdateMatrixTexrure |= dataAnimationParts.Plain.RotationTexture.Function.ValueGet(ref RotationTexture.Value, ref RotationTexture.FrameKey, dataAnimationParts.Plain.RotationTexture, ref argumentContainer);
-							if(true == flagUpdateMatrixTexrure)
+							if(0 != (Status & FlagBitStatus.UPDATE_TRANSFORM_TEXTURE))
 							{
+								/* Create Matrix & Transform Texture-UV */
 								Vector2 centerMapping = (sizeMapping * 0.5f) + positionMapping;
 								Vector3 Translation = new Vector3(	(centerMapping.x / SizeTexture.x) + PositionTexture.Value.x,
 																	((SizeTexture.y - centerMapping.y) / SizeTexture.y) - PositionTexture.Value.y,
@@ -1757,41 +1797,18 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Set Parts-Color */
-						bool flagUsePartsColor = true;
-						Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
-						flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
-						float operationBlend = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
-						Color[] tableColor = PartsColor.Value.VertexColor;
-
-						if(null != additionalColor)
-						{	/* Has AdditionalColor */
-							if(Library_SpriteStudio6.KindOperationBlend.NON != additionalColor.OperationBlend)
-							{
-								if(0 != (additionalColor.Status & Library_SpriteStudio6.Control.AdditionalColor.FlagBitStatus.CHANGE))
-								{
-									operationBlend = (float)((int)additionalColor.OperationBlend) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
-									tableColor = additionalColor.ColorVertex;
-
-									Status |= FlagBitStatus.UPDATE_COLORPARTS;
-									Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
-								}
-
-								flagUsePartsColor = false;
-							}
-						}
-						if(true == flagUsePartsColor)
+						float operationBlend;
+						Color[] tableColor;
+						if(0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR))
 						{
-							if((true == flagUpdateValueAttribute) || (0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS)))
-							{
-								Status |= FlagBitStatus.UPDATE_COLORPARTS;
-								Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
-							}
-
-							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
+							Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
+							operationBlend = (float)((int)additionalColor.OperationBlend) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+							tableColor = additionalColor.ColorVertex;
 						}
 						else
 						{
-							Status |= FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
+							operationBlend = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+							tableColor = PartsColor.Value.VertexColor;
 						}
 
 						float rateOpacity = instanceRoot.RateOpacity * RateOpacity.Value;
@@ -1817,12 +1834,6 @@ public static partial class Library_SpriteStudio6
 							}
 						}
 
-						/* Get Local-Scale */
-						if(true == dataAnimationParts.Plain.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.Plain.ScalingLocal, ref argumentContainer))
-						{
-							Status |= FlagBitStatus.UPDATE_COORDINATE;
-						}
-
 						/* Calculate Mesh coordinates */
 						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
 						{
@@ -1844,7 +1855,6 @@ public static partial class Library_SpriteStudio6
 								UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.C] = uv2C;
 
 								/* Set Coordinates */
-								dataAnimationParts.Plain.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.Plain.VertexCorrection, ref argumentContainer);
 								int indexVertex;
 								int[] tableIndex = TableIndexVertexCorrectionOrder[IndexVertexCollectionTable];
 								Vector2[] tableCoordinate = VertexCorrection.Value.Coordinate;
@@ -1891,10 +1901,7 @@ public static partial class Library_SpriteStudio6
 							CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(CoordinateDraw[i]);
 						}
 
-						/* Update datas for draw */
-//						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
-//						{
-//						}
+						/* Update Material */
 						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
 						{
 							if(true == flagPreDraw)
@@ -1914,12 +1921,6 @@ public static partial class Library_SpriteStudio6
 																		);
 							}
 						}
-//						if(0 != (Status & FlagBitStatus.UPDATE_COLORPARTS))
-//						{
-//						}
-//						if(0 != (Status & FlagBitStatus.UPDATE_PARAMETERBLEND))
-//						{
-//						}
 
 						/* Set to Draw-Cluster */
 						DrawAddCluster(instanceRoot.ClusterDraw, ChainDraw, MaterialDraw);
@@ -1931,7 +1932,21 @@ public static partial class Library_SpriteStudio6
 										| FlagBitStatus.UPDATE_PARAMETERBLEND
 										| FlagBitStatus.UPDATE_COLORPARTS
 										| FlagBitStatus.UPDATE_MASKING
+										| FlagBitStatus.UPDATE_TRANSFORM_TEXTURE
+//										| FlagBitStatus.USE_ADDITIONALCOLOR		/* update in "UpdatePlain", so not erase here */
 								);
+					}
+
+					internal bool UpdateFix(	Script_SpriteStudio6_Root instanceRoot,
+												int idParts,
+												GameObject instanceGameObject,
+												Transform instanceTransform,
+												ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
+												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
+										)
+					{
+						return(false);
 					}
 
 					internal void DrawFix(	Script_SpriteStudio6_Root instanceRoot,
@@ -1940,7 +1955,6 @@ public static partial class Library_SpriteStudio6
 											Transform instanceTransform,
 											Library_SpriteStudio6.KindMasking masking,
 											bool flagPreDraw,
-											bool flagHide,
 											ref Matrix4x4 matrixCorrection,
 											ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -1967,6 +1981,7 @@ public static partial class Library_SpriteStudio6
 					[System.Flags]
 					internal enum FlagBitStatus
 					{
+						/* Common */
 						UPDATE_COORDINATE = 0x00000001,
 						UPDATE_UVTEXTURE = 0x00000002,
 						UPDATE_PARAMETERBLEND = 0x00000004,
@@ -1974,8 +1989,13 @@ public static partial class Library_SpriteStudio6
 
 						UPDATE_MASKING = 0x00000010,
 
-						USE_ADDITIONALCOLOR_PREVIOUS = 0x000000100,
-						USE_ADDITIONALCOLOR = 0x000000200,
+						/* for Plain */
+						UPDATE_TRANSFORM_TEXTURE = 0x00010000,
+
+						USE_ADDITIONALCOLOR_PREVIOUS = 0x00100000,
+						USE_ADDITIONALCOLOR = 0x000200000,
+
+						/* for Fix */
 
 						CLEAR = 0x00000000
 					}
