@@ -74,11 +74,16 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		FlagVibrationPrevious = !FlagVibrationPrevious;
 
 		/* Get Animation Control Script-Component */
-		if(null == GameObjectRoot)
-		{	/* Error */
-			return;
+		GameObject gameObjectBase = GameObjectRoot;
+		if(null == gameObjectBase)
+		{
+			gameObjectBase = this.gameObject;
 		}
-		ScriptRoot = Script_SpriteStudio6_Root.Parts.RootGetChild(GameObjectRoot);
+		/* MEMO: "Script_SpriteStudio6_Root.Parts.RootGet" is function for finding "Script_SpriteStudio6_Root" in GameObjects below.       */
+		/*       (However, "Instance" is excluded. Find only "Highest-Root"-parts)                                                         */
+		/*       You can find "shallowest hierarchy"-one from direct-children, but not guarantee the shallowest when deeper than children. */
+		/*       Because wasteful to search every time access, recommend to cache.                                                         */
+		ScriptRoot = Script_SpriteStudio6_Root.Parts.RootGet(gameObjectBase);
 		if(null == ScriptRoot)
 		{	/* Error */
 			return;

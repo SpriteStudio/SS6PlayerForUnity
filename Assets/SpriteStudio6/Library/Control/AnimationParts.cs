@@ -953,39 +953,40 @@ public static partial class Library_SpriteStudio6
 					controlTrack.ArgumentContainer.IDParts = idParts;
 
 					/* Draw Sprite */
+					/* MEMO: There are some parameters (mainly AdditionalColor) that must be updated in hidden, so do not judge hidden here. */
 					bool flagHide = flagHideDefault;
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
-					if(false == flagHide)
+
+					switch(dataAnimationParts.Format)
 					{
-						switch(dataAnimationParts.Format)
-						{
-							case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
-								ParameterSprite.DrawPlain(	instanceRoot,
-															idParts,
-															InstanceGameObject,
-															InstanceTransform,
-															masking,
-															flagPreDraw,
-															ref matrixCorrection,
-															ref Status,
-															ref dataAnimationParts,
-															ref controlTrack.ArgumentContainer
-														);
-								break;
-							case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
-								ParameterSprite.DrawFix(	instanceRoot,
-															idParts,
-															InstanceGameObject,
-															InstanceTransform,
-															masking,
-															flagPreDraw,
-															ref matrixCorrection,
-															ref Status,
-															ref dataAnimationParts,
-															ref controlTrack.ArgumentContainer
-														);
-								break;
-						}
+						case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
+							ParameterSprite.DrawPlain(	instanceRoot,
+														idParts,
+														InstanceGameObject,
+														InstanceTransform,
+														masking,
+														flagPreDraw,
+														flagHide,
+														ref matrixCorrection,
+														ref Status,
+														ref dataAnimationParts,
+														ref controlTrack.ArgumentContainer
+													);
+							break;
+						case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
+							ParameterSprite.DrawFix(	instanceRoot,
+														idParts,
+														InstanceGameObject,
+														InstanceTransform,
+														masking,
+														flagPreDraw,
+														flagHide,
+														ref matrixCorrection,
+														ref Status,
+														ref dataAnimationParts,
+														ref controlTrack.ArgumentContainer
+													);
+							break;
 					}
 				}
 				private void DrawInstance(	Script_SpriteStudio6_Root instanceRoot,
@@ -1208,6 +1209,13 @@ public static partial class Library_SpriteStudio6
 										ref Matrix4x4 matrixCorrection
 									)
 				{
+					bool flagHide = flagHideDefault;
+					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
+					if(true == flagHide)
+					{
+						return;
+					}
+
 					/* Set to Draw-Cluster */
 					/* MEMO: Use same value as in "PreDraw", except for shaders and Draw-Chain. */
 					ParameterSprite.DrawAddCluster(instanceRoot.ClusterDraw, ParameterSprite.ChainDrawMask, ParameterSprite.MaterialDrawMask);
@@ -1654,12 +1662,18 @@ public static partial class Library_SpriteStudio6
 												Transform instanceTransform,
 												Library_SpriteStudio6.KindMasking masking,
 												bool flagPreDraw,
+												bool flagHide,
 												ref Matrix4x4 matrixCorrection,
 												ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
 												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
 											)
 					{
+						if(true == flagHide)
+						{
+							return;
+						}
+
 						bool flagUpdateValueAttribute;
 
 						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
@@ -1926,6 +1940,7 @@ public static partial class Library_SpriteStudio6
 											Transform instanceTransform,
 											Library_SpriteStudio6.KindMasking masking,
 											bool flagPreDraw,
+											bool flagHide,
 											ref Matrix4x4 matrixCorrection,
 											ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -1960,6 +1975,7 @@ public static partial class Library_SpriteStudio6
 						UPDATE_MASKING = 0x00000010,
 
 						USE_ADDITIONALCOLOR_PREVIOUS = 0x000000100,
+						USE_ADDITIONALCOLOR = 0x000000200,
 
 						CLEAR = 0x00000000
 					}

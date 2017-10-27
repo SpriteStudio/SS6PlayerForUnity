@@ -64,7 +64,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 	}
 
-	/* MEMO: Status of animation's play-track are diverted. (Since useless of redefine same content) */
+	/* MEMO: Status of animation's play-track are diverted. (Since wasteful of redefine same content) */
 	/* MEMO: "Effect" have no multi-track playing capcity. */
 	internal Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus StatusPlaying;
 	internal float TimePerFrame;

@@ -40,7 +40,9 @@ public partial class Script_SpriteStudio6_Root
 	Get animation index by name.<br>
 	<br>
 	Index is the serial-number (0 origins) in the animation data. <br>
-	Index is needed when you call "AnimationPlay" function.
+	Index is needed when you call "AnimationPlay" function.<br>
+	<br>
+	Since useless to search animation-index every time, recommend to cache frequently used indexes.
 	*/
 	public int IndexGetAnimation(string Name)
 	{

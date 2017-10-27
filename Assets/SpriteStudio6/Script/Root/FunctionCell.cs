@@ -352,7 +352,8 @@ public partial class Script_SpriteStudio6_Root
 	//! Change Part's-Cell
 	/*!
 	@param	idParts
-		Parts-ID(Part-Index)
+		Parts-ID<br>
+		-1 == All parts
 	@param	indexCellMap
 		Cell-Map Index<br>
 		-1 == Accorde to Animation-Data
