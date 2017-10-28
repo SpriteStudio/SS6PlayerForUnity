@@ -783,7 +783,7 @@ public static partial class Library_SpriteStudio6
 							return(-1);
 						}
 
-						public void KeyDataAdjustTopFrame(Attribute<_Type> setup)
+						public bool KeyDataAdjustTopFrame(Attribute<_Type> setup)
 						{	/* MEMO: Usually, use this to adjust top frame's key data.                      */
 							/*       When no key data, attribute is unused.                                 */
 							/*       When there are key datas, if extra frames at the top ...               */
@@ -800,14 +800,14 @@ public static partial class Library_SpriteStudio6
 							{	/* No Keys */
 								if(false == flagHasSetup)
 								{	/* No Setup-Key */
-									return;
+									return(false);	/* Has no Keys */
 								}
 							}
 							else
 							{	/* Has Keys */
 								if(0 == ListKey[0].Frame)
 								{	/* Has data at frame 0 */
-									return;
+									return(true);	/* Has Keys */
 								}
 							}
 
@@ -831,6 +831,7 @@ public static partial class Library_SpriteStudio6
 							/* MEMO: Same value. However, "frame = 0" and "no interpolation". */
 
 							ListKey.Insert(0, KeyDataTopFrame);
+							return(true);	/* Has Keys */
 						}
 
 						public bool KeyDataAdjustTopFrame(Attribute<_Type> setup, _Type valueDefault, bool flagNoKeyIsNoData, bool flagNotRetroactivelyComplement)

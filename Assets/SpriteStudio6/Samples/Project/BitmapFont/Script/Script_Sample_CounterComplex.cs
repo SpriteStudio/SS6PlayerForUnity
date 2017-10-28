@@ -660,18 +660,6 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		internal int IDParts;
 		internal UnityEngine.Transform Transform;
 
-		internal bool IsValid
-		{
-			get
-			{
-				if((0 > IDParts) || (null == Transform))
-				{
-					return(false);
-				}
-				return(true);
-			}
-		}
-
 		internal void CleanUp()
 		{
 			IDParts = -1;
@@ -688,18 +676,6 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		{
 			IndexCell = -1;
 			SizeCell = Vector2.zero;
-		}
-
-		internal bool IsValid
-		{
-			get
-			{
-				if(0 > IndexCell)
-				{
-					return(false);
-				}
-				return(true);
-			}
 		}
 	}
 	#endregion Classes, Structs & Interfaces

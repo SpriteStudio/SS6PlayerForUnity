@@ -871,6 +871,28 @@ public static partial class LibraryEditor_SpriteStudio6
 						goto ParseAnimation_ErrorEnd;
 					}
 				}
+				/* MEMO: Do not do "ParseAnimationAttributeSolve" in "ParseAnimationAttribute". */
+				/*       Because miss reflecting "Setup" to no key-data parts.                  */
+				for(int i=0; i<countParts; i++)
+				{
+					/* Solve Attributes */
+					/* MEMO: Do not "ParseAnimationAttributeSolve", since "Setup" animation has only initial value. */
+					if(false == flagIsSetup)
+					{
+						if(false == ParseAnimationAttributeSolve(	ref setting,
+																	informationSSPJ,
+																	informationSSAE,
+																	informationAnimation,
+																	informationAnimation.TableParts[i],
+																	i,
+																	nameFileSSAE
+																)
+							)
+						{
+							goto ParseAnimation_ErrorEnd;
+						}
+					}
+				}
 
 				return(informationAnimation);
 
@@ -1635,28 +1657,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 				}
 
-				/* Solve Attributes */
-				/* MEMO: Do not "ParseAnimationAttributeSolve", since "Setup" animation has only initial value. */
-				if(false == flagIsSetup)
-				{
-					if(false == ParseAnimationAttributeSolve(	ref setting,
-																informationSSPJ,
-																informationSSAE,
-																informationAnimation,
-																informationAnimationParts,
-																indexParts,
-																nameFileSSAE
-															)
-						)
-					{
-						goto ParseAnimationAttribute_ErrorEnd;
-					}
-				}
-
 				return(true);
 
-			ParseAnimationAttribute_ErrorEnd:;
-				return(false);
+//			ParseAnimationAttribute_ErrorEnd:;
+//				return(false);
 			}
 			private static void ParseAnimationAttributePartsColor(	out float colorA,
 																	out float colorR,
@@ -1699,33 +1703,59 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* MEMO: Caution that flag is inverted. (Difference between "Mask" and "No-Mask") */
 				if(true == informationSSAE.TableParts[indexParts].FlagMasking)
 				{
-					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING;
+					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING;
 				}
 				else
 				{
-					informationAnimationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING;
+					informationAnimationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING;
 				}
 
 				/* Adjust Top-Frame Key-Data */
-				informationAnimationParts.Cell.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Cell);
+				/* MEMO: Here, adjust parts' usage states too, since "Setup" is applied. */
+				bool flagInUse = (0 != (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED)) ? false : true;
 
-				informationAnimationParts.PositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionX);
-				informationAnimationParts.PositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionY);
-				informationAnimationParts.PositionZ.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionZ);
-				informationAnimationParts.RotationX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationX);
-				informationAnimationParts.RotationY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationY);
-				informationAnimationParts.RotationZ.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationZ);
-				informationAnimationParts.ScalingX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingX);
-				informationAnimationParts.ScalingY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingY);
-				informationAnimationParts.ScalingXLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingXLocal);
-				informationAnimationParts.ScalingYLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingYLocal);
+				flagInUse |= informationAnimationParts.Cell.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Cell);
 
-				informationAnimationParts.RateOpacity.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RateOpacity);
-				informationAnimationParts.RateOpacityLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RateOpacityLocal);
-				informationAnimationParts.Priority.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Priority);
+				bool flagInUsePosition = false;
+				flagInUsePosition |= informationAnimationParts.PositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionX);
+				flagInUsePosition |= informationAnimationParts.PositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionY);
+				flagInUsePosition |= informationAnimationParts.PositionZ.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PositionZ);
+				flagInUse |= flagInUsePosition;
+				if(true == flagInUsePosition)
+				{
+					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION;
+				}
 
-				informationAnimationParts.FlipX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipX);
-				informationAnimationParts.FlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipY);
+				bool flagInUseRotation = false;
+				flagInUseRotation |= informationAnimationParts.RotationX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationX);
+				flagInUseRotation |= informationAnimationParts.RotationY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationY);
+				flagInUseRotation |= informationAnimationParts.RotationZ.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RotationZ);
+				flagInUse |= flagInUseRotation;
+				if(true == flagInUseRotation)
+				{
+					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION;
+				}
+
+				bool flagInUseScaling = false;
+				flagInUseScaling |= informationAnimationParts.ScalingX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingX);
+				flagInUseScaling |= informationAnimationParts.ScalingY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingY);
+				flagInUse |= flagInUseScaling;
+				if(true == flagInUseScaling)
+				{
+					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING;
+				}
+
+				flagInUse |= informationAnimationParts.ScalingXLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingXLocal);
+				flagInUse |= informationAnimationParts.ScalingYLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.ScalingYLocal);
+
+				flagInUse |= informationAnimationParts.RateOpacity.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RateOpacity);
+				flagInUse |= informationAnimationParts.RateOpacityLocal.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RateOpacityLocal);
+				flagInUse |= informationAnimationParts.Priority.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Priority);
+
+				flagInUse |= informationAnimationParts.FlipX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipX);
+				flagInUse |= informationAnimationParts.FlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.FlipY);
+
+				bool flagInUseHide = false;
 				if((true == setting.Basic.FlagInvisibleToHideAll) && (true == informationSSAE.TableParts[indexParts].FlagHide))
 				{	/* Parts Hide (for Editing), convert to All-Frame-Hide */
 					informationAnimationParts.Hide.CleanUpKey();
@@ -1741,36 +1771,57 @@ public static partial class LibraryEditor_SpriteStudio6
 					informationAnimationParts.Hide.ListKey.Add(data);
 
 					informationAnimationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.HIDE_FULL;
+					flagInUseHide = true;
 				}
 				else
 				{
-					informationAnimationParts.Hide.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Hide, true, true, false);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
+					flagInUseHide |= informationAnimationParts.Hide.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Hide, true, true, false);	/* "Hide" is true for the top-frames without key data.(not value of first key to appear) */
+				}
+				flagInUse |= flagInUseHide;
+
+				bool flagInUsePartsColor = false;
+				flagInUsePartsColor |= informationAnimationParts.PartsColor.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PartsColor);
+				flagInUse |= flagInUsePartsColor;
+				if(true == flagInUsePartsColor)
+				{
+					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_PARTSCOLOR;
 				}
 
-				informationAnimationParts.PartsColor.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PartsColor);
-				informationAnimationParts.VertexCorrection.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.VertexCorrection);
+				flagInUse |= informationAnimationParts.VertexCorrection.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.VertexCorrection);
 
-				informationAnimationParts.PivotOffsetX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PivotOffsetX);
-				informationAnimationParts.PivotOffsetY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PivotOffsetY);
+				flagInUse |= informationAnimationParts.PivotOffsetX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PivotOffsetX);
+				flagInUse |= informationAnimationParts.PivotOffsetY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PivotOffsetY);
 
-				informationAnimationParts.AnchorPositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.AnchorPositionX);
-				informationAnimationParts.AnchorPositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.AnchorPositionY);
-				informationAnimationParts.SizeForceX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.SizeForceX);
-				informationAnimationParts.SizeForceY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.SizeForceY);
+				flagInUse |= informationAnimationParts.AnchorPositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.AnchorPositionX);
+				flagInUse |= informationAnimationParts.AnchorPositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.AnchorPositionY);
+				flagInUse |= informationAnimationParts.SizeForceX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.SizeForceX);
+				flagInUse |= informationAnimationParts.SizeForceY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.SizeForceY);
 
-				informationAnimationParts.TexturePositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TexturePositionX);
-				informationAnimationParts.TexturePositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TexturePositionY);
-				informationAnimationParts.TextureRotation.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureRotation);
-				informationAnimationParts.TextureScalingX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureScalingX);
-				informationAnimationParts.TextureScalingY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureScalingY);
-				informationAnimationParts.TextureFlipX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureFlipX);
-				informationAnimationParts.TextureFlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureFlipY);
+				bool flagInUseTransformTexture = false;
+				flagInUseTransformTexture |= informationAnimationParts.TexturePositionX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TexturePositionX);
+				flagInUseTransformTexture |= informationAnimationParts.TexturePositionY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TexturePositionY);
+				flagInUseTransformTexture |= informationAnimationParts.TextureRotation.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureRotation);
+				flagInUseTransformTexture |= informationAnimationParts.TextureScalingX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureScalingX);
+				flagInUseTransformTexture |= informationAnimationParts.TextureScalingY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureScalingY);
+				flagInUse |= flagInUseTransformTexture;
+				if(true == flagInUseTransformTexture)
+				{
+					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE;
+				}
+				flagInUse |= informationAnimationParts.TextureFlipX.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureFlipX);
+				flagInUse |= informationAnimationParts.TextureFlipY.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.TextureFlipY);
 
-				informationAnimationParts.RadiusCollision.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RadiusCollision);
-				informationAnimationParts.PowerMask.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PowerMask);
+				flagInUse |= informationAnimationParts.RadiusCollision.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.RadiusCollision);
+				flagInUse |= informationAnimationParts.PowerMask.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.PowerMask);
 
 				/* MEMO: UserData does not complement 0 frame. */
+//				bool flagInUseUserData = false;
 //				informationAnimationParts.UserData.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.UserData, Library_SpriteStudio6.Data.Animation.Attribute.DefaultUseData, false, true);
+//				flagInUse |= flagInUseUserData;
+//				if(true == flagInUseUserData)
+//				{
+//					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA;
+//				}
 				/* MEMO: Do not set at here. Set in processing for each part type. */
 //				informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance);
 //				informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect);
@@ -1850,12 +1901,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						informationAnimationParts.PowerMask.ListKey.Clear();
 
-						if(0 == (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+						if(true == flagInUse)
 						{
-							/* MEMO: If "NOT_USED" is set, interpret that "Instance" attribute is not used. */
+							/* MEMO: When not in use, interpret that "Instance" attribute is not used.      */
 							/*       Because "Hide" attribute is also unused.                               */
 							/*       (Since "Hide" attribute's default is "true", all frames are hidden)    */
-							informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance, Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false, false);
+							flagInUse |= informationAnimationParts.Instance.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Instance, Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false, false);
 						}
 
 						informationAnimationParts.Effect.ListKey.Clear();
@@ -1886,12 +1937,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						informationAnimationParts.PowerMask.ListKey.Clear();
 
-						if(0 == (informationAnimationParts.StatusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+						if(true == flagInUse)
 						{
-							/* MEMO: If "NOT_USED" is set, interpret that "Effect" attribute is not used. */
+							/* MEMO: When not in use, interpret that "Effect" attribute is not used.      */
 							/*       Because "Hide" attribute is also unused.                             */
 							/*       (Since "Hide" attribute's default is "true", all frames are hidden)  */
-							informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect, Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false, false);
+							flagInUse |= informationAnimationParts.Effect.KeyDataAdjustTopFrame((null == informationPartsSetup) ? null : informationPartsSetup.Effect, Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false, false);
 						}
 
 						informationAnimationParts.Instance.ListKey.Clear();
@@ -1926,6 +1977,15 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					default:
 						break;
+				}
+
+				if(true == flagInUse)
+				{
+					informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
+				}
+				else
+				{
+					informationAnimationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
 				}
 
 				return(true);

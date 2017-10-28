@@ -146,19 +146,85 @@ public partial class Script_SpriteStudio6_Root
 		}
 	}
 
+	/* ******************************************************** */
+	//! Get instance of "Instance"-Animation
+	/*!
+	@param	idParts
+		Parts-ID
+	@retval	Return-Value
+		"Instance" animation's instance<br>
+		null == Error / Invalid instance animation
+
+	Gets "Instance" animation managed by part.<br>
+	<br>
+	The reason why this function returns null is as follows.
+	<br>
+	- "idParts" is not "Instance" part<br>
+	- "Instance" animation's instance does not exist<br>
+	- Before executing "Start()"<br>
+	*/
 	public Script_SpriteStudio6_Root InstanceGet(int idParts)
 	{
-		return(null);
+		if((null == DataAnimation) || (null == TableControlParts))
+		{
+			return(null);
+		}
+
+		if((0 > idParts) || (TableControlParts.Length <= idParts))
+		{
+			return(null);
+		}
+
+		if(Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE != DataAnimation.TableParts[idParts].Feature)
+		{
+			return(null);
+		}
+
+		return(TableControlParts[idParts].InstanceRootUnderControl);
 	}
 
 //	InstanceChange
+//	AnimationChangeInstance
 
+	/* ******************************************************** */
+	//! Get instance of "Effect"-Animation
+	/*!
+	@param	idParts
+		Parts-ID
+	@retval	Return-Value
+		"Effect" animation's instance<br>
+		null == Error / Invalid instance animation
+
+	Gets "Instance" animation managed by part.<br>
+	<br>
+	The reason why this function returns null is as follows.
+	<br>
+	- "idParts" is not "Effect" part<br>
+	- "Effect" animation's instance does not exist<br>
+	- Before executing "Start()"<br>
+	*/
 	public Script_SpriteStudio6_RootEffect EffectGet(int idParts)
 	{
-		return(null);
+		if((null == DataAnimation) || (null == TableControlParts))
+		{
+			return(null);
+		}
+
+		if((0 > idParts) || (TableControlParts.Length <= idParts))
+		{
+			return(null);
+		}
+
+		if(Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT != DataAnimation.TableParts[idParts].Feature)
+		{
+			return(null);
+		}
+
+		return(TableControlParts[idParts].InstanceRootEffectUnderControl);
 	}
 
 //	EffectChange
+//	AnimationChangeEffect
 	#endregion Functions
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
 	#region Classes, Structs & Interfaces

@@ -1123,7 +1123,7 @@ public static partial class Library_SpriteStudio6
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
 					InstanceRootUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																flagHide,
-																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
+																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																ref matrixCorrection
 															);
 				}
@@ -1194,7 +1194,7 @@ public static partial class Library_SpriteStudio6
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
 					InstanceRootEffectUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																	flagHide,
-																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
+																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																	ref matrixCorrection
 																);
 				}
@@ -1742,7 +1742,7 @@ public static partial class Library_SpriteStudio6
 						{
 							if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
 							{
-								masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
+								masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
 							}
 						}
 						if(Masking != masking)
