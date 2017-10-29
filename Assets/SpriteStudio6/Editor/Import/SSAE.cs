@@ -258,13 +258,14 @@ public static partial class LibraryEditor_SpriteStudio6
 				for(int i=0; i<countAnimation; i++)
 				{
 					/* Solving Attributes */
-					/* MEMO: Complete attribute's first frame key-data in all animation.                             */
-					/*       Applying "Setup" animation is execute here.                                             */
-					/*       Since "Setup" animation is not no guaranteed defining at the top of the animation-list, */
-					/*        process after parse all animation data.                                                */
+					/* MEMO: Complement all animation-attributes' frame 0 key-data.                           */
+					/*       Applying "Setup" animation and deleting useless key-datas is processed here.     */
+					/*       Process after parse all animation data since "Setup" animation is not guaranteed */
+					/*        defining at top of the animation-list in SSAE.                                  */
 					informationSSAE.TableAnimation[i].AttributeSolve(informationSSPJ, informationSSAE, setting.Basic.FlagInvisibleToHideAll);
 
 					/* Set Part-Status */
+					/* MEMO: Analyze key-data and set each parts' usage status. */
 					/* MEMO: Execute before "DrawOrderCreate". */
 					informationSSAE.TableAnimation[i].StatusSetParts(informationSSPJ, informationSSAE);
 

@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 194737b46e04ff84a936435d5601662f, type: 3}
+  m_Name: dc_Doll
+  m_EditorClassIdentifier: 
+  Version: 65536
+  TableCellMap:
+  - Name: Doll
+    SizeOriginal: {x: 512, y: 512}
+    TableCell:
+    - Name: Joint
+      Rectangle:
+        serializedVersion: 2
+        x: 12
+        y: 12
+        width: 104
+        height: 104
+      Pivot: {x: 52, y: 52}
+      Mesh:
+        TableVertex: []
+        TableIndexVertex: 
+    - Name: Hemisphere
+      Rectangle:
+        serializedVersion: 2
+        x: 136
+        y: 4
+        width: 112
+        height: 56
+      Pivot: {x: 56, y: 53}
+      Mesh:
+        TableVertex: []
+        TableIndexVertex: 
+    - Name: ArmLeg
+      Rectangle:
+        serializedVersion: 2
+        x: 128
+        y: 68
+        width: 48
+        height: 56
+      Pivot: {x: 24, y: 0}
+      Mesh:
+        TableVertex: []
+        TableIndexVertex: 
+    - Name: Gloss
+      Rectangle:
+        serializedVersion: 2
+        x: 184
+        y: 72
+        width: 48
+        height: 48
+      Pivot: {x: 24, y: 24}
+      Mesh:
+        TableVertex: []
+        TableIndexVertex: 
+    - Name: Eye
+      Rectangle:
+        serializedVersion: 2
+        x: 4
+        y: 132
+        width: 40
+        height: 40
+      Pivot: {x: 20, y: 20}
+      Mesh:
+        TableVertex: []
+        TableIndexVertex: 
+    - Name: Eye-Red
+      Rectangle:
+        serializedVersion: 2
+        x: 52
+        y: 132
+        width: 40
+        height: 40
+      Pivot: {x: 20, y: 20}
+      Mesh:
+        TableVertex: []
+        TableIndexVertex: 

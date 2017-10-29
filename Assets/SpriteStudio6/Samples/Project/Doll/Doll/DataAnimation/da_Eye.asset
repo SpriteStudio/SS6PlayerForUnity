@@ -1,0 +1,1066 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6379835e446767444b98eb288010fcce, type: 3}
+  m_Name: da_Eye
+  m_EditorClassIdentifier: 
+  Version: 65536
+  TableMaterial:
+  - {fileID: 2100000, guid: 0f3fcfe0de2c94a46a59664d52b85139, type: 2}
+  - {fileID: 2100000, guid: 8567c9ccc970a67429859d93e1f86153, type: 2}
+  - {fileID: 2100000, guid: e0d862ad9bdca2b40a019970dfe57696, type: 2}
+  - {fileID: 2100000, guid: dbfc10eaf8081fc45a6cd5772ea4ed68, type: 2}
+  - {fileID: 2100000, guid: f47a2c767d3c5544b826f0cfd5457572, type: 2}
+  - {fileID: 2100000, guid: 158664f6142ff4541a20a126c92f64f5, type: 2}
+  - {fileID: 2100000, guid: 856851d6887ff8f48860364325b1a86d, type: 2}
+  - {fileID: 2100000, guid: 97d6c826498d9ae48b7bdde681adab51, type: 2}
+  - {fileID: 2100000, guid: d925371bcac0a4846a03cf639106f1e0, type: 2}
+  - {fileID: 2100000, guid: 34af89dfffaac5e43ac7ab2901e961f0, type: 2}
+  - {fileID: 2100000, guid: 2a8824b0ac31e474e8d331c7f9bbb9e3, type: 2}
+  - {fileID: 2100000, guid: 16c9bfb671781224386106d710d88c79, type: 2}
+  - {fileID: 2100000, guid: b834919e32bb9414996b2352ca479a48, type: 2}
+  - {fileID: 2100000, guid: e7c73e7d25e22284396e4f2aa6638105, type: 2}
+  - {fileID: 2100000, guid: 79c50af3719d3a94cb7170716cb2ac31, type: 2}
+  - {fileID: 2100000, guid: 0cf52ab7965998c4a84184e6b10bb061, type: 2}
+  - {fileID: 2100000, guid: e8a4cd898de578e4db7a4a72a8c491e5, type: 2}
+  - {fileID: 2100000, guid: b1f052aba0bb0004a9833a5864510de0, type: 2}
+  - {fileID: 2100000, guid: 92b35764b725f924f9a810122ea66153, type: 2}
+  - {fileID: 2100000, guid: 50c708bba6e273a4aa31d0145d563964, type: 2}
+  TableParts:
+  - Name: root
+    ID: 0
+    IDParent: -1
+    TableIDChild: 01000000
+    Feature: 0
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
+  - Name: Eye
+    ID: 1
+    IDParent: 0
+    TableIDChild: 0200000003000000
+    Feature: 2
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
+  - Name: Eye-Red
+    ID: 2
+    IDParent: 1
+    TableIDChild: 
+    Feature: 2
+    OperationBlendTarget: 1
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
+  - Name: Eye-Gloss
+    ID: 3
+    IDParent: 1
+    TableIDChild: 
+    Feature: 2
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
+  TableAnimation:
+  - Name: Blink
+    FramePerSecond: 30
+    CountFrame: 10
+    FrameValidStart: 0
+    FrameValidEnd: 9
+    CountFrameValid: 10
+    DepthIK: 3
+    TableLabel: []
+    TableParts:
+    - Format: 0
+      StatusParts: 1090256896
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773121
+      Position:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Rotation:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - 1
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1211891712
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773122
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 4
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - 0.75
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1211891712
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773123
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 5
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 0000000001800000020001000880000009000000
+          TableValue:
+          - 1
+          - 0.5
+          - 0
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1211891712
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16777215
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: -3, y: 2, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 3
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - {x: 0.3, y: 0.3}
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - 1
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+  - Name: Wait
+    FramePerSecond: 30
+    CountFrame: 15
+    FrameValidStart: 0
+    FrameValidEnd: 14
+    CountFrameValid: 15
+    DepthIK: 3
+    TableLabel: []
+    TableParts:
+    - Format: 0
+      StatusParts: 1090256896
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773121
+      Position:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Rotation:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - 1
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1211891712
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773122
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 4
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - 0.75
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1211891712
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773123
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 5
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - 1
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1211891712
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16777215
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: -3, y: 2, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 3
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - {x: 0.3, y: 0.3}
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - 1
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+  Setup:
+    Status:
+      Flags: 0
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scaling: {x: 0, y: 0}
+    PositionAnchor: {x: 0, y: 0}
+    UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+    Instance:
+      Flags: 0
+      PlayCount: 0
+      RateTime: 0
+      OffsetStart: 0
+      OffsetEnd: 0
+      LabelStart: 
+      LabelEnd: 
+    Effect:
+      Flags: 0
+      FrameStart: 0
+      RateTime: 0
+    RadiusCollision: 0
+    Plain:
+      Cell:
+        IndexCellMap: 0
+        IndexCell: 0
+      ScalingLocal: {x: 0, y: 0}
+      RateOpacity: 0
+      SizeForce: {x: 0, y: 0}
+      PartsColor:
+        Bound: 0
+        Operation: 0
+        VertexColor: []
+      VertexCorrection:
+        Coordinate: []
+      OffsetPivot: {x: 0, y: 0}
+      PositionTexture: {x: 0, y: 0}
+      ScalingTexture: {x: 0, y: 0}
+      RotationTexture: 0
+    Fix:
+      IndexCellMap: 0
+      Coordinate:
+        TableCoordinate: []
+      PartsColor:
+        TableUV: []
+        TableColorOverlay: []
+      UV0:
+        TableUV: []
+      SizeCollision: {x: 0, y: 0}
+      PivotCollision: {x: 0, y: 0}
