@@ -222,7 +222,7 @@ public static partial class Library_SpriteStudio6
 							InstanceRootUnderControl.InstanceRootParent = instanceRoot;
 
 							int indexAnimation = (true == string.IsNullOrEmpty(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl))
-													? 0 : instanceRoot.IndexGetAnimation(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl);
+													? 0 : InstanceRootUnderControl.IndexGetAnimation(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl);
 							IndexAnimationUnderControl = (-1 == indexAnimation) ? 0 : indexAnimation;
 //							InstanceRootUnderControl.AnimationPlay(-1, IndexAnimationUnderControl);
 //							InstanceRootUnderControl.AnimationStop();

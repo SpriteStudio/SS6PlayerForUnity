@@ -44,9 +44,9 @@ public partial class Script_SpriteStudio6_Root
 	<br>
 	Since useless to search animation-index every time, recommend to cache frequently used indexes.
 	*/
-	public int IndexGetAnimation(string Name)
+	public int IndexGetAnimation(string name)
 	{
-		return((null == DataAnimation) ? -1 : DataAnimation.IndexGetAnimation(Name));
+		return((null == DataAnimation) ? -1 : DataAnimation.IndexGetAnimation(name));
 	}
 
 	/* ********************************************************* */
