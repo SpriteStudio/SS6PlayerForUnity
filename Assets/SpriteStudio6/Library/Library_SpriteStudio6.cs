@@ -79,6 +79,13 @@ public static partial class Library_SpriteStudio6
 		PINGPONG = 1,
 	}
 
+	public enum KindIgnoreAttribute
+	{
+		NON = 0,
+		NOW_ANIMATION,
+		PERMANENT,
+	}
+
 	public enum KindMasking
 	{
 		THROUGH = 0,
@@ -2000,7 +2007,17 @@ public static partial class Library_SpriteStudio6
 									+ (countParticleMax * (int)Library_SpriteStudio6.KindVertex.TERMINATOR2);
 				int countIndexVertex =	(countSpriteMax * Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle4.Length)
 										+ (countParticleMax * Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle2.Length);
+
+				bool flagRenew;
 				if(null == ListCoordinate)
+				{
+					flagRenew = true;
+				}
+				else
+				{
+					flagRenew = (ListCoordinate.Count < countVertex) ? true : false;
+				}
+				if(true == flagRenew)
 				{
 					ListCoordinate = new List<Vector3>(countVertex);
 					if(null == ListCoordinate)
@@ -2009,7 +2026,16 @@ public static partial class Library_SpriteStudio6
 					}
 					ListCoordinate.Clear();
 				}
+
 				if(null == ListColorParts)
+				{
+					flagRenew = true;
+				}
+				else
+				{
+					flagRenew = (ListColorParts.Count < countVertex) ? true : false;
+				}
+				if(true == flagRenew)
 				{
 					ListColorParts = new List<Color32>(countVertex);
 					if(null == ListColorParts)
@@ -2018,7 +2044,16 @@ public static partial class Library_SpriteStudio6
 					}
 					ListColorParts.Clear();
 				}
+
 				if(null == ListUVTexture)
+				{
+					flagRenew = true;
+				}
+				else
+				{
+					flagRenew = (ListUVTexture.Count < countVertex) ? true : false;
+				}
+				if(true == flagRenew)
 				{
 					ListUVTexture = new List<Vector2>(countVertex);
 					if(null == ListUVTexture)
@@ -2027,7 +2062,16 @@ public static partial class Library_SpriteStudio6
 					}
 					ListUVTexture.Clear();
 				}
+
 				if(null == ListParameterBlend)
+				{
+					flagRenew = true;
+				}
+				else
+				{
+					flagRenew = (ListParameterBlend.Count < countVertex) ? true : false;
+				}
+				if(true == flagRenew)
 				{
 					ListParameterBlend = new List<Vector2>(countVertex);
 					if(null == ListParameterBlend)
@@ -2039,6 +2083,14 @@ public static partial class Library_SpriteStudio6
 
 				if(null == ListIndexVertex)
 				{
+					flagRenew = true;
+				}
+				else
+				{
+					flagRenew = (ListIndexVertex.Count < countIndexVertex) ? true : false;
+				}
+				if(true == flagRenew)
+				{
 					ListIndexVertex = new List<int>(countIndexVertex);
 					if(null == ListIndexVertex)
 					{
@@ -2046,7 +2098,16 @@ public static partial class Library_SpriteStudio6
 					}
 					ListIndexVertex.Clear();
 				}
+
 				if(null == ListIndexVertexSplit)
+				{
+					flagRenew = true;
+				}
+				else
+				{
+					flagRenew = (ListIndexVertexSplit.Count < countIndexVertex) ? true : false;
+				}
+				if(true == flagRenew)
 				{
 					ListIndexVertexSplit = new List<int>(countIndexVertex);
 					if(null == ListIndexVertexSplit)

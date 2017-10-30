@@ -34,6 +34,8 @@ public static partial class Library_SpriteStudio6
 				internal int IndexAnimationUnderControl;
 				internal Script_SpriteStudio6_RootEffect InstanceRootEffectUnderControl;
 				internal int FramePreviousUpdateUnderControl;
+				internal Library_SpriteStudio6.Data.Animation.Attribute.Instance DataInstance;
+				internal Library_SpriteStudio6.Data.Animation.Attribute.Effect DataEffect;
 
 				public Script_SpriteStudio6_Collider InstanceScriptCollider;
 				internal int FramePreviousUpdateRadiusCollision;
@@ -79,6 +81,8 @@ public static partial class Library_SpriteStudio6
 					IndexAnimationUnderControl = -1;
 					InstanceRootEffectUnderControl = null;
 					FramePreviousUpdateUnderControl = -1;
+					DataInstance.CleanUp();
+					DataEffect.CleanUp();
 
 //					InstanceScriptCollider =
 					FramePreviousUpdateRadiusCollision = -1;
@@ -106,10 +110,6 @@ public static partial class Library_SpriteStudio6
 						return(false);
 					}
 					InstanceTransform = InstanceGameObject.transform;
-
-					/* Clean up TRS Buffer */
-					TRSMaster.CleanUp();
-					TRSSlave.CleanUp();
 
 					/* Boot up for each part feature */
 					switch(instanceRoot.DataAnimation.TableParts[idParts].Feature)
@@ -147,7 +147,7 @@ public static partial class Library_SpriteStudio6
 								PrefabUnderControl = instanceRoot.DataAnimation.TableParts[idParts].PrefabUnderControl;
 								IndexAnimationUnderControl = -1;
 							}
-							if(false == BootUpInstance(instanceRoot, idParts, false))
+							if(false == BootUpInstance(instanceRoot, idParts, false, null))
 							{
 								goto BootUp_ErrorEnd;
 							}
@@ -206,12 +206,28 @@ public static partial class Library_SpriteStudio6
 					Status = FlagBitStatus.CLEAR;
 					return(false);
 				}
-				private bool BootUpInstance(Script_SpriteStudio6_Root instanceRoot, int idParts, bool flagRenewInstance)
+
+				public bool BootUpInstance(Script_SpriteStudio6_Root instanceRoot, int idParts, bool flagRenewInstance, GameObject source)
 				{
-					if(null != PrefabUnderControl)
+					bool flagRevert = false;
+					if(null == source)
+					{	/* Revert */
+						source = (GameObject)PrefabUnderControl;
+						if(null == source)
+						{
+							source = (GameObject)instanceRoot.DataAnimation.TableParts[idParts].PrefabUnderControl;
+						}
+						if(null == source)
+						{	/* Error */
+							return(false);
+						}
+
+						flagRevert = true;
+					}
+					if(null != source)
 					{
 						/* Create UnderControl-Instance */
-						InstanceGameObjectUnderControl = Library_SpriteStudio6.Utility.Asset.PrefabInstantiate(	(GameObject)PrefabUnderControl,
+						InstanceGameObjectUnderControl = Library_SpriteStudio6.Utility.Asset.PrefabInstantiate(	source,
 																												InstanceGameObjectUnderControl,
 																												InstanceGameObject,
 																												flagRenewInstance
@@ -221,16 +237,24 @@ public static partial class Library_SpriteStudio6
 							InstanceRootUnderControl = InstanceGameObjectUnderControl.GetComponent<Script_SpriteStudio6_Root>();
 							InstanceRootUnderControl.InstanceRootParent = instanceRoot;
 
-							int indexAnimation = (true == string.IsNullOrEmpty(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl))
-													? 0 : InstanceRootUnderControl.IndexGetAnimation(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl);
-							IndexAnimationUnderControl = (-1 == indexAnimation) ? 0 : indexAnimation;
+							int indexAnimation = 0;
+							if(true == flagRevert)
+							{
+								indexAnimation = (true == string.IsNullOrEmpty(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl))
+													? 0
+													: InstanceRootUnderControl.IndexGetAnimation(instanceRoot.DataAnimation.TableParts[idParts].NameAnimationUnderControl);
+							}
+							IndexAnimationUnderControl = (0 > indexAnimation) ? 0 : indexAnimation;
 //							InstanceRootUnderControl.AnimationPlay(-1, IndexAnimationUnderControl);
 //							InstanceRootUnderControl.AnimationStop();
 						}
+
+						FramePreviousUpdateUnderControl = -1;
 					}
 
 					return(true);
 				}
+
 				private bool BootUpEffect(Script_SpriteStudio6_Root instanceRoot, int idParts, bool flagRenewInstance)
 				{
 					if(null != PrefabUnderControl)
@@ -422,10 +446,6 @@ public static partial class Library_SpriteStudio6
 												ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 											)
 				{
-					if(null != instanceRoot.InstanceRootParent)
-					{	/* "Instance" ignores UserData-s */
-						return;
-					}
 					if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA))
 					{	/* Has no UserData-s */
 						return;
@@ -709,6 +729,7 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 				}
+
 				private void UpdateNormal(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -732,6 +753,7 @@ public static partial class Library_SpriteStudio6
 							break;
 					}
 				}
+
 				private void UpdateInstance(	Script_SpriteStudio6_Root instanceRoot,
 												int idParts,
 												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -743,6 +765,7 @@ public static partial class Library_SpriteStudio6
 					/*                                                                                           */
 					/*       "Instance"-parts are updated and rendered in same function "DrawInstance".          */
 				}
+
 				private void UpdateEffect(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -754,6 +777,7 @@ public static partial class Library_SpriteStudio6
 					/*                                                                                           */
 					/*       "Effect"-parts are updated and rendered in same function "DrawEffect".              */
 				}
+
 				private void UpdateColliderRectangle(	Script_SpriteStudio6_Root instanceRoot,
 														int idParts,
 														ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -771,6 +795,7 @@ public static partial class Library_SpriteStudio6
 						InstanceScriptCollider.ColliderSetRectangle(ref ParameterSprite.SizeSprite, ref ParameterSprite.PivotSprite);
 					}
 				}
+
 				private void UpdateColliderRadius(	Script_SpriteStudio6_Root instanceRoot,
 													int idParts,
 													ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -1005,7 +1030,7 @@ public static partial class Library_SpriteStudio6
 
 					int frame = controlTrack.ArgumentContainer.Frame;
 					bool flagDecode = controlTrack.StatusIsDecodeAttribute;
-					bool flagPlayIndependentNowInstance = (0 != (Status & FlagBitStatus.INSTANCE_PLAYINDEPENDENT)) ? true : false;
+					bool flagPlayIndependentNowInstance = (0 != (Status & FlagBitStatus.INSTANCE_PLAY_INDEPENDENT)) ? true : false;
 					bool flagPlayReverse = controlTrack.StatusIsPlayingReverse;
 					bool flagPlayTurn = controlTrack.StatusIsPlayingTurn;
 					bool flagTopFrame = false;
@@ -1039,23 +1064,24 @@ public static partial class Library_SpriteStudio6
 						Library_SpriteStudio6.Data.Animation.Attribute.Instance dataInstance = new Library_SpriteStudio6.Data.Animation.Attribute.Instance();
 						if(true == dataAnimationParts.Instance.Function.ValueGet(ref dataInstance, ref frameKey, dataAnimationParts.Instance, ref controlTrack.ArgumentContainer))
 						{   /* New Valid Data */
+							if(0 == (Status & FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA))
+							{	/* Attribute has priority */
+								DataInstance = dataInstance;
+							}
+							else
+							{	/* Externally set */
+								/* MEMO: Decoded data is discarded. */
+								FramePreviousUpdateUnderControl = -1;
+							}
+							Status &= ~FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
+
 							if(FramePreviousUpdateUnderControl != frameKey)
 							{	/* Different attribute */
-								bool flagPlayReverseInstanceData = (0.0f > dataInstance.RateTime) ? true : false;
+								bool flagPlayReverseInstanceData = (0.0f > DataInstance.RateTime) ? true : false;
 								bool flagPlayReverseInstance = flagPlayReverseInstanceData ^ flagPlayReverse;
 
-								/* MEMO: Playing target are all tracks. And TableInformationPlay[0] is always used. */
-								InstanceRootUnderControl.AnimationPlay(	-1,	/* All track */
-																		IndexAnimationUnderControl,
-																		dataInstance.PlayCount,
-																		0,
-																		dataInstance.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f),
-																		((0 != (dataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.PINGPONG)) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
-																		dataInstance.LabelStart,
-																		dataInstance.OffsetStart,
-																		dataInstance.LabelEnd,
-																		dataInstance.OffsetEnd
-																	);
+								/* Start Animation */
+								InstancePlayStart(flagPlayReverse);
 
 								/* Adjust Starting-Time */
 								/* MEMO: Necessary to set time, not frame. Because parent's elapsed time has a small excess. */
@@ -1112,7 +1138,6 @@ public static partial class Library_SpriteStudio6
 
 								/* Status Update */
 								FramePreviousUpdateUnderControl = frameKey;
-								Status = (0 != (dataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.INDEPENDENT)) ? (Status | FlagBitStatus.INSTANCE_PLAYINDEPENDENT) : (Status & ~FlagBitStatus.INSTANCE_PLAYINDEPENDENT);
 							}
 						}
 					}
@@ -1126,6 +1151,31 @@ public static partial class Library_SpriteStudio6
 																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																ref matrixCorrection
 															);
+				}
+				internal bool InstancePlayStart(bool flagPlayReverse)
+				{
+					if(0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.INDEPENDENT))
+					{
+						Status |= FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
+					}
+					else
+					{
+						Status &= ~FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
+					}
+
+					/* MEMO: Playing target are all tracks. And TableInformationPlay[0] is always used. */
+					return(InstanceRootUnderControl.AnimationPlay(	-1,	/* All track */
+																	IndexAnimationUnderControl,
+																	DataInstance.PlayCount,
+																	0,
+																	DataInstance.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f),
+																	((0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.PINGPONG)) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
+																	DataInstance.LabelStart,
+																	DataInstance.OffsetStart,
+																	DataInstance.LabelEnd,
+																	DataInstance.OffsetEnd
+																)
+						);
 				}
 				private void DrawEffect(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
@@ -1143,7 +1193,7 @@ public static partial class Library_SpriteStudio6
 					}
 
 					int frame = controlTrack.ArgumentContainer.Frame;
-					bool flagPlayIndependentNowInstance = (0 != (Status & FlagBitStatus.EFFECT_PLAYINDEPENDENT)) ? true : false;
+					bool flagPlayIndependentNowInstance = (0 != (Status & FlagBitStatus.EFFECT_PLAY_INDEPENDENT)) ? true : false;
 					bool flagPlayTurn = controlTrack.StatusIsPlayingTurn;
 					bool flagPlayReverse = controlTrack.StatusIsPlayingReverse;
 					float timeOffset = 0.0f;
@@ -1182,7 +1232,7 @@ public static partial class Library_SpriteStudio6
 
 									/* Status Update */
 									FramePreviousUpdateUnderControl = frameKey;
-									Status = (0 != (dataEffect.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Effect.FlagBit.INDEPENDENT)) ? (Status | FlagBitStatus.EFFECT_PLAYINDEPENDENT) : (Status & ~FlagBitStatus.EFFECT_PLAYINDEPENDENT);
+									Status = (0 != (dataEffect.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Effect.FlagBit.INDEPENDENT)) ? (Status | FlagBitStatus.EFFECT_PLAY_INDEPENDENT) : (Status & ~FlagBitStatus.EFFECT_PLAY_INDEPENDENT);
 								}
 							}
 						}
@@ -1225,8 +1275,26 @@ public static partial class Library_SpriteStudio6
 					Status |= (	FlagBitStatus.REFRESH_TRANSFORM_POSITION
 								| FlagBitStatus.REFRESH_TRANSFORM_ROTATION
 								| FlagBitStatus.REFRESH_TRANSFORM_SCALING
-								| FlagBitStatus.INSTANCE_PLAYINDEPENDENT
 							);
+
+					bool flagClearCellApply = false;
+					if(0 == (Status & FlagBitStatus.CHANGE_CELL_IGNORE_NEWANIMATION))
+					{
+						Status &= ~(FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE | FlagBitStatus.CHANGE_CELL_UNREFLECTED);
+						flagClearCellApply = true;
+					}
+
+					if(0 == (Status & FlagBitStatus.INSTANCE_IGNORE_NEWANIMATION))
+					{
+						Status &= ~(FlagBitStatus.INSTANCE_IGNORE_ATTRIBUTE | FlagBitStatus.INSTANCE_PLAY_INDEPENDENT);
+					}
+
+					if(0 == (Status & FlagBitStatus.EFFECT_IGNORE_NEWANIMATION))
+					{
+						Status &= ~(FlagBitStatus.EFFECT_IGNORE_ATTRIBUTE | FlagBitStatus.EFFECT_PLAY_INDEPENDENT);
+					}
+
+					ParameterSprite.AnimationChange(flagClearCellApply);
 
 					FramePreviousUpdateUnderControl = -1;
 					FramePreviousUpdateRadiusCollision = -1;
@@ -1251,12 +1319,18 @@ public static partial class Library_SpriteStudio6
 					REFRESH_TRANSFORM_POSITION = 0x00100000,
 
 					CHANGE_CELL_UNREFLECTED = 0x00080000,
-					CHANGE_CELL_IGNOREATTRIBUTE = 0x00040000,
+					CHANGE_CELL_IGNORE_ATTRIBUTE = 0x00020000,
+					CHANGE_CELL_IGNORE_NEWANIMATION = 0x00010000,
 
-					INSTANCE_VALID = 0x00008000,
-					INSTANCE_PLAYINDEPENDENT = 0x00004000,
-					EFFECT_VALID = 0x00002000,
-					EFFECT_PLAYINDEPENDENT = 0x00001000,
+					INSTANCE_PLAY_INDEPENDENT = 0x00008000,
+					INSTANCE_IGNORE_EXCEPT_NEXTDATA = 0x00004000,
+					INSTANCE_IGNORE_ATTRIBUTE = 0x00002000,
+					INSTANCE_IGNORE_NEWANIMATION = 0x00001000,
+
+					EFFECT_PLAY_INDEPENDENT = 0x00000800,
+					EFFECT_IGNORE_EXCEPT_NEXTDATA = 0x00000400,
+					EFFECT_IGNORE_ATTRIBUTE = 0x00000200,
+					EFFECT_IGNORE_NEWANIMATION = 0x00000100,
 
 					CLEAR = 0x00000000
 				}
@@ -1364,10 +1438,10 @@ public static partial class Library_SpriteStudio6
 						ChainDraw = null;
 						ChainDrawMask = null;
 
-						AnimationChange();
+						AnimationChange(true);
 					}
 
-					internal void AnimationChange()
+					internal void AnimationChange(bool flagClearDataCellApply)
 					{
 						Status = FlagBitStatus.CLEAR;
 
@@ -1385,7 +1459,10 @@ public static partial class Library_SpriteStudio6
 						PivotCell = Vector2.zero;
 						PositionCell = Vector2.zero;
 						MatrixTexture = Matrix4x4.identity;
-						DataCellApply.CleanUp();
+						if(true == flagClearDataCellApply)
+						{
+							DataCellApply.CleanUp();
+						}
 						IndexVertexCollectionTable = 0;
 
 						DataCell.CleanUp();	DataCell.Value.CleanUp();
@@ -1395,8 +1472,8 @@ public static partial class Library_SpriteStudio6
 						PositionTexture.CleanUp();	PositionTexture.Value = Vector2.zero;
 						RotationTexture.CleanUp();	RotationTexture.Value = 0.0f;
 						RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
-						PartsColor.CleanUp();	PartsColor.Value.CleanUp();
-						VertexCorrection.CleanUp();	VertexCorrection.Value.CleanUp();
+						PartsColor.CleanUp();	/* PartsColor.Value.CleanUp(); */
+						VertexCorrection.CleanUp();	/* VertexCorrection.Value.CleanUp(); */
 					}
 
 					internal bool BootUp(int countVertex, int countPartsSprite, bool flagMask)
@@ -1543,7 +1620,7 @@ public static partial class Library_SpriteStudio6
 						flagUpdateValueAttribute = dataAnimationParts.Plain.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Plain.Cell, ref argumentContainer);
 						if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED))
 						{
-							if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNOREATTRIBUTE))
+							if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE))
 							{
 								if(true == flagUpdateValueAttribute)
 								{	/* New Data */

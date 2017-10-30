@@ -12,6 +12,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 {
 	/* ----------------------------------------------- Notes */
 	#region Notes
+	/* ----------------------------------- Sample "Simple Counter" [Beginner] */
 	/* The points of this sample are as follows.                              */
 	/*                                                                        */
 	/* - How to play animation (Simple playing-method)                        */
@@ -156,7 +157,11 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 						/* Change Cell */
 						/* MEMO: (IndexCellMap == 0) Because this Animation has 1 Texture. */
 						indexCharacter = IndexGetCharacter(charactersDigit[(countDigit - 1) - i]);
-						ScriptRoot.CellChangeParts(idParts, 0, TableIndexCell[indexCharacter], true);	/* Ignore Attribute "Cell" */
+						ScriptRoot.CellChangeParts(	idParts,
+													0,
+													TableIndexCell[indexCharacter],
+													Library_SpriteStudio6.KindIgnoreAttribute.NOW_ANIMATION	/* Ignore "Reference-Cell" attribute during now animation */
+												);
 				
 						/* Show Digit */
 						/* MEMO: Don't Effect to children */
@@ -199,7 +204,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 	private enum Constant
 	{
 		DIGIT_MAX = 8,
-	};
+	}
 
 	private readonly static int ValueMax = (int)(Mathf.Pow(10.0f, (int)Constant.DIGIT_MAX)) - 1;
 	private readonly static int ValueMin = -((int)(Mathf.Pow(10.0f, (int)Constant.DIGIT_MAX - 1)) - 1);
@@ -225,7 +230,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		SYMBOL_DIV,
 
 		TERMINATOR
-	};
+	}
 	private readonly static char[] TableCharacters = new char[(int)KindCharacter.TERMINATOR]
 	{
 		'0',

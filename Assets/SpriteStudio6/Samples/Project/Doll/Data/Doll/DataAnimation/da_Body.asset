@@ -67,7 +67,7 @@ MonoBehaviour:
   - Name: Belly
     ID: 3
     IDParent: 2
-    TableIDChild: 0400000016000000
+    TableIDChild: 0400000019000000
     Feature: 2
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -77,7 +77,7 @@ MonoBehaviour:
   - Name: Breast
     ID: 4
     IDParent: 3
-    TableIDChild: 050000000c00000011000000
+    TableIDChild: 050000000e0000001300000018000000
     Feature: 2
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -97,14 +97,14 @@ MonoBehaviour:
   - Name: Face
     ID: 6
     IDParent: 5
-    TableIDChild: 07000000090000000a0000000b000000
+    TableIDChild: 07000000090000000a0000000c000000
     Feature: 2
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
-  - Name: Upper
+  - Name: Head-Upper
     ID: 7
     IDParent: 6
     TableIDChild: 08000000
@@ -114,7 +114,7 @@ MonoBehaviour:
     SizeCollisionZ: 0
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
-  - Name: Gloss
+  - Name: Head-Gloss
     ID: 8
     IDParent: 7
     TableIDChild: 
@@ -124,7 +124,7 @@ MonoBehaviour:
     SizeCollisionZ: 0
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
-  - Name: Lower
+  - Name: Head-Lower
     ID: 9
     IDParent: 6
     TableIDChild: 
@@ -137,7 +137,7 @@ MonoBehaviour:
   - Name: Eye-R
     ID: 10
     IDParent: 6
-    TableIDChild: 
+    TableIDChild: 0b000000
     Feature: 4
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -145,10 +145,20 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 1422334930252826, guid: 5e6fc5d912f1d874aac05867ba9f282d,
       type: 2}
     NameAnimationUnderControl: Wait
-  - Name: Eye-L
+  - Name: Eye-Gloss-R
     ID: 11
-    IDParent: 6
+    IDParent: 10
     TableIDChild: 
+    Feature: 2
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
+  - Name: Eye-L
+    ID: 12
+    IDParent: 6
+    TableIDChild: 0d000000
     Feature: 4
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -156,10 +166,20 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 1422334930252826, guid: 5e6fc5d912f1d874aac05867ba9f282d,
       type: 2}
     NameAnimationUnderControl: Wait
+  - Name: Eye-Gloss-L
+    ID: 13
+    IDParent: 12
+    TableIDChild: 
+    Feature: 2
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
   - Name: Shoulder-R
-    ID: 12
+    ID: 14
     IDParent: 4
-    TableIDChild: 0d000000
+    TableIDChild: 0f000000
     Feature: 1
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -167,9 +187,9 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: ArmUpper-R
-    ID: 13
-    IDParent: 12
-    TableIDChild: 0e000000
+    ID: 15
+    IDParent: 14
+    TableIDChild: 10000000
     Feature: 2
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -177,9 +197,9 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: Elbow-R
-    ID: 14
-    IDParent: 13
-    TableIDChild: 0f000000
+    ID: 16
+    IDParent: 15
+    TableIDChild: 11000000
     Feature: 2
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -187,9 +207,9 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: Elbow2-R
-    ID: 15
-    IDParent: 14
-    TableIDChild: 10000000
+    ID: 17
+    IDParent: 16
+    TableIDChild: 12000000
     Feature: 1
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -197,8 +217,8 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: ArmLower-R
-    ID: 16
-    IDParent: 15
+    ID: 18
+    IDParent: 17
     TableIDChild: 
     Feature: 2
     OperationBlendTarget: 0
@@ -207,9 +227,9 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: Shoulder-L
-    ID: 17
+    ID: 19
     IDParent: 4
-    TableIDChild: 12000000
+    TableIDChild: 14000000
     Feature: 1
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -217,9 +237,9 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: ArmUpper-L
-    ID: 18
-    IDParent: 17
-    TableIDChild: 13000000
+    ID: 20
+    IDParent: 19
+    TableIDChild: 15000000
     Feature: 2
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -227,9 +247,9 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: Elbow-L
-    ID: 19
-    IDParent: 18
-    TableIDChild: 14000000
+    ID: 21
+    IDParent: 20
+    TableIDChild: 16000000
     Feature: 2
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -237,9 +257,9 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: Elbow2-L
-    ID: 20
-    IDParent: 19
-    TableIDChild: 15000000
+    ID: 22
+    IDParent: 21
+    TableIDChild: 17000000
     Feature: 1
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -247,8 +267,8 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: ArmLower-L
-    ID: 21
-    IDParent: 20
+    ID: 23
+    IDParent: 22
     TableIDChild: 
     Feature: 2
     OperationBlendTarget: 0
@@ -256,10 +276,20 @@ MonoBehaviour:
     SizeCollisionZ: 0
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
+  - Name: Breast-Gloss
+    ID: 24
+    IDParent: 4
+    TableIDChild: 
+    Feature: 2
+    OperationBlendTarget: 1
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
   - Name: Waist
-    ID: 22
+    ID: 25
     IDParent: 3
-    TableIDChild: 170000001a000000
+    TableIDChild: 1a0000001d000000
     Feature: 2
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -267,38 +297,8 @@ MonoBehaviour:
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
   - Name: LegUpper-R
-    ID: 23
-    IDParent: 22
-    TableIDChild: 18000000
-    Feature: 2
-    OperationBlendTarget: 0
-    ShapeCollision: 0
-    SizeCollisionZ: 0
-    PrefabUnderControl: {fileID: 0}
-    NameAnimationUnderControl: 
-  - Name: Knee-R
-    ID: 24
-    IDParent: 23
-    TableIDChild: 19000000
-    Feature: 2
-    OperationBlendTarget: 0
-    ShapeCollision: 0
-    SizeCollisionZ: 0
-    PrefabUnderControl: {fileID: 0}
-    NameAnimationUnderControl: 
-  - Name: LegLower-R
-    ID: 25
-    IDParent: 24
-    TableIDChild: 
-    Feature: 2
-    OperationBlendTarget: 0
-    ShapeCollision: 0
-    SizeCollisionZ: 0
-    PrefabUnderControl: {fileID: 0}
-    NameAnimationUnderControl: 
-  - Name: LegUpper-L
     ID: 26
-    IDParent: 22
+    IDParent: 25
     TableIDChild: 1b000000
     Feature: 2
     OperationBlendTarget: 0
@@ -306,7 +306,7 @@ MonoBehaviour:
     SizeCollisionZ: 0
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
-  - Name: Knee-L
+  - Name: Knee-R
     ID: 27
     IDParent: 26
     TableIDChild: 1c000000
@@ -316,9 +316,39 @@ MonoBehaviour:
     SizeCollisionZ: 0
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
-  - Name: LegLower-L
+  - Name: LegLower-R
     ID: 28
     IDParent: 27
+    TableIDChild: 
+    Feature: 2
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
+  - Name: LegUpper-L
+    ID: 29
+    IDParent: 25
+    TableIDChild: 1e000000
+    Feature: 2
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
+  - Name: Knee-L
+    ID: 30
+    IDParent: 29
+    TableIDChild: 1f000000
+    Feature: 2
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 0}
+    NameAnimationUnderControl: 
+  - Name: LegLower-L
+    ID: 31
+    IDParent: 30
     TableIDChild: 
     Feature: 2
     OperationBlendTarget: 0
@@ -691,7 +721,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773142
+        - Flags: 16773145
       Position:
         TypePack: 1
         TableCodeValue:
@@ -993,41 +1023,39 @@ MonoBehaviour:
       Rotation:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000000d8000000e0001000f800100100002001180020012000300138003001400040015800100168004001700050018800500190006001a8006001b0007001c8007001d0008001e0000002b8008002c0009002d8009002e000a002f800a0030000b0031800b0032000c003380090034800c0035000d0036800d0037000e0038800e0039000f003a800f003b0010003c000000
+        - TableCode: 000000000d8000000e0001000f800100100002001180020012000300138003001480020015000400168004001700050018800100198005001a0006001b8006001c0007001d8007001e0000002b0008002c8008002d0009002e8009002f000a0030800a0031000b0032000a0033800b0034000c0035800c003600090037000d0038800d0039000e003a800e003b000f003c000000
         TableValue:
         - {x: 0, y: 0, z: 0}
-        - {x: 0, y: 0, z: 2.4444447}
-        - {x: 0, y: 0, z: 4.4444447}
-        - {x: 0, y: 0, z: 6}
-        - {x: 0, y: 0, z: 7.111111}
-        - {x: 0, y: 0, z: 7.7777777}
-        - {x: 0, y: 0, z: 8}
-        - {x: 0, y: 0, z: 7.3333335}
-        - {x: 0, y: 0, z: 6.6666665}
-        - {x: 0, y: 0, z: 5.333333}
-        - {x: 0, y: 0, z: 4.666667}
-        - {x: 0, y: 0, z: 4}
+        - {x: 0, y: 0, z: 0.8333334}
+        - {x: 0, y: 0, z: 1.6666667}
+        - {x: 0, y: 0, z: 2.5}
         - {x: 0, y: 0, z: 3.3333335}
-        - {x: 0, y: 0, z: 2.6666665}
-        - {x: 0, y: 0, z: 2}
-        - {x: 0, y: 0, z: 1.3333335}
-        - {x: 0, y: 0, z: 0.6666665}
-        - {x: 0, y: 0, z: -2.4444447}
-        - {x: 0, y: 0, z: -4.4444447}
-        - {x: 0, y: 0, z: -6}
-        - {x: 0, y: 0, z: -7.111111}
-        - {x: 0, y: 0, z: -7.7777777}
-        - {x: 0, y: 0, z: -8}
-        - {x: 0, y: 0, z: -7.3333335}
-        - {x: 0, y: 0, z: -6.6666665}
-        - {x: 0, y: 0, z: -5.333333}
-        - {x: 0, y: 0, z: -4.666667}
-        - {x: 0, y: 0, z: -4}
+        - {x: 0, y: 0, z: 4.1666665}
+        - {x: 0, y: 0, z: 5}
+        - {x: 0, y: 0, z: 4.5833335}
+        - {x: 0, y: 0, z: 3.75}
+        - {x: 0, y: 0, z: 3.3333333}
+        - {x: 0, y: 0, z: 2.9166667}
+        - {x: 0, y: 0, z: 2.0833335}
+        - {x: 0, y: 0, z: 1.6666665}
+        - {x: 0, y: 0, z: 1.25}
+        - {x: 0, y: 0, z: 0.83333343}
+        - {x: 0, y: 0, z: 0.41666657}
+        - {x: 0, y: 0, z: -0.8333334}
+        - {x: 0, y: 0, z: -1.6666667}
+        - {x: 0, y: 0, z: -2.5}
         - {x: 0, y: 0, z: -3.3333335}
-        - {x: 0, y: 0, z: -2.6666665}
-        - {x: 0, y: 0, z: -2}
-        - {x: 0, y: 0, z: -1.3333335}
-        - {x: 0, y: 0, z: -0.6666665}
+        - {x: 0, y: 0, z: -4.1666665}
+        - {x: 0, y: 0, z: -5}
+        - {x: 0, y: 0, z: -4.5833335}
+        - {x: 0, y: 0, z: -3.75}
+        - {x: 0, y: 0, z: -3.3333333}
+        - {x: 0, y: 0, z: -2.9166667}
+        - {x: 0, y: 0, z: -2.0833335}
+        - {x: 0, y: 0, z: -1.6666665}
+        - {x: 0, y: 0, z: -1.25}
+        - {x: 0, y: 0, z: -0.83333343}
+        - {x: 0, y: 0, z: -0.41666657}
       Scaling:
         TypePack: 1
         TableCodeValue: []
@@ -1357,19 +1385,120 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773130
+        - Flags: 16773144
       Position:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 00000000
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b0017800b0018000c0019800c001a000d001b800d001c000e001d800e001e000f001f800f00200010002180100022001100238011002400120025801200260013002780130028001400298014002a0015002b8015002c0016002d8016002e0017002f8017003000180031801800320019003380190034001a0035801a0036001b0037801b0038001c0039801c003a001d003b801d003c000000
         TableValue:
         - {x: -13, y: 30, z: 0}
+        - {x: -13.583333, y: 30.083334, z: 0}
+        - {x: -14.166667, y: 30.166666, z: 0}
+        - {x: -14.75, y: 30.25, z: 0}
+        - {x: -15.333333, y: 30.333334, z: 0}
+        - {x: -15.916667, y: 30.416666, z: 0}
+        - {x: -16.5, y: 30.5, z: 0}
+        - {x: -17.083334, y: 30.583334, z: 0}
+        - {x: -17.666666, y: 30.666666, z: 0}
+        - {x: -18.25, y: 30.75, z: 0}
+        - {x: -18.833334, y: 30.833334, z: 0}
+        - {x: -19.416666, y: 30.916666, z: 0}
+        - {x: -20, y: 31, z: 0}
+        - {x: -20, y: 31.166666, z: 0}
+        - {x: -20, y: 31.333334, z: 0}
+        - {x: -20, y: 31.5, z: 0}
+        - {x: -20, y: 31.666666, z: 0}
+        - {x: -20, y: 31.833334, z: 0}
+        - {x: -20, y: 32, z: 0}
+        - {x: -20.666666, y: 31.833334, z: 0}
+        - {x: -21.333334, y: 31.666666, z: 0}
+        - {x: -22, y: 31.5, z: 0}
+        - {x: -22.666666, y: 31.333334, z: 0}
+        - {x: -23.333334, y: 31.166666, z: 0}
+        - {x: -24, y: 31, z: 0}
+        - {x: -24.666666, y: 30.833334, z: 0}
+        - {x: -25.333334, y: 30.666666, z: 0}
+        - {x: -26, y: 30.5, z: 0}
+        - {x: -26.666666, y: 30.333334, z: 0}
+        - {x: -27.333334, y: 30.166666, z: 0}
+        - {x: -28, y: 30, z: 0}
+        - {x: -27.416666, y: 30, z: 0}
+        - {x: -26.833334, y: 30, z: 0}
+        - {x: -26.25, y: 30, z: 0}
+        - {x: -25.666666, y: 30, z: 0}
+        - {x: -25.083334, y: 30, z: 0}
+        - {x: -24.5, y: 30, z: 0}
+        - {x: -23.916666, y: 30, z: 0}
+        - {x: -23.333334, y: 30, z: 0}
+        - {x: -22.75, y: 30, z: 0}
+        - {x: -22.166666, y: 30, z: 0}
+        - {x: -21.583334, y: 30, z: 0}
+        - {x: -21, y: 30, z: 0}
+        - {x: -21.666666, y: 29.666666, z: 0}
+        - {x: -22.333334, y: 29.333334, z: 0}
+        - {x: -23, y: 29, z: 0}
+        - {x: -23.666666, y: 28.666666, z: 0}
+        - {x: -24.333334, y: 28.333334, z: 0}
+        - {x: -25, y: 28, z: 0}
+        - {x: -24, y: 28.166666, z: 0}
+        - {x: -23, y: 28.333334, z: 0}
+        - {x: -22, y: 28.5, z: 0}
+        - {x: -21, y: 28.666666, z: 0}
+        - {x: -20, y: 28.833334, z: 0}
+        - {x: -19, y: 29, z: 0}
+        - {x: -18, y: 29.166666, z: 0}
+        - {x: -17, y: 29.333334, z: 0}
+        - {x: -16, y: 29.5, z: 0}
+        - {x: -15, y: 29.666666, z: 0}
+        - {x: -14, y: 29.833334, z: 0}
       Rotation:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 00000000
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f800700100008001180080012000900138009001480070015000a001600060017800a001880040019000b001a0003001b800b001c8001001d000c001e0000001f800c0020000d0021800d0022000e0023800e0024000f0025800f00260010002780100028001100298011002a0012002b8012002c0013002d8013002e0014002f80140030001500318014003200140033801300340013003580120036001200370011003800100039000f003a000e003b000d003c000000
         TableValue:
         - {x: 0, y: 0, z: 30}
+        - {x: 0, y: 0, z: 29.166666}
+        - {x: 0, y: 0, z: 28.333334}
+        - {x: 0, y: 0, z: 27.5}
+        - {x: 0, y: 0, z: 26.666666}
+        - {x: 0, y: 0, z: 25.833334}
+        - {x: 0, y: 0, z: 25}
+        - {x: 0, y: 0, z: 24.166666}
+        - {x: 0, y: 0, z: 23.333334}
+        - {x: 0, y: 0, z: 22.5}
+        - {x: 0, y: 0, z: 21.666666}
+        - {x: 0, y: 0, z: 20.833334}
+        - {x: 0, y: 0, z: 20}
+        - {x: 0, y: 0, z: 19.166666}
+        - {x: 0, y: 0, z: 18.333334}
+        - {x: 0, y: 0, z: 17.5}
+        - {x: 0, y: 0, z: 16.666666}
+        - {x: 0, y: 0, z: 15.833333}
+        - {x: 0, y: 0, z: 15}
+        - {x: 0, y: 0, z: 16.25}
+        - {x: 0, y: 0, z: 18.75}
+        - {x: 0, y: 0, z: 21.25}
+        - {x: 0, y: 0, z: 23.75}
+        - {x: 0, y: 0, z: 26.25}
+        - {x: 0, y: 0, z: 28.75}
+        - {x: 0, y: 0, z: 30.416666}
+        - {x: 0, y: 0, z: 30.833334}
+        - {x: 0, y: 0, z: 31.25}
+        - {x: 0, y: 0, z: 31.666666}
+        - {x: 0, y: 0, z: 32.083332}
+        - {x: 0, y: 0, z: 32.5}
+        - {x: 0, y: 0, z: 32.916668}
+        - {x: 0, y: 0, z: 33.333332}
+        - {x: 0, y: 0, z: 33.75}
+        - {x: 0, y: 0, z: 34.166668}
+        - {x: 0, y: 0, z: 34.583332}
+        - {x: 0, y: 0, z: 35}
+        - {x: 0, y: 0, z: 35.833332}
+        - {x: 0, y: 0, z: 36.666668}
+        - {x: 0, y: 0, z: 37.5}
+        - {x: 0, y: 0, z: 38.333332}
+        - {x: 0, y: 0, z: 39.166668}
+        - {x: 0, y: 0, z: 40}
       Scaling:
         TypePack: 1
         TableCodeValue: []
@@ -1405,15 +1534,51 @@ MonoBehaviour:
         ScalingLocal:
           TypePack: 1
           TableCodeValue:
-          - TableCode: 00000000
+          - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f800700100008001100050012800800130009001480090015000a001600040017800a0018000b0019800b001a000c001b0003001c800c001d000d001e800d001f000e002000020021800e0022000f0023800f002400100025000100268010002700110028801100290012002a000000
           TableValue:
           - {x: 0.75, y: 0.5}
+          - {x: 0.75416666, y: 0.50416666}
+          - {x: 0.7583333, y: 0.5083333}
+          - {x: 0.7625, y: 0.5125}
+          - {x: 0.76666665, y: 0.51666665}
+          - {x: 0.7708333, y: 0.5208333}
+          - {x: 0.775, y: 0.525}
+          - {x: 0.7791667, y: 0.5291667}
+          - {x: 0.78333336, y: 0.53333336}
+          - {x: 0.7875, y: 0.5375}
+          - {x: 0.7916667, y: 0.5416667}
+          - {x: 0.79583335, y: 0.54583335}
+          - {x: 0.8, y: 0.55}
+          - {x: 0.79833335, y: 0.54833335}
+          - {x: 0.7966667, y: 0.5466667}
+          - {x: 0.795, y: 0.545}
+          - {x: 0.79333335, y: 0.54333335}
+          - {x: 0.79, y: 0.54}
+          - {x: 0.78833336, y: 0.53833336}
+          - {x: 0.7866667, y: 0.5366667}
+          - {x: 0.785, y: 0.535}
+          - {x: 0.7816667, y: 0.5316667}
+          - {x: 0.78000003, y: 0.53000003}
+          - {x: 0.77833337, y: 0.52833337}
+          - {x: 0.7766667, y: 0.5266667}
+          - {x: 0.7733333, y: 0.5233333}
+          - {x: 0.77166665, y: 0.52166665}
+          - {x: 0.77, y: 0.52}
+          - {x: 0.7683333, y: 0.5183333}
+          - {x: 0.765, y: 0.515}
+          - {x: 0.7633333, y: 0.5133333}
+          - {x: 0.76166666, y: 0.51166666}
+          - {x: 0.76, y: 0.51}
+          - {x: 0.75666666, y: 0.50666666}
+          - {x: 0.755, y: 0.505}
+          - {x: 0.75333333, y: 0.50333333}
+          - {x: 0.75166667, y: 0.50166667}
         RateOpacity:
           TypePack: 1
           TableCodeValue:
           - TableCode: 00000000
           TableValue:
-          - 0.15
+          - 0.1
         SizeForce:
           TypePack: 1
           TableCodeValue: []
@@ -1591,7 +1756,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773131
+        - Flags: 16773132
       Position:
         TypePack: 1
         TableCodeValue:
@@ -1711,7 +1876,283 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773144
+        - Flags: 16773133
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b0017800b0018000c0019800c001a000d001b800d001c000e001d800e001e000f001f800f00200010002180100022001100238011002400120025801200260013002780130028001400298014002a0015002b8015002c0016002d8016002e0017002f8017003000180031801800320019003380190034001a0035801a0036001b0037801b0038001c0039801c003a001d003b801d003c000000
+        TableValue:
+        - {x: -3, y: 2, z: 0}
+        - {x: -3.6666667, y: 2, z: 0}
+        - {x: -4.3333335, y: 2, z: 0}
+        - {x: -5, y: 2, z: 0}
+        - {x: -5.666667, y: 2, z: 0}
+        - {x: -6.333333, y: 2, z: 0}
+        - {x: -7, y: 2, z: 0}
+        - {x: -7.6666665, y: 2, z: 0}
+        - {x: -8.333334, y: 2, z: 0}
+        - {x: -9, y: 2, z: 0}
+        - {x: -9.666666, y: 2, z: 0}
+        - {x: -10.333334, y: 2, z: 0}
+        - {x: -11, y: 2, z: 0}
+        - {x: -10.666667, y: 2.5, z: 0}
+        - {x: -10.333333, y: 3, z: 0}
+        - {x: -10, y: 3.5, z: 0}
+        - {x: -9.666667, y: 4, z: 0}
+        - {x: -9.333333, y: 4.5, z: 0}
+        - {x: -9, y: 5, z: 0}
+        - {x: -9.25, y: 4.6666665, z: 0}
+        - {x: -9.5, y: 4.3333335, z: 0}
+        - {x: -9.75, y: 4, z: 0}
+        - {x: -10, y: 3.6666665, z: 0}
+        - {x: -10.25, y: 3.3333335, z: 0}
+        - {x: -10.5, y: 3, z: 0}
+        - {x: -10.75, y: 2.6666667, z: 0}
+        - {x: -11, y: 2.3333333, z: 0}
+        - {x: -11.25, y: 2, z: 0}
+        - {x: -11.5, y: 1.6666667, z: 0}
+        - {x: -11.75, y: 1.3333333, z: 0}
+        - {x: -12, y: 1, z: 0}
+        - {x: -11.666667, y: 0.9583333, z: 0}
+        - {x: -11.333333, y: 0.9166667, z: 0}
+        - {x: -11, y: 0.875, z: 0}
+        - {x: -10.666667, y: 0.8333333, z: 0}
+        - {x: -10.333333, y: 0.7916667, z: 0}
+        - {x: -10, y: 0.75, z: 0}
+        - {x: -9.666667, y: 0.7083334, z: 0}
+        - {x: -9.333333, y: 0.6666666, z: 0}
+        - {x: -9, y: 0.625, z: 0}
+        - {x: -8.666667, y: 0.5833334, z: 0}
+        - {x: -8.333333, y: 0.5416666, z: 0}
+        - {x: -8, y: 0.5, z: 0}
+        - {x: -8.166667, y: 0.25, z: 0}
+        - {x: -8.333333, y: -0.000000014901161, z: 0}
+        - {x: -8.5, y: -0.25, z: 0}
+        - {x: -8.666667, y: -0.5, z: 0}
+        - {x: -8.833333, y: -0.75, z: 0}
+        - {x: -9, y: -1, z: 0}
+        - {x: -8.5, y: -0.75, z: 0}
+        - {x: -8, y: -0.5, z: 0}
+        - {x: -7.5, y: -0.25, z: 0}
+        - {x: -7, y: 0.000000029802322, z: 0}
+        - {x: -6.5, y: 0.24999997, z: 0}
+        - {x: -6, y: 0.5, z: 0}
+        - {x: -5.5, y: 0.74999994, z: 0}
+        - {x: -5, y: 1, z: 0}
+        - {x: -4.5, y: 1.25, z: 0}
+        - {x: -4, y: 1.5, z: 0}
+        - {x: -3.5, y: 1.75, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b0017800b001880060019000c001a0005001b800c001c000d001d800d001e0000002b000e002c800e002d000f002e800f002f00100030801000310011003200100033801100340012003580120036000f003700130038801300390014003a8014003b0015003c000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+        - {x: 0, y: 0, z: -0.8333334}
+        - {x: 0, y: 0, z: -1.6666667}
+        - {x: 0, y: 0, z: -2.5}
+        - {x: 0, y: 0, z: -3.3333335}
+        - {x: 0, y: 0, z: -4.1666665}
+        - {x: 0, y: 0, z: -5}
+        - {x: 0, y: 0, z: -5.833333}
+        - {x: 0, y: 0, z: -6.666667}
+        - {x: 0, y: 0, z: -7.5}
+        - {x: 0, y: 0, z: -8.333333}
+        - {x: 0, y: 0, z: -9.166667}
+        - {x: 0, y: 0, z: -10}
+        - {x: 0, y: 0, z: -12.5}
+        - {x: 0, y: 0, z: -15}
+        - {x: 0, y: 0, z: -17.5}
+        - {x: 0, y: 0, z: -20}
+        - {x: 0, y: 0, z: -22.5}
+        - {x: 0, y: 0, z: -25}
+        - {x: 0, y: 0, z: -22.916666}
+        - {x: 0, y: 0, z: -20.833334}
+        - {x: 0, y: 0, z: -18.75}
+        - {x: 0, y: 0, z: -16.666666}
+        - {x: 0, y: 0, z: -14.583334}
+        - {x: 0, y: 0, z: -10.416667}
+        - {x: 0, y: 0, z: -6.25}
+        - {x: 0, y: 0, z: -4.166667}
+        - {x: 0, y: 0, z: -2.0833328}
+        - {x: 0, y: 0, z: 1.6666667}
+        - {x: 0, y: 0, z: 3.3333335}
+        - {x: 0, y: 0, z: 5}
+        - {x: 0, y: 0, z: 6.666667}
+        - {x: 0, y: 0, z: 8.333333}
+        - {x: 0, y: 0, z: 10}
+        - {x: 0, y: 0, z: 9.166667}
+        - {x: 0, y: 0, z: 7.5}
+        - {x: 0, y: 0, z: 6.6666665}
+        - {x: 0, y: 0, z: 5.8333335}
+        - {x: 0, y: 0, z: 4.166667}
+        - {x: 0, y: 0, z: 3.333333}
+        - {x: 0, y: 0, z: 2.5}
+        - {x: 0, y: 0, z: 1.6666669}
+        - {x: 0, y: 0, z: 0.83333313}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 3
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006001f800500200005002180040022000400238003002400030025800200260002002780010028000100298000002a0000002b8006002c0007002d8007002e0008002f80080030000900318009003280080033000a003400080035800a003680070037000b003800070039800b003a8006003b000c003c000000
+          TableValue:
+          - {x: 0.3, y: 0.3}
+          - {x: 0.3, y: 0.30833334}
+          - {x: 0.3, y: 0.3166667}
+          - {x: 0.3, y: 0.32500002}
+          - {x: 0.3, y: 0.33333334}
+          - {x: 0.3, y: 0.34166667}
+          - {x: 0.3, y: 0.35000002}
+          - {x: 0.3, y: 0.35833335}
+          - {x: 0.3, y: 0.36666667}
+          - {x: 0.3, y: 0.375}
+          - {x: 0.3, y: 0.38333333}
+          - {x: 0.3, y: 0.39166668}
+          - {x: 0.3, y: 0.4}
+          - {x: 0.30333334, y: 0.3}
+          - {x: 0.30666667, y: 0.3}
+          - {x: 0.31, y: 0.3}
+          - {x: 0.31333333, y: 0.3}
+          - {x: 0.31666666, y: 0.3}
+          - {x: 0.32, y: 0.3}
+          - {x: 0.31833333, y: 0.3}
+          - {x: 0.315, y: 0.3}
+          - {x: 0.31166667, y: 0.3}
+          - {x: 0.30833334, y: 0.3}
+          - {x: 0.305, y: 0.3}
+          - {x: 0.30166668, y: 0.3}
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f800700100008001180080012000900138009001480080015000a001600080017800a001880070019000b001a0007001b800b001c8006001d000c001e0006001f800c0020000d002180050022800d0023000e002400050025800e0026000f0027800f0028001000298010002a0011002b0010002c000f002d0005002e800d002f000d00300006003180050032000500338004003400040035800300360003003780020038000200398001003a0001003b8000003c000000
+          TableValue:
+          - 1
+          - 0.9875
+          - 0.975
+          - 0.9625
+          - 0.95
+          - 0.9375
+          - 0.925
+          - 0.9125
+          - 0.90000004
+          - 0.88750005
+          - 0.875
+          - 0.8625
+          - 0.85
+          - 0.8416667
+          - 0.8333334
+          - 0.82500005
+          - 0.81666666
+          - 0.80833334
+          - 0.8
+          - 0.8041667
+          - 0.8125
+          - 0.8208333
+          - 0.8291667
+          - 0.83750004
+          - 0.84583336
+          - 0.8541667
+          - 0.85833335
+          - 0.8666667
+          - 0.87083334
+          - 0.87916666
+          - 0.8833333
+          - 0.8875
+          - 0.89166665
+          - 0.8958333
+          - 0.9
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1077673984
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773147
       Position:
         TypePack: 1
         TableCodeValue:
@@ -1771,6 +2212,282 @@ MonoBehaviour:
           - TableCode: 00000000
           TableValue:
           - 1
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1077673984
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773146
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b0017800b0018000c0019800c001a000d001b800d001c000e001d800e001e000f001f800f00200010002180100022001100238011002400120025801200260013002780130028001400298014002a0015002b8015002c0016002d8016002e0017002f8017003000180031801800320019003380190034001a0035801a0036001b0037801b0038001c0039801c003a001d003b801d003c000000
+        TableValue:
+        - {x: -3, y: 2, z: 0}
+        - {x: -3.6666667, y: 2, z: 0}
+        - {x: -4.3333335, y: 2, z: 0}
+        - {x: -5, y: 2, z: 0}
+        - {x: -5.666667, y: 2, z: 0}
+        - {x: -6.333333, y: 2, z: 0}
+        - {x: -7, y: 2, z: 0}
+        - {x: -7.6666665, y: 2, z: 0}
+        - {x: -8.333334, y: 2, z: 0}
+        - {x: -9, y: 2, z: 0}
+        - {x: -9.666666, y: 2, z: 0}
+        - {x: -10.333334, y: 2, z: 0}
+        - {x: -11, y: 2, z: 0}
+        - {x: -10.666667, y: 2.5, z: 0}
+        - {x: -10.333333, y: 3, z: 0}
+        - {x: -10, y: 3.5, z: 0}
+        - {x: -9.666667, y: 4, z: 0}
+        - {x: -9.333333, y: 4.5, z: 0}
+        - {x: -9, y: 5, z: 0}
+        - {x: -9.25, y: 4.6666665, z: 0}
+        - {x: -9.5, y: 4.3333335, z: 0}
+        - {x: -9.75, y: 4, z: 0}
+        - {x: -10, y: 3.6666665, z: 0}
+        - {x: -10.25, y: 3.3333335, z: 0}
+        - {x: -10.5, y: 3, z: 0}
+        - {x: -10.75, y: 2.6666667, z: 0}
+        - {x: -11, y: 2.3333333, z: 0}
+        - {x: -11.25, y: 2, z: 0}
+        - {x: -11.5, y: 1.6666667, z: 0}
+        - {x: -11.75, y: 1.3333333, z: 0}
+        - {x: -12, y: 1, z: 0}
+        - {x: -11.666667, y: 0.9583333, z: 0}
+        - {x: -11.333333, y: 0.9166667, z: 0}
+        - {x: -11, y: 0.875, z: 0}
+        - {x: -10.666667, y: 0.8333333, z: 0}
+        - {x: -10.333333, y: 0.7916667, z: 0}
+        - {x: -10, y: 0.75, z: 0}
+        - {x: -9.666667, y: 0.7083334, z: 0}
+        - {x: -9.333333, y: 0.6666666, z: 0}
+        - {x: -9, y: 0.625, z: 0}
+        - {x: -8.666667, y: 0.5833334, z: 0}
+        - {x: -8.333333, y: 0.5416666, z: 0}
+        - {x: -8, y: 0.5, z: 0}
+        - {x: -8.166667, y: 0.25, z: 0}
+        - {x: -8.333333, y: -0.000000014901161, z: 0}
+        - {x: -8.5, y: -0.25, z: 0}
+        - {x: -8.666667, y: -0.5, z: 0}
+        - {x: -8.833333, y: -0.75, z: 0}
+        - {x: -9, y: -1, z: 0}
+        - {x: -8.5, y: -0.75, z: 0}
+        - {x: -8, y: -0.5, z: 0}
+        - {x: -7.5, y: -0.25, z: 0}
+        - {x: -7, y: 0.000000029802322, z: 0}
+        - {x: -6.5, y: 0.24999997, z: 0}
+        - {x: -6, y: 0.5, z: 0}
+        - {x: -5.5, y: 0.74999994, z: 0}
+        - {x: -5, y: 1, z: 0}
+        - {x: -4.5, y: 1.25, z: 0}
+        - {x: -4, y: 1.5, z: 0}
+        - {x: -3.5, y: 1.75, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b0017800b001880060019000c001a0005001b800c001c000d001d800d001e0000002b000e002c800e002d000f002e800f002f00100030801000310011003200100033801100340012003580120036000f003700130038801300390014003a8014003b0015003c000000
+        TableValue:
+        - {x: 0, y: 0, z: 0}
+        - {x: 0, y: 0, z: -0.8333334}
+        - {x: 0, y: 0, z: -1.6666667}
+        - {x: 0, y: 0, z: -2.5}
+        - {x: 0, y: 0, z: -3.3333335}
+        - {x: 0, y: 0, z: -4.1666665}
+        - {x: 0, y: 0, z: -5}
+        - {x: 0, y: 0, z: -5.833333}
+        - {x: 0, y: 0, z: -6.666667}
+        - {x: 0, y: 0, z: -7.5}
+        - {x: 0, y: 0, z: -8.333333}
+        - {x: 0, y: 0, z: -9.166667}
+        - {x: 0, y: 0, z: -10}
+        - {x: 0, y: 0, z: -12.5}
+        - {x: 0, y: 0, z: -15}
+        - {x: 0, y: 0, z: -17.5}
+        - {x: 0, y: 0, z: -20}
+        - {x: 0, y: 0, z: -22.5}
+        - {x: 0, y: 0, z: -25}
+        - {x: 0, y: 0, z: -22.916666}
+        - {x: 0, y: 0, z: -20.833334}
+        - {x: 0, y: 0, z: -18.75}
+        - {x: 0, y: 0, z: -16.666666}
+        - {x: 0, y: 0, z: -14.583334}
+        - {x: 0, y: 0, z: -10.416667}
+        - {x: 0, y: 0, z: -6.25}
+        - {x: 0, y: 0, z: -4.166667}
+        - {x: 0, y: 0, z: -2.0833328}
+        - {x: 0, y: 0, z: 1.6666667}
+        - {x: 0, y: 0, z: 3.3333335}
+        - {x: 0, y: 0, z: 5}
+        - {x: 0, y: 0, z: 6.666667}
+        - {x: 0, y: 0, z: 8.333333}
+        - {x: 0, y: 0, z: 10}
+        - {x: 0, y: 0, z: 9.166667}
+        - {x: 0, y: 0, z: 7.5}
+        - {x: 0, y: 0, z: 6.6666665}
+        - {x: 0, y: 0, z: 5.8333335}
+        - {x: 0, y: 0, z: 4.166667}
+        - {x: 0, y: 0, z: 3.333333}
+        - {x: 0, y: 0, z: 2.5}
+        - {x: 0, y: 0, z: 1.6666669}
+        - {x: 0, y: 0, z: 0.83333313}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 3
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006001f800500200005002180040022000400238003002400030025800200260002002780010028000100298000002a0000002b8006002c0007002d8007002e0008002f80080030000900318009003280080033000a003400080035800a003680070037000b003800070039800b003a8006003b000c003c000000
+          TableValue:
+          - {x: 0.3, y: 0.3}
+          - {x: 0.3, y: 0.30833334}
+          - {x: 0.3, y: 0.3166667}
+          - {x: 0.3, y: 0.32500002}
+          - {x: 0.3, y: 0.33333334}
+          - {x: 0.3, y: 0.34166667}
+          - {x: 0.3, y: 0.35000002}
+          - {x: 0.3, y: 0.35833335}
+          - {x: 0.3, y: 0.36666667}
+          - {x: 0.3, y: 0.375}
+          - {x: 0.3, y: 0.38333333}
+          - {x: 0.3, y: 0.39166668}
+          - {x: 0.3, y: 0.4}
+          - {x: 0.30333334, y: 0.3}
+          - {x: 0.30666667, y: 0.3}
+          - {x: 0.31, y: 0.3}
+          - {x: 0.31333333, y: 0.3}
+          - {x: 0.31666666, y: 0.3}
+          - {x: 0.32, y: 0.3}
+          - {x: 0.31833333, y: 0.3}
+          - {x: 0.315, y: 0.3}
+          - {x: 0.31166667, y: 0.3}
+          - {x: 0.30833334, y: 0.3}
+          - {x: 0.305, y: 0.3}
+          - {x: 0.30166668, y: 0.3}
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f800700100008001180080012000900138009001480080015000a001600080017800a001880070019000b001a0007001b800b001c8006001d000c001e0006001f800c0020000d002180050022800d0023000e002400050025800e0026000f0027800f0028001000298010002a0011002b0010002c000f002d0005002e800d002f000d00300006003180050032000500338004003400040035800300360003003780020038000200398001003a0001003b8000003c000000
+          TableValue:
+          - 1
+          - 0.9875
+          - 0.975
+          - 0.9625
+          - 0.95
+          - 0.9375
+          - 0.925
+          - 0.9125
+          - 0.90000004
+          - 0.88750005
+          - 0.875
+          - 0.8625
+          - 0.85
+          - 0.8416667
+          - 0.8333334
+          - 0.82500005
+          - 0.81666666
+          - 0.80833334
+          - 0.8
+          - 0.8041667
+          - 0.8125
+          - 0.8208333
+          - 0.8291667
+          - 0.83750004
+          - 0.84583336
+          - 0.8541667
+          - 0.85833335
+          - 0.8666667
+          - 0.87083334
+          - 0.87916666
+          - 0.8833333
+          - 0.8875
+          - 0.89166665
+          - 0.8958333
+          - 0.9
         SizeForce:
           TypePack: 1
           TableCodeValue: []
@@ -1991,7 +2708,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773138
+        - Flags: 16773140
       Position:
         TypePack: 1
         TableCodeValue:
@@ -2108,7 +2825,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773139
+        - Flags: 16773141
       Position:
         TypePack: 1
         TableCodeValue:
@@ -2237,9 +2954,65 @@ MonoBehaviour:
       Rotation:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 00000000
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b0017800b001880080019000c001a800c001b0005001c000d001d800d001e0000001f000e0020800e0021000f0022800f00230010002480100025001100268011002700120028801200290013002a8013002b0014002c8014002d0015002e8015002f0016003080160031001700328017003300180034801800350019003680190037001a0038801a0039001b003a801b003b001c003c000000
         TableValue:
+        - {x: 0, y: 0, z: 15}
+        - {x: 0, y: 0, z: 16}
+        - {x: 0, y: 0, z: 17}
+        - {x: 0, y: 0, z: 18}
+        - {x: 0, y: 0, z: 19}
+        - {x: 0, y: 0, z: 20}
+        - {x: 0, y: 0, z: 21}
+        - {x: 0, y: 0, z: 22}
+        - {x: 0, y: 0, z: 23}
+        - {x: 0, y: 0, z: 24}
+        - {x: 0, y: 0, z: 25}
+        - {x: 0, y: 0, z: 26}
+        - {x: 0, y: 0, z: 27}
+        - {x: 0, y: 0, z: 28}
+        - {x: 0, y: 0, z: 29}
         - {x: 0, y: 0, z: 30}
+        - {x: 0, y: 0, z: 32.5}
+        - {x: 0, y: 0, z: 35}
+        - {x: 0, y: 0, z: 37.5}
+        - {x: 0, y: 0, z: 40}
+        - {x: 0, y: 0, z: 42.5}
+        - {x: 0, y: 0, z: 45}
+        - {x: 0, y: 0, z: 41.666668}
+        - {x: 0, y: 0, z: 38.333332}
+        - {x: 0, y: 0, z: 31.666666}
+        - {x: 0, y: 0, z: 28.333332}
+        - {x: 0, y: 0, z: 21.666666}
+        - {x: 0, y: 0, z: 18.333334}
+        - {x: 0, y: 0, z: 14.210526}
+        - {x: 0, y: 0, z: 13.421053}
+        - {x: 0, y: 0, z: 12.631579}
+        - {x: 0, y: 0, z: 11.842105}
+        - {x: 0, y: 0, z: 11.052631}
+        - {x: 0, y: 0, z: 10.263158}
+        - {x: 0, y: 0, z: 9.473684}
+        - {x: 0, y: 0, z: 8.684211}
+        - {x: 0, y: 0, z: 7.894737}
+        - {x: 0, y: 0, z: 7.1052628}
+        - {x: 0, y: 0, z: 6.3157897}
+        - {x: 0, y: 0, z: 5.526316}
+        - {x: 0, y: 0, z: 4.736842}
+        - {x: 0, y: 0, z: 3.9473686}
+        - {x: 0, y: 0, z: 3.1578944}
+        - {x: 0, y: 0, z: 2.368421}
+        - {x: 0, y: 0, z: 1.5789475}
+        - {x: 0, y: 0, z: 0.78947335}
+        - {x: 0, y: 0, z: 0}
+        - {x: 0, y: 0, z: 1.3636364}
+        - {x: 0, y: 0, z: 2.7272727}
+        - {x: 0, y: 0, z: 4.090909}
+        - {x: 0, y: 0, z: 5.4545455}
+        - {x: 0, y: 0, z: 6.818182}
+        - {x: 0, y: 0, z: 8.181818}
+        - {x: 0, y: 0, z: 9.545454}
+        - {x: 0, y: 0, z: 10.909091}
+        - {x: 0, y: 0, z: 12.272727}
+        - {x: 0, y: 0, z: 13.636364}
       Scaling:
         TypePack: 1
         TableCodeValue:
@@ -2341,7 +3114,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773141
+        - Flags: 16773143
       Position:
         TypePack: 1
         TableCodeValue:
@@ -2620,7 +3393,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773136
+        - Flags: 16773138
       Position:
         TypePack: 1
         TableCodeValue:
@@ -2737,7 +3510,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773133
+        - Flags: 16773135
       Position:
         TypePack: 1
         TableCodeValue:
@@ -2866,9 +3639,65 @@ MonoBehaviour:
       Rotation:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 00000000
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b0017800b0018000c0019800c001a000d001b800d001c000e001d800e001e0000001f000f0020800f002100100022801000230011002480110025001200268012002700130028801300290014002a8014002b0015002c8015002d0016002e8016002f001700308017003100180032801800330019003480190035001a003600170037801a0038001b00398013003a801b003b001c003c000000
         TableValue:
+        - {x: 0, y: 0, z: -15}
+        - {x: 0, y: 0, z: -14.210526}
+        - {x: 0, y: 0, z: -13.421053}
+        - {x: 0, y: 0, z: -12.631579}
+        - {x: 0, y: 0, z: -11.842105}
+        - {x: 0, y: 0, z: -11.052631}
+        - {x: 0, y: 0, z: -10.263158}
+        - {x: 0, y: 0, z: -9.473684}
+        - {x: 0, y: 0, z: -8.684211}
+        - {x: 0, y: 0, z: -7.894737}
+        - {x: 0, y: 0, z: -7.1052628}
+        - {x: 0, y: 0, z: -6.3157897}
+        - {x: 0, y: 0, z: -5.526316}
+        - {x: 0, y: 0, z: -4.736842}
+        - {x: 0, y: 0, z: -3.9473686}
+        - {x: 0, y: 0, z: -3.1578944}
+        - {x: 0, y: 0, z: -2.368421}
+        - {x: 0, y: 0, z: -1.5789475}
+        - {x: 0, y: 0, z: -0.78947335}
+        - {x: 0, y: 0, z: 0}
+        - {x: 0, y: 0, z: -1.3636364}
+        - {x: 0, y: 0, z: -2.7272727}
+        - {x: 0, y: 0, z: -4.090909}
+        - {x: 0, y: 0, z: -5.4545455}
+        - {x: 0, y: 0, z: -6.818182}
+        - {x: 0, y: 0, z: -8.181818}
+        - {x: 0, y: 0, z: -9.545454}
+        - {x: 0, y: 0, z: -10.909091}
+        - {x: 0, y: 0, z: -12.272727}
+        - {x: 0, y: 0, z: -13.636364}
+        - {x: 0, y: 0, z: -16}
+        - {x: 0, y: 0, z: -17}
+        - {x: 0, y: 0, z: -18}
+        - {x: 0, y: 0, z: -19}
+        - {x: 0, y: 0, z: -20}
+        - {x: 0, y: 0, z: -21}
+        - {x: 0, y: 0, z: -22}
+        - {x: 0, y: 0, z: -23}
+        - {x: 0, y: 0, z: -24}
+        - {x: 0, y: 0, z: -25}
+        - {x: 0, y: 0, z: -26}
+        - {x: 0, y: 0, z: -27}
+        - {x: 0, y: 0, z: -28}
+        - {x: 0, y: 0, z: -29}
         - {x: 0, y: 0, z: -30}
+        - {x: 0, y: 0, z: -32.5}
+        - {x: 0, y: 0, z: -35}
+        - {x: 0, y: 0, z: -37.5}
+        - {x: 0, y: 0, z: -40}
+        - {x: 0, y: 0, z: -42.5}
+        - {x: 0, y: 0, z: -45}
+        - {x: 0, y: 0, z: -41.666668}
+        - {x: 0, y: 0, z: -38.333332}
+        - {x: 0, y: 0, z: -31.666666}
+        - {x: 0, y: 0, z: -28.333332}
+        - {x: 0, y: 0, z: -21.666666}
+        - {x: 0, y: 0, z: -18.333334}
       Scaling:
         TypePack: 1
         TableCodeValue:
@@ -3083,6 +3912,263 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: []
     - Format: 0
+      StatusParts: 1211891712
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 16773130
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b0017800b0018000c0019800c001a000d001b800d001c000e001d800e001e000f001f800f00200010002180100022001100238011002400120025801200260013002780130028001400298014002a0015002b8015002c0016002d8016002e0017002f8017003000180031801800320019003380190034001a0035801a0036001b0037801b0038001c0039801c003a001d003b801d003c000000
+        TableValue:
+        - {x: -7, y: 15, z: 0}
+        - {x: -7.25, y: 15.083333, z: 0}
+        - {x: -7.5, y: 15.166667, z: 0}
+        - {x: -7.75, y: 15.25, z: 0}
+        - {x: -8, y: 15.333333, z: 0}
+        - {x: -8.25, y: 15.416667, z: 0}
+        - {x: -8.5, y: 15.5, z: 0}
+        - {x: -8.75, y: 15.583333, z: 0}
+        - {x: -9, y: 15.666667, z: 0}
+        - {x: -9.25, y: 15.75, z: 0}
+        - {x: -9.5, y: 15.833333, z: 0}
+        - {x: -9.75, y: 15.916667, z: 0}
+        - {x: -10, y: 16, z: 0}
+        - {x: -10.222222, y: 15.944445, z: 0}
+        - {x: -10.444445, y: 15.888889, z: 0}
+        - {x: -10.666667, y: 15.833333, z: 0}
+        - {x: -10.888889, y: 15.777778, z: 0}
+        - {x: -11.111111, y: 15.722222, z: 0}
+        - {x: -11.333333, y: 15.666667, z: 0}
+        - {x: -11.555555, y: 15.611111, z: 0}
+        - {x: -11.777778, y: 15.555555, z: 0}
+        - {x: -12, y: 15.5, z: 0}
+        - {x: -12.222222, y: 15.444445, z: 0}
+        - {x: -12.444445, y: 15.388889, z: 0}
+        - {x: -12.666667, y: 15.333333, z: 0}
+        - {x: -12.888889, y: 15.277778, z: 0}
+        - {x: -13.111111, y: 15.222222, z: 0}
+        - {x: -13.333333, y: 15.166667, z: 0}
+        - {x: -13.555555, y: 15.111111, z: 0}
+        - {x: -13.777778, y: 15.055555, z: 0}
+        - {x: -14, y: 15, z: 0}
+        - {x: -13.8, y: 15, z: 0}
+        - {x: -13.6, y: 15, z: 0}
+        - {x: -13.4, y: 15, z: 0}
+        - {x: -13.2, y: 15, z: 0}
+        - {x: -13, y: 15, z: 0}
+        - {x: -12.8, y: 15, z: 0}
+        - {x: -12.6, y: 15, z: 0}
+        - {x: -12.4, y: 15, z: 0}
+        - {x: -12.2, y: 15, z: 0}
+        - {x: -12, y: 15, z: 0}
+        - {x: -11.8, y: 15, z: 0}
+        - {x: -11.6, y: 15, z: 0}
+        - {x: -11.4, y: 15, z: 0}
+        - {x: -11.2, y: 15, z: 0}
+        - {x: -11, y: 15, z: 0}
+        - {x: -10.733334, y: 15, z: 0}
+        - {x: -10.466666, y: 15, z: 0}
+        - {x: -10.2, y: 15, z: 0}
+        - {x: -9.933333, y: 15, z: 0}
+        - {x: -9.666667, y: 15, z: 0}
+        - {x: -9.4, y: 15, z: 0}
+        - {x: -9.133333, y: 15, z: 0}
+        - {x: -8.866667, y: 15, z: 0}
+        - {x: -8.6, y: 15, z: 0}
+        - {x: -8.333333, y: 15, z: 0}
+        - {x: -8.066667, y: 15, z: 0}
+        - {x: -7.8, y: 15, z: 0}
+        - {x: -7.5333333, y: 15, z: 0}
+        - {x: -7.2666664, y: 15, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f0005001080070011000800120004001380080014000900150003001680090017000a001800020019800a001a000b001b0001001c800b001d000c001e0000001f800c0020000d0021800d0022000e0023800e0024000f0025800f00260010002780100028001100298011002a0012002b8012002c0013002d8013002e0013002f801200300012003180110032001100338010003400100035800f0036000f0037800e0038000e0039800d003a000d003b800c003c000000
+        TableValue:
+        - {x: 0, y: 0, z: 30}
+        - {x: 0, y: 0, z: 29.166666}
+        - {x: 0, y: 0, z: 28.333334}
+        - {x: 0, y: 0, z: 27.5}
+        - {x: 0, y: 0, z: 26.666666}
+        - {x: 0, y: 0, z: 25.833334}
+        - {x: 0, y: 0, z: 25}
+        - {x: 0, y: 0, z: 24.166666}
+        - {x: 0, y: 0, z: 23.333334}
+        - {x: 0, y: 0, z: 22.5}
+        - {x: 0, y: 0, z: 21.666666}
+        - {x: 0, y: 0, z: 20.833334}
+        - {x: 0, y: 0, z: 20}
+        - {x: 0, y: 0, z: 20.555555}
+        - {x: 0, y: 0, z: 21.11111}
+        - {x: 0, y: 0, z: 22.222221}
+        - {x: 0, y: 0, z: 22.777779}
+        - {x: 0, y: 0, z: 23.88889}
+        - {x: 0, y: 0, z: 24.444445}
+        - {x: 0, y: 0, z: 25.555555}
+        - {x: 0, y: 0, z: 26.11111}
+        - {x: 0, y: 0, z: 27.222221}
+        - {x: 0, y: 0, z: 27.777779}
+        - {x: 0, y: 0, z: 28.88889}
+        - {x: 0, y: 0, z: 29.444445}
+        - {x: 0, y: 0, z: 30.333334}
+        - {x: 0, y: 0, z: 30.666666}
+        - {x: 0, y: 0, z: 31}
+        - {x: 0, y: 0, z: 31.333334}
+        - {x: 0, y: 0, z: 31.666666}
+        - {x: 0, y: 0, z: 32}
+        - {x: 0, y: 0, z: 32.333332}
+        - {x: 0, y: 0, z: 32.666668}
+        - {x: 0, y: 0, z: 33}
+        - {x: 0, y: 0, z: 33.333332}
+        - {x: 0, y: 0, z: 33.666668}
+        - {x: 0, y: 0, z: 34}
+        - {x: 0, y: 0, z: 34.333332}
+        - {x: 0, y: 0, z: 34.666668}
+        - {x: 0, y: 0, z: 35}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - IndexCellMap: 0
+            IndexCell: 3
+        ScalingLocal:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400098004000a0005000b8005000c0006000d8006000e0007000f8007001000080011800800120009001380090014000a0015800a0016000b001700040018800b0019000c001a800c001b000d001c800d001d000e001e800e001f000f0020800f002100100022000200238010002400110025801100260012002780120028001300298013002a0014002b8014002c0015002d000000
+          TableValue:
+          - {x: 0.35, y: 0.25}
+          - {x: 0.35416666, y: 0.2525}
+          - {x: 0.35833332, y: 0.255}
+          - {x: 0.3625, y: 0.2575}
+          - {x: 0.36666667, y: 0.26}
+          - {x: 0.37083334, y: 0.2625}
+          - {x: 0.375, y: 0.265}
+          - {x: 0.37916666, y: 0.2675}
+          - {x: 0.38333333, y: 0.27}
+          - {x: 0.3875, y: 0.2725}
+          - {x: 0.39166668, y: 0.275}
+          - {x: 0.39583334, y: 0.2775}
+          - {x: 0.4, y: 0.28}
+          - {x: 0.39848486, y: 0.2790909}
+          - {x: 0.3969697, y: 0.27818182}
+          - {x: 0.39545456, y: 0.27727273}
+          - {x: 0.3939394, y: 0.27636364}
+          - {x: 0.39242426, y: 0.27545455}
+          - {x: 0.3909091, y: 0.27454546}
+          - {x: 0.38939396, y: 0.27363637}
+          - {x: 0.3878788, y: 0.27272728}
+          - {x: 0.38636363, y: 0.2718182}
+          - {x: 0.38484848, y: 0.2709091}
+          - {x: 0.38181818, y: 0.26909092}
+          - {x: 0.38030303, y: 0.26818183}
+          - {x: 0.37878788, y: 0.26727274}
+          - {x: 0.37727273, y: 0.26636365}
+          - {x: 0.37575758, y: 0.26545456}
+          - {x: 0.37424242, y: 0.26454544}
+          - {x: 0.37272727, y: 0.26363635}
+          - {x: 0.37121212, y: 0.26272726}
+          - {x: 0.36969697, y: 0.26181817}
+          - {x: 0.36818182, y: 0.26090908}
+          - {x: 0.36515152, y: 0.2590909}
+          - {x: 0.36363637, y: 0.2581818}
+          - {x: 0.3621212, y: 0.25727272}
+          - {x: 0.36060604, y: 0.25636363}
+          - {x: 0.3590909, y: 0.25545454}
+          - {x: 0.35757574, y: 0.25454545}
+          - {x: 0.3560606, y: 0.25363636}
+          - {x: 0.35454544, y: 0.25272727}
+          - {x: 0.3530303, y: 0.25181818}
+          - {x: 0.35151514, y: 0.2509091}
+        RateOpacity:
+          TypePack: 1
+          TableCodeValue:
+          - TableCode: 00000000
+          TableValue:
+          - 0.06
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PartsColor:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
       StatusParts: 1077673984
       Status:
         TypePack: 1
@@ -3224,7 +4310,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773146
+        - Flags: 16773149
       Position:
         TypePack: 1
         TableCodeValue:
@@ -3358,7 +4444,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773147
+        - Flags: 16773150
       Position:
         TypePack: 1
         TableCodeValue:
@@ -3477,7 +4563,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773148
+        - Flags: 16773151
       Position:
         TypePack: 1
         TableCodeValue:
@@ -3596,7 +4682,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773145
+        - Flags: 16773148
       Position:
         TypePack: 1
         TableCodeValue:
@@ -3730,7 +4816,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773143
+        - Flags: 16773131
       Position:
         TypePack: 1
         TableCodeValue:
@@ -3849,7 +4935,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773134
+        - Flags: 16773136
       Position:
         TypePack: 1
         TableCodeValue:

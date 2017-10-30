@@ -12,6 +12,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 {
 	/* ----------------------------------------------- Notes */
 	#region Notes
+	/* ---------------------------------- Sample "Complex Counter" [Beginner] */
 	/* The points of this sample are as follows.                              */
 	/*                                                                        */
 	/* - Tips to change animation                                             */
@@ -141,7 +142,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		/* Adjust Parameters */
 		if(0 >= SizePixelFontX)
 		{
-			SizePixelFontX = 28;	/* Default */
+			SizePixelFontX = (int)Constant.FONTSIZE_DEFAULT;
 		}
 
 		if(0 > IndexFont)
@@ -248,7 +249,11 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 						/* Change Cell */
 						/* MEMO: (IndexCellMap == 0) Because this Animation has 1 Texture. */
 						indexCharacter = IndexGetCharacter(charactersDigit[(countDigit - 1) - i]);
-						ScriptRoot.CellChangeParts(idParts, 0, TableCellCharacter[IndexFont, indexCharacter].IndexCell, true);	/* Ignore Attribute "Cell" */
+						ScriptRoot.CellChangeParts(	idParts,
+													0,
+													TableCellCharacter[IndexFont, indexCharacter].IndexCell,
+													Library_SpriteStudio6.KindIgnoreAttribute.PERMANENT	/* Ignore "Reference-Cell" attribute even if change animation */
+												);
 
 						/* Show Digit */
 						/* MEMO: Don't Effect to children */
@@ -486,7 +491,8 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 	{
 		DIGIT_MAX = 8,
 		FONT_MAX = 4,
-	};
+		FONTSIZE_DEFAULT = 28,
+	}
 
 	private readonly static int ValueMax = (int)(Mathf.Pow(10.0f, (int)Constant.DIGIT_MAX)) - 1;
 	private readonly static int ValueMin = -((int)(Mathf.Pow(10.0f, (int)Constant.DIGIT_MAX - 1)) - 1);
@@ -528,7 +534,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		SYMBOL_DIV,
 
 		TERMINATOR
-	};
+	}
 	private readonly static char[] TableCharacters = new char[(int)KindCharacter.TERMINATOR]
 	{
 		'0',

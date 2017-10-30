@@ -61,7 +61,7 @@ public partial class Script_SpriteStudio6_Root
 		default: -1
 	@param	timesPlay
 		-1 == Apply previous setting.<br>
-		0 == Infinite-looping <br>
+		0 == Infinite-looping<br>
 		1 == Not looping<br>
 		2 <= Number of Plays<br>
 		default: -1

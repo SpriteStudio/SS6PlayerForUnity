@@ -355,15 +355,15 @@ public partial class Script_SpriteStudio6_Root
 		Parts-ID<br>
 		-1 == All parts
 	@param	indexCellMap
-		Cell-Map Index<br>
+		CellMap's index<br>
 		-1 == Accorde to Animation-Data
 	@param	indexCell
-		Cell Index in Cell-Map<br>
+		Cell's index in CellMap<br>
 		-1 == Accorde to Animation-Data
-	@param	flagIgnoreAttributeCell
-		true == Ignore "Reference-Cell" Attribute in the Animation-Data.<br>
-		false == Will be updated, if the new "Reference-Cell"Attribute-Data has appeared after changing.<br>
-		default: false
+	@param	ignoreAttribute
+		NON == Changed cell is overwritten when new "Reference Cell" attribute deecoded<br>
+		NOW_ANIMATION == Ignore "Reference Cell" attribute until new animation starts playing<br>
+		PERMANENT == Continue Ignoring "Reference Cell" attribute even if new animation starts playing
 	@retval	Return-Value
 		true == Success <br>
 		false == Failure (Error)
@@ -372,11 +372,16 @@ public partial class Script_SpriteStudio6_Root
 	<br>
 	This function must be called after "Start" and "Awake" are executed.<br>
 	<br>
-	Caution: This function returns error when animation with "Precalculation > Fix Sprite" set to "true" at import.
+	When set part excepting "Draw-parts" to "idParts", this function returns true and ignore specifications.<br>
+	Also, if "idParts" is set to "-1", false is returned when error occurs in any of "Draw-parts" included in current animation.<br>
+	*) "Draw-parts" mean "Normal(Sprite)"-parts and "Mask"-parts.<br>
+	<br>
+	Caution:<br>
+	This function returns error when animation with "Precalculation > Fix Sprite" set to "true" at import.<br>
 	*/
-	public bool CellChangeParts(int idParts, int indexCellMap, int indexCell, bool flagIgnoreAttributeCell=false)
+	public bool CellChangeParts(int idParts, int indexCellMap, int indexCell, Library_SpriteStudio6.KindIgnoreAttribute ignoreAttribute)
 	{
-		if((null == DataAnimation) || (null == TableControlParts))
+		if((null == DataAnimation) || (null == TableControlParts) || (null == TableControlTrack))
 		{
 			return(false);
 		}
@@ -384,12 +389,13 @@ public partial class Script_SpriteStudio6_Root
 		if(0 > idParts)
 		{	/* All Parts */
 			int countParts = TableControlParts.Length;
+			bool flagSuccess = true;
 			for(int i=0; i<countParts; i++)
 			{
-				CellChangePartsMain(i, indexCellMap, indexCell, flagIgnoreAttributeCell);
+				flagSuccess &= CellChangePartsMain(i, indexCellMap, indexCell, ignoreAttribute);
 			}
 
-			return(true);
+			return(flagSuccess);
 		}
 
 		if(TableControlParts.Length <= idParts)
@@ -397,15 +403,15 @@ public partial class Script_SpriteStudio6_Root
 			return(false);
 		}
 
-		return(CellChangePartsMain(idParts, indexCellMap, indexCell, flagIgnoreAttributeCell));
+		return(CellChangePartsMain(idParts, indexCellMap, indexCell, ignoreAttribute));
 	}
-	private bool CellChangePartsMain(int idParts, int indexCellMap, int indexCell, bool flagIgnoreAttributeCell)
+	private bool CellChangePartsMain(int idParts, int indexCellMap, int indexCell, Library_SpriteStudio6.KindIgnoreAttribute ignoreAttribute)
 	{
 		switch(DataAnimation.TableParts[idParts].Feature)
 		{
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
-				return(false);
+				return(true);
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
@@ -413,21 +419,35 @@ public partial class Script_SpriteStudio6_Root
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
-				return(false);
+				return(true);
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 				break;
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CLEARSTENCIL:
-				return(false);
+				return(true);
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
-				return(false);
+				return(true);
+		}
+
+		/* MEMO: Return error when animation-format is "FIX", since UVs and shape of imported-data has been determined. */
+		int indexTrack = TableControlParts[idParts].IndexControlTrack;
+		if(0 <= indexTrack)
+		{
+			int indexAnimation = TableControlTrack[indexTrack].ArgumentContainer.IndexAnimation;
+			if(0 <= indexAnimation)
+			{
+				if(Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX == DataAnimation.TableAnimation[indexAnimation].TableParts[idParts].Format)
+				{
+					return(false);
+				}
+			}
 		}
 
 		if((0 > indexCellMap) || (0 > indexCell))
@@ -438,13 +458,23 @@ public partial class Script_SpriteStudio6_Root
 		TableControlParts[idParts].ParameterSprite.DataCellApply.IndexCellMap = indexCellMap;
 		TableControlParts[idParts].ParameterSprite.DataCellApply.IndexCell = indexCell;
 		TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
-		if(true == flagIgnoreAttributeCell)
+
+		switch(ignoreAttribute)
 		{
-			TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNOREATTRIBUTE;
-		}
-		else
-		{
-			TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNOREATTRIBUTE;
+			case Library_SpriteStudio6.KindIgnoreAttribute.NON:
+				TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE;
+				TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_NEWANIMATION;
+				break;
+
+			case Library_SpriteStudio6.KindIgnoreAttribute.NOW_ANIMATION:
+				TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE;
+				TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_NEWANIMATION;
+				break;
+
+			case Library_SpriteStudio6.KindIgnoreAttribute.PERMANENT:
+				TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE;
+				TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_NEWANIMATION;
+				break;
 		}
 
 		return(true);
