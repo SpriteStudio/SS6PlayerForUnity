@@ -980,7 +980,7 @@ MonoBehaviour:
   TableInformationPlay:
   - FlagSetInitial: 1
     FlagStopInitial: 0
-    NameAnimation: Wait-Front
+    NameAnimation: PutOutL
     FlagPingPong: 0
     LabelStart: 
     FrameOffsetStart: 0

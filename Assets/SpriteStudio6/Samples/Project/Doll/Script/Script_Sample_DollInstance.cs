@@ -35,9 +35,8 @@ public class Script_Sample_DollInstance : MonoBehaviour
 
 	/* WorkArea */
 	private Script_SpriteStudio6_Root ScriptRoot = null;
-	private Script_SpriteStudio6_Root[] ScriptRootInstanceEye = new Script_SpriteStudio6_Root[(int)KindEye.TERMINATOR];
+	private Script_SpriteStudio6_Root ScriptRootInstanceEyeL = null;
 	private int[] TableIDPartsControlEye = new int[(int)KindEye.TERMINATOR];
-	private int[] TableIndexAnimationEye = new int[(int)KindAnimationEye.TERMINATOR];
 
 	private float TimeWaitBlinkEye = 0.0f;
 	private bool FlagBlinkingEye = false;
@@ -55,10 +54,6 @@ public class Script_Sample_DollInstance : MonoBehaviour
 		for(int i=0; i<(int)KindEye.TERMINATOR; i++)
 		{
 			TableIDPartsControlEye[i] = -1;
-		}
-		for(int i=0; i<(int)KindAnimationEye.TERMINATOR; i++)
-		{
-			TableIndexAnimationEye[i] = -1;
 		}
 
 		/* Get Animation Control Script-Component */
@@ -85,50 +80,15 @@ public class Script_Sample_DollInstance : MonoBehaviour
 			return;
 		}
 
-		/* Get Eye's "Instance"s */
-		/* MEMO: In order to get "Instance" stably, get after "scriptRoot.Start()" is executed. */
-		if(false == FlagInitializedEye)
-		{
-			int indexPartsEye;
-			FlagInitializedEye = true;
-
-			/* Get PartID (Eye's "Instance"-control parts) & "Instance" */
-			for(int i=0; i<(int)KindEye.TERMINATOR; i++)
-			{
-				indexPartsEye = ScriptRoot.IDGetParts(TableNamePartsEye[i]);
-				TableIDPartsControlEye[i] = indexPartsEye;
-				if(0 <= indexPartsEye)
-				{
-					ScriptRootInstanceEye[i] = ScriptRoot.InstanceGet(indexPartsEye);
-				}
-				FlagInitializedEye &= (null != ScriptRootInstanceEye[i]) ? true : false;
-			}
-
-			if(true == FlagInitializedEye)
-			{
-				/* Get "Instance"'s animation indexes */
-				/* MEMO: In the case of eyes, both left and right are the same animation. */
-				for(int i=0; i<(int)KindAnimationEye.TERMINATOR; i++)
-				{
-					TableIndexAnimationEye[i] = ScriptRootInstanceEye[(int)KindEye.L].IndexGetAnimation(TableNameAnimationEye[i]);
-				}
-
-				AnimatonSetEye(KindAnimationEye.WAIT);
-				TimeWaitBlinkEye = (float)((int)Constant.BLANK_EYE_INITIAL);
-				FlagBlinkingEye = false;
-			}
-		}
-
 		/* Control Eye's Animations */
-		if(true == FlagInitializedEye)
+		if(true == EyeCheckInitialized())
 		{
 			if(false == FlagBlinkingEye)
 			{	/* Now Waiting */
 				/* Check when start blinking */
 				TimeWaitBlinkEye -= Time.deltaTime;
 				if(0.0f >= TimeWaitBlinkEye)
-				{
-					/* Change Eyes' animation */
+				{	/* Wait -> Blink */
 					AnimatonSetEye(KindAnimationEye.BLINK);
 
 					FlagBlinkingEye = true;
@@ -150,9 +110,37 @@ public class Script_Sample_DollInstance : MonoBehaviour
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
 	#region Functions
+	private bool EyeCheckInitialized()
+	{
+		if(false == FlagInitializedEye)
+		{
+			FlagInitializedEye = true;
+
+			/* Get PartID (Eye's "Instance"-control parts) & "Instance" */
+			for(int i=0; i<(int)KindEye.TERMINATOR; i++)
+			{
+				TableIDPartsControlEye[i] = ScriptRoot.IDGetParts(TableNamePartsEye[i]);
+			}
+
+			int indexPartsEyeL = TableIDPartsControlEye[(int)KindEye.L];
+			if(0 <= indexPartsEyeL)
+			{
+				ScriptRootInstanceEyeL = ScriptRoot.InstanceGet(indexPartsEyeL);
+				FlagInitializedEye = true;
+			}
+
+			TimeWaitBlinkEye = float.NaN;
+			FlagBlinkingEye = true;
+		}
+
+		return(FlagInitializedEye);
+	}
+
 	private bool AnimatonSetEye(KindAnimationEye kind)
 	{
 		int idPartsEye;
+
+		/* Set Animation */
 		for(int i=0; i<(int)KindEye.TERMINATOR; i++)
 		{
 			idPartsEye = TableIDPartsControlEye[i];
@@ -160,7 +148,7 @@ public class Script_Sample_DollInstance : MonoBehaviour
 			{
 				ScriptRoot.AnimationChangeInstance(	idPartsEye,
 													TableNameAnimationEye[(int)kind],
-													Library_SpriteStudio6.KindIgnoreAttribute.NOW_ANIMATION,
+													Library_SpriteStudio6.KindIgnoreAttribute.PERMANENT,
 													true,	/* Start immediate */
 													1,
 													1.0f,
@@ -174,16 +162,15 @@ public class Script_Sample_DollInstance : MonoBehaviour
 		}
 
 		/* Set "Instance"'s CallBack-End */
-		idPartsEye = (int)KindEye.L;
-		if(null != ScriptRootInstanceEye[idPartsEye])
+		if(null != ScriptRootInstanceEyeL)
 		{
 			if(KindAnimationEye.WAIT == kind)
 			{
-				ScriptRootInstanceEye[idPartsEye].FunctionPlayEnd = null;
+				ScriptRootInstanceEyeL.FunctionPlayEnd = null;
 			}
 			else
 			{
-				ScriptRootInstanceEye[idPartsEye].FunctionPlayEnd = FunctionPlayEndEye;
+				ScriptRootInstanceEyeL.FunctionPlayEnd = FunctionPlayEndEye;
 			}
 		}
 
@@ -211,15 +198,15 @@ public class Script_Sample_DollInstance : MonoBehaviour
 	{
 		WAIT = 0,
 		PUT_OUT_L,
-		PUT_OUT_R,
+		RETURN_L,
 
 		TERMINATOR
 	}
 	private readonly static string[] TableNameAnimationBody = new string[(int)KindAnimationBody.TERMINATOR]
 	{
-		"Wait-Front",
-		"PutOutL-Front",
-		"PutOutR-Front",
+		"Wait",
+		"PutOutL",
+		"ReturnL",
 	};
 
 	private enum KindEye

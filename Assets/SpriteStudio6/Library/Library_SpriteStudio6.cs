@@ -1684,6 +1684,7 @@ public static partial class Library_SpriteStudio6
 			public bool FlagHideForce;
 
 			internal float RateOpacity = 1.0f;
+			internal Vector2 RateScaleLocal = Vector2.one;
 
 			internal Library_SpriteStudio6.Control.AdditionalColor AdditionalColor = null;
 
