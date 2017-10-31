@@ -314,31 +314,24 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			}
 		}
 
-		/* Clear transient status */
+		/* Check Track-End */
 		int indexTrackSlave = -1;
-		bool flagRequestTransitionEnd;
-		bool flagRequestPlayEnd;
-		bool flagAnimationPlayAnyTrack = true;
-		bool flagTrackPlay;
+		bool flagStopAllTrack = true;
+		bool flagRequestPlayEndTrack;
 		int indexAnimation;
 		for(int i=0; i<countControlTrack; i++)
 		{
-			flagTrackPlay = TableControlTrack[i].StatusIsPlaying;
-			flagAnimationPlayAnyTrack |= flagTrackPlay;
-			if(true == flagTrackPlay)
+			if(true == TableControlTrack[i].StatusIsPlaying)
 			{
-				flagRequestPlayEnd = TableControlTrack[i].StatusIsRequestPlayEnd;
-				flagRequestTransitionEnd = TableControlTrack[i].StatusIsRequestTransitionEnd;
+				flagRequestPlayEndTrack = TableControlTrack[i].StatusIsRequestPlayEnd;
 				indexAnimation = TableControlTrack[i].ArgumentContainer.IndexAnimation;
 
 				/* Check Transition-End */
-				if(true == flagRequestTransitionEnd)
+				if(true == TableControlTrack[i].StatusIsRequestTransitionEnd)
 				{
 					indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
 					if(0 <= indexTrackSlave)
 					{
-						/* Take over playing status */
-
 						/* Copy Track playing datas */
 						/* MEMO: Since track-control manages only playing-frame, copy all. */
 						/* MEMO: If destination-animation has ended at transition complete, will callback. */
@@ -350,12 +343,12 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 						TableControlTrack[i].StatusIsPausingDuringTransition = false;
 						TableControlTrack[i].Transition(-1, 0.0f, false);
 
-						flagRequestPlayEnd = TableControlTrack[i].StatusIsRequestPlayEnd;	/* Overwrite new value */
+						flagRequestPlayEndTrack = TableControlTrack[i].StatusIsRequestPlayEnd;	/* Overwrite new value */
 
 						/* Stop Slave */
 						TableControlTrack[indexTrackSlave].Stop(false);
 
-						/* Exec CallBack */
+						/* CallBack Transition-End */
 						if((null != FunctionPlayEndTrack) && (null != FunctionPlayEndTrack[i]))
 						{
 							FunctionPlayEndTrack[i](	this,
@@ -369,13 +362,21 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				}
 
 				/* Check Track Play-End */
-				if(true == flagRequestPlayEnd)
+				if(true == flagRequestPlayEndTrack)
 				{
+					/* Stop Track */
+					TableControlTrack[i].Stop(false);
+
+					/* CallBack Play-End */
 					/* MEMO: At Play-End callback, "indexTrackSlave" is always -1. */
 					if((null != FunctionPlayEndTrack) && (null != FunctionPlayEndTrack[i]))
 					{
 						FunctionPlayEndTrack[i](this, i, -1, indexAnimation, -1);
 					}
+				}
+				else
+				{
+					flagStopAllTrack = false;
 				}
 
 				TableControlTrack[i].StatusIsRequestPlayEnd = false;
@@ -391,34 +392,36 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 											);
 		}
 
+		/* Clear Transient-Status */
 		Status &= ~(FlagBitStatus.CHANGE_TABLEMATERIAL | FlagBitStatus.CHANGE_CELLMAP);
 		if(null != AdditionalColor)
 		{
 			AdditionalColor.Status &= ~Library_SpriteStudio6.Control.AdditionalColor.FlagBitStatus.CHANGE;
 		}
 
-		/* Callback Play-End */
-		if((0 != (Status & FlagBitStatus.PLAYING)) && (false == flagAnimationPlayAnyTrack))
+		/* Check Animation-End */
+		if(true == flagStopAllTrack)
 		{
-			if(null != FunctionPlayEnd)
-			{
-				if(false == FunctionPlayEnd(this, InstanceGameObjectControl))
+			if(0 != (Status & FlagBitStatus.PLAYING))
+			{	/* Playing -> Stop */
+				if(null != FunctionPlayEnd)
 				{
-					/* MEMO: When "FunctionPlayEnd" returns false, destroy self. */
-					/*       If have "Control-Object", will destroy as well.     */
-					if(null != InstanceGameObjectControl)
+					if(false == FunctionPlayEnd(this, InstanceGameObjectControl))
 					{
-						UnityEngine.Object.Destroy(InstanceGameObjectControl);
-					}
-					else
-					{
-						UnityEngine.Object.Destroy(gameObject);
+						/* MEMO: When "FunctionPlayEnd" returns false, destroy self. */
+						/*       If have "Control-Object", will destroy as well.     */
+						if(null != InstanceGameObjectControl)
+						{
+							UnityEngine.Object.Destroy(InstanceGameObjectControl);
+						}
+						else
+						{
+							UnityEngine.Object.Destroy(gameObject);
+						}
 					}
 				}
 			}
-		}
-		if(false == flagAnimationPlayAnyTrack)
-		{
+
 			Status &= ~FlagBitStatus.PLAYING;
 		}
 		else

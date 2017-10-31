@@ -115,6 +115,7 @@ public class Script_Sample_DollInstance : MonoBehaviour
 
 				AnimatonSetEye(KindAnimationEye.WAIT);
 				TimeWaitBlinkEye = (float)((int)Constant.BLANK_EYE_INITIAL);
+				FlagBlinkingEye = false;
 			}
 		}
 
@@ -122,22 +123,25 @@ public class Script_Sample_DollInstance : MonoBehaviour
 		if(true == FlagInitializedEye)
 		{
 			if(false == FlagBlinkingEye)
-			{
+			{	/* Now Waiting */
+				/* Check when start blinking */
+				TimeWaitBlinkEye -= Time.deltaTime;
+				if(0.0f >= TimeWaitBlinkEye)
+				{
+					/* Change Eyes' animation */
+					AnimatonSetEye(KindAnimationEye.BLINK);
+
+					FlagBlinkingEye = true;
+				}
+			}
+			else
+			{	/* Now Blinking */
 				if(true == float.IsNaN(TimeWaitBlinkEye))
 				{	/* Blink -> Wait */
 					AnimatonSetEye(KindAnimationEye.WAIT);
+
 					TimeWaitBlinkEye = Random.Range((float)((int)Constant.BLANK_EYE_MIN), (float)((int)Constant.BLANK_EYE_MAX));
-				}
-				else
-				{
-					/* Check when start blinking */
-					TimeWaitBlinkEye -= Time.deltaTime;
-					if(0.0f >= TimeWaitBlinkEye)
-					{
-						/* Change Eyes' animation */
-						AnimatonSetEye(KindAnimationEye.BLINK);
-						FlagBlinkingEye = true;
-					}
+					FlagBlinkingEye = false;
 				}
 			}
 		}
@@ -154,24 +158,44 @@ public class Script_Sample_DollInstance : MonoBehaviour
 			idPartsEye = TableIDPartsControlEye[i];
 			if(0 <= idPartsEye)
 			{
-				ScriptRootInstanceEye[i].AnimationChangeInstance(	idPartsEye,
-																	TableNameAnimationEye[(int)kind],
-																	Library_SpriteStudio6.KindIgnoreAttribute.NOW_ANIMATION,
-																	true,	/* Start immediate */
-																	1,
-																	1.0f,
-																	Library_SpriteStudio6.KindStylePlay.NORMAL,
-																	"",
-																	0,
-																	"",
-																	0
-																);
+				ScriptRoot.AnimationChangeInstance(	idPartsEye,
+													TableNameAnimationEye[(int)kind],
+													Library_SpriteStudio6.KindIgnoreAttribute.NOW_ANIMATION,
+													true,	/* Start immediate */
+													1,
+													1.0f,
+													Library_SpriteStudio6.KindStylePlay.NORMAL,
+													"",
+													0,
+													"",
+													0
+												);
+			}
+		}
+
+		/* Set "Instance"'s CallBack-End */
+		idPartsEye = (int)KindEye.L;
+		if(null != ScriptRootInstanceEye[idPartsEye])
+		{
+			if(KindAnimationEye.WAIT == kind)
+			{
+				ScriptRootInstanceEye[idPartsEye].FunctionPlayEnd = null;
+			}
+			else
+			{
+				ScriptRootInstanceEye[idPartsEye].FunctionPlayEnd = FunctionPlayEndEye;
 			}
 		}
 
 		return(false);
 	}
 
+	private bool FunctionPlayEndEye(Script_SpriteStudio6_Root scriptRoot, GameObject objectControl)
+	{
+		TimeWaitBlinkEye = float.NaN;
+
+		return(true);
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */

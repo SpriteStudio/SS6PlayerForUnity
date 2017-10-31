@@ -187,7 +187,6 @@ public static partial class Library_SpriteStudio6
 				internal float RateTime;
 
 				internal int TimesPlay;
-				internal int TimesPlayNow;
 				internal int CountLoop;
 				internal int CountLoopNow;
 
@@ -221,7 +220,6 @@ public static partial class Library_SpriteStudio6
 					TimeElapsedNow = 0.0f;
 
 					TimesPlay = -1;
-					TimesPlayNow = -1;
 					CountLoop = -1;
 					CountLoopNow = -1;
 
@@ -505,10 +503,10 @@ public static partial class Library_SpriteStudio6
 										CountLoop++;
 										if(TimeRange <= TimeElapsed)
 										{	/* Frame-Over: Loop/End */
-											if(0 < TimesPlayNow)
+											if(0 < TimesPlay)
 											{	/* Limited-Count Loop */
-												TimesPlayNow--;
-												if(0 >= TimesPlayNow)
+												TimesPlay--;
+												if(0 >= TimesPlay)
 												{	/* End */
 													goto Update_PlayEnd_Foward;
 												}
@@ -542,10 +540,10 @@ public static partial class Library_SpriteStudio6
 										CountLoop++;
 										if(0.0f > TimeElapsed)
 										{	/* Frame-Over: Loop/End */
-											if(0 < TimesPlayNow)
+											if(0 < TimesPlay)
 											{	/* Limited-Count Loop */
-												TimesPlayNow--;
-												if(0 >= TimesPlayNow)
+												TimesPlay--;
+												if(0 >= TimesPlay)
 												{	/* End */
 													goto AnimationUpdate_PlayEnd_Reverse;
 												}
@@ -599,10 +597,10 @@ public static partial class Library_SpriteStudio6
 								else
 								{
 									CountLoop++;
-									if(0 < TimesPlayNow)
+									if(0 < TimesPlay)
 									{	/* Limited-Count Loop */
-										TimesPlayNow--;
-										if(0 >= TimesPlayNow)
+										TimesPlay--;
+										if(0 >= TimesPlay)
 										{	/* End */
 											goto AnimationUpdate_PlayEnd_Reverse;
 										}
@@ -634,10 +632,10 @@ public static partial class Library_SpriteStudio6
 								else
 								{
 									CountLoop++;
-									if(0 < TimesPlayNow)
+									if(0 < TimesPlay)
 									{	/* Limited-Count Loop */
-										TimesPlayNow--;
-										if(0 >= TimesPlayNow)
+										TimesPlay--;
+										if(0 >= TimesPlay)
 										{	/* End */
 											goto Update_PlayEnd_Foward;
 										}
@@ -679,14 +677,14 @@ public static partial class Library_SpriteStudio6
 					return(true);
 
 				Update_PlayEnd_Foward:;
-					TimesPlayNow = 0;	/* Clip */
+					TimesPlay = 0;	/* Clip */
 					Status |= (FlagBitStatus.REQUEST_PLAYEND | FlagBitStatus.DECODE_ATTRIBUTE);
 					TimeElapsed = TimeRange;
 					ArgumentContainer.Frame = FrameEnd;
 					goto Update_UpdateTransition;
 
 				AnimationUpdate_PlayEnd_Reverse:;
-					TimesPlayNow = 0;	/* Clip */
+					TimesPlay = 0;	/* Clip */
 					Status |= (FlagBitStatus.REQUEST_PLAYEND | FlagBitStatus.DECODE_ATTRIBUTE);
 					TimeElapsed = 0.0f;
 					ArgumentContainer.Frame = FrameStart;
@@ -725,9 +723,9 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Solving Play-Count */
-					if(0 >= TimesPlayNow)
+					if(0 >= TimesPlay)
 					{	/* Infinite-Loop */
-						/* MEMO: "TimesPlayNow" does not change. */
+						/* MEMO: "TimesPlay" does not change. */
 						countLoop = 0;
 						TimeDelay = 0.0f;
 					}
@@ -735,24 +733,24 @@ public static partial class Library_SpriteStudio6
 					{	/* Limited-Loop */
 						if(0 >= countLoop)
 						{	/* No-Wrap-Around */
-							/* MEMO: "TimesPlayNow" does not change. */
+							/* MEMO: "TimesPlay" does not change. */
 							countLoop = 0;
 							TimeDelay = 0.0f;
 						}
 						else
 						{	/* Wrap-Around */
-							if(TimesPlayNow <= countLoop)
+							if(TimesPlay <= countLoop)
 							{	/* Over */
 								if(true == flagReverseParent)
 								{	/* Reverse ... Play-Delay */
-									/* MEMO: "TimesPlayNow" does not change. */
-									TimeDelay = ((float)(countLoop - TimesPlayNow) * timeLoop) + timeCursor;
+									/* MEMO: "TimesPlay" does not change. */
+									TimeDelay = ((float)(countLoop - TimesPlay) * timeLoop) + timeCursor;
 									timeCursor = timeLoop;
 								}
 								else
 								{	/* Foward ... Play-End */
 									TimeDelay = 0.0f;
-									TimesPlayNow = 0;
+									TimesPlay = 0;
 
 									if(true == flagPongPong)
 									{	/* Play-Style: PingPong */
@@ -768,7 +766,7 @@ public static partial class Library_SpriteStudio6
 							}
 							else
 							{   /* In-Range */
-								TimesPlayNow -= countLoop;
+								TimesPlay -= countLoop;
 							}
 						}
 					}
