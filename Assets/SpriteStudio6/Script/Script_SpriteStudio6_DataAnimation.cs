@@ -176,6 +176,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(TableAnimation[i].TableParts[j].Position);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(TableAnimation[i].TableParts[j].Rotation);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Scaling);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].ScalingLocal);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RateOpacity);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(TableAnimation[i].TableParts[j].PartsColor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].PositionAnchor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUserData(TableAnimation[i].TableParts[j].UserData);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInstance(TableAnimation[i].TableParts[j].Instance);
@@ -183,10 +186,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RadiusCollision);
 
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(TableAnimation[i].TableParts[j].Plain.Cell);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.ScalingLocal);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].Plain.RateOpacity);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.SizeForce);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(TableAnimation[i].TableParts[j].Plain.PartsColor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(TableAnimation[i].TableParts[j].Plain.VertexCorrection);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.OffsetPivot);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.PositionTexture);
@@ -234,6 +234,10 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		public Vector3 Rotation;
 		public Vector2 Scaling;
 
+		public Vector2 ScalingLocal;
+		public float RateOpacity;
+		public Library_SpriteStudio6.Data.Animation.Attribute.PartsColor PartsColor;
+
 		public Vector2 PositionAnchor;
 
 		public Library_SpriteStudio6.Data.Animation.Attribute.UserData UserData;
@@ -255,7 +259,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			Position = Vector3.zero;
 			Rotation = Vector3.zero;
 			Scaling = Vector2.one;
-
+			ScalingLocal = Vector2.one;
+			RateOpacity = 0.0f;
+			PartsColor.CleanUp();
 			PositionAnchor = Vector2.zero;
 
 			UserData.CleanUp();
@@ -265,10 +271,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			RadiusCollision = 0.0f;
 
 			Plain.Cell.CleanUp();
-			Plain.ScalingLocal = Vector2.one;
-			Plain.RateOpacity = 0.0f;
 			Plain.SizeForce = Vector2.zero;
-			Plain.PartsColor.CleanUp();
 			Plain.VertexCorrection.CleanUp();
 			Plain.OffsetPivot = Vector2.zero;
 			Plain.PositionTexture = Vector2.zero;
@@ -293,10 +296,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			#region Variables & Properties
 			public Library_SpriteStudio6.Data.Animation.Attribute.Cell Cell;
 
-			public Vector2 ScalingLocal;
-			public float RateOpacity;
 			public Vector2 SizeForce;
-			public Library_SpriteStudio6.Data.Animation.Attribute.PartsColor PartsColor;
 			public Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection VertexCorrection;
 			public Vector2 OffsetPivot;
 

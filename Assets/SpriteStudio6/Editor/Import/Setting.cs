@@ -1780,6 +1780,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Position;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Rotation;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Scaling;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack ScalingLocal;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PartsColor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PositionAnchor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack RadiusCollision;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack UserData;
@@ -1787,10 +1790,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Effect;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainCell;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainScalingLocal;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainRateOpacity;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainSizeForce;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainPartsColor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainVertexCorrection;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainOffsetPivot;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PlainPositionTexture;
@@ -1811,16 +1811,16 @@ public static partial class LibraryEditor_SpriteStudio6
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack position,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack rotation,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack scaling,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack scalingLocal,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack rateOpacity,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack partsColor,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack positionAnchor,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack radiusCollision,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack userData,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack instance,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack effect,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainCell,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainScalingLocal,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainRateOpacity,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainSizeForce,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainPartsColor,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainVertexCorrection,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainOffsetPivot,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack plainPositionTexture,
@@ -1838,6 +1838,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					Position = position;
 					Rotation = rotation;
 					Scaling = scaling;
+					ScalingLocal = scalingLocal;
+					RateOpacity = rateOpacity;
+					PartsColor = partsColor;
 					PositionAnchor = positionAnchor;
 					RadiusCollision = radiusCollision;
 					UserData = userData;
@@ -1845,10 +1848,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					Effect = effect;
 
 					PlainCell = plainCell;
-					PlainScalingLocal = plainScalingLocal;
-					PlainRateOpacity = plainRateOpacity;
 					PlainSizeForce = plainSizeForce;
-					PlainPartsColor = plainPartsColor;
 					PlainVertexCorrection = plainVertexCorrection;
 					PlainOffsetPivot = plainOffsetPivot;
 					PlainPositionTexture = plainPositionTexture;
@@ -1874,6 +1874,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					Position = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPosition, (int)Default.Position));
 					Rotation = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyRotation, (int)Default.Rotation));
 					Scaling = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyScaling, (int)Default.Scaling));
+					ScalingLocal = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyScalingLocal, (int)Default.ScalingLocal));
+					RateOpacity = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyRateOpacity, (int)Default.RateOpacity));
+					PartsColor = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPartsColor, (int)Default.PartsColor));
 					PositionAnchor = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPositionAnchor, (int)Default.PositionAnchor));
 					RadiusCollision = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyRadiusCollision, (int)Default.RadiusCollision));
 					UserData = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyUserData, (int)Default.UserData));
@@ -1881,10 +1884,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					Effect = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyEffect, (int)Default.Effect));
 
 					PlainCell = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainCell, (int)Default.PlainCell));
-					PlainScalingLocal = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainScalingLocal, (int)Default.PlainScalingLocal));
-					PlainRateOpacity = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainRateOpacity, (int)Default.PlainRateOpacity));
 					PlainSizeForce = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainSizeForce, (int)Default.PlainSizeForce));
-					PlainPartsColor = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainPartsColor, (int)Default.PlainPartsColor));
 					PlainVertexCorrection = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainVertexCorrection, (int)Default.PlainVertexCorrection));
 					PlainOffsetPivot = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainOffsetPivot, (int)Default.PlainOffsetPivot));
 					PlainPositionTexture = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPlainPositionTexture, (int)Default.PlainPositionTexture));
@@ -1907,6 +1907,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetInt(PrefsKeyPosition, (int)Position);
 					EditorPrefs.SetInt(PrefsKeyRotation, (int)Rotation);
 					EditorPrefs.SetInt(PrefsKeyScaling, (int)Scaling);
+					EditorPrefs.SetInt(PrefsKeyScalingLocal, (int)ScalingLocal);
+					EditorPrefs.SetInt(PrefsKeyRateOpacity, (int)RateOpacity);
+					EditorPrefs.SetInt(PrefsKeyPartsColor, (int)PartsColor);
 					EditorPrefs.SetInt(PrefsKeyPositionAnchor, (int)PositionAnchor);
 					EditorPrefs.SetInt(PrefsKeyRadiusCollision, (int)RadiusCollision);
 					EditorPrefs.SetInt(PrefsKeyUserData, (int)UserData);
@@ -1914,10 +1917,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetInt(PrefsKeyEffect, (int)Effect);
 
 					EditorPrefs.SetInt(PrefsKeyPlainCell, (int)PlainCell);
-					EditorPrefs.SetInt(PrefsKeyPlainScalingLocal, (int)PlainScalingLocal);
-					EditorPrefs.SetInt(PrefsKeyPlainRateOpacity, (int)PlainRateOpacity);
 					EditorPrefs.SetInt(PrefsKeyPlainSizeForce, (int)PlainSizeForce);
-					EditorPrefs.SetInt(PrefsKeyPlainPartsColor, (int)PlainPartsColor);
 					EditorPrefs.SetInt(PrefsKeyPlainVertexCorrection, (int)PlainVertexCorrection);
 					EditorPrefs.SetInt(PrefsKeyPlainOffsetPivot, (int)PlainOffsetPivot);
 					EditorPrefs.SetInt(PrefsKeyPlainPositionTexture, (int)PlainPositionTexture);
@@ -1951,35 +1951,35 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = NameGetPackKind(Scaling);
 					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyScaling, textValue);
 
+					textValue = NameGetPackKind(ScalingLocal);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyScalingLocal, textValue);
+
+					textValue = NameGetPackKind(RateOpacity);
+					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRateOpacity, textValue);
+
+					textValue = NameGetPackKind(PartsColor);
+					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPartsColor, textValue);
+
 					textValue = NameGetPackKind(PositionAnchor);
-					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionAnchor, textValue);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionAnchor, textValue);
 
 					textValue = NameGetPackKind(RadiusCollision);
-					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRadiusCollision, textValue);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRadiusCollision, textValue);
 
 					textValue = NameGetPackKind(UserData);
-					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyUserData, textValue);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyUserData, textValue);
 
 					textValue = NameGetPackKind(Instance);
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyInstance, textValue);
+					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyInstance, textValue);
 
 					textValue = NameGetPackKind(Effect);
-					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffect, textValue);
+					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffect, textValue);
 
 					textValue = NameGetPackKind(PlainCell);
-					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPlainCell, textValue);
-
-					textValue = NameGetPackKind(PlainScalingLocal);
-					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPlainScalingLocal, textValue);
-
-					textValue = NameGetPackKind(PlainRateOpacity);
-					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPlainRateOpacity, textValue);
+					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPlainCell, textValue);
 
 					textValue = NameGetPackKind(PlainSizeForce);
-					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPlainSizeForce, textValue);
-
-					textValue = NameGetPackKind(PlainPartsColor);
-					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPlainPartsColor, textValue);
+					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPlainSizeForce, textValue);
 
 					textValue = NameGetPackKind(PlainVertexCorrection);
 					textEncode[14] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPlainVertexCorrection, textValue);
@@ -2037,6 +2037,18 @@ public static partial class LibraryEditor_SpriteStudio6
 							Scaling = KindGetPackName(textArgument[1]);
 							return(true);
 
+						case TextKeyScalingLocal:
+							ScalingLocal = KindGetPackName(textArgument[1]);
+							return(true);
+
+						case TextKeyRateOpacity:
+							RateOpacity = KindGetPackName(textArgument[1]);
+							return(true);
+
+						case TextKeyPartsColor:
+							PartsColor = KindGetPackName(textArgument[1]);
+							return(true);
+
 						case TextKeyPositionAnchor:
 							PositionAnchor = KindGetPackName(textArgument[1]);
 							return(true);
@@ -2061,20 +2073,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							PlainCell = KindGetPackName(textArgument[1]);
 							return(true);
 
-						case TextKeyPlainScalingLocal:
-							PlainScalingLocal = KindGetPackName(textArgument[1]);
-							return(true);
-
-						case TextKeyPlainRateOpacity:
-							PlainRateOpacity = KindGetPackName(textArgument[1]);
-							return(true);
-
 						case TextKeyPlainSizeForce:
 							PlainSizeForce = KindGetPackName(textArgument[1]);
-							return(true);
-
-						case TextKeyPlainPartsColor:
-							PlainPartsColor = KindGetPackName(textArgument[1]);
 							return(true);
 
 						case TextKeyPlainVertexCorrection:
@@ -2153,6 +2153,18 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						Scaling = PackError;
 					}
+					if(false == capacityPack[(int)ScalingLocal].ScalingLocal)
+					{
+						ScalingLocal = PackError;
+					}
+					if(false == capacityPack[(int)RateOpacity].RateOpacity)
+					{
+						RateOpacity = PackError;
+					}
+					if(false == capacityPack[(int)PartsColor].PartsColor)
+					{
+						PartsColor = PackError;
+					}
 					if(false == capacityPack[(int)PositionAnchor].PositionAnchor)
 					{
 						PositionAnchor = PackError;
@@ -2173,21 +2185,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						PlainCell = PackError;
 					}
-					if(false == capacityPack[(int)PlainScalingLocal].PlainScalingLocal)
-					{
-						PlainScalingLocal = PackError;
-					}
-					if(false == capacityPack[(int)PlainRateOpacity].PlainRateOpacity)
-					{
-						PlainRateOpacity = PackError;
-					}
 					if(false == capacityPack[(int)PlainSizeForce].PlainSizeForce)
 					{
 						PlainSizeForce = PackError;
-					}
-					if(false == capacityPack[(int)PlainPartsColor].PlainPartsColor)
-					{
-						PlainPartsColor = PackError;
 					}
 					if(false == capacityPack[(int)PlainVertexCorrection].PlainVertexCorrection)
 					{
@@ -2281,16 +2281,16 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyPosition = "Position";
 				private const string KeyRotation = "Rotation";
 				private const string KeyScaling = "Scaling";
+				private const string KeyScalingLocal = "ScalingLocal";
+				private const string KeyRateOpacity = "RateOpacity";
+				private const string KeyPartsColor = "PartsColor";
 				private const string KeyPositionAnchor = "PositionAnchor";
 				private const string KeyRadiusCollision = "RadiusCollision";
 				private const string KeyUserData = "UserData";
 				private const string KeyInstance = "Instance";
 				private const string KeyEffect = "Effect";
 				private const string KeyPlainCell = "PlainCell";
-				private const string KeyPlainScalingLocal = "PlainScalingLocal";
-				private const string KeyPlainRateOpacity = "PlainRateOpacity";
 				private const string KeyPlainSizeForce = "PlainSizeForce";
-				private const string KeyPlainPartsColor = "PlainPartsColor";
 				private const string KeyPlainVertexCorrection = "PlainVertexCorrection";
 				private const string KeyPlainOffsetPivot = "PlainOffsetPivot";
 				private const string KeyPlainPositionTexture = "PlainPositionTexture";
@@ -2308,16 +2308,16 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyPosition = TextKeyPrefix + KeyPosition;
 				private const string TextKeyRotation = TextKeyPrefix + KeyRotation;
 				private const string TextKeyScaling = TextKeyPrefix + KeyScaling;
+				private const string TextKeyScalingLocal = TextKeyPrefix + KeyScalingLocal;
+				private const string TextKeyRateOpacity = TextKeyPrefix + KeyRateOpacity;
+				private const string TextKeyPartsColor = TextKeyPrefix + KeyPartsColor;
 				private const string TextKeyPositionAnchor = TextKeyPrefix + KeyPositionAnchor;
 				private const string TextKeyRadiusCollision = TextKeyPrefix + KeyRadiusCollision;
 				private const string TextKeyUserData = TextKeyPrefix + KeyUserData;
 				private const string TextKeyInstance = TextKeyPrefix + KeyInstance;
 				private const string TextKeyEffect = TextKeyPrefix + KeyEffect;
 				private const string TextKeyPlainCell = TextKeyPrefix + KeyPlainCell;
-				private const string TextKeyPlainScalingLocal = TextKeyPrefix + KeyPlainScalingLocal;
-				private const string TextKeyPlainRateOpacity = TextKeyPrefix + KeyPlainRateOpacity;
 				private const string TextKeyPlainSizeForce = TextKeyPrefix + KeyPlainSizeForce;
-				private const string TextKeyPlainPartsColor = TextKeyPrefix + KeyPlainPartsColor;
 				private const string TextKeyPlainVertexCorrection = TextKeyPrefix + KeyPlainVertexCorrection;
 				private const string TextKeyPlainOffsetPivot = TextKeyPrefix + KeyPlainOffsetPivot;
 				private const string TextKeyPlainPositionTexture = TextKeyPrefix + KeyPlainPositionTexture;
@@ -2335,16 +2335,16 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyPosition = PrefsKeyPrefix + KeyPosition;
 				private const string PrefsKeyRotation = PrefsKeyPrefix + KeyRotation;
 				private const string PrefsKeyScaling = PrefsKeyPrefix + KeyScaling;
+				private const string PrefsKeyScalingLocal = PrefsKeyPrefix + KeyScalingLocal;
+				private const string PrefsKeyRateOpacity = PrefsKeyPrefix + KeyRateOpacity;
+				private const string PrefsKeyPartsColor = PrefsKeyPrefix + KeyPartsColor;
 				private const string PrefsKeyPositionAnchor = PrefsKeyPrefix + KeyPositionAnchor;
 				private const string PrefsKeyRadiusCollision = PrefsKeyPrefix + KeyRadiusCollision;
 				private const string PrefsKeyUserData = PrefsKeyPrefix + KeyUserData;
 				private const string PrefsKeyInstance = PrefsKeyPrefix + KeyInstance;
 				private const string PrefsKeyEffect = PrefsKeyPrefix + KeyEffect;
 				private const string PrefsKeyPlainCell = PrefsKeyPrefix + KeyPlainCell;
-				private const string PrefsKeyPlainScalingLocal = PrefsKeyPrefix + KeyPlainScalingLocal;
-				private const string PrefsKeyPlainRateOpacity = PrefsKeyPrefix + KeyPlainRateOpacity;
 				private const string PrefsKeyPlainSizeForce = PrefsKeyPrefix + KeyPlainSizeForce;
-				private const string PrefsKeyPlainPartsColor = PrefsKeyPrefix + KeyPlainPartsColor;
 				private const string PrefsKeyPlainVertexCorrection = PrefsKeyPrefix + KeyPlainVertexCorrection;
 				private const string PrefsKeyPlainOffsetPivot = PrefsKeyPrefix + KeyPlainOffsetPivot;
 				private const string PrefsKeyPlainPositionTexture = PrefsKeyPrefix + KeyPlainPositionTexture;
@@ -2362,16 +2362,16 @@ public static partial class LibraryEditor_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Position */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Rotation */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Scaling */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* ScalingLocal */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RateOpacity */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PartsColor */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PositionAnchor */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RadiusCollision */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* UserData */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Instance */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Effect */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainCell */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainScalingLocal */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainRateOpacity */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainSizeForce */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainPartsColor */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainVertexCorrection */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainOffsetPivot */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainPositionTexture */

@@ -316,6 +316,10 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;
 
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;
+
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;
@@ -341,6 +345,10 @@ public static partial class Library_SpriteStudio6
 					Rotation = null;
 					Scaling = null;
 
+					ScalingLocal = null;
+					RateOpacity = null;
+					PartsColor = null;
+
 					PositionAnchor = null;
 
 					RadiusCollision = null;
@@ -350,10 +358,7 @@ public static partial class Library_SpriteStudio6
 					Effect = null;
 
 					Plain.Cell = null;
-					Plain.ScalingLocal = null;
-					Plain.RateOpacity = null;
 					Plain.SizeForce = null;
-					Plain.PartsColor = null;
 					Plain.VertexCorrection = null;
 					Plain.OffsetPivot = null;
 					Plain.PositionTexture = null;
@@ -407,10 +412,7 @@ public static partial class Library_SpriteStudio6
 					#region Variables & Properties
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell Cell;
 
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 OffsetPivot;
 

@@ -154,6 +154,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -179,21 +193,7 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -264,6 +264,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -292,21 +306,7 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 0
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -377,6 +377,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -405,21 +419,7 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 0
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -490,6 +490,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -518,21 +532,7 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 0
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -603,6 +603,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -631,21 +645,7 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 0
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -716,6 +716,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -744,21 +758,7 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 0
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -829,6 +829,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -857,21 +871,7 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 0
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -942,6 +942,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -970,21 +984,7 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 0
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -1055,6 +1055,20 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
       PositionAnchor:
         TypePack: 1
         TableCodeValue: []
@@ -1083,21 +1097,7 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 0
-        ScalingLocal:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        RateOpacity:
-          TypePack: 1
-          TableCodeValue:
-          - TableCode: 00000000
-          TableValue:
-          - 1
         SizeForce:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -1152,6 +1152,12 @@ MonoBehaviour:
     Position: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scaling: {x: 0, y: 0}
+    ScalingLocal: {x: 0, y: 0}
+    RateOpacity: 0
+    PartsColor:
+      Bound: 0
+      Operation: 0
+      VertexColor: []
     PositionAnchor: {x: 0, y: 0}
     UserData:
       Flags: 0
@@ -1181,13 +1187,7 @@ MonoBehaviour:
       Cell:
         IndexCellMap: 0
         IndexCell: 0
-      ScalingLocal: {x: 0, y: 0}
-      RateOpacity: 0
       SizeForce: {x: 0, y: 0}
-      PartsColor:
-        Bound: 0
-        Operation: 0
-        VertexColor: []
       VertexCorrection:
         Coordinate: []
       OffsetPivot: {x: 0, y: 0}

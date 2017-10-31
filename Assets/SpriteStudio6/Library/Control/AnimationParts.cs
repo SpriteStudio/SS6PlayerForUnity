@@ -1715,7 +1715,8 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Get Local-Scale */
-						if(true == dataAnimationParts.Plain.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.Plain.ScalingLocal, ref argumentContainer))
+//						if(true == dataAnimationParts.Plain.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.Plain.ScalingLocal, ref argumentContainer))
+						if(true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref argumentContainer))
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
 						}
@@ -1727,7 +1728,8 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Get Rate-Opacity */
-						flagUpdateValueAttribute = dataAnimationParts.Plain.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.Plain.RateOpacity, ref argumentContainer); 
+//						flagUpdateValueAttribute = dataAnimationParts.Plain.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.Plain.RateOpacity, ref argumentContainer); 
+						flagUpdateValueAttribute = dataAnimationParts.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.RateOpacity, ref argumentContainer); 
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
@@ -1755,7 +1757,8 @@ public static partial class Library_SpriteStudio6
 						{
 							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
 						}
-						flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
+//						flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
+						flagUpdateValueAttribute = dataAnimationParts.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.PartsColor, ref argumentContainer);
 						Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
 						if(null != additionalColor)
 						{	/* Has AdditionalColor */

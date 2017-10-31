@@ -766,7 +766,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("Don't manipulate this setting without reason.");
 		EditorGUILayout.LabelField("Understand amply the implementation of SS6PU data format before setting.");
 		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("\"[Plain]RateOpacity\" is shared for \"RateOpacity\", \"RateOpacityLocal\" and \"PowerMask\".");
+		EditorGUILayout.LabelField("\"[Common]RateOpacity\" is shared for \"RateOpacity\", \"RateOpacityLocal\" and \"PowerMask\".");
 		EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField("[Common]");
@@ -774,6 +774,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Position, "Position", ref PullDownPackAttributeAnimation.Position);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Rotation, "Rotation", ref PullDownPackAttributeAnimation.Rotation);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Scaling, "Scaling", ref PullDownPackAttributeAnimation.Scaling);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.ScalingLocal, "ScalingLocal", ref PullDownPackAttributeAnimation.ScalingLocal);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RateOpacity, "RateOpacity", ref PullDownPackAttributeAnimation.RateOpacity);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PartsColor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionAnchor, "PositionAnchor", ref PullDownPackAttributeAnimation.PositionAnchor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RadiusCollision, "RadiusCollision", ref PullDownPackAttributeAnimation.RadiusCollision);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.UserData, "UserData", ref PullDownPackAttributeAnimation.UserData);
@@ -783,10 +786,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		EditorGUILayout.LabelField("[Plain]");
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainCell, "Cell", ref PullDownPackAttributeAnimation.PlainCell);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainScalingLocal, "ScalingLocal", ref PullDownPackAttributeAnimation.PlainScalingLocal);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainRateOpacity, "RateOpacity", ref PullDownPackAttributeAnimation.PlainRateOpacity);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainSizeForce, "SizeForce", ref PullDownPackAttributeAnimation.PlainSizeForce);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PlainPartsColor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainVertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.PlainVertexCorrection);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainOffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.PlainOffsetPivot);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPositionTexture, "PositionTexture", ref PullDownPackAttributeAnimation.PlainPositionTexture);
@@ -1321,6 +1321,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute Position;
 		public Attribute Rotation;
 		public Attribute Scaling;
+		public Attribute ScalingLocal;
+		public Attribute RateOpacity;
+		public Attribute PartsColor;
 		public Attribute PositionAnchor;
 		public Attribute RadiusCollision;
 		public Attribute UserData;
@@ -1328,10 +1331,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute Effect;
 
 		public Attribute PlainCell;
-		public Attribute PlainScalingLocal;
-		public Attribute PlainRateOpacity;
 		public Attribute PlainSizeForce;
-		public Attribute PlainPartsColor;
 		public Attribute PlainVertexCorrection;
 		public Attribute PlainOffsetPivot;
 		public Attribute PlainPositionTexture;
@@ -1354,6 +1354,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			Position.CleanUp();
 			Rotation.CleanUp();
 			Scaling.CleanUp();
+			ScalingLocal.CleanUp();
+			RateOpacity.CleanUp();
+			PartsColor.CleanUp();
 			PositionAnchor.CleanUp();
 			RadiusCollision.CleanUp();
 			UserData.CleanUp();
@@ -1361,10 +1364,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			Effect.CleanUp();
 
 			PlainCell.CleanUp();
-			PlainScalingLocal.CleanUp();
-			PlainRateOpacity.CleanUp();
 			PlainSizeForce.CleanUp();
-			PlainPartsColor.CleanUp();
 			PlainVertexCorrection.CleanUp();
 			PlainOffsetPivot.CleanUp();
 			PlainPositionTexture.CleanUp();
@@ -1421,6 +1421,24 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
+				tableFlagEnablePack[i] = capacityPack[i].ScalingLocal;
+			}
+			ScalingLocal.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].RateOpacity;
+			}
+			RateOpacity.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].PartsColor;
+			}
+			PartsColor.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
 				tableFlagEnablePack[i] = capacityPack[i].PositionAnchor;
 			}
 			PositionAnchor.BootUp(tableFlagEnablePack);
@@ -1457,27 +1475,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainScalingLocal;
-			}
-			PlainScalingLocal.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainRateOpacity;
-			}
-			PlainRateOpacity.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
 				tableFlagEnablePack[i] = capacityPack[i].PlainSizeForce;
 			}
 			PlainSizeForce.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainPartsColor;
-			}
-			PlainPartsColor.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{

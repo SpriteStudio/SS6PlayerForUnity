@@ -27,16 +27,16 @@ public static partial class Library_SpriteStudio6
 						false,		/* Position *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* Rotation *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* Scaling *//* Use only in front stage of other pack formats, since performance is very poor. */
+						true,		/* ScalingLocal */
+						true,		/* RateOpacity */
+						true,		/* PartsColor */
 						true,		/* PositionAnchor */
 						false,		/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* UserData (Trigger) *//* Not Supported */
 						false,		/* Instance (Trigger) *//* Not Supported */
 						false,		/* Effect (Trigger) *//* Not Supported */
 						true,		/* Plain.Cell */
-						true,		/* Plain.ScalingLocal */
-						true,		/* Plain.RateOpacity */
 						true,		/* Plain.SizeForce */
-						true,		/* Plain.PartsColor */
 						true,		/* Plain.VertexCorrection */
 						true,		/* Plain.OffsetPivot */
 						true,		/* Plain.PositionTexture */
@@ -188,7 +188,7 @@ public static partial class Library_SpriteStudio6
 							container.TableValue = new float[countFrame];
 							switch(nameAttribute)
 							{
-								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainRateOpacity:
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity:
 									/* MEMO: Attribute"RateOpacity" inherits value. (Caution that "RateOpacityLocal" no-inherit value) */
 									for(int i=0; i<countFrame; i++)
 									{
@@ -197,7 +197,7 @@ public static partial class Library_SpriteStudio6
 									}
 									break;
 
-								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPowerMask:
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePowerMask:
 									/* MEMO: Caution                                                                   */
 									/*       Key-Data has 0.0 to 255.0 value, interpolating precision is with integer. */
 									/*       Runtime-Data has 1.0 to 0.0 value.                                        */
@@ -288,7 +288,7 @@ public static partial class Library_SpriteStudio6
 							switch(nameAttribute)
 							{
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScaling: 
-								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingLocal: 
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScalingLocal: 
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingTexture: 
 									/* MEMO: Attribute for scales, default value when has no key is 1.0f. */
 									valueDefault = 1.0f;

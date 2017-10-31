@@ -29,6 +29,11 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributePosition = "Position";
 					public const string NameAttributeRotation = "Rotation";
 					public const string NameAttributeScaling = "Scaling";
+					public const string NameAttributeScalingLocal = "ScalingLocal";
+					public const string NameAttributeRateOpacity = "RateOpacity";
+					public const string NameAttributeRateOpacityLocal = "RateOpacityLocal";
+					public const string NameAttributePowerMask = "PowerMask";
+					public const string NameAttributePartsColor = "PartsColor";
 					public const string NameAttributePositionAnchor = "PositionAnchor";
 					public const string NameAttributeUserData = "UserData";
 					public const string NameAttributeInstance = "Instance";
@@ -36,12 +41,7 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributeRadiusCollision = "RadiusCollision";
 
 					public const string NameAttributePlainCell = "Plain_Cell";
-					public const string NameAttributePlainScalingLocal = "PlainScalingLocal";
-					public const string NameAttributePlainRateOpacity = "PlainRateOpacity";
-					public const string NameAttributePlainRateOpacityLocal = "RateOpacityLocal";
-					public const string NameAttributePlainPowerMask = "PlainPowerMask";
 					public const string NameAttributePlainSizeForce = "PlainSizeForce";
-					public const string NameAttributePlainPartsColor = "Plain_PartsColor";
 					public const string NameAttributePlainVertexCorrection = "Plain_VertexCorrection";
 					public const string NameAttributePlainOffsetPivot = "Plain_OffsetPivot";
 					public const string NameAttributePlainPositionTexture = "Plain_PositionTexture";

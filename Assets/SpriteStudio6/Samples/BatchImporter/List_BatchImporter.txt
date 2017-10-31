@@ -401,16 +401,16 @@
 * PackAttributeAnimation_Position > FormatName
 * PackAttributeAnimation_Rotation > FormatName
 * PackAttributeAnimation_Scaling > FormatName
+* PackAttributeAnimation_ScalingLocal > FormatName
+* PackAttributeAnimation_RateOpacity > FormatName
+* PackAttributeAnimation_PartsColor > FormatName
 * PackAttributeAnimation_PositionAnchor > FormatName
 * PackAttributeAnimation_UserData > FormatName
 * PackAttributeAnimation_Instance > FormatName
 * PackAttributeAnimation_Effect > FormatName
 * PackAttributeAnimation_RadiusCollision > FormatName
 * PackAttributeAnimation_PlainCell > FormatName
-* PackAttributeAnimation_PlainScalingLocal > FormatName
-* PackAttributeAnimation_PlainRateOpacity > FormatName
 * PackAttributeAnimation_PlainSizeForce > FormatName
-* PackAttributeAnimation_PlainPartsColor > FormatName
 * PackAttributeAnimation_PlainVertexCorrection > FormatName
 * PackAttributeAnimation_PlainOffsetPivot > FormatName
 * PackAttributeAnimation_PlainPositionTexture > FormatName
@@ -418,7 +418,6 @@
 * PackAttributeAnimation_PlainRotationTexture > FormatName
 * PackAttributeAnimation_FixIndexCellMap > FormatName
 * PackAttributeAnimation_FixCoordinate > FormatName
-* PackAttributeAnimation_FixPartsColor > FormatName
 * PackAttributeAnimation_FixUV0 > FormatName
 * PackAttributeAnimation_FixSizeCollision > FormatName
 * PackAttributeAnimation_FixPivotCollision > FormatName
@@ -432,16 +431,16 @@
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Position"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Rotation"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Scaling"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]ScalingLocal"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RateOpacity"
+* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]PartsColor"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]PositionAnchor"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]UserData"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Instance"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Effect"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RadiusCollision"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]Cell"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]ScalingLocal"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]RateOpacity"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]SizeForce"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]PartsColor"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]VertexCorrection"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]OffsetPivot"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]PositionTexture"
@@ -449,7 +448,6 @@
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]RotationTexture"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]IndexCellMap"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]Coordinate"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]PartsColor"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]UV0"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]SizeCollision"
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]PivotCollision"
