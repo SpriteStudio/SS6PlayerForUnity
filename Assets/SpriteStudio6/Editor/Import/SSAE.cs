@@ -2259,7 +2259,6 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* MEMO: Attributes for Fix format absolutely do not have data at this point. */
 //							flagInUse |= (0 >= animationParts.FixIndexCellMap.CountGetKey()) ? true : false;
 //							flagInUse |= (0 >= animationParts.FixCoordinate.CountGetKey()) ? true : false;
-//							flagInUse |= (0 >= animationParts.FixPartsColor.CountGetKey()) ? true : false;
 //							flagInUse |= (0 >= animationParts.FixUV.CountGetKey()) ? true : false;
 //							flagInUse |= (0 >= animationParts.FixSizeCollisionX.CountGetKey()) ? true : false;
 //							flagInUse |= (0 >= animationParts.FixSizeCollisionY.CountGetKey()) ? true : false;
@@ -2647,7 +2646,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt FixIndexCellMap;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix FixCoordinate;
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix FixPartsColor;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix FixUV;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat FixSizeCollisionX;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat FixSizeCollisionY;
@@ -2754,8 +2752,6 @@ public static partial class LibraryEditor_SpriteStudio6
 							FixIndexCellMap.CleanUp();
 							FixCoordinate = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix();
 							FixCoordinate.CleanUp();
-							FixPartsColor = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix();
-							FixPartsColor.CleanUp();
 							FixUV = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix();
 							FixUV.CleanUp();
 							FixSizeCollisionX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
@@ -2825,7 +2821,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							FixIndexCellMap.BootUp();
 							FixCoordinate.BootUp();
-							FixPartsColor.BootUp();
 							FixUV.BootUp();
 							FixSizeCollisionX.BootUp();
 							FixSizeCollisionY.BootUp();
@@ -2892,7 +2887,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							FixIndexCellMap.ShutDown();
 							FixCoordinate.ShutDown();
-							FixPartsColor.ShutDown();
 							FixUV.ShutDown();
 							FixSizeCollisionX.ShutDown();
 							FixSizeCollisionY.ShutDown();
@@ -3676,7 +3670,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							dataAnimation.TableParts[j].Fix.IndexCellMap = PackAttribute.FactoryInt(setting.PackAttributeAnimation.FixIndexCellMap);
 							dataAnimation.TableParts[j].Fix.Coordinate = PackAttribute.FactoryCoordinateFix(setting.PackAttributeAnimation.FixCoordinate);
-							dataAnimation.TableParts[j].Fix.PartsColor = PackAttribute.FactoryPartsColorFix(setting.PackAttributeAnimation.FixPartsColor);
 							dataAnimation.TableParts[j].Fix.UV0 = PackAttribute.FactoryUVFix(setting.PackAttributeAnimation.FixUV0);
 							dataAnimation.TableParts[j].Fix.SizeCollision = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.FixSizeCollision);
 							dataAnimation.TableParts[j].Fix.PivotCollision = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.FixPivotCollision);
@@ -3814,20 +3807,6 @@ public static partial class LibraryEditor_SpriteStudio6
 										)
 									{
 										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.Coordinate\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-
-									if(false == dataAnimation.TableParts[j].Fix.PartsColor.Function.Pack(	dataAnimation.TableParts[j].Fix.PartsColor,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPartsColor,
-																											countFrame,
-																											informationAnimationParts.StatusParts,
-																											informationAnimationParts.TableOrderDraw,
-																											informationAnimationParts.TableOrderPreDraw,
-																											informationAnimationParts.FixPartsColor
-																									)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.PartsColor\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 										goto ConvertData_ErrorEnd;
 									}
 
@@ -3989,14 +3968,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix();
 						container.TypePack = pack;
 						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(container);
-						return(container);
-					}
-
-					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix FactoryPartsColorFix(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
-					{
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix();
-						container.TypePack = pack;
-						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColorFix(container);
 						return(container);
 					}
 

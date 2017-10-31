@@ -50,7 +50,6 @@ public static partial class Library_SpriteStudio6
 
 					public const string NameAttributeFixIndexCellMap = "Fix_IndexCellMap";
 					public const string NameAttributeFixCoordinate = "Fix_Coordinate";
-					public const string NameAttributeFixPartsColor = "Fix_PartsColor";
 					public const string NameAttributeFixUV0 = "Fix_UV0";
 					public const string NameAttributeFixSizeCollision = "Fix_SizeCollision";
 					public const string NameAttributeFixPivotCollision = "Fix_PivotCollision";
@@ -623,36 +622,6 @@ public static partial class Library_SpriteStudio6
 	
 						ValueGet_ErrorEnd:;
 							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultCoordinateFix;
-							return(false);
-						}
-						#endregion Functions
-					}
-					public class AttributePartsColorFix : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix>
-					{
-						/* ----------------------------------------------- Functions */
-						#region Functions
-						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix valueOutput, int frame)
-						{	/* MEMO: This attribute has keyframes in all frames. */
-							int count = CountGetKey();
-							if((0 >= count) || (0 > frame))
-							{
-								goto ValueGet_ErrorEnd;
-							}
-							if(count <= frame)
-							{
-								valueOutput = ListKey[count - 1].Value;
-								return(true);
-							}
-							if(ListKey[frame].Frame != frame)
-							{	/* Is the key missing ?? */
-								goto ValueGet_ErrorEnd;
-							}
-
-							valueOutput = ListKey[frame].Value;
-							return(true);
-	
-						ValueGet_ErrorEnd:;
-							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColorFix;
 							return(false);
 						}
 						#endregion Functions

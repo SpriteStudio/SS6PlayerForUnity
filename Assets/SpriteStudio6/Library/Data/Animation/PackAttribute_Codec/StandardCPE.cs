@@ -44,7 +44,6 @@ public static partial class Library_SpriteStudio6
 						true,	/* Plain.RotationTexture */
 						true,	/* Fix.IndexCellMap */
 						true,	/* Fix.Coordinate */
-						true,	/* Fix.PartsColor */
 						true,	/* Fix.UV0 */
 						true,	/* Fix.SizeCollision */
 						true	/* Fix.PivotCollision */
@@ -64,7 +63,6 @@ public static partial class Library_SpriteStudio6
 					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
 					internal readonly static InterfaceFunctionCoordinateFix FunctionCoordinateFix = new InterfaceFunctionCoordinateFix();
-					internal readonly static InterfaceFunctionPartsColorFix FunctionPartsColorFix = new InterfaceFunctionPartsColorFix();
 					internal readonly static InterfaceFunctionUVFix FunctionUVFix = new InterfaceFunctionUVFix();
 
 					[System.Flags]
@@ -776,62 +774,6 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(dataUncompressed);
-							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
-
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
-						}
-						#endregion Functions
-					}
-
-					public class InterfaceFunctionPartsColorFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerPartsColorFix
-					{
-						/* ----------------------------------------------- Functions */
-						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix outValue,
-												ref int outFrameKey,
-												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
-												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
-											)
-						{
-							if(0 >= container.TableCodeValue.Length)
-							{
-								return(false);
-							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableCodeValue[0].TableCode, container.TableValue));
-						}
-
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix outValue,
-													ref int outFrameKey,
-													int index,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
-													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
-												)
-						{
-							if(0 >= container.TableCodeValue.Length)
-							{
-								return(false);
-							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref outValue, ref outFrameKey, index, container.TableCodeValue[0].TableCode, container.TableValue));
-						}
-
-						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container)
-						{
-							return(container.TableCodeValue.Length);
-						}
-
-						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
-											string nameAttribute,
-											int countFrame,
-											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
-											int[] tableOrderDraw,
-											int[] tableOrderPreDraw,
-											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix[] listKeyData
-										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
-							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
-							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix();
-							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
-							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColorFix(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
 							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));

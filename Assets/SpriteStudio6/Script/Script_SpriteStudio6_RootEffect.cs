@@ -49,6 +49,20 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			Status = (true == value) ? (Status | FlagBitStatus.PLAYING_INFINITY) : (Status & ~FlagBitStatus.PLAYING_INFINITY);
 		}
 	}
+	internal bool StatusIsUpdateRateScaleLocal
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.UPDATE_RATE_SCALELOCAL));
+		}
+	}
+	internal bool StatusIsUpdateRateOpacity
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.UPDATE_RATE_OPACITY));
+		}
+	}
 	internal bool StatusIsChangeTableMaterial
 	{
 		get
@@ -61,6 +75,33 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		get
 		{
 			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+		}
+	}
+
+	/* MEMO: bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
+	/* In principle, do not change the value. Correctly operation is not guaranteed.                     */
+	internal float RateOpacity
+	{
+		get
+		{
+			return(RateOpacityForce);
+		}
+		set
+		{
+			RateOpacityForce = value;
+			Status |= FlagBitStatus.UPDATE_RATE_OPACITY;
+		}
+	}
+	internal Vector2 RateScaleLocal
+	{
+		get
+		{
+			return(RateScaleLocalForce);
+		}
+		set
+		{
+			RateScaleLocalForce = value;
+			Status |= FlagBitStatus.UPDATE_RATE_SCALELOCAL;
 		}
 	}
 
@@ -243,7 +284,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 		/* Clear transient status */
 		StatusPlaying &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START;
-		Status &= ~(FlagBitStatus.CHANGE_TABLEMATERIAL | FlagBitStatus.CHANGE_CELLMAP);
+		Status &= ~(	FlagBitStatus.UPDATE_RATE_SCALELOCAL
+						| FlagBitStatus.UPDATE_RATE_OPACITY
+						| FlagBitStatus.CHANGE_TABLEMATERIAL
+						| FlagBitStatus.CHANGE_CELLMAP
+					);
 	}
 	internal void TimeElapse(float time, bool flagReverseParent)
 	{	/* MEMO: In principle, This Function is for calling from "Library_SpriteStudio6.Control.Animation.Parts.DrawEffect". */
@@ -356,8 +401,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		PLAYING = 0x20000000,
 		PLAYING_INFINITY = 0x1000000,
 
-		CHANGE_TABLEMATERIAL = 0x08000000,
-		CHANGE_CELLMAP = 0x04000000,
+		UPDATE_RATE_SCALELOCAL = 0x08000000,
+		UPDATE_RATE_OPACITY = 0x04000000,
+
+		CHANGE_TABLEMATERIAL = 0x00800000,
+		CHANGE_CELLMAP = 0x00400000,
 
 		CLEAR = 0x00000000,
 	}

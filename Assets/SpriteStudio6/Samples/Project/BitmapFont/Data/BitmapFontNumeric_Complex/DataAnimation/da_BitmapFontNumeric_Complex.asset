@@ -237,10 +237,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -347,10 +343,6 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: 
         Coordinate:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -463,10 +455,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -573,10 +561,6 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: 
         Coordinate:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -689,10 +673,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -799,10 +779,6 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: 
         Coordinate:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -915,10 +891,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -1028,10 +1000,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -1138,10 +1106,6 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: 
         Coordinate:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -1269,10 +1233,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -1382,10 +1342,6 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: 
         Coordinate:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -1501,10 +1457,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -1614,10 +1566,6 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: 
         Coordinate:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -1733,10 +1681,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -1846,10 +1790,6 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: 
         Coordinate:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -1965,10 +1905,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -2078,10 +2014,6 @@ MonoBehaviour:
           TableCodeValue: []
           TableValue: 
         Coordinate:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
-        PartsColor:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
@@ -2197,10 +2129,6 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
-        PartsColor:
-          TypePack: 1
-          TableCodeValue: []
-          TableValue: []
         UV0:
           TypePack: 1
           TableCodeValue: []
@@ -2265,9 +2193,6 @@ MonoBehaviour:
       IndexCellMap: 0
       Coordinate:
         TableCoordinate: []
-      PartsColor:
-        TableUV: []
-        TableColorOverlay: []
       UV0:
         TableUV: []
       SizeCollision: {x: 0, y: 0}

@@ -316,11 +316,11 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;	/* used in Plain-Sprite, Plain-Mask, Instance, Effect */
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;	/* used in Plain-Sprite, Plain-Mask (Contents different) */
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;	/* (Unsupported now) */
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;
 
@@ -367,7 +367,6 @@ public static partial class Library_SpriteStudio6
 
 					Fix.IndexCellMap = null;
 					Fix.Coordinate = null;
-					Fix.PartsColor = null;
 					Fix.UV0 = null;
 					Fix.SizeCollision = null;
 					Fix.PivotCollision = null;
@@ -429,7 +428,6 @@ public static partial class Library_SpriteStudio6
 					#region Variables & Properties
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt IndexCellMap;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix Coordinate;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix PartsColor;
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix UV0;
 
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeCollision;
@@ -524,8 +522,6 @@ public static partial class Library_SpriteStudio6
 				public class ContainerEffect : Container<Library_SpriteStudio6.Data.Animation.Attribute.Effect, InterfaceContainerEffect> {}
 				[System.Serializable]
 				public class ContainerCoordinateFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix, InterfaceContainerCoordinateFix> {}
-				[System.Serializable]
-				public class ContainerPartsColorFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix, InterfaceContainerPartsColorFix> {}
 				[System.Serializable]
 				public class ContainerUVFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.UVFix, InterfaceContainerUVFix> {}
 				#endregion Classes, Structs & Interfaces
@@ -1685,8 +1681,8 @@ public static partial class Library_SpriteStudio6
 
 			public bool FlagHideForce;
 
-			internal float RateOpacity = 1.0f;
-			internal Vector2 RateScaleLocal = Vector2.one;
+			protected float RateOpacityForce = 1.0f;
+			protected Vector2 RateScaleLocalForce = Vector2.one;
 
 			internal Library_SpriteStudio6.Control.AdditionalColor AdditionalColor = null;
 

@@ -195,7 +195,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(TableAnimation[i].TableParts[j].Fix.IndexCellMap);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(TableAnimation[i].TableParts[j].Fix.Coordinate);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColorFix(TableAnimation[i].TableParts[j].Fix.PartsColor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUVFix(TableAnimation[i].TableParts[j].Fix.UV0);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Fix.SizeCollision);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Fix.PivotCollision);
@@ -280,7 +279,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 			Fix.IndexCellMap = -1;
 			Fix.Coordinate.CleanUp();
-			Fix.PartsColor.CleanUp();
 			Fix.UV0.CleanUp();
 			Fix.SizeCollision = Vector2.zero;
 			Fix.PivotCollision = Vector2.zero;
@@ -313,7 +311,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			#region Variables & Properties
 			public int IndexCellMap;
 			public Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix Coordinate;
-			public Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix PartsColor;
 			public Library_SpriteStudio6.Data.Animation.Attribute.UVFix UV0;
 
 			public Vector2 SizeCollision;

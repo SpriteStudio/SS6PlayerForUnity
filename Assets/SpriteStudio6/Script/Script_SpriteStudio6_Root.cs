@@ -42,6 +42,20 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			return(0 != (Status & FlagBitStatus.PLAYING));
 		}
 	}
+	internal bool StatusIsUpdateRateScaleLocal
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.UPDATE_RATE_SCALELOCAL));
+		}
+	}
+	internal bool StatusIsUpdateRateOpacity
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.UPDATE_RATE_OPACITY));
+		}
+	}
 	internal bool StatusIsChangeTableMaterial
 	{
 		get
@@ -54,6 +68,33 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		get
 		{
 			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+		}
+	}
+
+	/* MEMO: bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
+	/* In principle, do not change the value. Correctly operation is not guaranteed.                     */
+	internal float RateOpacity
+	{
+		get
+		{
+			return(RateOpacityForce);
+		}
+		set
+		{
+			RateOpacityForce = value;
+			Status |= FlagBitStatus.UPDATE_RATE_OPACITY;
+		}
+	}
+	internal Vector2 RateScaleLocal
+	{
+		get
+		{
+			return(RateScaleLocalForce);
+		}
+		set
+		{
+			RateScaleLocalForce = value;
+			Status |= FlagBitStatus.UPDATE_RATE_SCALELOCAL;
 		}
 	}
 
@@ -393,7 +434,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Clear Transient-Status */
-		Status &= ~(FlagBitStatus.CHANGE_TABLEMATERIAL | FlagBitStatus.CHANGE_CELLMAP);
+		Status &= ~(	FlagBitStatus.UPDATE_RATE_SCALELOCAL
+						| FlagBitStatus.UPDATE_RATE_OPACITY
+						| FlagBitStatus.CHANGE_TABLEMATERIAL
+						| FlagBitStatus.CHANGE_CELLMAP
+					);
 		if(null != AdditionalColor)
 		{
 			AdditionalColor.Status &= ~Library_SpriteStudio6.Control.AdditionalColor.FlagBitStatus.CHANGE;
@@ -645,8 +690,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		VALID = 0x40000000,
 		PLAYING = 0x20000000,
 
-		CHANGE_TABLEMATERIAL = 0x08000000,
-		CHANGE_CELLMAP = 0x04000000,
+		UPDATE_RATE_SCALELOCAL = 0x08000000,
+		UPDATE_RATE_OPACITY = 0x04000000,
+
+		CHANGE_TABLEMATERIAL = 0x00800000,
+		CHANGE_CELLMAP = 0x00400000,
 
 		CLEAR = 0x00000000,
 	}

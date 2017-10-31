@@ -114,22 +114,6 @@ public static partial class Library_SpriteStudio6
 					Vector2.zero,
 				};
 				public readonly static UVFix DefaultUVFix = new UVFix(TableUVUVFixDefault);
-
-				private readonly static Vector2[] TableUVPartsColorFixDefault = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
-				{
-					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.MIX + 0.01f),
-					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.MIX + 0.01f),
-					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.MIX + 0.01f),
-					new Vector2(0.0f, (float)Library_SpriteStudio6.KindOperationBlend.MIX + 0.01f),
-				};
-				private readonly static Color32[] TableColorPartsColorFixDefault = new Color32[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
-				{
-					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
-					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
-				};
-				public readonly static PartsColorFix DefaultPartsColorFix = new PartsColorFix(TableUVPartsColorFixDefault, TableColorPartsColorFixDefault);
 				#endregion Enums & Constants
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -920,96 +904,6 @@ public static partial class Library_SpriteStudio6
 						for(int i=0; i<count; i++)
 						{
 							if(TableUV[i] != targetData.TableUV[i])
-							{
-								return(false);
-							}
-						}
-						return(true);
-					}
-
-					public override int GetHashCode()
-					{
-						return(base.GetHashCode());
-					}
-					#endregion Functions
-				}
-
-				[System.Serializable]
-				public struct PartsColorFix
-				{
-					/* ----------------------------------------------- Variables & Properties */
-					#region Variables & Properties
-					public Vector2[] TableUV;
-					public Color32[] TableColorOverlay;
-					#endregion Variables & Properties
-
-					/* ----------------------------------------------- Functions */
-					#region Functions
-					public PartsColorFix(Vector2[] tableUV, Color32[] tableColorOverlay)
-					{
-						TableUV = tableUV;
-						TableColorOverlay = tableColorOverlay;
-					}
-
-					public void CleanUp()
-					{
-						TableUV = null;
-						TableColorOverlay = null;
-					}
-
-					public void Duplicate(PartsColorFix original)
-					{
-#if ATTRIBUTE_DUPLICATE_DEEP
-						/* MEMO: Deep copy */
-						int count = original.TableUV.Length;
-						TableUV = new Vector2[count];
-						for(int i=0; i<count; i++)
-						{
-							TableUV[i] = original.TableUV[i];
-						}
-
-						count = original.TableColorOverlay.Length;
-						TableColorOverlay = new Color32[count];
-						for(int i=0; i<count; i++)
-						{
-							TableColorOverlay[i] = original.TableColorOverlay[i];
-						}
-#else
-						/* MEMO: Shallow copy */
-						TableUV = original.TableUV;
-						TableColorOverlay = original.TableColorOverlay;
-#endif
-					}
-
-					public override bool Equals(System.Object target)
-					{
-						if((null == target) || (GetType() != target.GetType()))
-						{
-							return(false);
-						}
-
-						PartsColorFix targetData = (PartsColorFix)target;
-						int count = TableUV.Length;
-						if(count != targetData.TableUV.Length)
-						{
-							return(false);
-						}
-						for(int i=0; i<count; i++)
-						{
-							if(TableUV[i] != targetData.TableUV[i])
-							{
-								return(false);
-							}
-						}
-
-						count = TableColorOverlay.Length;
-						if(count != targetData.TableColorOverlay.Length)
-						{
-							return(false);
-						}
-						for(int i=0; i<count; i++)
-						{
-							if(false == TableColorOverlay[i].Equals(targetData.TableColorOverlay[i]))
 							{
 								return(false);
 							}

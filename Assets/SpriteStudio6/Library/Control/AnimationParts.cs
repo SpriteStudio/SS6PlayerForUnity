@@ -61,6 +61,9 @@ public static partial class Library_SpriteStudio6
 				internal BufferTRS TRSMaster;
 				internal BufferTRS TRSSlave;
 
+				internal BufferAttribute<Vector2> ScaleLocal;
+				internal BufferAttribute<float> RateOpacity;
+
 				internal BufferParameterSprite ParameterSprite;
 				#endregion Variables & Properties
 
@@ -93,6 +96,9 @@ public static partial class Library_SpriteStudio6
 
 					TRSMaster.CleanUp();
 					TRSSlave.CleanUp();
+
+					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
+					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
 
 					ParameterSprite.CleanUp();
 				}
@@ -196,7 +202,7 @@ public static partial class Library_SpriteStudio6
 							break;
 					}
 
-					AnimationRefresh();
+					AnimationChange();
 					Status |= FlagBitStatus.VALID;
 
 					return(true);
@@ -428,17 +434,32 @@ public static partial class Library_SpriteStudio6
 					}
 					else
 					{
-						if((FlagBitStatus.CHANGE_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_SCALING) == (Status & (FlagBitStatus.CHANGE_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_SCALING)))
+						if((FlagBitStatus.CHANGE_TRANSFORM_SCALING | FlagBitStatus.REFRESH_TRANSFORM_SCALING) == (Status & (FlagBitStatus.CHANGE_TRANSFORM_SCALING | FlagBitStatus.REFRESH_TRANSFORM_SCALING)))
 						{	/* Refresh */
 							transform.localScale = Vector3.one;
 						}
 					}
 
 					Status &= ~(FlagBitStatus.REFRESH_TRANSFORM_POSITION | FlagBitStatus.REFRESH_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_SCALING);
+					Status &= ~(FlagBitStatus.UPDATE_SCALELOCAL | FlagBitStatus.UPDATE_RATEOPACITY);
 
 					/* Get Status & Hide */
 					dataAnimationParts.Status.Function.ValueGet(ref StatusAnimationFrame, ref FrameKeyStatusAnimationFrame, dataAnimationParts.Status, ref controlTrack.ArgumentContainer);
 					Status = (true == StatusAnimationFrame.IsHide) ? (Status | FlagBitStatus.HIDE) : (Status & ~FlagBitStatus.HIDE);
+
+					/* Get Local-Scale *
+					/* MEMO: "ScaleLocal" are data that must be constantly updated in most parts, so decode here. */
+					if(true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref controlTrack.ArgumentContainer))
+					{
+						Status |= FlagBitStatus.UPDATE_SCALELOCAL;
+					}
+
+					/* Get Rate-Opacity */
+					/* MEMO: "RateOpacity" are data that must be constantly updated in most parts, so decode here. */
+					if(true == dataAnimationParts.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.RateOpacity, ref controlTrack.ArgumentContainer))
+					{
+						Status |= FlagBitStatus.UPDATE_RATEOPACITY;
+					}
 				}
 				private void UpdateUserData(	Script_SpriteStudio6_Root instanceRoot,
 												int idParts,
@@ -760,10 +781,12 @@ public static partial class Library_SpriteStudio6
 												ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 											)
 				{
-					/* MEMO: This function is present only for explicitness, not called. (dummy)                 */
+					/* MEMO: This function is not called. (dummy for explicitness)                               */
 					/*       Originally, the processing to be written in this function is  in "DrawInstance".    */
 					/*                                                                                           */
 					/*       "Instance"-parts are updated and rendered in same function "DrawInstance".          */
+					/*       Because "DrawInstance" is always called. (Mainly due to optimization)               */
+					/*       "Instance"-parts is included in draw-order-list regardless hide status.             */
 				}
 
 				private void UpdateEffect(	Script_SpriteStudio6_Root instanceRoot,
@@ -772,10 +795,12 @@ public static partial class Library_SpriteStudio6
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 										)
 				{
-					/* MEMO: This function is present only for explicitness, not called. (dummy)                 */
+					/* MEMO: This function is not called. (dummy for explicitness)                               */
 					/*       Originally, the processing to be written in this function is  in "DrawEffect".      */
 					/*                                                                                           */
 					/*       "Effect"-parts are updated and rendered in same function "DrawEffect".              */
+					/*       Because "DrawEffect" is always called. (Mainly due to optimization)                 */
+					/*       "Effect"-parts is included in draw-order-list regardless hide status.               */
 				}
 
 				private void UpdateColliderRectangle(	Script_SpriteStudio6_Root instanceRoot,
@@ -856,6 +881,7 @@ public static partial class Library_SpriteStudio6
 								DrawNormal(	instanceRoot,
 											idParts,
 											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+											ref instanceRoot.TableControlParts[idParts],
 											ref instanceRoot.TableControlTrack[indexTrack],
 											flagHideDefault,
 											masking,
@@ -904,6 +930,7 @@ public static partial class Library_SpriteStudio6
 								DrawNormal(	instanceRoot,
 											idParts,
 											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+											ref instanceRoot.TableControlParts[idParts],
 											ref instanceRoot.TableControlTrack[indexTrack],
 											flagHideDefault,
 											masking,
@@ -917,6 +944,7 @@ public static partial class Library_SpriteStudio6
 								DrawInstance(	instanceRoot,
 												idParts,
 												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+												ref instanceRoot.TableControlParts[idParts],
 												ref instanceRoot.TableControlTrack[indexTrack],
 												flagHideDefault,
 												masking,
@@ -929,6 +957,7 @@ public static partial class Library_SpriteStudio6
 								DrawEffect(	instanceRoot,
 											idParts,
 											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+											ref instanceRoot.TableControlParts[idParts],
 											ref instanceRoot.TableControlTrack[indexTrack],
 											flagHideDefault,
 											masking,
@@ -968,6 +997,7 @@ public static partial class Library_SpriteStudio6
 				private void DrawNormal(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+											ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 											bool flagHideDefault,
 											Library_SpriteStudio6.KindMasking masking,
@@ -987,6 +1017,7 @@ public static partial class Library_SpriteStudio6
 							case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
 								ParameterSprite.DrawPlain(	instanceRoot,
 															idParts,
+															ref controlParts,
 															InstanceGameObject,
 															InstanceTransform,
 															masking,
@@ -1000,6 +1031,7 @@ public static partial class Library_SpriteStudio6
 							case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
 								ParameterSprite.DrawFix(	instanceRoot,
 															idParts,
+															ref controlParts,
 															InstanceGameObject,
 															InstanceTransform,
 															masking,
@@ -1016,6 +1048,7 @@ public static partial class Library_SpriteStudio6
 				private void DrawInstance(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+											ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 											bool flagHideDefault,
 											Library_SpriteStudio6.KindMasking masking,
@@ -1146,6 +1179,20 @@ public static partial class Library_SpriteStudio6
 					/* MEMO: "Instance" is updated from here. (Not updated from Monobehaviour's LateUpdate) */
 					bool flagHide = flagHideDefault;
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
+
+					if((0 != (controlParts.Status & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL)) || (true == instanceRoot.StatusIsUpdateRateScaleLocal))
+					{
+						Vector2 scaleLocal = instanceRoot.RateScaleLocal;
+						scaleLocal.x *= controlParts.ScaleLocal.Value.x;
+						scaleLocal.y *= controlParts.ScaleLocal.Value.y;
+						InstanceRootUnderControl.RateScaleLocal = scaleLocal;
+					}
+
+					if((0 != (controlParts.Status & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_RATEOPACITY)) || (true == instanceRoot.StatusIsUpdateRateOpacity))
+					{
+						InstanceRootUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
+					}
+
 					InstanceRootUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																flagHide,
 																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
@@ -1180,6 +1227,7 @@ public static partial class Library_SpriteStudio6
 				private void DrawEffect(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+											ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 											bool flagHideDefault,
 											Library_SpriteStudio6.KindMasking masking,
@@ -1242,6 +1290,20 @@ public static partial class Library_SpriteStudio6
 					/* MEMO: "Instance" is updated from here. (Not updated from Monobehaviour's LateUpdate) */
 					bool flagHide = flagHideDefault;
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
+
+					if((0 != (controlParts.Status & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL)) || (true == instanceRoot.StatusIsUpdateRateScaleLocal))
+					{
+						Vector2 scaleLocal = instanceRoot.RateScaleLocal;
+						scaleLocal.x *= controlParts.ScaleLocal.Value.x;
+						scaleLocal.y *= controlParts.ScaleLocal.Value.y;
+						InstanceRootEffectUnderControl.RateScaleLocal = scaleLocal;
+					}
+
+					if((0 != (controlParts.Status & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_RATEOPACITY)) || (true == instanceRoot.StatusIsUpdateRateOpacity))
+					{
+						InstanceRootEffectUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
+					}
+
 					InstanceRootEffectUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																	flagHide,
 																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
@@ -1270,7 +1332,7 @@ public static partial class Library_SpriteStudio6
 					ParameterSprite.DrawAddCluster(instanceRoot.ClusterDraw, ParameterSprite.ChainDrawMask, ParameterSprite.MaterialDrawMask);
 				}
 
-				internal void AnimationRefresh()
+				internal void AnimationChange()
 				{
 					Status |= (	FlagBitStatus.REFRESH_TRANSFORM_POSITION
 								| FlagBitStatus.REFRESH_TRANSFORM_ROTATION
@@ -1293,6 +1355,9 @@ public static partial class Library_SpriteStudio6
 					{
 						Status &= ~(FlagBitStatus.EFFECT_IGNORE_ATTRIBUTE | FlagBitStatus.EFFECT_PLAY_INDEPENDENT);
 					}
+
+					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
+					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
 
 					ParameterSprite.AnimationChange(flagClearCellApply);
 
@@ -1318,20 +1383,22 @@ public static partial class Library_SpriteStudio6
 					REFRESH_TRANSFORM_ROTATION = 0x00200000,
 					REFRESH_TRANSFORM_POSITION = 0x00100000,
 
-					CHANGE_CELL_UNREFLECTED = 0x00080000,
-					CHANGE_CELL_IGNORE_ATTRIBUTE = 0x00020000,
-					CHANGE_CELL_IGNORE_NEWANIMATION = 0x00010000,
+					UPDATE_SCALELOCAL = 0x00080000,
+					UPDATE_RATEOPACITY = 0x00040000,
 
-					INSTANCE_PLAY_INDEPENDENT = 0x00008000,
-					INSTANCE_IGNORE_EXCEPT_NEXTDATA = 0x00004000,
-					INSTANCE_IGNORE_ATTRIBUTE = 0x00002000,
-					INSTANCE_IGNORE_NEWANIMATION = 0x00001000,
+					CHANGE_CELL_UNREFLECTED = 0x00008000,
+					CHANGE_CELL_IGNORE_ATTRIBUTE = 0x00002000,
+					CHANGE_CELL_IGNORE_NEWANIMATION = 0x00001000,
 
-					EFFECT_PLAY_INDEPENDENT = 0x00000800,
-					EFFECT_IGNORE_EXCEPT_NEXTDATA = 0x00000400,
-					EFFECT_IGNORE_ATTRIBUTE = 0x00000200,
-					EFFECT_IGNORE_NEWANIMATION = 0x00000100,
+					INSTANCE_PLAY_INDEPENDENT = 0x00000800,
+					INSTANCE_IGNORE_EXCEPT_NEXTDATA = 0x00000400,
+					INSTANCE_IGNORE_ATTRIBUTE = 0x00000200,
+					INSTANCE_IGNORE_NEWANIMATION = 0x00000100,
 
+					EFFECT_PLAY_INDEPENDENT = 0x00000080,
+					EFFECT_IGNORE_EXCEPT_NEXTDATA = 0x00000040,
+					EFFECT_IGNORE_ATTRIBUTE = 0x00000020,
+					EFFECT_IGNORE_NEWANIMATION = 0x00000010,
 					CLEAR = 0x00000000
 				}
 				#endregion Enums & Constants
@@ -1387,8 +1454,6 @@ public static partial class Library_SpriteStudio6
 
 					internal Library_SpriteStudio6.KindMasking Masking;
 
-					internal BufferAttribute<Vector2> ScaleLocal;
-
 					internal Vector2 RateScaleMesh;
 					internal Vector2 RateScaleTexture;
 
@@ -1420,7 +1485,6 @@ public static partial class Library_SpriteStudio6
 					internal BufferAttribute<Vector2> ScalingTexture;
 					internal BufferAttribute<Vector2> PositionTexture;
 					internal BufferAttribute<float> RotationTexture;
-					internal BufferAttribute<float> RateOpacity;
 					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> PartsColor;
 					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> VertexCorrection;
 					#endregion Variables & Properties
@@ -1447,8 +1511,6 @@ public static partial class Library_SpriteStudio6
 
 						Masking = (Library_SpriteStudio6.KindMasking)(-1);
 
-						ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
-
 						RateScaleMesh = Vector2.one;
 						RateScaleTexture = Vector2.one;
 
@@ -1471,7 +1533,6 @@ public static partial class Library_SpriteStudio6
 						ScalingTexture.CleanUp();	ScalingTexture.Value = Vector2.one;
 						PositionTexture.CleanUp();	PositionTexture.Value = Vector2.zero;
 						RotationTexture.CleanUp();	RotationTexture.Value = 0.0f;
-						RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
 						PartsColor.CleanUp();	/* PartsColor.Value.CleanUp(); */
 						VertexCorrection.CleanUp();	/* VertexCorrection.Value.CleanUp(); */
 					}
@@ -1615,6 +1676,17 @@ public static partial class Library_SpriteStudio6
 						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
 						bool flagUpdateValueAttribute;
 
+						/* Check Part-Control's update */
+						if((0 != (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL)) || (true == instanceRoot.StatusIsUpdateRateScaleLocal))
+						{
+							Status |= FlagBitStatus.UPDATE_COORDINATE;
+						}
+
+						if((0 != (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_RATEOPACITY)) || (true == instanceRoot.StatusIsUpdateRateOpacity))
+						{
+							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+						}
+
 						/* Create sprite data (from cell to use) */
 						/* MEMO: If do not always decode "Cell", malfunctions at restoration after cell-change. */
 						flagUpdateValueAttribute = dataAnimationParts.Plain.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Plain.Cell, ref argumentContainer);
@@ -1714,25 +1786,10 @@ public static partial class Library_SpriteStudio6
 							}
 						}
 
-						/* Get Local-Scale */
-//						if(true == dataAnimationParts.Plain.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.Plain.ScalingLocal, ref argumentContainer))
-						if(true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref argumentContainer))
-						{
-							Status |= FlagBitStatus.UPDATE_COORDINATE;
-						}
-
 						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
 						{	/* Re-Set Sprite's Size & Pivot (only when coordinates updateed) */
 							SizeSprite = sizeSprite;
 							PivotSprite = pivotSprite;
-						}
-
-						/* Get Rate-Opacity */
-//						flagUpdateValueAttribute = dataAnimationParts.Plain.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.Plain.RateOpacity, ref argumentContainer); 
-						flagUpdateValueAttribute = dataAnimationParts.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.RateOpacity, ref argumentContainer); 
-						if(true == flagUpdateValueAttribute)
-						{
-							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
 						}
 
 						/* Get Texture-Transform */
@@ -1748,6 +1805,7 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Get & Select PartsColor or AdditionalColor */
+						/* MEMO: Although data not depending on format(Plain or Fix), processing is somewhat different for each parts-feature. */
 						bool flagUseAdditionalColor = false;
 						if(0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR))
 						{
@@ -1757,7 +1815,6 @@ public static partial class Library_SpriteStudio6
 						{
 							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
 						}
-//						flagUpdateValueAttribute = dataAnimationParts.Plain.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.Plain.PartsColor, ref argumentContainer);
 						flagUpdateValueAttribute = dataAnimationParts.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.PartsColor, ref argumentContainer);
 						Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
 						if(null != additionalColor)
@@ -1796,6 +1853,7 @@ public static partial class Library_SpriteStudio6
 
 					internal void DrawPlain(	Script_SpriteStudio6_Root instanceRoot,
 												int idParts,
+												ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
 												GameObject instanceGameObject,
 												Transform instanceTransform,
 												Library_SpriteStudio6.KindMasking masking,
@@ -1891,7 +1949,7 @@ public static partial class Library_SpriteStudio6
 							tableColor = PartsColor.Value.VertexColor;
 						}
 
-						float rateOpacity = instanceRoot.RateOpacity * RateOpacity.Value;
+						float rateOpacity = instanceRoot.RateOpacity * controlParts.RateOpacity.Value;
 						if(0 != (Status & (FlagBitStatus.UPDATE_COLORPARTS | FlagBitStatus.UPDATE_PARAMETERBLEND)))
 						{
 							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.ColorClear;
@@ -1917,12 +1975,12 @@ public static partial class Library_SpriteStudio6
 						/* Calculate Mesh coordinates */
 						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
 						{
-							float ScaleMeshX = RateScaleMesh.x * ScaleLocal.Value.x;
-							float ScaleMeshY = -(RateScaleMesh.y * ScaleLocal.Value.y);	/* * -1.0f ... Y-Axis Inverse */
-							float left = (-pivotSprite.x) * ScaleMeshX;
-							float right = (sizeSprite.x - pivotSprite.x) * ScaleMeshX;
-							float top = (-pivotSprite.y) * ScaleMeshY;
-							float bottom = (sizeSprite.y - pivotSprite.y) * ScaleMeshY;
+							float scaleMeshX = RateScaleMesh.x * controlParts.ScaleLocal.Value.x * instanceRoot.RateScaleLocal.x;
+							float scaleMeshY = -(RateScaleMesh.y * controlParts.ScaleLocal.Value.y * instanceRoot.RateScaleLocal.y);	/* * -1.0f ... Y-Axis Inverse */
+							float left = (-pivotSprite.x) * scaleMeshX;
+							float right = (sizeSprite.x - pivotSprite.x) * scaleMeshX;
+							float top = (-pivotSprite.y) * scaleMeshY;
+							float bottom = (sizeSprite.y - pivotSprite.y) * scaleMeshY;
 
 							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
 							{	/* 4-Triangles Mesh */
@@ -2031,6 +2089,7 @@ public static partial class Library_SpriteStudio6
 
 					internal void DrawFix(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
+											ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
 											GameObject instanceGameObject,
 											Transform instanceTransform,
 											Library_SpriteStudio6.KindMasking masking,

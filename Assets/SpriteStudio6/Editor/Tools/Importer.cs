@@ -797,7 +797,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("[Fix]");
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixIndexCellMap, "IndexCellMap", ref PullDownPackAttributeAnimation.FixIndexCellMap);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixCoordinate, "Coordinate", ref PullDownPackAttributeAnimation.FixCoordinate);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPartsColor, "PartsColor", ref PullDownPackAttributeAnimation.FixPartsColor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixUV0, "UV0", ref PullDownPackAttributeAnimation.FixUV0);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
@@ -1340,7 +1339,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		public Attribute FixIndexCellMap;
 		public Attribute FixCoordinate;
-		public Attribute FixPartsColor;
 		public Attribute FixUV0;
 		public Attribute FixSizeCollision;
 		public Attribute FixPivotCollision;
@@ -1373,7 +1371,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			
 			FixIndexCellMap.CleanUp();
 			FixCoordinate.CleanUp();
-			FixPartsColor.CleanUp();
 			FixUV0.CleanUp();
 			FixSizeCollision.CleanUp();
 			FixPivotCollision.CleanUp();
@@ -1520,12 +1517,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].FixCoordinate;
 			}
 			FixCoordinate.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].FixPartsColor;
-			}
-			FixPartsColor.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{

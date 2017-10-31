@@ -44,7 +44,6 @@ public static partial class Library_SpriteStudio6
 						true,		/* Plain.RotationTexture */
 						true,		/* Fix.IndexCellMap */
 						true,		/* Fix.Coordinate */
-						true,		/* Fix.PartsColor */
 						true,		/* Fix.UV0 */
 						false,		/* Fix.SizeCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false		/* Fix.PivotCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
@@ -64,7 +63,6 @@ public static partial class Library_SpriteStudio6
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
 					internal readonly static InterfaceFunctionCoordinateFix FunctionCoordinateFix = new InterfaceFunctionCoordinateFix();
-					internal readonly static InterfaceFunctionPartsColorFix FunctionPartsColorFix = new InterfaceFunctionPartsColorFix();
 					internal readonly static InterfaceFunctionUVFix FunctionUVFix = new InterfaceFunctionUVFix();
 					#endregion Enums & Constants
 
@@ -711,61 +709,6 @@ public static partial class Library_SpriteStudio6
 							}
 
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix[countFrame];
-							for(int i=0; i<countFrame; i++)
-							{
-								listKeyData[0].ValueGet(out container.TableValue[i], i);
-							}
-							return(true);
-						}
-						#endregion Functions
-					}
-
-					public class InterfaceFunctionPartsColorFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerPartsColorFix
-					{
-						/* ----------------------------------------------- Functions */
-						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix outValue,
-												ref int outFrameKey,
-												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
-												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
-											)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
-						}
-
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix outValue,
-													ref int outFrameKey,
-													int index,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
-													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
-												)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
-						}
-
-						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container)
-						{
-							return(container.TableValue.Length);
-						}
-
-						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColorFix container,
-											string nameAttribute,
-											int countFrame,
-											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
-											int[] tableOrderDraw,
-											int[] tableOrderPreDraw,
-											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColorFix[] listKeyData
-										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-
-							if(0 >= listKeyData[0].CountGetKey())
-							{
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix[0];
-								return(true);
-							}
-
-							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColorFix[countFrame];
 							for(int i=0; i<countFrame; i++)
 							{
 								listKeyData[0].ValueGet(out container.TableValue[i], i);

@@ -311,26 +311,6 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
-				public static void BootUpFunctionPartsColorFix(ContainerPartsColorFix container)
-				{
-					switch(container.TypePack)
-					{
-						case KindTypePack.STANDARD_UNCOMPRESSED:
-							container.Function = StandardUncompressed.FunctionPartsColorFix;
-							break;
-
-						case KindTypePack.STANDARD_CPE:
-							container.Function = StandardCPE.FunctionPartsColorFix;
-							break;
-
-						case KindTypePack.CPE_FLYWEIGHT:
-							break;
-
-						default:
-							break;
-					}
-				}
-
 				public static void BootUpFunctionUVFix(ContainerUVFix container)
 				{
 					switch(container.TypePack)

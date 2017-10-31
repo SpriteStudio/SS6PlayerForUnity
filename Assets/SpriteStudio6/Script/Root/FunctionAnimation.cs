@@ -180,7 +180,7 @@ public partial class Script_SpriteStudio6_Root
 		{
 			if(TableControlParts[i].IndexControlTrack == indexTrack)
 			{
-				TableControlParts[i].AnimationRefresh();
+				TableControlParts[i].AnimationChange();
 			}
 		}
 
