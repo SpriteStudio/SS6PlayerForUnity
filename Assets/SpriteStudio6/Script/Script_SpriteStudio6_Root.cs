@@ -72,7 +72,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	}
 
 	/* MEMO: bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
-	/* In principle, do not change the value. Correctly operation is not guaranteed.                     */
+	/*       In principle, do not change the value. Correctly operation is not guaranteed.               */
 	internal float RateOpacity
 	{
 		get
@@ -453,15 +453,19 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				{
 					if(false == FunctionPlayEnd(this, InstanceGameObjectControl))
 					{
-						/* MEMO: When "FunctionPlayEnd" returns false, destroy self. */
-						/*       If have "Control-Object", will destroy as well.     */
-						if(null != InstanceGameObjectControl)
+						if(null == InstanceRootParent)
 						{
-							UnityEngine.Object.Destroy(InstanceGameObjectControl);
-						}
-						else
-						{
-							UnityEngine.Object.Destroy(gameObject);
+							/* MEMO: When "FunctionPlayEnd" returns false, destroy self. */
+							/*       If have "Control-Object", will destroy as well.     */
+							/*       However, can not destroy when "Instance".           */
+							if(null != InstanceGameObjectControl)
+							{
+								UnityEngine.Object.Destroy(InstanceGameObjectControl);
+							}
+							else
+							{
+								UnityEngine.Object.Destroy(gameObject);
+							}
 						}
 					}
 				}

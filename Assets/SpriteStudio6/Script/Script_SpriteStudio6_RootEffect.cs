@@ -79,7 +79,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	}
 
 	/* MEMO: bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
-	/* In principle, do not change the value. Correctly operation is not guaranteed.                     */
+	/*       In principle, do not change the value. Correctly operation is not guaranteed.               */
 	internal float RateOpacity
 	{
 		get

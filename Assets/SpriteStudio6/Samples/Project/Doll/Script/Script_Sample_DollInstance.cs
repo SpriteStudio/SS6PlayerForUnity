@@ -39,7 +39,12 @@ public class Script_Sample_DollInstance : MonoBehaviour
 	private int[] TableIDPartsControlEye = new int[(int)KindEye.TERMINATOR];
 
 	private float TimeWaitBlinkEye = 0.0f;
-	private bool FlagBlinkingEye = false;
+	private KindAnimationEye AnimationEyeRequest = KindAnimationEye.NON;
+	private KindAnimationEye AnimationEyePlaying = KindAnimationEye.NON;
+
+	private KindAnimationBody AnimationBodyRequest = KindAnimationBody.NON;
+	private KindAnimationBody AnimationBodyPlaying = KindAnimationBody.NON;
+	private int CountRemain = (int)Constant.LIFESPAN_BODY;
 
 	private bool FlagInitialized = false;
 	private bool FlagInitializedEye = false;
@@ -50,7 +55,6 @@ public class Script_Sample_DollInstance : MonoBehaviour
 	void Start()
 	{
 		/* Initialize WorkArea */
-		FlagBlinkingEye = false;
 		for(int i=0; i<(int)KindEye.TERMINATOR; i++)
 		{
 			TableIDPartsControlEye[i] = -1;
@@ -68,6 +72,12 @@ public class Script_Sample_DollInstance : MonoBehaviour
 			return;
 		}
 
+		/* Set PlayEnd-callback (for "Body") */
+		ScriptRoot.FunctionPlayEnd = FunctionPlayEndBody;
+
+		/* Set initial animation */
+		AnimationBodyRequest = KindAnimationBody.WAIT;
+
 		/* Initialize Complete */
 		FlagInitialized = true;
 	}
@@ -81,29 +91,31 @@ public class Script_Sample_DollInstance : MonoBehaviour
 		}
 
 		/* Control Eye's Animations */
+		/* MEMO: "Blinking eyes" works asynchronously with body's  animation. */
 		if(true == EyeCheckInitialized())
 		{
-			if(false == FlagBlinkingEye)
-			{	/* Now Waiting */
-				/* Check when start blinking */
-				TimeWaitBlinkEye -= Time.deltaTime;
-				if(0.0f >= TimeWaitBlinkEye)
-				{	/* Wait -> Blink */
-					AnimatonSetEye(KindAnimationEye.BLINK);
-
-					FlagBlinkingEye = true;
+			TimeWaitBlinkEye -= Time.deltaTime;
+			if(0.0f >= TimeWaitBlinkEye)
+			{
+				if(KindAnimationEye.BLINK != AnimationEyePlaying)
+				{
+					AnimationEyeRequest = KindAnimationEye.BLINK;
 				}
 			}
-			else
-			{	/* Now Blinking */
-				if(true == float.IsNaN(TimeWaitBlinkEye))
-				{	/* Blink -> Wait */
-					AnimatonSetEye(KindAnimationEye.WAIT);
 
-					TimeWaitBlinkEye = Random.Range((float)((int)Constant.BLANK_EYE_MIN), (float)((int)Constant.BLANK_EYE_MAX));
-					FlagBlinkingEye = false;
+			if(KindAnimationBody.NON == AnimationBodyRequest)
+			{
+				if(KindAnimationEye.NON != AnimationEyeRequest)
+				{	/* Requested */
+					AnimationSetEye();
 				}
 			}
+		}
+
+		/* Control Body's Animation */
+		if(KindAnimationBody.NON != AnimationBodyRequest)
+		{	/* Requested */
+			AnimationSetBody();
 		}
 	}
 	#endregion MonoBehaviour-Functions
@@ -122,6 +134,11 @@ public class Script_Sample_DollInstance : MonoBehaviour
 				TableIDPartsControlEye[i] = ScriptRoot.IDGetParts(TableNamePartsEye[i]);
 			}
 
+			/* MEMO: The reason for getting an instance is because it is necessary to get "Instance" animation's "PlayEnd" callback. */
+			/*       In principle, not recommended that you directly control the "Instance" animation.                               */
+			/*       However, since may be necessary such implementation,  will provide basic method as a sample.                    */
+			/* MEMO: In the case of this sample, "right eye" and "left eye" play in synchronously. */
+			/*       Enough to callbacking from one side("left eye") only.                         */
 			int indexPartsEyeL = TableIDPartsControlEye[(int)KindEye.L];
 			if(0 <= indexPartsEyeL)
 			{
@@ -129,26 +146,27 @@ public class Script_Sample_DollInstance : MonoBehaviour
 				FlagInitializedEye = true;
 			}
 
-			TimeWaitBlinkEye = float.NaN;
-			FlagBlinkingEye = true;
+			TimeWaitBlinkEye = (float)((int)Constant.BLANK_EYE_INITIAL);
 		}
 
 		return(FlagInitializedEye);
 	}
 
-	private bool AnimatonSetEye(KindAnimationEye kind)
+	private bool AnimationSetEye()
 	{
 		int idPartsEye;
 
-		/* Set Animation */
+		/* Set Animation (Left-eye and Right-eye) */
 		for(int i=0; i<(int)KindEye.TERMINATOR; i++)
 		{
 			idPartsEye = TableIDPartsControlEye[i];
 			if(0 <= idPartsEye)
 			{
+				/* MEMO: Do not use ("Instance"'s) "AnimationSet" directly when changing "Instance"'s animation from script. */
+				/*       Conflict with operation from parent animation.                                                      */
 				ScriptRoot.AnimationChangeInstance(	idPartsEye,
-													TableNameAnimationEye[(int)kind],
-													Library_SpriteStudio6.KindIgnoreAttribute.PERMANENT,
+													TableNameAnimationEye[(int)AnimationEyeRequest],
+													Library_SpriteStudio6.KindIgnoreAttribute.PERMANENT,	/* Maintain change even if parent's animation is changed */
 													true,	/* Start immediate */
 													1,
 													1.0f,
@@ -161,10 +179,16 @@ public class Script_Sample_DollInstance : MonoBehaviour
 			}
 		}
 
-		/* Set "Instance"'s CallBack-End */
+		AnimationEyePlaying = AnimationEyeRequest;
+		AnimationEyeRequest = KindAnimationEye.NON;
+
+		/* Set "Instance"'s PlayEnd-callback */
+		/* MEMO: To be honest, not advisable to change callback handling function considerably frequently. */
+		/*       (Because take time to build delegate)                                                     */
+		/*       Originally, seems that implementation like "Body" is desirable...                         */
 		if(null != ScriptRootInstanceEyeL)
 		{
-			if(KindAnimationEye.WAIT == kind)
+			if(KindAnimationEye.WAIT == AnimationEyePlaying)
 			{
 				ScriptRootInstanceEyeL.FunctionPlayEnd = null;
 			}
@@ -179,7 +203,61 @@ public class Script_Sample_DollInstance : MonoBehaviour
 
 	private bool FunctionPlayEndEye(Script_SpriteStudio6_Root scriptRoot, GameObject objectControl)
 	{
-		TimeWaitBlinkEye = float.NaN;
+		/* MEMO: Recommend not to change animation playing state in PlayEnd callback processing function. */
+		AnimationEyeRequest = KindAnimationEye.WAIT;
+		TimeWaitBlinkEye = Random.Range((float)((int)Constant.BLANK_EYE_MIN), (float)((int)Constant.BLANK_EYE_MAX)) + 0.5f;
+
+		/* MEMO: "Instance"'s PlayEnd callback processing function should never return false.                                        */
+		/*       "Instance" animation can not destroy self. (Returning false will also ignore it)                                    */
+		/*       If you really want to create state that "Instance" is disappeared, create hiding animation or hide "Instance"-part. */
+		return(true);
+	}
+
+	private bool AnimationSetBody()
+	{
+		int indexAnimation = ScriptRoot.IndexGetAnimation(TableNameAnimationBody[(int)AnimationBodyRequest]);
+		AnimationBodyPlaying = AnimationBodyRequest;
+		AnimationBodyRequest = KindAnimationBody.NON;
+		if(0 > indexAnimation)
+		{	/* Ignore */
+			return(false);
+		}
+
+		ScriptRoot.AnimationPlay(-1, indexAnimation, 1);
+		return(true);
+	}
+
+	private bool FunctionPlayEndBody(Script_SpriteStudio6_Root scriptRoot, GameObject objectControl)
+	{
+		/* MEMO: Recommend not to change animation playing state in PlayEnd callback processing function. */
+		switch(AnimationBodyPlaying)
+		{
+			case KindAnimationBody.WAIT:
+				if(0.5f < Random.value)
+				{
+					AnimationBodyRequest = KindAnimationBody.PUT_OUT_L;
+				}
+				else
+				{
+					AnimationBodyRequest = KindAnimationBody.WAIT;
+				}
+
+				CountRemain--;
+				if(0 > CountRemain)
+				{	/* Destroy Self */
+					/* MEMO: Animation object destroys self when Highest-Parent animation's PlayEnd callback processing function returns false. */
+					return(false);
+				}
+				break;
+
+			case KindAnimationBody.PUT_OUT_L:
+				AnimationBodyRequest = KindAnimationBody.RETURN_L;
+				break;
+
+			case KindAnimationBody.RETURN_L:
+				AnimationBodyRequest = KindAnimationBody.WAIT;
+				break;
+		}
 
 		return(true);
 	}
@@ -191,11 +269,15 @@ public class Script_Sample_DollInstance : MonoBehaviour
 	{
 		BLANK_EYE_MIN = 0,
 		BLANK_EYE_MAX = 2,
-		BLANK_EYE_INITIAL= 1,
+		BLANK_EYE_INITIAL = 1,
+
+		LIFESPAN_BODY = 50,
 	}
 
 	private enum KindAnimationBody
 	{
+		NON = -1,
+
 		WAIT = 0,
 		PUT_OUT_L,
 		RETURN_L,
@@ -223,6 +305,8 @@ public class Script_Sample_DollInstance : MonoBehaviour
 	};
 	private enum KindAnimationEye
 	{
+		NON = -1,
+
 		WAIT = 0,
 		BLINK,
 
