@@ -172,7 +172,12 @@ public static partial class Library_SpriteStudio6
 					BootUp(instanceRoot);
 				}
 
-				MatrixRoot = matrixCorrection * instanceRoot.transform.localToWorldMatrix;
+				/* Create Emitter's matrix */
+				Matrix4x4 matrix = Matrix4x4.TRS(	Vector3.zero,
+													Quaternion.Euler(0.0f, 0.0f, 0.0f),
+													instanceRoot.RateScaleLocal
+												);
+				MatrixRoot = matrixCorrection *instanceRoot.transform.localToWorldMatrix *  matrix;
 				CountParticleDraw = 0;
 
 				/* Emitters' Random-Seed Refresh */

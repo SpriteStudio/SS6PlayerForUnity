@@ -1287,22 +1287,17 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Update Effect */
-					/* MEMO: "Instance" is updated from here. (Not updated from Monobehaviour's LateUpdate) */
+					/* MEMO: "Effect" is updated from here. (Not updated from Monobehaviour's LateUpdate) */
 					bool flagHide = flagHideDefault;
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))) ? true : false;
 
-					if((0 != (controlParts.Status & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL)) || (true == instanceRoot.StatusIsUpdateRateScaleLocal))
-					{
-						Vector2 scaleLocal = instanceRoot.RateScaleLocal;
-						scaleLocal.x *= controlParts.ScaleLocal.Value.x;
-						scaleLocal.y *= controlParts.ScaleLocal.Value.y;
-						InstanceRootEffectUnderControl.RateScaleLocal = scaleLocal;
-					}
+					/* MEMO: Always update "ScaleLocal" and "RateOpacity". */
+					Vector2 scaleLocal = instanceRoot.RateScaleLocal;
+					scaleLocal.x *= controlParts.ScaleLocal.Value.x;
+					scaleLocal.y *= controlParts.ScaleLocal.Value.y;
+					InstanceRootEffectUnderControl.RateScaleLocal = scaleLocal;
 
-					if((0 != (controlParts.Status & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_RATEOPACITY)) || (true == instanceRoot.StatusIsUpdateRateOpacity))
-					{
-						InstanceRootEffectUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
-					}
+					InstanceRootEffectUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
 
 					InstanceRootEffectUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
 																	flagHide,
@@ -1358,6 +1353,9 @@ public static partial class Library_SpriteStudio6
 
 					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
 					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
+
+					TRSMaster.CleanUp();
+					TRSSlave.CleanUp();
 
 					ParameterSprite.AnimationChange(flagClearCellApply);
 

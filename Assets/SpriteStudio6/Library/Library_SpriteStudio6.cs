@@ -1697,16 +1697,22 @@ public static partial class Library_SpriteStudio6
 			#region Functions
 			protected bool BaseAwake()
 			{
+				/* Generate CellMap table */
+				if(false == CellMapBootUp())
+				{
+					return(false);
+				}
+
 				return(true);
 			}
 
 			protected bool BaseStart()
 			{
 				/* Generate CellMap table */
-				if(false == CellMapBootUp())
-				{
-					return(false);
-				}
+//				if(false == CellMapBootUp())
+//				{
+//					return(false);
+//				}
 
 				/* SetUp Mesh-Renderer & Combined-Mesh */
 				if(false == RendererBootUpDraw(true))

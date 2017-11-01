@@ -37,7 +37,7 @@ MonoBehaviour:
   - Name: root
     ID: 0
     IDParent: -1
-    TableIDChild: 01000000
+    TableIDChild: 0100000020000000
     Feature: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
@@ -356,13 +356,24 @@ MonoBehaviour:
     SizeCollisionZ: 0
     PrefabUnderControl: {fileID: 0}
     NameAnimationUnderControl: 
+  - Name: effect_1
+    ID: 32
+    IDParent: 0
+    TableIDChild: 
+    Feature: 5
+    OperationBlendTarget: 0
+    ShapeCollision: 0
+    SizeCollisionZ: 0
+    PrefabUnderControl: {fileID: 1215129659245186, guid: 9593ef459429a984f94eb0359428508d,
+      type: 2}
+    NameAnimationUnderControl: 
   TableAnimation:
   - Name: PutOutL
     FramePerSecond: 30
-    CountFrame: 30
+    CountFrame: 60
     FrameValidStart: 0
-    FrameValidEnd: 29
-    CountFrameValid: 30
+    FrameValidEnd: 59
+    CountFrameValid: 60
     DepthIK: 3
     TableLabel: []
     TableParts:
@@ -692,9 +703,9 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000000680000008000000
+        - TableCode: 000000000780000008000000
         TableValue:
-        - Flags: 16773145
+        - Flags: 16773152
         - Flags: 16773135
       Position:
         TypePack: 1
@@ -2230,7 +2241,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 0000000001800000020001000380010004000200058002000600030008800300
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400
         TableValue:
         - Flags: 16773140
         - Flags: 16773136
@@ -2239,6 +2250,7 @@ MonoBehaviour:
         - Flags: 16773128
         - Flags: 16773127
         - Flags: 16773145
+        - Flags: 16773152
         - Flags: 16773123
       Position:
         TypePack: 1
@@ -4297,6 +4309,162 @@ MonoBehaviour:
           TypePack: 1
           TableCodeValue: []
           TableValue: []
+    - Format: 0
+      StatusParts: 1077673984
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 0000000006800000070000001400010038000000
+        TableValue:
+        - Flags: 553644057
+        - Flags: 553644047
+        - Flags: 16773145
+      Position:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: -100, y: 170, z: 0}
+      Rotation:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - {x: 0, y: 0, z: 45}
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000002480000025000100268001002700020028800200290003002a8003002b0004002c8004002d0005002e8005002f0006003080060031000700328007003300080034800800350009003680090037000a00
+        TableValue:
+        - {x: 0.25, y: 0.25}
+        - {x: 0.2625, y: 0.2625}
+        - {x: 0.275, y: 0.275}
+        - {x: 0.2875, y: 0.2875}
+        - {x: 0.3, y: 0.3}
+        - {x: 0.3125, y: 0.3125}
+        - {x: 0.325, y: 0.325}
+        - {x: 0.3375, y: 0.3375}
+        - {x: 0.35, y: 0.35}
+        - {x: 0.3625, y: 0.3625}
+        - {x: 0.375, y: 0.375}
+        - {x: 0.3875, y: 0.3875}
+        - {x: 0.4, y: 0.4}
+        - {x: 0.4125, y: 0.4125}
+        - {x: 0.425, y: 0.425}
+        - {x: 0.4375, y: 0.4375}
+        - {x: 0.45, y: 0.45}
+        - {x: 0.4625, y: 0.4625}
+        - {x: 0.475, y: 0.475}
+        - {x: 0.4875, y: 0.4875}
+        - {x: 0.5, y: 0.5}
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000158000001600010017800100180002002480020025000300268003002700040028800100298004002a0005002b8005002c0006002d0001002e8006002f00070030800700310008003280000033800800340009003580090036000a0037000000
+        TableValue:
+        - 0
+        - 0.25
+        - 0.5
+        - 0.75
+        - 1
+        - 0.95
+        - 0.9
+        - 0.85
+        - 0.8
+        - 0.7
+        - 0.65
+        - 0.6
+        - 0.55
+        - 0.45
+        - 0.39999998
+        - 0.35000002
+        - 0.3
+        - 0.19999999
+        - 0.14999998
+        - 0.100000024
+        - 0.050000012
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 0
+          FrameStart: 0
+          RateTime: 1
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
   - Name: ReturnL
     FramePerSecond: 30
     CountFrame: 30
@@ -4311,7 +4479,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000000c800000
+        - TableCode: 0000000017800000
         TableValue:
         - Flags: 16773135
         - Flags: 16773123
@@ -4632,7 +4800,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000000c80000010000000
+        - TableCode: 000000001780000018000000
         TableValue:
         - Flags: 16773145
         - Flags: 16773135
@@ -4765,7 +4933,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000001080000012000000
+        - TableCode: 000000001880000019000000
         TableValue:
         - Flags: 16773126
         - Flags: 16773135
@@ -4987,7 +5155,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000001280000014000000
+        - TableCode: 00000000198000001a000000
         TableValue:
         - Flags: 16773127
         - Flags: 16773135
@@ -5210,10 +5378,9 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000001480000015000000
+        - TableCode: 00000000
         TableValue:
         - Flags: 16773144
-        - Flags: 16773135
       Position:
         TypePack: 1
         TableCodeValue:
@@ -5763,10 +5930,9 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000001680000017000000
+        - TableCode: 00000000
         TableValue:
         - Flags: 16773147
-        - Flags: 16773135
       Position:
         TypePack: 1
         TableCodeValue:
@@ -5919,7 +6085,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000001780000019000000
+        - TableCode: 000000001b8000001c000000
         TableValue:
         - Flags: 16773146
         - Flags: 16773135
@@ -6219,17 +6385,14 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000000c800000100001001280010014000200158002001600030017800300190004001a8004001c000500
+        - TableCode: 000000001780000018000100198001001a0002001b8002001c0003001d800300
         TableValue:
         - Flags: 16773123
         - Flags: 16773145
         - Flags: 16773126
         - Flags: 16773127
-        - Flags: 16773144
         - Flags: 16773130
-        - Flags: 16773147
         - Flags: 16773146
-        - Flags: 16773148
         - Flags: 16773136
         - Flags: 16773140
       Position:
@@ -6962,7 +7125,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000001c800000
+        - TableCode: 000000001d800000
         TableValue:
         - Flags: 16773140
         - Flags: 16773135
@@ -7322,7 +7485,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000001580000016000000
+        - TableCode: 000000001a8000001b000000
         TableValue:
         - Flags: 16773130
         - Flags: 16773135
@@ -7930,10 +8093,9 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 00000000198000001a000000
+        - TableCode: 00000000
         TableValue:
         - Flags: 16773148
-        - Flags: 16773135
       Position:
         TypePack: 1
         TableCodeValue:
@@ -8216,7 +8378,7 @@ MonoBehaviour:
       Status:
         TypePack: 1
         TableCodeValue:
-        - TableCode: 000000001a8000001c000000
+        - TableCode: 000000001c8000001d000000
         TableValue:
         - Flags: 16773136
         - Flags: 16773135
@@ -8282,6 +8444,110 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 2
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1358692352
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 553648127
+      Position:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Rotation:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
         SizeForce:
           TypePack: 1
           TableCodeValue: []
@@ -12844,6 +13110,110 @@ MonoBehaviour:
           TableValue:
           - IndexCellMap: 0
             IndexCell: 2
+        SizeForce:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        VertexCorrection:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        OffsetPivot:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PositionTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        ScalingTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        RotationTexture:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+      Fix:
+        IndexCellMap:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: 
+        Coordinate:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        UV0:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        SizeCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+        PivotCollision:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
+    - Format: 0
+      StatusParts: 1358692352
+      Status:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - Flags: 553648127
+      Position:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Rotation:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Scaling:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      ScalingLocal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RateOpacity:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue:
+        - 1
+      PartsColor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      PositionAnchor:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      RadiusCollision:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      UserData:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Instance:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Effect:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Plain:
+        Cell:
+          TypePack: 1
+          TableCodeValue: []
+          TableValue: []
         SizeForce:
           TypePack: 1
           TableCodeValue: []

@@ -197,7 +197,6 @@ public class Script_Sample_DollInstance : MonoBehaviour
 				ScriptRootInstanceEyeL.FunctionPlayEnd = FunctionPlayEndEye;
 			}
 		}
-
 		return(false);
 	}
 

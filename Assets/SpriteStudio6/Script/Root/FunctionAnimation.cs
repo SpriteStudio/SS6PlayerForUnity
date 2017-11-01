@@ -126,6 +126,11 @@ public partial class Script_SpriteStudio6_Root
 								int frameRangeOffsetEnd = int.MaxValue
 							)
 	{
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
+
 		int countTrack = TableControlTrack.Length;
 		if(0 > indexTrack)
 		{	/* All track */
@@ -401,6 +406,11 @@ public partial class Script_SpriteStudio6_Root
 										int frameRangeOffsetEnd = int.MaxValue
 									)
 	{
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
+
 		int countTrack = TableControlTrack.Length;
 		if(0 > indexTrackSlave)
 		{	/* Cancel Transition */
@@ -528,6 +538,11 @@ public partial class Script_SpriteStudio6_Root
 	*/
 	public void AnimationStop(int indexTrack, bool flagJumpEnd = false, bool flagJumpEndSlave = false)
 	{
+		if(null == TableControlTrack)
+		{
+			return;
+		}
+
 		int countTrack = TableControlTrack.Length;
 		if(0 > indexTrack)
 		{	/* All track */
@@ -588,6 +603,11 @@ public partial class Script_SpriteStudio6_Root
 	*/
 	public bool AnimationPause(int indexTrack, bool flagSwitch)
 	{
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
+
 		int countTrack = TableControlTrack.Length;
 		bool flagSuccess = true;
 		if(0 > indexTrack)
@@ -648,6 +668,11 @@ public partial class Script_SpriteStudio6_Root
 	*/
 	public bool AnimationSetRateTime(int indexTrack, float rateTime)
 	{
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
+
 		int countTrack = TableControlTrack.Length;
 		if(0 > indexTrack)
 		{	/* All track */
