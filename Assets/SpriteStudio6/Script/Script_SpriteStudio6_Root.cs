@@ -156,7 +156,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Generate Play-Track */
-		int countTrack = ControlBootUpTrack();
+		int countTrack = ControlBootUpTrack(-1);
 		if(0 >= countTrack)
 		{
 			goto Start_ErrorEnd;
@@ -270,7 +270,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* Update Play-Track */
 		if(null == TableControlTrack)
 		{	/* Lost */
-			ControlBootUpTrack();
+			ControlBootUpTrack(-1);
 		}
 		int countControlTrack = TableControlTrack.Length;
 		for(int i=0; i<countControlTrack; i++)
@@ -503,9 +503,33 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		DataAnimation.StatusIsBootup = true;
 	}
 
-	private int ControlBootUpTrack()
+	private int ControlBootUpTrack(int countTrack)
 	{
-		int countTrack = LimitGetTrack();
+		if(0 > countTrack)
+		{
+			countTrack = LimitGetTrack();
+		}
+
+		Library_SpriteStudio6.Control.Animation.Track[] tableControlTrackNow = TableControlTrack;
+		Library_SpriteStudio6.CallBack.FunctionControlEndTrackPlay[] functionPlayEndTrackNow = FunctionPlayEndTrack;
+		int countTrackNow = 0;
+		bool flagRenew = true;
+
+		if(null != tableControlTrackNow)
+		{
+			flagRenew = false;
+			countTrackNow = tableControlTrackNow.Length;
+			if(countTrackNow < countTrack)
+			{
+				flagRenew = true;
+			}
+		}
+		if(false == flagRenew)
+		{
+			return(countTrackNow);
+		}
+
+		/* Boot up */
 		TableControlTrack = new Library_SpriteStudio6.Control.Animation.Track[countTrack];
 		if(null == TableControlTrack)
 		{
@@ -525,6 +549,18 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			}
 			FunctionPlayEndTrack[i] = null;
 		}
+
+		/* Transfer state until just before */
+		if(null != tableControlTrackNow)
+		{
+			for(int i=0; i<countTrackNow; i++)
+			{
+				TableControlTrack[i] = tableControlTrackNow[i];
+				FunctionPlayEndTrack[i] = functionPlayEndTrackNow[i];
+			}
+		}
+		tableControlTrackNow = null;
+		functionPlayEndTrackNow = null;
 
 		return(countTrack);
 

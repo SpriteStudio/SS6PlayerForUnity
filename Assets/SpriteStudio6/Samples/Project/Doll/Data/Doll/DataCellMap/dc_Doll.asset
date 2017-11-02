@@ -14,7 +14,7 @@ MonoBehaviour:
   Version: 65536
   TableCellMap:
   - Name: Doll
-    SizeOriginal: {x: 512, y: 512}
+    SizeOriginal: {x: 256, y: 256}
     TableCell:
     - Name: Joint
       Rectangle:
@@ -79,6 +79,28 @@ MonoBehaviour:
         width: 40
         height: 40
       Pivot: {x: 20, y: 20}
+      Mesh:
+        TableVertex: []
+        TableIndexVertex: 
+    - Name: Dust
+      Rectangle:
+        serializedVersion: 2
+        x: 96
+        y: 128
+        width: 64
+        height: 64
+      Pivot: {x: 32, y: 32}
+      Mesh:
+        TableVertex: []
+        TableIndexVertex: 
+    - Name: Spark
+      Rectangle:
+        serializedVersion: 2
+        x: 160
+        y: 128
+        width: 64
+        height: 64
+      Pivot: {x: 32, y: 32}
       Mesh:
         TableVertex: []
         TableIndexVertex: 

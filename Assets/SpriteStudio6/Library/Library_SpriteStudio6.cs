@@ -1270,6 +1270,7 @@ public static partial class Library_SpriteStudio6
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
 				#region Classes, Structs & Interfaces
+				[System.Serializable]
 				public struct ColorLabel
 				{
 					/* ----------------------------------------------- Variables & Properties */

@@ -55,7 +55,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		GameObject gameObjectBase = GameObjectRoot;
 		if(null == gameObjectBase)
 		{
-			gameObjectBase = this.gameObject;
+			gameObjectBase = gameObject;
 		}
 		/* MEMO: "Script_SpriteStudio6_Root.Parts.RootGet" is function for finding "Script_SpriteStudio6_Root" in GameObjects below.       */
 		/*       (However, "Instance" is excluded. Find only "Highest-Root"-parts)                                                         */

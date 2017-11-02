@@ -22,6 +22,46 @@ public partial class Script_SpriteStudio6_Root
 		return((null != TableControlTrack) ? TableControlTrack.Length : -1);
 	}
 
+	public bool TrackReboot(int count)
+	{
+		if(0 >= count)
+		{
+			return(false);
+		}
+
+		int countTrack = ControlBootUpTrack(count);
+		if(0 >= countTrack)
+		{
+			return(false);
+		}
+
+		/* Renew Play-Informations */
+		if(TableInformationPlay.Length < countTrack)
+		{
+			InformationPlay[] tableInformationPlayNow = TableInformationPlay;
+			TableInformationPlay = new InformationPlay[countTrack];
+			if(null == TableInformationPlay)
+			{
+				return(false);
+			}
+
+			for(int i=0; i<countTrack; i++)
+			{
+				TableInformationPlay[i].CleanUp();
+			}
+
+			count = tableInformationPlayNow.Length;	/* Recycle */
+			for(int i=0; i<count; i++)
+			{
+				TableInformationPlay[i] = tableInformationPlayNow[i];
+			}
+
+			tableInformationPlayNow = null;
+		}
+
+		return(true);
+	}
+
 	public bool TrackConnectParts(int idParts, int indexTrack, bool flagChildParts = false)
 	{
 		if((null == TableControlParts) || (null == DataAnimation))

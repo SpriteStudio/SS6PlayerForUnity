@@ -39,6 +39,11 @@ MonoBehaviour:
     IDParent: -1
     TableIDChild: 01000000
     Feature: 0
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -49,6 +54,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 02000000
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -59,6 +69,11 @@ MonoBehaviour:
     IDParent: 1
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 1
     ShapeCollision: 0
     SizeCollisionZ: 0

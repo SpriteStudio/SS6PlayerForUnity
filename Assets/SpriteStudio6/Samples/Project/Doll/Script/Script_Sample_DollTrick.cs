@@ -1,4 +1,4 @@
-﻿/**
+/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Script_Sample_DollInstance : MonoBehaviour
+public class Script_Sample_DollTrick : MonoBehaviour
 {
 	/* ----------------------------------------------- Notes */
 	#region Notes
@@ -55,6 +55,7 @@ public class Script_Sample_DollInstance : MonoBehaviour
 	void Start()
 	{
 		/* Initialize WorkArea */
+		FlagInitializedEye = false;
 		for(int i=0; i<(int)KindEye.TERMINATOR; i++)
 		{
 			TableIDPartsControlEye[i] = -1;
@@ -64,7 +65,7 @@ public class Script_Sample_DollInstance : MonoBehaviour
 		GameObject gameObjectBase = GameObjectRoot;
 		if(null == gameObjectBase)
 		{
-			gameObjectBase = this.gameObject;
+			gameObjectBase = gameObject;
 		}
 		ScriptRoot = Script_SpriteStudio6_Root.Parts.RootGet(gameObjectBase);
 		if(null == ScriptRoot)
