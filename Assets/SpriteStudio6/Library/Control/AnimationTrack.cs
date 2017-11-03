@@ -377,8 +377,8 @@ public static partial class Library_SpriteStudio6
 
 				public bool Update(float timeElapsed)
 				{
-					timeElapsed *= RateTime;
-					TimeElapsedNow = timeElapsed;
+					float timeElapsedAnimation = timeElapsed * RateTime;
+					TimeElapsedNow = timeElapsedAnimation;
 
 					if(0 == (Status & FlagBitStatus.VALID))
 					{
@@ -427,7 +427,7 @@ public static partial class Library_SpriteStudio6
 					{	/* Wait Limited-Time */
 						if(0.0f < TimeDelay)
 						{	/* Waiting */
-							TimeDelay -= timeElapsed;
+							TimeDelay -= timeElapsedAnimation;
 							if(0.0f < TimeDelay)
 							{
 								Status &= ~(FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);	/* Cancel Start & Decoding Attribute */
@@ -435,7 +435,7 @@ public static partial class Library_SpriteStudio6
 							}
 
 							/* Start */
-							timeElapsed += -TimeDelay * ((0 == (Status & FlagBitStatus.PLAYING_REVERSE)) ? 1.0f : -1.0f);
+							timeElapsedAnimation += -TimeDelay * ((0 == (Status & FlagBitStatus.PLAYING_REVERSE)) ? 1.0f : -1.0f);
 							TimeDelay = 0.0f;
 							ArgumentContainer.FramePrevious = -1;
 							Status |= (FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);
@@ -444,7 +444,7 @@ public static partial class Library_SpriteStudio6
 					if(0 != (Status & FlagBitStatus.PLAYING_START))
 					{	/* Play & Right-After-Starting */
 						Status |= (FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);
-						timeElapsed = 0.0f;
+						timeElapsedAnimation = 0.0f;
 						goto Update_End;	/* Display the first frame, force */
 					}
 
@@ -456,7 +456,7 @@ public static partial class Library_SpriteStudio6
 						if(0 != (Status & FlagBitStatus.PLAYING_REVERSE))
 						{
 							FlagRangeOverPrevious = (0.0f > TimeElapsed) ? true : false;
-							TimeElapsed -= timeElapsed;
+							TimeElapsed -= timeElapsedAnimation;
 							if((0.0f > TimeElapsed) && (true == FlagRangeOverPrevious))
 							{	/* Still Range-Over */
 								goto Update_End;
@@ -465,7 +465,7 @@ public static partial class Library_SpriteStudio6
 						else
 						{
 							FlagRangeOverPrevious = (TimeRange <= TimeElapsed) ? true : false;
-							TimeElapsed += timeElapsed;
+							TimeElapsed += timeElapsedAnimation;
 							if((TimeRange <= TimeElapsed) && (true == FlagRangeOverPrevious))
 							{	/* Still Range-Over */
 								goto Update_End;
@@ -580,7 +580,7 @@ public static partial class Library_SpriteStudio6
 						if(0 != (Status & FlagBitStatus.STYLE_REVERSE))
 						{	/* Play-Style: OneWay & Reverse */
 							FlagRangeOverPrevious = (0.0f > TimeElapsed) ? true : false;
-							TimeElapsed -= timeElapsed;
+							TimeElapsed -= timeElapsedAnimation;
 							if((0.0f > TimeElapsed) && (true == FlagRangeOverPrevious))
 							{	/* Still Range-Over */
 								goto Update_End;
@@ -615,7 +615,7 @@ public static partial class Library_SpriteStudio6
 						else
 						{	/* Play-Style: OneWay & Foward */
 							FlagRangeOverPrevious = (TimeRange <= TimeElapsed) ? true : false;
-							TimeElapsed += timeElapsed;
+							TimeElapsed += timeElapsedAnimation;
 							if((TimeRange <= TimeElapsed) && (true == FlagRangeOverPrevious))
 							{	/* Still Range-Over */
 								goto Update_End;
@@ -663,7 +663,7 @@ public static partial class Library_SpriteStudio6
 					Status &= ~FlagBitStatus.REQUEST_TRANSITIONEND;
 					if(0 <= IndexTrackSlave)
 					{
-						TimeElapsedTransition += timeElapsed;
+						TimeElapsedTransition += timeElapsed;	/* Transition's elapsed time exclude RateTime */
 						if(TimeLimitTransition <= TimeElapsedTransition)
 						{	/* End */
 							RateTransition = 1.0f;	/* Clip */
@@ -671,7 +671,7 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{
-							RateTransition = Mathf.Lerp(0.0f, TimeLimitTransition, TimeElapsedTransition);
+							RateTransition = Mathf.Clamp01(Mathf.Lerp(0.0f, TimeLimitTransition, TimeElapsedTransition));
 						}
 					}
 					return(true);

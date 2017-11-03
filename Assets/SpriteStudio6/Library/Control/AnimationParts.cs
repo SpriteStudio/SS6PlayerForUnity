@@ -204,6 +204,11 @@ public static partial class Library_SpriteStudio6
 
 					AnimationChange();
 					Status |= FlagBitStatus.VALID;
+					/* MEMO: Make sure to refresh Transform at boot up */
+					Status |= (	FlagBitStatus.CHANGE_TRANSFORM_POSITION
+								| FlagBitStatus.CHANGE_TRANSFORM_ROTATION
+								| FlagBitStatus.CHANGE_TRANSFORM_SCALING
+							);
 
 					return(true);
 
@@ -374,7 +379,7 @@ public static partial class Library_SpriteStudio6
 					controlTrack.ArgumentContainer.IDParts = idParts;
 
 					Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusParts = dataAnimationParts.StatusParts;
-					StatusAnimationParts = statusParts;	/* cache */
+					StatusAnimationParts = statusParts;	/* cache for other Update/Draw-Functions */
 
 					/* MEMO: StatusParts's NOT_USED should not be judged here, because will fail Refresh at start of animation. */
 //					if(0 != (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
@@ -382,70 +387,258 @@ public static partial class Library_SpriteStudio6
 //						return;
 //					}
 
-					/* Set Position, Rotation and Scaling */
-					Transform transform = InstanceGameObject.transform;
-					Data.Animation.PackAttribute.ArgumentContainer argument = new Data.Animation.PackAttribute.ArgumentContainer();
-					argument.Frame = 0;
+					/* Check Transition & Cache Transition-Parameters */
+					int indexTrackSlave = controlTrack.IndexTrackSlave;
+					int indexAnimationSlave;
+					Library_SpriteStudio6.Data.Animation dataAnimationSlave;
+					float rateTransition;
+					float rateTransitionInverse;
+					Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsSlave;
+					if(0 > indexTrackSlave)
+					{	/* No Slave (Not Transition) */
+						indexAnimationSlave = -1;
+						dataAnimationSlave = null;
+						statusPartsSlave = (	Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION
+												| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION
+												| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING
+										);
 
+						rateTransition = 0.0f;
+						rateTransitionInverse = 1.0f;
+					}
+					else
+					{	/* Has Slave (Transition) */
+						instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer.IDParts = idParts;
+						indexAnimationSlave = instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer.IndexAnimation;
+						if(0 > indexAnimationSlave)
+						{	/* Invalid */
+							indexAnimationSlave = -1;
+							dataAnimationSlave = null;
+							statusPartsSlave = (	Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION
+													| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION
+													| Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING
+											);
+
+							rateTransition = 0.0f;
+							rateTransitionInverse = 1.0f;
+						}
+						else
+						{	/* Valid */
+							dataAnimationSlave = instanceRoot.DataAnimation.TableAnimation[indexAnimationSlave];
+							statusPartsSlave = dataAnimationSlave.TableParts[idParts].StatusParts;
+
+							rateTransition = controlTrack.RateTransition;
+							rateTransitionInverse = 1.0f - rateTransition;
+						}
+					}
+
+					Transform transform = InstanceGameObject.transform;
+					bool flagUpdate;
+					Vector3 valueTRSMaster;
+					Vector3 valueTRSSlave;
+
+					/* Update Position */
+					flagUpdate = false;
 					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION))
 					{
-						if(true == dataAnimationParts.Position.Function.ValueGet(ref TRSMaster.Position.Value, ref TRSMaster.Position.FrameKey, dataAnimationParts.Position, ref controlTrack.ArgumentContainer))
-						{	/* New Value */
-							transform.localPosition = TRSMaster.Position.Value;
-
-							Status |= FlagBitStatus.CHANGE_TRANSFORM_POSITION;
+						if(true == dataAnimationParts.Position.Function.ValueGet(	ref TRSMaster.Position.Value,
+																					ref TRSMaster.Position.FrameKey,
+																					dataAnimationParts.Position,
+																					ref controlTrack.ArgumentContainer
+																				)
+							)
+						{
+							flagUpdate = true;
 						}
+						valueTRSMaster = TRSMaster.Position.Value;
 					}
 					else
 					{
 						if((FlagBitStatus.CHANGE_TRANSFORM_POSITION | FlagBitStatus.REFRESH_TRANSFORM_POSITION) == (Status & (FlagBitStatus.CHANGE_TRANSFORM_POSITION | FlagBitStatus.REFRESH_TRANSFORM_POSITION)))
 						{	/* Refresh */
-							transform.localPosition = Vector3.zero;
+							flagUpdate = true;
+						}
+						valueTRSMaster = Vector3.zero;
+					}
+
+					if(0 > indexTrackSlave)
+					{	/* No Slave (Not Transition) */
+						/* Set Transform-Position */
+						if(true == flagUpdate)
+						{
+							transform.localPosition = valueTRSMaster;
+							Status |= FlagBitStatus.CHANGE_TRANSFORM_POSITION;
+						}
+					}
+					else
+					{	/* Has Slave (Transition) */
+						/* Get Slave Position */
+						if(0 == (statusPartsSlave & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION))
+						{
+							if(true == dataAnimationSlave.TableParts[idParts].Position.Function.ValueGet(	ref TRSSlave.Position.Value,
+																											ref TRSSlave.Position.FrameKey,
+																											dataAnimationSlave.TableParts[idParts].Position,
+																											ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
+																										)
+								)
+							{
+								flagUpdate |= true;
+							}
+							valueTRSSlave = TRSSlave.Position.Value;
+						}
+						else
+						{
+							valueTRSSlave = Vector3.zero;
+						}
+
+						/* Set Transform-Position */
+						if(true == flagUpdate)
+						{
+							transform.localPosition = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+							Status |= FlagBitStatus.CHANGE_TRANSFORM_POSITION;
 						}
 					}
 
+					/* Update Rotation */
+					flagUpdate = false;
 					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION))
 					{
-						if(true == dataAnimationParts.Rotation.Function.ValueGet(ref TRSMaster.Rotation.Value, ref TRSMaster.Rotation.FrameKey, dataAnimationParts.Rotation, ref controlTrack.ArgumentContainer))
-						{	/* New Value */
-							transform.localEulerAngles = TRSMaster.Rotation.Value;
-
-							Status |= FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
+						if(true == dataAnimationParts.Rotation.Function.ValueGet(	ref TRSMaster.Rotation.Value,
+																					ref TRSMaster.Rotation.FrameKey,
+																					dataAnimationParts.Rotation,
+																					ref controlTrack.ArgumentContainer
+																				)
+							)
+						{
+							flagUpdate = true;
 						}
+						valueTRSMaster = TRSMaster.Rotation.Value;
 					}
 					else
 					{
 						if((FlagBitStatus.CHANGE_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_ROTATION) == (Status & (FlagBitStatus.CHANGE_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_ROTATION)))
 						{	/* Refresh */
-							transform.localEulerAngles = Vector3.zero;
+							flagUpdate = true;
+						}
+						valueTRSMaster = Vector3.zero;
+					}
+
+					if(0 > indexTrackSlave)
+					{	/* No Slave (Not Transition) */
+						/* Set Transform-Rotation */
+						if(true == flagUpdate)
+						{
+							transform.localEulerAngles = valueTRSMaster;
+							Status |= FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
+						}
+					}
+					else
+					{	/* Has Slave (Transition) */
+						/* Get Slave Rotation */
+						if(0 == (statusPartsSlave & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION))
+						{
+							if(true == dataAnimationSlave.TableParts[idParts].Rotation.Function.ValueGet(	ref TRSSlave.Rotation.Value,
+																											ref TRSSlave.Rotation.FrameKey,
+																											dataAnimationSlave.TableParts[idParts].Rotation,
+																											ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
+																										)
+								)
+							{
+								flagUpdate |= true;
+							}
+							valueTRSSlave = TRSSlave.Rotation.Value;
+						}
+						else
+						{
+							valueTRSSlave = Vector3.zero;
+						}
+
+						/* Set Transform-Rotation */
+						if(true == flagUpdate)
+						{
+							transform.localEulerAngles = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+							Status |= FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
 						}
 					}
 
+					/* Update Scaling */
+					flagUpdate = false;
 					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING))
 					{
-						if(true == dataAnimationParts.Scaling.Function.ValueGet(ref TRSMaster.Scaling.Value, ref TRSMaster.Scaling.FrameKey, dataAnimationParts.Scaling, ref controlTrack.ArgumentContainer))
-						{	/* New Value */
-							Vector3 scaling = TRSMaster.Scaling.Value;
-							scaling.z = 1.0f;
-							transform.localScale = scaling;
-
-							Status |= FlagBitStatus.CHANGE_TRANSFORM_SCALING;
+						if(true == dataAnimationParts.Scaling.Function.ValueGet(	ref TRSMaster.Scaling.Value,
+																					ref TRSMaster.Scaling.FrameKey,
+																					dataAnimationParts.Scaling,
+																					ref controlTrack.ArgumentContainer
+																				)
+							)
+						{
+							flagUpdate = true;
 						}
+						valueTRSMaster = TRSMaster.Scaling.Value;
 					}
 					else
 					{
 						if((FlagBitStatus.CHANGE_TRANSFORM_SCALING | FlagBitStatus.REFRESH_TRANSFORM_SCALING) == (Status & (FlagBitStatus.CHANGE_TRANSFORM_SCALING | FlagBitStatus.REFRESH_TRANSFORM_SCALING)))
 						{	/* Refresh */
-							transform.localScale = Vector3.one;
+							flagUpdate = true;
+						}
+						valueTRSMaster = Vector3.one;
+					}
+
+					if(0 > indexTrackSlave)
+					{	/* No Slave (Not Transition) */
+						/* Set Transform-Scaling */
+						if(true == flagUpdate)
+						{
+							valueTRSMaster.z = 1.0f;
+							transform.localScale = valueTRSMaster;
+							Status |= FlagBitStatus.CHANGE_TRANSFORM_SCALING;
+						}
+					}
+					else
+					{	/* Has Slave (Transition) */
+						/* Get Slave Scaling */
+						if(0 == (statusPartsSlave & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING))
+						{
+							if(true == dataAnimationSlave.TableParts[idParts].Scaling.Function.ValueGet(	ref TRSSlave.Scaling.Value,
+																											ref TRSSlave.Scaling.FrameKey,
+																											dataAnimationSlave.TableParts[idParts].Scaling,
+																											ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
+																										)
+								)
+							{
+								flagUpdate |= true;
+							}
+							valueTRSSlave = TRSSlave.Scaling.Value;
+						}
+						else
+						{
+							valueTRSSlave = Vector3.one;
+						}
+
+						/* Set Transform-Scaling */
+						if(true == flagUpdate)
+						{
+							valueTRSMaster = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+							valueTRSMaster.z = 1.0f;
+							transform.localScale = valueTRSMaster;
+							Status |= FlagBitStatus.CHANGE_TRANSFORM_SCALING;
 						}
 					}
 
+					/* Clear "Refresh Transform" flags */
 					Status &= ~(FlagBitStatus.REFRESH_TRANSFORM_POSITION | FlagBitStatus.REFRESH_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_SCALING);
-					Status &= ~(FlagBitStatus.UPDATE_SCALELOCAL | FlagBitStatus.UPDATE_RATEOPACITY);
 
 					/* Get Status & Hide */
 					dataAnimationParts.Status.Function.ValueGet(ref StatusAnimationFrame, ref FrameKeyStatusAnimationFrame, dataAnimationParts.Status, ref controlTrack.ArgumentContainer);
-					Status = (true == StatusAnimationFrame.IsHide) ? (Status | FlagBitStatus.HIDE) : (Status & ~FlagBitStatus.HIDE);
+					if(true == StatusAnimationFrame.IsHide)
+					{
+						Status |= FlagBitStatus.HIDE;
+					}
+					else
+					{
+						Status &= ~FlagBitStatus.HIDE;
+					}
 
 					/* Get Local-Scale *
 					/* MEMO: "ScaleLocal" are data that must be constantly updated in most parts, so decode here. */
@@ -461,6 +654,7 @@ public static partial class Library_SpriteStudio6
 						Status |= FlagBitStatus.UPDATE_RATEOPACITY;
 					}
 				}
+
 				private void UpdateUserData(	Script_SpriteStudio6_Root instanceRoot,
 												int idParts,
 												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -1062,7 +1256,9 @@ public static partial class Library_SpriteStudio6
 					}
 
 					int frame = controlTrack.ArgumentContainer.Frame;
-					bool flagDecode = controlTrack.StatusIsDecodeAttribute;
+					bool flagDecode = !(0 != (Status & FlagBitStatus.INSTANCE_IGNORE_ATTRIBUTE));	/* (0 != (Status &= FlagBitStatus.INSTANCE_IGNORE_ATTRIBUTE)) ? false : true; */
+					flagDecode |= (0 != (Status & FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA));	/* ? true : false */
+					flagDecode &= controlTrack.StatusIsDecodeAttribute;
 					bool flagPlayIndependentNowInstance = (0 != (Status & FlagBitStatus.INSTANCE_PLAY_INDEPENDENT)) ? true : false;
 					bool flagPlayReverse = controlTrack.StatusIsPlayingReverse;
 					bool flagPlayTurn = controlTrack.StatusIsPlayingTurn;
@@ -1171,6 +1367,7 @@ public static partial class Library_SpriteStudio6
 
 								/* Status Update */
 								FramePreviousUpdateUnderControl = frameKey;
+								Status &= ~FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
 							}
 						}
 					}
@@ -1198,6 +1395,8 @@ public static partial class Library_SpriteStudio6
 																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																ref matrixCorrection
 															);
+
+					Status &= ~(FlagBitStatus.UPDATE_SCALELOCAL | FlagBitStatus.UPDATE_RATEOPACITY);
 				}
 				internal bool InstancePlayStart(bool flagPlayReverse)
 				{
@@ -1241,6 +1440,9 @@ public static partial class Library_SpriteStudio6
 					}
 
 					int frame = controlTrack.ArgumentContainer.Frame;
+					bool flagDecode = !(0 != (Status & FlagBitStatus.EFFECT_IGNORE_ATTRIBUTE));	/* (0 != (Status &= FlagBitStatus.EFFECT_IGNORE_ATTRIBUTE)) ? false : true; */
+					flagDecode |= (0 != (Status & FlagBitStatus.EFFECT_IGNORE_EXCEPT_NEXTDATA));	/* ? true : false */
+					flagDecode &= controlTrack.StatusIsDecodeAttribute;
 					bool flagPlayIndependentNowInstance = (0 != (Status & FlagBitStatus.EFFECT_PLAY_INDEPENDENT)) ? true : false;
 					bool flagPlayTurn = controlTrack.StatusIsPlayingTurn;
 					bool flagPlayReverse = controlTrack.StatusIsPlayingReverse;
@@ -1255,7 +1457,7 @@ public static partial class Library_SpriteStudio6
 
 					/* Decode "Effect" attribute */
 					int frameKey = FramePreviousUpdateUnderControl;
-					if(true == controlTrack.StatusIsDecodeAttribute)
+					if(true == flagDecode)
 					{
 						/* Decode data */
 						Library_SpriteStudio6.Data.Animation.Attribute.Effect dataEffect = new Library_SpriteStudio6.Data.Animation.Attribute.Effect();
@@ -1283,6 +1485,8 @@ public static partial class Library_SpriteStudio6
 									Status = (0 != (dataEffect.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Effect.FlagBit.INDEPENDENT)) ? (Status | FlagBitStatus.EFFECT_PLAY_INDEPENDENT) : (Status & ~FlagBitStatus.EFFECT_PLAY_INDEPENDENT);
 								}
 							}
+
+							Status &= ~FlagBitStatus.EFFECT_IGNORE_EXCEPT_NEXTDATA;
 						}
 					}
 
@@ -1304,6 +1508,8 @@ public static partial class Library_SpriteStudio6
 																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																	ref matrixCorrection
 																);
+
+					Status &= ~(FlagBitStatus.UPDATE_SCALELOCAL | FlagBitStatus.UPDATE_RATEOPACITY);
 				}
 				private void DrawMask(	Script_SpriteStudio6_Root instanceRoot,
 										int idParts,
@@ -2071,6 +2277,9 @@ public static partial class Library_SpriteStudio6
 										| FlagBitStatus.UPDATE_TRANSFORM_TEXTURE
 //										| FlagBitStatus.USE_ADDITIONALCOLOR		/* update in "UpdatePlain", so not erase here */
 								);
+						statusControlParts &= ~(	Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL
+													| Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_RATEOPACITY
+												);
 					}
 
 					internal bool UpdateFix(	Script_SpriteStudio6_Root instanceRoot,
