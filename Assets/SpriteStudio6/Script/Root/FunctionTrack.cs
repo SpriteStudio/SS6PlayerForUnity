@@ -198,7 +198,8 @@ public partial class Script_SpriteStudio6_Root
 		}
 
 		/* Set Master-Track to fade mode */
-		TableControlTrack[indexTrack].StatusIsStartAfterTransition = flagCancelPauseAfterTransition;
+		TableControlTrack[indexTrack].StatusIsTransitionStart = true;
+		TableControlTrack[indexTrack].StatusIsTransitionCancelPause = flagCancelPauseAfterTransition;
 		return(TableControlTrack[indexTrack].Transition(indexTrackSlave, time));
 	}
 

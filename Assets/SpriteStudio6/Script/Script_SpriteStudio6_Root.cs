@@ -373,7 +373,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 					indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
 					if(0 <= indexTrackSlave)
 					{
-						bool flagStartAnimation = TableControlTrack[i].StatusIsStartAfterTransition;
+						bool flagStartAnimation = TableControlTrack[i].StatusIsTransitionCancelPause;
 						flagRequestPlayEndTrack = TableControlTrack[indexTrackSlave].StatusIsRequestPlayEnd;	/* Overwrite slave track status. */
 
 						/* Copy Track playing datas */
@@ -383,7 +383,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 						/* Clear Transition */
 						TableControlTrack[i].StatusIsRequestTransitionEnd = false;
-						TableControlTrack[i].StatusIsStartAfterTransition = false;
+						TableControlTrack[i].StatusIsTransitionCancelPause = false;
 						TableControlTrack[i].Transition(-1, 0.0f);
 
 						/* Pause Cancel */
@@ -436,6 +436,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 //			TableControlTrack[i].StatusClearTransient();
 			TableControlTrack[i].Status &= ~(	Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.DECODE_ATTRIBUTE
+												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.TRANSITION_START
 											);
 		}
 

@@ -437,6 +437,11 @@ public static partial class Library_SpriteStudio6
 					Vector3 valueTRSMaster;
 					Vector3 valueTRSSlave;
 
+					if(true == controlTrack.StatusIsTransitionStart)
+					{
+						TRSSlave.CleanUp();
+					}
+
 					/* Update Position */
 					flagUpdate = false;
 					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION))

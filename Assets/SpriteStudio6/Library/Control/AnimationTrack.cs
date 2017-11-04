@@ -42,24 +42,6 @@ public static partial class Library_SpriteStudio6
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING)));
 					}
 				}
-				internal bool StatusIsStartAfterTransition
-				{
-					get
-					{
-						return(0 != (Status & FlagBitStatus.START_AFTER_TRANSITION));
-					}
-					set
-					{
-						if(true == value)
-						{
-							Status |= FlagBitStatus.START_AFTER_TRANSITION;
-						}
-						else
-						{
-							Status &= ~FlagBitStatus.START_AFTER_TRANSITION;
-						}
-					}
-				}
 				internal bool StatusIsPlayStylePingpong
 				{
 					get
@@ -122,6 +104,42 @@ public static partial class Library_SpriteStudio6
 					get
 					{
 						return(0 != (Status & FlagBitStatus.IGNORE_SKIPLOOP));
+					}
+				}
+				internal bool StatusIsTransitionStart
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.TRANSITION_START));
+					}
+					set
+					{
+						if(true == value)
+						{
+							Status |= FlagBitStatus.TRANSITION_START;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.TRANSITION_START;
+						}
+					}
+				}
+				internal bool StatusIsTransitionCancelPause
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.TRANSITION_CANCEL_PAUSE));
+					}
+					set
+					{
+						if(true == value)
+						{
+							Status |= FlagBitStatus.TRANSITION_CANCEL_PAUSE;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.TRANSITION_CANCEL_PAUSE;
+						}
 					}
 				}
 				internal bool StatusIsRequestPlayEnd
@@ -674,7 +692,7 @@ public static partial class Library_SpriteStudio6
 //				{
 //					if((FlagBitStatus.VALID | FlagBitStatus.PLAYING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)))
 //					{	/* Not-Playing */
-//						Status &= ~(FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE);
+//						Status &= ~(FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE | FlagBitStatus.TRANSITION_START);
 //					}
 //				}
 
@@ -808,7 +826,6 @@ public static partial class Library_SpriteStudio6
 					PLAYING = 0x20000000,
 					PAUSING = 0x10000000,
 
-					START_AFTER_TRANSITION = 0x08000000,
 					STYLE_PINGPONG = 0x02000000,
 					STYLE_REVERSE = 0x01000000,
 
@@ -822,8 +839,11 @@ public static partial class Library_SpriteStudio6
 					IGNORE_USERDATA = 0x00008000,
 					IGNORE_SKIPLOOP = 0x00004000,
 
-					REQUEST_PLAYEND = 0x00000080,
-					REQUEST_TRANSITIONEND = 0x00000010,
+					TRANSITION_START = 0x00000080,
+					TRANSITION_CANCEL_PAUSE = 0x00000040,
+
+					REQUEST_PLAYEND = 0x00000008,
+					REQUEST_TRANSITIONEND = 0x00000004,
 
 					CLEAR = 0x00000000,
 				}
