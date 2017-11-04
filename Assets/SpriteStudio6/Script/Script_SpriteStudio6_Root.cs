@@ -381,6 +381,16 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 						/* MEMO: If destination-animation has ended at transition complete, will callback. */
 						TableControlTrack[i] = TableControlTrack[indexTrackSlave];
 
+						/* Copy Parts-TRS */
+						/* MEMO: copy TRSSlave to TRSMaster since decode states at transition end is in TRSSlave. */
+						for(int j=0; j<countControlParts; j++)
+						{
+							if(TableControlParts[j].IndexControlTrack == i)
+							{
+								TableControlParts[j].TRSMaster = TableControlParts[j].TRSSlave;
+							}
+						}
+
 						/* Clear Transition */
 						TableControlTrack[i].StatusIsRequestTransitionEnd = false;
 						TableControlTrack[i].StatusIsTransitionCancelPause = false;
