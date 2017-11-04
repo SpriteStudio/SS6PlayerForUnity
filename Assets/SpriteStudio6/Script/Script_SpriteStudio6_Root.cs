@@ -373,6 +373,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 					indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
 					if(0 <= indexTrackSlave)
 					{
+						bool flagStartAnimation = TableControlTrack[i].StatusIsStartAfterTransition;
+						flagRequestPlayEndTrack = TableControlTrack[indexTrackSlave].StatusIsRequestPlayEnd;	/* Overwrite slave track status. */
+
 						/* Copy Track playing datas */
 						/* MEMO: Since track-control manages only playing-frame, copy all. */
 						/* MEMO: If destination-animation has ended at transition complete, will callback. */
@@ -381,10 +384,13 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 						/* Clear Transition */
 						TableControlTrack[i].StatusIsRequestTransitionEnd = false;
 						TableControlTrack[i].StatusIsStartAfterTransition = false;
-						TableControlTrack[i].StatusIsPausingDuringTransition = false;
-						TableControlTrack[i].Transition(-1, 0.0f, false);
+						TableControlTrack[i].Transition(-1, 0.0f);
 
-						flagRequestPlayEndTrack = TableControlTrack[i].StatusIsRequestPlayEnd;	/* Overwrite new value */
+						/* Pause Cancel */
+						if(true == flagStartAnimation)
+						{
+							TableControlTrack[i].Pause(false);
+						}
 
 						/* Stop Slave */
 						TableControlTrack[indexTrackSlave].Stop(false);

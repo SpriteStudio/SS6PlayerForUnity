@@ -381,7 +381,7 @@ public static partial class Library_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusParts = dataAnimationParts.StatusParts;
 					StatusAnimationParts = statusParts;	/* cache for other Update/Draw-Functions */
 
-					/* MEMO: StatusParts's NOT_USED should not be judged here, because will fail Refresh at start of animation. */
+					/* MEMO: StatusParts's NOT_USED should not be judged here, because will fail Refresh at animation-start. */
 //					if(0 != (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
 //					{
 //						return;
@@ -492,11 +492,9 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Set Transform-Position */
-						if(true == flagUpdate)
-						{
-							transform.localPosition = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
-							Status |= FlagBitStatus.CHANGE_TRANSFORM_POSITION;
-						}
+						/* MEMO: As blending rate always changes, not check attribute updates. */
+						transform.localPosition = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+						Status |= FlagBitStatus.CHANGE_TRANSFORM_POSITION;
 					}
 
 					/* Update Rotation */
@@ -554,11 +552,9 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Set Transform-Rotation */
-						if(true == flagUpdate)
-						{
-							transform.localEulerAngles = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
-							Status |= FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
-						}
+						/* MEMO: As blending rate always changes, not check attribute updates. */
+						transform.localEulerAngles = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+						Status |= FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
 					}
 
 					/* Update Scaling */
@@ -617,13 +613,11 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Set Transform-Scaling */
-						if(true == flagUpdate)
-						{
-							valueTRSMaster = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
-							valueTRSMaster.z = 1.0f;
-							transform.localScale = valueTRSMaster;
-							Status |= FlagBitStatus.CHANGE_TRANSFORM_SCALING;
-						}
+						/* MEMO: As blending rate always changes, not check attribute updates. */
+						valueTRSMaster = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+						valueTRSMaster.z = 1.0f;
+						transform.localScale = valueTRSMaster;
+						Status |= FlagBitStatus.CHANGE_TRANSFORM_SCALING;
 					}
 
 					/* Clear "Refresh Transform" flags */

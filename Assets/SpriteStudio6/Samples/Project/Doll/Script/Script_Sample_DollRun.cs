@@ -16,7 +16,7 @@ public class Script_Sample_DollRun : MonoBehaviour
 	/* The points of this sample are as follows.                              */
 	/*                                                                        */
 	/* - How to use multi play track                                          */
-	/* - How to use animation blend (transition TRS)                          */
+	/* - How to use "Animation Transition" (transition TRS)                   */
 	/* - Tips to use parts' "Color-Label"                                     */
 	/*                                                                        */
 	/* *) First, recommend to refer to the following samples                  */
@@ -34,6 +34,9 @@ public class Script_Sample_DollRun : MonoBehaviour
 
 	public KindAnimation AnimationUpperBody;
 	public KindAnimation AnimationLowerBody;
+
+	public bool FlagAnimationTransition;
+	public float TimeAnimationTransition;
 
 	/* WorkArea */
 	private Script_SpriteStudio6_Root ScriptRoot = null;
@@ -75,6 +78,8 @@ public class Script_Sample_DollRun : MonoBehaviour
 
 	void Update ()
 	{
+		int indexAnimation;
+
 		/* Check Validity */
 		if(false == FlagInitialized)
 		{	/* Failed to initialize */
@@ -87,6 +92,19 @@ public class Script_Sample_DollRun : MonoBehaviour
 			ScriptRoot.AnimationStop(-1);
 
 			/* Initialize Multi-Track */
+			/* MEMO: The number of tracks must be equal or more than the number of animations played at the same time.                      */
+			/*       In this sample, allocate different animations for "upper body" and "lower body", so two are required at least.         */
+			/*                                                                                                                              */
+			/*       Also, the reason for creating 4 tracks is because of "Animation Transition".                                           */
+			/*       "Animation Transitions" will play 2 animations during the transition so need 2 tracks when use "Animation Transition". */
+			/*       In this sample, "upper body" and "lower body" are run separately, so the following 4 tracks are required.              */
+			/*       - For playing "upper body"'s animation                                                                                 */
+			/*       - For playing "lower body"'s animation                                                                                 */
+			/*       - For "upper body"'s animation-transition                                                                              */
+			/*       - For "lower body"'s animation-transition                                                                              */
+			/*                                                                                                                              */
+			/*       "Animation transition" is function to transition between 2 animations while interpolating TRS(Position, Rotation       */
+			/*        and Scaling).                                                                                                         */
 			/* MEMO: To initialize multi tracks, Seting number of tracks directly from "Script_SpriteStudio6_Root"'s inspector is also OK. */
 			/*       In this sample, provide as a way to initialize from a script.                                                         */
 			/*       However, not recommended that Increasing or decreasing the number of tracks frequently during appliacation running.   */
@@ -106,17 +124,42 @@ public class Script_Sample_DollRun : MonoBehaviour
 				return;
 			}
 
+			indexAnimation = TableIndexAnimation[(int)AnimationUpperBody];
+			ScriptRoot.AnimationPlay((int)KindTrack.BODY_UPPER, indexAnimation, 0);
+			AnimationUpperBodyPrevious = AnimationUpperBody;
+
+			indexAnimation = TableIndexAnimation[(int)AnimationLowerBody];
+			ScriptRoot.AnimationPlay((int)KindTrack.BODY_LOWER, indexAnimation, 0);
+			AnimationLowerBodyPrevious = AnimationLowerBody;
+
 			FlagInitializedTrack = true;
 		}
 
+		/* Adjust values */
+		if(0.1f >= TimeAnimationTransition)
+		{
+			TimeAnimationTransition = 0.1f;
+		}
+
 		/* Update Animations */
-		int indexAnimation;
 		if(AnimationUpperBodyPrevious != AnimationUpperBody)
 		{
 			indexAnimation = TableIndexAnimation[(int)AnimationUpperBody];
 			if(0 <= indexAnimation)
 			{
-				ScriptRoot.AnimationPlay((int)KindTrack.BODY_UPPER, indexAnimation, 0);
+				if(true == FlagAnimationTransition)
+				{	/* Transition (Fade) */
+					ScriptRoot.AnimationPlay((int)KindTrack.TRANSITION_UPPER, indexAnimation, 0);
+					ScriptRoot.TrackTransition(	(int)KindTrack.BODY_UPPER,
+												(int)KindTrack.TRANSITION_UPPER,
+												TimeAnimationTransition,
+												false
+											);
+				}
+				else
+				{	/* Immediate */
+					ScriptRoot.AnimationPlay((int)KindTrack.BODY_UPPER, indexAnimation, 0);
+				}
 			}
 
 			AnimationUpperBodyPrevious = AnimationUpperBody;
@@ -126,7 +169,19 @@ public class Script_Sample_DollRun : MonoBehaviour
 			indexAnimation = TableIndexAnimation[(int)AnimationLowerBody];
 			if(0 <= indexAnimation)
 			{
-				ScriptRoot.AnimationPlay((int)KindTrack.BODY_LOWER, indexAnimation, 0);
+				if(true == FlagAnimationTransition)
+				{	/* Transition (Fade) */
+					ScriptRoot.AnimationPlay((int)KindTrack.TRANSITION_LOWER, indexAnimation, 0);
+					ScriptRoot.TrackTransition(	(int)KindTrack.BODY_LOWER,
+												(int)KindTrack.TRANSITION_LOWER,
+												TimeAnimationTransition,
+												true
+											);
+				}
+				else
+				{	/* Immediate */
+					ScriptRoot.AnimationPlay((int)KindTrack.BODY_LOWER, indexAnimation, 0);
+				}
 			}
 
 			AnimationLowerBodyPrevious = AnimationLowerBody;

@@ -60,24 +60,6 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 				}
-				internal bool StatusIsPausingDuringTransition
-				{
-					get
-					{
-						return(0 != (Status & FlagBitStatus.PAUSE_DURING_TRANSITION));
-					}
-					set
-					{
-						if(true == value)
-						{
-							Status |= FlagBitStatus.PAUSE_DURING_TRANSITION;
-						}
-						else
-						{
-							Status &= ~FlagBitStatus.PAUSE_DURING_TRANSITION;
-						}
-					}
-				}
 				internal bool StatusIsPlayStylePingpong
 				{
 					get
@@ -318,7 +300,7 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
-				public bool Transition(int indexTrackSlave, float time, bool flagTimeAffectedRateTime)
+				public bool Transition(int indexTrackSlave, float time)
 				{
 					if(0 == (Status & FlagBitStatus.VALID))
 					{
@@ -328,7 +310,7 @@ public static partial class Library_SpriteStudio6
 					IndexTrackSlave = indexTrackSlave;
 
 					TimeElapsedTransition = 0.0f;
-					TimeLimitTransition = (true == flagTimeAffectedRateTime) ? time : (time * RateTime);
+					TimeLimitTransition = time;
 					RateTransition = 0.0f;
 
 					return(true);
@@ -350,8 +332,7 @@ public static partial class Library_SpriteStudio6
 					{
 					}
 
-					Status &= ~FlagBitStatus.PLAYING;
-					Status &= ~FlagBitStatus.PLAYING_START;
+					Status &= FlagBitStatus.VALID;
 
 					return(true);
 				}
@@ -410,10 +391,6 @@ public static partial class Library_SpriteStudio6
 						{	/* Play & Pausing */
 							/* MEMO: Transition does not progress during paused. */
 							return(true);
-						}
-						if(0 != (Status & FlagBitStatus.PAUSE_DURING_TRANSITION))
-						{
-							goto Update_UpdateTransition;
 						}
 					}
 
@@ -671,7 +648,7 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{
-							RateTransition = Mathf.Clamp01(Mathf.Lerp(0.0f, TimeLimitTransition, TimeElapsedTransition));
+							RateTransition = TimeElapsedTransition / TimeLimitTransition;
 						}
 					}
 					return(true);
@@ -832,7 +809,6 @@ public static partial class Library_SpriteStudio6
 					PAUSING = 0x10000000,
 
 					START_AFTER_TRANSITION = 0x08000000,
-					PAUSE_DURING_TRANSITION = 0x04000000,
 					STYLE_PINGPONG = 0x02000000,
 					STYLE_REVERSE = 0x01000000,
 
