@@ -17,6 +17,7 @@ public class Script_Sample_DollRun : MonoBehaviour
 	/*                                                                        */
 	/* - How to use multi play track                                          */
 	/* - How to use "Animation Transition" (transition TRS)                   */
+	/* - How to use track-play-end callback & transition-end callback         */
 	/* - Tips to use parts' "Color-Label"                                     */
 	/*                                                                        */
 	/* *) First, recommend to refer to the following samples                  */
@@ -124,6 +125,7 @@ public class Script_Sample_DollRun : MonoBehaviour
 				return;
 			}
 
+			/* Initialize Animation */
 			indexAnimation = TableIndexAnimation[(int)AnimationUpperBody];
 			ScriptRoot.AnimationPlay((int)KindTrack.BODY_UPPER, indexAnimation, 0);
 			AnimationUpperBodyPrevious = AnimationUpperBody;
@@ -142,6 +144,39 @@ public class Script_Sample_DollRun : MonoBehaviour
 		}
 
 		/* Update Animations */
+		if(AnimationLowerBodyPrevious != AnimationLowerBody)
+		{
+			indexAnimation = TableIndexAnimation[(int)AnimationLowerBody];
+			if(0 <= indexAnimation)
+			{
+				if(true == FlagAnimationTransition)
+				{	/* Transition (Fade) */
+					/* MEMO: When start transition, you need to play destination animation on track for transition first. */
+					ScriptRoot.AnimationPlay((int)KindTrack.TRANSITION_LOWER, indexAnimation, 0);
+
+					/* MEMO: Connect transition track to current animation's track after destination animation is successfully played. */
+					/*       Set the transtion track to "indexTrackSlave".                                                             */
+					/* MEMO: Transition ends at set time(TimeAnimationTransition).                                     */
+					/*       At the end of the transition, transition track's playing state will move to master track. */
+					/* MEMO: Transition while animating when current animation or destination animation is not in the pause state. */
+					ScriptRoot.TrackTransition(	(int)KindTrack.BODY_LOWER,
+												(int)KindTrack.TRANSITION_LOWER,
+												TimeAnimationTransition,
+												false	/* Ignored if destination animation is not in pause state. */
+											);
+
+					/* MEMO: If you want timing of transition end, set callback function to "FunctionPlayEndTrack [master track's index]" of ScriptRoot. */
+					ScriptRoot.FunctionPlayEndTrack[(int)KindTrack.BODY_LOWER] = FunctionPlayEndTrackBody;
+
+				}
+				else
+				{	/* Immediate */
+					ScriptRoot.AnimationPlay((int)KindTrack.BODY_LOWER, indexAnimation, 0);
+				}
+			}
+
+			AnimationLowerBodyPrevious = AnimationLowerBody;
+		}
 		if(AnimationUpperBodyPrevious != AnimationUpperBody)
 		{
 			indexAnimation = TableIndexAnimation[(int)AnimationUpperBody];
@@ -149,11 +184,19 @@ public class Script_Sample_DollRun : MonoBehaviour
 			{
 				if(true == FlagAnimationTransition)
 				{	/* Transition (Fade) */
+					/* MEMO: If you pause animation and make a transition, you can perform transition while stopping the animation. */
 					ScriptRoot.AnimationPlay((int)KindTrack.TRANSITION_UPPER, indexAnimation, 0);
+
+					ScriptRoot.AnimationPause((int)KindTrack.TRANSITION_UPPER, true);
+					ScriptRoot.AnimationPause((int)KindTrack.BODY_UPPER, true);
+
+					/* MEMO: Set "flagCancelPauseAfterTransition" to true to automatically unpause animation when transition is complete. */
+					/*       Of course, you can get the timing with transition end callback and cancel pause state by yourself.           */
+					/*       But this way is more easier.                                                                                 */
 					ScriptRoot.TrackTransition(	(int)KindTrack.BODY_UPPER,
 												(int)KindTrack.TRANSITION_UPPER,
 												TimeAnimationTransition,
-												false
+												true
 											);
 				}
 				else
@@ -163,28 +206,6 @@ public class Script_Sample_DollRun : MonoBehaviour
 			}
 
 			AnimationUpperBodyPrevious = AnimationUpperBody;
-		}
-		if(AnimationLowerBodyPrevious != AnimationLowerBody)
-		{
-			indexAnimation = TableIndexAnimation[(int)AnimationLowerBody];
-			if(0 <= indexAnimation)
-			{
-				if(true == FlagAnimationTransition)
-				{	/* Transition (Fade) */
-					ScriptRoot.AnimationPlay((int)KindTrack.TRANSITION_LOWER, indexAnimation, 0);
-					ScriptRoot.TrackTransition(	(int)KindTrack.BODY_LOWER,
-												(int)KindTrack.TRANSITION_LOWER,
-												TimeAnimationTransition,
-												true
-											);
-				}
-				else
-				{	/* Immediate */
-					ScriptRoot.AnimationPlay((int)KindTrack.BODY_LOWER, indexAnimation, 0);
-				}
-			}
-
-			AnimationLowerBodyPrevious = AnimationLowerBody;
 		}
 	}
 	#endregion MonoBehaviour-Functions
@@ -227,6 +248,23 @@ public class Script_Sample_DollRun : MonoBehaviour
 		}
 
 		return(true);
+	}
+
+	private void FunctionPlayEndTrackBody(	Script_SpriteStudio6_Root scriptRoot,
+											int indexTrackPlay,
+											int indexTrackSlave,
+											int indexAnimation,
+											int indexAnimationSlave
+										)
+	{
+		/* MEMO: Same function is called when transition end and track play-end.                                                           */
+		/*       As method to distinguish them, at the end of the transition,                                                              */
+		/*        "indexTrackSlave" is set to "transition track index"  and "indexAnimationSlave" is set to "destination animation index". */
+		/*       (In case of playback end of track, both are set to -1)                                                                    */
+		/* MEMO: When "track play end" and "transition end" occur simultaneously, callbacks will be execute in following order. */
+		/*       1. Transition end                                                                                              */
+		/*       2. Track play end                                                                                              */
+		/* MEMO: Recommend not to change animation playing state in TrackPlayEnd callback processing function. */
 	}
 	#endregion Functions
 

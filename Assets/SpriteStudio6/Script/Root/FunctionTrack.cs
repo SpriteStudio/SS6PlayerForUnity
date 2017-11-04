@@ -188,6 +188,11 @@ public partial class Script_SpriteStudio6_Root
 			return(false);
 		}
 
+		if(false == TableControlTrack[indexTrackSlave].StatusIsPlaying)
+		{	/* Slave, Playing Stop */
+			return(false);
+		}
+
 		if(0 <= TableControlTrack[indexTrack].IndexTrackSlave)
 		{	/* Master, Transitioning now */
 			return(false);

@@ -407,8 +407,12 @@ public static partial class Library_SpriteStudio6
 					{	/* (Not Right-After-Starting) */
 						if(0 != (Status & FlagBitStatus.PAUSING))
 						{	/* Play & Pausing */
+#if false
 							/* MEMO: Transition does not progress during paused. */
 							return(true);
+#else
+							goto Update_UpdateTransition;
+#endif
 						}
 					}
 
