@@ -1,16 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
+/**
+	SpriteStudio6 Player for Unity
+
+	Copyright(C) Web Technology Corp. 
+	All rights reserved.
+*/
 using UnityEngine;
 
-public class Script_SpriteStudio6_ControlPrefab : MonoBehaviour {
+[ExecuteInEditMode]
+[System.Serializable]
+public partial class Script_SpriteStudio6_ControlPrefab : MonoBehaviour
+{
+	/* ----------------------------------------------- Variables & Properties */
+	#region Variables & Properties
+	public Object PrefabUnderControl;
+	#endregion Variables & Properties
 
-	// Use this for initialization
-	void Start () {
-		
+	/* ----------------------------------------------- MonoBehaviour-Functions */
+	#region MonoBehaviour-Functions
+//	void Awake()
+//	{
+//	}
+
+	void Start()
+	{
+		if(null != PrefabUnderControl)
+		{
+			GameObject instanceGameObject = Library_SpriteStudio6.Utility.Asset.PrefabInstantiate(gameObject, (GameObject)PrefabUnderControl, null, false);
+			if(null != instanceGameObject)
+			{
+				/* Instantiate Under-Control Prefab */
+				Script_SpriteStudio6_Root instanceScriptRoot = instanceGameObject.GetComponent<Script_SpriteStudio6_Root>();
+				if(null != instanceScriptRoot)
+				{
+					instanceScriptRoot.InstanceGameObjectControl = gameObject;
+				}
+			}
+		}
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+//	void Update()
+//	{
+//	}
+
+//	void LateUpdate()
+//	{
+//	}
+	#endregion MonoBehaviour-Functions
 }
