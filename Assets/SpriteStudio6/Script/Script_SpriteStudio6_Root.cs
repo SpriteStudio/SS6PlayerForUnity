@@ -185,40 +185,10 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		Status |= FlagBitStatus.VALID;
 
 		/* Set Initial Animations */
-		/* MEMO: Initial animation only applies track 0.                                               */
-		/*       For simplify setting (as interface for setting affecting part tables is complicated). */
-		/*       And because animation blends are often controlled from scripts in many cases.         */
-		int indexAnimation = -1;
-		if(true == string.IsNullOrEmpty(TableInformationPlay[0].NameAnimation))
+		if(false == AnimationPlayInitial())
 		{
-			indexAnimation = 0;
-			TableInformationPlay[0].NameAnimation = DataAnimation.TableAnimation[indexAnimation].Name;
+			goto Start_ErrorEnd;
 		}
-		else
-		{
-			indexAnimation = IndexGetAnimation(TableInformationPlay[0].NameAnimation);
-			if(0 > indexAnimation)
-			{
-				indexAnimation = 0;
-				TableInformationPlay[0].NameAnimation = DataAnimation.TableAnimation[indexAnimation].Name;
-			}
-		}
-		AnimationPlay(	-1,
-						indexAnimation,
-						TableInformationPlay[0].TimesPlay,
-						TableInformationPlay[0].Frame,
-						TableInformationPlay[0].RateTime,
-						((true == TableInformationPlay[0].FlagPingPong) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
-						TableInformationPlay[0].LabelStart,
-						TableInformationPlay[0].FrameOffsetStart,
-						TableInformationPlay[0].LabelEnd,
-						TableInformationPlay[0].FrameOffsetEnd
-					);
-		if(true == TableInformationPlay[0].FlagStopInitial)
-		{
-			AnimationStop(-1, false);
-		}
-
 		return;
 
 	Start_ErrorEnd:;
@@ -719,6 +689,45 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 					break;
 			}
 		}
+		return(true);
+	}
+
+	public bool AnimationPlayInitial()
+	{
+		/* MEMO: Initial animation only applies track 0.                                               */
+		/*       For simplify setting (as interface for setting affecting part tables is complicated). */
+		/*       And because animation blends are often controlled from scripts in many cases.         */
+		int indexAnimation = -1;
+		if(true == string.IsNullOrEmpty(TableInformationPlay[0].NameAnimation))
+		{
+			indexAnimation = 0;
+			TableInformationPlay[0].NameAnimation = DataAnimation.TableAnimation[indexAnimation].Name;
+		}
+		else
+		{
+			indexAnimation = IndexGetAnimation(TableInformationPlay[0].NameAnimation);
+			if(0 > indexAnimation)
+			{
+				indexAnimation = 0;
+				TableInformationPlay[0].NameAnimation = DataAnimation.TableAnimation[indexAnimation].Name;
+			}
+		}
+		AnimationPlay(	-1,
+						indexAnimation,
+						TableInformationPlay[0].TimesPlay,
+						TableInformationPlay[0].Frame,
+						TableInformationPlay[0].RateTime,
+						((true == TableInformationPlay[0].FlagPingPong) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
+						TableInformationPlay[0].LabelStart,
+						TableInformationPlay[0].FrameOffsetStart,
+						TableInformationPlay[0].LabelEnd,
+						TableInformationPlay[0].FrameOffsetEnd
+					);
+		if(true == TableInformationPlay[0].FlagStopInitial)
+		{
+			AnimationStop(-1, false);
+		}
+
 		return(true);
 	}
 

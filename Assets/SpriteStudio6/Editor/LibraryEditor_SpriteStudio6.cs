@@ -1510,6 +1510,156 @@ public static partial class LibraryEditor_SpriteStudio6
 			#endregion Functions
 		}
 
+		public static partial class Inspector
+		{
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public static void TableMaterialAnimation(Material[] tableMaterial, int levelIndent)
+			{
+				if(null == tableMaterial)
+				{
+					EditorGUI.indentLevel = levelIndent;
+					EditorGUILayout.LabelField("(Data Missing)");
+				}
+				else
+				{
+					EditorGUI.indentLevel = levelIndent;
+
+					int countShader = (int)(Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL);
+					int countBlock = (int)Library_SpriteStudio6.KindMasking.TERMINATOR * countShader;
+					int indexMaterialBlock;
+					int indexMaterial;
+
+					int countTexture = Script_SpriteStudio6_Root.Material.CountGetTexture(tableMaterial);
+					for(int i=0; i<countTexture; i++)
+					{
+						indexMaterialBlock = i * countBlock;
+						EditorGUILayout.LabelField(	"Material No ["
+													+ indexMaterialBlock.ToString()
+													+ "-"
+													+ (indexMaterialBlock + (countBlock - 1)).ToString()
+													+ "]: Texture-"
+													+ i.ToString()
+												);
+
+						EditorGUI.indentLevel = levelIndent + 1;
+						for(int j=0; j<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; j++)
+						{
+							for(int k=0; k<countShader; k++)
+							{
+								indexMaterial = indexMaterialBlock + (j * countShader) + k;
+								tableMaterial[indexMaterial] = (Material)(EditorGUILayout.ObjectField(	NameItemTableMaterialAnimation[j][k],
+																										tableMaterial[indexMaterial],
+																										typeof(Material),
+																										false
+																									)
+																		);
+							}
+							EditorGUILayout.Space();
+						}
+						EditorGUI.indentLevel = levelIndent;
+					}
+				}
+			}
+
+			public static void TableMaterialEffect(Material[] tableMaterial, int levelIndent)
+			{
+				if(null == tableMaterial)
+				{
+					EditorGUI.indentLevel = levelIndent;
+					EditorGUILayout.LabelField("(Data Missing)");
+				}
+				else
+				{
+					EditorGUI.indentLevel = levelIndent;
+
+					int countShader = (int)(Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL);
+					int countBlock = (int)Library_SpriteStudio6.KindMasking.TERMINATOR * countShader;
+					int indexMaterialBlock;
+					int indexMaterial;
+
+					int countTexture = Script_SpriteStudio6_RootEffect.Material.CountGetTexture(tableMaterial);
+					for(int i=0; i<countTexture; i++)
+					{
+						indexMaterialBlock = i * countBlock;
+						EditorGUILayout.LabelField(	"Material No ["
+													+ indexMaterialBlock.ToString()
+													+ "-"
+													+ (indexMaterialBlock + (countBlock - 1)).ToString()
+													+ "]: Texture-"
+													+ i.ToString()
+												);
+
+						EditorGUI.indentLevel = levelIndent + 1;
+						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+						{
+							for(int k=0; k<countShader; k++)
+							{
+								indexMaterial = indexMaterialBlock + (j * countShader) + k;
+								tableMaterial[indexMaterial] = (Material)(EditorGUILayout.ObjectField(	NameItemTableMaterialEffect[j][k],
+																										tableMaterial[indexMaterial],
+																										typeof(Material),
+																										false
+																									)
+																		);
+							}
+							EditorGUILayout.Space();
+						}
+						EditorGUI.indentLevel = levelIndent;
+					}
+
+				}
+			}
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			private readonly static string[][] NameItemTableMaterialAnimation = new string[2][]
+			{
+				new string[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
+				{
+					"Mask-Pre",
+					"Mask",
+					"Mix(T)",
+					"Add(T)",
+					"Sub(T)",
+					"Mul(T)",
+					"MulPA(T)",
+					"Scr(T)",
+					"Exc(T)",
+					"Inv(T)",
+				},
+				new string[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
+				{
+					"Mask-Pre",
+					"Mask",
+					"Mix(M)",
+					"Add(M)",
+					"Sub(M)",
+					"Mul(M)",
+					"MulPA(M)",
+					"Scr(M)",
+					"Exc(M)",
+					"Inv(M)",
+				}
+			};
+
+			private readonly static string[][] NameItemTableMaterialEffect = new string[2][]
+			{
+				new string[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL]
+				{
+					"Mix(T)",
+					"Add(T)",
+				},
+				new string[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL]
+				{
+					"Mix(M)",
+					"Add(M)",
+				}
+			};
+			#endregion Enums & Constants
+		}
+
 		public static partial class Miscellaneous
 		{
 			/* ----------------------------------------------- Functions */
