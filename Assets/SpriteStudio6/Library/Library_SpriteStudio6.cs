@@ -397,6 +397,8 @@ public static partial class Library_SpriteStudio6
 
 					NO_USERDATA = 0x00080000,
 					NO_PARTSCOLOR = 0x00040000,
+					NO_INSTANCE = 0x00020000,
+					NO_EFFECT = 0x00010000,
 
 					CLEAR = 0x00000000
 				}
@@ -2502,15 +2504,22 @@ public static partial class Library_SpriteStudio6
 				}
 
 				GameObject gameObject = gameObjectOld;
-				Transform transformParent = gameObjectParent.transform;
 				Transform transform;
+				Transform transformParent = null;
+				if(null != gameObjectParent)
+				{
+					transformParent = gameObjectParent.transform;
+				}
 
 				if(null == gameObject)
 				{	/* Lost (Not-Found) */
-					transform = transformParent.Find(prefab.name);
-					if(null != transform)
-					{	/* Found */
-						gameObject = transform.gameObject;
+					if(null != transformParent)
+					{
+						transform = transformParent.Find(prefab.name);
+						if(null != transform)
+						{	/* Found */
+							gameObject = transform.gameObject;
+						}
 					}
 				}
 

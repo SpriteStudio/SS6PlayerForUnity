@@ -12,7 +12,7 @@ public partial class Script_SpriteStudio6_ControlPrefab : MonoBehaviour
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
-	public Object PrefabUnderControl;
+	public Object PrefabAnimation;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -23,9 +23,9 @@ public partial class Script_SpriteStudio6_ControlPrefab : MonoBehaviour
 
 	void Start()
 	{
-		if(null != PrefabUnderControl)
+		if(null != PrefabAnimation)
 		{
-			GameObject instanceGameObject = Library_SpriteStudio6.Utility.Asset.PrefabInstantiate(gameObject, (GameObject)PrefabUnderControl, null, false);
+			GameObject instanceGameObject = Library_SpriteStudio6.Utility.Asset.PrefabInstantiate((GameObject)PrefabAnimation, null, gameObject, false);
 			if(null != instanceGameObject)
 			{
 				/* Instantiate Under-Control Prefab */

@@ -398,6 +398,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				TEXTURE = 0,
 
 				/* (Mode SS6PU) */
+				PREFAB_CONTROL_ANIMATION_SS6PU,
 				PREFAB_ANIMATION_SS6PU,
 				PREFAB_EFFECT_SS6PU,
 				DATA_CELLMAP_SS6PU,
@@ -1307,6 +1308,13 @@ public static partial class LibraryEditor_SpriteStudio6
 									+ nameBase;
 							break;
 
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU:
+							/* MEMO: (PrefabAnimation)_Control */
+							name = NamePrefixPrefabAnimationSS6PU
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ nameBase
+									+ "_Control";
+							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_SS6PU:
 							name = NamePrefixPrefabAnimationSS6PU
 									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
@@ -1663,6 +1671,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							name += NameFolderTexture + "/";
 							break;
 
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU:
+							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_SS6PU:
 							name += NameFolderPrefabAnimationSS6PU + "/";
 							break;

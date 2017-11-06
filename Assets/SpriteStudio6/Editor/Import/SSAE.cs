@@ -1724,6 +1724,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.Parts.KindFormat FormatSS6PU;
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataAnimation> DataAnimationSS6PU;
 				public LibraryEditor_SpriteStudio6.Import.Assets<Object> PrefabAnimationSS6PU;
+				public string NameGameObjectAnimationSS6PU;
+				public LibraryEditor_SpriteStudio6.Import.Assets<Object> PrefabControlAnimationSS6PU;
+				public string NameGameObjectAnimationControlSS6PU;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -1745,6 +1748,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					DataAnimationSS6PU.BootUp(1);	/* Always 1 */
 					PrefabAnimationSS6PU.CleanUp();
 					PrefabAnimationSS6PU.BootUp(1);	/* Always 1 */
+					NameGameObjectAnimationSS6PU = "";
+					PrefabControlAnimationSS6PU.CleanUp();
+					PrefabControlAnimationSS6PU.BootUp(1);	/* Always 1 */
+					NameGameObjectAnimationControlSS6PU = "";
 				}
 
 				public string FileNameGetFullPath()
@@ -2918,7 +2925,8 @@ public static partial class LibraryEditor_SpriteStudio6
 													LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE,
 													string nameOutputAssetFolderBase,
 													Script_SpriteStudio6_DataAnimation dataOverride,
-													Script_SpriteStudio6_Root prefabOverride
+													Script_SpriteStudio6_Root prefabOverride,
+													GameObject prefabOverrideControl
 												)
 				{
 					if(null != dataOverride)
@@ -2936,15 +2944,36 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(null != prefabOverride)
 					{	/* Specified */
+						informationSSAE.NameGameObjectAnimationSS6PU = string.Copy(prefabOverride.name);
+
 						informationSSAE.PrefabAnimationSS6PU.TableName[0] = AssetDatabase.GetAssetPath(prefabOverride);
 						informationSSAE.PrefabAnimationSS6PU.TableData[0] = prefabOverride;
 					}
 					else
 					{	/* Default */
+						informationSSAE.NameGameObjectAnimationSS6PU = setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_SS6PU, informationSSAE.NameFileBody, informationSSPJ.NameFileBody);
+
 						informationSSAE.PrefabAnimationSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_SS6PU, nameOutputAssetFolderBase)
-																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_SS6PU, informationSSAE.NameFileBody, informationSSPJ.NameFileBody)
-																		+ LibraryEditor_SpriteStudio6.Import.NameExtensionPrefab;
+																			+ informationSSAE.NameGameObjectAnimationSS6PU
+																			+ LibraryEditor_SpriteStudio6.Import.NameExtensionPrefab;
 						informationSSAE.PrefabAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<GameObject>(informationSSAE.PrefabAnimationSS6PU.TableName[0]);
+					}
+
+					if(null != prefabOverrideControl)
+					{	/* Specified */
+						informationSSAE.NameGameObjectAnimationSS6PU = string.Copy(prefabOverrideControl.name);
+
+						informationSSAE.PrefabControlAnimationSS6PU.TableName[0] = AssetDatabase.GetAssetPath(prefabOverrideControl);
+						informationSSAE.PrefabControlAnimationSS6PU.TableData[0] = prefabOverrideControl;
+					}
+					else
+					{	/* Default */
+						informationSSAE.NameGameObjectAnimationControlSS6PU = setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU, informationSSAE.NameFileBody, informationSSPJ.NameFileBody);
+
+						informationSSAE.PrefabControlAnimationSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU, nameOutputAssetFolderBase)
+																					+ informationSSAE.NameGameObjectAnimationControlSS6PU
+																					+ LibraryEditor_SpriteStudio6.Import.NameExtensionPrefab;
+						informationSSAE.PrefabControlAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<GameObject>(informationSSAE.PrefabControlAnimationSS6PU.TableName[0]);
 					}
 
 					return(true);
@@ -3084,13 +3113,13 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					/* Create new GameObject (Root) */
-					gameObjectRoot = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(informationSSAE.NameFileBody, false, null);
+					gameObjectRoot = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(informationSSAE.NameGameObjectAnimationSS6PU, false, null);	/* informationSSAE.NameFileBody */
 					if(null == gameObjectRoot)
 					{
 						LogError(messageLogPrefix, "Failure to get Temporary-GameObject", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 						goto AssetCreatePrefab_ErrorEnd;
 					}
-					gameObjectRoot.name = informationSSAE.NameFileBody;	/* Give Root same name as SSAE */
+//					gameObjectRoot.name = informationSSAE.NameGameObjectAnimationSS6PU;	/* informationSSAE.NameFileBody; */	/* Give Root same name as SSAE */
 					scriptRoot = gameObjectRoot.AddComponent<Script_SpriteStudio6_Root>();
 					if(null == scriptRoot)
 					{
@@ -3292,6 +3321,36 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Destroy Temporary */
 					UnityEngine.Object.DestroyImmediate(gameObjectRoot);
 					gameObjectRoot = null;
+
+					/* Create Control-Object */
+					if(true == setting.Basic.FlagCreateControlGameObject)
+					{
+						/* Control-Object Create */
+						GameObject gameObjectControl = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(informationSSAE.NameGameObjectAnimationControlSS6PU, false, null);
+						if(null == gameObjectControl)
+						{
+							LogError(messageLogPrefix, "Failure to get Temporary-GameObject (Control)", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+							goto AssetCreatePrefab_ErrorEnd;
+						}
+
+						/* Attach Script & Link Prefab */
+						Script_SpriteStudio6_ControlPrefab scriptControlPrefab = gameObjectControl.AddComponent<Script_SpriteStudio6_ControlPrefab>();
+						scriptControlPrefab.PrefabAnimation = informationSSAE.PrefabAnimationSS6PU.TableData[0];
+
+						/* Create Prefab */
+						gameObjectControl.SetActive(true);
+
+						UnityEngine.Object prefabControl = PrefabUtility.CreateEmptyPrefab(informationSSAE.PrefabControlAnimationSS6PU.TableName[0]);
+						PrefabUtility.ReplacePrefab(	gameObjectControl,
+														prefabControl,
+														LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
+													);
+						AssetDatabase.SaveAssets();
+
+						/* Destroy Temporary */
+						UnityEngine.Object.DestroyImmediate(gameObjectControl);
+						gameObjectControl = null;
+					}
 
 					return(true);
 

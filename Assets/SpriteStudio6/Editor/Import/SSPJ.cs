@@ -733,9 +733,10 @@ public static partial class LibraryEditor_SpriteStudio6
 													string nameOutputAssetFolderBase
 												)
 				{
-					/* Yuzu.: オプションがない場合は、名前で照合 */
-					/* Yuzu.: オプションがある場合は、SpriteStudio_Root/RootEffectから使用しているデータを追いかける */
-						/* Yuzu.: SpriteStudio_Root/RootEffectがない場合は名前で照合していく */
+					/* MEMO: Under constructing.                                                                         */
+					/*       If the option is not set, check by name.                                                    */
+					/*       If the option is set, follow references from "Root" and "RootEffect" and identify the name. */
+					/*       If there is no "Root" and "RootEffect", check by name.                                      */
 
 					/* SSAEs */
 					int countSSAE = informationSSPJ.TableInformationSSAE.Length;
@@ -745,6 +746,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							informationSSPJ,
 																							informationSSPJ.TableInformationSSAE[i],
 																							nameOutputAssetFolderBase,
+																							null,
 																							null,
 																							null
 																						);

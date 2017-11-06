@@ -639,6 +639,12 @@ public static partial class Library_SpriteStudio6
 						Status &= ~FlagBitStatus.HIDE;
 					}
 
+					/* Check Not Used */
+					if(0 != (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+					{
+						return;
+					}
+
 					/* Get Local-Scale *
 					/* MEMO: "ScaleLocal" are data that must be constantly updated in most parts, so decode here. */
 					if(true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref controlTrack.ArgumentContainer))
