@@ -1401,7 +1401,9 @@ public static partial class Library_SpriteStudio6
 																ref matrixCorrection
 															);
 
-					Status &= ~(FlagBitStatus.UPDATE_SCALELOCAL | FlagBitStatus.UPDATE_RATEOPACITY);
+					Status &= ~(	FlagBitStatus.UPDATE_SCALELOCAL
+									| FlagBitStatus.UPDATE_RATEOPACITY
+							);
 				}
 				internal bool InstancePlayStart(bool flagPlayReverse)
 				{
@@ -1514,7 +1516,9 @@ public static partial class Library_SpriteStudio6
 																	ref matrixCorrection
 																);
 
-					Status &= ~(FlagBitStatus.UPDATE_SCALELOCAL | FlagBitStatus.UPDATE_RATEOPACITY);
+					Status &= ~(	FlagBitStatus.UPDATE_SCALELOCAL
+									| FlagBitStatus.UPDATE_RATEOPACITY
+							);
 				}
 				private void DrawMask(	Script_SpriteStudio6_Root instanceRoot,
 										int idParts,
@@ -1595,19 +1599,20 @@ public static partial class Library_SpriteStudio6
 					UPDATE_SCALELOCAL = 0x00080000,
 					UPDATE_RATEOPACITY = 0x00040000,
 
-					CHANGE_CELL_UNREFLECTED = 0x00008000,
-					CHANGE_CELL_IGNORE_ATTRIBUTE = 0x00002000,
-					CHANGE_CELL_IGNORE_NEWANIMATION = 0x00001000,
+					CHANGE_CELL_UNREFLECTED = 0x00000800,
+					CHANGE_CELL_IGNORE_ATTRIBUTE = 0x00000200,
+					CHANGE_CELL_IGNORE_NEWANIMATION = 0x00000100,
 
-					INSTANCE_PLAY_INDEPENDENT = 0x00000800,
-					INSTANCE_IGNORE_EXCEPT_NEXTDATA = 0x00000400,
-					INSTANCE_IGNORE_ATTRIBUTE = 0x00000200,
-					INSTANCE_IGNORE_NEWANIMATION = 0x00000100,
+					INSTANCE_PLAY_INDEPENDENT = 0x00000080,
+					INSTANCE_IGNORE_EXCEPT_NEXTDATA = 0x00000040,
+					INSTANCE_IGNORE_ATTRIBUTE = 0x00000020,
+					INSTANCE_IGNORE_NEWANIMATION = 0x00000010,
 
-					EFFECT_PLAY_INDEPENDENT = 0x00000080,
-					EFFECT_IGNORE_EXCEPT_NEXTDATA = 0x00000040,
-					EFFECT_IGNORE_ATTRIBUTE = 0x00000020,
-					EFFECT_IGNORE_NEWANIMATION = 0x00000010,
+					EFFECT_PLAY_INDEPENDENT = 0x00000008,
+					EFFECT_IGNORE_EXCEPT_NEXTDATA = 0x00000004,
+					EFFECT_IGNORE_ATTRIBUTE = 0x00000002,
+					EFFECT_IGNORE_NEWANIMATION = 0x00000001,
+
 					CLEAR = 0x00000000
 				}
 				#endregion Enums & Constants
@@ -1660,6 +1665,8 @@ public static partial class Library_SpriteStudio6
 					#region Variables & Properties
 					/* MEMO: Common */
 					internal FlagBitStatus Status;
+
+					internal Library_SpriteStudio6.Data.Animation.Attribute.Status DataStatusPrevious;
 
 					internal Library_SpriteStudio6.KindMasking Masking;
 
@@ -1717,6 +1724,8 @@ public static partial class Library_SpriteStudio6
 					internal void AnimationChange(bool flagClearDataCellApply)
 					{
 						Status = FlagBitStatus.CLEAR;
+
+						DataStatusPrevious.CleanUp();
 
 						Masking = (Library_SpriteStudio6.KindMasking)(-1);
 
@@ -1833,6 +1842,39 @@ public static partial class Library_SpriteStudio6
 
 					internal void StatusSetFlip(ref Library_SpriteStudio6.Data.Animation.Attribute.Status status)
 					{
+						/* Update Check */
+						Library_SpriteStudio6.Data.Animation.Attribute.Status statusUpdate = new Library_SpriteStudio6.Data.Animation.Attribute.Status();
+						if(false == DataStatusPrevious.IsValid)
+						{
+							statusUpdate.Flags =	Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.HIDE
+													| Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_X
+													| Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_Y
+													| Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_X
+													| Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_Y;
+						}
+						else
+						{
+							/* MEMO: Extract only changed bits. */
+							statusUpdate.Flags = DataStatusPrevious.Flags ^ status.Flags;
+						}
+						if(0 != (statusUpdate.Flags & (	Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_X
+														| Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_Y
+													)
+								)
+							)	/* ((true == statusUpdate.IsTextureFlipX) || (true == statusUpdate.IsTextureFlipY)) */
+						{
+							Status |= FlagBitStatus.UPDATE_TRANSFORM_TEXTURE;
+						}
+						if(0 != (statusUpdate.Flags & (	Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_X
+														| Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_Y
+													)
+								)
+							)	/* ((true == statusUpdate.IsFlipX) || (true == statusUpdate.IsFlipY)) */
+						{
+							Status |= FlagBitStatus.UPDATE_COORDINATE;
+						}
+						DataStatusPrevious.Flags = status.Flags;
+
 						/* Dicide Sprite's scale (Flipping) & Vertex Order */
 						IndexVertexCollectionTable = 0;
 						if(true == status.IsFlipX)
@@ -1978,10 +2020,13 @@ public static partial class Library_SpriteStudio6
 							float ratePivot;
 							float size;
 
+							pivotSprite.x += (sizeSprite.x * OffsetPivot.Value.x);
+							pivotSprite.y -= (sizeSprite.y * OffsetPivot.Value.y);
+
 							size = SizeForce.Value.x;
 							if(0.0f <= size)
 							{
-								ratePivot = (pivotSprite.x / sizeSprite.x) + OffsetPivot.Value.x;
+								ratePivot = pivotSprite.x / sizeSprite.x;
 								sizeSprite.x = size;
 								pivotSprite.x = size * ratePivot;
 							}
@@ -1989,7 +2034,7 @@ public static partial class Library_SpriteStudio6
 							size = SizeForce.Value.y;
 							if(0.0f <= size)
 							{
-								ratePivot = (pivotSprite.y / sizeSprite.y) + OffsetPivot.Value.y;
+								ratePivot = pivotSprite.y / sizeSprite.y;
 								sizeSprite.y = size;
 								pivotSprite.y = size * ratePivot;
 							}
@@ -2056,7 +2101,10 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Get Coordinates */
-						dataAnimationParts.Plain.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.Plain.VertexCorrection, ref argumentContainer);
+						if(true == dataAnimationParts.Plain.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.Plain.VertexCorrection, ref argumentContainer))
+						{
+							Status |=  FlagBitStatus.UPDATE_COORDINATE;
+						}
 						return(true);
 					}
 
@@ -2129,10 +2177,11 @@ public static partial class Library_SpriteStudio6
 																	((SizeTexture.y - centerMapping.y) / SizeTexture.y) - PositionTexture.Value.y,
 																	0.0f
 																);
-								Vector3 Scaling = new Vector3(	(sizeMapping.x / SizeTexture.x) * RateScaleTexture.x,
-																(sizeMapping.y / SizeTexture.y) * RateScaleTexture.y,
+								Vector3 Scaling = new Vector3(	(sizeMapping.x / SizeTexture.x) * ScalingTexture.Value.x * RateScaleTexture.x,
+																(sizeMapping.y / SizeTexture.y) * ScalingTexture.Value.y * RateScaleTexture.y,
 																1.0f
 															);
+
 								Quaternion Rotation = Quaternion.Euler(0.0f, 0.0f, -RotationTexture.Value);
 								MatrixTexture = Matrix4x4.TRS(Translation, Rotation, Scaling);
 							}
@@ -2284,7 +2333,7 @@ public static partial class Library_SpriteStudio6
 								);
 						statusControlParts &= ~(	Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL
 													| Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_RATEOPACITY
-												);
+											);
 					}
 
 					internal bool UpdateFix(	Script_SpriteStudio6_Root instanceRoot,

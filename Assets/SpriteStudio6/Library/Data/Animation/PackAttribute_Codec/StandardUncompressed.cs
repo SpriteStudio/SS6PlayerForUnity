@@ -465,7 +465,7 @@ public static partial class Library_SpriteStudio6
 																														listKeyData[3],
 																														i
 																													);
-								container.TableValue[i].Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_Y : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
+								container.TableValue[i].Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_X : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
 
 								Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolToggle(	out valueAttribute,
 																														listKeyData[4],
@@ -485,6 +485,8 @@ public static partial class Library_SpriteStudio6
 																		<< (int)Library_SpriteStudio6.Data.Animation.Attribute.Status.ShiftFlagBit.ID_PARTS_NEXTPREDRAW
 																		) & Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTPREDRAW
 																	: Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTPREDRAW;	/* -1 */
+
+								container.TableValue[i].Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.VALID;
 							}
 							return(true);
 						}

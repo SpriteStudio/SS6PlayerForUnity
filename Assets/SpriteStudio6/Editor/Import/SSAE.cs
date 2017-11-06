@@ -2210,6 +2210,8 @@ public static partial class LibraryEditor_SpriteStudio6
 								&& (0 >= animationParts.TextureScalingX.CountGetKey())
 								&& (0 >= animationParts.TextureScalingY.CountGetKey())
 								&& (0 >= animationParts.TextureRotation.CountGetKey())
+								&& (0 >= animationParts.TextureFlipX.CountGetKey())
+								&& (0 >= animationParts.TextureFlipY.CountGetKey())
 								)
 							{
 								animationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE;
