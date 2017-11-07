@@ -1968,6 +1968,11 @@ public static partial class Library_SpriteStudio6
 				AdditionalColor = null;
 			}
 			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			protected const string NameBatchedMesh = "Batched Mesh";
+			#endregion Enums & Constants
 		}
 		#endregion Classes, Structs & Interfaces
 	}
@@ -2263,8 +2268,6 @@ public static partial class Library_SpriteStudio6
 				}
 
 				/* Create Mesh */
-				mesh.Clear();
-				mesh.name = NameBatchedMesh;
 				if(0 < countMaterial)
 				{
 					/* MEMO: Caution that "SetXXXXX(array, n)" consumes managed-heap. ("SetXXXXX(List<int>, n)" does not) */
@@ -2330,11 +2333,6 @@ public static partial class Library_SpriteStudio6
 				return(true);
 			}
 			#endregion Functions
-
-			/* ----------------------------------------------- Enums & Constants */
-			#region Enums & Constants
-			private const string NameBatchedMesh = "Batched Mesh";
-			#endregion Enums & Constants
 
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
 			#region Classes, Structs & Interfaces

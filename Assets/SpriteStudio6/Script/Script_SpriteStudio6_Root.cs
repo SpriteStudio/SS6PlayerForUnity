@@ -312,17 +312,21 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Mesh Combine & Set to Renderer */
-		if(false == flagHide)
+		if((null == InstanceRootParent) && (null != MeshCombined))
 		{
-			if((null == InstanceRootParent) && (null != MeshCombined))
+			/* Clear Mesh */
+			MeshCombined.Clear();
+			MeshCombined.name = NameBatchedMesh;
+
+			if(false == flagHide)
 			{
 				/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
 				if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
 				{
 					InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
-					InstanceMeshFilter.sharedMesh = MeshCombined;
 				}
 			}
+			InstanceMeshFilter.sharedMesh = MeshCombined;
 		}
 
 		/* Check Track-End */
