@@ -38,6 +38,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				System.Xml.XmlNode nodeRoot = xmlSSEE.FirstChild;
 				nodeRoot = nodeRoot.NextSibling;
 				KindVersion version = (KindVersion)(LibraryEditor_SpriteStudio6.Utility.XML.VersionGet(nodeRoot, "SpriteStudioEffect", (int)KindVersion.ERROR, true));
+#if false
+				/* MEMO: Strict version check */
 				switch(version)
 				{
 					case KindVersion.ERROR:
@@ -75,6 +77,45 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						break;
 				}
+#else
+				/* MEMO: Loose version check                                                       */
+				/*       If you check strictly, there are a lot of datas that can not be imported. */
+				switch(version)
+				{
+					case KindVersion.ERROR:
+						LogError(messageLogPrefix, "Version Invalid", nameFile, informationSSPJ);
+						goto Parse_ErrorEnd;
+
+					case KindVersion.CODE_010000:
+					case KindVersion.CODE_010001:
+					case KindVersion.CODE_010002:
+						/* MEMO: Read all as Ver.1.01.00. */
+						version = KindVersion.CODE_010100;
+						break;
+
+					case KindVersion.CODE_010100:
+						break;
+
+					default:
+						if(KindVersion.TARGET_EARLIEST > version)
+						{
+							version = KindVersion.TARGET_EARLIEST;
+							if(true == setting.CheckVersion.FlagInvalidSSCE)
+							{
+								LogWarning(messageLogPrefix, "Version Too Early", nameFile, informationSSPJ);
+							}
+						}
+						else
+						{
+							version = KindVersion.TARGET_LATEST;
+							if(true == setting.CheckVersion.FlagInvalidSSCE)
+							{
+								LogWarning(messageLogPrefix, "Version Unknown", nameFile, informationSSPJ);
+							}
+						}
+						break;
+				}
+#endif
 
 				/* Create Information */
 				informationSSEE = new Information();
@@ -793,7 +834,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				CODE_010002 = 0x00010002,	/* after ver.5.5 (Unsupported) */
 				CODE_010100 = 0x00010100,	/* after ver.5.7 */
 
-				TARGET_EARLIEST = CODE_010100,
+				TARGET_EARLIEST = CODE_010000,
 				TARGET_LATEST = CODE_010100
 			};
 
