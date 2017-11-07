@@ -399,6 +399,7 @@ public static partial class Library_SpriteStudio6
 							valueOutput.Bound = ListKey[indexStart].Value.Bound;
 							valueOutput.Operation = ListKey[indexStart].Value.Operation;
 							valueOutput.VertexColor = new Color[count];
+							valueOutput.RateAlpha = new float[count];
 							for(int i=0; i<count; i++)
 							{
 #if false
@@ -448,17 +449,17 @@ public static partial class Library_SpriteStudio6
 																															ListKey[indexStart].ValueCurveEnd
 																														);
 
-								valueOutput.RatePixelAlpha[i] = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
-																															frame,
-																															ListKey[indexStart].Frame,
-																															ListKey[indexStart].Value.RatePixelAlpha[i],
-																															ListKey[indexEnd].Frame,
-																															ListKey[indexEnd].Value.RatePixelAlpha[i],
-																															ListKey[indexStart].FrameCurveStart,
-																															ListKey[indexStart].ValueCurveStart,
-																															ListKey[indexStart].FrameCurveEnd,
-																															ListKey[indexStart].ValueCurveEnd
-																														);
+								valueOutput.RateAlpha[i] = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
+																														frame,
+																														ListKey[indexStart].Frame,
+																														ListKey[indexStart].Value.RateAlpha[i],
+																														ListKey[indexEnd].Frame,
+																														ListKey[indexEnd].Value.RateAlpha[i],
+																														ListKey[indexStart].FrameCurveStart,
+																														ListKey[indexStart].ValueCurveStart,
+																														ListKey[indexStart].FrameCurveEnd,
+																														ListKey[indexStart].ValueCurveEnd
+																													);
 #else
 								/* MEMO: SpriteStudio Ver.5.2- or Ver -4.x */
 								float rate = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
@@ -474,10 +475,11 @@ public static partial class Library_SpriteStudio6
 																									);
 								rate = Mathf.Clamp01(rate);
 
-								valueOutput.VertexColor[i].r = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].r, ListKey[indexStart].Value.VertexColor[i].r, rate);
-								valueOutput.VertexColor[i].g = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].g, ListKey[indexStart].Value.VertexColor[i].g, rate);
-								valueOutput.VertexColor[i].b = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].b, ListKey[indexStart].Value.VertexColor[i].b, rate);
-								valueOutput.VertexColor[i].a = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].a, ListKey[indexStart].Value.VertexColor[i].a, rate);
+								valueOutput.VertexColor[i].r = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].r, ListKey[indexEnd].Value.VertexColor[i].r, rate);
+								valueOutput.VertexColor[i].g = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].g, ListKey[indexEnd].Value.VertexColor[i].g, rate);
+								valueOutput.VertexColor[i].b = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].b, ListKey[indexEnd].Value.VertexColor[i].b, rate);
+								valueOutput.VertexColor[i].a = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.VertexColor[i].a, ListKey[indexEnd].Value.VertexColor[i].a, rate);
+								valueOutput.RateAlpha[i] = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.RateAlpha[i], ListKey[indexEnd].Value.RateAlpha[i], rate);
 #endif
 							}
 							return(true);

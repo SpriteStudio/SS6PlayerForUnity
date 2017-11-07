@@ -1822,7 +1822,7 @@ public static partial class Library_SpriteStudio6
 							ChainDrawMask.BootUp();
 						}
 
-						PartsColor.Value.BootUp();
+						PartsColor.Value.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2);
 						VertexCorrection.Value.BootUp();
 
 						Status |= (	FlagBitStatus.UPDATE_COORDINATE
@@ -2213,36 +2213,41 @@ public static partial class Library_SpriteStudio6
 						/* Set Parts-Color */
 						float operationBlend;
 						Color[] tableColor;
+						float[] tableAlpha;
 						if(0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR))
 						{
 							Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
 							operationBlend = (float)((int)additionalColor.OperationBlend) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
 							tableColor = additionalColor.ColorVertex;
+							tableAlpha = Library_SpriteStudio6.Data.Animation.Attribute.TableRateAlphaPartsColorDefault;
 						}
 						else
 						{
 							operationBlend = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
 							tableColor = PartsColor.Value.VertexColor;
+							tableAlpha = PartsColor.Value.RateAlpha;
 						}
 
 						float rateOpacity = instanceRoot.RateOpacity * controlParts.RateOpacity.Value;
 						if(0 != (Status & (FlagBitStatus.UPDATE_COLORPARTS | FlagBitStatus.UPDATE_PARAMETERBLEND)))
 						{
 							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.ColorClear;
+							float sumAlpha = 0.0f;
 							for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 							{
 								ParameterBlendDraw[i].x = operationBlend;
-								ParameterBlendDraw[i].y = rateOpacity;
+								ParameterBlendDraw[i].y = rateOpacity * tableAlpha[i];
 
 								ColorPartsDraw[i] = tableColor[i];
 								sumColor += tableColor[i];
+								sumAlpha += tableAlpha[i];
 							}
 							tableColor = null;
 
 							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
 							{
 								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].x = operationBlend;
-								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].y = rateOpacity;
+								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].y = rateOpacity * (sumAlpha * 0.25f);
 
 								ColorPartsDraw[(int)Library_SpriteStudio6.KindVertex.C] = sumColor * 0.25f;
 							}

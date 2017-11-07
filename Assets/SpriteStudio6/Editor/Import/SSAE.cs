@@ -1266,7 +1266,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								{
 									Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor.KeyData data = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor.KeyData();
 									data.Value.CleanUp();
-									data.Value.VertexColor = new Color[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+									data.Value.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2);
 
 									/* Set Interpolation-Data */
 									data.Formula = formula;
@@ -1307,6 +1307,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									float colorR = 0.0f;
 									float colorG = 0.0f;
 									float colorB = 0.0f;
+									float rateAlpha = 0.0f;
 									valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeKey, "value/target", managerNameSpace);
 									switch(valueText)
 									{
@@ -1314,13 +1315,14 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.OVERALL;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/color", managerNameSpace);
+												ParseAnimationAttributePartsColor(	out colorA, out colorR, out colorG, out colorB, out rateAlpha, data.Value.Operation, data.Value.Bound, nodeKey, "value/color", managerNameSpace);
 												for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 												{
 													data.Value.VertexColor[i].r = colorR;
 													data.Value.VertexColor[i].g = colorG;
 													data.Value.VertexColor[i].b = colorB;
 													data.Value.VertexColor[i].a = colorA;
+													data.Value.RateAlpha[i] = rateAlpha;
 												}
 											}
 											break;
@@ -1329,29 +1331,33 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												data.Value.Bound = Library_SpriteStudio6.KindBoundBlend.VERTEX;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/LT", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out rateAlpha, data.Value.Operation, data.Value.Bound, nodeKey, "value/LT", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU].a = colorA;
+												data.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = rateAlpha;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/RT", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out rateAlpha, data.Value.Operation, data.Value.Bound, nodeKey, "value/RT", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU].a = colorA;
+												data.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = rateAlpha;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/RB", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out rateAlpha, data.Value.Operation, data.Value.Bound, nodeKey, "value/RB", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD].a = colorA;
+												data.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = rateAlpha;
 
-												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, nodeKey, "value/LB", managerNameSpace);
+												ParseAnimationAttributePartsColor(out colorA, out colorR, out colorG, out colorB, out rateAlpha, data.Value.Operation, data.Value.Bound, nodeKey, "value/LB", managerNameSpace);
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].r = colorR;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].g = colorG;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].b = colorB;
 												data.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD].a = colorA;
+												data.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = rateAlpha;
 											}
 											break;
 
@@ -1660,17 +1666,84 @@ public static partial class LibraryEditor_SpriteStudio6
 																	out float colorR,
 																	out float colorG,
 																	out float colorB,
+																	out float rateAlpha,
+																	Library_SpriteStudio6.KindOperationBlend operation,
+																	Library_SpriteStudio6.KindBoundBlend bound,
 																	System.Xml.XmlNode NodeKey,
 																	string NameTagBase,
 																	System.Xml.XmlNamespaceManager ManagerNameSpace
 																)
 			{
 				string valueText = "";
+				float dataR;
+				float dataG;
+				float dataB;
+				float dataA;
+				float dataRate;
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(NodeKey, NameTagBase + "/rgba", ManagerNameSpace);
-				LibraryEditor_SpriteStudio6.Utility.Text.TextToColor(out colorA, out colorR, out colorG, out colorB, valueText);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					LibraryEditor_SpriteStudio6.Utility.Text.TextToColor(out dataA, out dataR, out dataG, out dataB, valueText);
+				}
+				else
+				{
+					dataR = 0.0f;
+					dataG = 0.0f;
+					dataB = 0.0f;
+					dataA = 0.0f;
+				}
 
-				/* MEMO: Currently, discard "/rate" because meaningless parameter. */
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(NodeKey, NameTagBase + "/rate", ManagerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					dataRate = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueText);
+				}
+				else
+				{
+					dataRate = 1.0f;
+				}
+
+				/* MEMO: Caution the specification when blend is 'Mix'. */
+				switch(operation)
+				{
+					case Library_SpriteStudio6.KindOperationBlend.MIX:
+						switch(bound)
+						{
+							case Library_SpriteStudio6.KindBoundBlend.OVERALL:
+								/* MEMO:  */
+								colorA = dataRate;
+								colorR = dataR;
+								colorG = dataG;
+								colorB = dataB;
+								rateAlpha = dataA;
+								break;
+
+							case Library_SpriteStudio6.KindBoundBlend.VERTEX:
+								colorA = dataA;
+								colorR = dataR;
+								colorG = dataG;
+								colorB = dataB;
+								rateAlpha = dataRate;	/* 1.0f */
+								break;
+
+							default:
+								/* MEMO: Not reach here. (To avoid warning) */
+								goto case Library_SpriteStudio6.KindBoundBlend.OVERALL;
+						}
+						return;
+
+					case Library_SpriteStudio6.KindOperationBlend.ADD:
+					case Library_SpriteStudio6.KindOperationBlend.SUB:
+					case Library_SpriteStudio6.KindOperationBlend.MUL:
+						break;
+				}
+
+				colorA = 1.0f;	/* dataRate */
+				colorR = dataR;
+				colorG = dataG;
+				colorB = dataB;
+				rateAlpha = dataA;
 			}
 
 			private static void LogError(string messagePrefix, string message, string nameFile, LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ)

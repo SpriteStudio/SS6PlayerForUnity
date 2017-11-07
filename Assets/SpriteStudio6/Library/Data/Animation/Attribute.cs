@@ -61,9 +61,17 @@ public static partial class Library_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
 					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
 				};
+				internal readonly static float[] TableRateAlphaPartsColorDefault = new float[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{
+					1.0f,
+					1.0f,
+					1.0f,
+					1.0f,
+				};
 				public readonly static PartsColor DefaultPartsColor = new PartsColor(	Library_SpriteStudio6.KindBoundBlend.NON,
 																						Library_SpriteStudio6.KindOperationBlend.MIX,
-																						TableVertexColorPartsColorDefault
+																						TableVertexColorPartsColorDefault,
+																						TableRateAlphaPartsColorDefault
 																					);
 
 				public const float DefaultPivotOffsetX = 0.0f;
@@ -377,18 +385,21 @@ public static partial class Library_SpriteStudio6
 					public Library_SpriteStudio6.KindBoundBlend Bound;
 					public Library_SpriteStudio6.KindOperationBlend Operation;
 					public Color[] VertexColor;
+					public float[] RateAlpha;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
 					public PartsColor(	Library_SpriteStudio6.KindBoundBlend bound,
 										Library_SpriteStudio6.KindOperationBlend operation,
-										Color[] vertexColor
+										Color[] vertexColor,
+										float[] rateAlpha
 									)
 					{
 						Bound = bound;
 						Operation = operation;
 						VertexColor = vertexColor;
+						RateAlpha = rateAlpha;
 					}
 
 					public void CleanUp()
@@ -396,19 +407,24 @@ public static partial class Library_SpriteStudio6
 						Bound = Library_SpriteStudio6.KindBoundBlend.NON;
 						Operation = Library_SpriteStudio6.KindOperationBlend.MIX;
 						VertexColor = null;
+						RateAlpha = null;
 					}
 
-					public void BootUp()
+					public void BootUp(int countVertex)
 					{
 						Bound = Library_SpriteStudio6.KindBoundBlend.NON;
 						Operation = Library_SpriteStudio6.KindOperationBlend.MIX;
 
-						int count = (int)Library_SpriteStudio6.KindVertex.TERMINATOR2;
-
-						VertexColor = new Color[count];
-						for(int i=0; i<count; i++)
+						VertexColor = new Color[countVertex];
+						for(int i=0; i<countVertex; i++)
 						{
 							VertexColor[i] = ColorClear;
+						}
+
+						RateAlpha = new float[countVertex];
+						for(int i=0; i<countVertex; i++)
+						{
+							RateAlpha[i] = 1.0f;
 						}
 					}
 
@@ -418,13 +434,28 @@ public static partial class Library_SpriteStudio6
 						Operation = original.Operation;
 #if ATTRIBUTE_DUPLICATE_DEEP
 						/* MEMO: Deep copy */
-						for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
+						int countVertex = original.VertexColor.Length;
+						if((null == VertexColor) || (VertexColor.Length != countVertex))
+						{
+							VertexColor = new Color[countVertex];
+						}
+						for(int i=0; i<countVertex; i++)
 						{
 							VertexColor[i] = original.VertexColor[i];
+						}
+
+						if((null == RateAlpha) || (RateAlpha.Length != countVertex))
+						{
+							RateAlpha = new float[countVertex];
+						}
+						for(int i=0; i<countVertex; i++)
+						{
+							RateAlpha[i] = original.RateAlpha[i];
 						}
 #else
 						/* MEMO: Shallow copy */
 						VertexColor = original.VertexColor;
+						RateAlpha = original.RateAlpha;
 #endif
 					}
 
@@ -441,13 +472,28 @@ public static partial class Library_SpriteStudio6
 						{
 							return(false);
 						}
+
+						int countVertex = VertexColor.Length;
 						if(VertexColor.Length != targetData.VertexColor.Length)
 						{
 							return(false);
 						}
-						for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
+						for(int i=0; i<countVertex; i++)
 						{
 							if(VertexColor[i] != targetData.VertexColor[i])
+							{
+								return(false);
+							}
+						}
+
+						countVertex = RateAlpha.Length;
+						if(RateAlpha.Length != targetData.RateAlpha.Length)
+						{
+							return(false);
+						}
+						for(int i=0; i<countVertex; i++)
+						{
+							if(RateAlpha[i] != targetData.RateAlpha[i])
 							{
 								return(false);
 							}
