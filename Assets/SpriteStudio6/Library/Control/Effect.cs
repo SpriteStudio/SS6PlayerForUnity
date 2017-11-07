@@ -797,7 +797,7 @@ public static partial class Library_SpriteStudio6
 																								);
 							Color colorVertex = ColorVertex;
 							colorVertex.a *= instanceRoot.RateOpacity;
-							emitter.DrawParticle(instanceRoot.ClusterDraw, ref matrixTransform, ref ColorVertex);
+							emitter.DrawParticle(instanceRoot.ClusterDraw, ref matrixTransform, ref colorVertex);
 						}
 					}
 
