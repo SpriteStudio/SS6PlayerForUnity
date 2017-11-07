@@ -666,6 +666,10 @@ public static partial class Library_SpriteStudio6
 												ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 											)
 				{
+					if(null != instanceRoot.InstanceRootParent)
+					{	/* Not decode in "Instance" animation */
+						return;
+					}
 					if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA))
 					{	/* Has no UserData-s */
 						return;
@@ -1968,6 +1972,15 @@ public static partial class Library_SpriteStudio6
 
 						int indexCellMap = DataCellApply.IndexCellMap;
 						int indexCell = DataCellApply.IndexCell;
+						if(0 > indexCellMap)
+						{
+							Status |= FlagBitStatus.NO_DRAW;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.NO_DRAW;
+						}
+
 						Library_SpriteStudio6.Data.CellMap cellMap = instanceRoot.DataGetCellMap(DataCellApply.IndexCellMap);
 						if(null != cellMap)
 						{	/* CellMap Valid */
@@ -2121,6 +2134,11 @@ public static partial class Library_SpriteStudio6
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
 											)
 					{
+						if(0 != (Status & FlagBitStatus.NO_DRAW))
+						{
+							return;
+						}
+
 						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
 
 						Vector2 sizeSprite = SizeSprite;
@@ -2382,18 +2400,20 @@ public static partial class Library_SpriteStudio6
 					internal enum FlagBitStatus
 					{
 						/* Common */
-						UPDATE_COORDINATE = 0x00000001,
-						UPDATE_UVTEXTURE = 0x00000002,
-						UPDATE_PARAMETERBLEND = 0x00000004,
-						UPDATE_COLORPARTS = 0x00000008,
+						NO_DRAW = 0x40000000,	/* Not "Hide" ... for when no cell designation */
 
-						UPDATE_MASKING = 0x00000010,
+						UPDATE_COORDINATE = 0x08000000,
+						UPDATE_UVTEXTURE = 0x04000000,
+						UPDATE_PARAMETERBLEND = 0x02000000,
+						UPDATE_COLORPARTS = 0x01000000,
+
+						UPDATE_MASKING = 0x00800000,
 
 						/* for Plain */
-						UPDATE_TRANSFORM_TEXTURE = 0x00010000,
+						UPDATE_TRANSFORM_TEXTURE = 0x00008000,
 
-						USE_ADDITIONALCOLOR_PREVIOUS = 0x00100000,
-						USE_ADDITIONALCOLOR = 0x000200000,
+						USE_ADDITIONALCOLOR_PREVIOUS = 0x00000800,
+						USE_ADDITIONALCOLOR = 0x00000400,
 
 						/* for Fix */
 

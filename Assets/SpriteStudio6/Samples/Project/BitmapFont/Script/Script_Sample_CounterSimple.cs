@@ -16,7 +16,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 	/* The points of this sample are as follows.                              */
 	/*                                                                        */
 	/* - How to play animation (Simple playing-method)                        */
-	/* - How to search for "Cells", "(Animation-Parts)                        */
+	/* - How to search for "Cell"s and parts                                  */
 	/* - How to hide parts from script                                        */
 	/* - How to change part's cell from script (Cell-Change)                  */
 	#endregion Notes
@@ -70,7 +70,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 		/* Animation Start */
 		/* MEMO: Since animation without movement, no problem even if stops right after playing. */
 		/*       (no problem even if does not stop too.)                                         */
-		/*       However, stopped animation has less CPU load than  continue playing.            */
+		/*       However, stopped animation has less CPU load than continue playing.             */
 		/* MEMO: Since useless to search animation-index every time, recommend to cache frequently used indexes. */
 		int indexAnimation = ScriptRoot.IndexGetAnimation("Digit08");
 		if(0 > indexAnimation)

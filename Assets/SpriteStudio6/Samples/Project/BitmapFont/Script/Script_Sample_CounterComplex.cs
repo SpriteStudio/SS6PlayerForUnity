@@ -460,8 +460,8 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		/* MEMO: "UserData"-callback is processed in the order of "1. part" and "2. frame".            */
 		/*       When many frames are skipped, please pay attention to the order of callback.          */
 		/*       (In parts by parts, Will be called back according to the order of the played-frames.) */
-		/* MEMO: To be honest, it is not recommended to place "UserData" in many parts.                                     */
-		/*       As much as possible recommend that you put "UserData" together in 1 part. (Can also get good pPerformance) */
+		/* MEMO: To be honest, it is not recommended to place "UserData" in many parts.                                    */
+		/*       As much as possible recommend that you put "UserData" together in 1 part. (Can also get good performance) */
 		/* MEMO: Do not place "UserData" in "Instance" animations. */
 		/*       (Will be ignored)                                 */
 		/* MEMO: "userData" is a shallow-copy of UserData in animation's master(original)-data.                                            */
@@ -471,7 +471,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		/*       Therefore, when judging whether same "UserData", judge by compare "scriptRoot","indexParts", */
 		/*        "indexAnimation" and "frameKeyData".                                                        */
 		/* MEMO: "flagWayBack" becomes true when direction-play is "way-back" during ping-pong(round-trip) playing. */
-		/*       Always false during normal(one-way) playback.                                                              */
+		/*       Always false during normal(one-way) playback.                                                      */
 
 		/* MEMO: If you know exactly what values are stored in the "UserData",                                          */
 		/*        you can directly retrieve values from "NumberInt", "Rectangle", "Coordinate" or "Text".               */
