@@ -62,7 +62,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(KindVersion.TARGET_EARLIEST > version)
 						{
 							version = KindVersion.TARGET_EARLIEST;
-							if(true == setting.CheckVersion.FlagInvalidSSCE)
+							if(true == setting.CheckVersion.FlagInvalidSSEE)
 							{
 								LogWarning(messageLogPrefix, "Version Too Early", nameFile, informationSSPJ);
 							}
@@ -70,7 +70,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						else
 						{
 							version = KindVersion.TARGET_LATEST;
-							if(true == setting.CheckVersion.FlagInvalidSSCE)
+							if(true == setting.CheckVersion.FlagInvalidSSEE)
 							{
 								LogWarning(messageLogPrefix, "Version Unknown", nameFile, informationSSPJ);
 							}
@@ -100,7 +100,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(KindVersion.TARGET_EARLIEST > version)
 						{
 							version = KindVersion.TARGET_EARLIEST;
-							if(true == setting.CheckVersion.FlagInvalidSSCE)
+							if(true == setting.CheckVersion.FlagInvalidSSEE)
 							{
 								LogWarning(messageLogPrefix, "Version Too Early", nameFile, informationSSPJ);
 							}
@@ -108,7 +108,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						else
 						{
 							version = KindVersion.TARGET_LATEST;
-							if(true == setting.CheckVersion.FlagInvalidSSCE)
+							if(true == setting.CheckVersion.FlagInvalidSSEE)
 							{
 								LogWarning(messageLogPrefix, "Version Unknown", nameFile, informationSSPJ);
 							}
