@@ -53,6 +53,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					case KindVersion.CODE_010202:
 						break;
 
+					case KindVersion.CODE_020000:
+					case KindVersion.CODE_020001:
+						break;
+
 					default:
 						if(KindVersion.TARGET_EARLIEST > version)
 						{
@@ -416,6 +420,8 @@ public static partial class LibraryEditor_SpriteStudio6
 								case KindVersion.CODE_010200:
 								case KindVersion.CODE_010201:
 								case KindVersion.CODE_010202:	/* EffectPartsCheck? */
+								case KindVersion.CODE_020000:
+								case KindVersion.CODE_020001:
 									if(0 == informationParts.Data.ID)
 									{
 										informationParts.Inheritance = Information.Parts.KindInheritance.SELF;
@@ -474,6 +480,8 @@ public static partial class LibraryEditor_SpriteStudio6
 								case KindVersion.CODE_010200:
 								case KindVersion.CODE_010201:
 								case KindVersion.CODE_010202:
+								case KindVersion.CODE_020000:
+								case KindVersion.CODE_020001:
 									{
 										/* MEMO: Attributes'-Tag always exists. */
 										bool valueBool = false;
@@ -1696,9 +1704,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				CODE_010200 = 0x00010200,	/* after SS5.5.0 beta-3 */
 				CODE_010201 = 0x00010201,	/* after SS5.7.0 beta-1 */
 				CODE_010202 = 0x00010202,	/* after SS5.7.0 beta-2 */
+				CODE_020000 = 0x00020000,	/* after SS6.0.0 beta */
+				CODE_020001 = 0x00020001,	/* after SS6.0.0 */
 
 				TARGET_EARLIEST = CODE_000100,
-				TARGET_LATEST = CODE_010202
+				TARGET_LATEST = CODE_020001
 			};
 
 			private const string ExtentionFile = ".ssae";

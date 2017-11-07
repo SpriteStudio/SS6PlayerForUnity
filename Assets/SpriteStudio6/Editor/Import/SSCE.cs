@@ -49,6 +49,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					case KindVersion.CODE_010001:
 						break;
 
+					case KindVersion.CODE_020000:
+						break;
+
 					default:
 						if(KindVersion.TARGET_EARLIEST > version)
 						{
@@ -334,9 +337,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				CODE_000100 = 0x00000100,	/* under-development SS5 */
 				CODE_010000 = 0x00010000,	/* after SS5.0.0 */
 				CODE_010001 = 0x00010200,	/* after SS5.5.0 beta-3 */
+				CODE_020000 = 0x00020000,	/* after SS6.0.0 */
 
 				TARGET_EARLIEST = CODE_000100,
-				TARGET_LATEST = CODE_010001
+				TARGET_LATEST = CODE_020000
 			}
 
 			private const string ExtentionFile = ".ssce";

@@ -58,6 +58,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					case KindVersion.CODE_010100:
 						break;
 
+					case KindVersion.CODE_020000:
+						break;
+
 					default:
 						if(KindVersion.TARGET_EARLIEST > version)
 						{
@@ -94,6 +97,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 
 					case KindVersion.CODE_010100:
+						break;
+
+					case KindVersion.CODE_020000:
 						break;
 
 					default:
@@ -144,6 +150,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 
 					case KindVersion.CODE_010100:
+					case KindVersion.CODE_020000:
 					{	/* SS5.7 */
 						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "effectData/lockRandSeed", managerNameSpace);
 						if(false == string.IsNullOrEmpty(valueText))
@@ -831,11 +838,12 @@ public static partial class LibraryEditor_SpriteStudio6
 				ERROR = 0x00000000,
 				CODE_010000 = 0x00010000,	/* (Disuse) */
 				CODE_010001 = 0x00010001,	/* (Disuse) */
-				CODE_010002 = 0x00010002,	/* after ver.5.5 (Unsupported) */
-				CODE_010100 = 0x00010100,	/* after ver.5.7 */
+				CODE_010002 = 0x00010002,	/* after SS5.5 (Unsupported) */
+				CODE_010100 = 0x00010100,	/* after SS5.7 */
+				CODE_020000 = 0x00020000,	/* after SS6.0 */
 
 				TARGET_EARLIEST = CODE_010000,
-				TARGET_LATEST = CODE_010100
+				TARGET_LATEST = CODE_020000
 			};
 
 			public enum Constants

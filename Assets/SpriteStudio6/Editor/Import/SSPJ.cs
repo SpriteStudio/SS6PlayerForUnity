@@ -52,6 +52,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					case KindVersion.CODE_010201:
 						break;
 
+					case KindVersion.CODE_020000:
+						break;
+
 					default:
 						if(KindVersion.TARGET_EARLIEST > version)
 						{
@@ -251,9 +254,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				CODE_010000 = 0x00010000,
 				CODE_010200 = 0x00010200,	/* after SS5.5.0 beta-3 */
 				CODE_010201 = 0x00010201,	/* after SS5.7.0 beta */
+				CODE_020000 = 0x00020000,	/* after SS6.0.0 */
 
 				TARGET_EARLIEST = CODE_000100,
-				TARGET_LATEST = CODE_010201
+				TARGET_LATEST = CODE_020000
 			}
 
 			private const string ExtentionFile = ".sspj";
