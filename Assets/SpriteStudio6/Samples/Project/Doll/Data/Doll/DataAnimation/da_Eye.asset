@@ -96,7 +96,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773121
+        - Flags: 1090514945
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -200,7 +200,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773122
+        - Flags: 1090514946
       Position:
         TypePack: 1
         TableCodeValue:
@@ -311,7 +311,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16777215
+        - Flags: 1090519039
       Position:
         TypePack: 1
         TableCodeValue:
@@ -433,7 +433,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773121
+        - Flags: 1090514945
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -537,7 +537,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773122
+        - Flags: 1090514946
       Position:
         TypePack: 1
         TableCodeValue:
@@ -648,7 +648,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16777215
+        - Flags: 1090519039
       Position:
         TypePack: 1
         TableCodeValue:
@@ -764,6 +764,7 @@ MonoBehaviour:
       Bound: 0
       Operation: 0
       VertexColor: []
+      RateAlpha: []
     PositionAnchor: {x: 0, y: 0}
     UserData:
       Flags: 0

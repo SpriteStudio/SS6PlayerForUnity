@@ -39,6 +39,11 @@ MonoBehaviour:
     IDParent: -1
     TableIDChild: 0100000002000000030000000400000005000000060000000700000008000000
     Feature: 0
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -49,6 +54,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -59,6 +69,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -69,6 +84,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -79,6 +99,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -89,6 +114,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -99,6 +129,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -109,6 +144,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -119,6 +159,11 @@ MonoBehaviour:
     IDParent: 0
     TableIDChild: 
     Feature: 2
+    LabelColor:
+      Form: 0
+      Color:
+        serializedVersion: 2
+        rgba: 0
     OperationBlendTarget: 0
     ShapeCollision: 0
     SizeCollisionZ: 0
@@ -141,7 +186,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773121
+        - Flags: 1090514945
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -256,7 +301,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773122
+        - Flags: 1090514946
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -365,7 +410,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773123
+        - Flags: 1090514947
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -474,7 +519,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773124
+        - Flags: 1090514948
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -583,7 +628,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773125
+        - Flags: 1090514949
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -692,7 +737,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773126
+        - Flags: 1090514950
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -801,7 +846,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773127
+        - Flags: 1090514951
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -910,7 +955,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773128
+        - Flags: 1090514952
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1019,7 +1064,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16777215
+        - Flags: 1090519039
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1137,7 +1182,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773121
+        - Flags: 1090514945
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1252,7 +1297,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773122
+        - Flags: 1090514946
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1364,7 +1409,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773123
+        - Flags: 1090514947
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1476,7 +1521,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773124
+        - Flags: 1090514948
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1588,7 +1633,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773125
+        - Flags: 1090514949
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1700,7 +1745,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773126
+        - Flags: 1090514950
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1812,7 +1857,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773127
+        - Flags: 1090514951
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -1924,7 +1969,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16773128
+        - Flags: 1090514952
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -2036,7 +2081,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 00000000
         TableValue:
-        - Flags: 16777215
+        - Flags: 1090519039
       Position:
         TypePack: 1
         TableCodeValue: []
@@ -2153,6 +2198,7 @@ MonoBehaviour:
       Bound: 0
       Operation: 0
       VertexColor: []
+      RateAlpha: []
     PositionAnchor: {x: 0, y: 0}
     UserData:
       Flags: 0
