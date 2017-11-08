@@ -1319,7 +1319,7 @@ public static partial class Library_SpriteStudio6
 								bool flagPlayReverseInstance = flagPlayReverseInstanceData ^ flagPlayReverse;
 
 								/* Start Animation */
-								InstancePlayStart(flagPlayReverse);
+								InstancePlayStart(instanceRoot, flagPlayReverse);
 
 								/* Adjust Starting-Time */
 								/* MEMO: Necessary to set time, not frame. Because parent's elapsed time has a small excess. */
@@ -1409,7 +1409,7 @@ public static partial class Library_SpriteStudio6
 									| FlagBitStatus.UPDATE_RATEOPACITY
 							);
 				}
-				internal bool InstancePlayStart(bool flagPlayReverse)
+				internal bool InstancePlayStart(Script_SpriteStudio6_Root instanceRoot, bool flagPlayReverse)
 				{
 					if(0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.INDEPENDENT))
 					{
@@ -1420,18 +1420,25 @@ public static partial class Library_SpriteStudio6
 						Status &= ~FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
 					}
 
+					int framePerSecond = 60;
+					if(0 <= IndexControlTrack)
+					{
+						framePerSecond = instanceRoot.TableControlTrack[IndexControlTrack].FramePerSecond;
+					}
+
 					/* MEMO: Playing target are all tracks. And TableInformationPlay[0] is always used. */
 					return(InstanceRootUnderControl.AnimationPlay(	-1,	/* All track */
-																	IndexAnimationUnderControl,
-																	DataInstance.PlayCount,
-																	0,
-																	DataInstance.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f),
-																	((0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.PINGPONG)) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
-																	DataInstance.LabelStart,
-																	DataInstance.OffsetStart,
-																	DataInstance.LabelEnd,
-																	DataInstance.OffsetEnd
-																)
+																		IndexAnimationUnderControl,
+																		DataInstance.PlayCount,
+																		0,
+																		DataInstance.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f),
+																		((0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.PINGPONG)) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
+																		DataInstance.LabelStart,
+																		DataInstance.OffsetStart,
+																		DataInstance.LabelEnd,
+																		DataInstance.OffsetEnd,
+																		framePerSecond
+																	)
 						);
 				}
 				private void DrawEffect(	Script_SpriteStudio6_Root instanceRoot,

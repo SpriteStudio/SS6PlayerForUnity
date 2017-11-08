@@ -438,7 +438,7 @@ public partial class Script_SpriteStudio6_Root
 			int indexTrack = controlParts.IndexControlTrack;
 			if(0 <= indexTrack)
 			{
-				return(controlParts.InstancePlayStart(TableControlTrack[indexTrack].StatusIsPlayingReverse));
+				return(controlParts.InstancePlayStart(this, TableControlTrack[indexTrack].StatusIsPlayingReverse));
 			}
 		}
 		return(true);

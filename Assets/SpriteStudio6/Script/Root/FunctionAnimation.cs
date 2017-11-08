@@ -100,6 +100,10 @@ public partial class Script_SpriteStudio6_Root
 		End frame of animation play range is "labelRangeEnd + frameRangeOffsetEnd".<br>
 		int.MaxValue == Apply previous setting.<br>
 		default: int.MaxValue
+	@param	framePerSecond
+		Frame Per Second (In principle, omit specifying this value)<br>
+		0 == Conforms to animation<br>
+		default: 0
 	@retval	Return-Value
 		true == Success<br>
 		false == Failure (Error)
@@ -123,7 +127,8 @@ public partial class Script_SpriteStudio6_Root
 								string labelRangeStart = null,
 								int frameRangeOffsetStart = int.MinValue,
 								string labelRangeEnd = null,
-								int frameRangeOffsetEnd = int.MaxValue
+								int frameRangeOffsetEnd = int.MaxValue,
+								int framePerSecond = 0
 							)
 	{
 		if(null == TableControlTrack)
@@ -205,6 +210,11 @@ public partial class Script_SpriteStudio6_Root
 
 		frameRangeOffsetEnd = (int.MaxValue == frameRangeOffsetEnd) ? TableInformationPlay[indexTrack].FrameOffsetEnd : frameRangeOffsetEnd;
 
+		if(0 >= framePerSecond)
+		{
+			framePerSecond = DataAnimation.TableAnimation[indexAnimation].FramePerSecond;
+		}
+
 		/* Update play-Information */
 //		TableInformationPlay[indexTrack].FlagSetInitial = 
 //		TableInformationPlay[indexTrack].FlagStopInitial = 
@@ -249,7 +259,7 @@ public partial class Script_SpriteStudio6_Root
 													frameRangeStart,
 													frameRangeEnd,
 													frame,
-													DataAnimation.TableAnimation[indexAnimation].FramePerSecond,
+													framePerSecond,
 													rateTime,
 													0.0f,
 													flagPingPong,
