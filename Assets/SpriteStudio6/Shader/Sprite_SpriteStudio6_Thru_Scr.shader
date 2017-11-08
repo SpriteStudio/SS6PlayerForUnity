@@ -40,6 +40,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite/Through/Screen"
 
 			#include "UnityCG.cginc"
 
+			#define PS_NOT_DISCARD
 			#include "Base/Shader_Data_SpriteStudio6.cginc"
 			#include "Base/ShaderVertex_Sprite_SpriteStudio6.cginc"
 			#include "Base/ShaderPixel_Sprite_SpriteStudio6.cginc"
