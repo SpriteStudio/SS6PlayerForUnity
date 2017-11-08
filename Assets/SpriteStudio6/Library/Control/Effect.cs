@@ -235,7 +235,7 @@ public static partial class Library_SpriteStudio6
 						flagDrawAll = TableEmitter[indexEmitterParent].UpdateSubEmitters(	frameTarget,
 																							instanceRoot,
 																							ref this,
-																							indexEmitterParent,
+																							indexEmitter,	// indexEmitterParent,
 																							ref TableEmitter[indexEmitter]
 																						);
 					}
@@ -506,7 +506,7 @@ public static partial class Library_SpriteStudio6
 				internal bool UpdateSubEmitters(	float frame,
 													Script_SpriteStudio6_RootEffect instanceRoot,
 													ref Library_SpriteStudio6.Control.Effect controlEffect,
-													int indexEmitter,
+													int indexEmitterTarget,
 													ref Emitter emitterTarget
 												)
 				{
@@ -535,7 +535,7 @@ public static partial class Library_SpriteStudio6
 							/* MEMO: "ParticleTempolary" is parent's parameter. */
 							frameTop = TableActivityParticle[i].FrameStart;
 							emitterTarget.ParticleTempolary.FrameStart = frameTop;
-							emitterTarget.ParticleTempolary.Direction = TableActivityParticle[i].FrameEnd;
+							emitterTarget.ParticleTempolary.FrameEnd = TableActivityParticle[i].FrameEnd;
 							emitterTarget.ParticleTempolary.ID = i;
 							emitterTarget.ParticleTempolary.IDParent = 0;
 
@@ -543,7 +543,7 @@ public static partial class Library_SpriteStudio6
 							if(false == emitterTarget.Update(	(frame - (float)frameTop),
 																instanceRoot,
 																ref controlEffect,
-																indexEmitter
+																IndexEmitter
 															)
 								)
 							{
