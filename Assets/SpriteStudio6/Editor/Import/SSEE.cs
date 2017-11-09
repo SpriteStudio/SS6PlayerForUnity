@@ -644,7 +644,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								Library_SpriteStudio6.Data.Effect.Emitter.RangeFloat rangeTemp = new Library_SpriteStudio6.Data.Effect.Emitter.RangeFloat();
 								ParsePartsEmitterRangeGetFloat(ref rangeTemp.Main, ref rangeTemp.Sub, informationSSPJ, nodeAttribute, "disprange", managerNameSpace, indexParts, nameFileSSEE);
 								informationEmitter.Data.AlphaFadeStart = rangeTemp.Main * 0.01f;
-								informationEmitter.Data.AlphaFadeEnd = rangeTemp.Sub * 0.01f;
+								informationEmitter.Data.AlphaFadeEnd = (rangeTemp.Main + rangeTemp.Sub) * 0.01f;
 							}
 							break;
 
@@ -1365,7 +1365,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						flagLockSeed = false;
 						if(0 != (informationSSEE.TableEmitterSS6PU[i].FlagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SEEDRANDOM))
 						{	/* Seed Overwrite */
-							seedRandom = (uint)informationSSEE.SeedRandom + (uint)Library_SpriteStudio6.Data.Effect.Emitter.Constant.SEED_MAGIC;
+							seedRandom = (uint)informationSSEE.TableEmitterSS6PU[i].SeedRandom + (uint)Library_SpriteStudio6.Data.Effect.Emitter.Constant.SEED_MAGIC;
 							flagLockSeed = true;
 						}
 						else
