@@ -300,7 +300,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 	}
 	#endregion MonoBehaviour-Functions
 
-	/* ----------------------------------------------- MonoBehaviour-Functions */
+	/* ----------------------------------------------- Functions */
 	#region Functions
 	private int[] AnimationIndexGet()
 	{

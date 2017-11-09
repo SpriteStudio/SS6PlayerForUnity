@@ -210,7 +210,7 @@ public class Script_Sample_DollRun : MonoBehaviour
 	}
 	#endregion MonoBehaviour-Functions
 
-	/* ----------------------------------------------- MonoBehaviour-Functions */
+	/* ----------------------------------------------- Functions */
 	#region Functions
 	private bool PartsConnectTrack()
 	{

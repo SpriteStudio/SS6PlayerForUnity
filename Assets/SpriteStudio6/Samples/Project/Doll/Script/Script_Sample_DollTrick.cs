@@ -121,7 +121,7 @@ public class Script_Sample_DollTrick : MonoBehaviour
 	}
 	#endregion MonoBehaviour-Functions
 
-	/* ----------------------------------------------- MonoBehaviour-Functions */
+	/* ----------------------------------------------- Functions */
 	#region Functions
 	private bool EyeCheckInitialized()
 	{

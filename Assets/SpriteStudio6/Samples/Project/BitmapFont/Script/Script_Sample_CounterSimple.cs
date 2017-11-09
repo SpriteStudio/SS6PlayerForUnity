@@ -181,7 +181,7 @@ public class Script_Sample_CounterSimple : MonoBehaviour
 	}
 	#endregion MonoBehaviour-Functions
 
-	/* ----------------------------------------------- MonoBehaviour-Functions */
+	/* ----------------------------------------------- Functions */
 	#region Functions
 	private int IndexGetCharacter(char character)
 	{
