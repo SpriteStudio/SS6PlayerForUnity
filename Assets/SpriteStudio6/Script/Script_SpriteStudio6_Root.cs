@@ -231,6 +231,14 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		{
 			return;
 		}
+		if(null == DataAnimation)
+		{
+			return;
+		}
+		if(false == DataAnimation.StatusIsBootup)
+		{	/* Re-import data? or Re-compile during playing animation? */
+			return;
+		}
 
 		bool flagHide = flagHideDefault | FlagHideForce;
 

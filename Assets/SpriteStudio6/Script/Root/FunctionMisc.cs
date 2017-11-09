@@ -362,6 +362,10 @@ public partial class Script_SpriteStudio6_Root
 												int frameRangeOffsetEnd
 											)
 	{
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
 		if(0 > timesPlay)
 		{
 			return(false);

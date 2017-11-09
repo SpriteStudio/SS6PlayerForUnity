@@ -217,6 +217,14 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		{
 			return;
 		}
+		if(null == DataEffect)
+		{
+			return;
+		}
+		if(false == DataEffect.StatusIsBootup)
+		{	/* Re-import data? or Re-compile during playing animation? */
+			return;
+		}
 
 		bool flagHide = flagHideDefault | FlagHideForce;
 
