@@ -322,10 +322,6 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Set Signature-Bootup */
 		DataEffect.StatusIsBootup = true;
 	}
-	private static void FunctionBootUpDataEffectignature()
-	{
-		/* Dummy-Function */
-	}
 
 	private bool ClusterBootUpDraw()
 	{
@@ -354,6 +350,15 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		CountParticleMax = 0;
 		ClusterDraw = null;
 		return(false);
+	}
+	/* MEMO: This function is used only for Inspector */
+	public bool ClusterRebootDraw()
+	{
+		if(null != InstanceRootParent)
+		{
+			return(false);
+		}
+		return(ClusterBootUpDraw());
 	}
 
 	internal int CountGetDrawMesh()

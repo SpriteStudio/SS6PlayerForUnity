@@ -47,6 +47,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 		EditorGUILayout.LabelField("[SpriteStudio6 Animation]");
 		int levelIndent = 0;
 		bool flagUpdate = false;
+		bool flagUpdateLimitTrack = false;
 
 		/* Static Datas */
 		EditorGUILayout.Space();
@@ -78,8 +79,22 @@ public class Inspector_SpriteStudio6_Root : Editor
 		PropertyInformationPlay.isExpanded = EditorGUILayout.Foldout(PropertyInformationPlay.isExpanded, "Initial/Preview Play Setting");
 		if(true == PropertyInformationPlay.isExpanded)
 		{
-			/* Set Hide */
+			/* Hide */
 			PropertyHideForce.boolValue = EditorGUILayout.Toggle("Hide Force", PropertyHideForce.boolValue);
+			EditorGUILayout.Space();
+
+			/* Track */
+			int countTrack = EditorGUILayout.IntField("Number of Track", PropertyCountTrack.intValue);
+			if(0 >= countTrack)
+			{
+				countTrack = 0;
+			}
+			if(PropertyCountTrack.intValue != countTrack)
+			{
+				PropertyCountTrack.intValue = countTrack;
+				flagUpdateLimitTrack |= true;
+				flagUpdate |= true;
+			}
 			EditorGUILayout.Space();
 
 			if(null == dataAnimation)
@@ -107,12 +122,17 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 		serializedObject.ApplyModifiedProperties();
 
-		/* RePlay Animation */
+		/* Reset Track */
+		if(true == flagUpdateLimitTrack)
+		{
+			InstanceRoot.TrackReboot(InstanceRoot.LimitTrack);
+		}
+
+		/* Reset Animation */
 		if(true == flagUpdate)
 		{
 			InstanceRoot.AnimationPlayInitial();
 		}
-
 	}
 
 	private void InfromationPlay(	ref bool flagUpdate,

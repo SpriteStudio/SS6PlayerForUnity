@@ -36,7 +36,7 @@ public partial class Script_SpriteStudio6_Root
 		}
 
 		/* Renew Play-Informations */
-		if(TableInformationPlay.Length < countTrack)
+		if(TableInformationPlay.Length != countTrack)	/* (TableInformationPlay.Length < countTrack) */
 		{
 			InformationPlay[] tableInformationPlayNow = TableInformationPlay;
 			TableInformationPlay = new InformationPlay[countTrack];
@@ -51,6 +51,10 @@ public partial class Script_SpriteStudio6_Root
 			}
 
 			count = tableInformationPlayNow.Length;	/* Recycle */
+			if(countTrack < count)
+			{
+				count = countTrack;
+			}
 			for(int i=0; i<count; i++)
 			{
 				TableInformationPlay[i] = tableInformationPlayNow[i];

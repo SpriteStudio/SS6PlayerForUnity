@@ -510,7 +510,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		{
 			flagRenew = false;
 			countTrackNow = tableControlTrackNow.Length;
-			if(countTrackNow < countTrack)
+			if(countTrackNow != countTrack)	/* (countTrackNow < countTrack) */
 			{
 				flagRenew = true;
 			}
@@ -544,6 +544,10 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* Transfer state until just before */
 		if(null != tableControlTrackNow)
 		{
+			if(countTrack < countTrackNow)
+			{
+				countTrackNow = countTrack;
+			}
 			for(int i=0; i<countTrackNow; i++)
 			{
 				TableControlTrack[i] = tableControlTrackNow[i];

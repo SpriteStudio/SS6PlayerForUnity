@@ -53,7 +53,7 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 			EditorGUI.indentLevel = levelIndent + 1;
 
 			PropertyDataCellMap.objectReferenceValue = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", PropertyDataCellMap.objectReferenceValue, typeof(Script_SpriteStudio6_DataCellMap), true));
-			PropertyDataEffect.objectReferenceValue = (Script_SpriteStudio6_DataEffect)(EditorGUILayout.ObjectField("Data:Animation", PropertyDataEffect.objectReferenceValue, typeof(Script_SpriteStudio6_DataEffect), true));
+			PropertyDataEffect.objectReferenceValue = (Script_SpriteStudio6_DataEffect)(EditorGUILayout.ObjectField("Data:Effect", PropertyDataEffect.objectReferenceValue, typeof(Script_SpriteStudio6_DataEffect), true));
 			EditorGUI.indentLevel = levelIndent;
 		}
 
@@ -68,18 +68,18 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 		}
 
 		/* Effect */
-		/* MEMO: Use particle limit's IsExpand since no opportune group. */
+		/* MEMO: Use particle-limit's IsExpand since no opportune group. */
 		EditorGUILayout.Space();
 		PropertyLimitParticle.isExpanded = EditorGUILayout.Foldout(PropertyLimitParticle.isExpanded, "Initial/Preview Play Setting");
 		if(true == PropertyLimitParticle.isExpanded)
 		{
 			EditorGUI.indentLevel = levelIndent;
 
-			/* Set Hide */
+			/* Hide */
 			PropertyHideForce.boolValue = EditorGUILayout.Toggle("Hide Force", PropertyHideForce.boolValue);
 			EditorGUILayout.Space();
 
-			/* Set Limit draw */
+			/* Limit draw particle */
 			int limitParticle = PropertyLimitParticle.intValue;
 			int limitParticleNew = EditorGUILayout.IntField("Count Limit Particle",limitParticle);
 			EditorGUILayout.LabelField("(0: Default-Value Set)");

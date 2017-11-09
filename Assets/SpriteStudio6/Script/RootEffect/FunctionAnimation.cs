@@ -15,16 +15,16 @@ public partial class Script_SpriteStudio6_RootEffect
 	/* ******************************************************** */
 	//! Start playing the animation
 	/*!
-	@param	FrameInitial
-		Offset frame-number of starting Play in animation (0 origins). <br>
-		At the time of the first play-loop, Animation is started "LabelStart + FrameOffsetStart + FrameInitial".
-		-1 == use "FrameNoInitial" Value<br>
+	@param	timesPlay
+		-1 == Apply previous setting.<br>
+		0 == Infinite-looping<br>
+		1 == Not looping<br>
 		default: -1
 	@param	RateTime
 		Coefficient of time-passage of animation.<br>
 		Minus Value is given, Animation is played backwards.<br>
-		0.0f is given, the now-setting is not changed) <br>
-		default: 0.0f (Setting is not changed)
+		float.NaN is given, the now-setting is not changed) <br>
+		default: float.NaN (Setting is not changed)
 	@retval	Return-Value
 		true == Success <br>
 		false == Failure (Error)
