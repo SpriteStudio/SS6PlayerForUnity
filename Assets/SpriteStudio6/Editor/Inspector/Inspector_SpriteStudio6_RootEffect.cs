@@ -13,72 +13,90 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
-	private static bool FoldOutStaticDatas;
-	private static bool FoldOutMaterialTable;
-	private static bool FoldOutMaterialApplied;
-	private static bool FoldOutPlayInformation;
+	private Script_SpriteStudio6_RootEffect InstanceRoot;
+
+	private SerializedProperty PropertyDataCellMap;
+	private SerializedProperty PropertyDataEffect;
+	private SerializedProperty PropertyTableMaterial;
+	private SerializedProperty PropertyHideForce;
+	private SerializedProperty PropertyLimitParticle;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
+	private void OnEnable()
+	{
+		InstanceRoot = (Script_SpriteStudio6_RootEffect)target;
+
+		serializedObject.FindProperty("__DUMMY__");
+		PropertyDataCellMap = serializedObject.FindProperty("DataCellMap");
+		PropertyDataEffect = serializedObject.FindProperty("DataEffect");
+		PropertyTableMaterial = serializedObject.FindProperty("TableMaterial");
+		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
+		PropertyLimitParticle = serializedObject.FindProperty("LimitParticleDraw");
+	}
+
 	public override void OnInspectorGUI()
 	{
 		Script_SpriteStudio6_RootEffect data = (Script_SpriteStudio6_RootEffect)target;
+
+		serializedObject.Update();
 
 		EditorGUILayout.LabelField("[SpriteStudio6 Effect]");
 		int levelIndent = 0;
 
 		/* Static Datas */
 		EditorGUILayout.Space();
-		FoldOutStaticDatas = EditorGUILayout.Foldout(FoldOutStaticDatas, "Static Datas");
-		if(true == FoldOutStaticDatas)
+		PropertyDataEffect.isExpanded = EditorGUILayout.Foldout(PropertyDataEffect.isExpanded, "Static Datas");
+		if(true == PropertyDataEffect.isExpanded)
 		{
 			EditorGUI.indentLevel = levelIndent + 1;
-			data.DataCellMap = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", data.DataCellMap, typeof(Script_SpriteStudio6_DataCellMap), true));
-			data.DataEffect = (Script_SpriteStudio6_DataEffect)(EditorGUILayout.ObjectField("Data:Effect", data.DataEffect, typeof(Script_SpriteStudio6_DataEffect), true));
+
+			PropertyDataCellMap.objectReferenceValue = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", PropertyDataCellMap.objectReferenceValue, typeof(Script_SpriteStudio6_DataCellMap), true));
+			PropertyDataEffect.objectReferenceValue = (Script_SpriteStudio6_DataEffect)(EditorGUILayout.ObjectField("Data:Animation", PropertyDataEffect.objectReferenceValue, typeof(Script_SpriteStudio6_DataEffect), true));
 			EditorGUI.indentLevel = levelIndent;
 		}
 
 		/* Table-Material */
 		EditorGUILayout.Space();
-		FoldOutMaterialTable = EditorGUILayout.Foldout(FoldOutMaterialTable, "Table-Material");
-		if(true == FoldOutMaterialTable)
+		PropertyTableMaterial.isExpanded = EditorGUILayout.Foldout(PropertyTableMaterial.isExpanded, "Table-Material");
+		if(true == PropertyTableMaterial.isExpanded)
 		{
 			EditorGUI.indentLevel = levelIndent + 1;
-			LibraryEditor_SpriteStudio6.Utility.Inspector.TableMaterialEffect(data.TableMaterial, levelIndent + 1);
+			LibraryEditor_SpriteStudio6.Utility.Inspector.TableMaterialEffect(InstanceRoot.TableMaterial, PropertyTableMaterial, levelIndent + 1);
 			EditorGUI.indentLevel = levelIndent;
 		}
 
 		/* Effect */
+		/* MEMO: Use particle limit's IsExpand since no opportune group. */
 		EditorGUILayout.Space();
-		FoldOutPlayInformation = EditorGUILayout.Foldout(FoldOutPlayInformation, "Initial/Preview Play Setting");
-		if(true == FoldOutPlayInformation)
+		PropertyLimitParticle.isExpanded = EditorGUILayout.Foldout(PropertyLimitParticle.isExpanded, "Initial/Preview Play Setting");
+		if(true == PropertyLimitParticle.isExpanded)
 		{
 			EditorGUI.indentLevel = levelIndent;
 
 			/* Set Hide */
-			data.FlagHideForce = EditorGUILayout.Toggle("Hide Force", data.FlagHideForce);
+			PropertyHideForce.boolValue = EditorGUILayout.Toggle("Hide Force", PropertyHideForce.boolValue);
 			EditorGUILayout.Space();
 
 			/* Set Limit draw */
-			int limitParticle = EditorGUILayout.IntField("Count Limit Particle", data.LimitParticleDraw);
+			int limitParticle = PropertyLimitParticle.intValue;
+			int limitParticleNew = EditorGUILayout.IntField("Count Limit Particle",limitParticle);
 			EditorGUILayout.LabelField("(0: Default-Value Set)");
-			if(0 > limitParticle)
+			if(0 > limitParticleNew)
 			{
-				limitParticle = 0;
+				limitParticleNew = 0;
 			}
-			if(limitParticle != data.LimitParticleDraw)
+			if(limitParticleNew != limitParticle)
 			{
-				data.LimitParticleDraw = limitParticle;
+				limitParticle = limitParticleNew;
+				PropertyLimitParticle.intValue = limitParticleNew;
 			}
 
 			EditorGUI.indentLevel = levelIndent;
 		}
 
-		if(true == GUI.changed)
-		{
-			Undo.RecordObject(target, "SpriteStudio6 Effect");
-		}
+		serializedObject.ApplyModifiedProperties();
 	}
 	#endregion Functions
 }

@@ -41,12 +41,12 @@ public class Inspector_SpriteStudio6_Root : Editor
 	public override void OnInspectorGUI()
 	{
 		const string NameMissing = "(Data Missing)";
-		bool flagUpdate = false;
 
 		serializedObject.Update();
 
 		EditorGUILayout.LabelField("[SpriteStudio6 Animation]");
 		int levelIndent = 0;
+		bool flagUpdate = false;
 
 		/* Static Datas */
 		EditorGUILayout.Space();
