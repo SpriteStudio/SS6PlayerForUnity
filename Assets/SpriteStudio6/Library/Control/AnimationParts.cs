@@ -292,6 +292,11 @@ public static partial class Library_SpriteStudio6
 				internal void Update(Script_SpriteStudio6_Root instanceRoot, int idParts)
 				{
 					int indexTrack = IndexControlTrack;
+					if(0 > indexTrack)
+					{	/* Disconnect */
+						return;
+					}
+
 					int indexAnimation = instanceRoot.TableControlTrack[indexTrack].ArgumentContainer.IndexAnimation;
 					if(0 > indexAnimation)
 					{	/* Not Playing */

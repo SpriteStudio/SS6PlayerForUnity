@@ -12,16 +12,39 @@ public partial class Script_SpriteStudio6_Root
 {
 	/* ----------------------------------------------- Functions */
 	#region Functions
-	public int LimitGetTrack()
-	{
-		return((0 < LimitTrack) ? LimitTrack : (int)Defaults.LIMIT_TRACK);
-	}
+	/* ******************************************************** */
+	//! Get number of "Play-Track"
+	/*!
+	@param	
+		(none)
+	@retval	Return-Value
+		Number of Play-Track<br>
+		-1 == Error / "Name" is not-found.
 
+	Get number of "Play-Track".<br>
+	Up to this value, can play animations in parallel.<br>
+	*/
 	public int CountGetTrack()
 	{
 		return((null != TableControlTrack) ? TableControlTrack.Length : -1);
 	}
 
+	/* ******************************************************** */
+	//! Change number of "Play-Track".
+	/*!
+	@param	count
+		New number of tracks (Must be 1 or more)<br>
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Change number of Play-Tracks.<br>
+	If it is the same as current number of Play-Tracks, this function does not change anything.<br>
+	<br>
+	Playing-status of each track is preserved.<br>
+	However, if becomes less than original number of tracks, playing-status of cut Play-Tracks will be lost.<br>
+	Also, parts connected to cut Play-Tracks will be disconnected.<br>
+	*/
 	public bool TrackReboot(int count)
 	{
 		if(0 >= count)
@@ -63,9 +86,42 @@ public partial class Script_SpriteStudio6_Root
 			tableInformationPlayNow = null;
 		}
 
+		/* Check conneced partst */
+		if(null != TableControlParts)
+		{
+			int countParts = TableControlParts.Length;
+			for(int i=0; i<countParts; i++)
+			{
+				if(count <= TableControlParts[i].IndexControlTrack)
+				{
+					TableControlParts[i].IndexControlTrack = -1;
+				}
+			}
+		}
+
 		return(true);
 	}
 
+	/* ******************************************************** */
+	//! Connect parts to Play-Track
+	/*!
+	@param	idParts
+		Parts-ID<br>
+		-1 == all parts
+	@param	indexTrack
+		Play-Track index
+	@param	flagChildParts
+		true == Also connect child parts of "idParts"<br>
+		false == only "idParts"
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Connect (animation)parts to Play-Track.<br>
+	The playing animation on connected Play-Track will be applied to specified parts.<br>
+	<br>
+	Using this function, it is possible to synthesize and play multiple animations to 1 animation object.<br>
+	*/
 	public bool TrackConnectParts(int idParts, int indexTrack, bool flagChildParts = false)
 	{
 		if((null == TableControlParts) || (null == DataAnimation))

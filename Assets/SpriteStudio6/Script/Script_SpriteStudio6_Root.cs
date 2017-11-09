@@ -502,6 +502,12 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		DataAnimation.StatusIsBootup = true;
 	}
 
+	/* MEMO: Do not use this function. (only for internal processing, importer and inspectors) */
+	public int LimitGetTrack()
+	{
+		return((0 < LimitTrack) ? LimitTrack : (int)Defaults.LIMIT_TRACK);
+	}
+
 	private int ControlBootUpTrack(int countTrack)
 	{
 		if(0 > countTrack)

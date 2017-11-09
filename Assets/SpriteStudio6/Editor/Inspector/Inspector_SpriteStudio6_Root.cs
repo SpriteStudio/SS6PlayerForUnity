@@ -85,6 +85,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 			/* Track */
 			int countTrack = EditorGUILayout.IntField("Number of Track", PropertyCountTrack.intValue);
+			EditorGUILayout.LabelField("(0: Default)");
 			if(0 >= countTrack)
 			{
 				countTrack = 0;
