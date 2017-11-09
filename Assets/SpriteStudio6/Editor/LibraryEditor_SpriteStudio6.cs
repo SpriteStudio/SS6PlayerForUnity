@@ -1564,7 +1564,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 			}
 
-			public static void TableMaterialEffect(Material[] tableMaterial, int levelIndent)
+			public static void TableMaterialEffect(Material[] tableMaterial, SerializedProperty propertyTableMaterial, int levelIndent)
 			{
 				if(null == tableMaterial)
 				{
@@ -1579,6 +1579,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countBlock = (int)Library_SpriteStudio6.KindMasking.TERMINATOR * countShader;
 					int indexMaterialBlock;
 					int indexMaterial;
+					SerializedProperty propertyMaterial;
 
 					int countTexture = Script_SpriteStudio6_RootEffect.Material.CountGetTexture(tableMaterial);
 					for(int i=0; i<countTexture; i++)
@@ -1598,11 +1599,12 @@ public static partial class LibraryEditor_SpriteStudio6
 							for(int k=0; k<countShader; k++)
 							{
 								indexMaterial = indexMaterialBlock + (j * countShader) + k;
-								tableMaterial[indexMaterial] = (Material)(EditorGUILayout.ObjectField(	NameItemTableMaterialEffect[j][k],
-																										tableMaterial[indexMaterial],
-																										typeof(Material),
-																										false
-																									)
+								propertyMaterial = propertyTableMaterial.GetArrayElementAtIndex(indexMaterial);
+								propertyMaterial.objectReferenceValue = (Material)(EditorGUILayout.ObjectField(	NameItemTableMaterialEffect[j][k],
+																												propertyMaterial.objectReferenceValue,
+																												typeof(Material),
+																												false
+																											)
 																		);
 							}
 							EditorGUILayout.Space();
