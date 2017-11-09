@@ -13,65 +13,83 @@ public class Inspector_SpriteStudio6_Root : Editor
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
-	private static bool FoldOutStaticDatas;
-	private static bool FoldOutMaterialTable;
-	private static bool FoldOutPlayInformation;
+	private Script_SpriteStudio6_Root InstanceRoot;
+
+	private SerializedProperty PropertyDataCellMap;
+	private SerializedProperty PropertyDataAnimation;
+	private SerializedProperty PropertyTableMaterial;
+	private SerializedProperty PropertyHideForce;
+	private SerializedProperty PropertyCountTrack;
+	private SerializedProperty PropertyInformationPlay;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
+	private void OnEnable()
+	{
+		InstanceRoot = (Script_SpriteStudio6_Root)target;
+
+		serializedObject.FindProperty("__DUMMY__");
+		PropertyDataCellMap = serializedObject.FindProperty("DataCellMap");
+		PropertyDataAnimation = serializedObject.FindProperty("DataAnimation");
+		PropertyTableMaterial = serializedObject.FindProperty("TableMaterial");
+		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
+		PropertyCountTrack = serializedObject.FindProperty("LimitTrack");
+		PropertyInformationPlay = serializedObject.FindProperty("TableInformationPlay");
+	}
+
 	public override void OnInspectorGUI()
 	{
 		const string NameMissing = "(Data Missing)";
+		bool flagUpdate = false;
 
-		Script_SpriteStudio6_Root data = (Script_SpriteStudio6_Root)target;
+		serializedObject.Update();
 
 		EditorGUILayout.LabelField("[SpriteStudio6 Animation]");
 		int levelIndent = 0;
 
 		/* Static Datas */
 		EditorGUILayout.Space();
-		FoldOutStaticDatas = EditorGUILayout.Foldout(FoldOutStaticDatas, "Static Datas");
-		if(true == FoldOutStaticDatas)
+		PropertyDataAnimation.isExpanded = EditorGUILayout.Foldout(PropertyDataAnimation.isExpanded, "Static Datas");
+		if(true == PropertyDataAnimation.isExpanded)
 		{
 			EditorGUI.indentLevel = levelIndent + 1;
-			data.DataCellMap = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", data.DataCellMap, typeof(Script_SpriteStudio6_DataCellMap), true));
-			data.DataAnimation = (Script_SpriteStudio6_DataAnimation)(EditorGUILayout.ObjectField("Data:Animation", data.DataAnimation, typeof(Script_SpriteStudio6_DataAnimation), true));
+
+			PropertyDataCellMap.objectReferenceValue = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", PropertyDataCellMap.objectReferenceValue, typeof(Script_SpriteStudio6_DataCellMap), true));
+			PropertyDataAnimation.objectReferenceValue = (Script_SpriteStudio6_DataAnimation)(EditorGUILayout.ObjectField("Data:Animation", PropertyDataAnimation.objectReferenceValue, typeof(Script_SpriteStudio6_DataAnimation), true));
 			EditorGUI.indentLevel = levelIndent;
 		}
 
 		/* Table-Material */
 		EditorGUILayout.Space();
-		FoldOutMaterialTable = EditorGUILayout.Foldout(FoldOutMaterialTable, "Table-Material");
-		if(true == FoldOutMaterialTable)
+		PropertyTableMaterial.isExpanded = EditorGUILayout.Foldout(PropertyTableMaterial.isExpanded, "Table-Material");
+		if(true == PropertyTableMaterial.isExpanded)
 		{
 			EditorGUI.indentLevel = levelIndent + 1;
-			LibraryEditor_SpriteStudio6.Utility.Inspector.TableMaterialAnimation(data.TableMaterial, levelIndent + 1);
+			LibraryEditor_SpriteStudio6.Utility.Inspector.TableMaterialAnimation(InstanceRoot.TableMaterial, PropertyTableMaterial, levelIndent + 1);
 			EditorGUI.indentLevel = levelIndent;
 		}
 
 		/* Animation */
-		Script_SpriteStudio6_DataAnimation dataAnimation = data.DataAnimation;
-//		Script_SpriteStudio6_DataCellMap dataCellMap = data.DataCellMap;
+		Script_SpriteStudio6_DataAnimation dataAnimation = InstanceRoot.DataAnimation;
+//		Script_SpriteStudio6_DataCellMap dataCellMap = InstanceRoot.DataCellMap;
 
 		EditorGUILayout.Space();
-		FoldOutPlayInformation = EditorGUILayout.Foldout(FoldOutPlayInformation, "Initial/Preview Play Setting");
-		if(true == FoldOutPlayInformation)
+		PropertyInformationPlay.isExpanded = EditorGUILayout.Foldout(PropertyInformationPlay.isExpanded, "Initial/Preview Play Setting");
+		if(true == PropertyInformationPlay.isExpanded)
 		{
-			bool flagUpdate = false;
-
 			/* Set Hide */
-			data.FlagHideForce = EditorGUILayout.Toggle("Hide Force", data.FlagHideForce);
+			PropertyHideForce.boolValue = EditorGUILayout.Toggle("Hide Force", PropertyHideForce.boolValue);
 			EditorGUILayout.Space();
 
 			if(null == dataAnimation)
 			{
-				EditorGUILayout.LabelField("(Animation Data Missin)");
+				EditorGUILayout.LabelField("(Animation Data Missing)");
 			}
 			else
 			{
 				/* Creation animation name table */
-				int countAnimation = data.CountGetAnimation();
+				int countAnimation = dataAnimation.CountGetAnimation();
 				string[] tableNameAnimation = new string[countAnimation];
 				for(int i=0; i<countAnimation; i++)
 				{
@@ -82,30 +100,44 @@ public class Inspector_SpriteStudio6_Root : Editor
 					}
 				}
 
-				InfromationPlay(ref flagUpdate,ref data.TableInformationPlay[0],data, tableNameAnimation);
-
-				/* RePlay Animation */
-				if(true == flagUpdate)
-				{
-					Undo.RecordObject(target, "SpriteStudio6 Animation");
-					data.AnimationPlayInitial();
-				}
+				SerializedProperty propertyInformationPlay = PropertyInformationPlay.GetArrayElementAtIndex(0);
+				InfromationPlay(ref flagUpdate, propertyInformationPlay, InstanceRoot, tableNameAnimation);
 			}
 		}
+
+		serializedObject.ApplyModifiedProperties();
+
+		/* RePlay Animation */
+		if(true == flagUpdate)
+		{
+			InstanceRoot.AnimationPlayInitial();
+		}
+
 	}
 
 	private void InfromationPlay(	ref bool flagUpdate,
-									ref Script_SpriteStudio6_Root.InformationPlay informationPlay,
+									SerializedProperty propertyInformationPlay,
 									Script_SpriteStudio6_Root instanceRoot,
 									string[] tableNameAnimation
 								)
 	{
+		SerializedProperty propertyFlagStopInitial = propertyInformationPlay.FindPropertyRelative("FlagStopInitial");
+		SerializedProperty propertyNameAnition = propertyInformationPlay.FindPropertyRelative("NameAnimation");
+		SerializedProperty propertyFlagPingPong = propertyInformationPlay.FindPropertyRelative("FlagPingPong");
+		SerializedProperty propertyLabelStart = propertyInformationPlay.FindPropertyRelative("LabelStart");
+		SerializedProperty propertyFrameOffsetStart= propertyInformationPlay.FindPropertyRelative("FrameOffsetStart");
+		SerializedProperty propertyLabelEnd = propertyInformationPlay.FindPropertyRelative("LabelEnd");
+		SerializedProperty propertyFrameOffsetEnd = propertyInformationPlay.FindPropertyRelative("FrameOffsetEnd");
+		SerializedProperty propertyFrame = propertyInformationPlay.FindPropertyRelative("Frame");
+		SerializedProperty propertyTimesPlay = propertyInformationPlay.FindPropertyRelative("TimesPlay");
+		SerializedProperty propertyRateTime = propertyInformationPlay.FindPropertyRelative("RateTime");
+
 		/* Set "Initial Stop" */
-		informationPlay.FlagStopInitial = EditorGUILayout.Toggle("Initial Stop", informationPlay.FlagStopInitial);
+		propertyFlagStopInitial.boolValue = EditorGUILayout.Toggle("Initial Stop", propertyFlagStopInitial.boolValue);
 		EditorGUILayout.Space();
 
 		/* "Animation" Select */
-		int indexAnimation = instanceRoot.IndexGetAnimation(informationPlay.NameAnimation);
+		int indexAnimation = instanceRoot.IndexGetAnimation(propertyNameAnition.stringValue);
 		if((0 > indexAnimation) || (tableNameAnimation.Length <= indexAnimation))
 		{
 			indexAnimation = 0;
@@ -115,7 +147,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 		if(indexNow != indexAnimation)
 		{
 			indexAnimation = indexNow;
-			informationPlay.NameAnimation = instanceRoot.DataAnimation.TableAnimation[indexAnimation].Name;
+			propertyNameAnition.stringValue = instanceRoot.DataAnimation.TableAnimation[indexAnimation].Name;
 			flagUpdate |= true;
 		}
 
@@ -167,11 +199,13 @@ public class Inspector_SpriteStudio6_Root : Editor
 		tableFrameLabel[countLabel - 1] = frameValidEnd;
 
 		/* Get current labels */
+		string nameLabelStart = propertyLabelStart.stringValue;
+		string nameLabelEnd = propertyLabelEnd.stringValue;
 		int indexTableLabelStart = -1;
 		int indexTableLabelEnd = -1;
 		for(int i=0; i<countLabel; i++)
 		{
-			if(tableNameLabel[i] == informationPlay.LabelStart)
+			if(tableNameLabel[i] == nameLabelStart)
 			{
 				indexTableLabelStart = i;
 				break;
@@ -179,7 +213,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 		}
 		for(int i=0; i<countLabel; i++)
 		{
-			if(tableNameLabel[i] == informationPlay.LabelEnd)
+			if(tableNameLabel[i] == nameLabelEnd)
 			{
 				indexTableLabelEnd = i;
 				break;
@@ -194,11 +228,11 @@ public class Inspector_SpriteStudio6_Root : Editor
 			indexTableLabelEnd = countLabel - 1;
 		}
 
-		int offsetStart = informationPlay.FrameOffsetStart;
-		int offsetEnd = informationPlay.FrameOffsetEnd;
+		int offsetStart = propertyFrameOffsetStart.intValue;
+		int offsetEnd = propertyFrameOffsetEnd.intValue;
 		int frameLabelStart = tableFrameLabel[indexTableLabelStart];
 		int frameLabelEnd = tableFrameLabel[indexTableLabelEnd];
-		int indexTableLabel;
+		int indexTableLabelNew;
 		int frameLimit;
 
 		/* Range "Start" */
@@ -211,28 +245,29 @@ public class Inspector_SpriteStudio6_Root : Editor
 								);
 
 		/* Start-Label Select */
-		indexTableLabel = EditorGUILayout.Popup("Range Start Label", indexTableLabelStart, tableNameLabel);
-		if(indexTableLabel != indexTableLabelStart)
-		{	/* Data is valid & Changed Animation */
-			indexTableLabelStart = indexTableLabel;
+		indexTableLabelNew = EditorGUILayout.Popup("Range Start Label", indexTableLabelStart, tableNameLabel);
+		if(indexTableLabelNew != indexTableLabelStart)
+		{
+			indexTableLabelStart = indexTableLabelNew;
+			propertyLabelStart.stringValue = tableNameLabel[indexTableLabelStart];
 			flagUpdate |= true;
 		}
-		informationPlay.LabelStart = tableNameLabel[indexTableLabelStart];
 		frameLabelStart = tableFrameLabel[indexTableLabelStart];
 
 		/* Start-Offset */
 		frameLimit = frameLabelEnd + offsetEnd;
-		offsetStart = EditorGUILayout.IntField("Range Start Offset", informationPlay.FrameOffsetStart);
+		int offsetStartNew = EditorGUILayout.IntField("Range Start Offset", offsetStart);
 		EditorGUILayout.LabelField(	"- Valid Value Range: Min[" + (frameValidStart - frameLabelStart).ToString() +
 									"] to Max[" + ((frameLimit - frameLabelStart) - 1).ToString() + "] "	/* -1 ... End frame */
 								);
 
-		offsetStart = (frameLimit <= (frameLabelStart + offsetStart)) ? ((frameLimit - frameLabelStart) - 1) : offsetStart;
-		offsetStart = (frameValidStart > (frameLabelStart + offsetStart)) ? (frameValidStart - frameLabelStart) : offsetStart;
-		offsetStart = (frameValidEnd < (frameLabelStart + offsetStart)) ? (frameValidEnd - frameLabelStart) : offsetStart;
-		if(informationPlay.FrameOffsetStart != offsetStart)
+		offsetStartNew = (frameLimit <= (frameLabelStart + offsetStartNew)) ? ((frameLimit - frameLabelStart) - 1) : offsetStartNew;
+		offsetStartNew = (frameValidStart > (frameLabelStart + offsetStartNew)) ? (frameValidStart - frameLabelStart) : offsetStartNew;
+		offsetStartNew = (frameValidEnd < (frameLabelStart + offsetStartNew)) ? (frameValidEnd - frameLabelStart) : offsetStartNew;
+		if(offsetStartNew != offsetStart)
 		{
-			informationPlay.FrameOffsetStart = offsetStart;
+			offsetStart = offsetStartNew;
+			propertyFrameOffsetStart.intValue = offsetStartNew;
 			flagUpdate |= true;
 		}
 
@@ -246,61 +281,65 @@ public class Inspector_SpriteStudio6_Root : Editor
 								);
 
 		/* End-Label Select */
-		indexTableLabel = EditorGUILayout.Popup("Range End Label", indexTableLabelEnd, tableNameLabel);
-		if(indexTableLabel != indexTableLabelEnd)
+		indexTableLabelNew = EditorGUILayout.Popup("Range End Label", indexTableLabelEnd, tableNameLabel);
+		if(indexTableLabelNew != indexTableLabelEnd)
 		{	/* Data is valid & Changed Animation */
-			indexTableLabelEnd = indexTableLabel;
+			indexTableLabelEnd = indexTableLabelNew;
+			propertyLabelEnd.stringValue = tableNameLabel[indexTableLabelEnd];
 			flagUpdate |= true;
 		}
-		informationPlay.LabelEnd = tableNameLabel[indexTableLabelEnd];
 		frameLabelEnd = tableFrameLabel[indexTableLabelEnd];
 
 		/* End-Offset */
 		frameLimit = frameLabelStart + offsetStart;
-		offsetEnd = EditorGUILayout.IntField("Range End Offset", informationPlay.FrameOffsetEnd);
+		int offsetEndNew = EditorGUILayout.IntField("Range End Offset", offsetEnd);
 		EditorGUILayout.LabelField(	"- Valid Value Range: Min[" + ((frameLimit - frameLabelEnd) + 1).ToString() +	/* +1 ... Start frame */
 									"] to Max[" + (frameValidEnd - frameLabelEnd).ToString() + "] "
 								);
 
-		offsetEnd = (frameLimit >= (frameLabelEnd + offsetEnd)) ? ((frameLimit - frameLabelEnd) + 1) : offsetEnd;
-		offsetEnd = (frameValidStart > (frameLabelEnd + offsetEnd)) ? (frameValidStart - frameLabelEnd) : offsetEnd;
-		offsetEnd = (frameValidEnd < (frameLabelEnd + offsetEnd)) ? (frameValidEnd - frameLabelEnd) : offsetEnd;
-		if(informationPlay.FrameOffsetEnd != offsetEnd)
+		offsetEndNew = (frameLimit >= (frameLabelEnd + offsetEndNew)) ? ((frameLimit - frameLabelEnd) + 1) : offsetEndNew;
+		offsetEndNew = (frameValidStart > (frameLabelEnd + offsetEndNew)) ? (frameValidStart - frameLabelEnd) : offsetEndNew;
+		offsetEndNew = (frameValidEnd < (frameLabelEnd + offsetEndNew)) ? (frameValidEnd - frameLabelEnd) : offsetEndNew;
+		if(offsetEndNew != offsetEnd)
 		{
-			informationPlay.FrameOffsetEnd = offsetEnd;
+			offsetEnd = offsetEndNew;
+			propertyFrameOffsetEnd.intValue = offsetEndNew;
 			flagUpdate |= true;
 		}
 
 		/* Play Pingpong */
 		EditorGUILayout.Space();
-		bool flagPingPong = EditorGUILayout.Toggle("Play-Pingpong", informationPlay.FlagPingPong);
-		if(flagPingPong != informationPlay.FlagPingPong)
+		bool flagPingPong = propertyFlagPingPong.boolValue;
+		bool flagPingPongNew = EditorGUILayout.Toggle("Play-Pingpong", flagPingPong);
+		if(flagPingPongNew != flagPingPong)
 		{
-			informationPlay.FlagPingPong = flagPingPong;
+			propertyFlagPingPong.boolValue = flagPingPongNew;
 			flagUpdate |= true;
 		}
 
 		/* Rate-Time */
 		EditorGUILayout.Space();
-		if(0.0f == informationPlay.RateTime)
+		float rateTime = propertyRateTime.floatValue;
+		if(0.0f == rateTime)
 		{
-			informationPlay.RateTime = 1.0f;
+			rateTime = 1.0f;
 		}
-		float rateTime = EditorGUILayout.FloatField("Rate Time-Progress", informationPlay.RateTime);
+		float rateTimeNew = EditorGUILayout.FloatField("Rate Time-Progress", rateTime);
 		EditorGUILayout.LabelField("(set Negative-Value, Play Backwards.)");
-		if(rateTime != informationPlay.RateTime)
+		if(rateTimeNew != rateTime)
 		{
-			informationPlay.RateTime = rateTime;
+			propertyRateTime.floatValue = rateTimeNew;
 			flagUpdate |= true;
 		}
 
 		/* Play-Times */
 		EditorGUILayout.Space();
-		int timesPlay = EditorGUILayout.IntField("Number of Plays", informationPlay.TimesPlay);
+		int timesPlay = propertyTimesPlay.intValue;
+		int timesPlayNew = EditorGUILayout.IntField("Number of Plays", timesPlay);
 		EditorGUILayout.LabelField("(1: No Loop / 0: Infinite Loop)");
-		if(timesPlay != informationPlay.TimesPlay)
+		if(timesPlayNew != timesPlay)
 		{
-			informationPlay.TimesPlay = timesPlay;
+			propertyTimesPlay.intValue = timesPlayNew;
 			flagUpdate |= true;
 		}
 
@@ -308,16 +347,16 @@ public class Inspector_SpriteStudio6_Root : Editor
 		EditorGUILayout.Space();
 		if(true == GUILayout.Button("Reset (Reinitialize)"))
 		{
-			informationPlay.NameAnimation = tableNameAnimation[0];
-			informationPlay.Frame = 0;
-			informationPlay.RateTime = 1.0f;
-			informationPlay.TimesPlay = 0;
-			informationPlay.FlagPingPong = false;
-			informationPlay.LabelStart = Library_SpriteStudio6.Data.Animation.Label.TableNameLabelReserved[(int)Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.START];
-			informationPlay.FrameOffsetStart = 0;
-			informationPlay.LabelEnd = Library_SpriteStudio6.Data.Animation.Label.TableNameLabelReserved[(int)Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.END];
-			informationPlay.FrameOffsetEnd = 0;
-			informationPlay.FlagStopInitial = false;
+			propertyNameAnition.stringValue = tableNameAnimation[0];
+			propertyFrame.intValue = 0;
+			propertyRateTime.floatValue = 1.0f;
+			propertyTimesPlay.intValue = 0;
+			propertyFlagPingPong.boolValue = false;
+			propertyLabelStart.stringValue = Library_SpriteStudio6.Data.Animation.Label.TableNameLabelReserved[(int)Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.START];
+			propertyFrameOffsetStart.intValue = 0;
+			propertyLabelEnd.stringValue = Library_SpriteStudio6.Data.Animation.Label.TableNameLabelReserved[(int)Library_SpriteStudio6.Data.Animation.Label.KindLabelReserved.END];
+			propertyFrameOffsetEnd.intValue = 0;
+			propertyFlagStopInitial.boolValue = false;
 			flagUpdate = true;	/* Force */
 		}
 	}

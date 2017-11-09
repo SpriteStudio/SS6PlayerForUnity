@@ -1514,7 +1514,7 @@ public static partial class LibraryEditor_SpriteStudio6
 		{
 			/* ----------------------------------------------- Functions */
 			#region Functions
-			public static void TableMaterialAnimation(Material[] tableMaterial, int levelIndent)
+			public static void TableMaterialAnimation(Material[] tableMaterial, SerializedProperty propertyTableMaterial, int levelIndent)
 			{
 				if(null == tableMaterial)
 				{
@@ -1529,6 +1529,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countBlock = (int)Library_SpriteStudio6.KindMasking.TERMINATOR * countShader;
 					int indexMaterialBlock;
 					int indexMaterial;
+					SerializedProperty propertyMaterial;
 
 					int countTexture = Script_SpriteStudio6_Root.Material.CountGetTexture(tableMaterial);
 					for(int i=0; i<countTexture; i++)
@@ -1548,11 +1549,12 @@ public static partial class LibraryEditor_SpriteStudio6
 							for(int k=0; k<countShader; k++)
 							{
 								indexMaterial = indexMaterialBlock + (j * countShader) + k;
-								tableMaterial[indexMaterial] = (Material)(EditorGUILayout.ObjectField(	NameItemTableMaterialAnimation[j][k],
-																										tableMaterial[indexMaterial],
-																										typeof(Material),
-																										false
-																									)
+								propertyMaterial = propertyTableMaterial.GetArrayElementAtIndex(indexMaterial);
+								propertyMaterial.objectReferenceValue = (Material)(EditorGUILayout.ObjectField(	NameItemTableMaterialAnimation[j][k],
+																												propertyMaterial.objectReferenceValue,
+																												typeof(Material),
+																												false
+																											)
 																		);
 							}
 							EditorGUILayout.Space();
