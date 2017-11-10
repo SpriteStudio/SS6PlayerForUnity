@@ -64,8 +64,8 @@ public class Script_SpriteStudio6_DebugFrameByFrame : MonoBehaviour
 			for(int i=0; i<countTrack; i++)
 			{
 				text = string.Format(	"Track[" + i.ToString()
-										+ "]: Frame[" + ScriptRootWatching.TableControlTrack[i].ArgumentContainer.Frame.ToString()
-										+ "] Animation[" + ScriptRootWatching.TableControlTrack[i].ArgumentContainer.IndexAnimation.ToString()
+										+ "]: Animation[" + ScriptRootWatching.TableControlTrack[i].ArgumentContainer.IndexAnimation.ToString()
+										+ "] Frame[" + ScriptRootWatching.TableControlTrack[i].ArgumentContainer.Frame.ToString()
 										+ "]"
 									);
 				GUI.Label(new Rect(20, 20 + (TextHeight * i), TextWidth, TextHeight), text);

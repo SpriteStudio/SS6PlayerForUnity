@@ -130,19 +130,19 @@ public static partial class Library_SpriteStudio6
 				Status |= (true == instanceRoot.DataEffect.StatusIsLockSeedRandom) ? FlagBitStatus.LOCKSEED : FlagBitStatus.CLEAR;
 
 				/* Get Effect's length */
-				int frameGlobal;
+				int frameFull;
 				DurationFull = 0;
 				for (int i=0; i<countEmitter; i++)
 				{
 					indexEmitterParent = TableEmitter[i].IndexParent;
-					frameGlobal = TableEmitter[i].FrameFull;
-					if(0 < indexEmitterParent)
+					frameFull = TableEmitter[i].FrameFull;
+					if(0 <= indexEmitterParent)
 					{	/* Sub-Emitters */
-						frameGlobal += TableEmitter[indexEmitterParent].FrameFull;
+						frameFull += TableEmitter[indexEmitterParent].FrameFull;
 					}
-					TableEmitter[i].FrameGlobal = frameGlobal;
+					TableEmitter[i].FrameGlobal = frameFull;
 
-					DurationFull = (frameGlobal > DurationFull) ? frameGlobal : DurationFull;
+					DurationFull = (frameFull > DurationFull) ? frameFull : DurationFull;
 				}
 
 				/* Reset Transform */
@@ -317,7 +317,10 @@ public static partial class Library_SpriteStudio6
 					get
 					{
 						return(	DataEffect.TableEmitter[IndexEmitter].DurationEmitter
-								+ (int)(DataEffect.TableEmitter[IndexEmitter].DurationParticle.Main + DataEffect.TableEmitter[IndexEmitter].DurationParticle.Sub)
+								+ (int)DataEffect.TableEmitter[IndexEmitter].DurationParticle.Main
+//								+ (int)(DataEffect.TableEmitter[IndexEmitter].DurationParticle.Main + DataEffect.TableEmitter[IndexEmitter].DurationParticle.Sub)
+								+ (int)DataEffect.TableEmitter[IndexEmitter].DurationParticle.Sub
+								+ DataEffect.TableEmitter[IndexEmitter].Delay
 							);
 					}
 				}
@@ -804,7 +807,7 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
-				private bool Calculate(	float Frame,
+				private bool Calculate(	float frame,
 										Script_SpriteStudio6_RootEffect instanceRoot,
 										ref Library_SpriteStudio6.Control.Effect controlEffect,
 										ref Library_SpriteStudio6.Control.Effect.Emitter emitter,
@@ -813,7 +816,7 @@ public static partial class Library_SpriteStudio6
 									)
 				{
 					Library_SpriteStudio6.Utility.Random.Generator random = emitter.Random;
-					float frameRelative = (Frame - (float)FrameStart);
+					float frameRelative = (frame - (float)FrameStart);
 					float framePower2 = frameRelative * frameRelative;
 					float life = (float)(FrameEnd - FrameStart);
 					if(0.0f >= life)	/* (0 == life) */
@@ -858,11 +861,11 @@ public static partial class Library_SpriteStudio6
 					float y = speedY * frameRelative;
 					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SPEED_FLUCTUATION))
 					{
-						float SpeedFluctuation = dataEmitter.SpeedFluctuation.Main + random.RandomFloat(dataEmitter.SpeedFluctuation.Sub);
-						float SpeedOffset = SpeedFluctuation / life;
+						float speedFluctuation = dataEmitter.SpeedFluctuation.Main + random.RandomFloat(dataEmitter.SpeedFluctuation.Sub);
+						float speedOffset = speedFluctuation / life;
 
-						x = (((cos * SpeedOffset) * frameRelative) + speedX) * ((frameRelative + 1.0f) * 0.5f);
-						y = (((sin * SpeedOffset) * frameRelative) + speedY) * ((frameRelative + 1.0f) * 0.5f);
+						x = (((cos * speedOffset) * frameRelative) + speedX) * ((frameRelative + 1.0f) * 0.5f);
+						y = (((sin * speedOffset) * frameRelative) + speedY) * ((frameRelative + 1.0f) * 0.5f);
 					}
 
 					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.GRAVITY_DIRECTION))
@@ -883,37 +886,37 @@ public static partial class Library_SpriteStudio6
 					{
 						RotateZ = dataEmitter.Rotation.Main + random.RandomFloat(dataEmitter.Rotation.Sub);
 
-						float RotationFluctuation = dataEmitter.RotationFluctuation.Main + random.RandomFloat(dataEmitter.RotationFluctuation.Sub);
+						float rotationFluctuation = dataEmitter.RotationFluctuation.Main + random.RandomFloat(dataEmitter.RotationFluctuation.Sub);
 						if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.ROTATION_FLUCTUATION))
 						{
-							float FrameLast = life * dataEmitter.RotationFluctuationRateTime;
+							float frameLast = life * dataEmitter.RotationFluctuationRateTime;
 
-							float RateRotationFluctuation = 0.0f;
-							if(0.0f >= FrameLast)	/* Minus??? */
+							float rateRotationFluctuation = 0.0f;
+							if(0.0f >= frameLast)	/* Minus??? */
 							{
-								RotateZ += (RotationFluctuation * dataEmitter.RotationFluctuationRate) * frameRelative;
+								RotateZ += (rotationFluctuation * dataEmitter.RotationFluctuationRate) * frameRelative;
 							}
 							else
 							{
-								RateRotationFluctuation = ((RotationFluctuation * dataEmitter.RotationFluctuationRate) - RotationFluctuation) / FrameLast;
+								rateRotationFluctuation = ((rotationFluctuation * dataEmitter.RotationFluctuationRate) - rotationFluctuation) / frameLast;
 
-								float frameModuration = frameRelative - FrameLast;
+								float frameModuration = frameRelative - frameLast;
 								frameModuration = (0.0f > frameModuration) ? 0.0f : frameModuration;
 
 								float frameRelativeNow = frameRelative;
-								frameRelativeNow = (frameRelativeNow > FrameLast) ? FrameLast : frameRelativeNow;
+								frameRelativeNow = (frameRelativeNow > frameLast) ? frameLast : frameRelativeNow;
 
-								float rotateOffsetTemp = RateRotationFluctuation * frameRelativeNow;
-								rotateOffsetTemp += RotationFluctuation;
-								float rotateOffset = (rotateOffsetTemp + RotationFluctuation) * (frameRelativeNow + 1.0f) * 0.5f;
-								rotateOffset -= RotationFluctuation;
+								float rotateOffsetTemp = rateRotationFluctuation * frameRelativeNow;
+								rotateOffsetTemp += rotationFluctuation;
+								float rotateOffset = (rotateOffsetTemp + rotationFluctuation) * (frameRelativeNow + 1.0f) * 0.5f;
+								rotateOffset -= rotationFluctuation;
 								rotateOffset += (frameModuration * rotateOffsetTemp);
 								RotateZ += rotateOffset;
 							}
 						}
 						else
 						{
-							RotateZ += (RotationFluctuation * frameRelative);
+							RotateZ += (rotationFluctuation * frameRelative);
 						}
 					}
 
@@ -943,23 +946,23 @@ public static partial class Library_SpriteStudio6
 
 					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.FADEALPHA))
 					{
-						float RateStart = dataEmitter.AlphaFadeStart;
-						float RateEnd = dataEmitter.AlphaFadeEnd;
-						if(rateLife < RateStart)
+						float rateStart = dataEmitter.AlphaFadeStart;
+						float rateEnd = dataEmitter.AlphaFadeEnd;
+						if(rateLife < rateStart)
 						{
-							ColorVertex.a *= (1.0f - ((RateStart - rateLife) / RateStart));
+							ColorVertex.a *= (1.0f - ((rateStart - rateLife) / rateStart));
 						}
 						else
 						{
-							if(rateLife > RateEnd)
+							if(rateLife > rateEnd)
 							{
-								if(1.0f <= RateEnd)
+								if(1.0f <= rateEnd)
 								{
 									ColorVertex.a = 0.0f;
 								}
 								else
 								{
-									float Alpha = (rateLife - RateEnd) / (1.0f - RateEnd);
+									float Alpha = (rateLife - rateEnd) / (1.0f - rateEnd);
 									Alpha = (1.0f <= Alpha) ? 1.0f : Alpha;
 									ColorVertex.a *= (1.0f - Alpha);
 								}
@@ -1010,14 +1013,16 @@ public static partial class Library_SpriteStudio6
 						if(0.0f < gravityPower)
 						{
 							float eFrame = (vectorPosition.magnitude / gravityPower) * 0.9f;
-							float gFrame = (Frame >= (int)eFrame) ? (eFrame * 0.9f) : Frame;
+//							float gFrame = (frame >= (int)eFrame) ? (eFrame * 0.9f) : frame;
+							float gFrame = (frameRelative >= (int)eFrame) ? (eFrame * 0.9f) : frameRelative;
 
 							vectorNormal = vectorNormal * gravityPower * gFrame;
 							PositionX += vectorNormal.x;
 							PositionY += vectorNormal.y;
 
 							float Blend = OutQuad(gFrame, eFrame, 0.9f, 0.0f);
-							Blend += (Frame / life * 0.1f);
+//							Blend += (frame / life * 0.1f);
+							Blend += (frameRelative / life * 0.1f);
 
 							PositionX = PositionX + ((positionXGravity - PositionX) * Blend);	/* CAUTION!: Don't use "Mathf.Lerp" */
 							PositionY = PositionY + ((positionYGravity - PositionY) * Blend);	/* CAUTION!: Don't use "Mathf.Lerp" */
@@ -1025,7 +1030,8 @@ public static partial class Library_SpriteStudio6
 						else
 						{
 							/* MEMO: In the case negative power, Simply repulsion. Attenuation due to distance is not taken into account. */
-							vectorNormal = vectorNormal * gravityPower * Frame;
+//							vectorNormal = vectorNormal * gravityPower * frame;
+							vectorNormal = vectorNormal * gravityPower * frameRelative;
 							PositionX += vectorNormal.x;
 							PositionY += vectorNormal.y;
 						}
@@ -1036,17 +1042,17 @@ public static partial class Library_SpriteStudio6
 					if((0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.TURNDIRECTION)) && (false == flagSimplicity))
 					{
 						emitter.ParticleTempolary2 = this;
-						emitter.ParticleTempolary2.Calculate(	(Frame + 1.0f),	/* (Frame + 0.1f), */
+						emitter.ParticleTempolary2.Calculate(	(frame + 1.0f),	/* (Frame + 0.1f), */
 																instanceRoot,
 																ref controlEffect,
 																ref emitter,
 																ref emitter.DataEffect.TableEmitter[emitter.IndexEmitter],
 																true
 															);
-						float RadianDirection = AngleGetCCW(	new Vector2(1.0f, 0.0f),
+						float radianDirection = AngleGetCCW(	new Vector2(1.0f, 0.0f),
 																new Vector2((PositionX - emitter.ParticleTempolary2.PositionX), (PositionY - emitter.ParticleTempolary2.PositionY))
 															);
-						Direction = (RadianDirection * Mathf.Rad2Deg) + 90.0f + dataEmitter.TurnDirectionFluctuation;
+						Direction = (radianDirection * Mathf.Rad2Deg) + 90.0f + dataEmitter.TurnDirectionFluctuation;
 					}
 
 					return (true);
@@ -1125,8 +1131,8 @@ public static partial class Library_SpriteStudio6
 
 							Cycle = countLoop;
 							FrameStart = cycleTop + patternOffset;
-							FrameEnd = FrameStart + durationTarget;
-								
+							FrameEnd = FrameStart +	durationTarget;
+
 							if((frame >= FrameStart) && (frame < FrameEnd))
 							{
 								Status |= (FlagBitStatus.BORN | FlagBitStatus.EXIST);
