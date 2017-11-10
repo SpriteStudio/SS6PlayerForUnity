@@ -270,6 +270,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						if((int)KindMode.UNITY_NATIVE == i)
 						{
 							LibraryEditor_SpriteStudio6.Import.LogError("Importer", "\"UNITY_NATIVE\" does not support at this version.");
+							return((KindMode)(-1));
 						}
 #endif
 						return((KindMode)i);
