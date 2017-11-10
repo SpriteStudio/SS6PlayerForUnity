@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+#define TAKE_AWAY_UNSUPPORTED_FUNCTION
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -319,7 +321,21 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 	void ModeUnityNative(int levelIndent)
 	{
-#if false
+#if TAKE_AWAY_UNSUPPORTED_FUNCTION
+		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.LabelField("Sorry.");
+		EditorGUILayout.LabelField("This mode can not be executed in current version.");
+		EditorGUILayout.LabelField("Please give us a little more time.");
+		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("Memo:");
+		EditorGUI.indentLevel = levelIndent + 1;
+		EditorGUILayout.LabelField("This mode is the successor to \"SS5 Converter for Unity 2D\".");
+		EditorGUILayout.LabelField("Convert the data created by SpriteStudio 6 to Unity's \"Animator + Sprite2D\".");
+		EditorGUILayout.LabelField("(However, there are attributes of SpriteStudio6 which can not be used)");
+		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.Space();
+		EditorGUILayout.Space();
+#else
 		SettingOption.ModeUnityNative.FlagFoldOutCaution = EditorGUILayout.Foldout(SettingOption.ModeUnityNative.FlagFoldOutCaution, "Cautions");
 		if(true == SettingOption.ModeUnityNative.FlagFoldOutCaution)
 		{
@@ -381,20 +397,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			EditorGUI.indentLevel = levelIndent;
 		}
 
-		EditorGUILayout.Space();
-		EditorGUILayout.Space();
-#else
-		EditorGUI.indentLevel = levelIndent;
-		EditorGUILayout.LabelField("Sorry.");
-		EditorGUILayout.LabelField("This mode can not be executed in current version.");
-		EditorGUILayout.LabelField("Please give us a little more time.");
-		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("Memo:");
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("This mode is the successor to \"SS5 Converter for Unity 2D\".");
-		EditorGUILayout.LabelField("Convert the data created by SpriteStudio 6 to Unity's \"Animator + Sprite2D\".");
-		EditorGUILayout.LabelField("(However, there are attributes of SpriteStudio6 which can not be used)");
-		EditorGUI.indentLevel = levelIndent;
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
 #endif
@@ -463,7 +465,18 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	private void FoldOutExecPreCalcualation(int levelIndent)
 	{	/* MEMO: only "SS6PU" Mode */
 		EditorGUI.indentLevel = levelIndent;
-#if false
+#if TAKE_AWAY_UNSUPPORTED_FUNCTION
+		EditorGUI.indentLevel = levelIndent + 1;
+		EditorGUILayout.LabelField("Sorry.");
+		EditorGUILayout.LabelField("This functions can not be executed in current version.");
+		EditorGUILayout.LabelField("Please give us a little more time.");
+		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("MEMO:");
+		EditorGUI.indentLevel = levelIndent + 2;
+		EditorGUILayout.LabelField("Functions of this group are intended to lower the runtime's load");
+		EditorGUILayout.LabelField(" by pre-calculate a part of runtime calculations at import.");
+		EditorGUI.indentLevel = levelIndent;
+#else
 		SettingImport.PreCalcualation.FlagFixMesh = EditorGUILayout.ToggleLeft("Fix Sprite", SettingImport.PreCalcualation.FlagFixMesh);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Deform of \"Sprite\" and \"Collider\" are calculated for improving execution speed of the runtime.");
@@ -475,17 +488,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Adjust the cells' size so that transparent-pixels are not drawn as possible.");
 		EditorGUILayout.LabelField("CAUTION: Some animation's attributes may not produce the intended result.");
-		EditorGUI.indentLevel = levelIndent;
-#else
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("Sorry.");
-		EditorGUILayout.LabelField("This functions can not be executed in current version.");
-		EditorGUILayout.LabelField("Please give us a little more time.");
-		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("MEMO:");
-		EditorGUI.indentLevel = levelIndent + 2;
-		EditorGUILayout.LabelField("Functions of this group are intended to lower the runtime's load");
-		EditorGUILayout.LabelField(" by pre-calculate a part of runtime calculations at import.");
 		EditorGUI.indentLevel = levelIndent;
 #endif
 		EditorGUILayout.Space();
@@ -789,7 +791,17 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 	private void FoldOutExecPackAttributeAnimation(int levelIndent)
 	{	/* MEMO: only "SS6PU" Mode */
-#if false
+#if TAKE_AWAY_UNSUPPORTED_FUNCTION
+		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.LabelField("Sorry.");
+		EditorGUILayout.LabelField("This functions can not be executed in current version.");
+		EditorGUILayout.LabelField("Please give us a little more time.");
+		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("MEMO:");
+		EditorGUI.indentLevel = levelIndent + 1;
+		EditorGUILayout.LabelField("Functions of this group are to set data format for each \"Attribute\" of animation data.");
+		EditorGUI.indentLevel = levelIndent;
+#else
 		EditorGUI.indentLevel = levelIndent;
 		EditorGUILayout.LabelField("Don't manipulate this setting without reason.");
 		EditorGUILayout.LabelField("Understand amply the implementation of SS6PU data format before setting.");
@@ -829,16 +841,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
 		EditorGUILayout.Space();
-#else
-		EditorGUI.indentLevel = levelIndent;
-		EditorGUILayout.LabelField("Sorry.");
-		EditorGUILayout.LabelField("This functions can not be executed in current version.");
-		EditorGUILayout.LabelField("Please give us a little more time.");
-		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("MEMO:");
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("Functions of this group are to set data format for each \"Attribute\" of animation data.");
-		EditorGUI.indentLevel = levelIndent;
 #endif
 	}
 	private void PullDownExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)

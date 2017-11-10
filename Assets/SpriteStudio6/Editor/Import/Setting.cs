@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+#define TAKE_AWAY_UNSUPPORTED_FUNCTION
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -264,6 +266,12 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					if(text == TextArgumentMode[i])
 					{
+#if TAKE_AWAY_UNSUPPORTED_FUNCTION
+						if((int)KindMode.UNITY_NATIVE == i)
+						{
+							LibraryEditor_SpriteStudio6.Import.LogError("Importer", "\"UNITY_NATIVE\" does not support at this version.");
+						}
+#endif
 						return((KindMode)i);
 					}
 				}
@@ -2369,8 +2377,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainScalingTexture */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PlainRotationTexture */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* FixIndexCellMap */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_FLYWEIGHT,	/* FixCoordinate */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_FLYWEIGHT,	/* FixUV0 */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	// .CPE_FLYWEIGHT,	/* FixCoordinate */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	// .CPE_FLYWEIGHT,	/* FixUV0 */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* FixSizeCollision */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE	/* FixPivotCollision */
 				);
