@@ -147,6 +147,89 @@ public partial class Script_SpriteStudio6_Root
 	}
 
 	/* ******************************************************** */
+	//! Cancel Transform refresh
+	/*!
+	@param	idParts
+		Parts-ID<br>
+		-1 == Set to all parts
+	@param	flagPosition
+		true == Cancel Position refresh<br>
+		false == Behave as usual
+	@param	flagRotation
+		true == Cancel Rotation refresh<br>
+		false == Behave as usual
+	@param	flagScaling
+		true == Cancel Scaling refresh<br>
+		false == Behave as usual
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Cancel refresh of parts' transform(position, rotation or scaling) after change animation.<br>
+	<br>
+	If transform has been changed in previous animation, transform will be reset when change animation.<br>
+	The same behavior is also execute in first animation process (in LateUpdate) that animation object initialized.<br>
+	This action is necessary for stable animation playing.<br>
+	<br>
+	However, in rare cases, this "Refreshing" may be obstructive.<br>
+	In particular, "SS6 Player for Unity" is a specification that does not intentionally change transform
+	 when "Position","Rotation" or "Scaling" are not manipulated with animation data.<br>
+	(In that case, you can change animation parts' transform from script)<br>
+	<br>
+	Use this function if you want to maintain transform without refresh even when you change the animation.<br>
+	<br>
+	However, if animation after switching has data in "position","rotation" or "scaling", this function do not have  meaning.<br>
+	(Because transform is overwritten with animation data)<br>
+	*/
+	public bool RefreshCancelTransform(int idParts, bool flagPosition, bool flagRotation, bool flagScaling)
+	{
+		if(null == TableControlParts)
+		{
+			return(false);
+		}
+		int countParts = TableControlParts.Length;
+
+		if(0 > idParts)
+		{
+			bool flagSuccess = true;
+			for(int i=0; i<countParts; i++)
+			{
+				flagSuccess &= RefreshCancelTransformMain(i, flagPosition, flagRotation, flagScaling);
+			}
+
+			return(flagSuccess);
+		}
+
+		if(countParts <= idParts)
+		{
+			return(false);
+		}
+
+		return(RefreshCancelTransformMain(idParts, flagPosition, flagRotation, flagScaling));
+	}
+	private bool RefreshCancelTransformMain(int idParts, bool flagPosition, bool flagRotation, bool flagScaling)
+	{
+		Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusMask = ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CLEAR;	/* All bit on */
+
+		if(true == flagPosition)
+		{
+			statusMask &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_TRANSFORM_POSITION;
+		}
+		if(true == flagRotation)
+		{
+			statusMask &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
+		}
+		if(true == flagScaling)
+		{
+			statusMask &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_TRANSFORM_SCALING;
+		}
+
+		TableControlParts[idParts].Status &= statusMask;
+
+		return(true);
+	}
+
+	/* ******************************************************** */
 	//! Get instance of "Instance"
 	/*!
 	@param	idParts
