@@ -14,7 +14,7 @@ public sealed class MenuItem_SpriteStudio6_About : EditorWindow
 	[MenuItem("Tools/SpriteStudio6/About")]
 	static void About()
 	{
-		string versionText = "1.0.0";
+		string versionText = "0.8.0";
 		EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
 										LibraryEditor_SpriteStudio6.NameAsset + "\n\n"
 										+ "Version: " + versionText

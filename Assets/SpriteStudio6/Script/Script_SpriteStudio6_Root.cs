@@ -7,6 +7,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 [ExecuteInEditMode]
 [System.Serializable]
@@ -211,7 +214,15 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			if(true == RendererBootUpDraw(false))
 			{
 				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
-				LateUpdateMain(	FunctionExecTimeElapse(this),
+				float timeElapsed = FunctionExecTimeElapse(this);
+#if UNITY_EDITOR
+				/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
+				if(false == EditorApplication.isPlaying)
+				{
+					timeElapsed = 0.0f;
+				}
+#endif
+				LateUpdateMain(	timeElapsed,
 								false,
 								Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
 								ref matrixInverseMeshRenderer

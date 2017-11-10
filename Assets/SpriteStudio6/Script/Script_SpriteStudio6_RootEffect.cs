@@ -7,6 +7,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 using RandomGenerator = Library_SpriteStudio6.Utility.Random.XorShift32;
 
@@ -199,7 +202,15 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			if(true == RendererBootUpDraw(false))
 			{
 				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
-				LateUpdateMain(	FunctionExecTimeElapse(this),
+				float timeElapsed = FunctionExecTimeElapse(this);
+#if UNITY_EDITOR
+				/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
+				if(false == EditorApplication.isPlaying)
+				{
+					timeElapsed = 0.0f;
+				}
+#endif
+				LateUpdateMain(	timeElapsed,
 								false,
 								Library_SpriteStudio6.KindMasking.THROUGH,	/* FOLLOW_DATA */
 								ref matrixInverseMeshRenderer
