@@ -1,0 +1,68 @@
+﻿* ========================================================
+*  Importer Setting-File                                  
+* --------------------------------------------------------
+*  Generated with "SpriteStudio6 Player for Unity"        
+*  Copyright(C) Web Technology Corp. All rights reserved. 
+* ========================================================
+? Common_Mode > SS6PU
+? PreCalculation_FlagFixMesh > false
+? PreCalculation_FlagTrimTransparentPixelsCell > false
+? ConfirmOverWrite_FlagPrefabAnimation > false
+? ConfirmOverWrite_FlagPrefabEffect > false
+? ConfirmOverWrite_FlagDataCellMap > false
+? ConfirmOverWrite_FlagDataAnimation > false
+? ConfirmOverWrite_FlagDataEffect > false
+? ConfirmOverWrite_FlagMaterialAnimation > false
+? ConfirmOverWrite_FlagMaterialEffect > false
+? ConfirmOverWrite_FlagTexture > false
+? RuleNameAsset_FlagAttachSpecificNameSSPJ > false
+? RuleNameAsset_NamePrefixTexture > 
+? RuleNameAsset_NamePrefixPrefabAnimationSS6PU > 
+? RuleNameAsset_NamePrefixPrefabEffectSS6PU > pe_
+? RuleNameAsset_NamePrefixDataCellMapSS6PU > dc_
+? RuleNameAsset_NamePrefixDataAnimationSS6PU > da_
+? RuleNameAsset_NamePrefixDataEffectSS6PU > de_
+? RuleNameAsset_NamePrefixMaterialAnimationSS6PU > ma_
+? RuleNameAsset_NamePrefixMaterialEffectSS6PU > me_
+? RuleNameAsset_NamePrefixPrefabAnimatorUnityNative > ps_
+? RuleNameAsset_NamePrefixPrefabParticleUnityNative > pp_
+? RuleNameAsset_NamePrefixAnimationClipUnityNative > ac_
+? RuleNameAsset_NamePrefixMaterialAnimatorUnityNative > ms_
+? RuleNameAsset_NamePrefixMaterialParticleUnityNative > mp_
+? RuleNameAssetFolder_NameFolderTexture > Texture
+? RuleNameAssetFolder_NameFolderPrefabAnimationSS6PU > PrefabAnimation
+? RuleNameAssetFolder_NameFolderPrefabEffectSS6PU > PrefabEffect
+? RuleNameAssetFolder_NameFolderDataCellMapSS6PU > DataCellMap
+? RuleNameAssetFolder_NameFolderDataAnimationSS6PU > DataAnimation
+? RuleNameAssetFolder_NameFolderDataEffectSS6PU > DataEffect
+? RuleNameAssetFolder_NameFolderMaterialAnimationSS6PU > Material
+? RuleNameAssetFolder_NameFolderMaterialEffectSS6PU > Material
+? RuleNameAssetFolder_NameFolderPrefabAnimatorUnityNative > PrefabSprite
+? RuleNameAssetFolder_NameFolderPrefabParticleUnityNative > PrefabParticle
+? RuleNameAssetFolder_NameFolderAnimationClipUnityNative > DataAnimationClip
+? RuleNameAssetFolder_NameFolderMaterialAnimatorUnityNative > Material
+? RuleNameAssetFolder_NameFolderMaterialParticleUnityNative > Material
+? PackAttributeAnimation_Status > StandardCPE
+? PackAttributeAnimation_Position > StandardCPE
+? PackAttributeAnimation_Rotation > StandardCPE
+? PackAttributeAnimation_Scaling > StandardCPE
+? PackAttributeAnimation_ScalingLocal > StandardCPE
+? PackAttributeAnimation_RateOpacity > StandardCPE
+? PackAttributeAnimation_PartsColor > StandardCPE
+? PackAttributeAnimation_PositionAnchor > StandardCPE
+? PackAttributeAnimation_RadiusCollision > StandardCPE
+? PackAttributeAnimation_UserData > StandardCPE
+? PackAttributeAnimation_Instance > StandardCPE
+? PackAttributeAnimation_Effect > StandardCPE
+? PackAttributeAnimation_PlainCell > StandardCPE
+? PackAttributeAnimation_PlainSizeForce > StandardCPE
+? PackAttributeAnimation_PlainVertexCorrection > StandardCPE
+? PackAttributeAnimation_PlainOffsetPivot > StandardCPE
+? PackAttributeAnimation_PlainPositionTexture > StandardCPE
+? PackAttributeAnimation_PlainScalingTexture > StandardCPE
+? PackAttributeAnimation_PlainRotationTexture > StandardCPE
+? PackAttributeAnimation_FixIndexCellMap > StandardCPE
+? PackAttributeAnimation_FixCoordinate > StandardCPE
+? PackAttributeAnimation_FixUV0 > StandardCPE
+? PackAttributeAnimation_FixSizeCollision > StandardCPE
+? PackAttributeAnimation_FixPivotCollision > StandardCPE

@@ -18,7 +18,6 @@ public class Script_Sample_DollTrick : MonoBehaviour
 	/* - How to use PlayEnd-callback                                          */
 	/* - How to change "Instance"                                             */
 	/* - How to change "Instance"'s animation                                 */
-	/* - How to change "Effect"                                               */
 	/*                                                                        */
 	/* *) First, recommend to refer to the following samples                  */
 	/*     since annotation for rudimentary handling is omitted.              */

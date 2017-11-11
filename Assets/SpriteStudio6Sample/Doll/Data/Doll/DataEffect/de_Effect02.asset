@@ -81,7 +81,7 @@ MonoBehaviour:
       Main: {r: 0.4862745, g: 0.43529412, b: 0.40784314, a: 0.36078432}
       Sub: {r: 0.28627452, g: 0.25490198, b: 0.23529413, a: 0.29803923}
     AlphaFadeStart: 0.16666667
-    AlphaFadeEnd: 0.421875
+    AlphaFadeEnd: 0.5885417
     Speed:
       Main: 20
       Sub: 10

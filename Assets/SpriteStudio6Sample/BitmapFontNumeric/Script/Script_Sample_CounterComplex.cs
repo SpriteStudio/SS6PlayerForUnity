@@ -115,8 +115,8 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		{
 			return;
 		}
-		/* MEMO: When position refresh occurs at animation initialize, refresh is prohibited                */
-		/*        to prevent overwriting position of digits' animation parts set at Update with refreshing. */
+		/* MEMO: When position refresh occurs at animation initialize, refresh is prohibited                  */
+		/*        to prevent overwriting position of digits' animation parts set at Update() with refreshing. */
 		int countPartsDigit = TablePartsDigit.Length;
 		int idParts;
 		for(int i=0; i<countPartsDigit; i++)
@@ -483,7 +483,7 @@ public class Script_Sample_CounterComplex : MonoBehaviour
 		/*       Therefore, when judging whether same "UserData", judge by compare "scriptRoot","indexParts", */
 		/*        "indexAnimation" and "frameKeyData".                                                        */
 		/* MEMO: "flagWayBack" becomes true when direction-play is "way-back" during ping-pong(round-trip) playing. */
-		/*       Always false during normal(one-way) playback.                                                      */
+		/*       Always false during normal(one-way) playing.                                                       */
 
 		/* MEMO: If you know exactly what values are stored in the "UserData",                                          */
 		/*        you can directly retrieve values from "NumberInt", "Rectangle", "Coordinate" or "Text".               */
