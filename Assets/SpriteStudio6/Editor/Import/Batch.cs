@@ -34,7 +34,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			public static bool Exec(	ref Setting settingBatchImporter,
 										ref LibraryEditor_SpriteStudio6.Import.Setting settingImportInitial,
 										string nameFileList,	/* Full-Path */
-										string nameFileLog
+										string nameFileLog	/* Full-Path */
 									)
 			{
 				const string messageLogPrefix = "Batch-Importer";
@@ -118,6 +118,21 @@ public static partial class LibraryEditor_SpriteStudio6
 						return(false);
 					}
 				}
+
+				/* Close List-File */
+				if(null != streamList)
+				{
+					streamList.Close();
+					streamList = null;
+				}
+
+				/* Close Log-File */
+				if(null != streamLog)
+				{
+					streamLog.Close();
+					streamLog = null;
+				}
+				LibraryEditor_SpriteStudio6.Utility.Log.StreamExternal = null;
 
 				return(true);
 			}
