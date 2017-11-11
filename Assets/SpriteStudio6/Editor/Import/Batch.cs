@@ -77,6 +77,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Open List-File */
 				System.IO.StreamReader streamList = new System.IO.StreamReader(nameFileList, System.Text.Encoding.Default);
 
+				/* Log Date */
+				System.DateTimeOffset dateTime = System.DateTimeOffset.Now;
+				LibraryEditor_SpriteStudio6.Utility.Log.Message("[Date imported] " + dateTime.ToString(), true, false);	/* External-File only */
+				LibraryEditor_SpriteStudio6.Utility.Log.Message("[In charge] " + System.Environment.MachineName + " (" + System.Environment.UserName + ")", true, false);	/* External-File only */
+
 				/* Decode List-File (1 Line) */
 				Mode = LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU;
 				int indexLine = 0;
