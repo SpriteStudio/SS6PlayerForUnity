@@ -766,7 +766,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					/* Track existing assets */
 					Script_SpriteStudio6_DataCellMap dataCellMapOld = null;	/* Pair with SSPJ (Always 1) */
-					int[] tableIndexSSCE = new int[countSSCE];
 					Material[] tableMaterialAnimationOld = null;
 					Material[,,] tableMaterialAnimationtNew = new Material[countSSCE, (int)Library_SpriteStudio6.KindMasking.TERMINATOR, (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL];
 					Material[] tableMaterialEffectOld = null;
@@ -776,7 +775,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					Script_SpriteStudio6_DataAnimation[] tableDataAnimationOld = new Script_SpriteStudio6_DataAnimation[countSSAE];
 					Script_SpriteStudio6_RootEffect[] tableScriptRootEffectOld = new Script_SpriteStudio6_RootEffect[countSSEE];
 					Script_SpriteStudio6_DataEffect[] tableDataEffectOld = new Script_SpriteStudio6_DataEffect[countSSEE];
-					if(	(null == tableIndexSSCE) || (null == tableMaterialAnimationtNew) || (null == tableMaterialEffectNew) || (null == tableTextureNew)
+					if(	(null == tableMaterialAnimationtNew) || (null == tableMaterialEffectNew) || (null == tableTextureNew)
 						|| (null == tableScriptRootOld) || (null == tableDataAnimationOld)
 						|| (null == tableScriptRootEffectOld) || (null == tableDataEffectOld)
 						)
@@ -868,7 +867,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* MEMO: Textures are gotten from materials. */
 						for(int i=0; i<countSSCE; i++)
 						{
-							tableIndexSSCE[i] = -1;
+							tableTextureNew[i] = null;
 						}
 						if(null != dataCellMapOld)
 						{
@@ -880,13 +879,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							for(int i=0; i<countCellMapOld; i++)
 							{
-								tableTextureNew[i] = null;
-
 								nameCellMapOld = dataCellMapOld.TableCellMap[i].Name;
 								if(false == string.IsNullOrEmpty(nameCellMapOld))
 								{
 									indexCellMapNew = informationSSPJ.IndexGetCellMap(nameCellMapOld);
-									tableIndexSSCE[i] = indexCellMapNew;
 									if(0 <= indexCellMapNew)
 									{
 										if(null != tableMaterialAnimationOld)
@@ -903,9 +899,9 @@ public static partial class LibraryEditor_SpriteStudio6
 													{
 														material = tableMaterialAnimationOld[indexMaterialOld];
 														tableMaterialAnimationtNew[indexCellMapNew, j, k] = material;
-														if((null != material) && (null == tableTextureNew[i]))
+														if((null != material) && (null == tableTextureNew[indexCellMapNew]))
 														{
-															tableTextureNew[i] = material.mainTexture as Texture2D;
+															tableTextureNew[indexCellMapNew] = material.mainTexture as Texture2D;
 														}
 													}
 												}
@@ -926,9 +922,9 @@ public static partial class LibraryEditor_SpriteStudio6
 													{
 														material = tableMaterialEffectOld[indexMaterialOld];
 														tableMaterialEffectNew[indexCellMapNew, j, k] = material;
-														if((null != material) && (null == tableTextureNew[i]))
+														if((null != material) && (null == tableTextureNew[indexCellMapNew]))
 														{
-															tableTextureNew[i] = material.mainTexture as Texture2D;
+															tableTextureNew[indexCellMapNew] = material.mainTexture as Texture2D;
 														}
 													}
 												}
@@ -1039,7 +1035,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				AssetNameDecide_ErrorEnd:;
 					dataCellMapOld = null;
-					tableIndexSSCE = null;
 					tableMaterialAnimationOld = null;
 					tableMaterialAnimationtNew = null;
 					tableMaterialEffectOld = null;
