@@ -460,18 +460,28 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("\"Control-Prefab\" is GameObject attached the script for Auto-Instantiate Body-Prefab.");
 		EditorGUILayout.LabelField(" (\"Script_SpriteStudio_ControlPrefab.cs\")");
-		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.Space();
 
 		SettingImport.Basic.FlagCreateProjectFolder = EditorGUILayout.ToggleLeft("Create Project Folder", SettingImport.Basic.FlagCreateProjectFolder);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Create a folder with same name as SSPJ.");
-		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.Space();
 
 		SettingImport.Basic.FlagInvisibleToHideAll = EditorGUILayout.ToggleLeft("\"Invisible\" part to \"Hide\" attribute", SettingImport.Basic.FlagInvisibleToHideAll);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Convert invisible part setting \"Hide\" attribute. (Hide at all frame)");
+		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.Space();
+
+		SettingImport.Basic.FlagTrackAsset = EditorGUILayout.ToggleLeft("Tracking Assets", SettingImport.Basic.FlagTrackAsset);
+		EditorGUI.indentLevel = levelIndent + 1;
+		EditorGUILayout.LabelField("Existing assets are identified by tracking prefabs' references when re-importing.");
+		EditorGUILayout.LabelField("However, \"Control-Prefab\", \"Animation's Prefab\" and \"Effect's Prefab\" must have");
+		EditorGUILayout.LabelField("  the same filename and foldername as when first-import.");
+		EditorGUILayout.LabelField("  (Existing of these datas is simply judged by filename and foldername)");
+		EditorGUILayout.LabelField("Unchecked, identify by the same name(file and sub folder) as when first-import.");
 		EditorGUI.indentLevel = levelIndent;
 
 		EditorGUILayout.Space();
