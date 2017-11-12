@@ -341,7 +341,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					case "mask":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK;
 						break;
-
+#if false
 					case "joint":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT;
 						break;
@@ -361,9 +361,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					case "bonepoint":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT;
 						break;
-
+#endif
 					default:
-						LogWarning(messageLogPrefix, "Unknown Parts-Type \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
+//						LogWarning(messageLogPrefix, "Unknown Parts-Type (Unsupported in this version) \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
+						LogWarning(messageLogPrefix, "Unknown Parts-Type (Unsupported in this version) \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
 						goto case "null";
 				}
 
@@ -1646,12 +1647,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "VCOL":
 								LogWarning(messageLogPrefix, "Deprecated attribute \"Color Blend\" (Data is ignored. Please use \"Parts Color\") Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-								goto case "PCOL";
-//								break;
+								break;
 
 							/* Unknown Attributes */
 							default:
-								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+//								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+								LogWarning(messageLogPrefix, "Unknown Attribute (Unsupported in this version) \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 								break;
 						}
 					}
