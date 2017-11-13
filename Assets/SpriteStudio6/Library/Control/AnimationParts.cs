@@ -1965,8 +1965,9 @@ public static partial class Library_SpriteStudio6
 								{	/* New Data */
 									DataCellApply = DataCell.Value;
 
-									Status |= FlagBitStatus.UPDATE_COORDINATE;
 									Status |= FlagBitStatus.UPDATE_UVTEXTURE;
+									Status |= FlagBitStatus.UPDATE_COORDINATE;
+									Status |= FlagBitStatus.UPDATE_TRANSFORM_TEXTURE;
 								}
 							}
 						}

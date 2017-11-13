@@ -65,11 +65,11 @@ public partial class Script_SpriteStudio6_Root
 		1 == Not looping<br>
 		2 <= Number of Plays<br>
 		default: -1
-	@param	frame
+	@param	frameOffset
 		Offset frame to start playing animation (0 origins). <br>
-		At the time of the first play-loop, animation is started "labelRangeStart + frameOffsetStart + frame".<br>
-		-1 == Apply previous setting.<br>
-		default: -1
+		At the time of the first play-loop, animation is started "labelRangeStart + frameOffsetStart + frameOffset".<br>
+		int.MinValue == Apply previous setting.<br>
+		default: int.MinValue
 	@param	rateTime
 		Coefficient of time-passage of animation.<br>
 		Minus Value is given, Animation is played backwards.<br>
@@ -121,7 +121,7 @@ public partial class Script_SpriteStudio6_Root
 	public bool AnimationPlay(	int indexTrack,
 								int indexAnimation = -1,
 								int timesPlay = -1,
-								int frame = -1,
+								int frameOffset = int.MinValue,
 								float rateTime = float.NaN,
 								Library_SpriteStudio6.KindStylePlay style = Library_SpriteStudio6.KindStylePlay.NO_CHANGE,
 								string labelRangeStart = null,
@@ -165,7 +165,7 @@ public partial class Script_SpriteStudio6_Root
 		}
 		timesPlay = (0 > timesPlay) ? TableInformationPlay[indexTrack].TimesPlay : timesPlay;
 
-		frame = (0 > frame) ? TableInformationPlay[indexTrack].Frame : frame;
+		frameOffset = (int.MinValue == frameOffset) ? TableInformationPlay[indexTrack].Frame : frameOffset;
 
 		rateTime = (true == float.IsNaN(rateTime)) ? TableInformationPlay[indexTrack].RateTime : rateTime;
 
@@ -225,7 +225,7 @@ public partial class Script_SpriteStudio6_Root
 		TableInformationPlay[indexTrack].FrameOffsetStart = frameRangeOffsetStart;
 		TableInformationPlay[indexTrack].LabelEnd = labelRangeEnd;	/* string.Copt(labelRangeEnd); */
 		TableInformationPlay[indexTrack].FrameOffsetEnd = frameRangeOffsetEnd;
-		TableInformationPlay[indexTrack].Frame = frame;
+		TableInformationPlay[indexTrack].Frame = frameOffset;
 		TableInformationPlay[indexTrack].TimesPlay = timesPlay;
 		TableInformationPlay[indexTrack].RateTime = rateTime;
 
@@ -238,6 +238,17 @@ public partial class Script_SpriteStudio6_Root
 																	labelRangeEnd,
 																	frameRangeOffsetEnd
 																);
+
+		/* Adjust top rame */
+		int frameTop = frameRangeStart + frameOffset;
+		if(0.0f > rateTime)
+		{	/* Play-Reverse */
+			frameTop = (frameTop <= frameRangeStart) ? (frameRangeEnd + 1) : frameTop;
+		}
+		else
+		{	/* Play-Normal */
+			frameTop = (frameTop >= (frameRangeEnd + 1)) ? (frameRangeStart - 1) : frameTop;
+		}
 
 		/* Update Status */
 		Status |= FlagBitStatus.PLAYING;
@@ -258,7 +269,7 @@ public partial class Script_SpriteStudio6_Root
 													indexAnimation,
 													frameRangeStart,
 													frameRangeEnd,
-													frame,
+													frameTop,
 													framePerSecond,
 													rateTime,
 													0.0f,
