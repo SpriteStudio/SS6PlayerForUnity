@@ -475,16 +475,26 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUI.indentLevel = levelIndent;
 		EditorGUILayout.Space();
 
-		SettingImport.Basic.FlagTrackAsset = EditorGUILayout.ToggleLeft("Tracking Assets", SettingImport.Basic.FlagTrackAsset);
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("Existing assets are identified by tracking prefabs' references when re-importing.");
-		EditorGUILayout.LabelField("However, \"Control-Prefab\", \"Animation's Prefab\" and \"Effect's Prefab\" must have");
-		EditorGUILayout.LabelField("  the same filename and foldername as when first-import.");
-		EditorGUILayout.LabelField("  (Existing of these datas is simply judged by filename and foldername)");
-		EditorGUILayout.LabelField("Unchecked, identify by the same name(file and sub folder) as when first-import.");
-		EditorGUI.indentLevel = levelIndent;
+		switch(SettingImport.Mode)
+		{
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
+				SettingImport.Basic.FlagTrackAsset = EditorGUILayout.ToggleLeft("Tracking Assets", SettingImport.Basic.FlagTrackAsset);
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Existing assets are identified by tracking prefabs' references when re-importing.");
+				EditorGUILayout.LabelField("However, \"Control-Prefab\", \"Animation's Prefab\" and \"Effect's Prefab\" must have");
+				EditorGUILayout.LabelField("  the same filename and foldername as when first-import.");
+				EditorGUILayout.LabelField("  (Existing of these datas is simply judged by filename and foldername)");
+				EditorGUILayout.LabelField("Unchecked, identify by the same name(file and sub folder) as when first-import.");
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+				break;
 
-		EditorGUILayout.Space();
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+				break;
+
+			default:
+				break;
+		}
 	}
 
 	private void FoldOutExecPreCalcualation(int levelIndent)
