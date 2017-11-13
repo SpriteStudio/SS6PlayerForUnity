@@ -47,6 +47,10 @@ public static partial class Library_SpriteStudio6
 				{
 					get
 					{
+						if(false == StatusAnimationFrame.IsValid)
+						{
+							return(-1);
+						}
 						return(StatusAnimationFrame.IDPartsNextDraw);
 					}
 				}
@@ -54,6 +58,10 @@ public static partial class Library_SpriteStudio6
 				{
 					get
 					{
+						if(false == StatusAnimationFrame.IsValid)
+						{
+							return(-1);
+						}
 						return(StatusAnimationFrame.IDPartsNextPreDraw);
 					}
 				}
