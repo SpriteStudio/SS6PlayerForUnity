@@ -68,6 +68,7 @@ public partial class Script_SpriteStudio6_Root
 	@param	frameOffset
 		Offset frame to start playing animation (0 origins). <br>
 		At the time of the first play-loop, animation is started "labelRangeStart + frameOffsetStart + frameOffset".<br>
+		However, can not possible to specify outside of playing-range. (In such cases, this value is adjust to 0)<br>
 		int.MinValue == Apply previous setting.<br>
 		default: int.MinValue
 	@param	rateTime
@@ -241,13 +242,9 @@ public partial class Script_SpriteStudio6_Root
 
 		/* Adjust top rame */
 		int frameTop = frameRangeStart + frameOffset;
-		if(0.0f > rateTime)
-		{	/* Play-Reverse */
-			frameTop = (frameTop <= frameRangeStart) ? (frameRangeEnd + 1) : frameTop;
-		}
-		else
-		{	/* Play-Normal */
-			frameTop = (frameTop >= (frameRangeEnd + 1)) ? (frameRangeStart - 1) : frameTop;
+		if((frameRangeStart > frameTop) || (frameRangeEnd < frameTop))
+		{	/* Range Error */
+			frameTop = frameRangeStart;
 		}
 
 		/* Update Status */
