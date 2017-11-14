@@ -143,7 +143,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case "mirror":
-#if false
+#if UNITY_5
 								LogWarning(messageLogPrefix, "Wrap-Mode \"Mirror\" is not Suppoted. Changed \"Clamp\"", nameFile, informationSSPJ);
 								goto case "clamp";
 #else
@@ -156,6 +156,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							default:
+								LogWarning(messageLogPrefix, "Wrap-Mode \"" + valueText + "\" is not Suppoted. Changed \"Clamp\"", nameFile, informationSSPJ);
 								goto case "clamp";
 						}
 
