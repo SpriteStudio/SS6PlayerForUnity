@@ -246,7 +246,10 @@ public static partial class LibraryEditor_SpriteStudio6
 			bool flagCreateAssetData = true;
 
 			/* Decide Asset Names & Check Assets existing */
-			SSPJ.ModeSS6PU.AssetNameDecide(ref setting, informationSSPJ, nameOutputAssetFolderBase);
+			if(false == SSPJ.ModeSS6PU.AssetNameDecide(ref setting, informationSSPJ, nameOutputAssetFolderBase))
+			{
+				goto ExecSS6PU_ErrorEnd;
+			}
 
 			/* Get Datas' count */
 			int countTexture = informationSSPJ.TableInformationTexture.Length;

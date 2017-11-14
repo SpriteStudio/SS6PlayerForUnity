@@ -980,18 +980,21 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagCreateControlGameObject;
 				public bool FlagCreateProjectFolder;
 				public bool FlagInvisibleToHideAll;
+				public bool FlagTrackAsset;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
 				public GroupBasic(	bool flagCreateControlGameObject,
 									bool flagCreateProjectFolder,
-									bool flagInvisibleToHideAll
+									bool flagInvisibleToHideAll,
+									bool flagTrackAsset
 								)
 				{
 					FlagCreateControlGameObject = flagCreateControlGameObject;
 					FlagCreateProjectFolder = flagCreateProjectFolder;
 					FlagInvisibleToHideAll = flagInvisibleToHideAll;
+					FlagTrackAsset = flagTrackAsset;
 				}
 
 				public void CleanUp()
@@ -1004,6 +1007,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagCreateControlGameObject = EditorPrefs.GetBool(PrefsKeyFlagCreateControlGameObject, Default.FlagCreateControlGameObject);
 					FlagCreateProjectFolder = EditorPrefs.GetBool(PrefsKeyFlagCreateProjectFolder, Default.FlagCreateProjectFolder);
 					FlagInvisibleToHideAll = EditorPrefs.GetBool(PrefsKeyFlagInvisibleToHideAll, Default.FlagInvisibleToHideAll);
+					FlagTrackAsset = EditorPrefs.GetBool(PrefsKeyFlagTrackAsset, Default.FlagTrackAsset);
 
 					return(true);
 				}
@@ -1013,13 +1017,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetBool(PrefsKeyFlagCreateControlGameObject, FlagCreateControlGameObject);
 					EditorPrefs.SetBool(PrefsKeyFlagCreateProjectFolder, FlagCreateProjectFolder);
 					EditorPrefs.SetBool(PrefsKeyFlagInvisibleToHideAll, FlagInvisibleToHideAll);
+					EditorPrefs.SetBool(PrefsKeyFlagTrackAsset, FlagTrackAsset);
 
 					return(true);
 				}
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[3];
+					string[] textEncode = new string[4];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateControlGameObject);
@@ -1030,6 +1035,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvisibleToHideAll);
 					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvisibleToHideAll, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrackAsset);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAsset, textValue);
 
 					return(textEncode);
 				}
@@ -1050,6 +1058,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagInvisibleToHideAll = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
+						case TextKeyFlagTrackAsset:
+							FlagTrackAsset = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
 						default:
 							break;
 					}
@@ -1062,21 +1074,25 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagCreateControlGameObject = "FlagCreateControlGameObject";
 				private const string KeyFlagCreateProjectFolder = "FlagCreateProjectFolder";
 				private const string KeyFlagInvisibleToHideAll = "FlagInvisibleToHideAll";
+				private const string KeyFlagTrackAsset = "FlagTrackAsset";
 
 				private const string TextKeyPrefix = "Basic_";
 				private const string TextKeyFlagCreateControlGameObject = TextKeyPrefix + KeyFlagCreateControlGameObject;
 				private const string TextKeyFlagCreateProjectFolder = TextKeyPrefix + KeyFlagCreateProjectFolder;
 				private const string TextKeyFlagInvisibleToHideAll = TextKeyPrefix + KeyFlagInvisibleToHideAll;
+				private const string TextKeyFlagTrackAsset = TextKeyPrefix + KeyFlagTrackAsset;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagCreateControlGameObject = PrefsKeyPrefix + KeyFlagCreateControlGameObject;
 				private const string PrefsKeyFlagCreateProjectFolder = PrefsKeyPrefix + KeyFlagCreateProjectFolder;
 				private const string PrefsKeyFlagInvisibleToHideAll = PrefsKeyPrefix + KeyFlagInvisibleToHideAll;
+				private const string PrefsKeyFlagTrackAsset = PrefsKeyPrefix + KeyFlagTrackAsset;
 
 				private readonly static GroupBasic Default = new GroupBasic(
-					true,	/* flagCreateControlGameObject */
-					true,	/* flagCreateProjectFolder */
-					false	/* flagInvisibleToHideAll */
+					true,	/* FlagCreateControlGameObject */
+					true,	/* FlagCreateProjectFolder */
+					false,	/* FlagInvisibleToHideAll */
+					true	/* FlagTrackAsset */
 				);
 				#endregion Enums & Constants
 			}

@@ -1004,12 +1004,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public static bool AssetNameDecide(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+				public static bool AssetNameDecideData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 														LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE,
 														string nameOutputAssetFolderBase,
-														Script_SpriteStudio6_DataEffect dataOverride,
-														Script_SpriteStudio6_RootEffect prefabOverride
+														Script_SpriteStudio6_DataEffect dataOverride
 													)
 				{
 					if(null != dataOverride)
@@ -1025,6 +1024,19 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationSSEE.DataEffectSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataEffect>(informationSSEE.DataEffectSS6PU.TableName[0]);
 					}
 
+					return(true);
+
+//				AssetNameDecide_ErroeEnd:;
+//					return(false);
+				}
+
+				public static bool AssetNameDecidePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE,
+														string nameOutputAssetFolderBase,
+														Script_SpriteStudio6_RootEffect prefabOverride
+													)
+				{
 					if(null != prefabOverride)
 					{	/* Specified */
 						informationSSEE.PrefabEffectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(prefabOverride);

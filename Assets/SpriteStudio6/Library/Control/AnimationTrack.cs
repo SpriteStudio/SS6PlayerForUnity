@@ -288,17 +288,21 @@ public static partial class Library_SpriteStudio6
 
 					FrameStart = frameRangeStart;
 					FrameEnd = frameRangeEnd;
-					ArgumentContainer.Frame = frame;
 					if(0 != (Status & FlagBitStatus.STYLE_REVERSE))
 					{	/* Play-Reverse */
-						Status |= FlagBitStatus.PLAYING_REVERSE;
-						ArgumentContainer.Frame = (ArgumentContainer.Frame <= FrameStart) ? (FrameEnd + 1) : ArgumentContainer.Frame;
+						if(FrameStart >= frame)
+						{
+							frame = FrameEnd + 1;
+						}
 					}
 					else
-					{	/* Play-Normal */
-						Status &= ~FlagBitStatus.PLAYING_REVERSE;
-						ArgumentContainer.Frame = (ArgumentContainer.Frame >= (FrameEnd + 1)) ? (FrameStart - 1) : ArgumentContainer.Frame;
+					{	/* Play-Foward */
+						if((FrameEnd + 1) <= frame)
+						{
+							frame = FrameStart - 1;
+						}
 					}
+					ArgumentContainer.Frame = frame;
 
 					TimesPlay = timesPlay;
 					TimeDelay = timeDelay;
@@ -649,12 +653,15 @@ public static partial class Library_SpriteStudio6
 					}
 
 				Update_End:;
-					ArgumentContainer.Frame = (int)(TimeElapsed / TimePerFrame);
-					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, 0, (FrameRange - 1));
-					ArgumentContainer.Frame += FrameStart;
-					if((ArgumentContainer.Frame != ArgumentContainer.FramePrevious) || (0 != (Status & FlagBitStatus.PLAYING_TURN)))
 					{
-						Status |= FlagBitStatus.DECODE_ATTRIBUTE;
+						int frame = (int)(TimeElapsed / TimePerFrame);
+						frame = Mathf.Clamp(frame, 0, (FrameRange - 1));
+						frame += FrameStart;
+						if((frame != ArgumentContainer.FramePrevious) || (0 != (Status & FlagBitStatus.PLAYING_TURN)))
+						{
+							Status |= FlagBitStatus.DECODE_ATTRIBUTE;
+						}
+						ArgumentContainer.Frame = frame;
 					}
 //					goto Update_UpdateTransition;
 
@@ -815,9 +822,11 @@ public static partial class Library_SpriteStudio6
 					}
 
 					TimeElapsed = timeCursor;
-					ArgumentContainer.Frame = (int)(TimeElapsed / TimePerFrame);
-					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, 0, (FrameRange - 1));
-					ArgumentContainer.Frame += FrameStart;
+
+					int frame = (int)(TimeElapsed / TimePerFrame);
+					frame = Mathf.Clamp(frame, 0, (FrameRange - 1));
+					frame += FrameStart;
+					ArgumentContainer.Frame = frame;
 				}
 				#endregion Functions
 
@@ -829,6 +838,8 @@ public static partial class Library_SpriteStudio6
 					VALID = 0x40000000,
 					PLAYING = 0x20000000,
 					PAUSING = 0x10000000,
+
+					NO_CLAMP_FRAME = 0x08000000,	/* Reserved */
 
 					STYLE_PINGPONG = 0x02000000,
 					STYLE_REVERSE = 0x01000000,

@@ -82,26 +82,33 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 					SettingOption.ModeBatchImporter.NameFolderList = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryList);
 					SettingOption.ModeBatchImporter.NameFileList = nameFileBodyList;
 
-					string nameDirectoryLog;
-					string nameFileBodyLog;
-					string nameFileExtensionLog;
-					if(true == LibraryEditor_SpriteStudio6.Utility.File.NamesGetFileDialogSave(	out nameDirectoryLog,
-																								out nameFileBodyLog,
-																								out nameFileExtensionLog,
-																								SettingOption.ModeBatchImporter.NameFolderLog,
-																								SettingOption.ModeBatchImporter.NameFileLog,
-																								"Select Batch-Importing log file",
-																								"txt"
-																							)
-						)
+					if(true == SettingOption.ModeBatchImporter.FlagOutputLog)
 					{
-						nameFileLog = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryLog + "/" + nameFileBodyLog + nameFileExtensionLog);
+						string nameDirectoryLog;
+						string nameFileBodyLog;
+						string nameFileExtensionLog;
+						if(true == LibraryEditor_SpriteStudio6.Utility.File.NamesGetFileDialogSave(	out nameDirectoryLog,
+																									out nameFileBodyLog,
+																									out nameFileExtensionLog,
+																									SettingOption.ModeBatchImporter.NameFolderLog,
+																									SettingOption.ModeBatchImporter.NameFileLog,
+																									"Select Batch-Importing log file",
+																									"txt"
+																								)
+							)
+						{
+							nameFileLog = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryLog + "/" + nameFileBodyLog + nameFileExtensionLog);
 
-						SettingOption.ModeBatchImporter.NameFolderLog = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryLog);
-						SettingOption.ModeBatchImporter.NameFileLog = nameFileBodyLog;
+							SettingOption.ModeBatchImporter.NameFolderLog = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameDirectoryLog);
+							SettingOption.ModeBatchImporter.NameFileLog = nameFileBodyLog;
+						}
+						else
+						{
+							nameFileList = "";
+						}
 					}
 
-					/* Import */
+					/* Batch-Import */
 					if(false == string.IsNullOrEmpty(nameFileList))
 					{
 						SettingOption.Save();
@@ -115,8 +122,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 						{
 							EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
 															"Batch-Import Interrupted! Check Error on Console.",
-													 		"OK"
-														);
+															"OK"
+													);
 						}
 
 						Close();
@@ -148,6 +155,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 						SettingOption.Save();
 						SettingImport.Save();
 
+						/* Import */
 						if(false == LibraryEditor_SpriteStudio6.Import.Exec(	ref SettingImport,
 																				nameFile,
 																				nameBaseAssetPath,
@@ -158,7 +166,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 							EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
 															"Import Interrupted! Check Error on Console.",
 													 		"OK"
-														);
+													);
 						}
 
 						Close();
@@ -168,8 +176,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				{	/* Error (No selected) */
 					EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
 													"Select Asset-Folder you want to store in before import, on the \"Project\" window.",
-											 		"OK"
-												);
+													"OK"
+											);
 				}
 			}
 		}
@@ -406,10 +414,16 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	{
 		EditorGUI.indentLevel = levelIndent;
 
-		/* Text List */
-		/* Text Log */
 		EditorGUILayout.Space();
 
+		SettingOption.ModeBatchImporter.FlagOutputLog = EditorGUILayout.ToggleLeft("Output log file", SettingOption.ModeBatchImporter.FlagOutputLog);
+		EditorGUI.indentLevel = levelIndent + 1;
+		EditorGUILayout.LabelField("Checked: Output Batch-Import log to text file.");
+		EditorGUILayout.LabelField("Unchecked: Not output Batch-Import log to text file.");
+		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.Space();
+
+		EditorGUI.indentLevel = levelIndent;
 		SettingOption.ModeBatchImporter.Setting.FlagNotBreakOnError = EditorGUILayout.ToggleLeft("Not break processing when error occurs", SettingOption.ModeBatchImporter.Setting.FlagNotBreakOnError);
 		EditorGUILayout.Space();
 
@@ -429,6 +443,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			EditorGUI.indentLevel = levelIndent + 2;
 			EditorGUILayout.LabelField("Checked: Follow settings in batch-list file. (Apply)");
 			EditorGUILayout.LabelField("Unchecked: Not perform, no matter setting in batch-list file. (Ignore)");
+			EditorGUILayout.Space();
 			EditorGUI.indentLevel = levelIndent + 1;
 
 			EditorGUI.indentLevel = levelIndent;
@@ -445,21 +460,41 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("\"Control-Prefab\" is GameObject attached the script for Auto-Instantiate Body-Prefab.");
 		EditorGUILayout.LabelField(" (\"Script_SpriteStudio_ControlPrefab.cs\")");
-		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.Space();
 
 		SettingImport.Basic.FlagCreateProjectFolder = EditorGUILayout.ToggleLeft("Create Project Folder", SettingImport.Basic.FlagCreateProjectFolder);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Create a folder with same name as SSPJ.");
-		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;
+		EditorGUILayout.Space();
 
 		SettingImport.Basic.FlagInvisibleToHideAll = EditorGUILayout.ToggleLeft("\"Invisible\" part to \"Hide\" attribute", SettingImport.Basic.FlagInvisibleToHideAll);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Convert invisible part setting \"Hide\" attribute. (Hide at all frame)");
 		EditorGUI.indentLevel = levelIndent;
-
 		EditorGUILayout.Space();
+
+		switch(SettingImport.Mode)
+		{
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
+				SettingImport.Basic.FlagTrackAsset = EditorGUILayout.ToggleLeft("Tracking Assets", SettingImport.Basic.FlagTrackAsset);
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Existing assets are identified by tracking prefabs' references when re-importing.");
+				EditorGUILayout.LabelField("However, \"Control-Prefab\", \"Animation's Prefab\" and \"Effect's Prefab\" must have");
+				EditorGUILayout.LabelField("  the same filename and foldername as when first-import.");
+				EditorGUILayout.LabelField("  (Existing of these datas is simply judged by filename and foldername)");
+				EditorGUILayout.LabelField("Unchecked, identify by the same name(file and sub folder) as when first-import.");
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+				break;
+
+			default:
+				break;
+		}
 	}
 
 	private void FoldOutExecPreCalcualation(int levelIndent)
@@ -1168,6 +1203,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public string NameFileList;
 			public string NameFolderLog;
 			public string NameFileLog;
+			public bool FlagOutputLog;
 
 			public bool FlagFoldOptions;
 
@@ -1187,6 +1223,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				NameFileList = DefaultNameFileList;
 				NameFolderLog = DefaultNameFolderLog;
 				NameFileLog = DefaultNameFileLog;
+				FlagOutputLog = DefaultFlagOutputLog;;
 
 				FlagFoldOptions = DefaultFlagFoldOptions;
 
@@ -1199,6 +1236,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				NameFileList = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFileList, DefaultNameFileList);
 				NameFolderLog = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderLog, DefaultNameFolderLog);
 				NameFileLog = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFileLog, DefaultNameFileLog);
+				FlagOutputLog  =EditorPrefs.GetBool(PrefsKeyFlagOutputLog, DefaultFlagOutputLog);
 
 				FlagFoldOptions = EditorPrefs.GetBool(PrefsKeyFlagFoldOptions, DefaultFlagFoldOptions);
 
@@ -1218,6 +1256,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFileList, NameFileList);
 				LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderLog, NameFolderLog);
 				LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFileLog, NameFileLog);
+				EditorPrefs.SetBool(PrefsKeyFlagOutputLog, FlagOutputLog);
 
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOptions, FlagFoldOptions);
 
@@ -1235,11 +1274,13 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			private const string PrefsKeyNameFolderLog = PrefsKeyPrefix + "NameFolderLog";
 			private const string PrefsKeyNameFileLog = PrefsKeyPrefix + "NameFileLog";
 			private const string PrefsKeyFlagFoldOptions = PrefsKeyPrefix + "FoldOptions";
+			private const string PrefsKeyFlagOutputLog = PrefsKeyPrefix + "FlagOutputLog";
 
 			private const string DefaultNameFolderList = "";
 			private const string DefaultNameFileList = "";
 			private const string DefaultNameFolderLog = "";
 			private const string DefaultNameFileLog = "LogSS6PU_BatchImport";
+			private const bool DefaultFlagOutputLog = false;
 			private const bool DefaultFlagFoldOptions = false;
 			#endregion Enums & Constants
 		}

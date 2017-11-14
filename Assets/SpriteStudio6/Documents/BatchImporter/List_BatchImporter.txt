@@ -23,9 +23,9 @@
 * 
 * Other ... InputFileName(.sspj)
 *           Attention to following when specify relative path from current directory.
-*           - Do not start file name with "/". (interpreted as Root-directory)
-*           - Do not specify relative path including a drive letter. (e.g. "C: sample.sspj")
-*           *) The above limitations are not applied when absolute path.
+*           - Do not use "/" to indicate "Current Directory". (interpreted as "Root Directory")
+*           - Do not specify relative path including a drive letter. (e.g. "C:sample.sspj")
+*             *) This limitations are not applied when absolute path.
 * 
 * [MEMO]
 * Command lines are always processed from top to bottom.
@@ -43,6 +43,7 @@
 * ---------------------
 * NameBaseFolderAsset > AssetFolderName
 *   AssetFolderName ... "Current folder" for storing asset data after import.
+*                       This command specifies "Asset-Folder". (Not Directory on OS)
 *                       Omit "Assets/" indicating root asset folder of project. ("Assets/" is root)
 *                       Automatically complemented, if no "/" at the end.
 *                       Default is "/" (actually "Assets/")
@@ -71,8 +72,9 @@
 * ---------------------
 * NameBaseFolderData > FolderName
 *   FolderName ... "Current directory" that stored SS6 data (sspj) to be imported.
+*                  This command specifies "Folder on local PC's OS". (Not Asset-Folder)
 *                  Automatically complemented, if no "/" at the end.
-*                  Default is folder where this list file is stored.
+*                  Default is folder where Batch-List file is stored.
 * 
 * SS6-datas for importing are stored under this Folder.
 * 
@@ -98,8 +100,9 @@
 * ---------------------
 * NameBaseFolderSetting > FolderName
 *   FolderName ... "Current directory" that stored setting-files that decoding with "Setting" command.
+*                  This command specifies "Folder on local PC's OS". (Not Asset-Folder)
 *                  Automatically complemented, if no "/" at the end.
-*                  Default is folder where this list file is stored.
+*                  Default is folder where Batch-List file is stored.
 * 
 * Importer's setting-files are stored under this Folder.
 * Do not specify invalid folder.
@@ -424,7 +427,8 @@
 *   FormatName ... Data format name
 *                  StandardUncompressed == format "Standard Uncompressed"
 *                  StandardCPE == format "Standard CPE"
-*                  CPE_GOFFlyweight == format "CPE & GOF Flyweight"
+*                  CPE_GOFFlyweight == format "CPE & GOF Flyweight" (reserved)
+*                  CPE_Interpolate == format "CPE & Interpole" (reserved)
 * 
 * This is same function as ...
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Status"
@@ -461,11 +465,14 @@
 * e.g.:
 *  PackAttributeAnimation_PlainPositionTexture > StandardCPE
 *  *) Set data format of the attribute "Plain.PositionTexture" to "Standard CPE".
-*
+* 
+
+* ---------------------
+* CAUTION: The following is a sample of how to write, do not try importing with this Batch-List.
 * ---------------------
 
 * ++++++++++++++++++++++++++++++++++++++++
-* Setting-File's folder is list-file's folder
+* Setting-File's folder is Batch-List's folder
 	? NameBaseFolderSetting > 
 * Base SS5Data's Folder is "E:/SpriteStudio_Data/"
 	? NameBaseFolderData > E:/SpriteStudio_Data/
@@ -480,10 +487,10 @@ Nowloading/NowLoading.sspj
 
 ** ++++++++++++++++++++++++++++++++++++++++
 ** Base SS5Data's Folder is "D:/SpriteStudio_Data/UI/"
-*	? NameBaseFolderData > UI
-*? NameBaseFolderAsset > /Graphic/Character
-*? Common_Mode > SS6PU
-*
-*Character01.sspj
-*Character02.sspj
+	? NameBaseFolderData > UI
+? NameBaseFolderAsset > /Graphic/Character
+? Common_Mode > SS6PU
+
+Character01.sspj
+Character02.sspj
 

@@ -341,7 +341,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					case "mask":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK;
 						break;
-
+#if false
 					case "joint":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT;
 						break;
@@ -361,9 +361,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					case "bonepoint":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT;
 						break;
-
+#endif
 					default:
-						LogWarning(messageLogPrefix, "Unknown Parts-Type \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
+//						LogWarning(messageLogPrefix, "Unknown Parts-Type (Unsupported in this version) \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
+						LogWarning(messageLogPrefix, "Unknown Parts-Type (Unsupported in this version) \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
 						goto case "null";
 				}
 
@@ -1646,12 +1647,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case "VCOL":
 								LogWarning(messageLogPrefix, "Deprecated attribute \"Color Blend\" (Data is ignored. Please use \"Parts Color\") Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-								goto case "PCOL";
-//								break;
+								break;
 
 							/* Unknown Attributes */
 							default:
-								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+//								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+								LogWarning(messageLogPrefix, "Unknown Attribute (Unsupported in this version) \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 								break;
 						}
 					}
@@ -2074,8 +2075,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+									/* MEMO: In the case of "MASK", not yet decided whether "TRIANGLE 2" or "TRIANGLE 4". (Dicide temporarily) */
 									if(0 >= animationParts.VertexCorrection.CountGetKey())
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2;
@@ -2084,7 +2084,18 @@ public static partial class LibraryEditor_SpriteStudio6
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
 									}
+									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
 
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+									/* MEMO: Even if temporarily decided as "TRIANGLE 2", when  used "Vertex Correction(Deformation)" in other animation, */
+									/*        change to "TRIANGLE 4".                                                                                     */
+									if(0 <= animationParts.VertexCorrection.CountGetKey())
+									{
+										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
+									}
+									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 									animationParts.PowerMask.ListKey.Clear();
 
 									animationParts.Instance.ListKey.Clear();
@@ -2158,17 +2169,27 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
-									if(0 >= animationParts.VertexCorrection.CountGetKey())
-									{
-										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2;
-									}
-									else
+									/* MEMO: In the case of "MASK", not yet decided whether "TRIANGLE 2" or "TRIANGLE 4". (Dicide temporarily) */
+									if(0 <= animationParts.VertexCorrection.CountGetKey())
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
 									}
+									else
+									{
+										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2;
+									}
+									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
 
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+									/* MEMO: Even if temporarily decided as "TRIANGLE 2", when  used "Vertex Correction(Deformation)" in other animation, */
+									/*        change to "TRIANGLE 4".                                                                                     */
+									if(0 <= animationParts.VertexCorrection.CountGetKey())
+									{
+										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
+									}
+									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 									animationParts.Instance.ListKey.Clear();
 									animationParts.Effect.ListKey.Clear();
 									break;
@@ -3005,14 +3026,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public static bool AssetNameDecide(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-													LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE,
-													string nameOutputAssetFolderBase,
-													Script_SpriteStudio6_DataAnimation dataOverride,
-													Script_SpriteStudio6_Root prefabOverride,
-													GameObject prefabOverrideControl
-												)
+				public static bool AssetNameDecideData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE,
+														string nameOutputAssetFolderBase,
+														Script_SpriteStudio6_DataAnimation dataOverride
+													)
 				{
 					if(null != dataOverride)
 					{	/* Specified */
@@ -3027,6 +3046,19 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationSSAE.DataAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataAnimation>(informationSSAE.DataAnimationSS6PU.TableName[0]);
 					}
 
+					return(true);
+
+//				AssetNameDecideData_ErroeEnd:;
+//					return(false);
+				}
+
+				public static bool AssetNameDecidePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+															LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE,
+															string nameOutputAssetFolderBase,
+															Script_SpriteStudio6_Root prefabOverride
+														)
+				{
 					if(null != prefabOverride)
 					{	/* Specified */
 						informationSSAE.NameGameObjectAnimationSS6PU = string.Copy(prefabOverride.name);
@@ -3044,22 +3076,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationSSAE.PrefabAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<GameObject>(informationSSAE.PrefabAnimationSS6PU.TableName[0]);
 					}
 
-					if(null != prefabOverrideControl)
-					{	/* Specified */
-						informationSSAE.NameGameObjectAnimationSS6PU = string.Copy(prefabOverrideControl.name);
-
-						informationSSAE.PrefabControlAnimationSS6PU.TableName[0] = AssetDatabase.GetAssetPath(prefabOverrideControl);
-						informationSSAE.PrefabControlAnimationSS6PU.TableData[0] = prefabOverrideControl;
-					}
-					else
-					{	/* Default */
-						informationSSAE.NameGameObjectAnimationControlSS6PU = setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU, informationSSAE.NameFileBody, informationSSPJ.NameFileBody);
-
-						informationSSAE.PrefabControlAnimationSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU, nameOutputAssetFolderBase)
-																					+ informationSSAE.NameGameObjectAnimationControlSS6PU
-																					+ LibraryEditor_SpriteStudio6.Import.NameExtensionPrefab;
-						informationSSAE.PrefabControlAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<GameObject>(informationSSAE.PrefabControlAnimationSS6PU.TableName[0]);
-					}
+					/* MEMO: "Control-Prefab" creates only the name. */
+					informationSSAE.NameGameObjectAnimationControlSS6PU = setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU, informationSSAE.NameFileBody, informationSSPJ.NameFileBody);
+					informationSSAE.PrefabControlAnimationSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU, nameOutputAssetFolderBase)
+																				+ informationSSAE.NameGameObjectAnimationControlSS6PU
+																				+ LibraryEditor_SpriteStudio6.Import.NameExtensionPrefab;
+					informationSSAE.PrefabControlAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<GameObject>(informationSSAE.PrefabControlAnimationSS6PU.TableName[0]);
 
 					return(true);
 
@@ -3425,7 +3447,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* Create Prefab */
 						gameObjectControl.SetActive(true);
 
-						UnityEngine.Object prefabControl = PrefabUtility.CreateEmptyPrefab(informationSSAE.PrefabControlAnimationSS6PU.TableName[0]);
+						UnityEngine.Object prefabControl = informationSSAE.PrefabControlAnimationSS6PU.TableData[0];
+						if(null == prefabControl)
+						{
+							prefabControl = PrefabUtility.CreateEmptyPrefab(informationSSAE.PrefabControlAnimationSS6PU.TableName[0]);
+						}
 						PrefabUtility.ReplacePrefab(	gameObjectControl,
 														prefabControl,
 														LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace

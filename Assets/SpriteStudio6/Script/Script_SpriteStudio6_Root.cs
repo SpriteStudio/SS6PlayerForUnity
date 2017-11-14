@@ -239,11 +239,15 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* MEMO: "flagForceMasking" is ignored when "flagValidMaskSetting" is true. */
 
 		if(0 == (Status & FlagBitStatus.VALID))
-		{
+		{	/* Status invalid */
+			return;
+		}
+		if((null == TableControlTrack) || (null == TableControlParts))
+		{	/* Can not play */
 			return;
 		}
 		if(null == DataAnimation)
-		{
+		{	/* Master data lost */
 			return;
 		}
 		if(false == DataAnimation.StatusIsBootup)
