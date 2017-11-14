@@ -52,7 +52,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					case KindVersion.CODE_010201:
 					case KindVersion.CODE_010202:
 						LogError(messageLogPrefix, "\"SpriteStudio5\"'s data can not be imported.Please re-save data in \"SpriteStudio6\" and then import.", nameFile, informationSSPJ);
-						break;
+						goto Parse_ErrorEnd;
 
 					case KindVersion.CODE_020000:
 					case KindVersion.CODE_020001:
