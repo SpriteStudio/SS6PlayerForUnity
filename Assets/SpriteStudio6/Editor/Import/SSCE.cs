@@ -143,12 +143,13 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case "mirror":
-#if UNITY_5
-								LogWarning(messageLogPrefix, "Wrap-Mode \"Mirror\" is not Suppoted. Changed \"Clamp\"", nameFile, informationSSPJ);
-								goto case "clamp";
-#else
+#if UNITY_2017_1_OR_NEWER
 								informationSSCE.WrapTexture = Library_SpriteStudio6.Data.Texture.KindWrap.MIRROR;
 								break;
+#else
+								/* MEMO: SS6PU is supported with Unity2017 or later, but since Nintendo-Switch's environment is Unity 5.6 at present. */
+								LogWarning(messageLogPrefix, "Wrap-Mode \"Mirror\" is not Suppoted. Changed \"Clamp\"", nameFile, informationSSPJ);
+								goto case "clamp";
 #endif
 
 							case "clamp":
@@ -599,7 +600,12 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Texture.KindWrap.MIRROR:
+#if UNITY_2017_1_OR_NEWER
 									importer.wrapMode = TextureWrapMode.Mirror;
+#else
+									/* MEMO: SS6PU is supported with Unity2017 or later, but since Nintendo-Switch's environment is Unity 5.6 at present. */
+									importer.wrapMode = TextureWrapMode.Clamp;
+#endif
 									break;
 
 								default:
