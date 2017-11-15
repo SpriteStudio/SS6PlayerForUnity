@@ -478,7 +478,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		switch(SettingImport.Mode)
 		{
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
-				SettingImport.Basic.FlagTrackAsset = EditorGUILayout.ToggleLeft("Tracking Assets", SettingImport.Basic.FlagTrackAsset);
+				SettingImport.Basic.FlagTrackAssets = EditorGUILayout.ToggleLeft("Tracking Assets", SettingImport.Basic.FlagTrackAssets);
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Existing assets are identified by tracking prefabs' references when re-importing.");
 				EditorGUILayout.LabelField("However, \"Control-Prefab\", \"Animation's Prefab\" and \"Effect's Prefab\" must have");

@@ -798,7 +798,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
-					if(true == setting.Basic.FlagTrackAsset)
+					if(true == setting.Basic.FlagTrackAssets)
 					{
 						GameObject gameObjectPrefab;
 
