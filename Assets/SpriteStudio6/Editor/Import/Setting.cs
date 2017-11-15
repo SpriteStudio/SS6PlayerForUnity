@@ -465,17 +465,17 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
-				public bool FlagFixMesh;
+				public bool FlagFixSprite;
 				public bool FlagTrimTransparentPixelsCell;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public GroupPreCalculation(	bool flagFixMesh,
+				public GroupPreCalculation(	bool flagFixSprite,
 											bool flagTrimTransparentPixelsCell
 										)
 				{
-					FlagFixMesh = flagFixMesh;
+					FlagFixSprite = flagFixSprite;
 					FlagTrimTransparentPixelsCell = flagTrimTransparentPixelsCell;
 				}
 
@@ -486,7 +486,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Load()
 				{
-					FlagFixMesh = EditorPrefs.GetBool(PrefsKeyFlagFixMesh, Default.FlagFixMesh);
+					FlagFixSprite = EditorPrefs.GetBool(PrefsKeyFlagFixSprite, Default.FlagFixSprite);
 					FlagTrimTransparentPixelsCell = EditorPrefs.GetBool(PrefsKeyFlagTrimTransparentPixelsCell, Default.FlagTrimTransparentPixelsCell);
 
 					return(true);
@@ -494,7 +494,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Save()
 				{
-					EditorPrefs.SetBool(PrefsKeyFlagFixMesh, FlagFixMesh);
+					EditorPrefs.SetBool(PrefsKeyFlagFixSprite, FlagFixSprite);
 					EditorPrefs.SetBool(PrefsKeyFlagTrimTransparentPixelsCell, FlagTrimTransparentPixelsCell);
 
 					return(true);
@@ -505,8 +505,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					string[] textEncode = new string[2];
 					string textValue;
 
-					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagFixMesh);
-					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagFixMesh, textValue);
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagFixSprite);
+					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagFixSprite, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrimTransparentPixelsCell);
 					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrimTransparentPixelsCell, textValue);
@@ -518,8 +518,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					switch(textArgument[0])
 					{
-						case TextKeyFlagFixMesh:
-							FlagFixMesh = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+						case TextKeyFlagFixSprite:
+							FlagFixSprite = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						case TextKeyFlagTrimTransparentPixelsCell:
@@ -535,19 +535,19 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
-				private const string KeyFlagFixMesh = "FlagFixMesh";
+				private const string KeyFlagFixSprite = "FlagFixSprite";
 				private const string KeyFlagTrimTransparentPixelsCell = "FlagTrimTransparentPixelsCell";
 
 				private const string TextKeyPrefix = "PreCalculation_";
-				private const string TextKeyFlagFixMesh = TextKeyPrefix + KeyFlagFixMesh;
+				private const string TextKeyFlagFixSprite = TextKeyPrefix + KeyFlagFixSprite;
 				private const string TextKeyFlagTrimTransparentPixelsCell = TextKeyPrefix + KeyFlagTrimTransparentPixelsCell;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
-				private const string PrefsKeyFlagFixMesh = PrefsKeyPrefix + KeyFlagFixMesh;
+				private const string PrefsKeyFlagFixSprite = PrefsKeyPrefix + KeyFlagFixSprite;
 				private const string PrefsKeyFlagTrimTransparentPixelsCell = PrefsKeyPrefix + KeyFlagTrimTransparentPixelsCell;
 
 				private readonly static GroupPreCalculation Default = new GroupPreCalculation(
-					false,	/* FlagFixMesh */
+					false,	/* FlagFixSprite */
 					false	/* FlagTrimTransparentPixelsCell */
 				);
 				#endregion Enums & Constants
