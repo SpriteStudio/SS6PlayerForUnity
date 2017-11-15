@@ -50,7 +50,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					case KindVersion.CODE_010000:
 					case KindVersion.CODE_010200:
 					case KindVersion.CODE_010201:
-						break;
+						LogError(messageLogPrefix, "\"SpriteStudio5\"'s data can not be imported.Please re-save data in \"SpriteStudio6\" and then import.", nameFile);
+						goto Parse_ErrorEnd;
 
 					case KindVersion.CODE_020000:
 						break;
@@ -256,7 +257,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				CODE_010201 = 0x00010201,	/* after SS5.7.0 beta */
 				CODE_020000 = 0x00020000,	/* after SS6.0.0 */
 
-				TARGET_EARLIEST = CODE_000100,
+				TARGET_EARLIEST = CODE_020000,
 				TARGET_LATEST = CODE_020000
 			}
 
