@@ -4,8 +4,11 @@
 *  Generated with "SpriteStudio6 Player for Unity"        
 *  Copyright(C) Web Technology Corp. All rights reserved. 
 * ========================================================
-? Common_Mode > SS6PU
-? PreCalculation_FlagFixMesh > false
+? Basic_FlagCreateControlGameObject > true
+? Basic_FlagCreateProjectFolder > true
+? Basic_FlagInvisibleToHideAll > false
+? Basic_FlagTrackAssets > true
+? PreCalculation_FlagFixSprite > false
 ? PreCalculation_FlagTrimTransparentPixelsCell > false
 ? ConfirmOverWrite_FlagPrefabAnimation > false
 ? ConfirmOverWrite_FlagPrefabEffect > false
