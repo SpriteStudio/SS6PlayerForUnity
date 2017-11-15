@@ -428,7 +428,7 @@
 *                  StandardUncompressed == format "Standard Uncompressed"
 *                  StandardCPE == format "Standard CPE"
 *                  CPE_GOFFlyweight == format "CPE & GOF Flyweight" (reserved)
-*                  CPE_Interpolate == format "CPE & Interpole" (reserved)
+*                  CPE_Interpolate == format "CPE & Interpolate" (reserved)
 * 
 * This is same function as ...
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Status"
