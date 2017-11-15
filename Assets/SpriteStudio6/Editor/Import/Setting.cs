@@ -280,8 +280,8 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 
 			public bool ExportFile(	string nameFile,
-									bool flagExportBasic,
 									bool flagExportCommon,
+									bool flagExportBasic,
 									bool flagExportPrecalculation,
 									bool flagExportConfirmOverWrite,
 									bool flagExportCollider,

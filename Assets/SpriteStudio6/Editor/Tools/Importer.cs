@@ -432,7 +432,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		{
 			EditorGUI.indentLevel = levelIndent + 1;
 
-			SettingOption.ModeBatchImporter.Setting.FlagEnableConfirmOverWrite = EditorGUILayout.ToggleLeft("Enable \"Confirm OverWrite\" settings", SettingOption.ModeBatchImporter.Setting.FlagEnableConfirmOverWrite);
+			SettingOption.ModeBatchImporter.Setting.FlagEnableConfirmOverWrite = EditorGUILayout.ToggleLeft("Enable \"OverWrite Confirm\" settings", SettingOption.ModeBatchImporter.Setting.FlagEnableConfirmOverWrite);
 			EditorGUI.indentLevel = levelIndent + 2;
 			EditorGUILayout.LabelField("Checked: Follow settings in batch-list file. (Apply)");
 			EditorGUILayout.LabelField("Unchecked: Not perform, no matter setting in batch-list file. (Ignore)");
