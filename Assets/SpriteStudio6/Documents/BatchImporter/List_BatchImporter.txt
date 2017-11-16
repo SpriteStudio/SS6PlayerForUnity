@@ -202,6 +202,17 @@
 *  Basic_FlagInvisibleToHideAll > true
 *
 * ---------------------
+* Basic_FlagTrackAssets > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: Basic > Tracking Assets" option in the import settings.
+* 
+* e.g.:
+*  Basic_FlagTrackAssets > false
+*
+* ---------------------
 * PreCalculation_FlagFixMesh > Flag
 *   Flag ... true / false (bool)
 *            true == same as checked
@@ -211,17 +222,6 @@
 * 
 * e.g.:
 *  PreCalculation_FlagFixMesh > true
-*
-* ---------------------
-* PreCalculation_FlagTrimTransparentPixelsCell > Flag
-*   Flag ... true / false (bool)
-*            true == same as checked
-*            false == same as unchecked
-* 
-* This is same function as "Options: PreCalculation > Trim transparent-pixels" option in the import settings.
-* 
-* e.g.:
-*  PreCalculation_FlagTrimTransparentPixelsCell > false
 *
 * ---------------------
 * PreCalculation_FlagTrimTransparentPixelsCell > Flag
@@ -428,7 +428,7 @@
 *                  StandardUncompressed == format "Standard Uncompressed"
 *                  StandardCPE == format "Standard CPE"
 *                  CPE_GOFFlyweight == format "CPE & GOF Flyweight" (reserved)
-*                  CPE_Interpolate == format "CPE & Interpole" (reserved)
+*                  CPE_Interpolate == format "CPE & Interpolate" (reserved)
 * 
 * This is same function as ...
 * - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Status"

@@ -70,7 +70,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						countProgressMax += 1;	/* Create-Asset(Materials) */
 						countProgressMax += (countTexture + 1 + countSSAE + countSSEE);	/* Create-Asset *//* 1==CellMap */
 
-						if(true == setting.PreCalcualation.FlagFixMesh)
+						if(true == setting.PreCalcualation.FlagFixSprite)
 						{
 							countProgressMax += countSSAE;	/* Convert-Animation Pass 2 (PreCalculate Mesh-Fix) */
 						}
@@ -616,7 +616,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					informationSSAE = informationSSPJ.TableInformationSSAE[indexParts];
 
 					/* Convert "Trim Transparent-Pixel": Data */
-					if(true == setting.PreCalcualation.FlagFixMesh)
+					if(true == setting.PreCalcualation.FlagFixSprite)
 					{
 						ProgressBarUpdate(	"Convert SSAEs \"Fix Mesh\" (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
 											flagDisplayProgressBar, ref countProgressNow, countProgressMax

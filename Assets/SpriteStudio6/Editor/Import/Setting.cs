@@ -280,8 +280,8 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 
 			public bool ExportFile(	string nameFile,
-									bool flagExportBasic,
 									bool flagExportCommon,
+									bool flagExportBasic,
 									bool flagExportPrecalculation,
 									bool flagExportConfirmOverWrite,
 									bool flagExportCollider,
@@ -465,17 +465,17 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
-				public bool FlagFixMesh;
+				public bool FlagFixSprite;
 				public bool FlagTrimTransparentPixelsCell;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public GroupPreCalculation(	bool flagFixMesh,
+				public GroupPreCalculation(	bool flagFixSprite,
 											bool flagTrimTransparentPixelsCell
 										)
 				{
-					FlagFixMesh = flagFixMesh;
+					FlagFixSprite = flagFixSprite;
 					FlagTrimTransparentPixelsCell = flagTrimTransparentPixelsCell;
 				}
 
@@ -486,7 +486,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Load()
 				{
-					FlagFixMesh = EditorPrefs.GetBool(PrefsKeyFlagFixMesh, Default.FlagFixMesh);
+					FlagFixSprite = EditorPrefs.GetBool(PrefsKeyFlagFixSprite, Default.FlagFixSprite);
 					FlagTrimTransparentPixelsCell = EditorPrefs.GetBool(PrefsKeyFlagTrimTransparentPixelsCell, Default.FlagTrimTransparentPixelsCell);
 
 					return(true);
@@ -494,7 +494,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Save()
 				{
-					EditorPrefs.SetBool(PrefsKeyFlagFixMesh, FlagFixMesh);
+					EditorPrefs.SetBool(PrefsKeyFlagFixSprite, FlagFixSprite);
 					EditorPrefs.SetBool(PrefsKeyFlagTrimTransparentPixelsCell, FlagTrimTransparentPixelsCell);
 
 					return(true);
@@ -505,8 +505,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					string[] textEncode = new string[2];
 					string textValue;
 
-					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagFixMesh);
-					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagFixMesh, textValue);
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagFixSprite);
+					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagFixSprite, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrimTransparentPixelsCell);
 					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrimTransparentPixelsCell, textValue);
@@ -518,8 +518,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					switch(textArgument[0])
 					{
-						case TextKeyFlagFixMesh:
-							FlagFixMesh = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+						case TextKeyFlagFixSprite:
+							FlagFixSprite = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						case TextKeyFlagTrimTransparentPixelsCell:
@@ -535,19 +535,19 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
-				private const string KeyFlagFixMesh = "FlagFixMesh";
+				private const string KeyFlagFixSprite = "FlagFixSprite";
 				private const string KeyFlagTrimTransparentPixelsCell = "FlagTrimTransparentPixelsCell";
 
 				private const string TextKeyPrefix = "PreCalculation_";
-				private const string TextKeyFlagFixMesh = TextKeyPrefix + KeyFlagFixMesh;
+				private const string TextKeyFlagFixSprite = TextKeyPrefix + KeyFlagFixSprite;
 				private const string TextKeyFlagTrimTransparentPixelsCell = TextKeyPrefix + KeyFlagTrimTransparentPixelsCell;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
-				private const string PrefsKeyFlagFixMesh = PrefsKeyPrefix + KeyFlagFixMesh;
+				private const string PrefsKeyFlagFixSprite = PrefsKeyPrefix + KeyFlagFixSprite;
 				private const string PrefsKeyFlagTrimTransparentPixelsCell = PrefsKeyPrefix + KeyFlagTrimTransparentPixelsCell;
 
 				private readonly static GroupPreCalculation Default = new GroupPreCalculation(
-					false,	/* FlagFixMesh */
+					false,	/* FlagFixSprite */
 					false	/* FlagTrimTransparentPixelsCell */
 				);
 				#endregion Enums & Constants
@@ -980,7 +980,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagCreateControlGameObject;
 				public bool FlagCreateProjectFolder;
 				public bool FlagInvisibleToHideAll;
-				public bool FlagTrackAsset;
+				public bool FlagTrackAssets;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -988,13 +988,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				public GroupBasic(	bool flagCreateControlGameObject,
 									bool flagCreateProjectFolder,
 									bool flagInvisibleToHideAll,
-									bool flagTrackAsset
+									bool flagTrackAssets
 								)
 				{
 					FlagCreateControlGameObject = flagCreateControlGameObject;
 					FlagCreateProjectFolder = flagCreateProjectFolder;
 					FlagInvisibleToHideAll = flagInvisibleToHideAll;
-					FlagTrackAsset = flagTrackAsset;
+					FlagTrackAssets = flagTrackAssets;
 				}
 
 				public void CleanUp()
@@ -1007,7 +1007,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagCreateControlGameObject = EditorPrefs.GetBool(PrefsKeyFlagCreateControlGameObject, Default.FlagCreateControlGameObject);
 					FlagCreateProjectFolder = EditorPrefs.GetBool(PrefsKeyFlagCreateProjectFolder, Default.FlagCreateProjectFolder);
 					FlagInvisibleToHideAll = EditorPrefs.GetBool(PrefsKeyFlagInvisibleToHideAll, Default.FlagInvisibleToHideAll);
-					FlagTrackAsset = EditorPrefs.GetBool(PrefsKeyFlagTrackAsset, Default.FlagTrackAsset);
+					FlagTrackAssets = EditorPrefs.GetBool(PrefsKeyFlagTrackAssets, Default.FlagTrackAssets);
 
 					return(true);
 				}
@@ -1017,7 +1017,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetBool(PrefsKeyFlagCreateControlGameObject, FlagCreateControlGameObject);
 					EditorPrefs.SetBool(PrefsKeyFlagCreateProjectFolder, FlagCreateProjectFolder);
 					EditorPrefs.SetBool(PrefsKeyFlagInvisibleToHideAll, FlagInvisibleToHideAll);
-					EditorPrefs.SetBool(PrefsKeyFlagTrackAsset, FlagTrackAsset);
+					EditorPrefs.SetBool(PrefsKeyFlagTrackAssets, FlagTrackAssets);
 
 					return(true);
 				}
@@ -1036,8 +1036,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvisibleToHideAll);
 					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvisibleToHideAll, textValue);
 
-					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrackAsset);
-					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAsset, textValue);
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrackAssets);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAssets, textValue);
 
 					return(textEncode);
 				}
@@ -1058,8 +1058,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagInvisibleToHideAll = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
-						case TextKeyFlagTrackAsset:
-							FlagTrackAsset = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+						case TextKeyFlagTrackAssets:
+							FlagTrackAssets = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						default:
@@ -1074,25 +1074,25 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagCreateControlGameObject = "FlagCreateControlGameObject";
 				private const string KeyFlagCreateProjectFolder = "FlagCreateProjectFolder";
 				private const string KeyFlagInvisibleToHideAll = "FlagInvisibleToHideAll";
-				private const string KeyFlagTrackAsset = "FlagTrackAsset";
+				private const string KeyFlagTrackAssets = "FlagTrackAssets";
 
 				private const string TextKeyPrefix = "Basic_";
 				private const string TextKeyFlagCreateControlGameObject = TextKeyPrefix + KeyFlagCreateControlGameObject;
 				private const string TextKeyFlagCreateProjectFolder = TextKeyPrefix + KeyFlagCreateProjectFolder;
 				private const string TextKeyFlagInvisibleToHideAll = TextKeyPrefix + KeyFlagInvisibleToHideAll;
-				private const string TextKeyFlagTrackAsset = TextKeyPrefix + KeyFlagTrackAsset;
+				private const string TextKeyFlagTrackAssets = TextKeyPrefix + KeyFlagTrackAssets;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagCreateControlGameObject = PrefsKeyPrefix + KeyFlagCreateControlGameObject;
 				private const string PrefsKeyFlagCreateProjectFolder = PrefsKeyPrefix + KeyFlagCreateProjectFolder;
 				private const string PrefsKeyFlagInvisibleToHideAll = PrefsKeyPrefix + KeyFlagInvisibleToHideAll;
-				private const string PrefsKeyFlagTrackAsset = PrefsKeyPrefix + KeyFlagTrackAsset;
+				private const string PrefsKeyFlagTrackAssets = PrefsKeyPrefix + KeyFlagTrackAssets;
 
 				private readonly static GroupBasic Default = new GroupBasic(
 					true,	/* FlagCreateControlGameObject */
 					true,	/* FlagCreateProjectFolder */
 					false,	/* FlagInvisibleToHideAll */
-					true	/* FlagTrackAsset */
+					true	/* FlagTrackAssets */
 				);
 				#endregion Enums & Constants
 			}
