@@ -361,8 +361,6 @@ public partial class Script_SpriteStudio6_Root
 	The playing of animation suspends or resumes.<br>
 	This function returns success if succeeds on all tracks (if you set -1 to "track", only tracks are playing will be targeted).<br>
 	if specific track, return false when the track is not playing.<br>
-	<br>
-	While pausing, the transition will also stop.
 	*/
 	public bool AnimationPause(int indexTrack, bool flagSwitch)
 	{
