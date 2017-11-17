@@ -268,5 +268,30 @@ public partial class Script_SpriteStudio6_Root
 		return(TableControlTrack[indexTrack].Transition(indexTrackSlave, time));
 	}
 
+	/* ******************************************************** */
+	//! Get Svale-Track's index
+	/*!
+	@param	indexTrack
+		Track index to set pause-status (0 origin)
+	@retval	Return-Value
+		Slave-Track's index<br>
+		-1 == Error / Not transitioned
+
+	Get Slave-Track's index if the track is transitioning (has Slave-Track).<br>
+	*/
+	public int IndexGetTrackSlave(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(-1);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(-1);
+		}
+
+		return(TableControlTrack[indexTrack].IndexTrackSlave);
+	}
 	#endregion Functions
 }
