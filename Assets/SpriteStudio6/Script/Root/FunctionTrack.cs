@@ -26,7 +26,7 @@ public partial class Script_SpriteStudio6_Root
 	<br>
 	Do not use property "StatusIsPlaying" directly. (For internal processing, Specification will be changed without notice)<br>
 	*/
-	public bool StatusIsPlay(int indexTrack)
+	public bool StatusGetPlay(int indexTrack)
 	{
 		if(null == TableControlTrack)
 		{
@@ -62,7 +62,7 @@ public partial class Script_SpriteStudio6_Root
 	<br>
 	Do not use property "StatusIsPausing" directly. (For internal processing, Specification will be changed without notice)<br>
 	*/
-	public bool StatusIsPause(int indexTrack)
+	public bool StatusGetPause(int indexTrack)
 	{
 		if(null == TableControlTrack)
 		{
