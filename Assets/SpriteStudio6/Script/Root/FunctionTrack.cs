@@ -352,6 +352,32 @@ public partial class Script_SpriteStudio6_Root
 	}
 
 	/* ******************************************************** */
+	//! Get Animation's index (Playing on track)
+	/*!
+	@param	indexTrack
+		Track index
+	@retval	Return-Value
+		Animation's index<br>
+		-1 == Error / Not playing
+
+	Get animation's index being played on track.<br>
+	*/
+	public int IndexGetAnimation(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(-1);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(-1);
+		}
+
+		return(TableControlTrack[indexTrack].ArgumentContainer.IndexAnimation);
+	}
+
+	/* ******************************************************** */
 	//! Get Track's index (Connected to Parts)
 	/*!
 	@param	idParts
@@ -487,32 +513,6 @@ public partial class Script_SpriteStudio6_Root
 	}
 
 	/* ******************************************************** */
-	//! Get Animation's index (Playing on track)
-	/*!
-	@param	indexTrack
-		Track index
-	@retval	Return-Value
-		Animation's index<br>
-		-1 == Error / Not playing
-
-	Get animation's index being played on track.<br>
-	*/
-	public int IndexGetAnimationTrack(int indexTrack)
-	{
-		if(null == TableControlTrack)
-		{
-			return(-1);
-		}
-
-		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
-		{
-			return(-1);
-		}
-
-		return(TableControlTrack[indexTrack].ArgumentContainer.IndexAnimation);
-	}
-
-	/* ******************************************************** */
 	//! Get remaining play count
 	/*!
 	@param	indexTrack
@@ -532,6 +532,11 @@ public partial class Script_SpriteStudio6_Root
 		}
 
 		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(-1);
+		}
+
+		if(false == TableControlTrack[indexTrack].StatusIsPlaying)
 		{
 			return(-1);
 		}
