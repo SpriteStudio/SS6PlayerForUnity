@@ -13,6 +13,25 @@ public partial class Script_SpriteStudio6_Root
 	/* ----------------------------------------------- Functions */
 	#region Functions
 	/* ******************************************************** */
+	//! Get "initialization completion (valid)" status of animation object
+	/*!
+	@param	
+		(none)
+	@retval	Return-Value
+		true == Complete<br>
+		false == Error / Not complete
+
+	Get state of whether animation object has completed "Start" processing.<br>
+	Also returns false when "Start" processing failed and ended.<br>
+	<br>
+	Do not use property "StatusIsValid" directly. (For internal processing, Specification will be changed without notice)<br>
+	*/
+	public bool StatustGetValid()
+	{
+		return(StatusIsValid);
+	}
+
+	/* ******************************************************** */
 	//! Get number of parts in animation
 	/*!
 	@param	
