@@ -116,13 +116,13 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	internal Library_SpriteStudio6.CallBack.FunctionPlayEnd FunctionPlayEnd = null;
 	internal Library_SpriteStudio6.CallBack.FunctionUserData FunctionUserData = null;
 
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderOnTriggerEnter = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderOnTriggerExit = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderOnTriggerStay = null;
+	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderEnter = null;
+	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderExit = null;
+	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderStay = null;
 
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionOnTriggerEnter = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionOnTriggerExit = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionOnTriggerStay = null;
+	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionEnter = null;
+	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionExit = null;
+	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionStay = null;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
