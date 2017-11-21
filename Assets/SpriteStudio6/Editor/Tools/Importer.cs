@@ -25,7 +25,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	[MenuItem("Tools/SpriteStudio6/Importer")]
 	static void OpenWindow()
 	{
-		EditorWindow.GetWindow<MenuItem_SpriteStudio6_ImportProject>(true, LibraryEditor_SpriteStudio6.NameAsset + " Import-Settings");
+		EditorWindow.GetWindow<MenuItem_SpriteStudio6_ImportProject>(true, Library_SpriteStudio6.SignatureNameAsset + " Import-Settings");
 		SettingImport.Load();
 		SettingOption.Load();
 
@@ -120,7 +120,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 																				)
 							)
 						{
-							EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+							EditorUtility.DisplayDialog(	Library_SpriteStudio6.SignatureNameAsset,
 															"Batch-Import Interrupted! Check Error on Console.",
 															"OK"
 													);
@@ -163,7 +163,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 																			)
 							)
 						{
-							EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+							EditorUtility.DisplayDialog(	Library_SpriteStudio6.SignatureNameAsset,
 															"Import Interrupted! Check Error on Console.",
 													 		"OK"
 													);
@@ -174,7 +174,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				}
 				else
 				{	/* Error (No selected) */
-					EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+					EditorUtility.DisplayDialog(	Library_SpriteStudio6.SignatureNameAsset,
 													"Select Asset-Folder you want to store in before import, on the \"Project\" window.",
 													"OK"
 											);
@@ -210,7 +210,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			{
 //				SettingImport.Save();
 
-				string nameFile = EditorUtility.SaveFilePanel(	"Save \"" + LibraryEditor_SpriteStudio6.NameAsset + "\" Import Setting file",
+				string nameFile = EditorUtility.SaveFilePanel(	"Save \"" + Library_SpriteStudio6.SignatureNameAsset + "\" Import Setting file",
 																"",
 																"SS6PU_ImportSetting",
 																"txt"
@@ -233,7 +233,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			if(true == GUILayout.Button("Load from Text-File"))
 			{
-				string nameFile = EditorUtility.OpenFilePanel(	"Load \"" + LibraryEditor_SpriteStudio6.NameAsset + "\" Import Setting file",
+				string nameFile = EditorUtility.OpenFilePanel(	"Load \"" + Library_SpriteStudio6.SignatureNameAsset + "\" Import Setting file",
 																"",
 																"txt"
 															);
@@ -512,7 +512,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField(" by pre-calculate a part of runtime calculations at import.");
 		EditorGUI.indentLevel = levelIndent;
 #else
-		SettingImport.PreCalcualation.FlagFixMesh = EditorGUILayout.ToggleLeft("Fix Sprite", SettingImport.PreCalcualation.FlagFixMesh);
+		SettingImport.PreCalcualation.FlagFixSprite = EditorGUILayout.ToggleLeft("Fix Sprite", SettingImport.PreCalcualation.FlagFixSprite);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Deform of \"Sprite\" and \"Collider\" are calculated for improving execution speed of the runtime.");
 		EditorGUILayout.LabelField("CAUTION: Data is increases. And some runtime-functions does not work.(Cell-Changing etc.)");

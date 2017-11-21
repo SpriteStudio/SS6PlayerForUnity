@@ -434,6 +434,9 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 				return(true);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+				return(true);
 		}
 
 		/* MEMO: Return error when animation-format is "FIX", since UVs and shape of imported-data has been determined. */

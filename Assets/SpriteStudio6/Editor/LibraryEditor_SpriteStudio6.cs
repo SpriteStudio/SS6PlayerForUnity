@@ -11,12 +11,6 @@ using UnityEditor;
 
 public static partial class LibraryEditor_SpriteStudio6
 {
-	/* ----------------------------------------------- Enums & Constants */
-	#region Enums & Constants
-	public const string NameAsset = "SpriteStudio6 Player for Unity";
-	public const string NameDistributor = "Web Technology Corp.";
-	#endregion Enums & Constants
-
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
 	#region Classes, Structs & Interfaces
 	public static partial class Import
@@ -750,7 +744,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 		public static void ProgressBarUpdate(string nameTask, bool flagSwitch, ref int step, int stepFull)
 		{
-			LibraryEditor_SpriteStudio6.Utility.Miscellaneous.ProgressBarUpdate(	LibraryEditor_SpriteStudio6.NameAsset + " Data Import",
+			LibraryEditor_SpriteStudio6.Utility.Miscellaneous.ProgressBarUpdate(	Library_SpriteStudio6.SignatureNameAsset + " Data Import",
 																					nameTask,
 																					flagSwitch,
 																					step,

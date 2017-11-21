@@ -724,6 +724,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+					break;
 			}
 		}
 		return(true);

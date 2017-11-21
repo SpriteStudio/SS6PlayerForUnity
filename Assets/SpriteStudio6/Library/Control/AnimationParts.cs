@@ -208,6 +208,9 @@ public static partial class Library_SpriteStudio6
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+							break;
 					}
 
 					AnimationChange();
@@ -355,6 +358,9 @@ public static partial class Library_SpriteStudio6
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 							break;
 					}
 
@@ -1112,6 +1118,9 @@ public static partial class Library_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+								break;
 						}
 					}
 				}
@@ -1206,6 +1215,9 @@ public static partial class Library_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 								break;
 						}
 					}

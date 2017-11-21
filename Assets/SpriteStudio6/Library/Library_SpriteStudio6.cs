@@ -15,6 +15,10 @@ public static partial class Library_SpriteStudio6
 {
 	/* ----------------------------------------------- Enums & Constants */
 	#region Enums & Constants
+	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
+	public const string SignatureVersionAsset = "0.8.2";
+	public const string SignatureNameDistributor = "Web Technology Corp.";
+
 	public enum KindOperationBlend
 	{
 		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR,	/* - (-x) = +(x) */
@@ -767,7 +771,7 @@ public static partial class Library_SpriteStudio6
 													Library_SpriteStudio6.Utility.Random.Generator random,
 													uint seedRandom
 												)
-				{	/* CAUTION!: Obtain "TablePatternOffset" before executing this function. */
+				{	/* CAUTION!: Get "TablePatternOffset" before executing this function. */
 					int count;
 					int countEmitMax = CountParticleMax;
 
@@ -1253,6 +1257,7 @@ public static partial class Library_SpriteStudio6
 					MOVENODE,
 					CONSTRAINT,
 					BONEPOINT,
+					MESH,
 
 					TERMINATOR,
 					NORMAL = TERMINATOR,	/* NORMAL_TRIANGLE2 or NORMAL_TRIANGLE4 *//* only during import */
@@ -1324,7 +1329,7 @@ public static partial class Library_SpriteStudio6
 						CUSTOM = TERMINATOR,
 					}
 
-					private readonly static ColorLabel[] TableDefault = new ColorLabel[(int)KindForm.TERMINATOR]
+					internal readonly static ColorLabel[] TableDefault = new ColorLabel[(int)KindForm.TERMINATOR]
 					{
 						new ColorLabel(KindForm.NON, new Color(0.0f, 0.0f, 0.0f, 0.0f)),
 

@@ -99,6 +99,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+					break;
 			}
 		}
 		return(count);
