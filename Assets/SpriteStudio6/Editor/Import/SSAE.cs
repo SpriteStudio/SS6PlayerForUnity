@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+#define TAKE_AWAY_UNSUPPORTED_FUNCTION
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -342,7 +344,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					case "mask":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK;
 						break;
-#if false
+#if TAKE_AWAY_UNSUPPORTED_FUNCTION
+					default:
+						LogWarning(messageLogPrefix, "Unknown Parts-Type (Unsupported in this version) \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
+						goto case "null";
+#else
+					case "mesh":
+						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH;
+						break;
+
 					case "joint":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT;
 						break;
@@ -362,11 +372,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					case "bonepoint":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT;
 						break;
-#endif
+
 					default:
-//						LogWarning(messageLogPrefix, "Unknown Parts-Type (Unsupported in this version) \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
-						LogWarning(messageLogPrefix, "Unknown Parts-Type (Unsupported in this version) \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
+						LogWarning(messageLogPrefix, "Unknown Parts-Type \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
 						goto case "null";
+#endif
 				}
 
 				/* Get "Collision" Datas */
@@ -1652,8 +1662,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							/* Unknown Attributes */
 							default:
-//								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+#if TAKE_AWAY_UNSUPPORTED_FUNCTION
 								LogWarning(messageLogPrefix, "Unknown Attribute (Unsupported in this version) \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+#else
+								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
+#endif
 								break;
 						}
 					}
@@ -2199,12 +2212,15 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
 									break;
-							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
-								break;
-							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
-								break;
-							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
-								break;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+									break;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+									break;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+									break;
 
 								default:
 									break;
@@ -2489,6 +2505,9 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 									break;
 
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+									break;
+
 								default:
 									/* MEMO: No reach here. */
 									break;
@@ -2575,6 +2594,9 @@ public static partial class LibraryEditor_SpriteStudio6
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 											break;
 
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+											break;
+
 										default:
 											/* MEMO: No reach here. */
 											break;
@@ -2642,6 +2664,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+										break;
+
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 										break;
 
 									default:
@@ -3550,6 +3575,9 @@ public static partial class LibraryEditor_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 								break;
 
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+								break;
+
 							default:
 								break;
 						}
@@ -3735,6 +3763,9 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 									break;
 
 								default:
