@@ -227,7 +227,7 @@ public class Script_Sample_DollRun : MonoBehaviour
 		int indexTrack;
 		for(int i=0; i<countParts; i++)
 		{
-			switch(ScriptRoot.DataAnimation.TableParts[i].LabelColor.Form)
+			switch(ScriptRoot.FormGetColorLabel(i))
 			{
 				case Library_SpriteStudio6.Data.Parts.Animation.ColorLabel.KindForm.RED:
 					indexTrack = (int)KindTrack.BODY_LOWER;
