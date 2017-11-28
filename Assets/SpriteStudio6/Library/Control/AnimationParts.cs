@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+// #define BONEINDEX_CONVERT_PARTSID
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +16,43 @@ public static partial class Library_SpriteStudio6
 	{
 		public static partial class Animation
 		{
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			public readonly static Vector2 SizeTextureDefault = new Vector2(64.0f, 64.0f);
+
+			public readonly static int[][] TableIndexVertexCorrectionOrder = new int[4][]
+			{
+				new int[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{	/* Normal */
+					(int)Library_SpriteStudio6.KindVertex.LU,
+					(int)Library_SpriteStudio6.KindVertex.RU,
+					(int)Library_SpriteStudio6.KindVertex.RD,
+					(int)Library_SpriteStudio6.KindVertex.LD,
+				},
+				new int[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{	/* Flip-X */
+					(int)Library_SpriteStudio6.KindVertex.RU,
+					(int)Library_SpriteStudio6.KindVertex.LU,
+					(int)Library_SpriteStudio6.KindVertex.LD,
+					(int)Library_SpriteStudio6.KindVertex.RD,
+				},
+				new int[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{	/* Flip-Y */
+					(int)Library_SpriteStudio6.KindVertex.LD,
+					(int)Library_SpriteStudio6.KindVertex.RD,
+					(int)Library_SpriteStudio6.KindVertex.RU,
+					(int)Library_SpriteStudio6.KindVertex.LU,
+				},
+				new int[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
+				{	/* FlipX&Y */
+					(int)Library_SpriteStudio6.KindVertex.RD,
+					(int)Library_SpriteStudio6.KindVertex.LD,
+					(int)Library_SpriteStudio6.KindVertex.LU,
+					(int)Library_SpriteStudio6.KindVertex.RU,
+				}
+			};
+			#endregion Enums & Constants
+
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
 			#region Classes, Structs & Interfaces
 			[System.Serializable]
@@ -27,6 +66,7 @@ public static partial class Library_SpriteStudio6
 
 				public GameObject InstanceGameObject;
 				internal Transform InstanceTransform;
+				internal Matrix4x4 MatrixBoneWorld;
 
 				public Object PrefabUnderControl;
 				public GameObject InstanceGameObjectUnderControl;
@@ -85,6 +125,7 @@ public static partial class Library_SpriteStudio6
 
 //					InstanceGameObject =
 					InstanceTransform = null;
+					MatrixBoneWorld = Matrix4x4.identity;
 
 //					PrefabUnderControl =
 //					InstanceGameObjectUnderControl =
@@ -203,13 +244,21 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+							/* MEMO: Erase, because can not have undercontrol object. */
+							PrefabUnderControl = null;
+							InstanceGameObjectUnderControl = null;
+
+							if(false == ParameterSprite.BootUpMesh(instanceRoot, idParts, false))
+							{
+								goto BootUp_ErrorEnd;
+							}
 							break;
 					}
 
@@ -300,7 +349,7 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
-				internal void Update(Script_SpriteStudio6_Root instanceRoot, int idParts)
+				internal void Update(Script_SpriteStudio6_Root instanceRoot, int idParts, ref Matrix4x4 matrixCorrection)
 				{
 					int indexTrack = IndexControlTrack;
 					if(0 > indexTrack)
@@ -354,13 +403,18 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+							break;
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+							/* MEMO: Since bones are referenced many times, cache in advance. */
+							MatrixBoneWorld = matrixCorrection * InstanceTransform.localToWorldMatrix;
+							break;
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+							UpdateMesh(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
 							break;
 					}
 
@@ -664,7 +718,7 @@ public static partial class Library_SpriteStudio6
 						return;
 					}
 
-					/* Get Local-Scale *
+					/* Get Local-Scale */
 					/* MEMO: "ScaleLocal" are data that must be constantly updated in most parts, so decode here. */
 					if(true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref controlTrack.ArgumentContainer))
 					{
@@ -983,18 +1037,8 @@ public static partial class Library_SpriteStudio6
 					/*       (Calcurate before draw, since sprite size is the shape of rectangle collider)        */
 
 					/* Update Sprite */
-					/* MEMO:  Flips of Sprite and Texture have effect only on NORMAL2/NORMAL4.  */
-					/*        (Not work, although can set to "Instance" or "Effect" on SS5/SS6) */
 					ParameterSprite.StatusSetFlip(ref StatusAnimationFrame);
-					switch(dataAnimationParts.Format)
-					{
-						case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
-							ParameterSprite.UpdatePlain(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
-							break;
-						case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
-							ParameterSprite.UpdateFix(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
-							break;
-					}
+					ParameterSprite.UpdatePlain(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
 				}
 
 				private void UpdateInstance(	Script_SpriteStudio6_Root instanceRoot,
@@ -1025,6 +1069,17 @@ public static partial class Library_SpriteStudio6
 					/*       "Effect"-parts is included in draw-order-list regardless hide status.               */
 				}
 
+				private void UpdateMesh(	Script_SpriteStudio6_Root instanceRoot,
+											int idParts,
+											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+											ref Library_SpriteStudio6.Control.Animation.Track controlTrack
+										)
+				{
+					/* MEMO: Since specification of pre-calculating has not been decided, currently use "UpdatePlain". */
+					ParameterSprite.StatusSetFlip(ref StatusAnimationFrame);
+					ParameterSprite.UpdatePlain(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
+				}
+
 				private void UpdateColliderRectangle(	Script_SpriteStudio6_Root instanceRoot,
 														int idParts,
 														ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -1039,7 +1094,13 @@ public static partial class Library_SpriteStudio6
 
 					if(0 != (ParameterSprite.Status & BufferParameterSprite.FlagBitStatus.UPDATE_COORDINATE))
 					{
-						InstanceScriptCollider.ColliderSetRectangle(ref ParameterSprite.SizeSprite, ref ParameterSprite.PivotSprite);
+						/* MEMO: "Local-Scale" does not affect "Circle Collision". */
+						Vector2 sizeSprite = ParameterSprite.SizeSprite;
+						Vector2 pivotSprite = ParameterSprite.PivotSprite;
+						pivotSprite -= sizeSprite * 0.5f;
+						pivotSprite.x *= -1.0f;
+
+						InstanceScriptCollider.ColliderSetRectangle(ref sizeSprite, ref pivotSprite);
 					}
 				}
 
@@ -1058,6 +1119,7 @@ public static partial class Library_SpriteStudio6
 					int frameKey = FramePreviousUpdateRadiusCollision;
 					if(true == dataAnimationParts.RadiusCollision.Function.ValueGet(ref radius, ref frameKey, dataAnimationParts.RadiusCollision, ref controlTrack.ArgumentContainer))
 					{   /* New Valid Data */
+						/* MEMO: "Pivot Offset" and "Local-Scale" do not affect "Circle Collision". */
 						FramePreviousUpdateRadiusCollision = frameKey;
 						InstanceScriptCollider.ColliderSetRadius(radius);
 					}
@@ -1113,7 +1175,7 @@ public static partial class Library_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
@@ -1211,13 +1273,23 @@ public static partial class Library_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+								DrawMesh(	instanceRoot,
+											idParts,
+											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+											ref instanceRoot.TableControlParts[idParts],
+											ref instanceRoot.TableControlTrack[indexTrack],
+											flagHideDefault,
+											masking,
+											false,
+											ref matrixCorrection
+										);
 								break;
 						}
 					}
@@ -1240,37 +1312,18 @@ public static partial class Library_SpriteStudio6
 					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE)));	/* ? true : false */
 					if(false == flagHide)
 					{
-						switch(dataAnimationParts.Format)
-						{
-							case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
-								ParameterSprite.DrawPlain(	instanceRoot,
-															idParts,
-															ref controlParts,
-															InstanceGameObject,
-															InstanceTransform,
-															masking,
-															flagPreDraw,
-															ref matrixCorrection,
-															ref Status,
-															ref dataAnimationParts,
-															ref controlTrack.ArgumentContainer
-														);
-								break;
-							case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
-								ParameterSprite.DrawFix(	instanceRoot,
-															idParts,
-															ref controlParts,
-															InstanceGameObject,
-															InstanceTransform,
-															masking,
-															flagPreDraw,
-															ref matrixCorrection,
-															ref Status,
-															ref dataAnimationParts,
-															ref controlTrack.ArgumentContainer
-														);
-								break;
-						}
+						ParameterSprite.DrawPlain(	instanceRoot,
+													idParts,
+													ref controlParts,
+													InstanceGameObject,
+													InstanceTransform,
+													masking,
+													flagPreDraw,
+													ref matrixCorrection,
+													ref Status,
+													ref dataAnimationParts,
+													ref controlTrack.ArgumentContainer
+												);
 					}
 				}
 				private void DrawInstance(	Script_SpriteStudio6_Root instanceRoot,
@@ -1613,6 +1666,39 @@ public static partial class Library_SpriteStudio6
 					FramePreviousUpdateUnderControl = -1;
 					FramePreviousUpdateRadiusCollision = -1;
 				}
+				private void DrawMesh(	Script_SpriteStudio6_Root instanceRoot,
+										int idParts,
+										ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+										ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
+										ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
+										bool flagHideDefault,
+										Library_SpriteStudio6.KindMasking masking,
+										bool flagPreDraw,
+										ref Matrix4x4 matrixCorrection
+									)
+				{
+					/* MEMO: Since specification of pre-calculating has not been decided, currently use only "DrawMeshPlain". */
+					controlTrack.ArgumentContainer.IDParts = idParts;
+
+					/* Draw Sprite */
+					bool flagHide = flagHideDefault;
+					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE)));	/* ? true : false */
+					if(false == flagHide)
+					{
+						ParameterSprite.DrawMeshPlain(	instanceRoot,
+														idParts,
+														ref controlParts,
+														InstanceGameObject,
+														InstanceTransform,
+														masking,
+														flagPreDraw,
+														ref matrixCorrection,
+														ref Status,
+														ref dataAnimationParts,
+														ref controlTrack.ArgumentContainer
+													);
+					}
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
@@ -1715,12 +1801,12 @@ public static partial class Library_SpriteStudio6
 					internal Color32[] ColorPartsDraw;
 					internal Vector2[] ParameterBlendDraw;
 					internal Vector2[] UVTextureDraw;
+					internal int[] IndexVertexDraw;
 					internal Material MaterialDraw;	/* "Sprite"'s Draw & "Mask"'s Pre-Draw */
 					internal Material MaterialDrawMask;	/* "Mask"'s Draw */
 					internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDraw;	/* "Sprite"'s Draw & "Mask"'s Pre-Draw */
 					internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDrawMask;	/* "Mask"'s Draw */
 
-					/* MEMO: Only "Data-Plain" */
 					internal Vector2 SizeSprite;
 					internal Vector2 PivotSprite;
 					internal Vector2 SizeTexture;
@@ -1732,13 +1818,13 @@ public static partial class Library_SpriteStudio6
 					internal int IndexVertexCollectionTable;
 
 					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.Cell> DataCell;
+					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> PartsColor;
+					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> VertexCorrection;
 					internal BufferAttribute<Vector2> OffsetPivot;
 					internal BufferAttribute<Vector2> SizeForce;
 					internal BufferAttribute<Vector2> ScalingTexture;
-					internal BufferAttribute<Vector2> PositionTexture;
 					internal BufferAttribute<float> RotationTexture;
-					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> PartsColor;
-					internal BufferAttribute<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> VertexCorrection;
+					internal BufferAttribute<Vector2> PositionTexture;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -1750,6 +1836,7 @@ public static partial class Library_SpriteStudio6
 						CoordinateTransformDraw = null;
 						ColorPartsDraw = null;
 						UVTextureDraw = null;
+						IndexVertexDraw = null;
 						ParameterBlendDraw = null;
 						ChainDraw = null;
 						ChainDrawMask = null;
@@ -1770,8 +1857,8 @@ public static partial class Library_SpriteStudio6
 
 						SizeCell = Vector2.zero;
 						PivotCell = Vector2.zero;
-						SizeTexture = SizeTextureDefault;
-						SizeCell = SizeTextureDefault;
+						SizeTexture = Library_SpriteStudio6.Control.Animation.SizeTextureDefault;
+						SizeCell = Library_SpriteStudio6.Control.Animation.SizeTextureDefault;
 						PivotCell = Vector2.zero;
 						PositionCell = Vector2.zero;
 						MatrixTexture = Matrix4x4.identity;
@@ -1827,6 +1914,8 @@ public static partial class Library_SpriteStudio6
 							goto BootUp_ErrorEnd;
 						}
 
+						IndexVertexDraw = null;	/* Disuse */
+
 						for(int i=0; i<countVertex; i++)
 						{
 							CoordinateDraw[i] = Library_SpriteStudio6.Draw.Model.TableCoordinate[i];
@@ -1835,10 +1924,35 @@ public static partial class Library_SpriteStudio6
 							ParameterBlendDraw[i] = Vector2.zero;
 						}
 
+						VertexCorrection.Value.BootUp();
+
+						/* MEMO: Direct-write into draw's workarea. */
+//						CoordinateFix.Value.TableCoordinate = CoordinateDraw;
+//						UV0Fix.Value.TableUV = UVTextureDraw;
+
+						if(false == BootUpCommon(countVertex, flagMask))
+						{
+							/* MEMO: Since workareas have been cleared, return direct. */
+							return(false);
+						}
+						return(true);
+
+					BootUp_ErrorEnd:;
+						MaterialDraw = null;
+						CoordinateDraw = null;
+						ColorPartsDraw = null;
+						UVTextureDraw = null;
+						IndexVertexDraw = null;
+						ParameterBlendDraw = null;
+						ChainDraw = null;
+						return(false);
+					}
+					private bool BootUpCommon(int countPartsColorBuffer, bool flagMask)
+					{
 						ChainDraw = new Draw.Cluster.Chain();
 						if(null == ChainDraw)
 						{
-							goto BootUp_ErrorEnd;
+							goto BootUpCommon_ErrorEnd;
 						}
 //						ChainDraw.CleanUp();
 						ChainDraw.BootUp();
@@ -1848,14 +1962,13 @@ public static partial class Library_SpriteStudio6
 							ChainDrawMask = new Draw.Cluster.Chain();
 							if(null == ChainDrawMask)
 							{
-								goto BootUp_ErrorEnd;
+								goto BootUpCommon_ErrorEnd;
 							}
 //							ChainDrawMask.CleanUp();
 							ChainDrawMask.BootUp();
 						}
 
 						PartsColor.Value.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2);
-						VertexCorrection.Value.BootUp();
 
 						Status |= (	FlagBitStatus.UPDATE_COORDINATE
 									| FlagBitStatus.UPDATE_UVTEXTURE
@@ -1866,11 +1979,72 @@ public static partial class Library_SpriteStudio6
 
 						return(true);
 
-					BootUp_ErrorEnd:;
+					BootUpCommon_ErrorEnd:;
 						MaterialDraw = null;
 						CoordinateDraw = null;
 						ColorPartsDraw = null;
 						UVTextureDraw = null;
+						ParameterBlendDraw = null;
+						ChainDraw = null;
+						return(false);
+					}
+
+					internal bool BootUpMesh(Script_SpriteStudio6_Root instanceRoot, int idParts, bool flagMask)
+					{
+						CleanUp();
+
+						/* MEMO: On SpriteStudio6.0, Cell's vertices count and MeshBind's vertices count may be different. */
+						/*       (Truncate surplus information)                                                            */
+						int countVertex = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableVertex.Length;
+						int countUVTable = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableRateUV.Length;
+						if(countVertex > countUVTable)
+						{
+							countVertex = countUVTable;
+						}
+						CountVertex = countVertex;
+
+						MaterialDraw = null;
+						CoordinateDraw = null;	/* Disuse */
+						CoordinateTransformDraw = new Vector3[countVertex];
+						if(null == CoordinateTransformDraw)
+						{
+							goto BootUpMesh_ErrorEnd;
+						}
+
+						ColorPartsDraw = new Color32[countVertex];
+						if(null == ColorPartsDraw)
+						{
+							goto BootUpMesh_ErrorEnd;
+						}
+
+						UVTextureDraw = new Vector2[countVertex];
+						if(null == UVTextureDraw)
+						{
+							goto BootUpMesh_ErrorEnd;
+						}
+
+						ParameterBlendDraw = new Vector2[countVertex];
+						if(null == ParameterBlendDraw)
+						{
+							goto BootUpMesh_ErrorEnd;
+						}
+
+						IndexVertexDraw = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableIndexVertex;
+
+						VertexCorrection.CleanUp();	/* Disused */
+						if(false == BootUpCommon(0, flagMask))
+						{
+							/* MEMO: Since workareas have been cleared, return direct. */
+							return(false);
+						}
+						return(true);
+
+					BootUpMesh_ErrorEnd:;
+						MaterialDraw = null;
+						CoordinateDraw = null;
+						ColorPartsDraw = null;
+						UVTextureDraw = null;
+						IndexVertexDraw = null;
 						ParameterBlendDraw = null;
 						ChainDraw = null;
 						return(false);
@@ -1976,7 +2150,7 @@ public static partial class Library_SpriteStudio6
 
 						/* Create sprite data (from cell to use) */
 						/* MEMO: If do not always decode "Cell", malfunctions at restoration after cell-change. */
-						flagUpdateValueAttribute = dataAnimationParts.Plain.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Plain.Cell, ref argumentContainer);
+						flagUpdateValueAttribute = dataAnimationParts.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Cell, ref argumentContainer);
 						if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED))
 						{
 							if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE))
@@ -2014,8 +2188,13 @@ public static partial class Library_SpriteStudio6
 							Status &= ~FlagBitStatus.NO_DRAW;
 						}
 
-						Library_SpriteStudio6.Data.CellMap cellMap = instanceRoot.DataGetCellMap(DataCellApply.IndexCellMap);
-						if(null != cellMap)
+						Library_SpriteStudio6.Data.CellMap cellMap = instanceRoot.DataGetCellMap(indexCellMap);
+						if(null == cellMap)
+						{	/* CellMap Invalid */
+							indexCellMap = -1;
+							indexCell = -1;
+						}
+						else
 						{	/* CellMap Valid */
 							if((0 > indexCell) || (cellMap.CountGetCell() <= indexCell))
 							{	/* Cell Invalid */
@@ -2025,9 +2204,9 @@ public static partial class Library_SpriteStudio6
 						}
 						if(0 > indexCellMap)
 						{	/* Invalid */
-							SizeTexture = SizeTextureDefault;
+							SizeTexture = Library_SpriteStudio6.Control.Animation.SizeTextureDefault;
 
-							SizeCell = SizeTextureDefault;
+							SizeCell = Library_SpriteStudio6.Control.Animation.SizeTextureDefault;
 							PivotCell = Vector2.zero;
 							PositionCell =Vector2.zero;
 						}
@@ -2035,11 +2214,9 @@ public static partial class Library_SpriteStudio6
 						{	/* Valid */
 							SizeTexture = cellMap.SizeOriginal;
 
-							SizeCell.x = cellMap.TableCell[indexCell].Rectangle.width;
-							SizeCell.y = cellMap.TableCell[indexCell].Rectangle.height;
+							SizeCell = cellMap.TableCell[indexCell].Rectangle.size;
 							PivotCell = cellMap.TableCell[indexCell].Pivot;
-							PositionCell.x = cellMap.TableCell[indexCell].Rectangle.xMin;
-							PositionCell.y = cellMap.TableCell[indexCell].Rectangle.yMin;
+							PositionCell = cellMap.TableCell[indexCell].Rectangle.position;
 						}
 
 						Vector2 sizeSprite = SizeCell;
@@ -2047,14 +2224,14 @@ public static partial class Library_SpriteStudio6
 
 						/* Correct Sprite data (by attributes) */
 						bool flagRecalcSizeSprite = false;
-						flagUpdateValueAttribute = dataAnimationParts.Plain.OffsetPivot.Function.ValueGet(ref OffsetPivot.Value, ref OffsetPivot.FrameKey, dataAnimationParts.Plain.OffsetPivot, ref argumentContainer);
+						flagUpdateValueAttribute = dataAnimationParts.OffsetPivot.Function.ValueGet(ref OffsetPivot.Value, ref OffsetPivot.FrameKey, dataAnimationParts.OffsetPivot, ref argumentContainer);
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
 							flagRecalcSizeSprite |= true;
 						}
 
-						flagUpdateValueAttribute = dataAnimationParts.Plain.SizeForce.Function.ValueGet(ref SizeForce.Value, ref SizeForce.FrameKey, dataAnimationParts.Plain.SizeForce, ref argumentContainer);
+						flagUpdateValueAttribute = dataAnimationParts.SizeForce.Function.ValueGet(ref SizeForce.Value, ref SizeForce.FrameKey, dataAnimationParts.SizeForce, ref argumentContainer);
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
@@ -2095,9 +2272,9 @@ public static partial class Library_SpriteStudio6
 						/* Get Texture-Transform */
 						if(0 == (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE))
 						{	/* Transform Texure */
-							bool flagUpdateMatrixTexrure = dataAnimationParts.Plain.PositionTexture.Function.ValueGet(ref PositionTexture.Value, ref PositionTexture.FrameKey, dataAnimationParts.Plain.PositionTexture, ref argumentContainer);
-							flagUpdateMatrixTexrure |= dataAnimationParts.Plain.ScalingTexture.Function.ValueGet(ref ScalingTexture.Value, ref ScalingTexture.FrameKey, dataAnimationParts.Plain.ScalingTexture, ref argumentContainer);
-							flagUpdateMatrixTexrure |= dataAnimationParts.Plain.RotationTexture.Function.ValueGet(ref RotationTexture.Value, ref RotationTexture.FrameKey, dataAnimationParts.Plain.RotationTexture, ref argumentContainer);
+							bool flagUpdateMatrixTexrure = dataAnimationParts.PositionTexture.Function.ValueGet(ref PositionTexture.Value, ref PositionTexture.FrameKey, dataAnimationParts.PositionTexture, ref argumentContainer);
+							flagUpdateMatrixTexrure |= dataAnimationParts.ScalingTexture.Function.ValueGet(ref ScalingTexture.Value, ref ScalingTexture.FrameKey, dataAnimationParts.ScalingTexture, ref argumentContainer);
+							flagUpdateMatrixTexrure |= dataAnimationParts.RotationTexture.Function.ValueGet(ref RotationTexture.Value, ref RotationTexture.FrameKey, dataAnimationParts.RotationTexture, ref argumentContainer);
 							if(true == flagUpdateMatrixTexrure)
 							{
 								Status |= FlagBitStatus.UPDATE_TRANSFORM_TEXTURE;
@@ -2146,8 +2323,8 @@ public static partial class Library_SpriteStudio6
 							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR;
 						}
 
-						/* Get Coordinates */
-						if(true == dataAnimationParts.Plain.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.Plain.VertexCorrection, ref argumentContainer))
+						/* Get Vertex-Correction */
+						if(true == dataAnimationParts.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.VertexCorrection, ref argumentContainer))
 						{
 							Status |=  FlagBitStatus.UPDATE_COORDINATE;
 						}
@@ -2198,6 +2375,7 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Calculate Texture-UV */
+						/* MEMO: Calculate only corners at this point.(Center is sets average value later) */
 						if(0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE))
 						{	/* No Transform (Ordinary rectangle) */
 							Vector2 uLR = new Vector2(positionMapping.x, positionMapping.x + sizeMapping.x);
@@ -2224,20 +2402,19 @@ public static partial class Library_SpriteStudio6
 							{
 								/* Create Matrix & Transform Texture-UV */
 								Vector2 centerMapping = (sizeMapping * 0.5f) + positionMapping;
-								Vector3 Translation = new Vector3(	(centerMapping.x / SizeTexture.x) + PositionTexture.Value.x,
+								Vector3 translation = new Vector3(	(centerMapping.x / SizeTexture.x) + PositionTexture.Value.x,
 																	((SizeTexture.y - centerMapping.y) / SizeTexture.y) - PositionTexture.Value.y,
 																	0.0f
 																);
-								Vector3 Scaling = new Vector3(	(sizeMapping.x / SizeTexture.x) * ScalingTexture.Value.x * RateScaleTexture.x,
+								Vector3 scaling = new Vector3(	(sizeMapping.x / SizeTexture.x) * ScalingTexture.Value.x * RateScaleTexture.x,
 																(sizeMapping.y / SizeTexture.y) * ScalingTexture.Value.y * RateScaleTexture.y,
 																1.0f
 															);
 
-								Quaternion Rotation = Quaternion.Euler(0.0f, 0.0f, -RotationTexture.Value);
-								MatrixTexture = Matrix4x4.TRS(Translation, Rotation, Scaling);
+								Quaternion rotation = Quaternion.Euler(0.0f, 0.0f, -RotationTexture.Value);
+								MatrixTexture = Matrix4x4.TRS(translation, rotation, scaling);
 							}
-
-							for(int i=0; i<CountVertex; i++)
+							for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 							{
 								UVTextureDraw[i] = MatrixTexture.MultiplyPoint3x4(Library_SpriteStudio6.Draw.Model.TableUVMapping[i]);
 							}
@@ -2289,8 +2466,8 @@ public static partial class Library_SpriteStudio6
 						/* Calculate Mesh coordinates */
 						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
 						{
-							float scaleMeshX = RateScaleMesh.x * controlParts.ScaleLocal.Value.x * instanceRoot.RateScaleLocal.x;
-							float scaleMeshY = -(RateScaleMesh.y * controlParts.ScaleLocal.Value.y * instanceRoot.RateScaleLocal.y);	/* * -1.0f ... Y-Axis Inverse */
+							float scaleMeshX = RateScaleMesh.x;
+							float scaleMeshY = -RateScaleMesh.y;	/* * -1.0f ... Y-Axis Inverse */
 							float left = (-pivotSprite.x) * scaleMeshX;
 							float right = (sizeSprite.x - pivotSprite.x) * scaleMeshX;
 							float top = (-pivotSprite.y) * scaleMeshY;
@@ -2308,7 +2485,7 @@ public static partial class Library_SpriteStudio6
 
 								/* Set Coordinates */
 								int indexVertex;
-								int[] tableIndex = TableIndexVertexCorrectionOrder[IndexVertexCollectionTable];
+								int[] tableIndex = Library_SpriteStudio6.Control.Animation.TableIndexVertexCorrectionOrder[IndexVertexCollectionTable];
 								Vector2[] tableCoordinate = VertexCorrection.Value.Coordinate;
 
 								indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.LU];
@@ -2347,7 +2524,13 @@ public static partial class Library_SpriteStudio6
 
 						/* Transform Coordinates */
 						/* MEMO: Prevent double effect MeshRenderer's world-matrix and InstanceTransform's world-matrix. */
-						Matrix4x4 matrixTransform = matrixCorrection * instanceTransform.localToWorldMatrix;
+						Matrix4x4 matrixTransform =	matrixCorrection
+													* instanceTransform.localToWorldMatrix
+													* Matrix4x4.Scale(new Vector3(	controlParts.ScaleLocal.Value.x * instanceRoot.RateScaleLocal.x,
+																					controlParts.ScaleLocal.Value.y * instanceRoot.RateScaleLocal.y,
+																					1.0f
+																				)
+																	);
 						for(int i=0; i<CountVertex; i++)
 						{
 							CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(CoordinateDraw[i]);
@@ -2392,31 +2575,314 @@ public static partial class Library_SpriteStudio6
 											);
 					}
 
-					internal bool UpdateFix(	Script_SpriteStudio6_Root instanceRoot,
-												int idParts,
-												GameObject instanceGameObject,
-												Transform instanceTransform,
-												ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
-												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
-												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
-										)
+					internal void DrawMeshPlain(	Script_SpriteStudio6_Root instanceRoot,
+													int idParts,
+													ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
+													GameObject instanceGameObject,
+													Transform instanceTransform,
+													Library_SpriteStudio6.KindMasking masking,
+													bool flagPreDraw,
+													ref Matrix4x4 matrixCorrection,
+													ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
+													ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
+												)
 					{
-						return(false);
-					}
+						if(0 != (Status & FlagBitStatus.NO_DRAW))
+						{
+							return;
+						}
 
-					internal void DrawFix(	Script_SpriteStudio6_Root instanceRoot,
-											int idParts,
-											ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
-											GameObject instanceGameObject,
-											Transform instanceTransform,
-											Library_SpriteStudio6.KindMasking masking,
-											bool flagPreDraw,
-											ref Matrix4x4 matrixCorrection,
-											ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
-											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
-											ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
-										)
-					{
+						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
+						Library_SpriteStudio6.Data.Parts.Animation.BindMesh.Vertex[] tableVertex = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableVertex;
+#if UNITY_EDITOR
+						if(null == tableVertex)
+						{
+							/* MEMO: May reach before deserialization direct-after import. */
+							return;
+						}
+#endif
+						if(0 >= tableVertex.Length)
+						{
+							/* MEMO: Can not be drawn as a mesh. */
+							goto DrawMeshPlain_ErrorEnd;
+						}
+
+						/* Check Masking */
+						if(true == flagPreDraw)
+						{
+							masking = Library_SpriteStudio6.KindMasking.THROUGH;
+						}
+						else
+						{
+							if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
+							{
+								masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
+							}
+						}
+						if(Masking != masking)
+						{
+							Masking = masking;
+							Status |= FlagBitStatus.UPDATE_MASKING;
+						}
+
+						/* Check Cell-Change */
+						int countVertex = 0;
+
+						int indexCellMap = DataCellApply.IndexCellMap;
+						int indexCell = DataCellApply.IndexCell;
+						Library_SpriteStudio6.Data.CellMap cellMap = instanceRoot.DataGetCellMap(indexCellMap);
+						if(null == cellMap)
+						{	/* CellMap Invalid */
+							/* MEMO: Can not be drawn as a mesh. */
+							goto DrawMeshPlain_ErrorEnd;
+						}
+						else
+						{	/* CellMap Valid */
+							if((0 > indexCell) || (cellMap.CountGetCell() <= indexCell))
+							{	/* Cell Invalid */
+								/* MEMO: Can not be drawn as a mesh. */
+								goto DrawMeshPlain_ErrorEnd;
+							}
+						}
+						if(false == cellMap.TableCell[indexCell].IsMesh)
+						{	/* Has no mesh */
+							/* MEMO: Can not be drawn as a mesh. */
+							goto DrawMeshPlain_ErrorEnd;
+						}
+
+						/* MEMO: Mapping-control attributes can not be set for "Mesh" parts, so UV recalculation occurs only when "Cell" is changed. */
+						if(0 != (Status & FlagBitStatus.UPDATE_UVTEXTURE))
+						{
+							/* Calculate UV */
+							if(null != UVTextureDraw)
+							{
+								/* MEMO: Calculate UV when change Cell. (Mesh-Bind is not changed.) */
+								/* MEMO: Each UV-coordinate is as ratio when original Mesh-Cell's size is 1. */
+								Vector2[] tableUVRate = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableRateUV;
+//								countVertex = UVTextureDraw.Length;
+								countVertex = CountVertex;
+
+								Vector2 sizeTexture = SizeTexture;
+								Vector2 sizeInverseTexture;
+								sizeInverseTexture.x = 1.0f / sizeTexture.x;
+								sizeInverseTexture.y = 1.0f / sizeTexture.y;
+								Vector2 positionCell = PositionCell;
+								Vector2 sizeCell = SizeCell;
+								Vector2 rateUV;
+								for(int i=0; i<countVertex; i++)
+								{
+									/* MEMO: Round to integer since original coordinate is pixel-alignment. */
+									rateUV = tableUVRate[i];
+
+									rateUV.x *= sizeCell.x;
+									rateUV.x = Mathf.Floor(rateUV.x);
+									rateUV.x += positionCell.x;
+									UVTextureDraw[i].x = rateUV.x * sizeInverseTexture.x;
+
+									rateUV.y *= sizeCell.y;
+									rateUV.y = Mathf.Floor(rateUV.y);
+									rateUV.y += positionCell.y;
+									rateUV.y = sizeTexture.y - rateUV.y;
+									UVTextureDraw[i].y = rateUV.y * sizeInverseTexture.y;
+								}
+							}
+
+							/* MEMO: Need to reset parts color. */
+							Status |= (FlagBitStatus.UPDATE_PARAMETERBLEND | FlagBitStatus.UPDATE_COLORPARTS);
+						}
+
+						/* Set Parts-Color */
+						float operationBlend;
+						Color32 colorParts;
+						float rateOpacity;
+						if(0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR))
+						{
+							Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
+							operationBlend = (float)((int)additionalColor.OperationBlend) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+							colorParts = additionalColor.ColorVertex[(int)Library_SpriteStudio6.KindVertex.LU];
+							rateOpacity = Library_SpriteStudio6.Data.Animation.Attribute.TableRateAlphaPartsColorDefault[(int)Library_SpriteStudio6.KindVertex.LU];
+						}
+						else
+						{
+							operationBlend = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+							colorParts = PartsColor.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU];
+							rateOpacity = PartsColor.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU];
+						}
+
+						rateOpacity *= instanceRoot.RateOpacity * controlParts.RateOpacity.Value;
+						if(0 != (Status & (FlagBitStatus.UPDATE_COLORPARTS | FlagBitStatus.UPDATE_PARAMETERBLEND)))
+						{
+							/* MEMO: "Mesh" supports only "Overall". */
+							countVertex = UVTextureDraw.Length;
+							for(int i=0; i<countVertex; i++)
+							{
+								ParameterBlendDraw[i].x = operationBlend;
+								ParameterBlendDraw[i].y = rateOpacity;
+								ColorPartsDraw[i] = colorParts;
+							}
+						}
+
+						/* Transform Coordinates */
+//						countVertex = tableVertex.Length;
+						countVertex = CountVertex;
+						int countBone;
+						Vector3 coordinate;
+						Vector3 coordinateSum;
+						int idPartsBone;
+						float weight;
+						for(int i=0; i<countVertex; i++)
+						{
+							coordinateSum = Vector3.zero;
+							countBone = tableVertex[i].TableBone.Length;
+							if(0 < countBone)
+							{
+								for(int j=0; j<countBone; j++)
+								{
+#if BONEINDEX_CONVERT_PARTSID
+									idPartsBone = tableVertex[i].TableBone[j].Index;
+#else
+									idPartsBone = tableVertex[i].TableBone[j].Index;
+									idPartsBone = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone[idPartsBone];
+#endif
+									if(0 <= idPartsBone)
+									{
+										coordinate = instanceRoot.TableControlParts[idPartsBone].MatrixBoneWorld.MultiplyPoint3x4(tableVertex[i].TableBone[j].CoordinateOffset);
+
+										weight = tableVertex[i].TableBone[j].Weight;
+										coordinate *= weight;
+										coordinate.z = 0.0f;
+
+										coordinateSum += coordinate;
+									}
+								}
+							}
+
+							CoordinateTransformDraw[i] = coordinateSum;
+						}
+
+						/* Update Material */
+						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
+						{
+							if(true == flagPreDraw)
+							{
+								/* MEMO: When "flagPreDraw" is true, only when "Mask"'s first time drawing. */
+								/*       Set fixed values.                                                  */
+								/* MEMO: Update material for "Draw" as well. */
+								indexCellMap = DataCellApply.IndexCellMap;
+								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, Library_SpriteStudio6.KindMasking.THROUGH);
+								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, Library_SpriteStudio6.KindMasking.THROUGH);
+							}
+							else
+							{
+								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
+																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
+																			Masking
+																		);
+							}
+						}
+
+						/* Set to Draw-Cluster */
+						DrawAddClusterMesh(instanceRoot.ClusterDraw, ChainDraw, MaterialDraw);
+
+						/* MEMO: "UPDATE" flags need to be cleared after add to Draw-Cluster.       */
+						/*       (Because "Draw" may not be executed even if "Update" is executed.) */
+						Status &= ~(	FlagBitStatus.UPDATE_COORDINATE
+										| FlagBitStatus.UPDATE_UVTEXTURE
+										| FlagBitStatus.UPDATE_PARAMETERBLEND
+										| FlagBitStatus.UPDATE_COLORPARTS
+										| FlagBitStatus.UPDATE_MASKING
+										| FlagBitStatus.UPDATE_TRANSFORM_TEXTURE
+//										| FlagBitStatus.USE_ADDITIONALCOLOR		/* update in "UpdatePlain", so not erase here */
+								);
+						statusControlParts &= ~(	Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL
+													| Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_RATEOPACITY
+											);
+
+						return;
+
+					DrawMeshPlain_ErrorEnd:;
+						/* MEMO: Draw without transform */
+						{
+							/* Re-asign Buffers (for Triangle2) */
+							CountVertex = (int)Library_SpriteStudio6.KindVertex.TERMINATOR2;
+
+							if(null == CoordinateTransformDraw)
+							{
+								CoordinateTransformDraw = new Vector3[CountVertex];
+							}
+							else
+							{
+								if(CountVertex != CoordinateTransformDraw.Length)
+								{
+									CoordinateTransformDraw = new Vector3[CountVertex];
+								}
+							}
+
+							if(null == CoordinateDraw)
+							{
+								CoordinateDraw = new Vector3[CountVertex];
+							}
+							else
+							{
+								if(CountVertex != CoordinateDraw.Length)
+								{
+									CoordinateDraw = new Vector3[CountVertex];
+								}
+							}
+
+							if(null == ColorPartsDraw)
+							{
+								ColorPartsDraw = new Color32[CountVertex];
+							}
+							else
+							{
+								if(CountVertex != ColorPartsDraw.Length)
+								{
+									ColorPartsDraw = new Color32[CountVertex];
+								}
+							}
+
+							if(null == ParameterBlendDraw)
+							{
+								ParameterBlendDraw = new Vector2[CountVertex];
+							}
+							else
+							{
+								if(CountVertex != ParameterBlendDraw.Length)
+								{
+									ParameterBlendDraw = new Vector2[CountVertex];
+								}
+							}
+
+							if(null == UVTextureDraw)
+							{
+								UVTextureDraw = new Vector2[CountVertex];
+							}
+							else
+							{
+								if(CountVertex != UVTextureDraw.Length)
+								{
+									UVTextureDraw = new Vector2[CountVertex];
+								}
+							}
+
+							IndexVertexDraw = null;
+						}
+
+						DrawPlain(	instanceRoot,
+									idParts,
+									ref controlParts,
+									instanceGameObject,
+									instanceTransform,
+									masking,
+									flagPreDraw,
+									ref matrixCorrection,
+									ref statusControlParts,
+									ref dataAnimationParts,
+									ref argumentContainer
+								);
+						return;
 					}
 
 					internal void DrawAddCluster(Library_SpriteStudio6.Draw.Cluster cluster, Library_SpriteStudio6.Draw.Cluster.Chain chain, Material material)
@@ -2429,6 +2895,18 @@ public static partial class Library_SpriteStudio6
 											ParameterBlendDraw,
 											material
 										);
+					}
+
+					internal void DrawAddClusterMesh(Library_SpriteStudio6.Draw.Cluster cluster, Library_SpriteStudio6.Draw.Cluster.Chain chain, Material material)
+					{
+						cluster.VertexAddMesh(	chain,
+												CoordinateTransformDraw,
+												ColorPartsDraw,
+												UVTextureDraw,
+												ParameterBlendDraw,
+												IndexVertexDraw,
+												material
+											);
 					}
 					#endregion Functions
 
@@ -2453,44 +2931,8 @@ public static partial class Library_SpriteStudio6
 						USE_ADDITIONALCOLOR_PREVIOUS = 0x00000800,
 						USE_ADDITIONALCOLOR = 0x00000400,
 
-						/* for Fix */
-
 						CLEAR = 0x00000000
 					}
-
-					private readonly static Vector2 SizeTextureDefault = new Vector2(64.0f, 64.0f);
-
-					private readonly static int[][] TableIndexVertexCorrectionOrder = new int[4][]
-					{
-						new int[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
-						{	/* Normal */
-							(int)Library_SpriteStudio6.KindVertex.LU,
-							(int)Library_SpriteStudio6.KindVertex.RU,
-							(int)Library_SpriteStudio6.KindVertex.RD,
-							(int)Library_SpriteStudio6.KindVertex.LD,
-						},
-						new int[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
-						{	/* Flip-X */
-							(int)Library_SpriteStudio6.KindVertex.RU,
-							(int)Library_SpriteStudio6.KindVertex.LU,
-							(int)Library_SpriteStudio6.KindVertex.LD,
-							(int)Library_SpriteStudio6.KindVertex.RD,
-						},
-						new int[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
-						{	/* Flip-Y */
-							(int)Library_SpriteStudio6.KindVertex.LD,
-							(int)Library_SpriteStudio6.KindVertex.RD,
-							(int)Library_SpriteStudio6.KindVertex.RU,
-							(int)Library_SpriteStudio6.KindVertex.LU,
-						},
-						new int[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
-						{	/* FlipX&Y */
-							(int)Library_SpriteStudio6.KindVertex.RD,
-							(int)Library_SpriteStudio6.KindVertex.LD,
-							(int)Library_SpriteStudio6.KindVertex.LU,
-							(int)Library_SpriteStudio6.KindVertex.RU,
-						}
-					};
 					#endregion Enums & Constants
 				}
 				#endregion Classes, Structs & Interfaces

@@ -357,7 +357,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			{
 				goto ClusterBootUpDraw_ErrorEnd;
 			}
-			if(false == ClusterDraw.BootUp(0, CountParticleMax))
+			if(false == ClusterDraw.BootUp(0, 0, CountParticleMax))
 			{
 				goto ClusterBootUpDraw_ErrorEnd;
 			}

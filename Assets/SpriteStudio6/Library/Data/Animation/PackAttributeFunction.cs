@@ -290,46 +290,6 @@ public static partial class Library_SpriteStudio6
 							break;
 					}
 				}
-
-				public static void BootUpFunctionCoordinateFix(ContainerCoordinateFix container)
-				{
-					switch(container.TypePack)
-					{
-						case KindTypePack.STANDARD_UNCOMPRESSED:
-							container.Function = StandardUncompressed.FunctionCoordinateFix;
-							break;
-
-						case KindTypePack.STANDARD_CPE:
-							container.Function = StandardCPE.FunctionCoordinateFix;
-							break;
-
-						case KindTypePack.CPE_FLYWEIGHT:
-							break;
-
-						default:
-							break;
-					}
-				}
-
-				public static void BootUpFunctionUVFix(ContainerUVFix container)
-				{
-					switch(container.TypePack)
-					{
-						case KindTypePack.STANDARD_UNCOMPRESSED:
-							container.Function = StandardUncompressed.FunctionUVFix;
-							break;
-
-						case KindTypePack.STANDARD_CPE:
-							container.Function = StandardCPE.FunctionUVFix;
-							break;
-
-						case KindTypePack.CPE_FLYWEIGHT:
-							break;
-
-						default:
-							break;
-					}
-				}
 				#endregion Functions
 			}
 		}

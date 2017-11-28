@@ -16,10 +16,15 @@ fixed4 PS_main(InputPS Input) : COLOR0
 
 	fixed4	pixel = tex2D(_MainTex, Input.Texture00UV.xy);
 	pixel *= Input.ColorMain;
+#if !defined(PS_NOT_DISCARD)
 	if(0.0f >= pixel.a)
 	{
 		discard;
 	}
+#endif
+#if !defined(PS_NOT_CLAMP_COLOR)
+//	pixel = saturate(pixel);
+#endif
 	output = pixel;
 
 	return(output);

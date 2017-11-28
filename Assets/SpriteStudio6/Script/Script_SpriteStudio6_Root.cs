@@ -21,6 +21,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	internal int CountPartsSprite = 0;
 	internal int CountSpriteMax = 0;	/* use only Highest-Parent-Root */
+	internal int CountMeshMax = 0;	/* use only Highest-Parent-Root */
 	internal int CountParticleMax = 0;	/* use only Highest-Parent-Root */
 
 	public int LimitTrack;
@@ -150,6 +151,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* Get Counts */
 		CountPartsSprite  = DataAnimation.CountGetPartsSprite();
 		CountSpriteMax = 0;	/* Set in ClusterBootUpDraw */
+		CountMeshMax = 0;	/* Set in ClusterBootUpDraw */
 		CountParticleMax = 0;	/* Set in ClusterBootUpDraw */
 
 		/* Start Base-Class */
@@ -275,7 +277,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		int countControlParts = TableControlParts.Length;
 		for(int i=0; i<countControlParts; i++)
 		{
-			TableControlParts[i].Update(this, i);
+			TableControlParts[i].Update(this, i, ref matrixCorrection);
 		}
 
 		/* Recover Draw-Cluster & Component for Rendering */
@@ -640,6 +642,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	private bool ClusterBootUpDraw()
 	{
 		CountSpriteMax = 0;
+		CountMeshMax = 0;
 		CountParticleMax = 0;
 		if(null != InstanceRootParent)
 		{	/* Child */
@@ -647,7 +650,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 		else
 		{	/* Highest-Root */
-			if(false == CountGetDrawMesh(ref CountSpriteMax, ref CountParticleMax))
+			if(false == CountGetDrawMesh(ref CountSpriteMax, ref CountMeshMax, ref CountParticleMax))
 			{
 				goto ClusterBootUpDraw_ErrorEnd;
 			}
@@ -657,7 +660,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			{
 				goto ClusterBootUpDraw_ErrorEnd;
 			}
-			if(false == ClusterDraw.BootUp(CountSpriteMax, CountParticleMax))
+			if(false == ClusterDraw.BootUp(CountSpriteMax, CountMeshMax, CountParticleMax))
 			{
 				goto ClusterBootUpDraw_ErrorEnd;
 			}
@@ -672,7 +675,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		return(false);
 	}
 
-	internal bool CountGetDrawMesh(ref int countSprite, ref int countParticle)
+	internal bool CountGetDrawMesh(ref int countSprite, ref int countMesh, ref int countParticle)
 	{
 		if((null == DataAnimation) || (null == TableControlParts))
 		{
@@ -698,7 +701,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 						if(null != rootUnderControl)
 						{
 							/* MEMO: "Instance" can be nested. */
-							rootUnderControl.CountGetDrawMesh(ref countSprite, ref countParticle);
+							rootUnderControl.CountGetDrawMesh(ref countSprite, ref countMesh, ref countParticle);
 						}
 					}
 					break;
@@ -719,13 +722,14 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+					countMesh += DataAnimation.TableParts[i].CountMesh;
 					break;
 			}
 		}
