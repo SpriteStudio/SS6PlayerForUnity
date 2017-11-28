@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 194737b46e04ff84a936435d5601662f, type: 3}
   m_Name: dc_BitmapFontNumeric_Simple
   m_EditorClassIdentifier: 
-  Version: 65536
+  Version: 65537
   TableCellMap:
   - Name: BitmapFontNumeric_Simple
     SizeOriginal: {x: 128, y: 128}
@@ -25,7 +25,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_1
       Rectangle:
@@ -36,7 +36,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 8, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_2
       Rectangle:
@@ -47,7 +47,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_3
       Rectangle:
@@ -58,7 +58,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_4
       Rectangle:
@@ -69,7 +69,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_5
       Rectangle:
@@ -80,7 +80,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_6
       Rectangle:
@@ -91,7 +91,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_7
       Rectangle:
@@ -102,7 +102,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_8
       Rectangle:
@@ -113,7 +113,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_9
       Rectangle:
@@ -124,7 +124,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_Period
       Rectangle:
@@ -135,7 +135,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 8, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_Comma
       Rectangle:
@@ -146,7 +146,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 8, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_Plus
       Rectangle:
@@ -157,7 +157,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_Minus
       Rectangle:
@@ -168,7 +168,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_Mul
       Rectangle:
@@ -179,7 +179,7 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Font1_Div
       Rectangle:
@@ -190,5 +190,5 @@ MonoBehaviour:
         height: 32
       Pivot: {x: 16, y: 16}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 

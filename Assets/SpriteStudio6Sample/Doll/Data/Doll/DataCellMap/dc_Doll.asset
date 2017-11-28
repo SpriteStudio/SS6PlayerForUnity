@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 194737b46e04ff84a936435d5601662f, type: 3}
   m_Name: dc_Doll
   m_EditorClassIdentifier: 
-  Version: 65536
+  Version: 65537
   TableCellMap:
   - Name: Doll
     SizeOriginal: {x: 256, y: 256}
@@ -25,7 +25,7 @@ MonoBehaviour:
         height: 104
       Pivot: {x: 52, y: 52}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Hemisphere
       Rectangle:
@@ -36,7 +36,7 @@ MonoBehaviour:
         height: 56
       Pivot: {x: 56, y: 53}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: ArmLeg
       Rectangle:
@@ -47,7 +47,7 @@ MonoBehaviour:
         height: 56
       Pivot: {x: 24, y: 0}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Gloss
       Rectangle:
@@ -58,7 +58,7 @@ MonoBehaviour:
         height: 48
       Pivot: {x: 24, y: 24}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Eye
       Rectangle:
@@ -69,7 +69,7 @@ MonoBehaviour:
         height: 40
       Pivot: {x: 20, y: 20}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Eye-Red
       Rectangle:
@@ -80,7 +80,7 @@ MonoBehaviour:
         height: 40
       Pivot: {x: 20, y: 20}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Dust
       Rectangle:
@@ -91,7 +91,7 @@ MonoBehaviour:
         height: 64
       Pivot: {x: 32, y: 32}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 
     - Name: Spark
       Rectangle:
@@ -102,5 +102,5 @@ MonoBehaviour:
         height: 64
       Pivot: {x: 32, y: 32}
       Mesh:
-        TableVertex: []
+        TableCoordinate: []
         TableIndexVertex: 

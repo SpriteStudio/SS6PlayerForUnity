@@ -18,7 +18,7 @@
 * ------------------------------------------
 
 * [Folder Setting]
-? NameBaseFolderSetting > Data/
+? NameBaseFolderSetting > SpriteStudioProject/
 ? NameBaseFolderData > SpriteStudioProject/Doll/
 ? NameBaseFolderAsset > SpriteStudio6Sample/Doll/Data/
 
