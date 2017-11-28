@@ -22,7 +22,7 @@ public partial class Script_SpriteStudio6_Root
 		false == Error / Not complete
 
 	Get state of whether animation object has completed "Start" processing.<br>
-	Also returns false when "Start" processing failed and ended.<br>
+	Return-value is false also when "Start" processing failed and ended.<br>
 	<br>
 	Do not use property "StatusIsValid" directly. (For internal processing, Specification will be changed without notice)<br>
 	*/

@@ -20,29 +20,24 @@ public static partial class Library_SpriteStudio6
 				#region Enums & Constants
 				private readonly static CapacityContainer CapacityContainerDummy = new CapacityContainer(
 					false,		/* Status */
+					false,		/* Cell */
 					false,		/* Position */
 					false,		/* Rotation */
 					false,		/* Scaling */
 					false,		/* ScalingLocal */
 					false,		/* RateOpacity */
 					false,		/* PartsColor */
+					false,		/* VertexCorrection */
+					false,		/* OffsetPivot */
 					false,		/* PositionAnchor */
+					false,		/* SizeForce */
+					false,		/* PositionTexture */
+					false,		/* RotationTexture */
+					false,		/* ScalingTexture */
 					false,		/* RadiusCollision */
 					false,		/* UserData (Trigger) */
 					false,		/* Instance (Trigger) */
-					false,		/* Effect (Trigger) */
-					false,		/* Plain.Cell */
-					false,		/* Plain.SizeForce */
-					false,		/* Plain.VertexCorrection */
-					false,		/* Plain.OffsetPivot */
-					false,		/* Plain.PositionTexture */
-					false,		/* Plain.ScalingTexture */
-					false,		/* Plain.RotationTexture */
-					false,		/* Fix.IndexCellMap */
-					false,		/* Fix.Coordinate */
-					false,		/* Fix.UV0 */
-					false,		/* Fix.SizeCollision *//* Always Compressed */
-					false		/* Fix.PivotCollision *//* Always Compressed */
+					false		/* Effect (Trigger) */
 				);
 				#endregion Enums & Constants
 
@@ -118,14 +113,6 @@ public static partial class Library_SpriteStudio6
 				public interface InterfaceContainerEffect : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Effect,
 																				ContainerEffect,
 																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect
-																			> {}
-				public interface InterfaceContainerCoordinateFix : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix,
-																							ContainerCoordinateFix,
-																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix
-																					> {}
-				public interface InterfaceContainerUVFix : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.UVFix,
-																				ContainerUVFix,
-																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix
 																			> {}
 
 				public interface InterfaceContainer<_TypeValue, _TypeContainer, _TypeSource>
@@ -205,14 +192,19 @@ public static partial class Library_SpriteStudio6
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
 					private FlagBit Flags;
-					private FlagBitPlain FlagsPlain;
-					private FlagBitFix FlagsFix;
 
 					public bool Status
 					{
 						get
 						{
 							return(0 != (Flags & FlagBit.STATUS));
+						}
+					}
+					public bool Cell
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.CELL));
 						}
 					}
 					public bool Position
@@ -257,11 +249,60 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.PARTS_COLOR));
 						}
 					}
+					public bool VertexCorrection
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.VERTEX_CORRECTION));
+						}
+					}
+					public bool OffsetPivot
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.OFFSET_PIVOT));
+						}
+					}
 					public bool PositionAnchor
 					{
 						get
 						{
 							return(0 != (Flags & FlagBit.POSITION_ANCHOR));
+						}
+					}
+					public bool SizeForce
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.SIZE_FORCE));
+						}
+					}
+					public bool PositionTexture
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.POSITION_TEXTURE));
+						}
+					}
+					public bool RotationTexture
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.ROTATION_TEXTURE));
+						}
+					}
+					public bool ScalingTexture
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.SCALING_TEXTURE));
+						}
+					}
+					public bool RadiusCollision
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.RADIUS_COLLISION));
 						}
 					}
 					public bool UserData
@@ -285,158 +326,57 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.EFFECT));
 						}
 					}
-					public bool RadiusCollision
-					{
-						get
-						{
-							return(0 != (Flags & FlagBit.RADIUS_COLLISION));
-						}
-					}
-
-					public bool PlainCell
-					{
-						get
-						{
-							return(0 != (FlagsPlain & FlagBitPlain.CELL));
-						}
-					}
-					public bool PlainSizeForce
-					{
-						get
-						{
-							return(0 != (FlagsPlain & FlagBitPlain.SIZE_FORCE));
-						}
-					}
-					public bool PlainVertexCorrection
-					{
-						get
-						{
-							return(0 != (FlagsPlain & FlagBitPlain.VERTEX_CORRECTION));
-						}
-					}
-					public bool PlainOffsetPivot
-					{
-						get
-						{
-							return(0 != (FlagsPlain & FlagBitPlain.OFFSET_PIVOT));
-						}
-					}
-					public bool PlainPositionTexture
-					{
-						get
-						{
-							return(0 != (FlagsPlain & FlagBitPlain.POSITION_TEXTURE));
-						}
-					}
-					public bool PlainScalingTexture
-					{
-						get
-						{
-							return(0 != (FlagsPlain & FlagBitPlain.SCALING_TEXTURE));
-						}
-					}
-					public bool PlainRotationTexture
-					{
-						get
-						{
-							return(0 != (FlagsPlain & FlagBitPlain.ROTATION_TEXTURE));
-						}
-					}
-
-					public bool FixIndexCellMap
-					{
-						get
-						{
-							return(0 != (FlagsFix & FlagBitFix.INDEX_CELL_MAP));
-						}
-					}
-					public bool FixCoordinate
-					{
-						get
-						{
-							return(0 != (FlagsFix & FlagBitFix.COORDINATE));
-						}
-					}
-					public bool FixUV0
-					{
-						get
-						{
-							return(0 != (FlagsFix & FlagBitFix.UV0));
-						}
-					}
-					public bool FixSizeCollision
-					{
-						get
-						{
-							return(0 != (FlagsFix & FlagBitFix.SIZE_COLLISION));
-						}
-					}
-					public bool FixPivotCollision
-					{
-						get
-						{
-							return(0 != (FlagsFix & FlagBitFix.PIVOT_COLLISION));
-						}
-					}
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
 					public CapacityContainer(	bool status,
+												bool cell,
 												bool position,
 												bool rotation,
 												bool scaling,
 												bool scalingLocal,
 												bool rateOpacity,
 												bool partsColor,
+												bool vertexCorrection,
+												bool offsetPivot,
 												bool positionAnchor,
+												bool sizeForce,
+												bool positionTexture,
+												bool rotationTexture,
+												bool scalingTexture,
 												bool radiusCollision,
 												bool userData,
 												bool instance,
-												bool effect,
-												bool plainCell,
-												bool plainSizeForce,
-												bool plainVertexCorrection,
-												bool plainOffsetPivot,
-												bool plainPositionTexture,
-												bool plainScalingTexture,
-												bool plainRotationTexture,
-												bool fixIndexCellMap,
-												bool fixCoordinate,
-												bool fixUV0,
-												bool fixSizeCollision,
-												bool fixPivotCollision
+												bool effect
 											)
 					{
 						Flags = 0;
 						Flags |= (true == status) ? FlagBit.STATUS : (FlagBit)0;
+
+						Flags |= (true == cell) ? FlagBit.CELL : (FlagBit)0;
+
 						Flags |= (true == position) ? FlagBit.POSITION : (FlagBit)0;
 						Flags |= (true == rotation) ? FlagBit.ROTATION : (FlagBit)0;
 						Flags |= (true == scaling) ? FlagBit.SCALING : (FlagBit)0;
 						Flags |= (true == scalingLocal) ? FlagBit.SCALING_LOCAL : (FlagBit)0;
+
 						Flags |= (true == rateOpacity) ? FlagBit.RATE_OPACITY : (FlagBit)0;
 						Flags |= (true == partsColor) ? FlagBit.PARTS_COLOR : (FlagBit)0;
+						Flags |= (true == vertexCorrection) ? FlagBit.VERTEX_CORRECTION : (FlagBit)0;
+
+						Flags |= (true == offsetPivot) ? FlagBit.OFFSET_PIVOT : (FlagBit)0;
 						Flags |= (true == positionAnchor) ? FlagBit.POSITION_ANCHOR : (FlagBit)0;
+						Flags |= (true == sizeForce) ? FlagBit.SIZE_FORCE : (FlagBit)0;
+						Flags |= (true == positionTexture) ? FlagBit.POSITION_TEXTURE : (FlagBit)0;
+						Flags |= (true == rotationTexture) ? FlagBit.ROTATION_TEXTURE : (FlagBit)0;
+						Flags |= (true == scalingTexture) ? FlagBit.SCALING_TEXTURE : (FlagBit)0;
+
 						Flags |= (true == radiusCollision) ? FlagBit.RADIUS_COLLISION : (FlagBit)0;
+
 						Flags |= (true == userData) ? FlagBit.USER_DATA : (FlagBit)0;
 						Flags |= (true == instance) ? FlagBit.INSTANCE : (FlagBit)0;
 						Flags |= (true == effect) ? FlagBit.EFFECT : (FlagBit)0;
-
-						FlagsPlain = 0;
-						FlagsPlain |= (true == plainCell) ? FlagBitPlain.CELL : (FlagBitPlain)0;
-						FlagsPlain |= (true == plainSizeForce) ? FlagBitPlain.SIZE_FORCE : (FlagBitPlain)0;
-						FlagsPlain |= (true == plainVertexCorrection) ? FlagBitPlain.VERTEX_CORRECTION : (FlagBitPlain)0;
-						FlagsPlain |= (true == plainOffsetPivot) ? FlagBitPlain.OFFSET_PIVOT : (FlagBitPlain)0;
-						FlagsPlain |= (true == plainPositionTexture) ? FlagBitPlain.POSITION_TEXTURE : (FlagBitPlain)0;
-						FlagsPlain |= (true == plainScalingTexture) ? FlagBitPlain.SCALING_TEXTURE : (FlagBitPlain)0;
-						FlagsPlain |= (true == plainRotationTexture) ? FlagBitPlain.ROTATION_TEXTURE : (FlagBitPlain)0;
-
-						FlagsFix = 0;
-						FlagsFix |= (true == fixIndexCellMap) ? FlagBitFix.INDEX_CELL_MAP : (FlagBitFix)0;
-						FlagsFix |= (true == fixCoordinate) ? FlagBitFix.COORDINATE : (FlagBitFix)0;
-						FlagsFix |= (true == fixUV0) ? FlagBitFix.UV0 : (FlagBitFix)0;
-						FlagsFix |= (true == fixSizeCollision) ? FlagBitFix.SIZE_COLLISION : (FlagBitFix)0;
-						FlagsFix |= (true == fixPivotCollision) ? FlagBitFix.PIVOT_COLLISION : (FlagBitFix)0;
 					}
 					#endregion Functions
 
@@ -446,39 +386,24 @@ public static partial class Library_SpriteStudio6
 					private enum FlagBit
 					{
 						STATUS = 0x00000001,
-						POSITION = 0x00000002,
-						ROTATION = 0x00000004,
-						SCALING = 0x00000008,
-						SCALING_LOCAL = 0x00000010,
-						RATE_OPACITY = 0x00000020,
-						PARTS_COLOR = 0x00000040,
-						POSITION_ANCHOR = 0x00000080,
-						RADIUS_COLLISION = 0x00000100,
-						USER_DATA = 0x00000200,
-						INSTANCE = 0x00000400,
-						EFFECT = 0x00000800,
-					}
-
-					[System.Flags]
-					private enum FlagBitPlain
-					{
-						CELL = 0x00000001,
-						SIZE_FORCE = 0x00000002,
-						VERTEX_CORRECTION = 0x00000004,
-						OFFSET_PIVOT = 0x00000008,
-						POSITION_TEXTURE = 0x00000010,
-						SCALING_TEXTURE = 0x00000020,
-						ROTATION_TEXTURE = 0x00000040,
-					}
-
-					[System.Flags]
-					private enum FlagBitFix
-					{
-						INDEX_CELL_MAP = 0x00000001,
-						COORDINATE = 0x00000002,
-						UV0 = 0x00000004,
-						SIZE_COLLISION = 0x00000008,
-						PIVOT_COLLISION = 0x00000010,
+						CELL = 0x00000002,
+						POSITION = 0x00000004,
+						ROTATION = 0x00000008,
+						SCALING = 0x00000010,
+						SCALING_LOCAL = 0x00000020,
+						RATE_OPACITY = 0x00000040,
+						PARTS_COLOR = 0x00000080,
+						VERTEX_CORRECTION = 0x00000100,
+						OFFSET_PIVOT = 0x00000200,
+						POSITION_ANCHOR = 0x00000400,
+						SIZE_FORCE = 0x00000800,
+						POSITION_TEXTURE = 0x00001000,
+						ROTATION_TEXTURE = 0x00002000,
+						SCALING_TEXTURE = 0x00004000,
+						RADIUS_COLLISION = 0x00008000,
+						USER_DATA = 0x00010000,
+						INSTANCE = 0x00020000,
+						EFFECT = 0x00040000,
 					}
 					#endregion Enums & Constants
 				}

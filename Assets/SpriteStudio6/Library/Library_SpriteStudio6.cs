@@ -8,17 +8,19 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public static partial class Library_SpriteStudio6
 {
+	/* ----------------------------------------------- Signatures */
+	#region Signatures
+	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
+	public const string SignatureVersionAsset = "0.9.0";
+	public const string SignatureNameDistributor = "Web Technology Corp.";
+	#endregion Signatures
+
 	/* ----------------------------------------------- Enums & Constants */
 	#region Enums & Constants
-	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "0.8.2";
-	public const string SignatureNameDistributor = "Web Technology Corp.";
-
 	public enum KindOperationBlend
 	{
 		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR,	/* - (-x) = +(x) */
@@ -51,7 +53,6 @@ public static partial class Library_SpriteStudio6
 
 		MIX = 0,
 		ADD,
-//		ADD_PA,
 
 		TERMINATOR,
 	}
@@ -73,6 +74,7 @@ public static partial class Library_SpriteStudio6
 
 		TERMINATOR,
 		TERMINATOR4 = TERMINATOR,
+		TERMINATOR3 = LD,	/* for "Mesh" */
 		TERMINATOR2 = C
 	}
 
@@ -305,86 +307,76 @@ public static partial class Library_SpriteStudio6
 
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
 			#region Classes, Structs & Interfaces
-
 			[System.Serializable]
 			public struct Parts
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
-				public KindFormat Format;
 				public FlagBitStatus StatusParts;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus Status;
 
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell Cell;
+
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Position;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 Rotation;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;	/* used in Sprite, Mask, Instance, Effect */
 
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;	/* used in Plain-Sprite, Plain-Mask, Instance, Effect */
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
-				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;	/* used in Plain-Sprite, Plain-Mask (Contents different) */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;	/* used in Sprite, Mask (Contents different) */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
 
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 OffsetPivot;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;	/* (Unsupported now) */
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionTexture;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RotationTexture;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingTexture;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RadiusCollision;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect Effect;
-
-				public AttributeGroupPlain Plain;
-				public AttributeGroupFix Fix;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
 				public void CleanUp()
 				{
-					Format = KindFormat.PLAIN;
 					StatusParts = FlagBitStatus.CLEAR;
 
 					Status = null;
 
+					Cell = null;
+
 					Position = null;
 					Rotation = null;
 					Scaling = null;
-
 					ScalingLocal = null;
+
 					RateOpacity = null;
 					PartsColor = null;
+					VertexCorrection = null;
 
+					OffsetPivot = null;
 					PositionAnchor = null;
+					SizeForce = null;
+					PositionTexture = null;
+					RotationTexture = null;
+					ScalingTexture = null;
 
 					RadiusCollision = null;
 
 					UserData = null;
 					Instance = null;
 					Effect = null;
-
-					Plain.Cell = null;
-					Plain.SizeForce = null;
-					Plain.VertexCorrection = null;
-					Plain.OffsetPivot = null;
-					Plain.PositionTexture = null;
-					Plain.ScalingTexture = null;
-					Plain.RotationTexture = null;
-
-					Fix.IndexCellMap = null;
-					Fix.Coordinate = null;
-					Fix.UV0 = null;
-					Fix.SizeCollision = null;
-					Fix.PivotCollision = null;
 				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
-				public enum KindFormat
-				{	/* ERROR/NON: -1 */
-					PLAIN = 0,	/* Data-Format: Plain-Data */
-					FIX,	/* Data-Format: Precalculated "Fix Mesh" */
-				}
-
 				[System.Flags]
 				public enum FlagBitStatus
 				{
@@ -407,40 +399,6 @@ public static partial class Library_SpriteStudio6
 					CLEAR = 0x00000000
 				}
 				#endregion Enums & Constants
-
-				/* ----------------------------------------------- Classes, Structs & Interfaces */
-				#region Classes, Structs & Interfaces
-				[System.Serializable]
-				public struct AttributeGroupPlain
-				{
-					/* ----------------------------------------------- Variables & Properties */
-					#region Variables & Properties
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell Cell;
-
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeForce;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 OffsetPivot;
-
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionTexture;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingTexture;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RotationTexture;
-					#endregion Variables & Properties
-				}
-
-				[System.Serializable]
-				public struct AttributeGroupFix
-				{
-					/* ----------------------------------------------- Variables & Properties */
-					#region Variables & Properties
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt IndexCellMap;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix Coordinate;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix UV0;
-
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 SizeCollision;
-					public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PivotCollision;
-				#endregion Variables & Properties
-				}
-				#endregion Classes, Structs & Interfaces
 			}
 
 			[System.Serializable]
@@ -526,10 +484,6 @@ public static partial class Library_SpriteStudio6
 				public class ContainerInstance : Container<Library_SpriteStudio6.Data.Animation.Attribute.Instance, InterfaceContainerInstance> {}
 				[System.Serializable]
 				public class ContainerEffect : Container<Library_SpriteStudio6.Data.Animation.Attribute.Effect, InterfaceContainerEffect> {}
-				[System.Serializable]
-				public class ContainerCoordinateFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix, InterfaceContainerCoordinateFix> {}
-				[System.Serializable]
-				public class ContainerUVFix : Container<Library_SpriteStudio6.Data.Animation.Attribute.UVFix, InterfaceContainerUVFix> {}
 				#endregion Classes, Structs & Interfaces
 
 				/* Part: SpriteStudio6/Library/Data/Animation/PackAttributeFunction.cs */
@@ -1013,7 +967,11 @@ public static partial class Library_SpriteStudio6
 				{
 					get
 					{
-						return(0 < Mesh.TableVertex.Length);
+						if(null == Mesh.TableCoordinate)
+						{
+							return(false);
+						}
+						return(0 < Mesh.TableCoordinate.Length);
 					}
 				}
 				#endregion Variables & Properties
@@ -1068,15 +1026,23 @@ public static partial class Library_SpriteStudio6
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
-					public Vector2[] TableVertex;
+					public Vector2[] TableCoordinate;
 					public int[] TableIndexVertex;
+
+					public int CountMesh
+					{
+						get
+						{
+							return(TableIndexVertex.Length / (int)Constants.COUNT_VERTEX_SURFACE);
+						}
+					}
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
 					public void CleanUp()
 					{
-						TableVertex = null;
+						TableCoordinate = null;
 						TableIndexVertex = null;
 					}
 
@@ -1088,14 +1054,14 @@ public static partial class Library_SpriteStudio6
 							return(true);
 						}
 
-						TableVertex = new Vector2[countVertex];
-						if(null == TableVertex)
+						TableCoordinate = new Vector2[countVertex];
+						if(null == TableCoordinate)
 						{
 							goto BootUp_ErrorEnd;
 						}
 
 						TableIndexVertex = new int[countTriangle * (int)Constants.COUNT_VERTEX_SURFACE];
-						if(null == TableVertex)
+						if(null == TableIndexVertex)
 						{
 							goto BootUp_ErrorEnd;
 						}
@@ -1118,7 +1084,7 @@ public static partial class Library_SpriteStudio6
 
 					public bool CopyShallow(ref DataMesh original)
 					{
-						TableVertex = original.TableVertex;
+						TableCoordinate = original.TableCoordinate;
 						TableIndexVertex = original.TableIndexVertex;
 
 						return(true);
@@ -1127,18 +1093,18 @@ public static partial class Library_SpriteStudio6
 					public bool CopyDeep(ref DataMesh original)
 					{
 						int count;
-						if(null != original.TableVertex)
+						if(null != original.TableCoordinate)
 						{
-							count = original.TableVertex.Length;
-							TableVertex = new Vector2[count];
+							count = original.TableCoordinate.Length;
+							TableCoordinate = new Vector2[count];
 							for(int i=0; i<count; i++)
 							{
-								TableVertex[i] = original.TableVertex[i];
+								TableCoordinate[i] = original.TableCoordinate[i];
 							}
 						}
 						else
 						{
-							TableVertex = null;
+							TableCoordinate = null;
 						}
 
 						if(null != original.TableIndexVertex)
@@ -1204,7 +1170,11 @@ public static partial class Library_SpriteStudio6
 				public int ID;
 				public int IDParent;
 				public int[] TableIDChild;
+
 				public KindFeature Feature;
+				public int CountMesh;
+				public BindMesh Mesh;
+
 				public ColorLabel LabelColor;
 				public Library_SpriteStudio6.KindOperationBlend OperationBlendTarget;
 
@@ -1225,6 +1195,8 @@ public static partial class Library_SpriteStudio6
 					IDParent = -1;
 
 					Feature = (KindFeature)(-1);
+					CountMesh = 0;
+
 					OperationBlendTarget = Library_SpriteStudio6.KindOperationBlend.NON;
 					LabelColor.CleanUp();
 
@@ -1250,10 +1222,9 @@ public static partial class Library_SpriteStudio6
 
 					MASK_TRIANGLE2,	/* No use Vertex-Collection Mask-Parts */
 					MASK_TRIANGLE4,	/* Use Vertex-Collection Mask-Parts */
-					CLEARSTENCIL,	/* Player (for Unity) only */
 
 					JOINT,
-					ARMATURE,
+					BONE,
 					MOVENODE,
 					CONSTRAINT,
 					BONEPOINT,
@@ -1342,6 +1313,128 @@ public static partial class Library_SpriteStudio6
 						new ColorLabel(KindForm.GRAY, new Color(0.67f, 0.67f, 0.67f, 1.0f)),
 					};
 					#endregion Enums & Constants
+				}
+
+				[System.Serializable]
+				public struct BindMesh
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public Vertex[] TableVertex;
+					public Vector2[] TableRateUV;
+					public int[] TableIndexVertex;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						TableVertex = null;
+						TableRateUV = null;
+						TableIndexVertex = null;
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Classes, Structs & Interfaces */
+					#region Classes, Structs & Interfaces
+					[System.Serializable]
+					public struct Vertex
+					{
+						/* ----------------------------------------------- Variables & Properties */
+						#region Variables & Properties
+						public Bone[] TableBone;
+						#endregion Variables & Properties
+
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public void CleanUp()
+						{
+							TableBone = null;
+						}
+
+						public bool BootUp(int countBone)
+						{
+							TableBone = new Bone[countBone];
+							if(null == TableBone)
+							{
+								return(false);
+							}
+
+							for(int i=0; i<countBone; i++)
+							{
+								TableBone[i].CleanUp();
+							}
+
+							return(true);
+						}
+						#endregion Functions
+
+						/* ----------------------------------------------- Classes, Structs & Interfaces */
+						#region Classes, Structs & Interfaces
+						[System.Serializable]
+						public struct Bone
+						{
+							/* ----------------------------------------------- Variables & Properties */
+							#region Variables & Properties
+							public int Index;
+							public float Weight;
+							public Vector3 CoordinateOffset;
+							#endregion Variables & Properties
+
+							/* ----------------------------------------------- Functions */
+							#region Functions
+							public void CleanUp()
+							{
+								Index = -1;
+								Weight = 0.0f;
+								CoordinateOffset = Vector3.zero;
+							}
+							#endregion Functions
+						}
+						#endregion Classes, Structs & Interfaces
+					}
+					#endregion Classes, Structs & Interfaces
+				}
+
+				[System.Serializable]
+				public struct Catalog
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public int[] TableIDPartsNULL;
+					public int[] TableIDPartsTriangle2;
+					public int[] TableIDPartsTriangle4;
+					public int[] TableIDPartsInstance;
+					public int[] TableIDPartsEffect;
+					public int[] TableIDPartsMaskTriangle2;
+					public int[] TableIDPartsMaskTriangle4;
+					public int[] TableIDPartsJoint;
+					public int[] TableIDPartsBone;
+					public int[] TableIDPartsMoveNode;
+					public int[] TableIDPartsConstraint;
+					public int[] TableIDPartsBonePoint;
+					public int[] TableIDPartsMesh;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						TableIDPartsNULL = null;
+						TableIDPartsTriangle2 = null;
+						TableIDPartsTriangle4 = null;
+						TableIDPartsInstance = null;
+						TableIDPartsEffect = null;
+						TableIDPartsJoint = null;
+						TableIDPartsMaskTriangle2 = null;
+						TableIDPartsMaskTriangle4 = null;
+						TableIDPartsBone = null;
+						TableIDPartsMoveNode = null;
+						TableIDPartsConstraint = null;
+						TableIDPartsBonePoint = null;
+						TableIDPartsMesh = null;
+					}
+					#endregion Functions
 				}
 				#endregion Classes, Structs & Interfaces
 			}
@@ -1472,14 +1565,12 @@ public static partial class Library_SpriteStudio6
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Add"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/AddPA"),
 			};
 
 			public readonly static UnityEngine.Shader[] TableEffectMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/AddPA"),
 			};
 			#endregion Enums & Constants
 		}
@@ -2018,12 +2109,14 @@ public static partial class Library_SpriteStudio6
 				ListIndexVertexSplit = null;
 			}
 
-			internal bool BootUp(int countSpriteMax, int countParticleMax)
+			internal bool BootUp(int countSpriteMax, int countMeshMax, int countParticleMax)
 			{
 				/* MEMO: Buffer length is added up as "Sprite is Triangle-4" and "Effect is Triangle-2". */
 				int countVertex =	(countSpriteMax * (int)Library_SpriteStudio6.KindVertex.TERMINATOR4)
+									+ (countMeshMax * (int)Library_SpriteStudio6.KindVertex.TERMINATOR3)
 									+ (countParticleMax * (int)Library_SpriteStudio6.KindVertex.TERMINATOR2);
 				int countIndexVertex =	(countSpriteMax * Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle4.Length)
+										+ (countMeshMax * (int)Library_SpriteStudio6.KindVertex.TERMINATOR3)
 										+ (countParticleMax * Library_SpriteStudio6.Draw.Model.TableIndexVertex_Triangle2.Length);
 
 				bool flagRenew;
@@ -2232,6 +2325,62 @@ public static partial class Library_SpriteStudio6
 				return(chain);
 			}
 
+			internal Chain VertexAddMesh(	Chain chain,
+											Vector3[] tableCoordinate,
+											Color32[] tableColorParts,
+											Vector2[] tableUVTexture,
+											Vector2[] tableParameterBlend,
+											int[] tableIndexVertex,
+											Material material
+										)
+			{
+				int countCoordinate = ListCoordinate.Count;
+				int countVertex = tableCoordinate.Length;
+				if((countCoordinate + countVertex) > ListCoordinate.Capacity)
+				{	/* Capacity Over */
+					return(null);
+				}
+
+//				if(null == material)
+//				{	/* Material Invalid */
+//					return(null);
+//				}
+
+				/* Decide Chain */
+				/* MEMO: Do not unite Sub-Cluster calls. */
+				if((null != ChainLast) && (material == ChainLast.MaterialDraw))
+				{	/* Same Material (Use exist Chain) */
+					chain = ChainLast;
+				}
+				else
+				{	/* Use new Chain */
+					chain.DataPurge();
+					chain.MaterialDraw = material;
+					ChainAdd(chain);
+				}
+
+				/* Add Vertex data */
+				for(int i=0; i<countVertex; i++)
+				{
+					ListCoordinate.Add(tableCoordinate[i]);
+					ListColorParts.Add(tableColorParts[i]);
+					ListUVTexture.Add(tableUVTexture[i]);
+					ListParameterBlend.Add(tableParameterBlend[i]);
+				}
+
+				/* Add Vertex-Index data */
+				int countIndex = tableIndexVertex.Length;
+				int indexVertexTop = ListIndexVertex.Count;
+				for(int i=0; i<countIndex; i++)
+				{
+					ListIndexVertex.Add(tableIndexVertex[i] + countCoordinate);
+				}
+
+				chain.Add(indexVertexTop, countIndex);
+
+				return(chain);
+			}
+
 			internal int Fix()
 			{
 				int count = 0;
@@ -2288,22 +2437,7 @@ public static partial class Library_SpriteStudio6
 						mesh.subMeshCount = countMaterial;
 
 						int indexMaterial = 0;
-#if false
-						/* MEMO: "LINQ" is as a of course, also "GetRange" and etc consumes managed-heap. */
-						List<int> listIndexVertexChain = null;
-						while(null != chain)
-						{
-							listIndexVertexChain = ListIndexVertex.GetRange(chain.IndexVertex, chain.CountVertex);	/* GC Alloc, at GetRange */
-							mesh.SetTriangles(listIndexVertexChain, indexMaterial);
-							listIndexVertexChain.Clear();
-							listIndexVertexChain = null;
 
-							tableMaterial[indexMaterial] = chain.MaterialDraw;
-
-							indexMaterial++;
-							chain = chain.ChainNext;
-						}
-#else
 						/* MEMO: Excepting manually copying "List", I don't know ways to split list without consuming managed-heap. */
 						/*       Time to copy is waste, but seem that CPU-load is light.                                            */
 						int indexVertexTop;
@@ -2325,7 +2459,6 @@ public static partial class Library_SpriteStudio6
 							indexMaterial++;
 							chain = chain.ChainNext;
 						}
-#endif
 					}
 					else
 					{	/* Single-Material */
@@ -2394,7 +2527,7 @@ public static partial class Library_SpriteStudio6
 			#endregion Classes, Structs & Interfaces
 		}
 
-		internal static class Model
+		public static class Model
 		{
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
@@ -2410,7 +2543,7 @@ public static partial class Library_SpriteStudio6
 				(int)Library_SpriteStudio6.KindVertex.C, (int)Library_SpriteStudio6.KindVertex.RD, (int)Library_SpriteStudio6.KindVertex.LD,
 				(int)Library_SpriteStudio6.KindVertex.C, (int)Library_SpriteStudio6.KindVertex.LD, (int)Library_SpriteStudio6.KindVertex.LU,
 			};
-			internal readonly static Vector3[] TableUVMapping = new Vector3[]
+			public readonly static Vector3[] TableUVMapping = new Vector3[]
 			{	/* MEMO: Used externally */
 				/* LU */	new Vector3(-0.5f, 0.5f, 0.0f),
 				/* RU */	new Vector3(0.5f, 0.5f, 0.0f),

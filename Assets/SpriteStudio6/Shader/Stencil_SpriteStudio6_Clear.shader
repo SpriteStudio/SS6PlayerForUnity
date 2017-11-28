@@ -42,7 +42,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/Clear"
 			#include "UnityCG.cginc"
 
 			#include "Base/Shader_Data_SpriteStudio6.cginc"
-//			#include "Base/ShaderVertex_Sprite_SpriteStudio6.cginc"
+
 			InputPS VS_main(InputVS input)
 			{
 				InputPS output;
@@ -59,7 +59,6 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/Clear"
 				return(output);
 			}
 
-//			#include "Base/ShaderPixel_Sprite_SpriteStudio6.cginc"
 			#ifdef SV_Target
 			fixed4 PS_main(InputPS input) : SV_Target
 			#else

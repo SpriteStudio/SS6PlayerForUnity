@@ -4,7 +4,7 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
-#define TAKE_AWAY_UNSUPPORTED_FUNCTION
+// #define BONEINDEX_CONVERT_PARTSID
 
 using System.Collections;
 using System.Collections.Generic;
@@ -89,7 +89,24 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				informationSSAE.CleanUp();
 				informationSSAE.Version = version;
-				informationSSAE.FormatSS6PU = Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN;
+				informationSSAE.ListBone = new List<string>();
+				if(null == informationSSAE.ListBone)
+				{
+					LogError(messageLogPrefix, "Not Enough Memory (Bone list)", nameFile, informationSSPJ);
+					goto Parse_ErrorEnd;
+				}
+				informationSSAE.ListBindMesh = new List<Information.BindMesh>();
+				if(null == informationSSAE.ListBindMesh)
+				{
+					LogError(messageLogPrefix, "Not Enough Memory (Mesh-Bind list)", nameFile, informationSSPJ);
+					goto Parse_ErrorEnd;
+				}
+
+				if(false == informationSSAE.CatalogParts.BootUp())
+				{
+					LogError(messageLogPrefix, "Not Enough Memory (Parts-Catalog)", nameFile, informationSSPJ);
+					goto Parse_ErrorEnd;
+				}
 
 				/* Get Base-Directories */
 				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out informationSSAE.NameDirectory, out informationSSAE.NameFileBody, out informationSSAE.NameFileExtension, nameFile);
@@ -100,7 +117,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				System.Xml.XmlNamespaceManager managerNameSpace = new System.Xml.XmlNamespaceManager(nodeNameSpace);
 				System.Xml.XmlNodeList listNode= null;
 
-				/* Parts-Data Get */
+				/* Decode Parts-Data */
 				listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "Model/partList/value", managerNameSpace);
 				if(null == listNode)
 				{
@@ -116,7 +133,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				foreach(System.Xml.XmlNode nodeAnimation in listNode)
 				{
-					/* Part-Data Get */
+					/* Get Part-Data */
 					int indexParts = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeAnimation, "arrayIndex", managerNameSpace));
 					informationSSAE.TableParts[indexParts] = ParseParts(	ref setting,
 																			informationSSPJ,
@@ -156,6 +173,92 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						default:
 							goto case Information.Parts.KindInheritance.PARENT;
+					}
+				}
+
+				/* Decode Bone-List */
+				listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "Model/boneList/item", managerNameSpace);
+				if(null != listNode)
+				{
+					int countBoneList = listNode.Count;
+					if(0 < countBoneList)
+					{
+						/* MEMO: In reality no need, but in case the bone's index is flying. */
+						for(int i=0; i<countBoneList; i++)
+						{
+							informationSSAE.ListBone.Add(null);
+						}
+
+						int indexBone;
+						string nameBoneParts;
+						foreach(System.Xml.XmlNode nodeBone in listNode)
+						{
+							/* Get Bone-List */
+							nameBoneParts = nodeBone.Attributes["key"].Value;
+							indexBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(nodeBone.InnerText);
+							if(0 <= indexBone)
+							{
+								informationSSAE.ListBone[indexBone] = string.Copy(nameBoneParts);
+							}
+						}
+					}
+				}
+
+				/* Decode MeshBind List */
+				listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "Model/meshList/value", managerNameSpace);
+				if(null != listNode)
+				{
+					string[] valueTextSplitVertex = null;
+					string[] valueTextSplitParameter = null;
+					int countVertex;
+					int countBone;
+
+					foreach(System.Xml.XmlNode nodeBindMesh in listNode)
+					{
+						Information.BindMesh bindMesh = new Information.BindMesh();
+						bindMesh.BootUp();
+
+						if(false == string.IsNullOrEmpty(nodeBindMesh.InnerText))
+						{
+							Library_SpriteStudio6.Data.Parts.Animation.BindMesh.Vertex bindVertex = new Library_SpriteStudio6.Data.Parts.Animation.BindMesh.Vertex();
+
+							valueTextSplitVertex = nodeBindMesh.InnerText.Split(',');
+							if(null != valueTextSplitVertex)
+							{
+								/* MEMO: Since the end always ends with "," count is one more than actual vertices. */
+								countVertex = valueTextSplitVertex.Length;
+								if(true == string.IsNullOrEmpty(valueTextSplitVertex[countVertex - 1]))
+								{
+									countVertex--;
+								}
+
+								for(int i=0; i<countVertex; i++)
+								{
+									valueTextSplitParameter = valueTextSplitVertex[i].Split(' ');
+
+									/* Get Bone-count */
+									countBone =  LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplitParameter[0]);
+
+									bindVertex.CleanUp();
+									bindVertex.BootUp(countBone);
+
+									/* Set Bones */
+									for(int j=0; j<countBone; j++)
+									{
+										bindVertex.TableBone[j].Index = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplitParameter[((j * 4) + 1) + 0]);
+										bindVertex.TableBone[j].Weight = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplitParameter[((j * 4) + 1) + 1])) * 0.01f;
+										bindVertex.TableBone[j].CoordinateOffset.x = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueTextSplitParameter[((j * 4) + 1) + 2]);
+										bindVertex.TableBone[j].CoordinateOffset.y = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueTextSplitParameter[((j * 4) + 1) + 3]);
+										bindVertex.TableBone[j].CoordinateOffset.z = 0.0f;
+									}
+
+									/* Add Vertex-binding */
+									bindMesh.ListBindVertex.Add(bindVertex);
+								}
+							}
+						}
+
+						informationSSAE.ListBindMesh.Add(bindMesh);
 					}
 				}
 
@@ -280,9 +383,77 @@ public static partial class LibraryEditor_SpriteStudio6
 					informationSSAE.TableAnimation[i].DrawOrderCreate(informationSSPJ, informationSSAE);
 				}
 
+				/* Gather Parts-ID by feature(usage) */
+				/* MEMO: Can not gather unless Parts' "Feature" has been finalized. */
+				countParts = informationSSAE.TableParts.Length;
+				for(int i=0; i<countParts; i++)
+				{
+					switch(informationSSAE.TableParts[i].Data.Feature)
+					{
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+							informationSSAE.CatalogParts.ListIDPartsNULL.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+							informationSSAE.CatalogParts.ListIDPartsTriangle2.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+							informationSSAE.CatalogParts.ListIDPartsTriangle4.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+							informationSSAE.CatalogParts.ListIDPartsInstance.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+							informationSSAE.CatalogParts.ListIDPartsEffect.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+							informationSSAE.CatalogParts.ListIDPartsMaskTriangle2.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+							informationSSAE.CatalogParts.ListIDPartsMaskTriangle4.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+							informationSSAE.CatalogParts.ListIDPartsJoint.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+							informationSSAE.CatalogParts.ListIDPartsBone.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+							informationSSAE.CatalogParts.ListIDPartsMoveNode.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+							informationSSAE.CatalogParts.ListIDPartsConstraint.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+							informationSSAE.CatalogParts.ListIDPartsBonePoint.Add(i);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+							informationSSAE.CatalogParts.ListIDPartsMesh.Add(i);
+							break;
+
+						default:
+							break;
+					}
+				}
+
 				return(informationSSAE);
 
 			Parse_ErrorEnd:;
+				informationSSAE = null;
 				return(null);
 			}
 
@@ -344,11 +515,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					case "mask":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK;
 						break;
-#if TAKE_AWAY_UNSUPPORTED_FUNCTION
-					default:
-						LogWarning(messageLogPrefix, "Unknown Parts-Type (Unsupported in this version) \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
-						goto case "null";
-#else
+
 					case "mesh":
 						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH;
 						break;
@@ -358,7 +525,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 
 					case "armature":
-						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE;
+						informationParts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE;
 						break;
 
 					case "movenode":
@@ -376,7 +543,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					default:
 						LogWarning(messageLogPrefix, "Unknown Parts-Type \"" + valueText + "\" Parts[" + indexParts.ToString() + "]", nameFileSSAE, informationSSPJ);
 						goto case "null";
-#endif
 				}
 
 				/* Get "Collision" Datas */
@@ -1662,11 +1828,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							/* Unknown Attributes */
 							default:
-#if TAKE_AWAY_UNSUPPORTED_FUNCTION
-								LogWarning(messageLogPrefix, "Unknown Attribute (Unsupported in this version) \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-#else
 								LogWarning(messageLogPrefix, "Unknown Attribute \"" + tagText + "\" Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-#endif
 								break;
 						}
 					}
@@ -1815,11 +1977,15 @@ public static partial class LibraryEditor_SpriteStudio6
 				public string NameFileExtension;
 
 				public Parts[] TableParts;
+				public Catalog.Parts CatalogParts;
+
 				public int[] TableIndexCellMap;
 				public Animation[] TableAnimation;
 				public Animation AnimationSetup;
 
-				public Library_SpriteStudio6.Data.Animation.Parts.KindFormat FormatSS6PU;
+				public List<string> ListBone;
+				public List<BindMesh> ListBindMesh;
+
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataAnimation> DataAnimationSS6PU;
 				public LibraryEditor_SpriteStudio6.Import.Assets<Object> PrefabAnimationSS6PU;
 				public string NameGameObjectAnimationSS6PU;
@@ -1838,9 +2004,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					NameFileExtension = "";
 
 					TableParts = null;
+					CatalogParts.CleanUp();
+
 					TableIndexCellMap = null;
 					TableAnimation = null;
 					AnimationSetup = null;
+
+					ListBone = null;
+					ListBindMesh = null;
 
 					DataAnimationSS6PU.CleanUp();
 					DataAnimationSS6PU.BootUp(1);	/* Always 1 */
@@ -1881,6 +2052,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					#region Variables & Properties
 					public Library_SpriteStudio6.Data.Parts.Animation Data;
 
+					public int IndexCellMapMeshBind;
+					public int IndexCellMeshBind;
+
 					public KindInheritance Inheritance;
 					public FlagBitInheritance FlagInheritance;
 
@@ -1899,6 +2073,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					public void CleanUp()
 					{
 						Data.CleanUp();
+
+						IndexCellMapMeshBind = -1;
+						IndexCellMeshBind = -1;
 
 						Inheritance = KindInheritance.PARENT;
 						FlagInheritance = FlagBitInheritance.CLEAR;
@@ -2063,6 +2240,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+									parts.Data.CountMesh = 0;
+
 									animationParts.Cell.ListKey.Clear();
 
 									animationParts.PartsColor.ListKey.Clear();
@@ -2093,10 +2272,12 @@ public static partial class LibraryEditor_SpriteStudio6
 									if(0 >= animationParts.VertexCorrection.CountGetKey())
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2;
+										parts.Data.CountMesh = 2;
 									}
 									else
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
+										parts.Data.CountMesh = 4;
 									}
 									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
 
@@ -2106,6 +2287,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									if(0 <= animationParts.VertexCorrection.CountGetKey())
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
+										parts.Data.CountMesh = 4;
 									}
 									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
 
@@ -2117,6 +2299,8 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+									parts.Data.CountMesh = 0;
+
 									animationParts.Cell.ListKey.Clear();
 
 									animationParts.FlipX.ListKey.Clear();
@@ -2150,6 +2334,8 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+									parts.Data.CountMesh = 0;
+
 									animationParts.Cell.ListKey.Clear();
 
 									animationParts.FlipX.ListKey.Clear();
@@ -2187,10 +2373,12 @@ public static partial class LibraryEditor_SpriteStudio6
 									if(0 <= animationParts.VertexCorrection.CountGetKey())
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
+										parts.Data.CountMesh = 4;
 									}
 									else
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2;
+										parts.Data.CountMesh = 2;
 									}
 									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
 
@@ -2200,6 +2388,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									if(0 <= animationParts.VertexCorrection.CountGetKey())
 									{
 										parts.Data.Feature = Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
+										parts.Data.CountMesh = 4;
 									}
 									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
 
@@ -2209,8 +2398,72 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+									parts.Data.CountMesh = 0;
+
+									animationParts.Cell.ListKey.Clear();
+
+									animationParts.FlipX.ListKey.Clear();
+									animationParts.FlipY.ListKey.Clear();
+
+									animationParts.PartsColor.ListKey.Clear();
+									animationParts.VertexCorrection.ListKey.Clear();
+
+									animationParts.PivotOffsetX.ListKey.Clear();
+									animationParts.PivotOffsetY.ListKey.Clear();
+
+									animationParts.SizeForceX.ListKey.Clear();
+									animationParts.SizeForceY.ListKey.Clear();
+
+									animationParts.TexturePositionX.ListKey.Clear();
+									animationParts.TexturePositionY.ListKey.Clear();
+									animationParts.TextureRotation.ListKey.Clear();
+									animationParts.TextureScalingX.ListKey.Clear();
+									animationParts.TextureScalingY.ListKey.Clear();
+									animationParts.TextureFlipX.ListKey.Clear();
+									animationParts.TextureFlipY.ListKey.Clear();
+
+									animationParts.PowerMask.ListKey.Clear();
+
+									animationParts.Instance.ListKey.Clear();
+									animationParts.Effect.ListKey.Clear();
 									break;
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+									parts.Data.CountMesh = 0;
+
+									animationParts.Cell.ListKey.Clear();
+
+									animationParts.RotationX.ListKey.Clear();
+									animationParts.RotationY.ListKey.Clear();
+
+									animationParts.ScalingXLocal.ListKey.Clear();
+									animationParts.ScalingYLocal.ListKey.Clear();
+
+									animationParts.RateOpacityLocal.ListKey.Clear();
+
+									animationParts.FlipX.ListKey.Clear();
+									animationParts.FlipY.ListKey.Clear();
+
+									animationParts.PartsColor.ListKey.Clear();
+									animationParts.VertexCorrection.ListKey.Clear();
+
+									animationParts.PivotOffsetX.ListKey.Clear();
+									animationParts.PivotOffsetY.ListKey.Clear();
+
+									animationParts.SizeForceX.ListKey.Clear();
+									animationParts.SizeForceY.ListKey.Clear();
+
+									animationParts.TexturePositionX.ListKey.Clear();
+									animationParts.TexturePositionY.ListKey.Clear();
+									animationParts.TextureRotation.ListKey.Clear();
+									animationParts.TextureScalingX.ListKey.Clear();
+									animationParts.TextureScalingY.ListKey.Clear();
+									animationParts.TextureFlipX.ListKey.Clear();
+									animationParts.TextureFlipY.ListKey.Clear();
+
+									animationParts.PowerMask.ListKey.Clear();
+
+									animationParts.Instance.ListKey.Clear();
+									animationParts.Effect.ListKey.Clear();
 									break;
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 									break;
@@ -2220,6 +2473,45 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+									animationParts.FlipX.ListKey.Clear();
+									animationParts.FlipY.ListKey.Clear();
+
+									animationParts.PartsColor.ListKey.Clear();
+
+									animationParts.TexturePositionX.ListKey.Clear();
+									animationParts.TexturePositionY.ListKey.Clear();
+									animationParts.TextureRotation.ListKey.Clear();
+									animationParts.TextureScalingX.ListKey.Clear();
+									animationParts.TextureScalingY.ListKey.Clear();
+									animationParts.TextureFlipX.ListKey.Clear();
+									animationParts.TextureFlipY.ListKey.Clear();
+
+									animationParts.PowerMask.ListKey.Clear();
+
+									animationParts.Instance.ListKey.Clear();
+									animationParts.Effect.ListKey.Clear();
+
+									/* MEMO: Since Mesh's cell is set in "Setup" animation, can not be changed for each animation. */
+									/*       But just in case, get mesh count each animation.                                      */
+									if(0 <= animationParts.Cell.CountGetKey())
+									{
+										int indexCellMap = animationParts.Cell.ListKey[0].Value.IndexCellMap;
+										int indexCell = animationParts.Cell.ListKey[0].Value.IndexCell;
+										if((0 <= indexCellMap) && (0 <= indexCell))
+										{
+											if(true == informationSSPJ.TableInformationSSCE[indexCellMap].TableCell[indexCell].Data.IsMesh)
+											{
+												int countMesh = informationSSPJ.TableInformationSSCE[indexCellMap].TableCell[indexCell].Data.Mesh.CountMesh;
+												if(parts.Data.CountMesh < countMesh)
+												{
+													parts.IndexCellMapMeshBind = indexCellMap;
+													parts.IndexCellMeshBind = indexCell;
+
+													parts.Data.CountMesh = countMesh;
+												}
+											}
+										}
+									}
 									break;
 
 								default:
@@ -2471,6 +2763,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 									/* MEMO: Normal rendering parts only draw on "Draw". */
 									/* Create Draw-Order table */
 									animationParts.TableOrderDraw = new int[countFrame];
@@ -2499,13 +2792,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
-									break;
-
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 									break;
 
 								default:
@@ -2561,6 +2851,7 @@ public static partial class LibraryEditor_SpriteStudio6
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 											/* MEMO: Not be added to list at when hide state. */
 											if(false == animationParts.TableHide[frame])
 											{
@@ -2588,13 +2879,10 @@ public static partial class LibraryEditor_SpriteStudio6
 											break;
 
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
-											break;
-
-										case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 											break;
 
 										default:
@@ -2650,6 +2938,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 										break;
 
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
@@ -2660,13 +2949,10 @@ public static partial class LibraryEditor_SpriteStudio6
 										break;
 
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
-										break;
-
-									case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 										break;
 
 									default:
@@ -2783,14 +3069,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance Instance;
 						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect Effect;
 
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt FixIndexCellMap;
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix FixCoordinate;
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix FixUV;
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat FixSizeCollisionX;
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat FixSizeCollisionY;
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat FixPivotCollisionX;
-						public Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat FixPivotCollisionY;
-
 						public Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus StatusParts;
 						public bool[] TableHide;	/* Expand "Hide"attribute in order to drawing state optimize. */
 						public int[] TableOrderDraw;
@@ -2887,21 +3165,6 @@ public static partial class LibraryEditor_SpriteStudio6
 							Effect = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect();
 							Effect.CleanUp();
 
-							FixIndexCellMap = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt();
-							FixIndexCellMap.CleanUp();
-							FixCoordinate = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix();
-							FixCoordinate.CleanUp();
-							FixUV = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix();
-							FixUV.CleanUp();
-							FixSizeCollisionX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
-							FixSizeCollisionX.CleanUp();
-							FixSizeCollisionY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
-							FixSizeCollisionY.CleanUp();
-							FixPivotCollisionX = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
-							FixPivotCollisionX.CleanUp();
-							FixPivotCollisionY = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat();
-							FixPivotCollisionY.CleanUp();
-
 							StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
 							TableHide = null;
 							TableOrderDraw = null;
@@ -2957,14 +3220,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							Instance.BootUp();
 							Effect.BootUp();
-
-							FixIndexCellMap.BootUp();
-							FixCoordinate.BootUp();
-							FixUV.BootUp();
-							FixSizeCollisionX.BootUp();
-							FixSizeCollisionY.BootUp();
-							FixPivotCollisionX.BootUp();
-							FixPivotCollisionY.BootUp();
 
 							StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
 							TableHide = null;
@@ -3024,14 +3279,6 @@ public static partial class LibraryEditor_SpriteStudio6
 							Instance.ShutDown();
 							Effect.ShutDown();
 
-							FixIndexCellMap.ShutDown();
-							FixCoordinate.ShutDown();
-							FixUV.ShutDown();
-							FixSizeCollisionX.ShutDown();
-							FixSizeCollisionY.ShutDown();
-							FixPivotCollisionX.ShutDown();
-							FixPivotCollisionY.ShutDown();
-
 							StatusParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.CLEAR;
 							TableHide = null;
 							TableOrderDraw = null;
@@ -3040,6 +3287,120 @@ public static partial class LibraryEditor_SpriteStudio6
 						#endregion Functions
 					}
 					#endregion Classes, Structs & Interfaces
+				}
+
+				public struct BindMesh
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public List<Library_SpriteStudio6.Data.Parts.Animation.BindMesh.Vertex> ListBindVertex;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						ListBindVertex = null;
+					}
+
+					public bool BootUp()
+					{
+						ListBindVertex = new List<Library_SpriteStudio6.Data.Parts.Animation.BindMesh.Vertex>();
+						if(null == ListBindVertex)
+						{
+							return(false);
+						}
+
+						ListBindVertex.Clear();
+						return(true);
+					}
+					#endregion Functions
+				}
+
+				public static class Catalog
+				{
+					public struct Parts
+					{
+						/* ----------------------------------------------- Variables & Properties */
+						#region Variables & Properties
+						public List<int> ListIDPartsNULL;
+						public List<int> ListIDPartsTriangle2;
+						public List<int> ListIDPartsTriangle4;
+						public List<int> ListIDPartsInstance;
+						public List<int> ListIDPartsEffect;
+						public List<int> ListIDPartsMaskTriangle2;
+						public List<int> ListIDPartsMaskTriangle4;
+						public List<int> ListIDPartsJoint;
+						public List<int> ListIDPartsBone;
+						public List<int> ListIDPartsMoveNode;
+						public List<int> ListIDPartsConstraint;
+						public List<int> ListIDPartsBonePoint;
+						public List<int> ListIDPartsMesh;
+						#endregion Variables & Properties
+
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public void CleanUp()
+						{
+							ListIDPartsNULL = null;
+							ListIDPartsTriangle2 = null;
+							ListIDPartsTriangle4 = null;
+							ListIDPartsInstance = null;
+							ListIDPartsEffect = null;
+							ListIDPartsMaskTriangle2 = null;
+							ListIDPartsMaskTriangle4 = null;
+							ListIDPartsJoint = null;
+							ListIDPartsBone = null;
+							ListIDPartsMoveNode = null;
+							ListIDPartsConstraint = null;
+							ListIDPartsBonePoint = null;
+							ListIDPartsMesh = null;
+						}
+
+						public bool BootUp()
+						{
+							ListIDPartsNULL = new List<int>();
+							ListIDPartsTriangle2 = new List<int>();
+							ListIDPartsTriangle4 = new List<int>();
+							ListIDPartsInstance = new List<int>();
+							ListIDPartsEffect = new List<int>();
+							ListIDPartsMaskTriangle2 = new List<int>();
+							ListIDPartsMaskTriangle4 = new List<int>();
+							ListIDPartsJoint = new List<int>();
+							ListIDPartsBone = new List<int>();
+							ListIDPartsMoveNode = new List<int>();
+							ListIDPartsConstraint = new List<int>();
+							ListIDPartsBonePoint = new List<int>();
+							ListIDPartsMesh = new List<int>();
+
+							if(	(null == ListIDPartsNULL)
+								|| (null == ListIDPartsTriangle2) || (null == ListIDPartsTriangle4)
+								|| (null == ListIDPartsInstance) || (null == ListIDPartsEffect)
+								|| (null == ListIDPartsMaskTriangle2) || (null == ListIDPartsMaskTriangle4)
+								|| (null == ListIDPartsJoint) || (null == ListIDPartsBone) || (null == ListIDPartsMoveNode) || (null == ListIDPartsConstraint) || (null == ListIDPartsBonePoint) || (null == ListIDPartsMesh)
+								)
+							{
+								return(false);
+							}
+
+							ListIDPartsNULL.Clear();
+							ListIDPartsTriangle2.Clear();
+							ListIDPartsTriangle4.Clear();
+							ListIDPartsInstance.Clear();
+							ListIDPartsEffect.Clear();
+							ListIDPartsMaskTriangle2.Clear();
+							ListIDPartsMaskTriangle4.Clear();
+							ListIDPartsJoint.Clear();
+							ListIDPartsBone.Clear();
+							ListIDPartsMoveNode.Clear();
+							ListIDPartsConstraint.Clear();
+							ListIDPartsBonePoint.Clear();
+							ListIDPartsMesh.Clear();
+
+							return(true);
+						}
+						#endregion Functions
+					}
 				}
 				#endregion Classes, Structs & Interfaces
 			}
@@ -3147,6 +3508,20 @@ public static partial class LibraryEditor_SpriteStudio6
 						tableAnimationRuntime[i] = informationSSAE.TableAnimation[i].Data;
 					}
 					dataAnimation.TableAnimation = tableAnimationRuntime;
+
+					dataAnimation.CatalogParts.TableIDPartsNULL = informationSSAE.CatalogParts.ListIDPartsNULL.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsTriangle2 = informationSSAE.CatalogParts.ListIDPartsTriangle2.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsTriangle4 = informationSSAE.CatalogParts.ListIDPartsTriangle4.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsInstance = informationSSAE.CatalogParts.ListIDPartsInstance.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsEffect = informationSSAE.CatalogParts.ListIDPartsEffect.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsMaskTriangle2 = informationSSAE.CatalogParts.ListIDPartsMaskTriangle2.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsMaskTriangle4 = informationSSAE.CatalogParts.ListIDPartsMaskTriangle4.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsJoint = informationSSAE.CatalogParts.ListIDPartsJoint.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsBone = informationSSAE.CatalogParts.ListIDPartsBone.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsMoveNode = informationSSAE.CatalogParts.ListIDPartsMoveNode.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsConstraint = informationSSAE.CatalogParts.ListIDPartsConstraint.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsBonePoint = informationSSAE.CatalogParts.ListIDPartsBonePoint.ToArray();
+					dataAnimation.CatalogParts.TableIDPartsMesh = informationSSAE.CatalogParts.ListIDPartsMesh.ToArray();
 
 					dataAnimation.TableMaterial = informationSSPJ.TableMaterialAnimationSS6PU;	/* Back up original */
 
@@ -3499,29 +3874,17 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(false);
 				}
 
-				public static bool ConvertFixMesh(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-													LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
-												)
-				{
-					const string messageLogPrefix = "Convert Fixing-Mesh (Data-Animation)";
-					informationSSAE.FormatSS6PU = Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX;
-					return(true);
-
-//				ConvertDataFixMesh_ErrorEnd:;
-//					return(false);
-				}
-
 				public static bool ConvertData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 												LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
 											)
 				{
 					const string messageLogPrefix = "Convert (Data-Animation)";
+
 					int countParts = informationSSAE.TableParts.Length;
 					int countAnimation = informationSSAE.TableAnimation.Length;
 
-					/* Convert Parts (Pick up underControl Objects) */
+					/* Set Additional-datas (Pick up underControl Objects, Set Mesh-Bind data and etc.) */
 					/* MEMO: Since order of SSAE conversion is determined in "informationSSPJ.QueueGetConvertSSAE", */
 					/*        prefabs referred to in this animation has already been fixed.                         */
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Parts informationParts = null;
@@ -3538,6 +3901,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+								/* MEMO: Set "Instance" prefab under control. */
 								informationParts.Data.PrefabUnderControl = null;
 								informationParts.Data.NameAnimationUnderControl = "";
 								if(false == string.IsNullOrEmpty(informationParts.NameUnderControl))
@@ -3552,6 +3916,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+								/* MEMO: Set "Effect" prefab under control. */
 								informationParts.Data.PrefabUnderControl = null;
 								informationParts.Data.NameAnimationUnderControl = "";
 								if(false == string.IsNullOrEmpty(informationParts.NameUnderControl))
@@ -3569,13 +3934,122 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+								/* MEMO: Set Mesh-Bind data. */
+								{
+									informationParts.Data.Mesh.CleanUp();
+
+									int indexCellMap = informationParts.IndexCellMapMeshBind;
+									int indexCell = informationParts.IndexCellMeshBind;
+									LibraryEditor_SpriteStudio6.Import.SSCE.Information cellMap = null;
+									if((0 <= indexCellMap) && (0 <= indexCell))
+									{
+										/* Set Vertex-index table */
+										if(informationSSPJ.TableInformationSSCE.Length > indexCellMap)
+										{
+											/* MEMO: "cellMap.TableCell" is purged at "SSCE.ModeSS6PU.ConvertCellMap". */
+											cellMap = informationSSPJ.TableInformationSSCE[indexCellMap];
+											if(cellMap.Data.TableCell.Length > indexCell)
+											{
+												if(true == cellMap.Data.TableCell[indexCell].IsMesh)
+												{
+													informationParts.Data.Mesh.TableIndexVertex = cellMap.Data.TableCell[indexCell].Mesh.TableIndexVertex;
+												}
+											}
+										}
+
+										/* Set UV Rate */
+										if(null != informationParts.Data.Mesh.TableIndexVertex)
+										{
+											int countVertex = cellMap.Data.TableCell[indexCell].Mesh.TableCoordinate.Length;
+											informationParts.Data.Mesh.TableRateUV = new Vector2[countVertex];
+											if(null == informationParts.Data.Mesh.TableRateUV)
+											{
+												informationParts.Data.Mesh.CleanUp();
+											}
+											else
+											{
+												Rect rectangleCell = cellMap.Data.TableCell[indexCell].Rectangle;
+												float sizeInverseX = 1.0f / rectangleCell.width;
+												float sizeInverseY = 1.0f / rectangleCell.height;
+												Vector2 coordinate;
+												for(int j=0; j<countVertex; j++)
+												{
+													coordinate = cellMap.Data.TableCell[indexCell].Mesh.TableCoordinate[j];
+
+													coordinate.x *= sizeInverseX;
+													coordinate.y *= sizeInverseY;
+
+													informationParts.Data.Mesh.TableRateUV[j] = coordinate;
+												}
+											}
+										}
+
+										/* Set(Overwrite) Bone-Parts' ID */
+										if(null != informationParts.Data.Mesh.TableIndexVertex)
+										{
+											int indexBindMesh = informationSSAE.CatalogParts.ListIDPartsMesh.IndexOf(i);
+											if(0 > indexBindMesh)
+											{	/* Error (Parts-ID not found) */
+												informationParts.Data.Mesh.CleanUp();
+											}
+											else
+											{
+												if(informationSSAE.ListBindMesh.Count <= indexBindMesh)
+												{	/* Error (Mesh-Bind not found) */
+													informationParts.Data.Mesh.CleanUp();
+												}
+												else
+												{
+													informationParts.Data.Mesh.TableVertex = informationSSAE.ListBindMesh[indexBindMesh].ListBindVertex.ToArray();
+
+													/* Convert Bone-ID to Bone-PartsID */
+													int countBindVertex = informationParts.Data.Mesh.TableVertex.Length;
+													if(countBindVertex !=informationParts.Data.Mesh.TableRateUV.Length)
+													{
+														LogWarning(messageLogPrefix, "Mesh-Bind's vertices count is different from Cell's vertice count. Parts[" + informationSSAE.TableParts[i].Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+													}
+
+													int countBone;
+													string namePartsBone;
+													int idPartsBone;
+													bool flagValidMesh = false;
+													for(int j=0; j<countBindVertex; j++)
+													{
+														countBone = informationParts.Data.Mesh.TableVertex[j].TableBone.Length;
+														if(0 < countBone)
+														{
+															flagValidMesh = true;
+															for(int k=0; k<countBone; k++)
+															{
+																idPartsBone = informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index;
+																namePartsBone = informationSSAE.ListBone[idPartsBone];
+																idPartsBone = informationSSAE.IndexGetParts(namePartsBone);
+#if BONEINDEX_CONVERT_PARTSID
+																if(0 <= idPartsBone)
+																{
+																	informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = idPartsBone;
+																}
+#endif
+															}
+														}
+													}
+
+													if(false == flagValidMesh)
+													{	/* Mesh-Bind is empty */
+														informationParts.Data.Mesh.CleanUp();
+													}
+												}
+											}
+										}
+									}
+								}
 								break;
 
 							default:
@@ -3605,7 +4079,6 @@ public static partial class LibraryEditor_SpriteStudio6
 							informationParts = informationSSAE.TableParts[j];
 							informationAnimationParts = informationAnimation.TableParts[j];
 							dataAnimation.TableParts[j].StatusParts = informationAnimationParts.StatusParts;
-							dataAnimation.TableParts[j].Format = informationSSAE.FormatSS6PU;
 
 							dataAnimation.TableParts[j].Status = PackAttribute.FactoryStatus(setting.PackAttributeAnimation.Status);
 							if(false == dataAnimation.TableParts[j].Status.Function.Pack(	dataAnimation.TableParts[j].Status,
@@ -3704,6 +4177,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 									if(0 >= informationAnimationParts.RateOpacityLocal.CountGetKey())
 									{	/* RateOpacity */
 										dataAnimation.TableParts[j].RateOpacity = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RateOpacity);
@@ -3759,13 +4233,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
-									break;
-
-								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 									break;
 
 								default:
@@ -3863,203 +4334,114 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							/* MEMO: Just create, even if do not use.                            */
 							/*       (Because pack format at instantiate becomes inappropriate.) */
-							dataAnimation.TableParts[j].Plain.Cell = PackAttribute.FactoryCell(setting.PackAttributeAnimation.PlainCell);
-							dataAnimation.TableParts[j].Plain.VertexCorrection = PackAttribute.FactoryVertexCorrection(setting.PackAttributeAnimation.PlainVertexCorrection);
-							dataAnimation.TableParts[j].Plain.OffsetPivot = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainOffsetPivot);
-							dataAnimation.TableParts[j].Plain.PositionTexture = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainPositionTexture);
-							dataAnimation.TableParts[j].Plain.ScalingTexture = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainScalingTexture);
-							dataAnimation.TableParts[j].Plain.RotationTexture = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.PlainRotationTexture);
+							dataAnimation.TableParts[j].Cell = PackAttribute.FactoryCell(setting.PackAttributeAnimation.Cell);
+							dataAnimation.TableParts[j].VertexCorrection = PackAttribute.FactoryVertexCorrection(setting.PackAttributeAnimation.VertexCorrection);
+							dataAnimation.TableParts[j].OffsetPivot = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.OffsetPivot);
+							dataAnimation.TableParts[j].PositionTexture = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PositionTexture);
+							dataAnimation.TableParts[j].ScalingTexture = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.ScalingTexture);
+							dataAnimation.TableParts[j].RotationTexture = PackAttribute.FactoryFloat(setting.PackAttributeAnimation.RotationTexture);
 
-							dataAnimation.TableParts[j].Fix.IndexCellMap = PackAttribute.FactoryInt(setting.PackAttributeAnimation.FixIndexCellMap);
-							dataAnimation.TableParts[j].Fix.Coordinate = PackAttribute.FactoryCoordinateFix(setting.PackAttributeAnimation.FixCoordinate);
-							dataAnimation.TableParts[j].Fix.UV0 = PackAttribute.FactoryUVFix(setting.PackAttributeAnimation.FixUV0);
-							dataAnimation.TableParts[j].Fix.SizeCollision = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.FixSizeCollision);
-							dataAnimation.TableParts[j].Fix.PivotCollision = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.FixPivotCollision);
-
-							switch(informationSSAE.FormatSS6PU)
+							dataAnimation.TableParts[j].SizeForce = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.SizeForce);
+							if(false == dataAnimation.TableParts[j].SizeForce.Function.Pack(	dataAnimation.TableParts[j].SizeForce,
+																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeSizeForce,
+																								countFrame,
+																								informationAnimationParts.StatusParts,
+																								informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.TableOrderPreDraw,
+																								informationAnimationParts.SizeForceX,
+																								informationAnimationParts.SizeForceY
+																							)
+								)
 							{
-								case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.PLAIN:
-									dataAnimation.TableParts[j].Plain.SizeForce = PackAttribute.FactoryVector2(setting.PackAttributeAnimation.PlainSizeForce);
-									if(false == dataAnimation.TableParts[j].Plain.SizeForce.Function.Pack(	dataAnimation.TableParts[j].Plain.SizeForce,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainSizeForce,
-																											countFrame,
-																											informationAnimationParts.StatusParts,
-																											informationAnimationParts.TableOrderDraw,
-																											informationAnimationParts.TableOrderPreDraw,
-																											informationAnimationParts.SizeForceX,
-																											informationAnimationParts.SizeForceY
-																										)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"SizeForce\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
+								LogError(messageLogPrefix, "Failure Packing Attribute \"SizeForce\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
 
-									if(false ==  dataAnimation.TableParts[j].Plain.Cell.Function.Pack(	dataAnimation.TableParts[j].Plain.Cell,
-																										Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainCell,
-																										countFrame,
-																										informationAnimationParts.StatusParts,
-																										informationAnimationParts.TableOrderDraw,
-																										informationAnimationParts.TableOrderPreDraw,
-																										informationAnimationParts.Cell
-																									)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.Cell\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
+							if(false ==  dataAnimation.TableParts[j].Cell.Function.Pack(	dataAnimation.TableParts[j].Cell,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeCell,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
+																							informationAnimationParts.Cell
+																						)
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"Cell\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
 
-									if(false == dataAnimation.TableParts[j].Plain.VertexCorrection.Function.Pack(	dataAnimation.TableParts[j].Plain.VertexCorrection,
-																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainVertexCorrection,
-																													countFrame,
-																													informationAnimationParts.StatusParts,
-																													informationAnimationParts.TableOrderDraw,
-																													informationAnimationParts.TableOrderPreDraw,
-																													informationAnimationParts.VertexCorrection
-																											)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.VertexCorrection\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-
-									if(false == dataAnimation.TableParts[j].Plain.OffsetPivot.Function.Pack(	dataAnimation.TableParts[j].Plain.OffsetPivot,
-																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainOffsetPivot,
-																												countFrame,
-																												informationAnimationParts.StatusParts,
-																												informationAnimationParts.TableOrderDraw,
-																												informationAnimationParts.TableOrderPreDraw,
-																												informationAnimationParts.PivotOffsetX,
-																												informationAnimationParts.PivotOffsetY
-																										)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.OffsetPivot\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-
-									if(false == dataAnimation.TableParts[j].Plain.PositionTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.PositionTexture,
-																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainPositionTexture,
-																													countFrame,
-																													informationAnimationParts.StatusParts,
-																													informationAnimationParts.TableOrderDraw,
-																													informationAnimationParts.TableOrderPreDraw,
-																													informationAnimationParts.TexturePositionX,
-																													informationAnimationParts.TexturePositionY
-																											)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.PositionTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-
-									if(false == dataAnimation.TableParts[j].Plain.ScalingTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.ScalingTexture,
-																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingTexture,
-																												countFrame,
-																												informationAnimationParts.StatusParts,
-																												informationAnimationParts.TableOrderDraw,
-																												informationAnimationParts.TableOrderPreDraw,
-																												informationAnimationParts.TextureScalingX,
-																												informationAnimationParts.TextureScalingY
-																											)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.ScalingTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-
-									if(false == dataAnimation.TableParts[j].Plain.RotationTexture.Function.Pack(	dataAnimation.TableParts[j].Plain.RotationTexture,
-																													Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainRotationTexture,
-																													countFrame,
-																													informationAnimationParts.StatusParts,
-																													informationAnimationParts.TableOrderDraw,
-																													informationAnimationParts.TableOrderPreDraw,
-																													informationAnimationParts.TextureRotation
-																											)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Plain.RotationTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-									break;
-
-								case Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX:
-									if(false == dataAnimation.TableParts[j].Fix.IndexCellMap.Function.Pack(	dataAnimation.TableParts[j].Fix.IndexCellMap,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixIndexCellMap,
-																											countFrame,
-																											informationAnimationParts.StatusParts,
-																											informationAnimationParts.TableOrderDraw,
-																											informationAnimationParts.TableOrderPreDraw,
-																											informationAnimationParts.FixIndexCellMap
-																										)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.Coordinate\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-
-									if(false == dataAnimation.TableParts[j].Fix.Coordinate.Function.Pack(	dataAnimation.TableParts[j].Fix.Coordinate,
-																											Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixCoordinate,
-																											countFrame,
-																											informationAnimationParts.StatusParts,
-																											informationAnimationParts.TableOrderDraw,
-																											informationAnimationParts.TableOrderPreDraw,
-																											informationAnimationParts.FixCoordinate
-																									)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.Coordinate\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-
-									if(false == dataAnimation.TableParts[j].Fix.UV0.Function.Pack(	dataAnimation.TableParts[j].Fix.UV0,
-																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixUV0,
+							if(false == dataAnimation.TableParts[j].VertexCorrection.Function.Pack(	dataAnimation.TableParts[j].VertexCorrection,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeVertexCorrection,
 																									countFrame,
 																									informationAnimationParts.StatusParts,
 																									informationAnimationParts.TableOrderDraw,
 																									informationAnimationParts.TableOrderPreDraw,
-																									informationAnimationParts.FixUV
+																									informationAnimationParts.VertexCorrection
 																								)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.UV0\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"VertexCorrection\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
 
-									if(false == dataAnimation.TableParts[j].Fix.SizeCollision.Function.Pack(	dataAnimation.TableParts[j].Fix.SizeCollision,
-																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixSizeCollision,
-																												countFrame,
-																												informationAnimationParts.StatusParts,
-																												informationAnimationParts.TableOrderDraw,
-																												informationAnimationParts.TableOrderPreDraw,
-																												informationAnimationParts.FixSizeCollisionX,
-																												informationAnimationParts.FixSizeCollisionY
-																										)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.SizeCollision\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
+							if(false == dataAnimation.TableParts[j].OffsetPivot.Function.Pack(	dataAnimation.TableParts[j].OffsetPivot,
+																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeOffsetPivot,
+																								countFrame,
+																								informationAnimationParts.StatusParts,
+																								informationAnimationParts.TableOrderDraw,
+																								informationAnimationParts.TableOrderPreDraw,
+																								informationAnimationParts.PivotOffsetX,
+																								informationAnimationParts.PivotOffsetY
+																							)
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"OffsetPivot\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
 
-									if(false == dataAnimation.TableParts[j].Fix.PivotCollision.Function.Pack(	dataAnimation.TableParts[j].Fix.PivotCollision,
-																												Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixPivotCollision,
-																												countFrame,
-																												informationAnimationParts.StatusParts,
-																												informationAnimationParts.TableOrderDraw,
-																												informationAnimationParts.TableOrderPreDraw,
-																												informationAnimationParts.FixPivotCollisionX,
-																												informationAnimationParts.FixPivotCollisionY
-																										)
-										)
-									{
-										LogError(messageLogPrefix, "Failure Packing Attribute \"Fix.PivotCollision\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-										goto ConvertData_ErrorEnd;
-									}
-									break;
+							if(false == dataAnimation.TableParts[j].PositionTexture.Function.Pack(	dataAnimation.TableParts[j].PositionTexture,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePositionTexture,
+																									countFrame,
+																									informationAnimationParts.StatusParts,
+																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.TableOrderPreDraw,
+																									informationAnimationParts.TexturePositionX,
+																									informationAnimationParts.TexturePositionY
+																								)
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"PositionTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
 
-								default:
-									/* MEMO: Impossible to reach. */
-									break;
+							if(false == dataAnimation.TableParts[j].ScalingTexture.Function.Pack(	dataAnimation.TableParts[j].ScalingTexture,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScalingTexture,
+																									countFrame,
+																									informationAnimationParts.StatusParts,
+																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.TableOrderPreDraw,
+																									informationAnimationParts.TextureScalingX,
+																									informationAnimationParts.TextureScalingY
+																								)
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"ScalingTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
+
+							if(false == dataAnimation.TableParts[j].RotationTexture.Function.Pack(	dataAnimation.TableParts[j].RotationTexture,
+																									Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRotationTexture,
+																									countFrame,
+																									informationAnimationParts.StatusParts,
+																									informationAnimationParts.TableOrderDraw,
+																									informationAnimationParts.TableOrderPreDraw,
+																									informationAnimationParts.TextureRotation
+																								)
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"RotationTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
 							}
 						}
 					}
@@ -4162,22 +4544,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect();
 						container.TypePack = pack;
 						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionEffect(container);
-						return(container);
-					}
-
-					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix FactoryCoordinateFix(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
-					{
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix();
-						container.TypePack = pack;
-						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(container);
-						return(container);
-					}
-
-					public static Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix FactoryUVFix(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack)
-					{
-						Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix();
-						container.TypePack = pack;
-						Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUVFix(container);
 						return(container);
 					}
 					#endregion Functions

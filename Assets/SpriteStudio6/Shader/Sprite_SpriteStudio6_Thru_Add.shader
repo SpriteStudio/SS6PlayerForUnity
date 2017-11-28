@@ -40,6 +40,8 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite/Through/Add"
 
 			#include "UnityCG.cginc"
 
+//			#define PS_NOT_DISCARD
+			#define	PS_NOT_CLAMP_COLOR
 			#include "Base/Shader_Data_SpriteStudio6.cginc"
 			#include "Base/ShaderVertex_Sprite_SpriteStudio6.cginc"
 			#include "Base/ShaderPixel_Sprite_SpriteStudio6.cginc"

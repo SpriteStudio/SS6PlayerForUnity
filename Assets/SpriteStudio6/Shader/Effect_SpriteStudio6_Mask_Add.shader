@@ -42,6 +42,8 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"
 
 			#include "UnityCG.cginc"
 
+//			#define PS_NOT_DISCARD
+			#define	PS_NOT_CLAMP_COLOR
 			#include "Base/Shader_Data_SpriteStudio6.cginc"
 			#include "Base/ShaderVertex_Effect_SpriteStudio6.cginc"
 			#include "Base/ShaderPixel_Effect_SpriteStudio6.cginc"

@@ -241,7 +241,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					{	/* "ismesh"tag is exist (SS5's SSCE has no "ismesh") */
 						if(true == LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText))
 						{	/* Has Mesh */
-							cell.Data.Mesh.TableVertex = TableGetPointList(nodeCell, "meshPointList", managerNameSpace);
+							cell.Data.Mesh.TableCoordinate = TableGetPoint2DList(nodeCell, "meshPointList", managerNameSpace);
 							cell.Data.Mesh.TableIndexVertex = TableGetTriangleList(nodeCell, "meshTriList", managerNameSpace);
 						}
 					}
@@ -260,7 +260,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				return(null);
 			}
-			private static Vector2[] TableGetPointList(System.Xml.XmlNode node, string namePath, System.Xml.XmlNamespaceManager manager)
+			private static Vector2[] TableGetPoint2DList(System.Xml.XmlNode node, string namePath, System.Xml.XmlNamespaceManager manager)
 			{
 				System.Xml.XmlNodeList listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(node, namePath + "/value", manager);
 				if(null == listNode)
@@ -700,8 +700,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																)
 				{
 					const string messageLogPrefix = "Create Asset(Material-Animation)";
-					int indexTable = Script_SpriteStudio6_Root.Material.IndexGetTable(0, operationTarget, masking);
 
+					int indexTable = Script_SpriteStudio6_Root.Material.IndexGetTable(0, operationTarget, masking);
 					Material material = null;
 					material = informationTexture.MaterialAnimationSS6PU.TableData[indexTable];
 					if(null == material)
@@ -730,8 +730,8 @@ public static partial class LibraryEditor_SpriteStudio6
 															)
 				{
 					const string messageLogPrefix = "Create Asset(Material-Effect)";
-					int indexTable = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, operationTarget, masking);
 
+					int indexTable = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, operationTarget, masking);
 					Material material = null;
 					material = informationTexture.MaterialEffectSS6PU.TableData[indexTable];
 					if(null == material)
@@ -757,6 +757,8 @@ public static partial class LibraryEditor_SpriteStudio6
 													LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
 												)
 				{	/* Convert-SS6PU Pass-1 ... Transfer necessary data from the temporary. */
+					const string messageLogPrefix = "Convert (CellMap)";
+
 					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* ”UnityEngine.Texture” and my "Texture", class-names are conflict unless fully-qualified. */
 					if(0 <= informationSSCE.IndexTexture)
 					{
@@ -785,8 +787,187 @@ public static partial class LibraryEditor_SpriteStudio6
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 																		LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
 																	)
-				{	/* Convert-SS6PU Pass-2 */
-					return(false);
+				{
+					const string messageLogPrefix = "Convert Trimming-Pixel (CellMap)";
+
+					/* MEMO: "cellMap.TableCell" is purged at "SSCE.ModeSS6PU.ConvertCellMap". */
+					Library_SpriteStudio6.Data.CellMap.Cell[] tableCell = informationSSCE.Data.TableCell;
+					if(null == tableCell)
+					{
+						return(true);	/* false */
+					}
+
+					/* Get Texture & Set "Read/Write Enable" */
+					int indexTexture = informationSSCE.IndexTexture;
+					if(0 > indexTexture)
+					{
+						return(true);	/* false */
+					}
+
+					string nameAssetTexture = informationSSPJ.TableInformationTexture[indexTexture].PrefabTexture.TableName[0];
+					TextureImporter importerTexture = TextureImporter.GetAtPath(nameAssetTexture) as TextureImporter;
+					if(null == importerTexture)
+					{
+						return(true);	/* false */
+					}
+					bool flagReadableOld = importerTexture.isReadable;
+					if(false == flagReadableOld)
+					{
+						importerTexture.isReadable = true;
+						AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
+					}
+
+					Texture2D texture = informationSSPJ.TableInformationTexture[indexTexture].PrefabTexture.TableData[0];
+					if(null == texture)
+					{
+						return(true);	/* false */
+					}
+					int sizeXTexture = texture.width;
+					int sizeYTexture = texture.height;
+
+					/* Get new rectangle & pivot */
+					Rect rectangleOld;
+					Rect rectangleNew;
+					Vector2 pivotOld;
+					Vector2 pivotNew;
+					Vector2 shiftPosition;
+					bool flagEmpty;
+					bool flagTransparentLine;
+					Color colorPixel;
+					int positionX;
+					int positionY;
+					int countCell = informationSSCE.Data.TableCell.Length;
+					for(int i=0; i<countCell; i++)
+					{
+						/* MEMO: Do not trim Cells that have mesh.                               */
+						/*       (Since vertices are bound, no way to follow when changing Cell) */
+						if(true == tableCell[i].IsMesh)
+						{
+							continue;
+						}
+
+						rectangleOld = tableCell[i].Rectangle;
+						rectangleNew = rectangleOld;
+						pivotOld = tableCell[i].Pivot;
+						flagEmpty = false;
+
+						/* Get Left */
+						rectangleNew.xMin = rectangleOld.xMin;
+						for(int j=0; j<rectangleOld.width; j++)
+						{
+							positionX = (int)rectangleOld.xMin + j;
+							flagTransparentLine = true;
+							for(int k=0; k<rectangleOld.height; k++)
+							{
+								positionY = (int)rectangleOld.yMin + k;
+								colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
+								if(0.0f < colorPixel.a)
+								{
+									flagTransparentLine = false;
+									flagEmpty = false;
+									break;
+								}
+							}
+							if(false == flagTransparentLine)
+							{
+								break;
+							}
+							/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
+							rectangleNew.xMin = (float)positionX;
+						}
+						if(true == flagEmpty)
+						{	/* All pixle is transparent */
+							rectangleNew = rectangleOld;
+						}
+						else
+						{
+							/* Get Right */
+							rectangleNew.xMax = rectangleOld.xMax;
+							for(int j=0; j<rectangleOld.width; j++)
+							{
+								positionX = ((int)rectangleOld.xMax - 1) - j;
+								flagTransparentLine = true;
+								for(int k=0; k<rectangleOld.height; k++)
+								{
+									positionY = (int)rectangleOld.yMin + k;
+									colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
+									if(0.0f < colorPixel.a)
+									{
+										flagTransparentLine = false;
+										break;
+									}
+								}
+								if(false == flagTransparentLine)
+								{
+									break;
+								}
+								/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
+								rectangleNew.xMax = (float)(positionX + 1);
+							}
+
+							/* Get Up */
+							rectangleNew.yMin = rectangleOld.yMin;
+							for(int j=0; j<rectangleOld.height; j++)
+							{
+								positionY = (int)rectangleOld.yMin + j;
+								flagTransparentLine = true;
+								for(int k=0; k<rectangleOld.width; k++)
+								{
+									positionX = (int)rectangleOld.xMin + k;
+									colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
+									if(0.0f < colorPixel.a)
+									{
+										flagTransparentLine = false;
+										break;
+									}
+								}
+								if(false == flagTransparentLine)
+								{
+									break;
+								}
+								/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
+								rectangleNew.yMin = (float)positionY;
+							}
+
+							/* Get Bottom */
+							rectangleNew.yMax = rectangleOld.yMax;
+							for(int j=0; j<rectangleOld.height; j++)
+							{
+								positionY = ((int)rectangleOld.yMax - 1) - j;
+								flagTransparentLine = true;
+								for(int k=0; k<rectangleOld.width; k++)
+								{
+									positionX = (int)rectangleOld.xMin + k;
+									colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
+									if(0.0f < colorPixel.a)
+									{
+										flagTransparentLine = false;
+										break;
+									}
+								}
+								if(false == flagTransparentLine)
+								{
+									break;
+								}
+								/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
+								rectangleNew.yMax = (float)(positionY + 1);
+							}
+						}
+
+						shiftPosition = rectangleNew.position - rectangleOld.position;
+						pivotNew.x = pivotOld.x - shiftPosition.x;
+						pivotNew.y = pivotOld.y - shiftPosition.y;
+						tableCell[i].Rectangle = rectangleNew;
+						tableCell[i].Pivot = pivotNew;
+					}
+
+					if(false == flagReadableOld)
+					{
+						importerTexture.isReadable = false;
+						AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
+					}
+
+					return(true);
 
 //				ConverCellMaptPixelTrimTransparent_ErrorEnd:;
 //					return(false);
