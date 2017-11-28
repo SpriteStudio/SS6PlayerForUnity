@@ -18,7 +18,7 @@
 * ------------------------------------------
 
 * [Folder Setting]
-? NameBaseFolderSetting > Data/
+? NameBaseFolderSetting > SpriteStudioProject/
 ? NameBaseFolderData > SpriteStudioProject/
 ? NameBaseFolderAsset > SpriteStudio6Sample/BitmapFontNumeric/Data/
 
