@@ -24,29 +24,24 @@ public static partial class Library_SpriteStudio6
 					#region Enums & Constants
 					public readonly static Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer Capacity = new Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer(
 						true,		/* Status */
+						true,		/* Cell */
 						false,		/* Position *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* Rotation *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* Scaling *//* Use only in front stage of other pack formats, since performance is very poor. */
 						true,		/* ScalingLocal */
 						true,		/* RateOpacity */
 						true,		/* PartsColor */
+						true,		/* VertexCorrection */
+						true,		/* OffsetPivot */
 						true,		/* PositionAnchor */
+						true,		/* SizeForce */
+						true,		/* PositionTexture */
+						true,		/* RotationTexture */
+						true,		/* ScalingTexture */
 						false,		/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,		/* UserData (Trigger) *//* Not Supported */
 						false,		/* Instance (Trigger) *//* Not Supported */
-						false,		/* Effect (Trigger) *//* Not Supported */
-						true,		/* Plain.Cell */
-						true,		/* Plain.SizeForce */
-						true,		/* Plain.VertexCorrection */
-						true,		/* Plain.OffsetPivot */
-						true,		/* Plain.PositionTexture */
-						true,		/* Plain.ScalingTexture */
-						true,		/* Plain.RotationTexture */
-						true,		/* Fix.IndexCellMap */
-						true,		/* Fix.Coordinate */
-						true,		/* Fix.UV0 */
-						false,		/* Fix.SizeCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
-						false		/* Fix.PivotCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
+						false		/* Effect (Trigger) *//* Not Supported */
 					);
 
 					public const string ID = "StandardUncompressed";
@@ -62,8 +57,6 @@ public static partial class Library_SpriteStudio6
 //					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
-					internal readonly static InterfaceFunctionCoordinateFix FunctionCoordinateFix = new InterfaceFunctionCoordinateFix();
-					internal readonly static InterfaceFunctionUVFix FunctionUVFix = new InterfaceFunctionUVFix();
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -115,16 +108,6 @@ public static partial class Library_SpriteStudio6
 
 							/* MEMO: Default value when attribute has no key data differs depending on attribute. */
 							int valueDefault = 0;
-							switch(nameAttribute)
-							{
-								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeFixIndexCellMap:
-									valueDefault = -1;
-									break;
-
-								default:
-									valueDefault = 0;
-									break;
-							}
 
 							int value;
 							container.TableValue = new int[countFrame];
@@ -287,12 +270,12 @@ public static partial class Library_SpriteStudio6
 							{
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScaling: 
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScalingLocal: 
-								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainScalingTexture: 
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeScalingTexture: 
 									/* MEMO: Attribute for scales, default value when has no key is 1.0f. */
 									valueDefault = 1.0f;
 									break;
 
-								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePlainSizeForce:
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeSizeForce:
 									/* MEMO: "SizeForce", default value when has no key is -1.0f(No change). */
 									valueDefault = -1.0f;
 									break;
@@ -665,115 +648,6 @@ public static partial class Library_SpriteStudio6
 					/* MEMO: Not Support */
 //					public class InterfaceFunctionEffect : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerEffect
 
-					public class InterfaceFunctionCoordinateFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerCoordinateFix
-					{
-						/* ----------------------------------------------- Functions */
-						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix outValue,
-												ref int outFrameKey,
-												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container,
-												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
-											)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
-						}
-
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix outValue,
-													ref int outFrameKey,
-													int index,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container,
-													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
-												)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
-						}
-
-						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container)
-						{
-							return(container.TableValue.Length);
-						}
-
-						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCoordinateFix container,
-											string nameAttribute,
-											int countFrame,
-											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
-											int[] tableOrderDraw,
-											int[] tableOrderPreDraw,
-											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCoordinateFix[] listKeyData
-										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-
-							if(0 >= listKeyData[0].CountGetKey())
-							{
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix[0];
-								return(true);
-							}
-
-							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix[countFrame];
-							for(int i=0; i<countFrame; i++)
-							{
-								listKeyData[0].ValueGet(out container.TableValue[i], i);
-							}
-							return(true);
-						}
-						#endregion Functions
-					}
-
-					public class InterfaceFunctionUVFix : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerUVFix
-					{
-						/* ----------------------------------------------- Functions */
-						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.UVFix outValue,
-												ref int outFrameKey,
-												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container,
-												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
-											)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
-						}
-
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.UVFix outValue,
-													ref int outFrameKey,
-													int index,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container,
-													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
-												)
-						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
-						}
-
-						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container)
-						{
-							return(container.TableValue.Length);
-						}
-
-						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUVFix container,
-											string nameAttribute,
-											int countFrame,
-											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
-											int[] tableOrderDraw,
-											int[] tableOrderPreDraw,
-											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUVFix[] listKeyData
-										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-
-							if(0 >= listKeyData[0].CountGetKey())
-							{
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.UVFix[0];
-								return(true);
-							}
-
-							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.UVFix[countFrame];
-							for(int i=0; i<countFrame; i++)
-							{
-								listKeyData[0].ValueGet(out container.TableValue[i], i);
-							}
-							return(true);
-						}
-						#endregion Functions
-					}
 					#endregion Classes, Structs & Interfaces
 
 					/* ----------------------------------------------- Functions */
@@ -785,6 +659,13 @@ public static partial class Library_SpriteStudio6
 													)
 						where _Type : struct
 					{
+#if UNITY_EDITOR
+						if(null == tableValue)
+						{
+							/* MEMO: May reach before deserialization direct-after import. */
+							return(false);
+						}
+#endif
 						if((0 > frame) || (tableValue.Length <= frame))
 						{
 							return(false);

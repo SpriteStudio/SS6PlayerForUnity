@@ -40,19 +40,13 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributeEffect = "Effect";
 					public const string NameAttributeRadiusCollision = "RadiusCollision";
 
-					public const string NameAttributePlainCell = "Plain_Cell";
-					public const string NameAttributePlainSizeForce = "PlainSizeForce";
-					public const string NameAttributePlainVertexCorrection = "Plain_VertexCorrection";
-					public const string NameAttributePlainOffsetPivot = "Plain_OffsetPivot";
-					public const string NameAttributePlainPositionTexture = "Plain_PositionTexture";
-					public const string NameAttributePlainScalingTexture = "Plain_ScalingTexture";
-					public const string NameAttributePlainRotationTexture = "Plain_RotationTexture";
-
-					public const string NameAttributeFixIndexCellMap = "Fix_IndexCellMap";
-					public const string NameAttributeFixCoordinate = "Fix_Coordinate";
-					public const string NameAttributeFixUV0 = "Fix_UV0";
-					public const string NameAttributeFixSizeCollision = "Fix_SizeCollision";
-					public const string NameAttributeFixPivotCollision = "Fix_PivotCollision";
+					public const string NameAttributeCell = "Cell";
+					public const string NameAttributeSizeForce = "SizeForce";
+					public const string NameAttributeVertexCorrection = "VertexCorrection";
+					public const string NameAttributeOffsetPivot = "OffsetPivot";
+					public const string NameAttributePositionTexture = "PositionTexture";
+					public const string NameAttributeScalingTexture = "ScalingTexture";
+					public const string NameAttributeRotationTexture = "RotationTexture";
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -594,66 +588,6 @@ public static partial class Library_SpriteStudio6
 							}
 
 							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect;
-							return(false);
-						}
-						#endregion Functions
-					}
-					public class AttributeCoordinateFix : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix>
-					{
-						/* ----------------------------------------------- Functions */
-						#region Functions
-						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix valueOutput, int frame)
-						{	/* MEMO: This attribute has keyframes in all frames. */
-							int count = CountGetKey();
-							if((0 >= count) || (0 > frame))
-							{
-								goto ValueGet_ErrorEnd;
-							}
-							if(count <= frame)
-							{
-								valueOutput = ListKey[count - 1].Value;
-								return(true);
-							}
-							if(ListKey[frame].Frame != frame)
-							{	/* Is the key missing ?? */
-								goto ValueGet_ErrorEnd;
-							}
-
-							valueOutput = ListKey[frame].Value;
-							return(true);
-	
-						ValueGet_ErrorEnd:;
-							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultCoordinateFix;
-							return(false);
-						}
-						#endregion Functions
-					}
-					public class AttributeUVFix : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.UVFix>
-					{
-						/* ----------------------------------------------- Functions */
-						#region Functions
-						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.UVFix valueOutput, int frame)
-						{	/* MEMO: This attribute has keyframes in all frames. */
-							int count = CountGetKey();
-							if((0 >= count) || (0 > frame))
-							{
-								goto ValueGet_ErrorEnd;
-							}
-							if(count <= frame)
-							{
-								valueOutput = ListKey[count - 1].Value;
-								return(true);
-							}
-							if(ListKey[frame].Frame != frame)
-							{	/* Is the key missing ?? */
-								goto ValueGet_ErrorEnd;
-							}
-
-							valueOutput = ListKey[frame].Value;
-							return(true);
-	
-						ValueGet_ErrorEnd:;
-							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultUVFix;
 							return(false);
 						}
 						#endregion Functions

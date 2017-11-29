@@ -25,7 +25,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	[MenuItem("Tools/SpriteStudio6/Importer")]
 	static void OpenWindow()
 	{
-		EditorWindow.GetWindow<MenuItem_SpriteStudio6_ImportProject>(true, LibraryEditor_SpriteStudio6.NameAsset + " Import-Settings");
+		EditorWindow.GetWindow<MenuItem_SpriteStudio6_ImportProject>(true, Library_SpriteStudio6.SignatureNameAsset + " Import-Settings");
 		SettingImport.Load();
 		SettingOption.Load();
 
@@ -120,7 +120,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 																				)
 							)
 						{
-							EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+							EditorUtility.DisplayDialog(	Library_SpriteStudio6.SignatureNameAsset,
 															"Batch-Import Interrupted! Check Error on Console.",
 															"OK"
 													);
@@ -163,7 +163,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 																			)
 							)
 						{
-							EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+							EditorUtility.DisplayDialog(	Library_SpriteStudio6.SignatureNameAsset,
 															"Import Interrupted! Check Error on Console.",
 													 		"OK"
 													);
@@ -174,7 +174,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				}
 				else
 				{	/* Error (No selected) */
-					EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
+					EditorUtility.DisplayDialog(	Library_SpriteStudio6.SignatureNameAsset,
 													"Select Asset-Folder you want to store in before import, on the \"Project\" window.",
 													"OK"
 											);
@@ -210,7 +210,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			{
 //				SettingImport.Save();
 
-				string nameFile = EditorUtility.SaveFilePanel(	"Save \"" + LibraryEditor_SpriteStudio6.NameAsset + "\" Import Setting file",
+				string nameFile = EditorUtility.SaveFilePanel(	"Save \"" + Library_SpriteStudio6.SignatureNameAsset + "\" Import Setting file",
 																"",
 																"SS6PU_ImportSetting",
 																"txt"
@@ -233,7 +233,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			if(true == GUILayout.Button("Load from Text-File"))
 			{
-				string nameFile = EditorUtility.OpenFilePanel(	"Load \"" + LibraryEditor_SpriteStudio6.NameAsset + "\" Import Setting file",
+				string nameFile = EditorUtility.OpenFilePanel(	"Load \"" + Library_SpriteStudio6.SignatureNameAsset + "\" Import Setting file",
 																"",
 																"txt"
 															);
@@ -500,31 +500,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	private void FoldOutExecPreCalcualation(int levelIndent)
 	{	/* MEMO: only "SS6PU" Mode */
 		EditorGUI.indentLevel = levelIndent;
-#if TAKE_AWAY_UNSUPPORTED_FUNCTION
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("Sorry.");
-		EditorGUILayout.LabelField("This functions can not be executed in current version.");
-		EditorGUILayout.LabelField("Please give us a little more time.");
-		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("MEMO:");
-		EditorGUI.indentLevel = levelIndent + 2;
-		EditorGUILayout.LabelField("Functions of this group are intended to lower the runtime's load");
-		EditorGUILayout.LabelField(" by pre-calculate a part of runtime calculations at import.");
-		EditorGUI.indentLevel = levelIndent;
-#else
-		SettingImport.PreCalcualation.FlagFixMesh = EditorGUILayout.ToggleLeft("Fix Sprite", SettingImport.PreCalcualation.FlagFixMesh);
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("Deform of \"Sprite\" and \"Collider\" are calculated for improving execution speed of the runtime.");
-		EditorGUILayout.LabelField("CAUTION: Data is increases. And some runtime-functions does not work.(Cell-Changing etc.)");
-		EditorGUILayout.Space();
-		EditorGUI.indentLevel = levelIndent;
 
 		SettingImport.PreCalcualation.FlagTrimTransparentPixelsCell = EditorGUILayout.ToggleLeft("Trim transparent-pixels", SettingImport.PreCalcualation.FlagTrimTransparentPixelsCell);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Adjust the cells' size so that transparent-pixels are not drawn as possible.");
 		EditorGUILayout.LabelField("CAUTION: Some animation's attributes may not produce the intended result.");
 		EditorGUI.indentLevel = levelIndent;
-#endif
 		EditorGUILayout.Space();
 	}
 
@@ -841,40 +822,28 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("Don't manipulate this setting without reason.");
 		EditorGUILayout.LabelField("Understand amply the implementation of SS6PU data format before setting.");
 		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("\"[Common]RateOpacity\" is shared for \"RateOpacity\", \"RateOpacityLocal\" and \"PowerMask\".");
+		EditorGUILayout.LabelField("\"RateOpacity\" is shared for \"RateOpacity\", \"RateOpacityLocal\" and \"PowerMask\".");
 		EditorGUILayout.Space();
 
-		EditorGUILayout.LabelField("[Common]");
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Status, "Status", ref PullDownPackAttributeAnimation.Status);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Cell, "Cell", ref PullDownPackAttributeAnimation.Cell);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Position, "Position", ref PullDownPackAttributeAnimation.Position);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Rotation, "Rotation", ref PullDownPackAttributeAnimation.Rotation);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Scaling, "Scaling", ref PullDownPackAttributeAnimation.Scaling);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.ScalingLocal, "ScalingLocal", ref PullDownPackAttributeAnimation.ScalingLocal);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RateOpacity, "RateOpacity", ref PullDownPackAttributeAnimation.RateOpacity);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PartsColor);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.VertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.VertexCorrection);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.OffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.OffsetPivot);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionAnchor, "PositionAnchor", ref PullDownPackAttributeAnimation.PositionAnchor);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.SizeForce, "SizeForce", ref PullDownPackAttributeAnimation.SizeForce);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionTexture, "PositionTexture", ref PullDownPackAttributeAnimation.PositionTexture);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RotationTexture, "RotationTexture", ref PullDownPackAttributeAnimation.RotationTexture);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.ScalingTexture, "ScalingTexture", ref PullDownPackAttributeAnimation.ScalingTexture);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RadiusCollision, "RadiusCollision", ref PullDownPackAttributeAnimation.RadiusCollision);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.UserData, "UserData", ref PullDownPackAttributeAnimation.UserData);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Instance, "Instance", ref PullDownPackAttributeAnimation.Instance);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Effect, "Effect", ref PullDownPackAttributeAnimation.Effect);
-		EditorGUILayout.Space();
-
-		EditorGUILayout.LabelField("[Plain]");
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainCell, "Cell", ref PullDownPackAttributeAnimation.PlainCell);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainSizeForce, "SizeForce", ref PullDownPackAttributeAnimation.PlainSizeForce);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainVertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.PlainVertexCorrection);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainOffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.PlainOffsetPivot);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainPositionTexture, "PositionTexture", ref PullDownPackAttributeAnimation.PlainPositionTexture);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainScalingTexture, "ScalingTexture", ref PullDownPackAttributeAnimation.PlainScalingTexture);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PlainRotationTexture, "RotationTexture", ref PullDownPackAttributeAnimation.PlainRotationTexture);
-		EditorGUILayout.Space();
-
-		EditorGUILayout.LabelField("[Fix]");
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixIndexCellMap, "IndexCellMap", ref PullDownPackAttributeAnimation.FixIndexCellMap);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixCoordinate, "Coordinate", ref PullDownPackAttributeAnimation.FixCoordinate);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixUV0, "UV0", ref PullDownPackAttributeAnimation.FixUV0);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixSizeCollision, "SizeCollision", ref PullDownPackAttributeAnimation.FixSizeCollision);
-		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.FixPivotCollision, "PivotCollision", ref PullDownPackAttributeAnimation.FixPivotCollision);
 		EditorGUILayout.Space();
 #endif
 	}
@@ -1399,31 +1368,24 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		/* ----------------------------------------------- Variables & Properties */
 		#region Variables & Properties
 		public Attribute Status;
+		public Attribute Cell;
 		public Attribute Position;
 		public Attribute Rotation;
 		public Attribute Scaling;
 		public Attribute ScalingLocal;
 		public Attribute RateOpacity;
 		public Attribute PartsColor;
+		public Attribute VertexCorrection;
+		public Attribute OffsetPivot;
 		public Attribute PositionAnchor;
+		public Attribute SizeForce;
+		public Attribute PositionTexture;
+		public Attribute RotationTexture;
+		public Attribute ScalingTexture;
 		public Attribute RadiusCollision;
 		public Attribute UserData;
 		public Attribute Instance;
 		public Attribute Effect;
-
-		public Attribute PlainCell;
-		public Attribute PlainSizeForce;
-		public Attribute PlainVertexCorrection;
-		public Attribute PlainOffsetPivot;
-		public Attribute PlainPositionTexture;
-		public Attribute PlainScalingTexture;
-		public Attribute PlainRotationTexture;
-
-		public Attribute FixIndexCellMap;
-		public Attribute FixCoordinate;
-		public Attribute FixUV0;
-		public Attribute FixSizeCollision;
-		public Attribute FixPivotCollision;
 		#endregion Variables & Properties
 
 		/* ----------------------------------------------- Functions */
@@ -1431,31 +1393,24 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public void CleanUp()
 		{
 			Status.CleanUp();
+			Cell.CleanUp();
 			Position.CleanUp();
 			Rotation.CleanUp();
 			Scaling.CleanUp();
 			ScalingLocal.CleanUp();
 			RateOpacity.CleanUp();
 			PartsColor.CleanUp();
+			VertexCorrection.CleanUp();
+			OffsetPivot.CleanUp();
 			PositionAnchor.CleanUp();
+			SizeForce.CleanUp();
+			PositionTexture.CleanUp();
+			RotationTexture.CleanUp();
+			ScalingTexture.CleanUp();
 			RadiusCollision.CleanUp();
 			UserData.CleanUp();
 			Instance.CleanUp();
 			Effect.CleanUp();
-
-			PlainCell.CleanUp();
-			PlainSizeForce.CleanUp();
-			PlainVertexCorrection.CleanUp();
-			PlainOffsetPivot.CleanUp();
-			PlainPositionTexture.CleanUp();
-			PlainScalingTexture.CleanUp();
-			PlainRotationTexture.CleanUp();
-			
-			FixIndexCellMap.CleanUp();
-			FixCoordinate.CleanUp();
-			FixUV0.CleanUp();
-			FixSizeCollision.CleanUp();
-			FixPivotCollision.CleanUp();
 		}
 
 		public void BootUp()
@@ -1479,6 +1434,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].Status;
 			}
 			Status.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].Cell;
+			}
+			Cell.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{
@@ -1518,9 +1479,45 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
+				tableFlagEnablePack[i] = capacityPack[i].VertexCorrection;
+			}
+			VertexCorrection.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].OffsetPivot;
+			}
+			OffsetPivot.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
 				tableFlagEnablePack[i] = capacityPack[i].PositionAnchor;
 			}
 			PositionAnchor.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].SizeForce;
+			}
+			SizeForce.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].PositionTexture;
+			}
+			PositionTexture.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].RotationTexture;
+			}
+			RotationTexture.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].ScalingTexture;
+			}
+			ScalingTexture.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{
@@ -1545,78 +1542,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].Effect;
 			}
 			Effect.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainCell;
-			}
-			PlainCell.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainSizeForce;
-			}
-			PlainSizeForce.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainVertexCorrection;
-			}
-			PlainVertexCorrection.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainOffsetPivot;
-			}
-			PlainOffsetPivot.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainPositionTexture;
-			}
-			PlainPositionTexture.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainScalingTexture;
-			}
-			PlainScalingTexture.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].PlainRotationTexture;
-			}
-			PlainRotationTexture.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].FixIndexCellMap;
-			}
-			FixIndexCellMap.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].FixCoordinate;
-			}
-			FixCoordinate.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].FixUV0;
-			}
-			FixUV0.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].FixSizeCollision;
-			}
-			FixSizeCollision.BootUp(tableFlagEnablePack);
-
-			for(int i=0; i<countPack; i++)
-			{
-				tableFlagEnablePack[i] = capacityPack[i].FixPivotCollision;
-			}
-			FixPivotCollision.BootUp(tableFlagEnablePack);
 
 			SettingImport.PackAttributeAnimation.Adjust();
 		}

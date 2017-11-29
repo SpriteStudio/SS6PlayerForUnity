@@ -361,8 +361,6 @@ public partial class Script_SpriteStudio6_Root
 	The playing of animation suspends or resumes.<br>
 	This function returns success if succeeds on all tracks (if you set -1 to "track", only tracks are playing will be targeted).<br>
 	if specific track, return false when the track is not playing.<br>
-	<br>
-	While pausing, the transition will also stop.
 	*/
 	public bool AnimationPause(int indexTrack, bool flagSwitch)
 	{
@@ -412,55 +410,6 @@ public partial class Script_SpriteStudio6_Root
 			flagSuccess &= TableControlTrack[indexTrackSlave].Pause(flagSwitch);
 		}
 		return(flagSuccess);
-	}
-
-	/* ********************************************************* */
-	//! Changing animations' playing speed
-	/*!
-	@param	indexTrack
-		Track index to set pause-status (0 origin)<br>
-		-1 == Set pause-status all tracks.
-	@param	rateTime
-		Coefficient of time-passage of animation.<br>
-		Minus Value is given, Animation is played backwards.
-	@retval	Return-Value
-		true == Success<br>
-		false == Failure (Error)
-
-	Change speed of the animation during playing.<br>
-	*/
-	public bool AnimationSetRateTime(int indexTrack, float rateTime)
-	{
-		if(null == TableControlTrack)
-		{
-			return(false);
-		}
-
-		int countTrack = TableControlTrack.Length;
-		if(0 > indexTrack)
-		{	/* All track */
-			/* MEMO: Stop all current playback and play single animation at track 0. */
-			for(int i=0; i<countTrack; i++)
-			{
-				if(true == TableControlTrack[i].StatusIsPlaying)
-				{
-					TableControlTrack[i].RateTime = rateTime;
-				}
-			}
-		}
-		else
-		{	/* Specific track */
-			if(countTrack <= indexTrack)
-			{
-				return(false);
-			}
-			if(false == TableControlTrack[indexTrack].StatusIsPlaying)
-			{
-				return(false);
-			}
-			TableControlTrack[indexTrack].RateTime = rateTime;
-		}
-		return(true);
 	}
 	#endregion Functions
 }

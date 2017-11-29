@@ -14,12 +14,12 @@ public sealed class MenuItem_SpriteStudio6_About : EditorWindow
 	[MenuItem("Tools/SpriteStudio6/About")]
 	static void About()
 	{
-		string versionText = "0.8.0";
-		EditorUtility.DisplayDialog(	LibraryEditor_SpriteStudio6.NameAsset,
-										LibraryEditor_SpriteStudio6.NameAsset + "\n\n"
-										+ "Version: " + versionText
+		EditorUtility.DisplayDialog(	Library_SpriteStudio6.SignatureNameAsset,
+										Library_SpriteStudio6.SignatureNameAsset
 										+ "\n\n"
-										+ "Copyright(C) " + LibraryEditor_SpriteStudio6.NameDistributor,
+										+ "Version: " + Library_SpriteStudio6.SignatureVersionAsset
+										+ "\n\n"
+										+ "Copyright(C) " + Library_SpriteStudio6.SignatureNameDistributor,
 										"OK"
 									);
 	}

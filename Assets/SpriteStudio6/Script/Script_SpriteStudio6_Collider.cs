@@ -46,55 +46,55 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 
 	void OnTriggerEnter(Collider pair)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderOnTriggerEnter))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderEnter))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderOnTriggerEnter(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
+			InstanceRoot.FunctionColliderEnter(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
 		}
 	}
 
 	void OnTriggerExit(Collider pair)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderOnTriggerExit))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderExit))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderOnTriggerExit(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
+			InstanceRoot.FunctionColliderExit(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
 		}
 	}
 
 	void OnTriggerStay(Collider pair)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderOnTriggerStay))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderStay))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderOnTriggerStay(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
+			InstanceRoot.FunctionColliderStay(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
 		}
 	}
 
 	void OnCollisionEnter(Collision contacts)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionOnTriggerEnter))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionEnter))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionOnTriggerEnter(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
+			InstanceRoot.FunctionCollisionEnter(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
 		}
 	}
 
 	void OnCollisionExit(Collision contacts)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionOnTriggerExit))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionExit))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionOnTriggerExit(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
+			InstanceRoot.FunctionCollisionExit(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
 		}
 	}
 
 	void OnCollisionStay(Collision contacts)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionOnTriggerStay))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionStay))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionOnTriggerStay(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
+			InstanceRoot.FunctionCollisionStay(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
 		}
 	}
 	#endregion MonoBehaviour-Functions

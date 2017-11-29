@@ -220,6 +220,10 @@
 * 
 * This is same function as "Options: PreCalculation > Fix Mesh" option in the import settings.
 * 
+* Caution!
+*  This command is obsolute after Ver.0.9.0 and ignored.
+*  Function of this option is obsolete.
+* 
 * e.g.:
 *  PreCalculation_FlagFixMesh > true
 *
@@ -401,29 +405,24 @@
 *
 * ---------------------
 * PackAttributeAnimation_Status > FormatName
+* PackAttributeAnimation_Cell > FormatName
 * PackAttributeAnimation_Position > FormatName
 * PackAttributeAnimation_Rotation > FormatName
 * PackAttributeAnimation_Scaling > FormatName
 * PackAttributeAnimation_ScalingLocal > FormatName
 * PackAttributeAnimation_RateOpacity > FormatName
 * PackAttributeAnimation_PartsColor > FormatName
+* PackAttributeAnimation_VertexCorrection > FormatName
+* PackAttributeAnimation_OffsetPivot > FormatName
 * PackAttributeAnimation_PositionAnchor > FormatName
+* PackAttributeAnimation_SizeForce > FormatName
+* PackAttributeAnimation_PositionTexture > FormatName
+* PackAttributeAnimation_RotationTexture > FormatName
+* PackAttributeAnimation_ScalingTexture > FormatName
+* PackAttributeAnimation_RadiusCollision > FormatName
 * PackAttributeAnimation_UserData > FormatName
 * PackAttributeAnimation_Instance > FormatName
 * PackAttributeAnimation_Effect > FormatName
-* PackAttributeAnimation_RadiusCollision > FormatName
-* PackAttributeAnimation_PlainCell > FormatName
-* PackAttributeAnimation_PlainSizeForce > FormatName
-* PackAttributeAnimation_PlainVertexCorrection > FormatName
-* PackAttributeAnimation_PlainOffsetPivot > FormatName
-* PackAttributeAnimation_PlainPositionTexture > FormatName
-* PackAttributeAnimation_PlainScalingTexture > FormatName
-* PackAttributeAnimation_PlainRotationTexture > FormatName
-* PackAttributeAnimation_FixIndexCellMap > FormatName
-* PackAttributeAnimation_FixCoordinate > FormatName
-* PackAttributeAnimation_FixUV0 > FormatName
-* PackAttributeAnimation_FixSizeCollision > FormatName
-* PackAttributeAnimation_FixPivotCollision > FormatName
 *   FormatName ... Data format name
 *                  StandardUncompressed == format "Standard Uncompressed"
 *                  StandardCPE == format "Standard CPE"
@@ -431,30 +430,25 @@
 *                  CPE_Interpolate == format "CPE & Interpolate" (reserved)
 * 
 * This is same function as ...
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Status"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Position"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Rotation"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Scaling"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]ScalingLocal"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RateOpacity"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]PartsColor"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]PositionAnchor"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]UserData"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Instance"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]Effect"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Common]RadiusCollision"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]Cell"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]SizeForce"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]VertexCorrection"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]OffsetPivot"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]PositionTexture"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]ScalingTexture"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Plain]RotationTexture"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]IndexCellMap"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]Coordinate"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]UV0"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]SizeCollision"
-* - "Advanced Options > Advanced Options: Attribute data Packing > [Fix]PivotCollision"
+* - "Advanced Options > Advanced Options: Attribute data Packing > Status"
+* - "Advanced Options > Advanced Options: Attribute data Packing > Cell"
+* - "Advanced Options > Advanced Options: Attribute data Packing > Position"
+* - "Advanced Options > Advanced Options: Attribute data Packing > Rotation"
+* - "Advanced Options > Advanced Options: Attribute data Packing > Scaling"
+* - "Advanced Options > Advanced Options: Attribute data Packing > ScalingLocal"
+* - "Advanced Options > Advanced Options: Attribute data Packing > RateOpacity"
+* - "Advanced Options > Advanced Options: Attribute data Packing > PartsColor"
+* - "Advanced Options > Advanced Options: Attribute data Packing > VertexCorrection"
+* - "Advanced Options > Advanced Options: Attribute data Packing > OffsetPivot"
+* - "Advanced Options > Advanced Options: Attribute data Packing > PositionAnchor"
+* - "Advanced Options > Advanced Options: Attribute data Packing > SizeForce"
+* - "Advanced Options > Advanced Options: Attribute data Packing > PositionTexture"
+* - "Advanced Options > Advanced Options: Attribute data Packing > RotationTexture"
+* - "Advanced Options > Advanced Options: Attribute data Packing > ScalingTexture"
+* - "Advanced Options > Advanced Options: Attribute data Packing > RadiusCollision"
+* - "Advanced Options > Advanced Options: Attribute data Packing > UserData"
+* - "Advanced Options > Advanced Options: Attribute data Packing > Instance"
+* - "Advanced Options > Advanced Options: Attribute data Packing > Effect"
 * ... options in the import settings.
 * 
 * Caution!
@@ -462,9 +456,28 @@
 *  Particularly in data formats other than "Standard CPE",
 *   there is a high possibility that attributes are not supported, so if mistake setting, malfunction will occur.
 * 
+* Memo:
+*  The following commands are obsolete after Ver.0.9.0.
+*  "PackAttributeAnimation_Plain ..." are converted to "PackAttributeAnimation _...",
+*   but a measure to prevent setting-file of Ver.0.8.x from becoming unusable.
+*  "PackAttributeAnimation_Fix ..." are ignored.
+* 
+* - PackAttributeAnimation_PlainCell > FormatName
+* - PackAttributeAnimation_PlainSizeForce > FormatName
+* - PackAttributeAnimation_PlainVertexCorrection > FormatName
+* - PackAttributeAnimation_PlainOffsetPivot > FormatName
+* - PackAttributeAnimation_PlainPositionTexture > FormatName
+* - PackAttributeAnimation_PlainScalingTexture > FormatName
+* - PackAttributeAnimation_PlainRotationTexture > FormatName
+* - PackAttributeAnimation_FixIndexCellMap > FormatName
+* - PackAttributeAnimation_FixCoordinate > FormatName
+* - PackAttributeAnimation_FixUV0 > FormatName
+* - PackAttributeAnimation_FixSizeCollision > FormatName
+* - PackAttributeAnimation_FixPivotCollision > FormatName
+* 
 * e.g.:
-*  PackAttributeAnimation_PlainPositionTexture > StandardCPE
-*  *) Set data format of the attribute "Plain.PositionTexture" to "Standard CPE".
+*  PackAttributeAnimation_PositionTexture > StandardCPE
+*  *) Set data format of the attribute "PositionTexture" to "Standard CPE".
 * 
 
 * ---------------------

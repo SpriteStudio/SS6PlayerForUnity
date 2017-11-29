@@ -18,10 +18,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	public Material[] TableMaterial;
 
 	public Library_SpriteStudio6.Data.Parts.Animation[] TableParts;
-	public Library_SpriteStudio6.Data.Animation[] TableAnimation;
+	public Library_SpriteStudio6.Data.Parts.Animation.Catalog CatalogParts;
 
-	public Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer CapacitySetup;
-	public AttributeSetup Setup;
+	public Library_SpriteStudio6.Data.Animation[] TableAnimation;
 
 	/* MEMO: Use "delegate" instead of bool because value is cleared each compiling. */
 	private FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
@@ -53,10 +52,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		TableMaterial = null;
 
 		TableParts = null;
-		TableAnimation = null;
+		CatalogParts.CleanUp();
 
-		CapacitySetup = null;
-		Setup.CleanUp();
+		TableAnimation = null;
 
 		SignatureBootUpFunction = null;
 	}
@@ -94,10 +92,14 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+					/* MEMO: Not count. (not sprite) */
 					break;
 			}
 		}
@@ -173,31 +175,30 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			for(int j=0; j<countParts; j++)
 			{
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionStatus(TableAnimation[i].TableParts[j].Status);
+
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(TableAnimation[i].TableParts[j].Cell);
+
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(TableAnimation[i].TableParts[j].Position);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(TableAnimation[i].TableParts[j].Rotation);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Scaling);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].ScalingLocal);
+
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RateOpacity);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(TableAnimation[i].TableParts[j].PartsColor);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(TableAnimation[i].TableParts[j].VertexCorrection);
+
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].OffsetPivot);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].PositionAnchor);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].SizeForce);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].PositionTexture);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RotationTexture);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].ScalingTexture);
+
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RadiusCollision);
+
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUserData(TableAnimation[i].TableParts[j].UserData);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInstance(TableAnimation[i].TableParts[j].Instance);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionEffect(TableAnimation[i].TableParts[j].Effect);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RadiusCollision);
-
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(TableAnimation[i].TableParts[j].Plain.Cell);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.SizeForce);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(TableAnimation[i].TableParts[j].Plain.VertexCorrection);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.OffsetPivot);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.PositionTexture);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Plain.ScalingTexture);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].Plain.RotationTexture);
-
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(TableAnimation[i].TableParts[j].Fix.IndexCellMap);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCoordinateFix(TableAnimation[i].TableParts[j].Fix.Coordinate);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUVFix(TableAnimation[i].TableParts[j].Fix.UV0);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Fix.SizeCollision);
-				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Fix.PivotCollision);
 			}
 		}
 	}
@@ -213,113 +214,15 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	public enum KindVersion
 	{
 		SS5PU = 0,	/* Before SS5PU *//* (Reserved) */
-		CODE_010000 = 0x00010000,	/* SS6PU Ver.1.0.0 */
+		CODE_010000 = 0x00010000,	/* SS6PU Ver.0.8.0 */
+		CODE_010001 = 0x00010001,	/* SS6PU Ver.0.9.0 */
+			/* MEMO: Add "Library_SpriteStudio6.Data.Parts.Animation.CountMesh" */
+			/* MEMO: Add "Library_SpriteStudio6.Data.Parts.Animation.Category" */
 
 		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010000
+		SUPPORT_LATEST = CODE_010001
 	}
 	#endregion Enums & Constants
-
-	/* ----------------------------------------------- Classes, Structs & Interfaces */
-	#region Classes, Structs & Interfaces
-	[System.Serializable]
-	public struct AttributeSetup
-	{
-		/* ----------------------------------------------- Variables & Properties */
-		#region Variables & Properties
-		public Library_SpriteStudio6.Data.Animation.Attribute.Status Status;
-
-		public Vector3 Position;
-		public Vector3 Rotation;
-		public Vector2 Scaling;
-
-		public Vector2 ScalingLocal;
-		public float RateOpacity;
-		public Library_SpriteStudio6.Data.Animation.Attribute.PartsColor PartsColor;
-
-		public Vector2 PositionAnchor;
-
-		public Library_SpriteStudio6.Data.Animation.Attribute.UserData UserData;
-		public Library_SpriteStudio6.Data.Animation.Attribute.Instance Instance;
-		public Library_SpriteStudio6.Data.Animation.Attribute.Effect Effect;
-
-		public float RadiusCollision;
-
-		public AttributeGroupPlain Plain;
-		public AttributeGroupFix Fix;
-		#endregion Variables & Properties
-
-		/* ----------------------------------------------- Functions */
-		#region Functions
-		public void CleanUp()
-		{
-			Status.CleanUp();
-
-			Position = Vector3.zero;
-			Rotation = Vector3.zero;
-			Scaling = Vector2.one;
-			ScalingLocal = Vector2.one;
-			RateOpacity = 0.0f;
-			PartsColor.CleanUp();
-			PositionAnchor = Vector2.zero;
-
-			UserData.CleanUp();
-			Instance.CleanUp();
-			Effect.CleanUp();
-
-			RadiusCollision = 0.0f;
-
-			Plain.Cell.CleanUp();
-			Plain.SizeForce = Vector2.zero;
-			Plain.VertexCorrection.CleanUp();
-			Plain.OffsetPivot = Vector2.zero;
-			Plain.PositionTexture = Vector2.zero;
-			Plain.ScalingTexture = Vector2.one;
-			Plain.RotationTexture = 0.0f;
-
-			Fix.IndexCellMap = -1;
-			Fix.Coordinate.CleanUp();
-			Fix.UV0.CleanUp();
-			Fix.SizeCollision = Vector2.zero;
-			Fix.PivotCollision = Vector2.zero;
-		}
-		#endregion Functions
-
-		/* ----------------------------------------------- Classes, Structs & Interfaces */
-		#region Classes, Structs & Interfaces
-		[System.Serializable]
-		public struct AttributeGroupPlain
-		{
-			/* ----------------------------------------------- Variables & Properties */
-			#region Variables & Properties
-			public Library_SpriteStudio6.Data.Animation.Attribute.Cell Cell;
-
-			public Vector2 SizeForce;
-			public Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection VertexCorrection;
-			public Vector2 OffsetPivot;
-
-			public Vector2 PositionTexture;
-			public Vector2 ScalingTexture;
-			public float RotationTexture;
-			#endregion Variables & Properties
-		}
-
-		[System.Serializable]
-		public struct AttributeGroupFix
-		{
-			/* ----------------------------------------------- Variables & Properties */
-			#region Variables & Properties
-			public int IndexCellMap;
-			public Library_SpriteStudio6.Data.Animation.Attribute.CoordinateFix Coordinate;
-			public Library_SpriteStudio6.Data.Animation.Attribute.UVFix UV0;
-
-			public Vector2 SizeCollision;
-			public Vector2 PivotCollision;
-			#endregion Variables & Properties
-		}
-		#endregion Classes, Structs & Interfaces
-	}
-	#endregion Classes, Structs & Interfaces
 
 	/* ----------------------------------------------- Deligates */
 	#region Deligates

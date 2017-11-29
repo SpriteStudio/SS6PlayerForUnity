@@ -425,29 +425,15 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 				break;
 
-			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CLEARSTENCIL:
-				return(true);
-
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ARMATURE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 				return(true);
-		}
 
-		/* MEMO: Return error when animation-format is "FIX", since UVs and shape of imported-data has been determined. */
-		int indexTrack = TableControlParts[idParts].IndexControlTrack;
-		if(0 <= indexTrack)
-		{
-			int indexAnimation = TableControlTrack[indexTrack].ArgumentContainer.IndexAnimation;
-			if(0 <= indexAnimation)
-			{
-				if(Library_SpriteStudio6.Data.Animation.Parts.KindFormat.FIX == DataAnimation.TableAnimation[indexAnimation].TableParts[idParts].Format)
-				{
-					return(false);
-				}
-			}
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+				return(true);
 		}
 
 		if((0 > indexCellMap) || (0 > indexCell))

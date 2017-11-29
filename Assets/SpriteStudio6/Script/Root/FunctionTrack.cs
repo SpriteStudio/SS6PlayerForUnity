@@ -13,6 +13,89 @@ public partial class Script_SpriteStudio6_Root
 	/* ----------------------------------------------- Functions */
 	#region Functions
 	/* ******************************************************** */
+	//! Get "Playing (animation)" status
+	/*!
+	@param	indexTrack
+		Play-Track index<br>
+		-1 == Target the animation object
+	@retval	Return-Value
+		true == Now-playing<br>
+		false == Error / Not playing
+
+	Gets status as to whether animation is playing on track.<br>
+	<br>
+	Do not use property "StatusIsPlaying" directly. (For internal processing, Specification will be changed without notice)<br>
+	*/
+	public bool StatusGetPlay(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
+
+		if(0 > indexTrack)
+		{
+			return(StatusIsPlaying);
+		}
+
+		if(TableControlTrack.Length <= indexTrack)
+		{
+			return(false);
+		}
+
+		return(TableControlTrack[indexTrack].StatusIsPlaying);
+	}
+
+	/* ******************************************************** */
+	//! Get "Pausing (animation)" status
+	/*!
+	@param	indexTrack
+		Play-Track index<br>
+		-1 == All tracks
+	@retval	Return-Value
+		true == Pausing (Now-Suspended)<br>
+		false == Error / Not playing / 
+
+	Gets "Pause(suspended)" status as to whether animation is playing on track.<br>
+	<br>
+	When indexTrack is set "-1", return "true" if all playing tracks are paused.<br>
+	<br>
+	Do not use property "StatusIsPausing" directly. (For internal processing, Specification will be changed without notice)<br>
+	*/
+	public bool StatusGetPause(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
+
+		int countTrack = TableControlTrack.Length;
+
+		if(0 > indexTrack)
+		{
+			bool flagPlay = false;
+			for(int i=0; i<countTrack; i++)
+			{
+				if(true == TableControlTrack[indexTrack].StatusIsPlaying)
+				{
+					flagPlay |= true;
+					if(false == TableControlTrack[indexTrack].StatusIsPausing)
+					{
+						return(false);
+					}
+				}
+			}
+			return(flagPlay);
+		}
+
+		if(countTrack <= indexTrack)
+		{
+			return(false);
+		}
+		return(TableControlTrack[indexTrack].StatusIsPausing);
+	}
+
+	/* ******************************************************** */
 	//! Get number of "Play-Track"
 	/*!
 	@param	
@@ -268,5 +351,197 @@ public partial class Script_SpriteStudio6_Root
 		return(TableControlTrack[indexTrack].Transition(indexTrackSlave, time));
 	}
 
+	/* ******************************************************** */
+	//! Get Animation's index (Playing on track)
+	/*!
+	@param	indexTrack
+		Track index
+	@retval	Return-Value
+		Animation's index<br>
+		-1 == Error / Not playing
+
+	Get animation's index being played on track.<br>
+	*/
+	public int IndexGetAnimation(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(-1);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(-1);
+		}
+
+		return(TableControlTrack[indexTrack].ArgumentContainer.IndexAnimation);
+	}
+
+	/* ******************************************************** */
+	//! Get Track's index (Connected to Parts)
+	/*!
+	@param	idParts
+		Parts-ID
+	@retval	Return-Value
+		Track's index<br>
+		-1 == Error / Not connected
+
+	Get track index connected to (animation's) part.<br>
+	Default value is 0.<br>
+	*/
+	public int IndexGetTrack(int idParts)
+	{
+		if((null == TableControlTrack) || (null == TableControlParts))
+		{
+			return(-1);
+		}
+
+		if((0 > idParts) || (TableControlParts.Length <= idParts))
+		{
+			return(-1);
+		}
+
+		return(TableControlParts[idParts].IndexControlTrack);
+	}
+
+	/* ******************************************************** */
+	//! Get Svale-Track's index
+	/*!
+	@param	indexTrack
+		Track index to set pause-status (0 origin)
+	@retval	Return-Value
+		Slave-Track's index<br>
+		-1 == Error / Not transitioned
+
+	Get Slave-Track's index if the track is transitioning (has Slave-Track).<br>
+	*/
+	public int IndexGetTrackSlave(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(-1);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(-1);
+		}
+
+		return(TableControlTrack[indexTrack].IndexTrackSlave);
+	}
+
+	/* ********************************************************* */
+	//! Changing animations' playing speed
+	/*!
+	@param	indexTrack
+		Track index to set pause-status (0 origin)<br>
+		-1 == Set pause-status all tracks.
+	@param	rateTime
+		Coefficient of time-passage of animation.<br>
+		Minus Value is given, Animation is played backwards.
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Change speed of the animation during playing.<br>
+	*/
+	public bool RateTimeSet(int indexTrack, float rateTime)
+	{
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
+
+		int countTrack = TableControlTrack.Length;
+		if(0 > indexTrack)
+		{	/* All track */
+			/* MEMO: Stop all current playback and play single animation at track 0. */
+			for(int i=0; i<countTrack; i++)
+			{
+				if(true == TableControlTrack[i].StatusIsPlaying)
+				{
+					TableControlTrack[i].RateTime = rateTime;
+				}
+			}
+		}
+		else
+		{	/* Specific track */
+			if(countTrack <= indexTrack)
+			{
+				return(false);
+			}
+			if(false == TableControlTrack[indexTrack].StatusIsPlaying)
+			{
+				return(false);
+			}
+			TableControlTrack[indexTrack].RateTime = rateTime;
+		}
+		return(true);
+	}
+
+	/* ********************************************************* */
+	//! Get animations' playing speed
+	/*!
+	@param	indexTrack
+		Track index to set pause-status (0 origin)<br>
+		-1 == Set pause-status all tracks.
+	@retval	Return-Value
+		Coefficient of time-passage of animation.<br>
+		float.NaN == Failure (Error)
+
+	Change speed of the animation during playing.<br>
+	For tracks that are not playing, playing speed up to previous time is returned.<br>
+	*/
+	public float RateTimeGet(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(float.NaN);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(float.NaN);
+		}
+
+//		if(true == TableControlTrack[indexTrack].StatusIsPlaying)
+//		{
+//			return(float.NaN);
+//		}
+
+		return(TableControlTrack[indexTrack].RateTime);
+	}
+
+	/* ******************************************************** */
+	//! Get remaining play count
+	/*!
+	@param	indexTrack
+		Track index
+	@retval	Return-Value
+		remaining play count<br>
+		0 == Infinite loop (No finish)<br>
+		-1 == Error / Not playing
+
+	Get animation's index being played on track.<br>
+	*/
+	public int PlayTimesGetRemain(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(-1);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(-1);
+		}
+
+		if(false == TableControlTrack[indexTrack].StatusIsPlaying)
+		{
+			return(-1);
+		}
+
+		return(TableControlTrack[indexTrack].TimesPlay);
+	}
 	#endregion Functions
 }

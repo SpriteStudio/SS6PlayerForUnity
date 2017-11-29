@@ -11,12 +11,6 @@ using UnityEditor;
 
 public static partial class LibraryEditor_SpriteStudio6
 {
-	/* ----------------------------------------------- Enums & Constants */
-	#region Enums & Constants
-	public const string NameAsset = "SpriteStudio6 Player for Unity";
-	public const string NameDistributor = "Web Technology Corp.";
-	#endregion Enums & Constants
-
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
 	#region Classes, Structs & Interfaces
 	public static partial class Import
@@ -60,7 +54,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			int countSSCE = informationSSPJ.TableNameSSCE.Length;
 			int countSSAE = informationSSPJ.TableNameSSAE.Length;
 			int countSSEE = informationSSPJ.TableNameSSEE.Length;
-			int countTexture = countSSCE;	/* Decretal order */
+			int countTexture = countSSCE;
 			countProgressMax += (countSSCE + countSSAE + countSSEE + 1);	/* Parse *//* +1 = Create Texture-Information */
 			switch(setting.Mode)
 			{
@@ -68,13 +62,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						countProgressMax += (countSSCE + countSSAE + countSSEE);	/* Convert */
 						countProgressMax += 1;	/* Create-Asset(Materials) */
-						countProgressMax += (countTexture + 1 + countSSAE + countSSEE);	/* Create-Asset *//* 1==CellMap */
-
-						if(true == setting.PreCalcualation.FlagFixSprite)
-						{
-							countProgressMax += countSSAE;	/* Convert-Animation Pass 2 (PreCalculate Mesh-Fix) */
-						}
-						countProgressMax += countSSAE;	/* Convert-Animation Pass 3 (Attributes Pack) */
+						countProgressMax += (countTexture + 1 + countSSAE + countSSEE);	/* Create-Asset (Data) */
+						countProgressMax += (countSSAE + countSSEE);	/* Create-Asset (Prefab) */
 
 						if(true == setting.PreCalcualation.FlagTrimTransparentPixelsCell)
 						{
@@ -615,19 +604,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					indexParts = informationSSPJ.QueueConvertSSAE[i];
 					informationSSAE = informationSSPJ.TableInformationSSAE[indexParts];
 
-					/* Convert "Trim Transparent-Pixel": Data */
-					if(true == setting.PreCalcualation.FlagFixSprite)
-					{
-						ProgressBarUpdate(	"Convert SSAEs \"Fix Mesh\" (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
-											flagDisplayProgressBar, ref countProgressNow, countProgressMax
-										);
-
-						if(false == SSAE.ModeSS6PU.ConvertFixMesh(ref setting, informationSSPJ, informationSSAE))
-						{
-							goto ExecSS6PU_ErrorEnd;
-						}
-					}
-
 					/* Convert: Data */
 					ProgressBarUpdate(	"Convert SSAEs (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
 										flagDisplayProgressBar, ref countProgressNow, countProgressMax
@@ -750,7 +726,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 		public static void ProgressBarUpdate(string nameTask, bool flagSwitch, ref int step, int stepFull)
 		{
-			LibraryEditor_SpriteStudio6.Utility.Miscellaneous.ProgressBarUpdate(	LibraryEditor_SpriteStudio6.NameAsset + " Data Import",
+			LibraryEditor_SpriteStudio6.Utility.Miscellaneous.ProgressBarUpdate(	Library_SpriteStudio6.SignatureNameAsset + " Data Import",
 																					nameTask,
 																					flagSwitch,
 																					step,
