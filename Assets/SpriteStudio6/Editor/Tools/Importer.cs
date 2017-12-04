@@ -4,7 +4,7 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
-// #define TAKE_AWAY_UNSUPPORTED_FUNCTION
+#define TAKE_AWAY_UNSUPPORTED_FUNCTION
 
 using System.Collections;
 using System.Collections.Generic;
@@ -332,21 +332,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 	void ModeUnityNative(int levelIndent)
 	{
-#if TAKE_AWAY_UNSUPPORTED_FUNCTION
-		EditorGUI.indentLevel = levelIndent;
-		EditorGUILayout.LabelField("Sorry.");
-		EditorGUILayout.LabelField("This mode can not be executed in current version.");
-		EditorGUILayout.LabelField("Please give us a little more time.");
-		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("Memo:");
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("This mode is the successor to \"SS5 Converter for Unity 2D\".");
-		EditorGUILayout.LabelField("Convert the data created by SpriteStudio 6 to Unity's \"Animator + Sprite2D\".");
-		EditorGUILayout.LabelField("(However, there are attributes of SpriteStudio6 which can not be used)");
-		EditorGUI.indentLevel = levelIndent;
-		EditorGUILayout.Space();
-		EditorGUILayout.Space();
-#else
 		SettingOption.ModeUnityNative.FlagFoldOutCaution = EditorGUILayout.Foldout(SettingOption.ModeUnityNative.FlagFoldOutCaution, "Cautions");
 		if(true == SettingOption.ModeUnityNative.FlagFoldOutCaution)
 		{
@@ -417,7 +402,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
-#endif
 	}
 
 	private void ModeBatchImporter(int levelIndent)

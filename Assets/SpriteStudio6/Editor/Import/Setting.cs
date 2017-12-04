@@ -4,7 +4,6 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
-// #define TAKE_AWAY_UNSUPPORTED_FUNCTION
 
 using System.Collections;
 using System.Collections.Generic;
