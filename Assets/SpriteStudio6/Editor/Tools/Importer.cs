@@ -872,13 +872,13 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.Space();
 
 		SettingImport.PresetMaterial.AnimationUnityNativeMix = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMix, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeAdd = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeAdd, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeSub = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeSub, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeMul = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMul, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeMulNA = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMulNA, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeScr = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeScr, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeExc = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeExc, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeInv = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeInv, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeAdd = EditorGUILayout.ObjectField("[Unity-Native]Add", SettingImport.PresetMaterial.AnimationUnityNativeAdd, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeSub = EditorGUILayout.ObjectField("[Unity-Native]Sub", SettingImport.PresetMaterial.AnimationUnityNativeSub, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeMul = EditorGUILayout.ObjectField("[Unity-Native]Mul", SettingImport.PresetMaterial.AnimationUnityNativeMul, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeMulNA = EditorGUILayout.ObjectField("[Unity-Native]MulNA", SettingImport.PresetMaterial.AnimationUnityNativeMulNA, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeScr = EditorGUILayout.ObjectField("[Unity-Native]Scr", SettingImport.PresetMaterial.AnimationUnityNativeScr, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeExc = EditorGUILayout.ObjectField("[Unity-Native]Exc", SettingImport.PresetMaterial.AnimationUnityNativeExc, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeInv = EditorGUILayout.ObjectField("[Unity-Native]Inv", SettingImport.PresetMaterial.AnimationUnityNativeInv, typeof(Material), false) as Material;
 
 		EditorGUILayout.Space();
 	}
