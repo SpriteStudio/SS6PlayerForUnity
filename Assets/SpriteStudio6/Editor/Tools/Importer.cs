@@ -536,11 +536,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("- X Local Scale");
 		EditorGUILayout.LabelField("- Y Local Scale");
 		EditorGUILayout.LabelField("- Opacity");
-		EditorGUILayout.LabelField("- LOcal Opacity");
+		EditorGUILayout.LabelField("- Local Opacity");
 		EditorGUILayout.LabelField("- Priority");
 		EditorGUILayout.LabelField("- Hide");
 		EditorGUILayout.LabelField("- Parts Color");
-		EditorGUILayout.LabelField("- Collision Radius");
+		EditorGUILayout.LabelField("- Mask Power");
 		EditorGUILayout.LabelField("- User Data");
 		EditorGUI.indentLevel = levelIndent;
 
