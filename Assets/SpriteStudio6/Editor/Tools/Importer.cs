@@ -4,7 +4,7 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
-#define TAKE_AWAY_UNSUPPORTED_FUNCTION
+// #define TAKE_AWAY_UNSUPPORTED_FUNCTION
 
 using System.Collections;
 using System.Collections.Generic;
@@ -204,6 +204,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			SettingOption.SettingBackUp.FlagExportRuleNameAsset = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Naming Assets\"", SettingOption.SettingBackUp.FlagExportRuleNameAsset);
 			SettingOption.SettingBackUp.FlagExportRuleNameAssetFolder = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Naming Asset-Folders\"", SettingOption.SettingBackUp.FlagExportRuleNameAssetFolder);
 			SettingOption.SettingBackUp.FlagPackAttributeAnimation = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Attribute data Packing\"", SettingOption.SettingBackUp.FlagPackAttributeAnimation);
+			SettingOption.SettingBackUp.FlagPresetMaterial = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Preset Material\"", SettingOption.SettingBackUp.FlagPresetMaterial);
 			EditorGUILayout.Space();
 
 			if(true == GUILayout.Button("Save to Text-File"))
@@ -226,7 +227,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 												SettingOption.SettingBackUp.FlagExportCheckVersion,
 												SettingOption.SettingBackUp.FlagExportRuleNameAsset,
 												SettingOption.SettingBackUp.FlagExportRuleNameAssetFolder,
-												SettingOption.SettingBackUp.FlagPackAttributeAnimation
+												SettingOption.SettingBackUp.FlagPackAttributeAnimation,
+												SettingOption.SettingBackUp.FlagPresetMaterial
 											);
 				}
 			}
@@ -240,6 +242,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				if((null != nameFile) && (0 < nameFile.Length))
 				{
 					SettingImport.ImportFile(nameFile);
+					SettingImport.Save();
 				}
 			}
 			EditorGUILayout.Space();
@@ -401,6 +404,13 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent;
 			}
 
+			SettingOption.ModeUnityNative.FlagFoldOutPresetMaterial = EditorGUILayout.Foldout(SettingOption.ModeUnityNative.FlagFoldOutPresetMaterial, "Advanced Options: Preset Material");
+			if(true == SettingOption.ModeUnityNative.FlagFoldOutPresetMaterial)
+			{
+				FoldOutExecPresetMaterial(levelIndent + 1);
+				EditorGUI.indentLevel = levelIndent;
+			}
+
 			levelIndent--;
 			EditorGUI.indentLevel = levelIndent;
 		}
@@ -490,6 +500,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				break;
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+				SettingImport.Basic.FlagCreateHolderAsset = EditorGUILayout.ToggleLeft("Create Asset-Holder", SettingImport.Basic.FlagCreateHolderAsset);
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Add \"Asset-Holder\" script of used asset (AnimationClip etc).");
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
 				break;
 
 			default:
@@ -513,18 +528,19 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	{	/* MEMO: only "Unity-Native" Mode */
 		EditorGUI.indentLevel = levelIndent;
 		EditorGUILayout.LabelField("In this mode, only the following Animation-Part-Types can be used.");
-		EditorGUILayout.LabelField("Other Part-Types are ignored.");
+		EditorGUILayout.LabelField("(Other Part-Types are ignored)");
 
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("- root");
 		EditorGUILayout.LabelField("- NULL");
 		EditorGUILayout.LabelField("- Normal");
+		EditorGUILayout.LabelField("- Mask");
 		EditorGUI.indentLevel = levelIndent;
 
 		EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField("In this mode, only the following Animation-Attributes can be used.");
-		EditorGUILayout.LabelField("Other Attributes are ignored.");
+		EditorGUILayout.LabelField("(Other Attributes are ignored)");
 
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("- Reference Cell");
@@ -533,9 +549,14 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("- Z Axis Rotation");
 		EditorGUILayout.LabelField("- X Scale");
 		EditorGUILayout.LabelField("- Y Scale");
+		EditorGUILayout.LabelField("- X Local Scale");
+		EditorGUILayout.LabelField("- Y Local Scale");
 		EditorGUILayout.LabelField("- Opacity");
+		EditorGUILayout.LabelField("- LOcal Opacity");
 		EditorGUILayout.LabelField("- Priority");
 		EditorGUILayout.LabelField("- Hide");
+		EditorGUILayout.LabelField("- Parts Color");
+		EditorGUILayout.LabelField("- Collision Radius");
 		EditorGUILayout.LabelField("- User Data");
 		EditorGUI.indentLevel = levelIndent;
 
@@ -858,6 +879,25 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			pack = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorGUILayout.IntPopup(message, (int)pack, dataPopup.TableName, dataPopup.TableKindTypePack));
 		}
 	}
+
+	private void FoldOutExecPresetMaterial(int levelIndent)
+	{
+		EditorGUI.indentLevel = levelIndent;
+
+		EditorGUILayout.LabelField("Set each blend-operation's materials.");
+		EditorGUILayout.Space();
+
+		SettingImport.PresetMaterial.AnimationUnityNativeMix = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMix, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeAdd = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeAdd, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeSub = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeSub, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeMul = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMul, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeMulNA = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMulNA, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeScr = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeScr, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeExc = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeExc, typeof(Material), false) as Material;
+		SettingImport.PresetMaterial.AnimationUnityNativeInv = EditorGUILayout.ObjectField("[Unity-Native]Mix", SettingImport.PresetMaterial.AnimationUnityNativeInv, typeof(Material), false) as Material;
+
+		EditorGUILayout.Space();
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */
@@ -1070,6 +1110,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public bool FlagFoldOutRuleNameAsset;
 			public bool FlagFoldOutRuleNameAssetSample;
 			public bool FlagFoldOutRuleNameAssetFolder;
+			public bool FlagFoldOutPresetMaterial;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1082,7 +1123,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 										bool flagOpenAdvancedOprions,
 										bool flagFoldOutRuleNameAsset,
 										bool flagFoldOutRuleNameAssetSample,
-										bool flagFoldOutRuleNameAssetFolder
+										bool flagFoldOutRuleNameAssetFolder,
+										bool flagFoldOutPresetMaterial
 									)
 			{
 				FlagFoldOutCaution = flagFoldOutCaution;
@@ -1095,6 +1137,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagFoldOutRuleNameAsset = flagFoldOutRuleNameAsset;
 				FlagFoldOutRuleNameAssetSample = flagFoldOutRuleNameAssetSample;
 				FlagFoldOutRuleNameAssetFolder = flagFoldOutRuleNameAssetFolder;
+				FlagFoldOutPresetMaterial = flagFoldOutPresetMaterial;
 			}
 
 			public void CleanUp()
@@ -1114,6 +1157,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagFoldOutRuleNameAsset = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAsset, Default.FlagFoldOutRuleNameAsset);
 				FlagFoldOutRuleNameAssetSample = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, Default.FlagFoldOutRuleNameAssetSample);
 				FlagFoldOutRuleNameAssetFolder = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAssetFolder, Default.FlagFoldOutRuleNameAssetFolder);
+				FlagFoldOutPresetMaterial = EditorPrefs.GetBool(PrefsKeyFlagFoldOutPresetMaterial, Default.FlagFoldOutPresetMaterial);
 
 				return(true);
 			}
@@ -1132,6 +1176,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAsset, FlagFoldOutRuleNameAsset);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, FlagFoldOutRuleNameAssetSample);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetFolder, FlagFoldOutRuleNameAssetFolder);
+				EditorPrefs.SetBool(PrefsKeyFlagFoldOutPresetMaterial, FlagFoldOutPresetMaterial);
 
 				return(true);
 			}
@@ -1149,6 +1194,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			private const string PrefsKeyFlagFoldOutRuleNameAsset = PrefsKeyPrefix + "FlagFoldOutRuleNameAsset";
 			private const string PrefsKeyFlagFoldOutRuleNameAssetSample = PrefsKeyPrefix + "FlagFoldOutRuleNameAssetSample";
 			private const string PrefsKeyFlagFoldOutRuleNameAssetFolder = PrefsKeyPrefix + "FlagFoldOutRuleNameAssetFolder";
+			private const string PrefsKeyFlagFoldOutPresetMaterial = PrefsKeyPrefix + "FlagFoldOutPresetMaterial";
 
 			private readonly static GroupUnityNative Default = new GroupUnityNative(
 				true,	/* FlagFoldOutCaution */
@@ -1159,7 +1205,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				false,	/* FlagOpenAdvancedOprions */
 				false,	/* FlagFoldOutRuleNameAsset */
 				true,	/* FlagFoldOutRuleNameAssetSample */
-				false	/* FlagFoldOutRuleNameAssetFolder */
+				false,	/* FlagFoldOutRuleNameAssetFolder */
+				false	/* FlagFoldOutPresetMaterial */
 			);
 			#endregion Enums & Constants
 		}
@@ -1267,6 +1314,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public bool FlagExportRuleNameAsset;
 			public bool FlagExportRuleNameAssetFolder;
 			public bool FlagPackAttributeAnimation;
+			public bool FlagPresetMaterial;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1279,7 +1327,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 										bool flagExportCheckVersion,
 										bool flagExportRuleNameAsset,
 										bool flagExportRuleNameAssetFolder,
-										bool flagPackAttributeAnimation
+										bool flagPackAttributeAnimation,
+										bool flagPresetMaterial
 									)
 			{
 				FlagExportCommon = flagExportCommon;
@@ -1292,6 +1341,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagExportRuleNameAsset = flagExportRuleNameAsset;
 				FlagExportRuleNameAssetFolder = flagExportRuleNameAssetFolder;
 				FlagPackAttributeAnimation = flagPackAttributeAnimation;
+				FlagPresetMaterial = flagPresetMaterial;
 			}
 
 			public void CleanUp()
@@ -1311,6 +1361,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagExportRuleNameAsset = EditorPrefs.GetBool(PrefsKeyFlagExportRuleNameAsset, Default.FlagExportRuleNameAsset);
 				FlagExportRuleNameAssetFolder = EditorPrefs.GetBool(PrefsKeyFlagExportRuleNameAsset, Default.FlagExportRuleNameAssetFolder);
 				FlagPackAttributeAnimation = EditorPrefs.GetBool(PrefsKeyFlagPackAttributeAnimation, Default.FlagPackAttributeAnimation);
+				FlagPresetMaterial = EditorPrefs.GetBool(PrefsKeyFlagPresetMaterial, Default.FlagPresetMaterial);
 
 				return(true);
 			}
@@ -1327,6 +1378,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorPrefs.SetBool(PrefsKeyFlagExportRuleNameAsset, FlagExportRuleNameAsset);
 				EditorPrefs.SetBool(PrefsKeyFlagExportRuleNameAssetFolder, FlagExportRuleNameAssetFolder);
 				EditorPrefs.SetBool(PrefsKeyFlagPackAttributeAnimation, FlagPackAttributeAnimation);
+				EditorPrefs.SetBool(PrefsKeyFlagPresetMaterial, FlagPresetMaterial);
 
 				return(true);
 			}
@@ -1344,6 +1396,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			private const string PrefsKeyFlagExportRuleNameAsset = PrefsKeyPrefix + "FlagExportRuleNameAsset";
 			private const string PrefsKeyFlagExportRuleNameAssetFolder = PrefsKeyPrefix + "FlagExportRuleNameAssetFolder";
 			private const string PrefsKeyFlagPackAttributeAnimation = PrefsKeyPrefix + "FlagPackAttributeAnimation";
+			private const string PrefsKeyFlagPresetMaterial = PrefsKeyPrefix + "FlagPresetMaterial";
 
 			private readonly static GroupSettingBackUp Default = new GroupSettingBackUp(
 				false,	/* FlagExportCommon */
@@ -1354,7 +1407,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				false,	/* FlagExportCheckVersion */
 				true,	/* FlagExportRuleNameAsset */
 				true,	/* FlagExportRuleNameAssetFolder */
-				true	/* FlagPackAttributeAnimation */
+				true,	/* FlagPackAttributeAnimation */
+				true	/* FlagPresetMaterial */
 			);
 			#endregion Enums & Constants
 		}

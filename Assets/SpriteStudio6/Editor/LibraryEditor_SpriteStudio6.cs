@@ -74,7 +74,14 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				case Setting.KindMode.UNITY_NATIVE:
 					{
+						countProgressMax += countSSCE;	/* Convert (CellMap) */
 						countProgressMax += countTexture;	/* Create-Asset (Texture) */
+						countProgressMax += countSSAE;	/* Convert & Create-Asset (Animation) */
+
+						if(true == setting.PreCalcualation.FlagTrimTransparentPixelsCell)
+						{
+							countProgressMax += countSSCE;	/* Convert-CellMap Pass 2 (PreCalculate Trim-TransparentPixels) */
+						}
 					}
 					break;
 
@@ -287,14 +294,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					if(true == flagCreateAssetData)
 					{
-						if(false == SSCE.ModeSS6PU.AssetCreateTexture(ref setting, informationSSPJ, informationTexture))
+						if(false == SSCE.AssetCreateTexture(ref setting, informationSSPJ, informationTexture))
 						{
 							goto ExecSS6PU_ErrorEnd;
 						}
 					}
 				}
 			}
-			countProgressNow += (countSSEE - countTexture);	/* The number of textures and SSEEs do not necessarily match. When the number is different, SSEEs are more. */
+			countProgressNow -= (countSSEE - countTexture);	/* The number of textures and SSEEs do not necessarily match. When the number is different, SSEEs are more. */
 
 			/* Create Asset: Material (Animation) */
 			/* MEMO: Materials corresponding to number of target-blend types(shader) are generated for 1 texture. */
@@ -431,15 +438,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* MEMO: Be sure to "Convert" even when not create CellMap data-assets. Datas may be used at converting SSAE. */
 					informationSSCE = informationSSPJ.TableInformationSSCE[i];
 
-					/* Convert */
-					ProgressBarUpdate(	"Convert SSCEs (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
-										flagDisplayProgressBar, ref countProgressNow, countProgressMax
-									);
-					if(false == SSCE.ModeSS6PU.ConvertCellMap(ref setting, informationSSPJ, informationSSCE))
-					{
-						goto ExecSS6PU_ErrorEnd;
-					}
-
 					/* Convert "Trim Transparent-Pixel" */
 					if(true == setting.PreCalcualation.FlagTrimTransparentPixelsCell)
 					{
@@ -447,10 +445,19 @@ public static partial class LibraryEditor_SpriteStudio6
 											flagDisplayProgressBar, ref countProgressNow, countProgressMax
 										);
 
-						if(false == SSCE.ModeSS6PU.ConverCellMaptPixelTrimTransparent(ref setting, informationSSPJ, informationSSCE))
+						if(false == SSCE.CellTrimTransparentPixel(ref setting, informationSSPJ, informationSSCE))
 						{
 							goto ExecSS6PU_ErrorEnd;
 						}
+					}
+
+					/* Convert */
+					ProgressBarUpdate(	"Convert SSCEs (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+					if(false == SSCE.ModeSS6PU.ConvertCellMap(ref setting, informationSSPJ, informationSSCE))
+					{
+						goto ExecSS6PU_ErrorEnd;
 					}
 				}
 
@@ -651,7 +658,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
-					/* Create-Asset: Data */
+					/* Create-Asset: Prefab */
 					ProgressBarUpdate(	"Create Asset \"Prefab-Animation\" (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
 										flagDisplayProgressBar, ref countProgressNow, countProgressMax
 									);
@@ -673,7 +680,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					{	/* Exist */
 						if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagDataAnimation,
 																													informationSSAE.PrefabAnimationSS6PU.TableName[0],
-																													"Data Animation"
+																													"Prefab Animation"
 																												)
 							)
 						{	/* Not overwrite */
@@ -703,15 +710,214 @@ public static partial class LibraryEditor_SpriteStudio6
 												string nameOutputAssetFolderBase
 											)
 		{
-			/* Animation -> Animator/AnimationClip */
+			const string messageLogPrefix = "Convert-Main (UnityNative)";
+			string nameOutputAssetFolder = "";
+			string nameOutputAssetBody = "";
+			string nameOutputAssetExtention = "";
+			bool flagCreateAssetData = true;
 
-			/* Effect -> Particle */
+			/* Decide Asset Names & Check Assets existing */
+			if(false == SSPJ.ModeUnityNative.AssetNameDecide(ref setting, informationSSPJ, nameOutputAssetFolderBase))
+			{
+				goto ExecUnityNative_ErrorEnd;
+			}
 
+			/* Get Datas' count */
+			int countTexture = informationSSPJ.TableInformationTexture.Length;
+			int countSSCE = informationSSPJ.TableInformationSSCE.Length;
+			int countSSAE = informationSSPJ.TableInformationSSAE.Length;
+			int countSSEE = informationSSPJ.TableInformationSSEE.Length;
 
+			/* Create Asset: Texture */
+			/* MEMO: Create Texture-Assets before CellMap for "Trim Transparent-Pixel". */
+			if(0 < countTexture)
+			{
+				/* Copy Texture files */
+				SSCE.Information.Texture informationTexture = null;
+				for(int i=0; i<countTexture; i++)
+				{
+					ProgressBarUpdate(	"Copy Textures (" + (i + 1).ToString() + "/" + countTexture.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+
+					flagCreateAssetData = true;
+					informationTexture = informationSSPJ.TableInformationTexture[i];
+
+					/* Create-Asset */
+					if(null == informationTexture.PrefabTexture.TableData[0])
+					{	/* New */
+						/* Create Output Asset-Folder */
+						LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																			informationTexture.PrefabTexture.TableName[0]
+																		);
+						if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+						{
+							LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+							goto ExecUnityNative_ErrorEnd;
+						}
+					}
+					else
+					{	/* Exist */
+						if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagTexture,
+																													informationTexture.PrefabTexture.TableName[0],
+																													"Texture"
+																												)
+							)
+						{	/* Not overwrite */
+							flagCreateAssetData = false;
+						}
+					}
+					if(true == flagCreateAssetData)
+					{
+						if(false == SSCE.AssetCreateTexture(ref setting, informationSSPJ, informationTexture))
+						{
+							goto ExecUnityNative_ErrorEnd;
+						}
+					}
+				}
+			}
+			countProgressNow -= (countSSEE - countTexture);	/* The number of textures and SSEEs do not necessarily match. When the number is different, SSEEs are more. */
+
+			/* Convert SSCEs */
+			/* MEMO: Currently, SSCE does not has own data-file in "Unity-Native" mode. */
+			/*       (... but might create later)                                       */
+			if(0 < countSSCE)
+			{
+				SSCE.Information informationSSCE = null;
+				for(int i=0; i<countSSCE; i++)
+				{
+					/* MEMO: Be sure to "Convert" even when not create CellMap data-assets. Datas may be used at converting SSAE. */
+					informationSSCE = informationSSPJ.TableInformationSSCE[i];
+
+					/* Convert "Trim Transparent-Pixel" */
+					if(true == setting.PreCalcualation.FlagTrimTransparentPixelsCell)
+					{
+						ProgressBarUpdate(	"Convert SSCEs \"Trim Pixel\" (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
+											flagDisplayProgressBar, ref countProgressNow, countProgressMax
+										);
+
+						if(false == SSCE.CellTrimTransparentPixel(ref setting, informationSSPJ, informationSSCE))
+						{
+							goto ExecUnityNative_ErrorEnd;
+						}
+					}
+
+					/* Convert (Create Textures' Atlas) */
+					ProgressBarUpdate(	"Convert SSCEs (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+					if(false == SSCE.ModeUnityNative.ConvertCellMap(ref setting, informationSSPJ, informationSSCE))
+					{
+						goto ExecUnityNative_ErrorEnd;
+					}
+				}
+
+				/* Add Atlases to Textures */
+				for(int i=0; i<countTexture; i++)
+				{
+					if(false == SSCE.ModeUnityNative.CellMapSetTexture(ref setting, informationSSPJ, i))
+					{
+						goto ExecUnityNative_ErrorEnd;
+					}
+				}
+			}
+
+			/* Create Assrts SSAEs */
+			if(0 < countSSAE)
+			{
+				SSAE.Information informationSSAE = null;
+				for(int i=0; i<countSSAE; i++)
+				{
+					informationSSAE = informationSSPJ.TableInformationSSAE[i];
+
+					/* Convert Parts (Create Temporary GameObjects) */
+					ProgressBarUpdate(	"Convert & Create Asset SSAEs (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+
+					GameObject gameObjectRoot = SSAE.ModeUnityNative.ConvertPartsAnimation(ref setting, informationSSPJ, informationSSAE);
+					if(null == gameObjectRoot)
+					{
+						goto ExecUnityNative_ErrorEnd;
+					}
+
+					/* Create Asset: Animation (AnimationClip) */
+					int countAnimation = informationSSAE.TableAnimation.Length;
+					for(int j=0; j<countAnimation; j++)
+					{
+						flagCreateAssetData = true;
+						if(null == informationSSAE.DataAnimationUnityNative.TableData[j])
+						{	/* New */
+							/* Create Output Asset-Folder */
+							LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																				informationSSAE.DataAnimationUnityNative.TableName[j]
+																			);
+							if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+							{
+								LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+								goto ExecUnityNative_ErrorEnd;
+							}
+						}
+						else
+						{	/* Exist */
+							if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagDataAnimation,
+																														informationSSAE.DataAnimationUnityNative.TableName[j],
+																														"Data Animation"
+																													)
+								)
+							{	/* Not overwrite */
+								flagCreateAssetData = false;
+							}
+						}
+						if(true == flagCreateAssetData)
+						{
+							if(false == SSAE.ModeUnityNative.AssetCreateData(ref setting, informationSSPJ, informationSSAE, j))
+							{
+								goto ExecUnityNative_ErrorEnd;
+							}
+						}
+					}
+
+					/* Create Asset: Animation (Prefab) */
+					flagCreateAssetData = true;
+					if(null == informationSSAE.PrefabAnimationUnityNative.TableData[0])
+					{	/* New */
+						/* Create Output Asset-Folder */
+						LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																			informationSSAE.PrefabAnimationUnityNative.TableName[0]
+																		);
+						if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+						{
+							LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+							goto ExecUnityNative_ErrorEnd;
+						}
+					}
+					else
+					{	/* Exist */
+						if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagDataAnimation,
+																													informationSSAE.PrefabAnimationUnityNative.TableName[0],
+																													"Prefab Animation"
+																												)
+							)
+						{	/* Not overwrite */
+							flagCreateAssetData = false;
+						}
+					}
+					if(true == flagCreateAssetData)
+					{
+						if(false == SSAE.ModeUnityNative.AssetCreatePrefab(ref setting, informationSSPJ, informationSSAE, gameObjectRoot))
+						{
+							goto ExecUnityNative_ErrorEnd;
+						}
+						gameObjectRoot = null;
+					}
+				}
+			}
+
+			return(true);
+
+		ExecUnityNative_ErrorEnd:;
 			return(false);
-
-//		ExecUnityNative_ErrorEnd:;
-//			return(false);
 		}
 
 		private static void LogError(string messagePrefix, string message)
@@ -915,7 +1121,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(null);
 				}
 #if false
-				/* MEMO: when use "AssetDataBase.CreateFolder" to create folders recursively, processing may be delayed. */
+				/* MEMO: When use "AssetDataBase.CreateFolder" to create folders recursively, processing may be delayed. */
 				/* Create Folder Recursive */
 				string namePathParent = "Assets";
 				string namePathChild = "";
@@ -1203,6 +1409,35 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				rv = rv.Replace("../", "_");	/* "../" -> "_" */
 				rv = rv.Replace("/", "_");	/* "/" -> "_" */
+				return(rv);
+			}
+
+			public static string NameNormalize(string name)
+			{
+				if(true == string.IsNullOrEmpty(name))
+				{
+					return("");
+				}
+
+				string rv = string.Copy(name);
+				rv = rv.Replace(":", "_");	/* "/" -> "_" */
+				rv = rv.Replace("\\", "/");	/* "\" -> "/" */
+				rv = rv.Replace("/", "_");	/* "/" -> "_" */
+				rv = rv.Replace(".", "_");	/* "." -> "_" */
+				rv = rv.Replace(",", "_");	/* "," -> "_" */
+				rv = rv.Replace("\"", "_");	/* """ -> "_" */
+				rv = rv.Replace("|", "_");	/* "|" -> "_" */
+				rv = rv.Replace("[", "_");	/* "[" -> "_" */
+				rv = rv.Replace("]", "_");	/* "]" -> "_" */
+				rv = rv.Replace(";", "_");	/* ";" -> "_" */
+				rv = rv.Replace("=", "_");	/* "=" -> "_" */
+				rv = rv.Replace(" ", "_");	/* " " -> "_" */
+				rv = rv.Replace("~", "_");	/* " " -> "_" */
+				rv = rv.Replace("$", "_");	/* "$" -> "_" */
+				rv = rv.Replace("@", "_");	/* "@" -> "_" */
+				rv = rv.Replace("&", "_");	/* "&" -> "_" */
+				rv = rv.Replace("\0x00", "_");	/* NULL -> "_" */
+
 				return(rv);
 			}
 			#endregion Functions
