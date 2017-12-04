@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "0.9.0";
+	public const string SignatureVersionAsset = "0.9.5";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -1529,6 +1529,16 @@ public static partial class Library_SpriteStudio6
 				}
 				return(null);
 			}
+
+			public static UnityEngine.Shader ShaderGetAnimationUnityNative(Library_SpriteStudio6.KindOperationBlend operationBlend)
+			{
+				if((Library_SpriteStudio6.KindOperationBlend.MIX > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
+				{
+					return(null);
+				}
+
+				return(TableSpriteUnityNative[(int)operationBlend]);
+			}
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */
@@ -1571,6 +1581,18 @@ public static partial class Library_SpriteStudio6
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"),
+			};
+
+			public readonly static UnityEngine.Shader[] TableSpriteUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
+			{
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Subtract"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Multiple"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/MultipleNA"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Screen"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Exclude"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Inverse")
 			};
 			#endregion Enums & Constants
 		}

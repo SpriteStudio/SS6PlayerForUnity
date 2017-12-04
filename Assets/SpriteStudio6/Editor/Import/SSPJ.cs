@@ -977,7 +977,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationSSPJ.DataCellMapSS6PU.CleanUp();
 					}
 
-					/* Materials & Textures */
+					/* Materials */
 					int indexMaterialBlend;
 					int indexTexture;
 
@@ -1034,15 +1034,15 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
-					/* Texture */
+					/* Textures */
 					for(int i=0; i<countTexture; i++)
 					{
-						LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideTexture(	ref setting,
-																									informationSSPJ,
-																									informationSSPJ.TableInformationTexture[i],
-																									nameOutputAssetFolderBase,
-																									tableTextureNew[i]
-																								);
+						LibraryEditor_SpriteStudio6.Import.SSCE.AssetNameDecideTexture(	ref setting,
+																						informationSSPJ,
+																						informationSSPJ.TableInformationTexture[i],
+																						nameOutputAssetFolderBase,
+																						tableTextureNew[i]
+																					);
 					}
 
 					return(true);
@@ -1189,6 +1189,91 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				MaterialPickUp_ErrorEnd:;
 					return(false);
+				}
+				#endregion Functions
+			}
+
+			public static partial class ModeUnityNative
+			{
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public static bool AssetNameDecide(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													string nameOutputAssetFolderBase
+												)
+				{
+					int countSSAE = informationSSPJ.TableInformationSSAE.Length;
+					int countSSEE = informationSSPJ.TableInformationSSEE.Length;
+					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
+					int countTexture = informationSSPJ.TableInformationTexture.Length;
+
+					/* SSAEs (Prefab) */
+					for(int i=0; i<countSSAE; i++)
+					{
+						LibraryEditor_SpriteStudio6.Import.SSAE.ModeUnityNative.AssetNameDecidePrefab(	ref setting,
+																										informationSSPJ,
+																										informationSSPJ.TableInformationSSAE[i],
+																										nameOutputAssetFolderBase,
+																										null
+																									);
+					}
+
+					/* SSAEs (AnimationClip) */
+					int countAnimation;
+					for(int i=0; i<countSSAE; i++)
+					{
+						countAnimation = informationSSPJ.TableInformationSSAE[i].TableAnimation.Length;
+						/* MEMO: Create asset's informations since number of animations in SSAE is finalized. */
+						informationSSPJ.TableInformationSSAE[i].DataAnimationUnityNative.BootUp(countAnimation);
+						for(int j=0; j<countAnimation; j++)
+						{
+							LibraryEditor_SpriteStudio6.Import.SSAE.ModeUnityNative.AssetNameDecideData(	ref setting,
+																											informationSSPJ,
+																											informationSSPJ.TableInformationSSAE[i],
+																											j,
+																											nameOutputAssetFolderBase,
+																											null
+																										);
+						}
+					}
+
+					/* Track existing assets */
+					Texture2D[] tableTextureNew = new Texture2D[countTexture];
+
+					/* Materials */
+					int indexTexture;
+					for(int i=0; i<countTexture; i++)
+					{
+						indexTexture = i;
+
+						/* Materials (Animation) */
+						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+						{
+							LibraryEditor_SpriteStudio6.Import.SSCE.ModeUnityNative.AssetNameDecideMaterialAnimation(	ref setting,
+																														informationSSPJ,
+																														informationSSPJ.TableInformationTexture[indexTexture],
+																														nameOutputAssetFolderBase,
+																														(Library_SpriteStudio6.KindOperationBlend)j,
+																														null
+																													);
+						}
+					}
+
+					/* Textures */
+					for(int i=0; i<countTexture; i++)
+					{
+						LibraryEditor_SpriteStudio6.Import.SSCE.AssetNameDecideTexture(	ref setting,
+																						informationSSPJ,
+																						informationSSPJ.TableInformationTexture[i],
+																						nameOutputAssetFolderBase,
+																						tableTextureNew[i]
+																					);
+					}
+
+					return(true);
+
+//				AssetNameDecide_ErrorEnd:;
+//					return(false);
 				}
 				#endregion Functions
 			}

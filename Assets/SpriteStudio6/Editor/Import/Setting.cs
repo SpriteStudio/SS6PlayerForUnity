@@ -4,7 +4,7 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
-#define TAKE_AWAY_UNSUPPORTED_FUNCTION
+// #define TAKE_AWAY_UNSUPPORTED_FUNCTION
 
 using System.Collections;
 using System.Collections.Generic;
@@ -33,6 +33,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			public GroupRuleNameAsset RuleNameAsset;
 			public GroupRuleNameAssetFolder RuleNameAssetFolder;
 			public GroupPackAttributeAnimation PackAttributeAnimation;
+			public GroupPresetMaterial PresetMaterial;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -50,6 +51,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				RuleNameAsset.CleanUp();
 				RuleNameAssetFolder.CleanUp();
 				PackAttributeAnimation.CleanUp();
+				PresetMaterial.CleanUp();
 			}
 
 			public bool Load()
@@ -65,6 +67,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				RuleNameAsset.Load();
 				RuleNameAssetFolder.Load();
 				PackAttributeAnimation.Load();
+				PresetMaterial.Load();
 
 				return(true);
 			}
@@ -82,6 +85,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				RuleNameAsset.Save();
 				RuleNameAssetFolder.Save();
 				PackAttributeAnimation.Save();
+				PresetMaterial.Save();
 
 				return(true);
 			}
@@ -94,7 +98,8 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagExportCheckVersion,
 									bool flagExportRuleNameAsset,
 									bool flagExportRuleNameAssetFolder,
-									bool flagPackAttributeAnimation
+									bool flagPackAttributeAnimation,
+									bool flagPresetMaterial
 								)
 			{
 				string[] exportCommon = (true == flagExportCommon) ? ExportCommon() : null;
@@ -106,6 +111,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				string[] exportRuleNameAsset = (true == flagExportRuleNameAsset) ? RuleNameAsset.Export() : null;
 				string[] exportRuleNameAssetFolder = (true == flagExportRuleNameAssetFolder) ? RuleNameAssetFolder.Export() : null;
 				string[] exportPackAttributeAnimation = (true == flagPackAttributeAnimation) ? PackAttributeAnimation.Export() : null;
+				string[] exportPresetMaterial = (true == flagPresetMaterial) ? PresetMaterial.Export() : null;
 
 				int countCommon = (null != exportCommon) ? exportCommon.Length : 0;
 				int countBasic = (null != exportBasic) ? exportBasic.Length : 0;
@@ -116,6 +122,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				int counttRuleNameAsset = (null != exportRuleNameAsset) ? exportRuleNameAsset.Length : 0;
 				int counttRuleNameAssetFolder = (null != exportRuleNameAssetFolder) ? exportRuleNameAssetFolder.Length : 0;
 				int countPackAttributeAnimation = (null != exportPackAttributeAnimation) ? exportPackAttributeAnimation.Length : 0;
+				int countPresetMaterial = (null != exportPresetMaterial) ? exportPresetMaterial.Length : 0;
 
 				int count = 0;
 				count += countCommon;
@@ -127,6 +134,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				count += counttRuleNameAsset;
 				count += counttRuleNameAssetFolder;
 				count += countPackAttributeAnimation;
+				count += countPresetMaterial;
 
 				string[] exportAll = new string[count];
 				count = 0;
@@ -174,6 +182,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				for(int i=0; i<countPackAttributeAnimation; i++)
 				{
 					exportAll[count] = exportPackAttributeAnimation[i];
+					count++;
+				}
+				for(int i=0; i<countPresetMaterial; i++)
+				{
+					exportAll[count] = exportPresetMaterial[i];
 					count++;
 				}
 
@@ -225,6 +238,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					return(true);
 				}
+				if(true == PresetMaterial.Import(textArgument))
+				{
+					return(true);
+				}
 
 				return(false);
 			}
@@ -266,13 +283,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					if(text == TextArgumentMode[i])
 					{
-#if TAKE_AWAY_UNSUPPORTED_FUNCTION
-						if((int)KindMode.UNITY_NATIVE == i)
-						{
-							LibraryEditor_SpriteStudio6.Import.LogError("Importer", "\"UNITY_NATIVE\" does not support at this version.");
-							return((KindMode)(-1));
-						}
-#endif
 						return((KindMode)i);
 					}
 				}
@@ -288,7 +298,8 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagExportCheckVersion,
 									bool flagExportRuleNameAsset,
 									bool flagExportRuleNameAssetFolder,
-									bool flagPackAttributeAnimation
+									bool flagPackAttributeAnimation,
+									bool flagPresetMaterial
 								)
 			{
 				bool rv = false;
@@ -308,7 +319,8 @@ public static partial class LibraryEditor_SpriteStudio6
 												flagExportCheckVersion,
 												flagExportRuleNameAsset,
 												flagExportRuleNameAssetFolder,
-												flagPackAttributeAnimation
+												flagPackAttributeAnimation,
+												flagPresetMaterial
 											);
 					if(null != textLine)
 					{
@@ -417,6 +429,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				MATERIAL_EFFECT_SS6PU,
 
 				/* (Mode UnityNative) */
+				PREFAB_CONTROL_ANIMATION_UNITYNATIVE,
 				PREFAB_ANIMATION_UNITYNATIVE,
 				PREFAB_EFFECT_UNITYNATIVE,
 				DATA_ANIMATION_UNITYNATIVE,
@@ -969,6 +982,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Variables & Properties
 				public bool FlagCreateControlGameObject;
 				public bool FlagCreateProjectFolder;
+				public bool FlagCreateHolderAsset;
 				public bool FlagInvisibleToHideAll;
 				public bool FlagTrackAssets;
 				#endregion Variables & Properties
@@ -977,12 +991,14 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Functions
 				public GroupBasic(	bool flagCreateControlGameObject,
 									bool flagCreateProjectFolder,
+									bool flagCreateHolderAsset,
 									bool flagInvisibleToHideAll,
 									bool flagTrackAssets
 								)
 				{
 					FlagCreateControlGameObject = flagCreateControlGameObject;
 					FlagCreateProjectFolder = flagCreateProjectFolder;
+					FlagCreateHolderAsset = flagCreateHolderAsset;
 					FlagInvisibleToHideAll = flagInvisibleToHideAll;
 					FlagTrackAssets = flagTrackAssets;
 				}
@@ -996,6 +1012,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					FlagCreateControlGameObject = EditorPrefs.GetBool(PrefsKeyFlagCreateControlGameObject, Default.FlagCreateControlGameObject);
 					FlagCreateProjectFolder = EditorPrefs.GetBool(PrefsKeyFlagCreateProjectFolder, Default.FlagCreateProjectFolder);
+					FlagCreateHolderAsset = EditorPrefs.GetBool(PrefsKeyFlagCreateHolderAsset, Default.FlagCreateHolderAsset);
 					FlagInvisibleToHideAll = EditorPrefs.GetBool(PrefsKeyFlagInvisibleToHideAll, Default.FlagInvisibleToHideAll);
 					FlagTrackAssets = EditorPrefs.GetBool(PrefsKeyFlagTrackAssets, Default.FlagTrackAssets);
 
@@ -1006,6 +1023,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					EditorPrefs.SetBool(PrefsKeyFlagCreateControlGameObject, FlagCreateControlGameObject);
 					EditorPrefs.SetBool(PrefsKeyFlagCreateProjectFolder, FlagCreateProjectFolder);
+					EditorPrefs.SetBool(PrefsKeyFlagCreateHolderAsset, FlagCreateHolderAsset);
 					EditorPrefs.SetBool(PrefsKeyFlagInvisibleToHideAll, FlagInvisibleToHideAll);
 					EditorPrefs.SetBool(PrefsKeyFlagTrackAssets, FlagTrackAssets);
 
@@ -1014,7 +1032,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[4];
+					string[] textEncode = new string[5];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateControlGameObject);
@@ -1023,11 +1041,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateProjectFolder);
 					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagCreateProjectFolder, textValue);
 
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateHolderAsset);
+					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagCreateHolderAsset, textValue);
+
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvisibleToHideAll);
-					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvisibleToHideAll, textValue);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvisibleToHideAll, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrackAssets);
-					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAssets, textValue);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAssets, textValue);
 
 					return(textEncode);
 				}
@@ -1042,6 +1063,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyFlagCreateProjectFolder:
 							FlagCreateProjectFolder = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagCreateHolderAsset:
+							FlagCreateHolderAsset = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						case TextKeyFlagInvisibleToHideAll:
@@ -1063,24 +1088,28 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Enums & Constants
 				private const string KeyFlagCreateControlGameObject = "FlagCreateControlGameObject";
 				private const string KeyFlagCreateProjectFolder = "FlagCreateProjectFolder";
+				private const string KeyFlagCreateHolderAsset = "FlagCreateHolderAsset";
 				private const string KeyFlagInvisibleToHideAll = "FlagInvisibleToHideAll";
 				private const string KeyFlagTrackAssets = "FlagTrackAssets";
 
 				private const string TextKeyPrefix = "Basic_";
 				private const string TextKeyFlagCreateControlGameObject = TextKeyPrefix + KeyFlagCreateControlGameObject;
 				private const string TextKeyFlagCreateProjectFolder = TextKeyPrefix + KeyFlagCreateProjectFolder;
+				private const string TextKeyFlagCreateHolderAsset = TextKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string TextKeyFlagInvisibleToHideAll = TextKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string TextKeyFlagTrackAssets = TextKeyPrefix + KeyFlagTrackAssets;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagCreateControlGameObject = PrefsKeyPrefix + KeyFlagCreateControlGameObject;
 				private const string PrefsKeyFlagCreateProjectFolder = PrefsKeyPrefix + KeyFlagCreateProjectFolder;
+				private const string PrefsKeyFlagCreateHolderAsset = PrefsKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string PrefsKeyFlagInvisibleToHideAll = PrefsKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string PrefsKeyFlagTrackAssets = PrefsKeyPrefix + KeyFlagTrackAssets;
 
 				private readonly static GroupBasic Default = new GroupBasic(
 					true,	/* FlagCreateControlGameObject */
 					true,	/* FlagCreateProjectFolder */
+					true,	/* FlagCreateHolderAsset */
 					false,	/* FlagInvisibleToHideAll */
 					true	/* FlagTrackAssets */
 				);
@@ -1366,6 +1395,13 @@ public static partial class LibraryEditor_SpriteStudio6
 									+ nameBase;
 							break;
 
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_UNITYNATIVE:
+							/* MEMO: (PrefabAnimation)_Control */
+							name = NamePrefixPrefabAnimatorUnityNative
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ nameBase
+									+ "_Control";
+							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_UNITYNATIVE:
 							name = NamePrefixPrefabAnimatorUnityNative
 									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
@@ -1710,6 +1746,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							name += NameFolderMaterialEffectSS6PU + "/";
 							break;
 
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_UNITYNATIVE:
+							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_UNITYNATIVE:
 							name += NameFolderPrefabAnimatorUnityNative + "/";
 							break;
@@ -2206,7 +2244,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					return((Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(-1));
 				}
-
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
@@ -2331,6 +2368,271 @@ public static partial class LibraryEditor_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* UserData */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Instance */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE	/* Effect */
+				);
+				#endregion Enums & Constants
+			}
+
+			public struct GroupPresetMaterial
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				public Material AnimationUnityNativeMix;
+				public Material AnimationUnityNativeAdd;
+				public Material AnimationUnityNativeSub;
+				public Material AnimationUnityNativeMul;
+				public Material AnimationUnityNativeMulNA;
+				public Material AnimationUnityNativeScr;
+				public Material AnimationUnityNativeExc;
+				public Material AnimationUnityNativeInv;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public GroupPresetMaterial(	string animationUnityNativeMix,
+											string animationUnityNativeAdd,
+											string animationUnityNativeSub,
+											string animationUnityNativeMul,
+											string animationUnityNativeMulNA,
+											string animationUnityNativeScr,
+											string animationUnityNativeExc,
+											string animationUnityNativeInv
+										)
+				{
+					AnimationUnityNativeMix = MaterialLoadPath(animationUnityNativeMix);
+					AnimationUnityNativeAdd = MaterialLoadPath(animationUnityNativeAdd);
+					AnimationUnityNativeSub = MaterialLoadPath(animationUnityNativeSub);
+					AnimationUnityNativeMul = MaterialLoadPath(animationUnityNativeMul);
+					AnimationUnityNativeMulNA = MaterialLoadPath(animationUnityNativeMulNA);
+					AnimationUnityNativeScr = MaterialLoadPath(animationUnityNativeScr);
+					AnimationUnityNativeExc = MaterialLoadPath(animationUnityNativeExc);
+					AnimationUnityNativeInv = MaterialLoadPath(animationUnityNativeInv);
+						
+				}
+
+				public void CleanUp()
+				{
+					this = Default;
+				}
+
+				public bool Load()
+				{
+					string guid = "";
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeMix, GUIDGetMaterial(Default.AnimationUnityNativeMix));
+					AnimationUnityNativeMix = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeAdd, GUIDGetMaterial(Default.AnimationUnityNativeAdd));
+					AnimationUnityNativeAdd = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeSub, GUIDGetMaterial(Default.AnimationUnityNativeSub));
+					AnimationUnityNativeSub = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeMul, GUIDGetMaterial(Default.AnimationUnityNativeMul));
+					AnimationUnityNativeMul = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeMulNA, GUIDGetMaterial(Default.AnimationUnityNativeMulNA));
+					AnimationUnityNativeMulNA = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeScr, GUIDGetMaterial(Default.AnimationUnityNativeScr));
+					AnimationUnityNativeScr = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeExc, GUIDGetMaterial(Default.AnimationUnityNativeExc));
+					AnimationUnityNativeExc = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeInv, GUIDGetMaterial(Default.AnimationUnityNativeInv));
+					AnimationUnityNativeInv = MaterialGetGUID(guid);
+
+					return(true);
+				}
+
+				public bool Save()
+				{
+					string guid = "";
+
+					guid = GUIDGetMaterial(AnimationUnityNativeMix);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeMix, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeAdd);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeAdd, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeSub);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeSub, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeMul);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeMul, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeMulNA);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeMulNA, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeScr);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeScr, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeExc);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeExc, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeInv);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeInv, guid);
+
+					return(true);
+				}
+
+				public string[] Export()
+				{
+					string[] textEncode = new string[8];
+					string textValue;
+
+					textValue = PathGetMaterial(AnimationUnityNativeMix);
+					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMix, textValue);
+
+					textValue = PathGetMaterial(AnimationUnityNativeAdd);
+					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeAdd, textValue);
+
+					textValue = PathGetMaterial(AnimationUnityNativeSub);
+					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeSub, textValue);
+
+					textValue = PathGetMaterial(AnimationUnityNativeMul);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMul, textValue);
+
+					textValue = PathGetMaterial(AnimationUnityNativeMulNA);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMulNA, textValue);
+
+					textValue = PathGetMaterial(AnimationUnityNativeScr);
+					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeScr, textValue);
+
+					textValue = PathGetMaterial(AnimationUnityNativeExc);
+					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeExc, textValue);
+
+					textValue = PathGetMaterial(AnimationUnityNativeInv);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeInv, textValue);
+
+					return(textEncode);
+				}
+
+				public bool Import(string[] textArgument)
+				{
+					switch(textArgument[0])
+					{
+						case TextKeyAnimationUnityNativeMix:
+							AnimationUnityNativeMix = MaterialLoadPath(textArgument[1]);
+							return(true);
+
+						case TextKeyAnimationUnityNativeAdd:
+							AnimationUnityNativeAdd = MaterialLoadPath(textArgument[1]);
+							return(true);
+
+						case TextKeyAnimationUnityNativeSub:
+							AnimationUnityNativeSub = MaterialLoadPath(textArgument[1]);
+							return(true);
+
+						case TextKeyAnimationUnityNativeMul:
+							AnimationUnityNativeMul = MaterialLoadPath(textArgument[1]);
+							return(true);
+
+						case TextKeyAnimationUnityNativeMulNA:
+							AnimationUnityNativeMulNA = MaterialLoadPath(textArgument[1]);
+							return(true);
+
+						case TextKeyAnimationUnityNativeScr:
+							AnimationUnityNativeScr = MaterialLoadPath(textArgument[1]);
+							return(true);
+
+						case TextKeyAnimationUnityNativeExc:
+							AnimationUnityNativeExc = MaterialLoadPath(textArgument[1]);
+							return(true);
+
+						case TextKeyAnimationUnityNativeInv:
+							AnimationUnityNativeInv = MaterialLoadPath(textArgument[1]);
+							return(true);
+
+						default:
+							break;
+					}
+
+					return(false);
+				}
+
+				private static Material MaterialLoadPath(string path)
+				{
+					Material material = AssetDatabase.LoadAssetAtPath(path, typeof(Material)) as Material;
+					return(material);
+				}
+
+				private static string PathGetMaterial(Material material)
+				{
+					if(null == material)
+					{
+						return("");
+					}
+					return(AssetDatabase.GetAssetPath(material));
+				}
+
+				private static string GUIDGetMaterial(Material material)
+				{
+					string guidMaterial = "";
+					if(null != material)
+					{
+						string namePathMaterial = PathGetMaterial(material);
+						if(true == string.IsNullOrEmpty(namePathMaterial))
+						{
+							return("");
+						}
+						guidMaterial = AssetDatabase.AssetPathToGUID(namePathMaterial);
+					}
+					return(guidMaterial);
+				}
+
+				private static Material MaterialGetGUID(string guid)
+				{
+					if(true == string.IsNullOrEmpty(guid))
+					{
+						return(null);
+					}
+
+					string namePathMaterial = AssetDatabase.GUIDToAssetPath(guid);
+					return(MaterialLoadPath(namePathMaterial));
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				private const string KeyAnimationUnityNativeMix = "AnimationUnityNativeMix";
+				private const string KeyAnimationUnityNativeAdd = "AnimationUnityNativeAdd";
+				private const string KeyAnimationUnityNativeSub = "AnimationUnityNativeSub";
+				private const string KeyAnimationUnityNativeMul = "AnimationUnityNativeMul";
+				private const string KeyAnimationUnityNativeMulNA = "AnimationUnityNativeMulNA";
+				private const string KeyAnimationUnityNativeScr = "AnimationUnityNativeScr";
+				private const string KeyAnimationUnityNativeExc = "AnimationUnityNativeExc";
+				private const string KeyAnimationUnityNativeInv = "AnimationUnityNativeInv";
+
+				private const string TextKeyPrefix = "PresetMaterial_";
+				private const string TextKeyAnimationUnityNativeMix = TextKeyPrefix + KeyAnimationUnityNativeMix;
+				private const string TextKeyAnimationUnityNativeAdd = TextKeyPrefix + KeyAnimationUnityNativeAdd;
+				private const string TextKeyAnimationUnityNativeSub = TextKeyPrefix + KeyAnimationUnityNativeSub;
+				private const string TextKeyAnimationUnityNativeMul = TextKeyPrefix + KeyAnimationUnityNativeMul;
+				private const string TextKeyAnimationUnityNativeMulNA = TextKeyPrefix + KeyAnimationUnityNativeMulNA;
+				private const string TextKeyAnimationUnityNativeScr = TextKeyPrefix + KeyAnimationUnityNativeScr;
+				private const string TextKeyAnimationUnityNativeExc = TextKeyPrefix + KeyAnimationUnityNativeExc;
+				private const string TextKeyAnimationUnityNativeInv = TextKeyPrefix + KeyAnimationUnityNativeInv;
+
+				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
+				private const string PrefsKeyAnimationUnityNativeMix = PrefsKeyPrefix + KeyAnimationUnityNativeMix;
+				private const string PrefsKeyAnimationUnityNativeAdd = PrefsKeyPrefix + KeyAnimationUnityNativeAdd;
+				private const string PrefsKeyAnimationUnityNativeSub = PrefsKeyPrefix + KeyAnimationUnityNativeSub;
+				private const string PrefsKeyAnimationUnityNativeMul = PrefsKeyPrefix + KeyAnimationUnityNativeMul;
+				private const string PrefsKeyAnimationUnityNativeMulNA = PrefsKeyPrefix + KeyAnimationUnityNativeMulNA;
+				private const string PrefsKeyAnimationUnityNativeScr = PrefsKeyPrefix + KeyAnimationUnityNativeScr;
+				private const string PrefsKeyAnimationUnityNativeExc = PrefsKeyPrefix + KeyAnimationUnityNativeExc;
+				private const string PrefsKeyAnimationUnityNativeInv = PrefsKeyPrefix + KeyAnimationUnityNativeInv;
+
+				private readonly static GroupPresetMaterial Default = new GroupPresetMaterial(
+					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MIX.mat",		/* AnimationUnityNativeMix */
+					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_ADD.mat",		/* AnimationUnityNativeAdd */
+					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SUB.mat",		/* AnimationUnityNativeSub */
+					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL.mat",		/* AnimationUnityNativeMul */
+					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL_NA.mat",	/* AnimationUnityNativeMulNA */
+					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SCR.mat",		/* AnimationUnityNativeScr */
+					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_EXC.mat",		/* AnimationUnityNativeExc */
+					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_INV.mat"		/* AnimationUnityNativeInv */
 				);
 				#endregion Enums & Constants
 			}
