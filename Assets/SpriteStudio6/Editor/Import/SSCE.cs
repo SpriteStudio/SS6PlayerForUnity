@@ -312,6 +312,316 @@ public static partial class LibraryEditor_SpriteStudio6
 				return(tableIndexList);
 			}
 
+			public static bool AssetNameDecideTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														Information.Texture informationTexture,
+														string nameOutputAssetFolderBase,
+														Texture2D textureOverride
+													)
+			{	/* MEMO: In each import mode, texture is shared. */
+				if(null != textureOverride)
+				{	/* Specified */
+					informationTexture.PrefabTexture.TableName[0] = AssetDatabase.GetAssetPath(textureOverride);
+					informationTexture.PrefabTexture.TableData[0] = textureOverride;
+				}
+				else
+				{	/* Default */
+					informationTexture.PrefabTexture.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, nameOutputAssetFolderBase)
+																	+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, informationTexture.NameFileBody, informationSSPJ.NameFileBody)
+																	+ informationTexture.NameFileExtension;
+					/* MEMO: Can not detect Platform-Dependent Textures (such as DDS and PVR). */
+					informationTexture.PrefabTexture.TableData[0] = AssetDatabase.LoadAssetAtPath<Texture2D>(informationTexture.PrefabTexture.TableName[0]);
+				}
+
+				return(true);
+
+//			AssetNameDecideTexture_ErrorEnd:;
+//				return(false);
+			}
+
+			public static bool AssetCreateTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													Information.Texture informationTexture
+												)
+			{	/* MEMO: In each import mode, texture is shared. */
+				const string messageLogPrefix = "Create Asset(Texture)";
+
+				/* Copy into Asset */
+				string namePathAssetNative = LibraryEditor_SpriteStudio6.Utility.File.PathGetAssetNative(informationTexture.PrefabTexture.TableName[0]);
+				LibraryEditor_SpriteStudio6.Utility.File.FileCopyToAsset(	namePathAssetNative,
+																			informationTexture.FileNameGetFullPath(),
+																			true
+																		);
+
+				/* Set Texture-Importer */
+				if(null == informationTexture.PrefabTexture.TableData[0])
+				{
+					AssetDatabase.ImportAsset(informationTexture.PrefabTexture.TableName[0]);
+					TextureImporter importer = TextureImporter.GetAtPath(informationTexture.PrefabTexture.TableName[0]) as TextureImporter;
+					if(null != importer)
+					{
+						importer.anisoLevel = 1;
+						importer.borderMipmap = false;
+						importer.convertToNormalmap = false;
+						importer.fadeout = false;
+						switch(informationTexture.Filter)
+						{
+							case Library_SpriteStudio6.Data.Texture.KindFilter.NEAREST:
+								importer.filterMode = FilterMode.Point;
+								break;
+
+							case Library_SpriteStudio6.Data.Texture.KindFilter.LINEAR:
+								importer.filterMode = FilterMode.Bilinear;
+								break;
+
+							default:
+								/* MEMO: Errors and warnings have already been done and values have been revised. Therefore, will not come here. */
+								goto AssetCreateTexture_ErrorEnd;
+						}
+
+						/* MEMO: For 5.5.0beta & later, with "Sprite" to avoid unnecessary interpolation. */
+						importer.textureShape = TextureImporterShape.Texture2D;
+						importer.isReadable = false;
+						importer.mipmapEnabled = false;
+						importer.maxTextureSize = 4096;
+						importer.alphaSource = TextureImporterAlphaSource.FromInput;
+						importer.alphaIsTransparency = true;
+						importer.npotScale = TextureImporterNPOTScale.None;
+						importer.textureType = TextureImporterType.Sprite;
+
+						switch(informationTexture.Wrap)
+						{
+							case Library_SpriteStudio6.Data.Texture.KindWrap.REPEAT:
+								importer.wrapMode = TextureWrapMode.Repeat;
+								break;
+
+							case Library_SpriteStudio6.Data.Texture.KindWrap.CLAMP:
+								importer.wrapMode = TextureWrapMode.Clamp;
+								break;
+
+							case Library_SpriteStudio6.Data.Texture.KindWrap.MIRROR:
+#if UNITY_2017_1_OR_NEWER
+								importer.wrapMode = TextureWrapMode.Mirror;
+#else
+								/* MEMO: SS6PU is supported with Unity2017 or later, but since Nintendo-Switch's environment is Unity 5.6 at present. */
+								importer.wrapMode = TextureWrapMode.Clamp;
+#endif
+								break;
+
+							default:
+								/* MEMO: Errors and warnings have already been done and values have been revised. Therefore, will not come here. */
+								goto AssetCreateTexture_ErrorEnd;
+						}
+						AssetDatabase.ImportAsset(informationTexture.PrefabTexture.TableName[0], ImportAssetOptions.ForceUpdate);
+					}
+				}
+				AssetDatabase.SaveAssets();
+
+				informationTexture.PrefabTexture.TableData[0] = AssetDatabase.LoadAssetAtPath(informationTexture.PrefabTexture.TableName[0], typeof(Texture2D)) as Texture2D;
+				if((0 >= informationTexture.SizeX) || (0 >= informationTexture.SizeY))
+				{	/* Only when texture size can not be get from SSCE */
+					informationTexture.SizeX = informationTexture.PrefabTexture.TableData[0].width;
+					informationTexture.SizeY = informationTexture.PrefabTexture.TableData[0].height;
+				}
+
+				return(true);
+
+			AssetCreateTexture_ErrorEnd:;
+				return(false);
+			}
+
+			public static bool CellTrimTransparentPixel(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+															LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
+													)
+			{
+				const string messageLogPrefix = "Convert Trimming-Pixel (CellMap)";
+
+				/* MEMO: Necessary to execute ...              */
+				/*       after "SSCE.AssetCreateTexture"       */ 
+				/*       before "SSCE.ModeXXXX.ConvertCellMap" */
+				Information.Cell[] tableCell = informationSSCE.TableCell;
+				if(null == tableCell)
+				{
+					return(true);	/* false */
+				}
+
+				/* Get Texture & Set "Read/Write Enable" */
+				int indexTexture = informationSSCE.IndexTexture;
+				if(0 > indexTexture)
+				{
+					return(true);	/* false */
+				}
+
+				string nameAssetTexture = informationSSPJ.TableInformationTexture[indexTexture].PrefabTexture.TableName[0];
+				TextureImporter importerTexture = TextureImporter.GetAtPath(nameAssetTexture) as TextureImporter;
+				if(null == importerTexture)
+				{
+					return(true);	/* false */
+				}
+				bool flagReadableOld = importerTexture.isReadable;
+				if(false == flagReadableOld)
+				{
+					importerTexture.isReadable = true;
+					AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
+				}
+
+				Texture2D texture = informationSSPJ.TableInformationTexture[indexTexture].PrefabTexture.TableData[0];
+				if(null == texture)
+				{
+					return(true);	/* false */
+				}
+				int sizeXTexture = texture.width;
+				int sizeYTexture = texture.height;
+
+				/* Get new rectangle & pivot */
+				Rect rectangleOld;
+				Rect rectangleNew;
+				Vector2 pivotOld;
+				Vector2 pivotNew;
+				Vector2 shiftPosition;
+				bool flagEmpty;
+				bool flagTransparentLine;
+				Color colorPixel;
+				int positionX;
+				int positionY;
+				int countCell = tableCell.Length;
+				for(int i=0; i<countCell; i++)
+				{
+					/* MEMO: Do not trim Cells that have mesh.                               */
+					/*       (Since vertices are bound, no way to follow when changing Cell) */
+					if(true == tableCell[i].Data.IsMesh)
+					{
+						continue;
+					}
+
+					rectangleOld = tableCell[i].Data.Rectangle;
+					rectangleNew = rectangleOld;
+					pivotOld = tableCell[i].Data.Pivot;
+					flagEmpty = false;
+
+					/* Get Left */
+					rectangleNew.xMin = rectangleOld.xMin;
+					for(int j=0; j<rectangleOld.width; j++)
+					{
+						positionX = (int)rectangleOld.xMin + j;
+						flagTransparentLine = true;
+						for(int k=0; k<rectangleOld.height; k++)
+						{
+							positionY = (int)rectangleOld.yMin + k;
+							colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
+							if(0.0f < colorPixel.a)
+							{
+								flagTransparentLine = false;
+								flagEmpty = false;
+								break;
+							}
+						}
+						if(false == flagTransparentLine)
+						{
+							break;
+						}
+						/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
+						rectangleNew.xMin = (float)positionX;
+					}
+					if(true == flagEmpty)
+					{	/* All pixle is transparent */
+						rectangleNew = rectangleOld;
+					}
+					else
+					{
+						/* Get Right */
+						rectangleNew.xMax = rectangleOld.xMax;
+						for(int j=0; j<rectangleOld.width; j++)
+						{
+							positionX = ((int)rectangleOld.xMax - 1) - j;
+							flagTransparentLine = true;
+							for(int k=0; k<rectangleOld.height; k++)
+							{
+								positionY = (int)rectangleOld.yMin + k;
+								colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
+								if(0.0f < colorPixel.a)
+								{
+									flagTransparentLine = false;
+									break;
+								}
+							}
+							if(false == flagTransparentLine)
+							{
+								break;
+							}
+							/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
+							rectangleNew.xMax = (float)(positionX + 1);
+						}
+
+						/* Get Up */
+						rectangleNew.yMin = rectangleOld.yMin;
+						for(int j=0; j<rectangleOld.height; j++)
+						{
+							positionY = (int)rectangleOld.yMin + j;
+							flagTransparentLine = true;
+							for(int k=0; k<rectangleOld.width; k++)
+							{
+								positionX = (int)rectangleOld.xMin + k;
+								colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
+								if(0.0f < colorPixel.a)
+								{
+									flagTransparentLine = false;
+									break;
+								}
+							}
+							if(false == flagTransparentLine)
+							{
+								break;
+							}
+							/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
+							rectangleNew.yMin = (float)positionY;
+						}
+
+						/* Get Bottom */
+						rectangleNew.yMax = rectangleOld.yMax;
+						for(int j=0; j<rectangleOld.height; j++)
+						{
+							positionY = ((int)rectangleOld.yMax - 1) - j;
+							flagTransparentLine = true;
+							for(int k=0; k<rectangleOld.width; k++)
+							{
+								positionX = (int)rectangleOld.xMin + k;
+								colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
+								if(0.0f < colorPixel.a)
+								{
+									flagTransparentLine = false;
+									break;
+								}
+							}
+							if(false == flagTransparentLine)
+							{
+								break;
+							}
+							/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
+							rectangleNew.yMax = (float)(positionY + 1);
+						}
+					}
+
+					shiftPosition = rectangleNew.position - rectangleOld.position;
+					pivotNew.x = pivotOld.x - shiftPosition.x;
+					pivotNew.y = pivotOld.y - shiftPosition.y;
+					tableCell[i].Data.Rectangle = rectangleNew;
+					tableCell[i].Data.Pivot = pivotNew;
+				}
+
+				if(false == flagReadableOld)
+				{
+					importerTexture.isReadable = false;
+					AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
+				}
+
+				return(true);
+
+//			CellTrimTransparentPixelt_ErrorEnd:;
+//				return(false);
+			}
+
 			private static void LogError(string messagePrefix, string message, string nameFile, LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ)
 			{
 				LibraryEditor_SpriteStudio6.Utility.Log.Error(	messagePrefix
@@ -370,6 +680,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool flagBlendImagePremultipliedAlpha;
 
 				public Cell[] TableCell;
+
+				public string[] TableNameSpriteUnityNative;	/* Temporary */
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -391,6 +703,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					flagBlendImagePremultipliedAlpha = false;
 
 					TableCell = null;
+
+					TableNameSpriteUnityNative = null;
 				}
 
 				public string FileNameGetFullPath()
@@ -465,6 +779,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					public LibraryEditor_SpriteStudio6.Import.Assets<Texture2D> PrefabTexture;
 					public LibraryEditor_SpriteStudio6.Import.Assets<Material> MaterialAnimationSS6PU;
 					public LibraryEditor_SpriteStudio6.Import.Assets<Material> MaterialEffectSS6PU;
+					public LibraryEditor_SpriteStudio6.Import.Assets<Material> MaterialAnimationUnityNative;
+
+					public List<SpriteMetaData> ListSpriteMetaDataUnityNative;	/* Temporary */
+					public List<Sprite> ListSpriteUnityNative;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -493,6 +811,14 @@ public static partial class LibraryEditor_SpriteStudio6
 						MaterialEffectSS6PU.CleanUp();
 						countMaterial = Script_SpriteStudio6_RootEffect.Material.CountGetTable(1);
 						MaterialEffectSS6PU.BootUp(countMaterial);
+
+						/* MEMO: "Unity-Native" mode does not have "MASK_PRE" and "MASK". */
+						MaterialAnimationUnityNative.CleanUp();
+						countMaterial = (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						MaterialAnimationUnityNative.BootUp(countMaterial);
+
+						ListSpriteMetaDataUnityNative = null;
+						ListSpriteUnityNative = null;
 					}
 
 					public string FileNameGetFullPath()
@@ -512,124 +838,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public static bool AssetNameDecideTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-															Information.Texture informationTexture,
-															string nameOutputAssetFolderBase,
-															Texture2D textureOverride
-														)
-				{	/* MEMO: In each import mode, texture is shared. */
-					if(null != textureOverride)
-					{	/* Specified */
-						informationTexture.PrefabTexture.TableName[0] = AssetDatabase.GetAssetPath(textureOverride);
-						informationTexture.PrefabTexture.TableData[0] = textureOverride;
-					}
-					else
-					{	/* Default */
-						informationTexture.PrefabTexture.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, nameOutputAssetFolderBase)
-																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, informationTexture.NameFileBody, informationSSPJ.NameFileBody)
-																		+ informationTexture.NameFileExtension;
-						/* MEMO: Can not detect Platform-Dependent Textures (such as DDS and PVR). */
-						informationTexture.PrefabTexture.TableData[0] = AssetDatabase.LoadAssetAtPath<Texture2D>(informationTexture.PrefabTexture.TableName[0]);
-					}
-
-					return(true);
-
-//				AssetNameDecideTexture_ErrorEnd:;
-//					return(false);
-				}
-
-				public static bool AssetCreateTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-														Information.Texture informationTexture
-													)
-				{	/* MEMO: In each import mode, texture is shared. */
-					const string messageLogPrefix = "Create Asset(Texture)";
-
-					/* Copy into Asset */
-					string namePathAssetNative = LibraryEditor_SpriteStudio6.Utility.File.PathGetAssetNative(informationTexture.PrefabTexture.TableName[0]);
-					LibraryEditor_SpriteStudio6.Utility.File.FileCopyToAsset(	namePathAssetNative,
-																				informationTexture.FileNameGetFullPath(),
-																				true
-																			);
-
-					/* Set Texture-Importer */
-					if(null == informationTexture.PrefabTexture.TableData[0])
-					{
-						AssetDatabase.ImportAsset(informationTexture.PrefabTexture.TableName[0]);
-						TextureImporter importer = TextureImporter.GetAtPath(informationTexture.PrefabTexture.TableName[0]) as TextureImporter;
-						if(null != importer)
-						{
-							importer.anisoLevel = 1;
-							importer.borderMipmap = false;
-							importer.convertToNormalmap = false;
-							importer.fadeout = false;
-							switch(informationTexture.Filter)
-							{
-								case Library_SpriteStudio6.Data.Texture.KindFilter.NEAREST:
-									importer.filterMode = FilterMode.Point;
-									break;
-
-								case Library_SpriteStudio6.Data.Texture.KindFilter.LINEAR:
-									importer.filterMode = FilterMode.Bilinear;
-									break;
-
-								default:
-									/* MEMO: Errors and warnings have already been done and values have been revised. Therefore, will not come here. */
-									goto AssetCreateTexture_ErrorEnd;
-							}
-
-							/* MEMO: For 5.5.0beta & later, with "Sprite" to avoid unnecessary interpolation. */
-							importer.textureShape = TextureImporterShape.Texture2D;
-							importer.isReadable = false;
-							importer.mipmapEnabled = false;
-							importer.maxTextureSize = 4096;
-							importer.alphaSource = TextureImporterAlphaSource.FromInput;
-							importer.alphaIsTransparency = true;
-							importer.npotScale = TextureImporterNPOTScale.None;
-							importer.textureType = TextureImporterType.Sprite;
-
-							switch(informationTexture.Wrap)
-							{
-								case Library_SpriteStudio6.Data.Texture.KindWrap.REPEAT:
-									importer.wrapMode = TextureWrapMode.Repeat;
-									break;
-
-								case Library_SpriteStudio6.Data.Texture.KindWrap.CLAMP:
-									importer.wrapMode = TextureWrapMode.Clamp;
-									break;
-
-								case Library_SpriteStudio6.Data.Texture.KindWrap.MIRROR:
-#if UNITY_2017_1_OR_NEWER
-									importer.wrapMode = TextureWrapMode.Mirror;
-#else
-									/* MEMO: SS6PU is supported with Unity2017 or later, but since Nintendo-Switch's environment is Unity 5.6 at present. */
-									importer.wrapMode = TextureWrapMode.Clamp;
-#endif
-									break;
-
-								default:
-									/* MEMO: Errors and warnings have already been done and values have been revised. Therefore, will not come here. */
-									goto AssetCreateTexture_ErrorEnd;
-							}
-							AssetDatabase.ImportAsset(informationTexture.PrefabTexture.TableName[0], ImportAssetOptions.ForceUpdate);
-						}
-					}
-					AssetDatabase.SaveAssets();
-
-					informationTexture.PrefabTexture.TableData[0] = AssetDatabase.LoadAssetAtPath(informationTexture.PrefabTexture.TableName[0], typeof(Texture2D)) as Texture2D;
-					if((0 >= informationTexture.SizeX) || (0 >= informationTexture.SizeY))
-					{	/* Only when texture size can not be get from SSCE */
-						informationTexture.SizeX = informationTexture.PrefabTexture.TableData[0].width;
-						informationTexture.SizeY = informationTexture.PrefabTexture.TableData[0].height;
-					}
-
-					return(true);
-
-				AssetCreateTexture_ErrorEnd:;
-					return(false);
-				}
-
 				public static bool AssetNameDecideMaterialAnimation(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 																		Information.Texture informationTexture,
@@ -649,8 +857,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					{	/* Default */
 						informationTexture.MaterialAnimationSS6PU.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, nameOutputAssetFolderBase)
 																							+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU, informationTexture.NameFileBody, informationSSPJ.NameFileBody)
-																								+ "_" + NameKindMasking[(int)masking]
-																								+ "_" + operationTarget.ToString()
+																							+ "_" + NameKindMasking[(int)masking]
+																							+ "_" + operationTarget.ToString()
 																							+ LibraryEditor_SpriteStudio6.Import.NameExtentionMaterial;
 						informationTexture.MaterialAnimationSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
 					}
@@ -680,8 +888,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					{	/* Default */
 						informationTexture.MaterialEffectSS6PU.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, nameOutputAssetFolderBase)
 																						+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU, informationTexture.NameFileBody, informationSSPJ.NameFileBody)
-																							+ "_" + NameKindMasking[(int)masking]
-																							+ "_" + operationTarget.ToString()
+																						+ "_" + NameKindMasking[(int)masking]
+																						+ "_" + operationTarget.ToString()
 																						+ LibraryEditor_SpriteStudio6.Import.NameExtentionMaterial;
 						informationTexture.MaterialEffectSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexTable]);
 					}
@@ -779,197 +987,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					return(true);
 
-//				ConvertSS6PU_ErrorEnd:;
-//					return(false);
-				}
-
-				public static bool ConverCellMaptPixelTrimTransparent(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-																		LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
-																	)
-				{
-					const string messageLogPrefix = "Convert Trimming-Pixel (CellMap)";
-
-					/* MEMO: "cellMap.TableCell" is purged at "SSCE.ModeSS6PU.ConvertCellMap". */
-					Library_SpriteStudio6.Data.CellMap.Cell[] tableCell = informationSSCE.Data.TableCell;
-					if(null == tableCell)
-					{
-						return(true);	/* false */
-					}
-
-					/* Get Texture & Set "Read/Write Enable" */
-					int indexTexture = informationSSCE.IndexTexture;
-					if(0 > indexTexture)
-					{
-						return(true);	/* false */
-					}
-
-					string nameAssetTexture = informationSSPJ.TableInformationTexture[indexTexture].PrefabTexture.TableName[0];
-					TextureImporter importerTexture = TextureImporter.GetAtPath(nameAssetTexture) as TextureImporter;
-					if(null == importerTexture)
-					{
-						return(true);	/* false */
-					}
-					bool flagReadableOld = importerTexture.isReadable;
-					if(false == flagReadableOld)
-					{
-						importerTexture.isReadable = true;
-						AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
-					}
-
-					Texture2D texture = informationSSPJ.TableInformationTexture[indexTexture].PrefabTexture.TableData[0];
-					if(null == texture)
-					{
-						return(true);	/* false */
-					}
-					int sizeXTexture = texture.width;
-					int sizeYTexture = texture.height;
-
-					/* Get new rectangle & pivot */
-					Rect rectangleOld;
-					Rect rectangleNew;
-					Vector2 pivotOld;
-					Vector2 pivotNew;
-					Vector2 shiftPosition;
-					bool flagEmpty;
-					bool flagTransparentLine;
-					Color colorPixel;
-					int positionX;
-					int positionY;
-					int countCell = informationSSCE.Data.TableCell.Length;
-					for(int i=0; i<countCell; i++)
-					{
-						/* MEMO: Do not trim Cells that have mesh.                               */
-						/*       (Since vertices are bound, no way to follow when changing Cell) */
-						if(true == tableCell[i].IsMesh)
-						{
-							continue;
-						}
-
-						rectangleOld = tableCell[i].Rectangle;
-						rectangleNew = rectangleOld;
-						pivotOld = tableCell[i].Pivot;
-						flagEmpty = false;
-
-						/* Get Left */
-						rectangleNew.xMin = rectangleOld.xMin;
-						for(int j=0; j<rectangleOld.width; j++)
-						{
-							positionX = (int)rectangleOld.xMin + j;
-							flagTransparentLine = true;
-							for(int k=0; k<rectangleOld.height; k++)
-							{
-								positionY = (int)rectangleOld.yMin + k;
-								colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
-								if(0.0f < colorPixel.a)
-								{
-									flagTransparentLine = false;
-									flagEmpty = false;
-									break;
-								}
-							}
-							if(false == flagTransparentLine)
-							{
-								break;
-							}
-							/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
-							rectangleNew.xMin = (float)positionX;
-						}
-						if(true == flagEmpty)
-						{	/* All pixle is transparent */
-							rectangleNew = rectangleOld;
-						}
-						else
-						{
-							/* Get Right */
-							rectangleNew.xMax = rectangleOld.xMax;
-							for(int j=0; j<rectangleOld.width; j++)
-							{
-								positionX = ((int)rectangleOld.xMax - 1) - j;
-								flagTransparentLine = true;
-								for(int k=0; k<rectangleOld.height; k++)
-								{
-									positionY = (int)rectangleOld.yMin + k;
-									colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
-									if(0.0f < colorPixel.a)
-									{
-										flagTransparentLine = false;
-										break;
-									}
-								}
-								if(false == flagTransparentLine)
-								{
-									break;
-								}
-								/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
-								rectangleNew.xMax = (float)(positionX + 1);
-							}
-
-							/* Get Up */
-							rectangleNew.yMin = rectangleOld.yMin;
-							for(int j=0; j<rectangleOld.height; j++)
-							{
-								positionY = (int)rectangleOld.yMin + j;
-								flagTransparentLine = true;
-								for(int k=0; k<rectangleOld.width; k++)
-								{
-									positionX = (int)rectangleOld.xMin + k;
-									colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
-									if(0.0f < colorPixel.a)
-									{
-										flagTransparentLine = false;
-										break;
-									}
-								}
-								if(false == flagTransparentLine)
-								{
-									break;
-								}
-								/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
-								rectangleNew.yMin = (float)positionY;
-							}
-
-							/* Get Bottom */
-							rectangleNew.yMax = rectangleOld.yMax;
-							for(int j=0; j<rectangleOld.height; j++)
-							{
-								positionY = ((int)rectangleOld.yMax - 1) - j;
-								flagTransparentLine = true;
-								for(int k=0; k<rectangleOld.width; k++)
-								{
-									positionX = (int)rectangleOld.xMin + k;
-									colorPixel = texture.GetPixel(positionX, (sizeYTexture - 1) - positionY);
-									if(0.0f < colorPixel.a)
-									{
-										flagTransparentLine = false;
-										break;
-									}
-								}
-								if(false == flagTransparentLine)
-								{
-									break;
-								}
-								/* MEMO: Set the position of the transparent line found last for securing 1 pixel margin after trimming. */
-								rectangleNew.yMax = (float)(positionY + 1);
-							}
-						}
-
-						shiftPosition = rectangleNew.position - rectangleOld.position;
-						pivotNew.x = pivotOld.x - shiftPosition.x;
-						pivotNew.y = pivotOld.y - shiftPosition.y;
-						tableCell[i].Rectangle = rectangleNew;
-						tableCell[i].Pivot = pivotNew;
-					}
-
-					if(false == flagReadableOld)
-					{
-						importerTexture.isReadable = false;
-						AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
-					}
-
-					return(true);
-
-//				ConverCellMaptPixelTrimTransparent_ErrorEnd:;
+//				ConvertCellMap_ErrorEnd:;
 //					return(false);
 				}
 				#endregion Functions
@@ -982,6 +1000,280 @@ public static partial class LibraryEditor_SpriteStudio6
 					"M"
 				};
 				#endregion Enums & Constants
+			}
+
+			public static partial class ModeUnityNative
+			{
+				/* MEMO: Originally functions that should be defined in each information class. */
+				/*       However, confusion tends to occur with mode increases.                 */
+				/*       ... Compromised way.                                                   */
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public static bool AssetNameDecideMaterialAnimation(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																		Information.Texture informationTexture,
+																		string nameOutputAssetFolderBase,
+																		Library_SpriteStudio6.KindOperationBlend operationTarget,
+																		Material materialOverride
+																	)
+				{
+					/* MEMO: "Unity-Native" mode does not have "MASK_PRE" and "MASK". */
+					int indexTable = (int)operationTarget;
+					if(null != materialOverride)
+					{	/* Specified */
+						informationTexture.MaterialAnimationUnityNative.TableName[indexTable] = AssetDatabase.GetAssetPath(materialOverride);
+						informationTexture.MaterialAnimationUnityNative.TableData[indexTable] = materialOverride;
+					}
+					else
+					{	/* Default */
+						informationTexture.MaterialAnimationUnityNative.TableName[indexTable] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_UNITYNATIVE, nameOutputAssetFolderBase)
+																								+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_UNITYNATIVE, informationTexture.NameFileBody, informationSSPJ.NameFileBody)
+																								+ "_" + operationTarget.ToString()
+																								+ LibraryEditor_SpriteStudio6.Import.NameExtentionMaterial;
+						informationTexture.MaterialAnimationUnityNative.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationUnityNative.TableName[indexTable]);
+					}
+
+					return(true);
+
+//				AssetNameDecideMaterialAnimation_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool AssetCreateMaterialAnimation(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																	Information.Texture informationTexture,
+																	Library_SpriteStudio6.KindOperationBlend operationTarget
+																)
+				{
+					const string messageLogPrefix = "Create Asset(Material-Animation)";
+
+					/* MEMO: "Unity-Native" mode does not have "MASK_PRE" and "MASK". */
+					int indexTable = (int)operationTarget;
+					Material material = null;
+					material = informationTexture.MaterialAnimationUnityNative.TableData[indexTable];
+					if(null == material)
+					{
+						material = new Material(Library_SpriteStudio6.Data.Shader.ShaderGetAnimationUnityNative(operationTarget));
+
+						AssetDatabase.CreateAsset(material, informationTexture.MaterialAnimationUnityNative.TableName[indexTable]);
+						informationTexture.MaterialAnimationUnityNative.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationUnityNative.TableName[indexTable]);
+					}
+
+					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
+					EditorUtility.SetDirty(material);
+					AssetDatabase.SaveAssets();
+
+					return(true);
+
+//				AssetCreateMaterialAnimation_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool ConvertCellMap(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
+												)
+				{
+					const string messageLogPrefix = "Convert (CellMap)";
+
+					List<SpriteMetaData> listSpriteMetaData = null;
+					string[] tableNameSprite = null;
+
+					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* ”UnityEngine.Texture” and my "Texture", class-names are conflict unless fully-qualified. */
+					if(0 <= informationSSCE.IndexTexture)
+					{
+						informationTexture = informationSSPJ.TableInformationTexture[informationSSCE.IndexTexture];
+						if(null == informationTexture.ListSpriteMetaDataUnityNative)
+						{
+							informationTexture.ListSpriteMetaDataUnityNative = new List<SpriteMetaData>();
+							if(null == informationTexture.ListSpriteMetaDataUnityNative)
+							{
+								LogError(messageLogPrefix, "Not Enough Memory (CellMap WorkArea)", informationSSCE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertCellMap_ErrorEnd;
+							}
+							informationTexture.ListSpriteMetaDataUnityNative.Clear();
+						}
+
+						listSpriteMetaData = informationTexture.ListSpriteMetaDataUnityNative;
+						SpriteMetaData spriteMetaData = new SpriteMetaData();
+						Vector2 sizeTexture = new Vector2((float)informationTexture.SizeX, (float)informationTexture.SizeY);
+						Vector2 sizeInverseTexture;
+						sizeInverseTexture.x = 1.0f / sizeTexture.x;
+						sizeInverseTexture.y = 1.0f / sizeTexture.y;
+						Vector2 sizeCell;
+						Vector2 positionCell;
+						Vector2 pivotCell;
+						Rect rectangleCell;
+						int countCell = informationSSCE.TableCell.Length;
+
+						informationSSCE.TableNameSpriteUnityNative = new string[countCell];
+						if(null == informationSSCE.TableNameSpriteUnityNative)
+						{
+							LogError(messageLogPrefix, "Not Enough Memory (CellMap WorkArea)", informationSSCE.FileNameGetFullPath(), informationSSPJ);
+							goto ConvertCellMap_ErrorEnd;
+						}
+						tableNameSprite = informationSSCE.TableNameSpriteUnityNative;
+						for(int i=0; i<countCell; i++)
+						{
+							tableNameSprite[i] = null;
+						}
+
+						string nameCell;
+						for(int i=0; i<countCell; i++)
+						{
+							nameCell = ConvertCellMapNameCreate(listSpriteMetaData, informationSSCE.TableCell[i].Data.Name);
+							if(null == nameCell)
+							{
+								LogError(messageLogPrefix, "Name Decision Falure [" + informationSSCE.TableCell[i].Data.Name + "]", informationSSCE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertCellMap_ErrorEnd;
+							}
+
+							spriteMetaData.name = string.Copy(nameCell);
+							rectangleCell = informationSSCE.TableCell[i].Data.Rectangle;
+							positionCell = rectangleCell.position;
+							sizeCell = rectangleCell.size;
+							positionCell.y = sizeTexture.y - (positionCell.y + sizeCell.y);
+							rectangleCell.position = positionCell;
+							rectangleCell.size = sizeCell;
+							spriteMetaData.rect = rectangleCell;
+							pivotCell = informationSSCE.TableCell[i].Data.Pivot;
+							if(0.0f == pivotCell.x)
+							{
+								/* MEMO: Set immediate value for no causing rounding error. */
+								pivotCell.x = 0.5f;
+							}
+							else
+							{
+								pivotCell.x = pivotCell.x / rectangleCell.width;
+							}
+							if(0.0f == pivotCell.y)
+							{
+								/* MEMO: Set immediate value for no causing rounding error. */
+								pivotCell.y = 0.5f;
+							}
+							else
+							{
+								pivotCell.y = 1.0f - (pivotCell.y / rectangleCell.height);
+							}
+							spriteMetaData.pivot = pivotCell;
+							spriteMetaData.alignment = 9;	/* Custom */
+
+							listSpriteMetaData.Add(spriteMetaData);
+
+							tableNameSprite[i] = string.Copy(nameCell);
+						}
+						informationSSCE.TableCell = null;	/* Purge WorkArea */
+					}
+					return(true);
+
+				ConvertCellMap_ErrorEnd:;
+					if(null != tableNameSprite)
+					{
+						informationSSCE.TableNameSpriteUnityNative = null;
+						tableNameSprite = null;
+					}
+
+					if(null != listSpriteMetaData)
+					{
+						informationTexture.ListSpriteMetaDataUnityNative = null;
+						listSpriteMetaData.Clear();
+						listSpriteMetaData = null;
+					}
+					return(false);
+				}
+				private static string ConvertCellMapNameCreate(List<SpriteMetaData> listSpriteMetaData, string nameCell)
+				{
+					bool flagRetry = true;
+					int countRetry = 0;
+					string name = nameCell;
+					while(true == flagRetry)
+					{
+						flagRetry = false;
+
+						int countListSpriteMetaData = listSpriteMetaData.Count;
+						for(int i=0; i<countListSpriteMetaData; i++)
+						{
+							if(listSpriteMetaData[i].name == name)
+							{
+								countRetry++;
+								name = nameCell + "_" + countRetry.ToString();
+								flagRetry = true;
+								break;	/* Break i-loop */
+							}
+						}
+					}
+
+					return(name);
+				}
+
+				public static bool CellMapSetTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														int indexTexture
+													)
+				{
+					const string messageLogPrefix = "Add Texture-Atlas";
+
+					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = informationSSPJ.TableInformationTexture[indexTexture];
+					if(null == informationTexture)
+					{
+						/* MEMO: Usually do not reach here. */
+						LogError(messageLogPrefix, "Texture information vanished. index[" + indexTexture.ToString() + "]", "", informationSSPJ);
+						goto CellMapSetTexture_ErrorEnd;
+					}
+					if(null == informationTexture.ListSpriteMetaDataUnityNative)
+					{	/* Has no Cell */
+						return(true);
+					}
+					if(null == informationTexture.PrefabTexture.TableData[0])
+					{
+						LogError(messageLogPrefix, "Texture asset lost", informationTexture.FileNameGetFullPath(), informationSSPJ);
+						goto CellMapSetTexture_ErrorEnd;
+					}
+
+					TextureImporter importer = TextureImporter.GetAtPath(informationTexture.PrefabTexture.TableName[0]) as TextureImporter;
+					importer.spriteImportMode = SpriteImportMode.Multiple;
+					importer.spritesheet = informationTexture.ListSpriteMetaDataUnityNative.ToArray();
+					importer.spritePixelsPerUnit = 1.0f;
+					EditorUtility.SetDirty(importer);
+					AssetDatabase.ImportAsset(informationTexture.PrefabTexture.TableName[0], ImportAssetOptions.ForceUpdate);	/* Re-Import */
+					AssetDatabase.SaveAssets();
+
+					/* Purge temporary */
+					informationTexture.ListSpriteMetaDataUnityNative.Clear();
+					informationTexture.ListSpriteMetaDataUnityNative = null;
+
+					/* Get Sprites */
+					/* MEMO: Do not access this list by Cell's index, since sorting-method is likely to be different from "SpriteStudio6". */
+					/*       (Search by the name of informationSSCE.TableNameSpriteUnityNative and get index)                              */
+					if(null == informationTexture.ListSpriteUnityNative)
+					{
+						informationTexture.ListSpriteUnityNative = new List<Sprite>();
+						if(null == informationTexture.ListSpriteUnityNative)
+						{
+							LogError(messageLogPrefix, "Not Enough Memory", informationTexture.FileNameGetFullPath(), informationSSPJ);
+							goto CellMapSetTexture_ErrorEnd;
+						}
+					}
+					List<Sprite> listSprite =  informationTexture.ListSpriteUnityNative;
+					listSprite.Clear();
+					{
+						UnityEngine.Object[] tableObjectTexture = AssetDatabase.LoadAllAssetsAtPath(informationTexture.PrefabTexture.TableName[0]);
+						foreach(UnityEngine.Object objectTexture in tableObjectTexture)
+						{
+							if(true == objectTexture.GetType().Equals(typeof(Sprite)))
+							{
+								listSprite.Add((Sprite)objectTexture);
+							}
+						}
+					}
+
+					return(true);
+
+				CellMapSetTexture_ErrorEnd:;
+					return(false);
+				}
+				#endregion Functions
 			}
 			#endregion Classes, Structs & Interfaces
 		}

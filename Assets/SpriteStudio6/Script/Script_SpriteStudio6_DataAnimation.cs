@@ -44,6 +44,16 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	}
 	#endregion Variables & Properties
 
+	/* ----------------------------------------------- ScriptableObject-Functions */
+	#region ScriptableObject-Functions
+	void Start()
+	{
+		/* Awake Base-Class */
+		CountGetPartsSprite();
+		StatusIsBootup = true;
+	}
+	#endregion ScriptableObject-Functions
+
 	/* ----------------------------------------------- Functions */
 	#region Functions
 	public void CleanUp()

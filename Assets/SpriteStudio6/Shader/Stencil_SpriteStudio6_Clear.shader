@@ -1,5 +1,5 @@
 ﻿//
-//	SpriteStudio5 Player for Unity
+//	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) Web Technology Corp.
 //	All rights reserved.
