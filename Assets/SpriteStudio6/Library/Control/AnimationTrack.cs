@@ -202,8 +202,12 @@ public static partial class Library_SpriteStudio6
 				internal float TimeElapsedTransition;
 				internal float TimeLimitTransition;
 				internal float RateTransition;
-
 				internal int IndexTrackSlave;
+
+				/* MEMO: This value is applicable even in a stopping.                            */
+				/*       Mainly used for shifting display-frame in cycle that executed "Stop()". */
+				internal float TimeElapseReplacement;
+				internal float TimeElapseInRangeReplacement;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -235,8 +239,10 @@ public static partial class Library_SpriteStudio6
 					TimeElapsedTransition = 0.0f;
 					TimeLimitTransition = 0.0f;
 					RateTransition = 0.0f;
-
 					IndexTrackSlave = -1;
+
+					TimeElapseReplacement = 0.0f;
+					TimeElapseInRangeReplacement = 0.0f;
 				}
 
 				public bool BootUp()
@@ -277,10 +283,11 @@ public static partial class Library_SpriteStudio6
 					Status &= FlagBitStatus.VALID;	/* Clear */
 
 					Status = (true == flagPingpong) ? (Status | FlagBitStatus.STYLE_PINGPONG) : (Status & ~FlagBitStatus.STYLE_PINGPONG); 
+					Status &= ~FlagBitStatus.STYLE_REVERSE;
 					RateTime = rateTime;
 					if(0.0f > RateTime)
 					{
-						Status = (0 == (Status & FlagBitStatus.STYLE_REVERSE)) ? (Status | FlagBitStatus.STYLE_REVERSE) : (Status & ~FlagBitStatus.STYLE_REVERSE);
+						Status |= (FlagBitStatus.STYLE_REVERSE | FlagBitStatus.PLAYING_REVERSE);
 						RateTime *= -1.0f;
 					}
 					FramePerSecond = framePerSecond;
@@ -288,7 +295,7 @@ public static partial class Library_SpriteStudio6
 
 					FrameStart = frameRangeStart;
 					FrameEnd = frameRangeEnd;
-					if(0 != (Status & FlagBitStatus.STYLE_REVERSE))
+					if(0 != (Status & FlagBitStatus.PLAYING_REVERSE))
 					{	/* Play-Reverse */
 						if(FrameStart >= frame)
 						{
@@ -319,6 +326,9 @@ public static partial class Library_SpriteStudio6
 					TimeRange = (float)FrameRange * TimePerFrame;
 					TimePerFrameConsideredRateTime = TimePerFrame * RateTime;
 
+					TimeElapseReplacement = 0.0f;
+					TimeElapseInRangeReplacement = 0.0f;
+
 					return(true);
 				}
 
@@ -338,7 +348,7 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
-				public bool Stop(bool flagJumpEnd)
+				public bool Stop()
 				{
 					if(0 == (Status & FlagBitStatus.VALID))
 					{
@@ -350,11 +360,7 @@ public static partial class Library_SpriteStudio6
 						return(true);
 					}
 
-					if(true == flagJumpEnd)
-					{
-					}
-
-					Status &= FlagBitStatus.VALID;
+					Status &= ~(FlagBitStatus.PLAYING | FlagBitStatus.PAUSING);
 
 					return(true);
 				}
@@ -381,6 +387,19 @@ public static partial class Library_SpriteStudio6
 				public bool Update(float timeElapsed)
 				{
 					float timeElapsedAnimation = timeElapsed * RateTime;
+					bool flagStopJumpTime = (0.0f != TimeElapseReplacement);
+					if(0 == (Status & FlagBitStatus.PLAYING))
+					{	/* Stoping */
+						if(true == flagStopJumpTime)
+						{
+							/* MEMO: In frame-Jump, Elapsed time is absolute. */
+							timeElapsedAnimation = TimeElapseReplacement;
+						}
+						else
+						{
+							timeElapsedAnimation = 0.0f;
+						}
+					}
 					TimeElapsedNow = timeElapsedAnimation;
 
 					if(0 == (Status & FlagBitStatus.VALID))
@@ -404,7 +423,10 @@ public static partial class Library_SpriteStudio6
 					if(0 == (Status & FlagBitStatus.PLAYING))
 					{	/* Not-Playing */
 						/* MEMO: Even if the animation has ended, there are cases when you are transitioning. */
-						goto Update_UpdateTransition;
+						if(false == flagStopJumpTime)
+						{
+							goto Update_UpdateTransition;
+						}
 					}
 
 					if(0 == (Status & FlagBitStatus.PLAYING_START))
@@ -657,7 +679,9 @@ public static partial class Library_SpriteStudio6
 						int frame = (int)(TimeElapsed / TimePerFrame);
 						frame = Mathf.Clamp(frame, 0, (FrameRange - 1));
 						frame += FrameStart;
-						if((frame != ArgumentContainer.FramePrevious) || (0 != (Status & FlagBitStatus.PLAYING_TURN)))
+						if(	((frame != ArgumentContainer.FramePrevious) || (0 != (Status & FlagBitStatus.PLAYING_TURN)))
+							|| (true == flagStopJumpTime)
+							)
 						{
 							Status |= FlagBitStatus.DECODE_ATTRIBUTE;
 						}
@@ -666,6 +690,7 @@ public static partial class Library_SpriteStudio6
 //					goto Update_UpdateTransition;
 
 				Update_UpdateTransition:;
+
 					Status &= ~FlagBitStatus.REQUEST_TRANSITIONEND;
 					if(0 <= IndexTrackSlave)
 					{
@@ -705,6 +730,7 @@ public static partial class Library_SpriteStudio6
 //					{	/* Not-Playing */
 //						Status &= ~(FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE | FlagBitStatus.TRANSITION_START);
 //					}
+//					TimeElapseReplacement = 0.0f;
 //				}
 
 				public void TimeSkip(float time, bool flagReverseParent, bool flagRangeEnd)
@@ -767,7 +793,7 @@ public static partial class Library_SpriteStudio6
 										timeCursor = (0 != (Status & FlagBitStatus.STYLE_REVERSE)) ? 0.0f : TimeRange;
 									}
 
-									Stop(false);
+									Stop();
 								}
 							}
 							else
@@ -828,6 +854,70 @@ public static partial class Library_SpriteStudio6
 					frame += FrameStart;
 					ArgumentContainer.Frame = frame;
 				}
+
+				public bool TimeGetRemain(out float timeRemainTotal, out float timeRemainInRange)
+				{
+					timeRemainTotal = 0.0f;
+					timeRemainInRange = 0.0f;
+
+					if((FlagBitStatus.VALID | FlagBitStatus.PLAYING) != (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)))
+					{
+						return(false);
+					}
+
+					int timesPlayRemain = 0;
+					if(0 < TimesPlay)
+					{	/* Limited-Loop */
+						timesPlayRemain = TimesPlay - 1;
+					}
+
+					if(0 != (Status & FlagBitStatus.STYLE_PINGPONG))
+					{	/* Style-PingPong */
+						timeRemainTotal = TimeRange * (float)(timesPlayRemain * 2);
+
+						if(0 != (Status & FlagBitStatus.STYLE_REVERSE))
+						{	/* Style-Reverse */
+							if(0 != (Status & FlagBitStatus.PLAYING_REVERSE))
+							{	/* timeRemain-Reverse (Out-bound) */
+								timeRemainInRange = TimeRange + TimeElapsed;
+							}
+							else
+							{	/* Play-Normal (In-bound) */
+								timeRemainInRange = (TimeRange - TimeElapsed);
+							}
+						}
+						else
+						{	/* Style-Normal */
+							if(0 == (Status & FlagBitStatus.PLAYING_REVERSE))
+							{	/* Play-Normal (Out-bound) */
+								timeRemainInRange = TimeRange + (TimeRange - TimeElapsed);
+							}
+							else
+							{	/* Play-Reverse (In-bound) */
+								timeRemainInRange = TimeElapsed;
+							}
+						}
+
+						timeRemainTotal += timeRemainInRange;
+					}
+					else
+					{
+						timeRemainTotal += TimeRange * (float)timesPlayRemain;
+
+						if(0 != (Status & FlagBitStatus.STYLE_REVERSE))
+						{	/* Style-Reverse */
+							timeRemainInRange = TimeElapsed;
+						}
+						else
+						{	/* Style-Normal */
+							timeRemainInRange = (TimeRange - TimeElapsed);
+						}
+
+						timeRemainTotal += timeRemainInRange;
+					}
+
+					return(true);
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
@@ -839,17 +929,15 @@ public static partial class Library_SpriteStudio6
 					PLAYING = 0x20000000,
 					PAUSING = 0x10000000,
 
-					NO_CLAMP_FRAME = 0x08000000,	/* Reserved */
-
 					STYLE_PINGPONG = 0x02000000,
 					STYLE_REVERSE = 0x01000000,
 
-					PLAYING_START = 0x00800000,
+					PLAYING_START = 0x00800000,	/* PLAYING_SKIPTIME */
 					PLAYING_REVERSE = 0x00400000,
 					PLAYING_REVERSEPREVIOUS = 0x00200000,
 					PLAYING_TURN = 0x00100000,
 
-					DECODE_ATTRIBUTE = 0x00080000,
+					DECODE_ATTRIBUTE = 0x0008000,
 
 					IGNORE_USERDATA = 0x00008000,
 					IGNORE_SKIPLOOP = 0x00004000,

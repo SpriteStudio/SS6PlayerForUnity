@@ -179,6 +179,7 @@
 * e.g.:
 *  Basic_FlagCreateControlGameObject > false
 *
+*
 * ---------------------
 * Basic_FlagCreateProjectFolder > Flag
 *   Flag ... true / false (bool)
@@ -189,6 +190,19 @@
 * 
 * e.g.:
 *  Basic_FlagCreateProjectFolder > true
+*
+*
+* ---------------------
+* Basic_FlagTextureReadable > Flag
+*   Flag ... true / false (bool)
+*            true == set "Read/Write Enable" to texture
+*            false == set prohibiting read/write to texture
+* 
+* This is same function as "Options: Basic > Set Texture Read/Write Enabled" option in the import settings.
+* 
+* e.g.:
+*  Basic_FlagTextureReadable > false
+*
 *
 * ---------------------
 * Basic_FlagInvisibleToHideAll > Flag
@@ -201,6 +215,7 @@
 * e.g.:
 *  Basic_FlagInvisibleToHideAll > true
 *
+*
 * ---------------------
 * Basic_FlagTrackAssets > Flag
 *   Flag ... true / false (bool)
@@ -211,6 +226,7 @@
 * 
 * e.g.:
 *  Basic_FlagTrackAssets > false
+*
 *
 * ---------------------
 * PreCalculation_FlagFixMesh > Flag
@@ -227,6 +243,7 @@
 * e.g.:
 *  PreCalculation_FlagFixMesh > true
 *
+*
 * ---------------------
 * PreCalculation_FlagTrimTransparentPixelsCell > Flag
 *   Flag ... true / false (bool)
@@ -237,6 +254,7 @@
 * 
 * e.g.:
 *  PreCalculation_FlagTrimTransparentPixelsCell > false
+*
 *
 * ---------------------
 * ConfirmOverWrite_FlagPrefabAnimation > Flag
@@ -265,6 +283,7 @@
 * e.g.:
 *  ConfirmOverWrite_FlagPrefabAnimation > true
 *
+*
 * ---------------------
 * Collider_FlagAttachCollider > Flag
 *   Flag ... true / false (bool)
@@ -275,6 +294,7 @@
 * 
 * e.g.:
 *  Collider_FlagAttachCollider > true
+*
 *
 * ---------------------
 * Collider_FlagAttachRigidBody > Flag
@@ -287,6 +307,7 @@
 * e.g.:
 *  Collider_FlagAttachRigidBody > false
 *
+*
 * ---------------------
 * Collider_SizeZ > Size
 *   Size ... collider's Z-axis size of local coordinate system
@@ -296,6 +317,7 @@
 * 
 * e.g.:
 *  Collider_SizeZ > 1.0
+*
 *
 * ---------------------
 * CheckVersion_FlagInvalidSSPJ > Flag
@@ -316,6 +338,7 @@
 * e.g.:
 *  CheckVersion_FlagInvalidSSPJ > true
 *
+*
 * ---------------------
 * RuleNameAsset_FlagAttachSpecificNameSSPJ > Flag
 *   Flag ... true / false (bool)
@@ -326,6 +349,7 @@
 * 
 * e.g.:
 *  RuleNameAsset_FlagAttachSpecificNameSSPJ > true
+*
 *
 * ---------------------
 * RuleNameAsset_NamePrefixTexture > PrefixName
@@ -367,6 +391,7 @@
 *  RuleNameAsset_NamePrefixPrefabParticleUnityNative >
 *  *) no prefix to "Particle"'s prefab file name in "Convert To Unity-Native" mode.
 *
+*
 * ---------------------
 * RuleNameAssetFolder_NameFolderTexture > FolderName
 * RuleNameAssetFolder_NameFolderPrefabAnimationSS6PU > FolderName
@@ -403,6 +428,7 @@
 *  RuleNameAssetFolder_NameFolderDataAnimationSS6PU > DataAnimation
 *  *) Set subfolder name that stores asset-file for "Data-Animation" of "SpriteStudio 6 Player" mode to "DataAnimation".
 *
+*
 * ---------------------
 * PackAttributeAnimation_Status > FormatName
 * PackAttributeAnimation_Cell > FormatName
@@ -426,8 +452,8 @@
 *   FormatName ... Data format name
 *                  StandardUncompressed == format "Standard Uncompressed"
 *                  StandardCPE == format "Standard CPE"
-*                  CPE_GOFFlyweight == format "CPE & GOF Flyweight" (reserved)
-*                  CPE_Interpolate == format "CPE & Interpolate" (reserved)
+*                  CPE_Flyweight == format "CPE & GOF Flyweight"
+*                  CPE_Interpolate == format "CPE & Interpolate"
 * 
 * This is same function as ...
 * - "Advanced Options > Advanced Options: Attribute data Packing > Status"
@@ -456,28 +482,66 @@
 *  Particularly in data formats other than "Standard CPE",
 *   there is a high possibility that attributes are not supported, so if mistake setting, malfunction will occur.
 * 
+*  Avoid writing this group's commands directly as much as possible.
+*  At very least, set with importer's setting UI and copy&paste from saved setting-file.
+*  When use these commands, "Is specified storage format  usable for attributes ?" is not checked.
+*  Therefore, if wrong setting with these commands, import  may not be executed normally, and datas may be crushed.
+* 
 * Memo:
 *  The following commands are obsolete after Ver.0.9.0.
+* 
 *  "PackAttributeAnimation_Plain ..." are converted to "PackAttributeAnimation _...",
 *   but a measure to prevent setting-file of Ver.0.8.x from becoming unusable.
-*  "PackAttributeAnimation_Fix ..." are ignored.
+*   - PackAttributeAnimation_PlainCell > FormatName
+*   - PackAttributeAnimation_PlainSizeForce > FormatName
+*   - PackAttributeAnimation_PlainVertexCorrection > FormatName
+*   - PackAttributeAnimation_PlainOffsetPivot > FormatName
+*   - PackAttributeAnimation_PlainPositionTexture > FormatName
+*   - PackAttributeAnimation_PlainScalingTexture > FormatName
+*   - PackAttributeAnimation_PlainRotationTexture > FormatName
 * 
-* - PackAttributeAnimation_PlainCell > FormatName
-* - PackAttributeAnimation_PlainSizeForce > FormatName
-* - PackAttributeAnimation_PlainVertexCorrection > FormatName
-* - PackAttributeAnimation_PlainOffsetPivot > FormatName
-* - PackAttributeAnimation_PlainPositionTexture > FormatName
-* - PackAttributeAnimation_PlainScalingTexture > FormatName
-* - PackAttributeAnimation_PlainRotationTexture > FormatName
-* - PackAttributeAnimation_FixIndexCellMap > FormatName
-* - PackAttributeAnimation_FixCoordinate > FormatName
-* - PackAttributeAnimation_FixUV0 > FormatName
-* - PackAttributeAnimation_FixSizeCollision > FormatName
-* - PackAttributeAnimation_FixPivotCollision > FormatName
+*  "PackAttributeAnimation_Fix ..." are ignored.
+*   - PackAttributeAnimation_FixIndexCellMap > FormatName
+*   - PackAttributeAnimation_FixCoordinate > FormatName
+*   - PackAttributeAnimation_FixUV0 > FormatName
+*   - PackAttributeAnimation_FixSizeCollision > FormatName
+*   - PackAttributeAnimation_FixPivotCollision > FormatName
 * 
 * e.g.:
 *  PackAttributeAnimation_PositionTexture > StandardCPE
 *  *) Set data format of the attribute "PositionTexture" to "Standard CPE".
+* 
+*
+* ---------------------
+* PresetMaterial_AnimationUnityNativeMix > MaterialPath
+* PresetMaterial_AnimationUnityNativeAdd > MaterialPath
+* PresetMaterial_AnimationUnityNativeSub > MaterialPath
+* PresetMaterial_AnimationUnityNativeMul > MaterialPath
+* PresetMaterial_AnimationUnityNativeMulNA > MaterialPath
+* PresetMaterial_AnimationUnityNativeScr > MaterialPath
+* PresetMaterial_AnimationUnityNativeExc > MaterialPath
+* PresetMaterial_AnimationUnityNativeInv > MaterialPath
+*   MaterialPath ... Material Asset-Path (Full Path)
+*                  Material's Asset Path.
+*                  Do not include "Assets" at the head like other commands' path.
+*                  ("Assets/subFolder/sample.mat" -> "/subFolder/sample.mat")
+*                  However, relative path can not be specified.
+* 
+* When "Convert to Unity-Native" mode, change material that importer will assign to sprites for target-blending.
+* This is same function as ...
+* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Mix" (Mix)
+* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Add" (Add)
+* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Sub" (Subtract)
+* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Mul" (Multiple)
+* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]MulNA" (Multiple-NonAlpha)
+* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Scr" (Screen)
+* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Exc" (Exclude)
+* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Inv" (Inverse)
+* ... options in the import settings.
+* 
+* e.g.:
+*  PresetMaterial_AnimationUnityNativeMulNA > /Materials/PresetMaterial/Add.mat
+*
 * 
 
 * ---------------------

@@ -380,8 +380,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 
 						/* MEMO: For 5.5.0beta & later, with "Sprite" to avoid unnecessary interpolation. */
+						/* MEMO: Enable read till complete SSCE precalculation. */
 						importer.textureShape = TextureImporterShape.Texture2D;
-						importer.isReadable = false;
+						importer.isReadable = (true == setting.Basic.FlagTextureReadable) ? true : false;
 						importer.mipmapEnabled = false;
 						importer.maxTextureSize = 4096;
 						importer.alphaSource = TextureImporterAlphaSource.FromInput;
@@ -459,12 +460,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					return(true);	/* false */
 				}
-				bool flagReadableOld = importerTexture.isReadable;
-				if(false == flagReadableOld)
-				{
-					importerTexture.isReadable = true;
-					AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
-				}
+				importerTexture.isReadable = true;
+				AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
 
 				Texture2D texture = informationSSPJ.TableInformationTexture[indexTexture].PrefabTexture.TableData[0];
 				if(null == texture)
@@ -610,11 +607,13 @@ public static partial class LibraryEditor_SpriteStudio6
 					tableCell[i].Data.Pivot = pivotNew;
 				}
 
-				if(false == flagReadableOld)
+				bool flagEnableRead = false;
+				if(true == setting.Basic.FlagTextureReadable)
 				{
-					importerTexture.isReadable = false;
-					AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
+					flagEnableRead = true;
 				}
+				importerTexture.isReadable = flagEnableRead;
+				AssetDatabase.ImportAsset(nameAssetTexture, ImportAssetOptions.ForceUpdate);
 
 				return(true);
 
@@ -1235,6 +1234,13 @@ public static partial class LibraryEditor_SpriteStudio6
 					importer.spriteImportMode = SpriteImportMode.Multiple;
 					importer.spritesheet = informationTexture.ListSpriteMetaDataUnityNative.ToArray();
 					importer.spritePixelsPerUnit = 1.0f;
+					bool flagEnableRead = false;
+					if(true == setting.Basic.FlagTextureReadable)
+					{
+						flagEnableRead = true;
+					}
+					importer.isReadable = flagEnableRead;
+
 					EditorUtility.SetDirty(importer);
 					AssetDatabase.ImportAsset(informationTexture.PrefabTexture.TableName[0], ImportAssetOptions.ForceUpdate);	/* Re-Import */
 					AssetDatabase.SaveAssets();

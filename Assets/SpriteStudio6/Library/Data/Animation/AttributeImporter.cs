@@ -26,6 +26,7 @@ public static partial class Library_SpriteStudio6
 					/* ----------------------------------------------- Enums & Constants */
 					#region Enums & Constants
 					public const string NameAttributeStatus = "Status";
+					public const string NameAttributeCell = "Cell";
 					public const string NameAttributePosition = "Position";
 					public const string NameAttributeRotation = "Rotation";
 					public const string NameAttributeScaling = "Scaling";
@@ -34,19 +35,17 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributeRateOpacityLocal = "RateOpacityLocal";
 					public const string NameAttributePowerMask = "PowerMask";
 					public const string NameAttributePartsColor = "PartsColor";
+					public const string NameAttributeVertexCorrection = "VertexCorrection";
+					public const string NameAttributeOffsetPivot = "OffsetPivot";
 					public const string NameAttributePositionAnchor = "PositionAnchor";
+					public const string NameAttributeSizeForce = "SizeForce";
+					public const string NameAttributePositionTexture = "PositionTexture";
+					public const string NameAttributeRotationTexture = "RotationTexture";
+					public const string NameAttributeScalingTexture = "ScalingTexture";
+					public const string NameAttributeRadiusCollision = "RadiusCollision";
 					public const string NameAttributeUserData = "UserData";
 					public const string NameAttributeInstance = "Instance";
 					public const string NameAttributeEffect = "Effect";
-					public const string NameAttributeRadiusCollision = "RadiusCollision";
-
-					public const string NameAttributeCell = "Cell";
-					public const string NameAttributeSizeForce = "SizeForce";
-					public const string NameAttributeVertexCorrection = "VertexCorrection";
-					public const string NameAttributeOffsetPivot = "OffsetPivot";
-					public const string NameAttributePositionTexture = "PositionTexture";
-					public const string NameAttributeScalingTexture = "ScalingTexture";
-					public const string NameAttributeRotationTexture = "RotationTexture";
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */

@@ -306,7 +306,7 @@ public partial class Script_SpriteStudio6_Root
 				indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
 				if(0 <= indexTrackSlave)
 				{
-					TableControlTrack[indexTrackSlave].Stop(false);
+					TableControlTrack[indexTrackSlave].Stop();
 					TableControlTrack[indexTrack].Transition(-1, 0.0f);
 				}
 			}
@@ -321,7 +321,7 @@ public partial class Script_SpriteStudio6_Root
 		if(0 > indexTrackSlave)
 		{	/* Cancel Transition */
 			indexTrackSlave = TableControlTrack[indexTrack].IndexTrackSlave;
-			TableControlTrack[indexTrackSlave].Stop(false);
+			TableControlTrack[indexTrackSlave].Stop();
 			TableControlTrack[indexTrack].Transition(-1, 0.0f);
 
 			return(true);

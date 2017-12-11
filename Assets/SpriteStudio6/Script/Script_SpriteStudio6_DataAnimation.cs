@@ -22,6 +22,12 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 	public Library_SpriteStudio6.Data.Animation[] TableAnimation;
 
+	/* PackAttribute's Dictionaries */
+//	public Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.Dictionary Dictionary_StandardUnCompressed;
+//	public Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Dictionary Dictionary_StandardCPE;
+	public Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.Dictionary Dictionary_CPE_Flyweight;
+//	public Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Interpolate.Dictionary Dictionary_CPE_Interpolate;
+
 	/* MEMO: Use "delegate" instead of bool because value is cleared each compiling. */
 	private FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
 	internal bool StatusIsBootup
@@ -228,9 +234,11 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		CODE_010001 = 0x00010001,	/* SS6PU Ver.0.9.0 */
 			/* MEMO: Add "Library_SpriteStudio6.Data.Parts.Animation.CountMesh" */
 			/* MEMO: Add "Library_SpriteStudio6.Data.Parts.Animation.Category" */
+		CODE_010002 = 0x00010002,	/* SS6PU Ver.0.9.8 */
+			/* MEMO: Add "PackAttribute's Dictionaries" */
 
 		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010001
+		SUPPORT_LATEST = CODE_010002
 	}
 	#endregion Enums & Constants
 

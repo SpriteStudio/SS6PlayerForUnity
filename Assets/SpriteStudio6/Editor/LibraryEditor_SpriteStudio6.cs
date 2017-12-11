@@ -604,12 +604,19 @@ public static partial class LibraryEditor_SpriteStudio6
 			/* MEMO: SSAE always has only 1 data-asset & 1 prefab. */
 			if(0 < countSSAE)
 			{
-				int indexParts;
+				int indexSSAE;
 				SSAE.Information informationSSAE = null;
 				for(int i=0; i<countSSAE; i++)
 				{
-					indexParts = informationSSPJ.QueueConvertSSAE[i];
-					informationSSAE = informationSSPJ.TableInformationSSAE[indexParts];
+					indexSSAE = informationSSPJ.QueueConvertSSAE[i];
+					informationSSAE = informationSSPJ.TableInformationSSAE[indexSSAE];
+
+					/* Open Pack-Attribute's Dictionary */
+					if(false == Library_SpriteStudio6.Data.Animation.PackAttribute.DictionaryBootUp(-1, -1, null))
+					{
+						LogError(messageLogPrefix, "Failure Open PackAttribute's dictionary (for entire-SSAE)  at [" + informationSSPJ.FileNameGetFullPath() + "]");
+						goto ExecSS6PU_ErrorEnd;
+					}
 
 					/* Convert: Data */
 					ProgressBarUpdate(	"Convert SSAEs (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
@@ -656,6 +663,19 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							goto ExecSS6PU_ErrorEnd;
 						}
+					}
+
+					/* Close Pack-Attribute's Dictionary */
+					Script_SpriteStudio6_DataAnimation scriptDtaAnimation = informationSSAE.DataAnimationSS6PU.TableData[0];
+					if(false == Library_SpriteStudio6.Data.Animation.PackAttribute.DictionaryShutDown(-1, -1, scriptDtaAnimation))
+					{
+						LogError(messageLogPrefix, "Failure Close PackAttribute's dictionary (for entire-SSAE)  at [" + informationSSPJ.FileNameGetFullPath() + "]");
+						goto ExecSS6PU_ErrorEnd;
+					}
+					if(null != scriptDtaAnimation)
+					{	/* Re-Save */
+						EditorUtility.SetDirty(scriptDtaAnimation);
+						AssetDatabase.SaveAssets();
 					}
 
 					/* Create-Asset: Prefab */
@@ -730,6 +750,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			/* Create Asset: Texture */
 			/* MEMO: Create Texture-Assets before CellMap for "Trim Transparent-Pixel". */
+			/* MEMO: Enable read till sprite-datas set complete. */
 			if(0 < countTexture)
 			{
 				/* Copy Texture files */
@@ -789,18 +810,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* MEMO: Be sure to "Convert" even when not create CellMap data-assets. Datas may be used at converting SSAE. */
 					informationSSCE = informationSSPJ.TableInformationSSCE[i];
 
-					/* Convert "Trim Transparent-Pixel" */
-					if(true == setting.PreCalcualation.FlagTrimTransparentPixelsCell)
-					{
-						ProgressBarUpdate(	"Convert SSCEs \"Trim Pixel\" (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
-											flagDisplayProgressBar, ref countProgressNow, countProgressMax
-										);
-
-						if(false == SSCE.CellTrimTransparentPixel(ref setting, informationSSPJ, informationSSCE))
-						{
-							goto ExecUnityNative_ErrorEnd;
-						}
-					}
+					/* MEMO: "Trim Transparent-Pixel" processing is unnecessary since Unity's sprite trims transparent pixels automatically by mesh shape. */
 
 					/* Convert (Create Textures' Atlas) */
 					ProgressBarUpdate(	"Convert SSCEs (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
@@ -812,9 +822,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 				}
 
-				/* Add Atlases to Textures */
+				/* Fix Texture */
 				for(int i=0; i<countTexture; i++)
 				{
+					/* Add Atlases to Textures */
 					if(false == SSCE.ModeUnityNative.CellMapSetTexture(ref setting, informationSSPJ, i))
 					{
 						goto ExecUnityNative_ErrorEnd;

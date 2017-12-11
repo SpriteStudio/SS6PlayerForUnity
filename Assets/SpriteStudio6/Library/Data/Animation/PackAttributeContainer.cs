@@ -18,6 +18,7 @@ public static partial class Library_SpriteStudio6
 			{
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
+#if false
 				private readonly static CapacityContainer CapacityContainerDummy = new CapacityContainer(
 					false,		/* Status */
 					false,		/* Cell */
@@ -39,6 +40,7 @@ public static partial class Library_SpriteStudio6
 					false,		/* Instance (Trigger) */
 					false		/* Effect (Trigger) */
 				);
+#endif
 				#endregion Enums & Constants
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
