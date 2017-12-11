@@ -144,6 +144,13 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 	void Start()
 	{
+		if(0 == (Status & FlagBitStatus.VALID))
+		{
+			StartMain();
+		}
+	}
+	internal void StartMain()
+	{
 		/* Clear Status */
 		Status = FlagBitStatus.CLEAR;
 

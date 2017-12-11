@@ -23,6 +23,7 @@ public static partial class Library_SpriteStudio6
 					STANDARD_UNCOMPRESSED = 0,	/* Standard-Uncompressed (Plain Array) */
 					STANDARD_CPE,	/* Standard-Compressed (Changing-Point Extracting) */
 					CPE_FLYWEIGHT,	/* CPE & GoF-Flyweight */
+					CPE_INTERPOLATE,	/* CPE & GoF-Flyweight */
 
 					TERMINATOR,
 				}
@@ -41,7 +42,10 @@ public static partial class Library_SpriteStudio6
 							return(StandardCPE.Capacity);
 
 						case KindTypePack.CPE_FLYWEIGHT:
-							return(CapacityContainerDummy);
+							return(CPE_Flyweight.Capacity);
+
+						case KindTypePack.CPE_INTERPOLATE:
+							return(CPE_Interpolate.Capacity);
 
 						default:
 							break;
@@ -60,7 +64,10 @@ public static partial class Library_SpriteStudio6
 							return(StandardCPE.ID);
 
 						case KindTypePack.CPE_FLYWEIGHT:
-							return("Dummy");
+							return(CPE_Flyweight.ID);
+
+						case KindTypePack.CPE_INTERPOLATE:
+							return(CPE_Interpolate.ID);
 
 						default:
 							break;
@@ -81,6 +88,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = CPE_Flyweight.FunctionInt;
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionInt;
 							break;
 
 						default:
@@ -101,6 +113,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = CPE_Flyweight.FunctionFloat;
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionFloat;
 							break;
 
 						default:
@@ -121,6 +138,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = CPE_Flyweight.FunctionVector2;
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionVector2;
 							break;
 
 						default:
@@ -141,6 +163,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = CPE_Flyweight.FunctionVector3;
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionVector3;
 							break;
 
 						default:
@@ -161,6 +188,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
 							break;
 
 						default:
@@ -181,6 +213,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
 							break;
 
 						default:
@@ -201,6 +238,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = CPE_Flyweight.FunctionPartsColor;
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionPartsColor;
 							break;
 
 						default:
@@ -221,6 +263,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = CPE_Flyweight.FunctionVertexCorrection;
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionVertexCorrection;
 							break;
 
 						default:
@@ -233,8 +280,7 @@ public static partial class Library_SpriteStudio6
 					switch(container.TypePack)
 					{
 						case KindTypePack.STANDARD_UNCOMPRESSED:
-							/* MEMO: Unsupported */
-//							container.Function = StandardUncompressed.FunctionUserData;
+							container.Function = null;	/* Not Support */
 							break;
 
 						case KindTypePack.STANDARD_CPE:
@@ -242,6 +288,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
 							break;
 
 						default:
@@ -254,8 +305,7 @@ public static partial class Library_SpriteStudio6
 					switch(container.TypePack)
 					{
 						case KindTypePack.STANDARD_UNCOMPRESSED:
-							/* MEMO: Unsupported */
-//							container.Function = StandardUncompressed.FunctionInstance;
+							container.Function = null;	/* Not Support */
 							break;
 
 						case KindTypePack.STANDARD_CPE:
@@ -263,6 +313,11 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
 							break;
 
 						default:
@@ -275,8 +330,7 @@ public static partial class Library_SpriteStudio6
 					switch(container.TypePack)
 					{
 						case KindTypePack.STANDARD_UNCOMPRESSED:
-							/* MEMO: Unsupported */
-//							container.Function = StandardUncompressed.FunctionEffect;
+							container.Function = null;	/* Not Support */
 							break;
 
 						case KindTypePack.STANDARD_CPE:
@@ -284,11 +338,40 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
 							break;
 
 						default:
 							break;
 					}
+				}
+
+				public static bool DictionaryBootUp(int indexAnimation, int indexParts, Script_SpriteStudio6_DataAnimation dataAnimation)
+				{
+					bool flagSuccess = true;
+
+					flagSuccess &= StandardUncompressed.DictionaryBootUp(indexAnimation, indexParts, dataAnimation);
+					flagSuccess &= StandardCPE.DictionaryBootUp(indexAnimation, indexParts, dataAnimation);
+					flagSuccess &= CPE_Flyweight.DictionaryBootUp(indexAnimation, indexParts, dataAnimation);
+					flagSuccess &= CPE_Interpolate.DictionaryBootUp(indexAnimation, indexParts, dataAnimation);
+
+					return(flagSuccess);
+				}
+
+				public static bool DictionaryShutDown(int indexAnimation, int indexParts, Script_SpriteStudio6_DataAnimation dataAnimation)
+				{
+					bool flagSuccess = true;
+
+					flagSuccess &= StandardUncompressed.DictionaryShutDown(indexAnimation, indexParts, dataAnimation);
+					flagSuccess &= StandardCPE.DictionaryShutDown(indexAnimation, indexParts, dataAnimation);
+					flagSuccess &= CPE_Flyweight.DictionaryShutDown(indexAnimation, indexParts, dataAnimation);
+					flagSuccess &= CPE_Interpolate.DictionaryShutDown(indexAnimation, indexParts, dataAnimation);
+
+					return(flagSuccess);
 				}
 				#endregion Functions
 			}

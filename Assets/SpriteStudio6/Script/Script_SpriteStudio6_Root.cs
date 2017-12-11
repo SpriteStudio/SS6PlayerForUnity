@@ -136,6 +136,13 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	void Start()
 	{
+		if(0 == (Status & FlagBitStatus.VALID))
+		{
+			StartMain();
+		}
+	}
+	internal void StartMain()
+	{
 		Status = FlagBitStatus.CLEAR;
 
 		/* Boot up master datas */
@@ -144,7 +151,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/*        is to stabilize execution such when re-compile.                */
 		if((null == DataCellMap) || (null == DataAnimation))
 		{
-			goto Start_ErrorEnd;
+			goto StartMain_ErrorEnd;
 		}
 		FunctionBootUpDataAnimation();
 
@@ -157,26 +164,26 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* Start Base-Class */
 		if(false == BaseStart())
 		{
-			goto Start_ErrorEnd;
+			goto StartMain_ErrorEnd;
 		}
 
 		/* Generate Play-Track */
 		int countTrack = ControlBootUpTrack(-1);
 		if(0 >= countTrack)
 		{
-			goto Start_ErrorEnd;
+			goto StartMain_ErrorEnd;
 		}
 
 		/* Check Play-Information */
 		if(false == InformationCheckPlay(countTrack))
 		{
-			goto Start_ErrorEnd;
+			goto StartMain_ErrorEnd;
 		}
 
 		/* Boot up Parts-Control */
 		if(false == ControlBootUpParts(CountSpriteMax))
 		{
-			goto Start_ErrorEnd;
+			goto StartMain_ErrorEnd;
 		}
 
 		/* Boot up Draw-Cluster */
@@ -184,7 +191,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/*       ("ClusterDraw" is set null if before the parent's start)                                                                    */
 		if(false == ClusterBootUpDraw())
 		{
-			goto Start_ErrorEnd;
+			goto StartMain_ErrorEnd;
 		}
 
 		Status |= FlagBitStatus.VALID;
@@ -192,11 +199,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* Set Initial Animations */
 		if(false == AnimationPlayInitial())
 		{
-			goto Start_ErrorEnd;
+			goto StartMain_ErrorEnd;
 		}
 		return;
 
-	Start_ErrorEnd:;
+	StartMain_ErrorEnd:;
 		TableControlTrack = null;
 
 		Status &= ~FlagBitStatus.VALID;
@@ -372,37 +379,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 					indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
 					if(0 <= indexTrackSlave)
 					{
-						bool flagStartAnimation = TableControlTrack[i].StatusIsTransitionCancelPause;
-						flagRequestPlayEndTrack = TableControlTrack[indexTrackSlave].StatusIsRequestPlayEnd;	/* Overwrite slave track status. */
-
-						/* Copy Track playing datas */
-						/* MEMO: Since track-control manages only playing-frame, copy all. */
-						/* MEMO: If destination-animation has ended at transition complete, will callback. */
-						TableControlTrack[i] = TableControlTrack[indexTrackSlave];
-
-						/* Copy Parts-TRS */
-						/* MEMO: copy TRSSlave to TRSMaster since decode states at transition end is in TRSSlave. */
-						for(int j=0; j<countControlParts; j++)
-						{
-							if(TableControlParts[j].IndexControlTrack == i)
-							{
-								TableControlParts[j].TRSMaster = TableControlParts[j].TRSSlave;
-							}
-						}
-
-						/* Clear Transition */
-						TableControlTrack[i].StatusIsRequestTransitionEnd = false;
-						TableControlTrack[i].StatusIsTransitionCancelPause = false;
-						TableControlTrack[i].Transition(-1, 0.0f);
-
-						/* Pause Cancel */
-						if(true == flagStartAnimation)
-						{
-							TableControlTrack[i].Pause(false);
-						}
-
-						/* Stop Slave */
-						TableControlTrack[indexTrackSlave].Stop(false);
+						/* Change Track Slave to Master */
+						/* MEMO: Overwrite slave track status. */
+						flagRequestPlayEndTrack = TrackChangeSlaveToMaster(i, indexTrackSlave);
 
 						/* CallBack Transition-End */
 						if((null != FunctionPlayEndTrack) && (null != FunctionPlayEndTrack[i]))
@@ -421,7 +400,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				if(true == flagRequestPlayEndTrack)
 				{
 					/* Stop Track */
-					TableControlTrack[i].Stop(false);
+					TableControlTrack[i].Stop();
 
 					/* CallBack Play-End */
 					/* MEMO: At Play-End callback, "indexTrackSlave" is always -1. */
@@ -439,14 +418,18 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				TableControlTrack[i].StatusIsRequestTransitionEnd = false;
 			}
 
+#if false
+			TableControlTrack[i].StatusClearTransient();
+#else
 			/* MEMO: Originally should call function, but directly process (taking call-cost into account). */
 			/* MEMO: Since clear bits only, VALID is not judged.                                  */
 			/*       (Even if clearing those bits of stopping track, processing is not affected.) */
-//			TableControlTrack[i].StatusClearTransient();
 			TableControlTrack[i].Status &= ~(	Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_START
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.DECODE_ATTRIBUTE
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.TRANSITION_START
 											);
+			TableControlTrack[i].TimeElapseReplacement = 0.0f;
+#endif
 		}
 
 		/* Clear Transient-Status */
@@ -773,6 +756,44 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		return(true);
+	}
+
+	private bool TrackChangeSlaveToMaster(int indexTrackMaskter, int indexTrackSlave)
+	{
+		bool flagStartAnimation = TableControlTrack[indexTrackMaskter].StatusIsTransitionCancelPause;
+		bool flagRequestPlayEndTrack = TableControlTrack[indexTrackSlave].StatusIsRequestPlayEnd;
+
+		/* Copy Track playing datas */
+		/* MEMO: Since track-control manages only playing-frame, copy all. */
+		/* MEMO: If destination-animation has ended at transition complete, will callback. */
+		TableControlTrack[indexTrackMaskter] = TableControlTrack[indexTrackSlave];
+
+		/* Copy Parts-TRS */
+		/* MEMO: copy TRSSlave to TRSMaster since decode states at transition end is in TRSSlave. */
+		int countControlParts = TableControlParts.Length;
+		for(int i=0; i<countControlParts; i++)
+		{
+			if(TableControlParts[i].IndexControlTrack == indexTrackMaskter)
+			{
+				TableControlParts[i].TRSMaster = TableControlParts[i].TRSSlave;
+			}
+		}
+
+		/* Clear Transition */
+		TableControlTrack[indexTrackMaskter].StatusIsRequestTransitionEnd = false;
+		TableControlTrack[indexTrackMaskter].StatusIsTransitionCancelPause = false;
+		TableControlTrack[indexTrackMaskter].Transition(-1, 0.0f);
+
+		/* Pause Cancel */
+		if(true == flagStartAnimation)
+		{
+			TableControlTrack[indexTrackMaskter].Pause(false);
+		}
+
+		/* Stop Slave */
+		TableControlTrack[indexTrackSlave].Stop();
+
+		return(flagRequestPlayEndTrack);
 	}
 
 	/* Part: SpriteStudio6/Script/Root/FunctionAnimation.cs */

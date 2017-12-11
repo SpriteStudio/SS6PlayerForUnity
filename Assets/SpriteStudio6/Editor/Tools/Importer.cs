@@ -4,8 +4,6 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
-#define TAKE_AWAY_UNSUPPORTED_FUNCTION
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -469,6 +467,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUI.indentLevel = levelIndent;
 		EditorGUILayout.Space();
 
+		SettingImport.Basic.FlagTextureReadable = EditorGUILayout.ToggleLeft("Set Texture \"Read/Write Enabled\"", SettingImport.Basic.FlagTextureReadable);
+		EditorGUILayout.Space();
+
 		switch(SettingImport.Mode)
 		{
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
@@ -812,17 +813,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 	private void FoldOutExecPackAttributeAnimation(int levelIndent)
 	{	/* MEMO: only "SS6PU" Mode */
-#if TAKE_AWAY_UNSUPPORTED_FUNCTION
-		EditorGUI.indentLevel = levelIndent;
-		EditorGUILayout.LabelField("Sorry.");
-		EditorGUILayout.LabelField("This functions can not be executed in current version.");
-		EditorGUILayout.LabelField("Please give us a little more time.");
-		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("MEMO:");
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("Functions of this group are to set data format for each \"Attribute\" of animation data.");
-		EditorGUI.indentLevel = levelIndent;
-#else
 		EditorGUI.indentLevel = levelIndent;
 		EditorGUILayout.LabelField("Don't manipulate this setting without reason.");
 		EditorGUILayout.LabelField("Understand amply the implementation of SS6PU data format before setting.");
@@ -837,6 +827,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Scaling, "Scaling", ref PullDownPackAttributeAnimation.Scaling);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.ScalingLocal, "ScalingLocal", ref PullDownPackAttributeAnimation.ScalingLocal);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.RateOpacity, "RateOpacity", ref PullDownPackAttributeAnimation.RateOpacity);
+		if(Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE == SettingImport.PackAttributeAnimation.RateOpacity)
+		{
+			EditorGUI.indentLevel = levelIndent + 1;
+			EditorGUILayout.LabelField("Only when packing \"RateOpacity\", \"Standard CPE\" is used.");
+			EditorGUI.indentLevel = levelIndent;
+		}
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PartsColor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.VertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.VertexCorrection);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.OffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.OffsetPivot);
@@ -850,7 +846,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Instance, "Instance", ref PullDownPackAttributeAnimation.Instance);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Effect, "Effect", ref PullDownPackAttributeAnimation.Effect);
 		EditorGUILayout.Space();
-#endif
 	}
 	private void PullDownExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)
 	{
@@ -1641,7 +1636,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			private readonly static string[] PackName = new string[(int)Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.TERMINATOR] {
 				"Standard Uncompressed",
 				"Standard CPE",
-				"CPE & GOF-Flyweight",
+				"CPE + GOF-Flyweight",
+				"CPE + Interpolate",
 			};
 			#endregion Enums & Constants
 		}
