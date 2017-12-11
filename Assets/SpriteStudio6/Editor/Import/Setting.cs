@@ -4,7 +4,6 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -981,6 +980,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Variables & Properties
 				public bool FlagCreateControlGameObject;
 				public bool FlagCreateProjectFolder;
+				public bool FlagTextureReadable;
 				public bool FlagCreateHolderAsset;
 				public bool FlagInvisibleToHideAll;
 				public bool FlagTrackAssets;
@@ -990,6 +990,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Functions
 				public GroupBasic(	bool flagCreateControlGameObject,
 									bool flagCreateProjectFolder,
+									bool flagTextureReadable,
 									bool flagCreateHolderAsset,
 									bool flagInvisibleToHideAll,
 									bool flagTrackAssets
@@ -997,6 +998,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					FlagCreateControlGameObject = flagCreateControlGameObject;
 					FlagCreateProjectFolder = flagCreateProjectFolder;
+					FlagTextureReadable = flagTextureReadable;
 					FlagCreateHolderAsset = flagCreateHolderAsset;
 					FlagInvisibleToHideAll = flagInvisibleToHideAll;
 					FlagTrackAssets = flagTrackAssets;
@@ -1011,6 +1013,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					FlagCreateControlGameObject = EditorPrefs.GetBool(PrefsKeyFlagCreateControlGameObject, Default.FlagCreateControlGameObject);
 					FlagCreateProjectFolder = EditorPrefs.GetBool(PrefsKeyFlagCreateProjectFolder, Default.FlagCreateProjectFolder);
+					FlagTextureReadable = EditorPrefs.GetBool(PrefsKeyFlagTextureReadable, Default.FlagTextureReadable);
 					FlagCreateHolderAsset = EditorPrefs.GetBool(PrefsKeyFlagCreateHolderAsset, Default.FlagCreateHolderAsset);
 					FlagInvisibleToHideAll = EditorPrefs.GetBool(PrefsKeyFlagInvisibleToHideAll, Default.FlagInvisibleToHideAll);
 					FlagTrackAssets = EditorPrefs.GetBool(PrefsKeyFlagTrackAssets, Default.FlagTrackAssets);
@@ -1022,6 +1025,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					EditorPrefs.SetBool(PrefsKeyFlagCreateControlGameObject, FlagCreateControlGameObject);
 					EditorPrefs.SetBool(PrefsKeyFlagCreateProjectFolder, FlagCreateProjectFolder);
+					EditorPrefs.SetBool(PrefsKeyFlagTextureReadable, FlagTextureReadable);
 					EditorPrefs.SetBool(PrefsKeyFlagCreateHolderAsset, FlagCreateHolderAsset);
 					EditorPrefs.SetBool(PrefsKeyFlagInvisibleToHideAll, FlagInvisibleToHideAll);
 					EditorPrefs.SetBool(PrefsKeyFlagTrackAssets, FlagTrackAssets);
@@ -1031,7 +1035,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[5];
+					string[] textEncode = new string[6];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateControlGameObject);
@@ -1040,14 +1044,17 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateProjectFolder);
 					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagCreateProjectFolder, textValue);
 
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTextureReadable);
+					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTextureReadable, textValue);
+
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateHolderAsset);
-					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagCreateHolderAsset, textValue);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagCreateHolderAsset, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvisibleToHideAll);
-					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvisibleToHideAll, textValue);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvisibleToHideAll, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrackAssets);
-					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAssets, textValue);
+					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAssets, textValue);
 
 					return(textEncode);
 				}
@@ -1062,6 +1069,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyFlagCreateProjectFolder:
 							FlagCreateProjectFolder = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagTextureReadable:
+							FlagTextureReadable = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						case TextKeyFlagCreateHolderAsset:
@@ -1087,6 +1098,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Enums & Constants
 				private const string KeyFlagCreateControlGameObject = "FlagCreateControlGameObject";
 				private const string KeyFlagCreateProjectFolder = "FlagCreateProjectFolder";
+				private const string KeyFlagTextureReadable = "FlagTextureReadable";
 				private const string KeyFlagCreateHolderAsset = "FlagCreateHolderAsset";
 				private const string KeyFlagInvisibleToHideAll = "FlagInvisibleToHideAll";
 				private const string KeyFlagTrackAssets = "FlagTrackAssets";
@@ -1094,6 +1106,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyPrefix = "Basic_";
 				private const string TextKeyFlagCreateControlGameObject = TextKeyPrefix + KeyFlagCreateControlGameObject;
 				private const string TextKeyFlagCreateProjectFolder = TextKeyPrefix + KeyFlagCreateProjectFolder;
+				private const string TextKeyFlagTextureReadable = TextKeyPrefix + KeyFlagTextureReadable;
 				private const string TextKeyFlagCreateHolderAsset = TextKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string TextKeyFlagInvisibleToHideAll = TextKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string TextKeyFlagTrackAssets = TextKeyPrefix + KeyFlagTrackAssets;
@@ -1101,6 +1114,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagCreateControlGameObject = PrefsKeyPrefix + KeyFlagCreateControlGameObject;
 				private const string PrefsKeyFlagCreateProjectFolder = PrefsKeyPrefix + KeyFlagCreateProjectFolder;
+				private const string PrefsKeyFlagTextureReadable = PrefsKeyPrefix + KeyFlagTextureReadable;
 				private const string PrefsKeyFlagCreateHolderAsset = PrefsKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string PrefsKeyFlagInvisibleToHideAll = PrefsKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string PrefsKeyFlagTrackAssets = PrefsKeyPrefix + KeyFlagTrackAssets;
@@ -1108,6 +1122,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private readonly static GroupBasic Default = new GroupBasic(
 					true,	/* FlagCreateControlGameObject */
 					true,	/* FlagCreateProjectFolder */
+					false,	/* FlagTextureReadable */
 					true,	/* FlagCreateHolderAsset */
 					false,	/* FlagInvisibleToHideAll */
 					true	/* FlagTrackAssets */
@@ -2042,7 +2057,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							return(true);
 
 						case TextKeyRotation:
-							Status = KindGetPackName(textArgument[1]);
+							Rotation = KindGetPackName(textArgument[1]);
 							return(true);
 
 						case TextKeyScaling:
@@ -2397,15 +2412,14 @@ public static partial class LibraryEditor_SpriteStudio6
 											string animationUnityNativeInv
 										)
 				{
-					AnimationUnityNativeMix = MaterialLoadPath(animationUnityNativeMix);
-					AnimationUnityNativeAdd = MaterialLoadPath(animationUnityNativeAdd);
-					AnimationUnityNativeSub = MaterialLoadPath(animationUnityNativeSub);
-					AnimationUnityNativeMul = MaterialLoadPath(animationUnityNativeMul);
-					AnimationUnityNativeMulNA = MaterialLoadPath(animationUnityNativeMulNA);
-					AnimationUnityNativeScr = MaterialLoadPath(animationUnityNativeScr);
-					AnimationUnityNativeExc = MaterialLoadPath(animationUnityNativeExc);
-					AnimationUnityNativeInv = MaterialLoadPath(animationUnityNativeInv);
-						
+					AnimationUnityNativeMix = MaterialLoadPath(PathGet(animationUnityNativeMix));
+					AnimationUnityNativeAdd = MaterialLoadPath(PathGet(animationUnityNativeAdd));
+					AnimationUnityNativeSub = MaterialLoadPath(PathGet(animationUnityNativeSub));
+					AnimationUnityNativeMul = MaterialLoadPath(PathGet(animationUnityNativeMul));
+					AnimationUnityNativeMulNA = MaterialLoadPath(PathGet(animationUnityNativeMulNA));
+					AnimationUnityNativeScr = MaterialLoadPath(PathGet(animationUnityNativeScr));
+					AnimationUnityNativeExc = MaterialLoadPath(PathGet(animationUnityNativeExc));
+					AnimationUnityNativeInv = MaterialLoadPath(PathGet(animationUnityNativeInv));
 				}
 
 				public void CleanUp()
@@ -2480,28 +2494,28 @@ public static partial class LibraryEditor_SpriteStudio6
 					string[] textEncode = new string[8];
 					string textValue;
 
-					textValue = PathGetMaterial(AnimationUnityNativeMix);
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeMix));
 					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMix, textValue);
 
-					textValue = PathGetMaterial(AnimationUnityNativeAdd);
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeAdd));
 					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeAdd, textValue);
 
-					textValue = PathGetMaterial(AnimationUnityNativeSub);
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeSub));
 					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeSub, textValue);
 
-					textValue = PathGetMaterial(AnimationUnityNativeMul);
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeMul));
 					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMul, textValue);
 
-					textValue = PathGetMaterial(AnimationUnityNativeMulNA);
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeMulNA));
 					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMulNA, textValue);
 
-					textValue = PathGetMaterial(AnimationUnityNativeScr);
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeScr));
 					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeScr, textValue);
 
-					textValue = PathGetMaterial(AnimationUnityNativeExc);
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeExc));
 					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeExc, textValue);
 
-					textValue = PathGetMaterial(AnimationUnityNativeInv);
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeInv));
 					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeInv, textValue);
 
 					return(textEncode);
@@ -2512,35 +2526,35 @@ public static partial class LibraryEditor_SpriteStudio6
 					switch(textArgument[0])
 					{
 						case TextKeyAnimationUnityNativeMix:
-							AnimationUnityNativeMix = MaterialLoadPath(textArgument[1]);
+							AnimationUnityNativeMix = MaterialLoadPath(PathGet(textArgument[1]));
 							return(true);
 
 						case TextKeyAnimationUnityNativeAdd:
-							AnimationUnityNativeAdd = MaterialLoadPath(textArgument[1]);
+							AnimationUnityNativeAdd = MaterialLoadPath(PathGet(textArgument[1]));
 							return(true);
 
 						case TextKeyAnimationUnityNativeSub:
-							AnimationUnityNativeSub = MaterialLoadPath(textArgument[1]);
+							AnimationUnityNativeSub = MaterialLoadPath(PathGet(textArgument[1]));
 							return(true);
 
 						case TextKeyAnimationUnityNativeMul:
-							AnimationUnityNativeMul = MaterialLoadPath(textArgument[1]);
+							AnimationUnityNativeMul = MaterialLoadPath(PathGet(textArgument[1]));
 							return(true);
 
 						case TextKeyAnimationUnityNativeMulNA:
-							AnimationUnityNativeMulNA = MaterialLoadPath(textArgument[1]);
+							AnimationUnityNativeMulNA = MaterialLoadPath(PathGet(textArgument[1]));
 							return(true);
 
 						case TextKeyAnimationUnityNativeScr:
-							AnimationUnityNativeScr = MaterialLoadPath(textArgument[1]);
+							AnimationUnityNativeScr = MaterialLoadPath(PathGet(textArgument[1]));
 							return(true);
 
 						case TextKeyAnimationUnityNativeExc:
-							AnimationUnityNativeExc = MaterialLoadPath(textArgument[1]);
+							AnimationUnityNativeExc = MaterialLoadPath(PathGet(textArgument[1]));
 							return(true);
 
 						case TextKeyAnimationUnityNativeInv:
-							AnimationUnityNativeInv = MaterialLoadPath(textArgument[1]);
+							AnimationUnityNativeInv = MaterialLoadPath(PathGet(textArgument[1]));
 							return(true);
 
 						default:
@@ -2590,6 +2604,21 @@ public static partial class LibraryEditor_SpriteStudio6
 					string namePathMaterial = AssetDatabase.GUIDToAssetPath(guid);
 					return(MaterialLoadPath(namePathMaterial));
 				}
+
+				private static string PathGet(string namePath)
+				{
+					string name = namePath;
+					if(false == name.StartsWith("/"))
+					{
+						name = "/" + name;
+					}
+					return(namePathRoot + name);
+				}
+
+				private static string PathGetForExport(string namePath)
+				{
+					return(namePath.Remove(0, namePathRoot.Length));
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
@@ -2623,15 +2652,17 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyAnimationUnityNativeExc = PrefsKeyPrefix + KeyAnimationUnityNativeExc;
 				private const string PrefsKeyAnimationUnityNativeInv = PrefsKeyPrefix + KeyAnimationUnityNativeInv;
 
+				private const string namePathRoot = "Assets";
+
 				private readonly static GroupPresetMaterial Default = new GroupPresetMaterial(
-					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MIX.mat",		/* AnimationUnityNativeMix */
-					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_ADD.mat",		/* AnimationUnityNativeAdd */
-					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SUB.mat",		/* AnimationUnityNativeSub */
-					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL.mat",		/* AnimationUnityNativeMul */
-					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL_NA.mat",	/* AnimationUnityNativeMulNA */
-					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SCR.mat",		/* AnimationUnityNativeScr */
-					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_EXC.mat",		/* AnimationUnityNativeExc */
-					"Assets/SpriteStudio6/Material/UnityNative/Sprite_UnityNative_INV.mat"		/* AnimationUnityNativeInv */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MIX.mat",		/* AnimationUnityNativeMix */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_ADD.mat",		/* AnimationUnityNativeAdd */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SUB.mat",		/* AnimationUnityNativeSub */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL.mat",		/* AnimationUnityNativeMul */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL_NA.mat",	/* AnimationUnityNativeMulNA */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SCR.mat",		/* AnimationUnityNativeScr */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_EXC.mat",		/* AnimationUnityNativeExc */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_INV.mat"		/* AnimationUnityNativeInv */
 				);
 				#endregion Enums & Constants
 			}

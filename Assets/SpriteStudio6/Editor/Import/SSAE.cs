@@ -1412,21 +1412,30 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 									else
 									{
-										int indexCellMap = informationSSAE.TableIndexCellMap[LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText)];
-										data.Value.IndexCellMap = indexCellMap;
-
-										valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeKey, "value/name", managerNameSpace);
-										if(null == valueText)
-										{
+										int indexCellMap = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+										if(0 > indexCellMap)
+										{	/* Invalid Ref.Cell */
+											data.Value.IndexCellMap = -1;
 											data.Value.IndexCell = -1;
 										}
 										else
 										{
-											int indexCell = informationSSPJ.TableInformationSSCE[indexCellMap].IndexGetCell(valueText);
-											data.Value.IndexCell = indexCell;
-											if(0 <= indexCell)
+											indexCellMap = informationSSAE.TableIndexCellMap[indexCellMap];
+											data.Value.IndexCellMap = indexCellMap;
+
+											valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeKey, "value/name", managerNameSpace);
+											if(null == valueText)
 											{
-												flagValidCell = true;
+												data.Value.IndexCell = -1;
+											}
+											else
+											{
+												int indexCell = informationSSPJ.TableInformationSSCE[indexCellMap].IndexGetCell(valueText);
+												data.Value.IndexCell = indexCell;
+												if(0 <= indexCell)
+												{
+													flagValidCell = true;
+												}
 											}
 										}
 									}
@@ -4099,11 +4108,23 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						countFrame = informationAnimation.Data.CountFrame;
 
+						if(false == Library_SpriteStudio6.Data.Animation.PackAttribute.DictionaryBootUp(i, -1, null))
+						{
+							LogError(messageLogPrefix, "Failure Open PackAttribute's dictionary (for Animation)  Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+							goto ConvertData_ErrorEnd;
+						}
+
 						for(int j=0; j<countParts; j++)
 						{
 							informationParts = informationSSAE.TableParts[j];
 							informationAnimationParts = informationAnimation.TableParts[j];
 							dataAnimation.TableParts[j].StatusParts = informationAnimationParts.StatusParts;
+
+							if(false == Library_SpriteStudio6.Data.Animation.PackAttribute.DictionaryBootUp(i, j, null))
+							{
+								LogError(messageLogPrefix, "Failure Open PackAttribute's dictionary (for Animation-Parts) Parts-Name[" + informationParts.Data.Name + "] Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
 
 							dataAnimation.TableParts[j].Status = PackAttribute.FactoryStatus(setting.PackAttributeAnimation.Status);
 							if(false == dataAnimation.TableParts[j].Status.Function.Pack(	dataAnimation.TableParts[j].Status,
@@ -4468,6 +4489,18 @@ public static partial class LibraryEditor_SpriteStudio6
 								LogError(messageLogPrefix, "Failure Packing Attribute \"RotationTexture\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 								goto ConvertData_ErrorEnd;
 							}
+
+							if(false == Library_SpriteStudio6.Data.Animation.PackAttribute.DictionaryShutDown(i, j, null))
+							{
+								LogError(messageLogPrefix, "Failure Close PackAttribute's dictionary (for Animation-Parts) Parts-Name[" + informationParts.Data.Name + "] Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
+						}
+
+						if(false == Library_SpriteStudio6.Data.Animation.PackAttribute.DictionaryShutDown(i, -1, null))
+						{
+							LogError(messageLogPrefix, "Failure Close PackAttribute's dictionary (for Animation) Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+							goto ConvertData_ErrorEnd;
 						}
 					}
 

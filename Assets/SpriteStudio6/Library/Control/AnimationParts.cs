@@ -351,6 +351,8 @@ public static partial class Library_SpriteStudio6
 
 				internal void Update(Script_SpriteStudio6_Root instanceRoot, int idParts, ref Matrix4x4 matrixCorrection)
 				{
+					/* MEMO: Since "Track-Transition" and frame-jump at stop must be processed, should not return only by judging playing. */
+
 					int indexTrack = IndexControlTrack;
 					if(0 > indexTrack)
 					{	/* Disconnect */
@@ -374,7 +376,15 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Update UserData */
-					UpdateUserData(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+					/* MEMO: "UserData" is not decoded when not playing animation. */
+					/* MEMO: "UserData" is not decoded in "Instance" animation. */
+					if(true == instanceRoot.TableControlTrack[indexTrack].StatusIsPlaying)
+					{
+						if((null == instanceRoot.InstanceRootParent) && (0 == (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA)))
+						{
+							UpdateUserData(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+						}
+					}
 
 					/* Update for each parts' feature */
 					switch(instanceRoot.DataAnimation.TableParts[idParts].Feature)
@@ -519,12 +529,23 @@ public static partial class Library_SpriteStudio6
 					flagUpdate = false;
 					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION))
 					{
+#if UNITY_EDITOR
+						if(	(null != dataAnimationParts.Position.Function)
+							&& (true == dataAnimationParts.Position.Function.ValueGet(	ref TRSMaster.Position.Value,
+																						ref TRSMaster.Position.FrameKey,
+																						dataAnimationParts.Position,
+																						ref controlTrack.ArgumentContainer
+																					)
+								)
+							)
+#else
 						if(true == dataAnimationParts.Position.Function.ValueGet(	ref TRSMaster.Position.Value,
 																					ref TRSMaster.Position.FrameKey,
 																					dataAnimationParts.Position,
 																					ref controlTrack.ArgumentContainer
 																				)
 							)
+#endif
 						{
 							flagUpdate = true;
 						}
@@ -553,12 +574,23 @@ public static partial class Library_SpriteStudio6
 						/* Get Slave Position */
 						if(0 == (statusPartsSlave & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_POSITION))
 						{
+#if UNITY_EDITOR
+							if(	(null !=dataAnimationSlave.TableParts[idParts].Position.Function)
+								&& (true == dataAnimationSlave.TableParts[idParts].Position.Function.ValueGet(	ref TRSSlave.Position.Value,
+																												ref TRSSlave.Position.FrameKey,
+																												dataAnimationSlave.TableParts[idParts].Position,
+																												ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
+																											)
+									)
+								)
+#else
 							if(true == dataAnimationSlave.TableParts[idParts].Position.Function.ValueGet(	ref TRSSlave.Position.Value,
 																											ref TRSSlave.Position.FrameKey,
 																											dataAnimationSlave.TableParts[idParts].Position,
 																											ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
 																										)
 								)
+#endif
 							{
 								flagUpdate |= true;
 							}
@@ -579,12 +611,23 @@ public static partial class Library_SpriteStudio6
 					flagUpdate = false;
 					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION))
 					{
+#if UNITY_EDITOR
+						if(	(null != dataAnimationParts.Rotation.Function)
+							&& (true == dataAnimationParts.Rotation.Function.ValueGet(	ref TRSMaster.Rotation.Value,
+																						ref TRSMaster.Rotation.FrameKey,
+																						dataAnimationParts.Rotation,
+																						ref controlTrack.ArgumentContainer
+																					)
+								)
+							)
+#else
 						if(true == dataAnimationParts.Rotation.Function.ValueGet(	ref TRSMaster.Rotation.Value,
 																					ref TRSMaster.Rotation.FrameKey,
 																					dataAnimationParts.Rotation,
 																					ref controlTrack.ArgumentContainer
 																				)
 							)
+#endif
 						{
 							flagUpdate = true;
 						}
@@ -613,12 +656,23 @@ public static partial class Library_SpriteStudio6
 						/* Get Slave Rotation */
 						if(0 == (statusPartsSlave & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ROTATION))
 						{
+#if UNITY_EDITOR
+							if(	(null != dataAnimationSlave.TableParts[idParts].Rotation.Function)
+								&& (true == dataAnimationSlave.TableParts[idParts].Rotation.Function.ValueGet(	ref TRSSlave.Rotation.Value,
+																												ref TRSSlave.Rotation.FrameKey,
+																												dataAnimationSlave.TableParts[idParts].Rotation,
+																												ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
+																											)
+									)
+								)
+#else
 							if(true == dataAnimationSlave.TableParts[idParts].Rotation.Function.ValueGet(	ref TRSSlave.Rotation.Value,
 																											ref TRSSlave.Rotation.FrameKey,
 																											dataAnimationSlave.TableParts[idParts].Rotation,
 																											ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
 																										)
 								)
+#endif
 							{
 								flagUpdate |= true;
 							}
@@ -639,12 +693,23 @@ public static partial class Library_SpriteStudio6
 					flagUpdate = false;
 					if(0 == (statusParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING))
 					{
+#if UNITY_EDITOR
+						if(	(null != dataAnimationParts.Scaling.Function)
+							&& (true == dataAnimationParts.Scaling.Function.ValueGet(	ref TRSMaster.Scaling.Value,
+																						ref TRSMaster.Scaling.FrameKey,
+																						dataAnimationParts.Scaling,
+																						ref controlTrack.ArgumentContainer
+																					)
+								)
+							)
+#else
 						if(true == dataAnimationParts.Scaling.Function.ValueGet(	ref TRSMaster.Scaling.Value,
 																					ref TRSMaster.Scaling.FrameKey,
 																					dataAnimationParts.Scaling,
 																					ref controlTrack.ArgumentContainer
 																				)
 							)
+#endif
 						{
 							flagUpdate = true;
 						}
@@ -674,12 +739,23 @@ public static partial class Library_SpriteStudio6
 						/* Get Slave Scaling */
 						if(0 == (statusPartsSlave & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SCALING))
 						{
+#if UNITY_EDITOR
+							if(	(null !=  dataAnimationSlave.TableParts[idParts].Scaling.Function)
+								&& (true == dataAnimationSlave.TableParts[idParts].Scaling.Function.ValueGet(	ref TRSSlave.Scaling.Value,
+																												ref TRSSlave.Scaling.FrameKey,
+																												dataAnimationSlave.TableParts[idParts].Scaling,
+																												ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
+																											)
+									)
+								)
+#else
 							if(true == dataAnimationSlave.TableParts[idParts].Scaling.Function.ValueGet(	ref TRSSlave.Scaling.Value,
 																											ref TRSSlave.Scaling.FrameKey,
 																											dataAnimationSlave.TableParts[idParts].Scaling,
 																											ref instanceRoot.TableControlTrack[indexTrackSlave].ArgumentContainer
 																										)
 								)
+#endif
 							{
 								flagUpdate |= true;
 							}
@@ -702,7 +778,14 @@ public static partial class Library_SpriteStudio6
 					Status &= ~(FlagBitStatus.REFRESH_TRANSFORM_POSITION | FlagBitStatus.REFRESH_TRANSFORM_ROTATION | FlagBitStatus.REFRESH_TRANSFORM_SCALING);
 
 					/* Get Status & Hide */
+#if UNITY_EDITOR
+					if(null != dataAnimationParts.Status.Function)
+					{
+						dataAnimationParts.Status.Function.ValueGet(ref StatusAnimationFrame, ref FrameKeyStatusAnimationFrame, dataAnimationParts.Status, ref controlTrack.ArgumentContainer);
+					}
+#else
 					dataAnimationParts.Status.Function.ValueGet(ref StatusAnimationFrame, ref FrameKeyStatusAnimationFrame, dataAnimationParts.Status, ref controlTrack.ArgumentContainer);
+#endif
 					if(true == StatusAnimationFrame.IsHide)
 					{
 						Status |= FlagBitStatus.HIDE;
@@ -720,14 +803,26 @@ public static partial class Library_SpriteStudio6
 
 					/* Get Local-Scale */
 					/* MEMO: "ScaleLocal" are data that must be constantly updated in most parts, so decode here. */
+#if UNITY_EDITOR
+					if(	(null != dataAnimationParts.ScalingLocal.Function)
+						&& (true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref controlTrack.ArgumentContainer))
+						)
+#else
 					if(true == dataAnimationParts.ScalingLocal.Function.ValueGet(ref ScaleLocal.Value, ref ScaleLocal.FrameKey, dataAnimationParts.ScalingLocal, ref controlTrack.ArgumentContainer))
+#endif
 					{
 						Status |= FlagBitStatus.UPDATE_SCALELOCAL;
 					}
 
 					/* Get Rate-Opacity */
 					/* MEMO: "RateOpacity" are data that must be constantly updated in most parts, so decode here. */
+#if UNITY_EDITOR
+					if(	(null != dataAnimationParts.RateOpacity.Function)
+						&& (true == dataAnimationParts.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.RateOpacity, ref controlTrack.ArgumentContainer))
+						)
+#else
 					if(true == dataAnimationParts.RateOpacity.Function.ValueGet(ref RateOpacity.Value, ref RateOpacity.FrameKey, dataAnimationParts.RateOpacity, ref controlTrack.ArgumentContainer))
+#endif
 					{
 						Status |= FlagBitStatus.UPDATE_RATEOPACITY;
 					}
@@ -739,14 +834,6 @@ public static partial class Library_SpriteStudio6
 												ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 											)
 				{
-					if(null != instanceRoot.InstanceRootParent)
-					{	/* Not decode in "Instance" animation */
-						return;
-					}
-					if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA))
-					{	/* Has no UserData-s */
-						return;
-					}
 					if((true == controlTrack.StatusIsIgnoreUserData) || (false == controlTrack.StatusIsDecodeAttribute) || (null == instanceRoot.FunctionUserData))
 					{	/* No Need to decode UserData-s */
 						return;
@@ -979,7 +1066,14 @@ public static partial class Library_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.Attribute.UserData userData = new Library_SpriteStudio6.Data.Animation.Attribute.UserData();
 					for(int i=0; i<countData; i++)
 					{
+#if UNITY_EDITOR
+						if(null != dataAnimationParts.UserData.Function)
+						{
+							dataAnimationParts.UserData.Function.ValueGetIndex(ref userData, ref frameKey, i, dataAnimationParts.UserData, ref controlTrack.ArgumentContainer);
+						}
+#else
 						dataAnimationParts.UserData.Function.ValueGetIndex(ref userData, ref frameKey, i, dataAnimationParts.UserData, ref controlTrack.ArgumentContainer);
+#endif
 						if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
 						{	/* In range */
 							instanceRoot.FunctionUserData(	instanceRoot,
@@ -1011,7 +1105,14 @@ public static partial class Library_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.Attribute.UserData userData = new Library_SpriteStudio6.Data.Animation.Attribute.UserData();
 					for(int i=(countData-1); i>=0; i--)
 					{
+#if UNITY_EDITOR
+						if(null != dataAnimationParts.UserData.Function)
+						{
+							dataAnimationParts.UserData.Function.ValueGetIndex(ref userData, ref frameKey, i, dataAnimationParts.UserData, ref controlTrack.ArgumentContainer);
+						}
+#else
 						dataAnimationParts.UserData.Function.ValueGetIndex(ref userData, ref frameKey, i, dataAnimationParts.UserData, ref controlTrack.ArgumentContainer);
+#endif
 						if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
 						{	/* In range */
 							instanceRoot.FunctionUserData(	instanceRoot,
@@ -1117,7 +1218,13 @@ public static partial class Library_SpriteStudio6
 
 					float radius = 0.0f;
 					int frameKey = FramePreviousUpdateRadiusCollision;
+#if UNITY_EDITOR
+					if(	(null != dataAnimationParts.RadiusCollision.Function)
+						&& (true == dataAnimationParts.RadiusCollision.Function.ValueGet(ref radius, ref frameKey, dataAnimationParts.RadiusCollision, ref controlTrack.ArgumentContainer))
+						)
+#else
 					if(true == dataAnimationParts.RadiusCollision.Function.ValueGet(ref radius, ref frameKey, dataAnimationParts.RadiusCollision, ref controlTrack.ArgumentContainer))
+#endif
 					{   /* New Valid Data */
 						/* MEMO: "Pivot Offset" and "Local-Scale" do not affect "Circle Collision". */
 						FramePreviousUpdateRadiusCollision = frameKey;
@@ -1341,11 +1448,39 @@ public static partial class Library_SpriteStudio6
 					{	/* "Instance" animation object invalid */
 						return;
 					}
+					if(false == InstanceRootUnderControl.StatusIsValid)
+					{
+						InstanceRootUnderControl.StartMain();
+					}
+
+					/* Get Instance's elapsed time */
+					float timeElapsed = controlTrack.TimeElapsedNow;
+					bool flagStopJumpTime = (0.0f != controlTrack.TimeElapseReplacement);
+					if(false == controlTrack.StatusIsPlaying)
+					{	/* Stop */
+						if(true == flagStopJumpTime)
+						{	/* Frame Jump */
+							timeElapsed = controlTrack.TimeElapseInRangeReplacement;
+						}
+						else
+						{
+							timeElapsed = 0.0f;
+						}
+					}
+					else
+					{
+						if(true == controlTrack.StatusIsPausing)
+						{
+							timeElapsed = 0.0f;
+						}
+					}
+
+					bool flagDecode = true;
+					flagDecode &= !(0 != (Status & FlagBitStatus.INSTANCE_IGNORE_ATTRIBUTE));	/* Ignore Decode */
+					flagDecode |= (0 != (Status & FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA));	/* Force Decode */
+					flagDecode &= controlTrack.StatusIsDecodeAttribute;
 
 					int frame = controlTrack.ArgumentContainer.Frame;
-					bool flagDecode = !(0 != (Status & FlagBitStatus.INSTANCE_IGNORE_ATTRIBUTE));	/* (0 != (Status &= FlagBitStatus.INSTANCE_IGNORE_ATTRIBUTE)) ? false : true; */
-					flagDecode |= (0 != (Status & FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA));	/* ? true : false */
-					flagDecode &= controlTrack.StatusIsDecodeAttribute;
 					bool flagPlayIndependentNowInstance = (0 != (Status & FlagBitStatus.INSTANCE_PLAY_INDEPENDENT)) ? true : false;
 					bool flagPlayReverse = controlTrack.StatusIsPlayingReverse;
 					bool flagPlayTurn = controlTrack.StatusIsPlayingTurn;
@@ -1378,7 +1513,13 @@ public static partial class Library_SpriteStudio6
 					{
 						/* Decode data */
 						Library_SpriteStudio6.Data.Animation.Attribute.Instance dataInstance = new Library_SpriteStudio6.Data.Animation.Attribute.Instance();
+#if UNITY_EDITOR
+						if(	(null !=  dataAnimationParts.Instance.Function)
+							&& (true == dataAnimationParts.Instance.Function.ValueGet(ref dataInstance, ref frameKey, dataAnimationParts.Instance, ref controlTrack.ArgumentContainer))
+							)
+#else
 						if(true == dataAnimationParts.Instance.Function.ValueGet(ref dataInstance, ref frameKey, dataAnimationParts.Instance, ref controlTrack.ArgumentContainer))
+#endif
 						{   /* New Valid Data */
 							if(0 == (Status & FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA))
 							{	/* Attribute has priority */
@@ -1454,7 +1595,6 @@ public static partial class Library_SpriteStudio6
 
 								/* Status Update */
 								FramePreviousUpdateUnderControl = frameKey;
-								Status &= ~FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
 							}
 						}
 					}
@@ -1477,7 +1617,7 @@ public static partial class Library_SpriteStudio6
 						InstanceRootUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
 					}
 
-					InstanceRootUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
+					InstanceRootUnderControl.LateUpdateMain(	timeElapsed,
 																flagHide,
 																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																ref matrixCorrection
@@ -1506,17 +1646,17 @@ public static partial class Library_SpriteStudio6
 
 					/* MEMO: Playing target are all tracks. And TableInformationPlay[0] is always used. */
 					return(InstanceRootUnderControl.AnimationPlay(	-1,	/* All track */
-																		IndexAnimationUnderControl,
-																		DataInstance.PlayCount,
-																		0,
-																		DataInstance.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f),
-																		((0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.PINGPONG)) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
-																		DataInstance.LabelStart,
-																		DataInstance.OffsetStart,
-																		DataInstance.LabelEnd,
-																		DataInstance.OffsetEnd,
-																		framePerSecond
-																	)
+																	IndexAnimationUnderControl,
+																	DataInstance.PlayCount,
+																	0,
+																	DataInstance.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f),
+																	((0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.PINGPONG)) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
+																	DataInstance.LabelStart,
+																	DataInstance.OffsetStart,
+																	DataInstance.LabelEnd,
+																	DataInstance.OffsetEnd,
+																	framePerSecond
+																)
 						);
 				}
 				private void DrawEffect(	Script_SpriteStudio6_Root instanceRoot,
@@ -1533,6 +1673,32 @@ public static partial class Library_SpriteStudio6
 					if(null == InstanceRootEffectUnderControl)
 					{	/* "Effect" animation object invalid */
 						return;
+					}
+					if(false == InstanceRootEffectUnderControl.StatusIsValid)
+					{
+						InstanceRootEffectUnderControl.StartMain();
+					}
+
+					/* Get Instance's elapsed time */
+					float timeElapsed = controlTrack.TimeElapsedNow;
+					bool flagStopJumpTime = (0.0f != controlTrack.TimeElapseReplacement);
+					if(false == controlTrack.StatusIsPlaying)
+					{	/* Stop */
+						if(true == flagStopJumpTime)
+						{	/* Frame Jump */
+							timeElapsed = controlTrack.TimeElapseInRangeReplacement;
+						}
+						else
+						{
+							timeElapsed = 0.0f;
+						}
+					}
+					else
+					{
+						if(true == controlTrack.StatusIsPausing)
+						{
+							timeElapsed = 0.0f;
+						}
 					}
 
 					int frame = controlTrack.ArgumentContainer.Frame;
@@ -1557,7 +1723,13 @@ public static partial class Library_SpriteStudio6
 					{
 						/* Decode data */
 						Library_SpriteStudio6.Data.Animation.Attribute.Effect dataEffect = new Library_SpriteStudio6.Data.Animation.Attribute.Effect();
+#if UNITY_EDITOR
+						if(	(null != dataAnimationParts.Effect.Function)
+							&& (true == dataAnimationParts.Effect.Function.ValueGet(ref dataEffect, ref frameKey, dataAnimationParts.Effect, ref controlTrack.ArgumentContainer))
+							)
+#else
 						if(true == dataAnimationParts.Effect.Function.ValueGet(ref dataEffect, ref frameKey, dataAnimationParts.Effect, ref controlTrack.ArgumentContainer))
+#endif
 						{   /* New Valid Data */
 							if(FramePreviousUpdateUnderControl != frameKey)
 							{	/* Different attribute */
@@ -1581,8 +1753,6 @@ public static partial class Library_SpriteStudio6
 									Status = (0 != (dataEffect.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Effect.FlagBit.INDEPENDENT)) ? (Status | FlagBitStatus.EFFECT_PLAY_INDEPENDENT) : (Status & ~FlagBitStatus.EFFECT_PLAY_INDEPENDENT);
 								}
 							}
-
-							Status &= ~FlagBitStatus.EFFECT_IGNORE_EXCEPT_NEXTDATA;
 						}
 					}
 
@@ -1599,7 +1769,7 @@ public static partial class Library_SpriteStudio6
 
 					InstanceRootEffectUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
 
-					InstanceRootEffectUnderControl.LateUpdateMain(	controlTrack.TimeElapsedNow,
+					InstanceRootEffectUnderControl.LateUpdateMain(	timeElapsed,
 																	flagHide,
 																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
 																	ref matrixCorrection
@@ -1825,6 +1995,11 @@ public static partial class Library_SpriteStudio6
 					internal BufferAttribute<Vector2> ScalingTexture;
 					internal BufferAttribute<float> RotationTexture;
 					internal BufferAttribute<Vector2> PositionTexture;
+
+					/* MEMO: Backup for lost by shallow copy at decoding. */
+					internal Color[] TableVertexColorPartsColor;
+					internal float[] TableRateAlphaPartsColor;
+					internal Vector2[] TableCoordinateVertexCorrection;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -1840,6 +2015,10 @@ public static partial class Library_SpriteStudio6
 						ParameterBlendDraw = null;
 						ChainDraw = null;
 						ChainDrawMask = null;
+
+						TableVertexColorPartsColor = null;
+						TableRateAlphaPartsColor = null;
+						TableCoordinateVertexCorrection = null;
 
 						AnimationChange(true);
 					}
@@ -1925,6 +2104,7 @@ public static partial class Library_SpriteStudio6
 						}
 
 						VertexCorrection.Value.BootUp();
+						TableCoordinateVertexCorrection = VertexCorrection.Value.Coordinate;
 
 						/* MEMO: Direct-write into draw's workarea. */
 //						CoordinateFix.Value.TableCoordinate = CoordinateDraw;
@@ -1969,6 +2149,8 @@ public static partial class Library_SpriteStudio6
 						}
 
 						PartsColor.Value.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2);
+						TableVertexColorPartsColor = PartsColor.Value.VertexColor;
+						TableRateAlphaPartsColor = PartsColor.Value.RateAlpha;
 
 						Status |= (	FlagBitStatus.UPDATE_COORDINATE
 									| FlagBitStatus.UPDATE_UVTEXTURE
@@ -2032,6 +2214,8 @@ public static partial class Library_SpriteStudio6
 						IndexVertexDraw = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableIndexVertex;
 
 						VertexCorrection.CleanUp();	/* Disused */
+						TableCoordinateVertexCorrection = null;	/* Disused */
+
 						if(false == BootUpCommon(0, flagMask))
 						{
 							/* MEMO: Since workareas have been cleared, return direct. */
@@ -2150,7 +2334,18 @@ public static partial class Library_SpriteStudio6
 
 						/* Create sprite data (from cell to use) */
 						/* MEMO: If do not always decode "Cell", malfunctions at restoration after cell-change. */
+#if UNITY_EDITOR
+						if(null != dataAnimationParts.Cell.Function)
+						{
+							flagUpdateValueAttribute = dataAnimationParts.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Cell, ref argumentContainer);
+						}
+						else
+						{
+							flagUpdateValueAttribute = false;
+						}
+#else
 						flagUpdateValueAttribute = dataAnimationParts.Cell.Function.ValueGet(ref DataCell.Value, ref DataCell.FrameKey, dataAnimationParts.Cell, ref argumentContainer);
+#endif
 						if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED))
 						{
 							if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE))
@@ -2224,14 +2419,36 @@ public static partial class Library_SpriteStudio6
 
 						/* Correct Sprite data (by attributes) */
 						bool flagRecalcSizeSprite = false;
+#if UNITY_EDITOR
+						if(null != dataAnimationParts.OffsetPivot.Function)
+						{
+							flagUpdateValueAttribute = dataAnimationParts.OffsetPivot.Function.ValueGet(ref OffsetPivot.Value, ref OffsetPivot.FrameKey, dataAnimationParts.OffsetPivot, ref argumentContainer);
+						}
+						else
+						{
+							flagUpdateValueAttribute = false;
+						}
+#else
 						flagUpdateValueAttribute = dataAnimationParts.OffsetPivot.Function.ValueGet(ref OffsetPivot.Value, ref OffsetPivot.FrameKey, dataAnimationParts.OffsetPivot, ref argumentContainer);
+#endif
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
 							flagRecalcSizeSprite |= true;
 						}
 
+#if UNITY_EDITOR
+						if(null != dataAnimationParts.SizeForce.Function)
+						{
+							flagUpdateValueAttribute = dataAnimationParts.SizeForce.Function.ValueGet(ref SizeForce.Value, ref SizeForce.FrameKey, dataAnimationParts.SizeForce, ref argumentContainer);
+						}
+						else
+						{
+							flagUpdateValueAttribute = false;
+						}
+#else
 						flagUpdateValueAttribute = dataAnimationParts.SizeForce.Function.ValueGet(ref SizeForce.Value, ref SizeForce.FrameKey, dataAnimationParts.SizeForce, ref argumentContainer);
+#endif
 						if(true == flagUpdateValueAttribute)
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
@@ -2272,9 +2489,25 @@ public static partial class Library_SpriteStudio6
 						/* Get Texture-Transform */
 						if(0 == (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE))
 						{	/* Transform Texure */
+#if UNITY_EDITOR
+							bool flagUpdateMatrixTexrure = false;
+							if(null != dataAnimationParts.PositionTexture.Function)
+							{
+								flagUpdateMatrixTexrure = dataAnimationParts.PositionTexture.Function.ValueGet(ref PositionTexture.Value, ref PositionTexture.FrameKey, dataAnimationParts.PositionTexture, ref argumentContainer);
+							}
+							if(null != dataAnimationParts.ScalingTexture.Function)
+							{
+								flagUpdateMatrixTexrure |= dataAnimationParts.ScalingTexture.Function.ValueGet(ref ScalingTexture.Value, ref ScalingTexture.FrameKey, dataAnimationParts.ScalingTexture, ref argumentContainer);
+							}
+							if(null != dataAnimationParts.RotationTexture.Function)
+							{
+								flagUpdateMatrixTexrure |= dataAnimationParts.RotationTexture.Function.ValueGet(ref RotationTexture.Value, ref RotationTexture.FrameKey, dataAnimationParts.RotationTexture, ref argumentContainer);
+							}
+#else
 							bool flagUpdateMatrixTexrure = dataAnimationParts.PositionTexture.Function.ValueGet(ref PositionTexture.Value, ref PositionTexture.FrameKey, dataAnimationParts.PositionTexture, ref argumentContainer);
 							flagUpdateMatrixTexrure |= dataAnimationParts.ScalingTexture.Function.ValueGet(ref ScalingTexture.Value, ref ScalingTexture.FrameKey, dataAnimationParts.ScalingTexture, ref argumentContainer);
 							flagUpdateMatrixTexrure |= dataAnimationParts.RotationTexture.Function.ValueGet(ref RotationTexture.Value, ref RotationTexture.FrameKey, dataAnimationParts.RotationTexture, ref argumentContainer);
+#endif
 							if(true == flagUpdateMatrixTexrure)
 							{
 								Status |= FlagBitStatus.UPDATE_TRANSFORM_TEXTURE;
@@ -2292,7 +2525,24 @@ public static partial class Library_SpriteStudio6
 						{
 							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS;
 						}
+						/* MEMO: When decode data, array may change to original data by shallow copy, so replace buffers. */
+						/*       (Need to set writable buffer since some decoders write to buffer)                        */
+						Color[] tableVertexColorPartsColorOld = PartsColor.Value.VertexColor;
+						float[] tableRateAlphaPartsColorOld = PartsColor.Value.RateAlpha;
+						PartsColor.Value.VertexColor = TableVertexColorPartsColor;
+						PartsColor.Value.RateAlpha = TableRateAlphaPartsColor;
+#if UNITY_EDITOR
+						if(null != dataAnimationParts.PartsColor.Function)
+						{
+							flagUpdateValueAttribute = dataAnimationParts.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.PartsColor, ref argumentContainer);
+						}
+						else
+						{
+							flagUpdateValueAttribute = false;
+						}
+#else
 						flagUpdateValueAttribute = dataAnimationParts.PartsColor.Function.ValueGet(ref PartsColor.Value, ref PartsColor.FrameKey, dataAnimationParts.PartsColor, ref argumentContainer);
+#endif
 						Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
 						if(null != additionalColor)
 						{	/* Has AdditionalColor */
@@ -2315,19 +2565,46 @@ public static partial class Library_SpriteStudio6
 						{	/* Use PartsColor */
 							/* MEMO: Update force when switching from AdditionalColor to PartColor.                             */
 							/*       (Otherwise AdditionalColor will continue remaining until next PartsColor data is detected) */
-							if((true == flagUpdateValueAttribute) || (0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS)))
+							if(true == flagUpdateValueAttribute)
 							{
 								Status |= FlagBitStatus.UPDATE_COLORPARTS;
 								Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+							}
+							else
+							{
+								PartsColor.Value.VertexColor = tableVertexColorPartsColorOld;
+								PartsColor.Value.RateAlpha = tableRateAlphaPartsColorOld;
+
+								if(0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR_PREVIOUS))
+								{
+									Status |= FlagBitStatus.UPDATE_COLORPARTS;
+									Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
+								}
 							}
 							Status &= ~FlagBitStatus.USE_ADDITIONALCOLOR;
 						}
 
 						/* Get Vertex-Correction */
+						/* MEMO: When decode data, array may change to original data by shallow copy, so replace buffers. */
+						/*       (Need to set writable buffer since some decoders write to buffer)                        */
+						Vector2[] tableCoordinateVertexCorrectionOld = VertexCorrection.Value.Coordinate;
+						VertexCorrection.Value.Coordinate = TableCoordinateVertexCorrection;
+						TableCoordinateVertexCorrection = VertexCorrection.Value.Coordinate;
+#if UNITY_EDITOR
+						if(	(null != dataAnimationParts.VertexCorrection.Function)
+							&& (true == dataAnimationParts.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.VertexCorrection, ref argumentContainer))
+							)
+#else
 						if(true == dataAnimationParts.VertexCorrection.Function.ValueGet(ref VertexCorrection.Value, ref VertexCorrection.FrameKey, dataAnimationParts.VertexCorrection, ref argumentContainer))
+#endif
 						{
 							Status |=  FlagBitStatus.UPDATE_COORDINATE;
 						}
+						else
+						{
+							VertexCorrection.Value.Coordinate = tableCoordinateVertexCorrectionOld;
+						}
+
 						return(true);
 					}
 

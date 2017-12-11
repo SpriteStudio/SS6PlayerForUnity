@@ -390,19 +390,16 @@ public partial class Script_SpriteStudio6_Root
 		dataInstance.LabelEnd = labelRangeEnd;
 		dataInstance.OffsetEnd = frameRangeOffsetEnd;
 
-		if(0 <= indexAnimation)
+		if(false == flagStartImmediate)
 		{
-			if(true == flagStartImmediate)
-			{
-				controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
-			}
-			else
-			{
-				controlParts.Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
+			controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
+		}
+		else
+		{
+			controlParts.Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
 
-				/* MEMO: When does not start immediately, necessary to always decode next data, so turn off "Independent time" status. */
-				controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
-			}
+			/* MEMO: When does not start immediately, necessary to always decode next data, so turn off "Independent time" status. */
+			controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
 
 			controlParts.IndexAnimationUnderControl = indexAnimation;
 			controlParts.DataInstance = dataInstance;
@@ -413,6 +410,7 @@ public partial class Script_SpriteStudio6_Root
 				return(controlParts.InstancePlayStart(this, TableControlTrack[indexTrack].StatusIsPlayingReverse));
 			}
 		}
+
 		return(true);
 	}
 

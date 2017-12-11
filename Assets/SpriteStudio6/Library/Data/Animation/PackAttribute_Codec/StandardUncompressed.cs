@@ -59,6 +59,21 @@ public static partial class Library_SpriteStudio6
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
 					#endregion Enums & Constants
 
+					/* ----------------------------------------------- Dictionary-Functions */
+					#region Dictionary-Functions
+					public static bool DictionaryBootUp(int indexAnimation, int indexParts, Script_SpriteStudio6_DataAnimation dataAnimation)
+					{
+						/* MEMO: Have no external dictionary. */
+						return(true);
+					}
+
+					public static bool DictionaryShutDown(int indexAnimation, int indexParts, Script_SpriteStudio6_DataAnimation dataAnimation)
+					{
+						/* MEMO: Have no external dictionary. */
+						return(true);
+					}
+					#endregion Dictionary-Functions
+
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
 					#region Classes, Structs & Interfaces
 					public class InterfaceFunctionInt : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerInt

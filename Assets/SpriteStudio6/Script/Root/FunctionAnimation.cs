@@ -143,7 +143,7 @@ public partial class Script_SpriteStudio6_Root
 			/* MEMO: Stop all current playback and play single animation at track 0. */
 			for(int i=0; i<countTrack; i++)
 			{
-				TableControlTrack[i].Stop(false);
+				TableControlTrack[i].Stop();
 				TableControlTrack[i].Transition(-1, 0.0f);
 			}
 			TrackConnectParts(-1, 0);
@@ -155,7 +155,7 @@ public partial class Script_SpriteStudio6_Root
 			{
 				goto AnimationPlay_ErrorEnd;
 			}
-			TableControlTrack[indexTrack].Stop(false);
+			TableControlTrack[indexTrack].Stop();
 			TableControlTrack[indexTrack].Transition(-1, 0.0f);
 		}
 
@@ -289,17 +289,24 @@ public partial class Script_SpriteStudio6_Root
 		false == Animation is stopped with maintaining the current state.<br>
 		true == Animation is stop and jump to last frame.<br>
 		default: false
-	@param	flagJumpEndSlave
-		If running transition, will destination-animation also jump to last frame?
-		false == Current state<br>
-		true == Jump<br>
+	@param	flagEngageTransition
+		If running transition, will transition also end?<br>
+		false == Current state (Continue transition)<br>
+		true == Complete transition<br>
 		default: false
 	@retval	Return-Value
 		(None)
 
-	The playing of animation stops.
+	The playing of animation stops.<br>
+	<br>
+	When "frameJumpEnd" is set to true, "UserData" detection in skipped frames is not performed.<br>
+	Likewise, indexTrack's "Track Play-End" callback and animation's "PlayEnd" callback are not done.<br>
+	<br>
+	When "flagEngageTransition" is set to true, transition is forced to complete.<br>
+	(Master track's play-status is overwritten from Slave track's)<br>
+	However, even when "flagJumpEnd" is set to true at that time, Slave track's frame will not jump.<br>
 	*/
-	public void AnimationStop(int indexTrack, bool flagJumpEnd = false, bool flagJumpEndSlave = false)
+	public void AnimationStop(int indexTrack, bool flagJumpEnd = false, bool flagEngageTransition = false)
 	{
 		if(null == TableControlTrack)
 		{
@@ -312,12 +319,12 @@ public partial class Script_SpriteStudio6_Root
 			/* MEMO: Stop all current playback and play single animation at track 0. */
 			for(int i=0; i<countTrack; i++)
 			{
-				AnimationStopMain(i, flagJumpEnd, flagJumpEndSlave);
+				if(true == AnimationStopMain(i, flagJumpEnd, flagEngageTransition))
+				{	/* All Track Stoping */
+					Status &= ~FlagBitStatus.PLAYING;
+					break;
+				}
 			}
-			/* MEMO: Would be better not erasing parts table here. Better to unify when set tracks -1 at "AnimationPlay". */
-//			TrackConnectParts(-1, 0);
-
-			Status &= ~FlagBitStatus.PLAYING;
 		}
 		else
 		{	/* Specific track */
@@ -325,24 +332,56 @@ public partial class Script_SpriteStudio6_Root
 			{
 				return;	/* Ignore error */
 			}
-			TableControlTrack[indexTrack].Stop(flagJumpEnd);
 
-			AnimationStopMain(indexTrack, flagJumpEnd, flagJumpEndSlave);
+			if(true == AnimationStopMain(indexTrack, flagJumpEnd, flagEngageTransition))
+			{
+				Status &= ~FlagBitStatus.PLAYING;
+			}
 		}
 	}
-	private void AnimationStopMain(int indexTrack, bool flagJumpEnd, bool flagJumpEndSlave)
+	private bool AnimationStopMain(int indexTrack, bool flagJumpEnd, bool flagEngageTransition)
 	{
-		TableControlTrack[indexTrack].Stop(flagJumpEnd);
-
-		int indexTrackSlave = TableControlTrack[indexTrack].IndexTrackSlave;
-		if(0 <= indexTrackSlave)
-		{
-			if(true == flagJumpEnd)
+		/* Stop Master */
+		if(true == flagJumpEnd)
+		{	/* Jump to End */
+			float timeTotal;
+			float timeInRange;
+			if(true == TableControlTrack[indexTrack].TimeGetRemain(out timeTotal, out timeInRange))
 			{
-				TableControlTrack[indexTrack].RateTransition = 1.0f;
+				TableControlTrack[indexTrack].Stop();
+				TableControlTrack[indexTrack].TimeElapseReplacement = timeTotal;
+				TableControlTrack[indexTrack].TimeElapseInRangeReplacement = timeInRange;
 			}
-			TableControlTrack[indexTrackSlave].Stop(flagJumpEndSlave);
 		}
+		else
+		{	/* Stay */
+			TableControlTrack[indexTrack].Stop();
+		}
+
+		/* Stop Slave */
+		if(true == flagEngageTransition)
+		{
+			int indexTrackSlave = TableControlTrack[indexTrack].IndexTrackSlave;
+			if(0 <= indexTrackSlave)
+			{
+				TrackChangeSlaveToMaster(indexTrack, indexTrackSlave);
+				TableControlTrack[indexTrackSlave].Stop();
+			}
+		}
+
+		/* Check Playing */
+		int countTrack = TableControlTrack.Length;
+		bool flagStopAll = true;
+		for(int i=0; i<countTrack; i++)
+		{
+			if(true == TableControlTrack[i].StatusIsPlaying)
+			{
+				flagStopAll = false;
+				break;	/* Break i-Loop */
+			}
+		}
+
+		return(flagStopAll);
 	}
 
 	/* ********************************************************* */
