@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379835e446767444b98eb288010fcce, type: 3}
   m_Name: da_Action02_Body
   m_EditorClassIdentifier: 
-  Version: 65537
+  Version: 65538
   TableMaterial:
   - {fileID: 2100000, guid: 045054ee8a64e38458351cbd7ad24c31, type: 2}
   - {fileID: 2100000, guid: dc5635f63ebb85e4daf5c9ec3f9b699d, type: 2}
@@ -10353,3 +10353,9 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+  Dictionary_CPE_Flyweight:
+    TableValueInt: 
+    TableValueFloat: []
+    TableValueFloatVector: []
+    TableValueFloatCoordinate: []
+    TableValueColor: []

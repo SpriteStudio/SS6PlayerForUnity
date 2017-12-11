@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379835e446767444b98eb288010fcce, type: 3}
   m_Name: da_BitmapFontNumeric_Simple
   m_EditorClassIdentifier: 
-  Version: 65537
+  Version: 65538
   TableMaterial:
   - {fileID: 2100000, guid: 612342195cd424e45975890a9bad388f, type: 2}
   - {fileID: 2100000, guid: d24777cb6812c6c499d48bb8933980ca, type: 2}
@@ -1007,3 +1007,9 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+  Dictionary_CPE_Flyweight:
+    TableValueInt: 
+    TableValueFloat: []
+    TableValueFloatVector: []
+    TableValueFloatCoordinate: []
+    TableValueColor: []
