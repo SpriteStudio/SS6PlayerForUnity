@@ -278,6 +278,7 @@ public static partial class Library_SpriteStudio6
 					/* Reset Animation */
 					ArgumentContainer.DataAnimation = instanceRoot.DataAnimation;
 					ArgumentContainer.IndexAnimation = indexAnimation;
+					ArgumentContainer.FramePrevious = -1;
 
 					/* Set datas */
 					Status &= FlagBitStatus.VALID;	/* Clear */
