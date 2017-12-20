@@ -41,6 +41,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite/Mask/Screen"
 
 			#include "UnityCG.cginc"
 
+			#define RESTRICT_SHADER_MODEL_3
 			#define PS_NOT_DISCARD
 			#define	PS_NOT_CLAMP_COLOR
 			#include "Base/Shader_Data_SpriteStudio6.cginc"

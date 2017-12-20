@@ -14,7 +14,7 @@ struct InputVS
 
 struct InputPS
 {
-#ifdef SV_POSITION
+#if defined(SV_POSITION)
 	float4 Position : SV_POSITION;
 #else
 	float4 Position : POSITION;
@@ -23,4 +23,8 @@ struct InputPS
 	float4 ColorOverlay : COLOR1;
 	float4 Texture00UV : TEXCOORD0;
 	float4 PositionDraw : TEXCOORD7;
+#if defined(RESTRICT_SHADER_MODEL_3)
+	float4	ParameterOverlay : TEXCOORD1;
+// #else
+#endif
 };
