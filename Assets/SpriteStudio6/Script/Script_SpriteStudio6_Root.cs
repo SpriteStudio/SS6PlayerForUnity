@@ -143,8 +143,6 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	}
 	internal void StartMain()
 	{
-		Status = FlagBitStatus.CLEAR;
-
 		/* Boot up master datas */
 		/* MEMO: Reason why initial setting of ScriptableObject is done here     */
 		/*        (without processing with ScriptableObject's Awake or OnEnable) */
@@ -721,6 +719,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	public bool AnimationPlayInitial()
 	{
+		if(0 != (Status & FlagBitStatus.PLAYING))
+		{
+			return(true);
+		}
+
 		/* MEMO: Initial animation only applies track 0.                                               */
 		/*       For simplify setting (as interface for setting affecting part tables is complicated). */
 		/*       And because animation blends are often controlled from scripts in many cases.         */

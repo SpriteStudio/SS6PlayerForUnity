@@ -132,6 +132,9 @@ public partial class Script_SpriteStudio6_Root
 								int framePerSecond = 0
 							)
 	{
+		/* MEMO: Execute initialization to properly process play immediately after instantiating. */
+		Start();
+
 		if(null == TableControlTrack)
 		{
 			return(false);

@@ -38,6 +38,9 @@ public partial class Script_SpriteStudio6_RootEffect
 								int framePerSecond = 0
 							)
 	{
+		/* MEMO: Execute initialization to properly process play immediately after instantiating. */
+		Start();
+
 		if(0 == (Status & FlagBitStatus.VALID))
 		{	/* Not Start */
 			Start();

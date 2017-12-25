@@ -130,6 +130,9 @@ public partial class Script_SpriteStudio6_Root
 	*/
 	public bool TrackReboot(int count)
 	{
+		/* MEMO: Execute initialization to properly process play immediately after instantiating. */
+		Start();
+
 		if(0 >= count)
 		{
 			return(false);
@@ -207,6 +210,9 @@ public partial class Script_SpriteStudio6_Root
 	*/
 	public bool TrackConnectParts(int idParts, int indexTrack, bool flagChildParts = false)
 	{
+		/* MEMO: Execute initialization to properly process play immediately after instantiating. */
+		Start();
+
 		if((null == TableControlParts) || (null == DataAnimation))
 		{
 			return(false);
@@ -288,6 +294,9 @@ public partial class Script_SpriteStudio6_Root
 									bool flagCancelPauseAfterTransition
 							)
 	{
+		/* MEMO: Execute initialization to properly process play immediately after instantiating. */
+		Start();
+
 		if(null == TableControlTrack)
 		{
 			return(false);
