@@ -716,6 +716,7 @@ public static partial class Library_SpriteStudio6
 							}
 
 							/* Create Top Key-Data */
+							/* MEMO: Same value. However, "frame = 0" and "no interpolation". */
 							KeyData KeyDataTopFrame = new KeyData();
 							KeyDataTopFrame.Frame = 0;
 							KeyDataTopFrame.Formula = Utility.Interpolation.KindFormula.NON;
@@ -732,7 +733,53 @@ public static partial class Library_SpriteStudio6
 								KeyDataTopFrame.Value = setup.ListKey[0].Value;
 							}
 
+							ListKey.Insert(0, KeyDataTopFrame);
+							return(true);	/* Has Keys */
+						}
+
+						public bool KeyDataAdjustTopFrame(Attribute<_Type> setup, _Type valueDefault)
+						{	/* MEMO: This function is for attributes with special specifications to adjust top frame's key data. */
+							/*       - When no key data, interpret as default value is set                                       */
+							/*       - Otherwise, performs the same as "KeyDataAdjustTopFrame" for normal.                       */
+							/*       However, interpolation is not performed.                                                    */
+							bool flagHasSetup = false;
+							if(null != setup)
+							{
+								flagHasSetup = (0 < setup.CountGetKey()) ? true : false;
+							}
+
+							if(0 < ListKey.Count)
+							{	/* Has Keys */
+								if(0 == ListKey[0].Frame)
+								{	/* Has data at frame 0 */
+									return(true);	/* Has Keys */
+								}
+							}
+
+							/* Create Top Key-Data */
 							/* MEMO: Same value. However, "frame = 0" and "no interpolation". */
+							KeyData KeyDataTopFrame = new KeyData();
+							KeyDataTopFrame.Frame = 0;
+							KeyDataTopFrame.Formula = Utility.Interpolation.KindFormula.NON;
+							KeyDataTopFrame.FrameCurveStart = 0.0f;
+							KeyDataTopFrame.ValueCurveStart = 0.0f;
+							KeyDataTopFrame.FrameCurveEnd = 0.0f;
+							KeyDataTopFrame.ValueCurveEnd = 0.0f;
+							if(false == flagHasSetup)
+							{	/* No Setup-Key */
+								if(0 >= ListKey.Count)
+								{	/* Has no keys */
+									KeyDataTopFrame.Value = valueDefault;
+								}
+								else
+								{	/* Has Keys */
+									KeyDataTopFrame.Value = ListKey[0].Value;
+								}
+							}
+							else
+							{	/* Setup-Key */
+								KeyDataTopFrame.Value = setup.ListKey[0].Value;
+							}
 
 							ListKey.Insert(0, KeyDataTopFrame);
 							return(true);	/* Has Keys */

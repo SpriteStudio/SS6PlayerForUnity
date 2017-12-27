@@ -41,6 +41,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil/Clear"
 
 			#include "UnityCG.cginc"
 
+//			#define RESTRICT_SHADER_MODEL_3
 			#include "Base/Shader_Data_SpriteStudio6.cginc"
 
 			InputPS VS_main(InputVS input)

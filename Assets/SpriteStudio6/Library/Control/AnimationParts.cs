@@ -1808,6 +1808,8 @@ public static partial class Library_SpriteStudio6
 								| FlagBitStatus.REFRESH_TRANSFORM_SCALING
 							);
 
+					StatusAnimationParts = Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.CLEAR;
+
 					bool flagClearCellApply = false;
 					if(0 == (Status & FlagBitStatus.CHANGE_CELL_IGNORE_NEWANIMATION))
 					{

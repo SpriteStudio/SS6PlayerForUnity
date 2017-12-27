@@ -26,7 +26,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	public int LimitParticleDraw;
 	internal int CountParticleMax = 0;	/* use only Highest-Parent-Root */
 
-	private FlagBitStatus Status;
+	private FlagBitStatus Status = FlagBitStatus.CLEAR;
 	internal bool StatusIsValid
 	{
 		get
@@ -151,9 +151,6 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	}
 	internal void StartMain()
 	{
-		/* Clear Status */
-		Status = FlagBitStatus.CLEAR;
-
 		/* Boot up master datas */
 		/* MEMO: Reason why initial setting of ScriptableObject is done here     */
 		/*        (without processing with ScriptableObject's Awake or OnEnable) */

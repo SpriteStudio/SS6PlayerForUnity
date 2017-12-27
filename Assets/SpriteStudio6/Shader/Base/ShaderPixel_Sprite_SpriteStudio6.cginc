@@ -6,7 +6,7 @@
 //
 sampler2D _MainTex;
 
-#ifdef SV_Target
+#if defined(SV_Target)
 fixed4 PS_main(InputPS input) : SV_Target
 #else
 fixed4 PS_main(InputPS input) : COLOR0
@@ -22,9 +22,18 @@ fixed4 PS_main(InputPS input) : COLOR0
 		discard;
 	}
 #endif
-
-	fixed4 color[4];
 	float pixelA = pixel.a;
+
+#if defined(RESTRICT_SHADER_MODEL_3)
+	fixed4	colorOverlay = input.ColorOverlay;
+	float	colorOverlayA = colorOverlay.a;
+	fixed4	overlayParameter = input.ParameterOverlay;
+	fixed4	pixelCoefficientColorOvelay = (fixed4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - overlayParameter.z)) + (pixel * overlayParameter.z);
+	colorOverlay *= colorOverlayA;
+
+	pixel = (pixel * (1.0f - (colorOverlayA * overlayParameter.y))) + (pixelCoefficientColorOvelay * colorOverlay * overlayParameter.w);
+#else
+	fixed4 color[4];
 	float rate = input.ColorOverlay.a;
 	float rateInverse = 1.0f - rate;
 	color[0] = (pixel * rateInverse) + (input.ColorOverlay * rate);	/* Mix */
@@ -33,7 +42,9 @@ fixed4 PS_main(InputPS input) : COLOR0
 	color[3] = (pixel * rateInverse) + ((pixel * input.ColorOverlay) * rate);	/* Multiple */
 
 	pixel = color[input.Texture00UV.z];
+#endif
 	pixel.a = pixelA;
+
 #if !defined(PS_NOT_CLAMP_COLOR)
 	pixel = saturate(pixel);
 #endif

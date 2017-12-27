@@ -885,6 +885,40 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 				}
 
+				/* Get Bone-Data */
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "boneLength", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationParts.LengthBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueText);
+				}
+				else
+				{
+					informationParts.LengthBone = 0.0f;
+				}
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "bonePosition", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					string[] valueTextSplit = valueText.Split(' ');
+					informationParts.PositionXBone = (float)LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueTextSplit[0]);
+					informationParts.PositionYBone = (float)LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueTextSplit[1]);
+				}
+				else
+				{
+					informationParts.PositionXBone = 0.0f;
+					informationParts.PositionYBone = 0.0f;
+				}
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "boneRotation", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationParts.RotateZBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueText);
+				}
+				else
+				{
+					informationParts.RotateZBone = 0.0f;
+				}
+
 				return(informationParts);
 
 			ParseParts_ErrorEnd:;
@@ -2079,6 +2113,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					public int IndexCellMapMeshBind;
 					public int IndexCellMeshBind;
 
+					public float LengthBone;
+					public float PositionXBone;
+					public float PositionYBone;
+					public float RotateZBone;
+
 					public KindInheritance Inheritance;
 					public FlagBitInheritance FlagInheritance;
 
@@ -2105,6 +2144,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						IndexCellMapMeshBind = -1;
 						IndexCellMeshBind = -1;
+
+						LengthBone = 0.0f;
+						PositionXBone = 0.0f;
+						PositionYBone = 0.0f;
+						RotateZBone = 0.0f;
 
 						Inheritance = KindInheritance.PARENT;
 						FlagInheritance = FlagBitInheritance.CLEAR;
@@ -2198,13 +2242,58 @@ public static partial class LibraryEditor_SpriteStudio6
 							/* Adjust Top-Frame Key-Data */
 							animationParts.Cell.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.Cell);
 
-							animationParts.PositionX.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionX);
-							animationParts.PositionY.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionY);
-							animationParts.PositionZ.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionZ);
+							/* MEMO: In the case of "bone" parts, when no key at frame 0,  necessary to set bone's information to attributes. */
+							switch(parts.Data.Feature)
+							{
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+									animationParts.PositionX.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionX, parts.PositionXBone);
+									animationParts.PositionY.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionY, parts.PositionYBone);
+									animationParts.PositionZ.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionZ);
 
-							animationParts.RotationX.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationX);
-							animationParts.RotationY.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationY);
-							animationParts.RotationZ.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationZ);
+									animationParts.RotationX.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationX);
+									animationParts.RotationY.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationY);
+									animationParts.RotationZ.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationZ, parts.RotateZBone);
+									break;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+									goto default;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+									goto default;
+								default:
+									animationParts.PositionX.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionX);
+									animationParts.PositionY.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionY);
+									animationParts.PositionZ.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.PositionZ);
+
+									animationParts.RotationX.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationX);
+									animationParts.RotationY.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationY);
+									animationParts.RotationZ.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.RotationZ);
+									break;
+							}
 
 							animationParts.ScalingX.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.ScalingX);
 							animationParts.ScalingY.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.ScalingY);
