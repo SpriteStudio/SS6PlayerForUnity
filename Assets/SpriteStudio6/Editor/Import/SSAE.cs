@@ -4922,8 +4922,9 @@ public static partial class LibraryEditor_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 								if(null != spriteRendererParts)
 								{
-									AssetCreateDataCurveSetCellRenderrer(	dataAnimation,
+									AssetCreateDataCurveSetCellRenderer(	dataAnimation,
 																			nameGameObject, spriteRendererParts,
+																			informationPartsParent.GameObjectUnityNative,
 																			informationAnimationParts.Cell,
 																			indexAnimation,
 																			frameStart, frameEnd, timePerFrame,
@@ -4971,6 +4972,13 @@ public static partial class LibraryEditor_SpriteStudio6
 																		indexAnimation,
 																		frameStart, frameEnd, timePerFrame
 																	);
+
+									AssetCreateDataCurveSetVertexCorrection(	dataAnimation,
+																				nameGameObject, spriteRendererParts,
+ 																				informationAnimationParts.VertexCorrection,
+																				indexAnimation,
+																				frameStart, frameEnd, timePerFrame
+																			);
 								}
 
 								AssetCreateDataCurveSetOrderDraw(	dataAnimation,
@@ -4995,6 +5003,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									/* MEMO: In the case of Sprite, variable name is fixed ? */
 									AssetCreateDataCurveSetCellMask(	dataAnimation,
 																		nameGameObject, spriteMaskParts,
+																		informationPartsParent.GameObjectUnityNative,
 																		informationAnimationParts.Cell,
 																		indexAnimation,
 																		frameStart, frameEnd, timePerFrame,
@@ -5046,10 +5055,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(0 < informationAnimationParts.FlipY.CountGetKey())
 						{
 							LogWarning(messageLogPrefix, "Unsupported Attribute \"Vertical Flip\" Parts[" + i.ToString() + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-						}
-						if(0 < informationAnimationParts.VertexCorrection.CountGetKey())
-						{
-							LogWarning(messageLogPrefix, "Unsupported Attribute \"Vertex Deformation\" Parts[" + i.ToString() + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 						}
 						if(0 < informationAnimationParts.PivotOffsetX.CountGetKey())
 						{
@@ -5173,9 +5178,12 @@ public static partial class LibraryEditor_SpriteStudio6
 					valuePrevious = value;
 
 					/* Create Frame 1 to end */
+					int frame;
 					for(int i=1; i<countFrameRange; i++)
 					{
-						if(false == Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolOR(out value, attributeBool, (i + frameStart), true))
+						frame = i + frameStart;
+
+						if(false == Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolOR(out value, attributeBool, frame, true))
 						{
 							value = valueError;
 						}
@@ -5188,9 +5196,9 @@ public static partial class LibraryEditor_SpriteStudio6
 							keyframe.value = (true == value) ? 0.0f : 1.0f;
 
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "m_Enabled", animationCurve);
@@ -5275,9 +5283,9 @@ public static partial class LibraryEditor_SpriteStudio6
 							keyframe.value = (true == value) ? 0.0f : 1.0f;
 
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteMask), "m_Enabled", animationCurve);
@@ -5296,29 +5304,44 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						Vector3 position = gameObject.transform.localPosition;
-						position.x = 0.0f;
-						gameObject.transform.localPosition = position;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
 						Vector3 position = gameObject.transform.localPosition;
-						position.x = 0.0f;
+						position.x = valueError;
 						gameObject.transform.localPosition = position;
 						return(true);
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
+
+					if(0 >= attributeFloat.CountGetKey())
+					{
+						value = valueError;
+
+						Vector3 position = gameObject.transform.localPosition;
+						position.x = value;
+						gameObject.transform.localPosition = position;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetPositionX_End;
+					}
+
 					float valuePrevious = float.NaN;
+					int frame;
+					bool flagForceSetKey;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributeFloat.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributeFloat.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -5332,19 +5355,28 @@ public static partial class LibraryEditor_SpriteStudio6
 							gameObject.transform.localPosition = position;
 						}
 
-						if(valuePrevious != value)
+						/* MEMO: Forcibly create key-data.                  */
+						/*       - first frame: for initialize              */
+						/*       - end frame: for ensuring animation length */
+						flagForceSetKey = false;
+						if(((countFrameRange - 1) == i) || (0 == i))
 						{
-							Keyframe keyframe = new Keyframe();
+							flagForceSetKey = true;
+						}
+
+						if((flagForceSetKey == true) || (valuePrevious != value))
+						{
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							keyframe.value = value;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetPositionX_End:;
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.x", animationCurve);
 
 					return(true);
@@ -5360,29 +5392,43 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						Vector3 position = gameObject.transform.localPosition;
-						position.y = 0.0f;
-						gameObject.transform.localPosition = position;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
 						Vector3 position = gameObject.transform.localPosition;
-						position.y = 0.0f;
+						position.y = valueError;
 						gameObject.transform.localPosition = position;
 						return(true);
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
+
+					if(0 >= attributeFloat.CountGetKey())
+					{
+						value = valueError;
+
+						Vector3 position = gameObject.transform.localPosition;
+						position.y = value;
+						gameObject.transform.localPosition = position;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetPositionY_End;
+					}
+
 					float valuePrevious = float.NaN;
+					int frame;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributeFloat.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributeFloat.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -5396,19 +5442,19 @@ public static partial class LibraryEditor_SpriteStudio6
 							gameObject.transform.localPosition = position;
 						}
 
-						if(valuePrevious != value)
+						if((0 == i) || (valuePrevious != value))
 						{
-							Keyframe keyframe = new Keyframe();
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							keyframe.value = value;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetPositionY_End:;
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.y", animationCurve);
 
 					return(true);
@@ -5424,29 +5470,43 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						Vector3 position = gameObject.transform.localPosition;
-						position.z = 0.0f;
-						gameObject.transform.localPosition = position;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
 						Vector3 position = gameObject.transform.localPosition;
-						position.z = 0.0f;
+						position.z = valueError;
 						gameObject.transform.localPosition = position;
 						return(true);
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
+
+					if(0 >= attributeFloat.CountGetKey())
+					{
+						value = valueError;
+
+						Vector3 position = gameObject.transform.localPosition;
+						position.z = value;
+						gameObject.transform.localPosition = position;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetPositionZ_End;
+					}
+
 					float valuePrevious = float.NaN;
+					int frame;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributeFloat.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributeFloat.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -5460,19 +5520,19 @@ public static partial class LibraryEditor_SpriteStudio6
 							gameObject.transform.localPosition = position;
 						}
 
-						if(valuePrevious != value)
+						if((0 == i) || (valuePrevious != value))
 						{
-							Keyframe keyframe = new Keyframe();
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							keyframe.value = value;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetPositionZ_End:;
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.z", animationCurve);
 
 					return(true);
@@ -5489,29 +5549,43 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.x = 0.0f;
-						gameObject.transform.localEulerAngles = rotation;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
 						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.x = 0.0f;
+						rotation.x = valueError;
 						gameObject.transform.localEulerAngles = rotation;
 						return(true);
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
+
+					if(0 >= attributeFloat.CountGetKey())
+					{
+						value = valueError;
+
+						Vector3 rotation = gameObject.transform.localEulerAngles;
+						rotation.x = value;
+						gameObject.transform.localEulerAngles = rotation;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetRotationX_End;
+					}
+
 					float valuePrevious = float.NaN;
+					int frame;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributeFloat.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributeFloat.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -5525,19 +5599,19 @@ public static partial class LibraryEditor_SpriteStudio6
 							gameObject.transform.localEulerAngles = rotation;
 						}
 
-						if(valuePrevious != value)
+						if((0 == i) || (valuePrevious != value))
 						{
-							Keyframe keyframe = new Keyframe();
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							keyframe.value = value;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetRotationX_End:;
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.x", animationCurve);
 
 					return(true);
@@ -5553,29 +5627,43 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.y = 0.0f;
-						gameObject.transform.localEulerAngles = rotation;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
 						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.y = 0.0f;
+						rotation.y = valueError;
 						gameObject.transform.localEulerAngles = rotation;
 						return(true);
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
+
+					if(0 >= attributeFloat.CountGetKey())
+					{
+						value = valueError;
+
+						Vector3 rotation = gameObject.transform.localEulerAngles;
+						rotation.y = value;
+						gameObject.transform.localEulerAngles = rotation;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetRotationY_End;
+					}
+
 					float valuePrevious = float.NaN;
+					int frame;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributeFloat.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributeFloat.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -5589,19 +5677,19 @@ public static partial class LibraryEditor_SpriteStudio6
 							gameObject.transform.localEulerAngles = rotation;
 						}
 
-						if(valuePrevious != value)
+						if((0 == i) || (valuePrevious != value))
 						{
-							Keyframe keyframe = new Keyframe();
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							keyframe.value = value;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetRotationY_End:;
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.y", animationCurve);
 
 					return(true);
@@ -5617,29 +5705,43 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.z = 0.0f;
-						gameObject.transform.localEulerAngles = rotation;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
 						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.z = 0.0f;
+						rotation.z = valueError;
 						gameObject.transform.localEulerAngles = rotation;
 						return(true);
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
+
+					if(0 >= attributeFloat.CountGetKey())
+					{
+						value = valueError;
+
+						Vector3 rotation = gameObject.transform.localEulerAngles;
+						rotation.z = 0.0f;
+						gameObject.transform.localEulerAngles = rotation;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetRotationZ_End;
+					}
+
 					float valuePrevious = float.NaN;
+					int frame;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributeFloat.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributeFloat.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -5653,19 +5755,19 @@ public static partial class LibraryEditor_SpriteStudio6
 							gameObject.transform.localEulerAngles = rotation;
 						}
 
-						if(valuePrevious != value)
+						if((0 == i) || (valuePrevious != value))
 						{
-							Keyframe keyframe = new Keyframe();
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							keyframe.value = value;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetRotationZ_End:;
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.z", animationCurve);
 
 					return(true);
@@ -5682,31 +5784,45 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						Vector3 scaling = gameObject.transform.localScale;
-						scaling.x = 1.0f;
-						scaling.z = 1.0f;
-						gameObject.transform.localScale = scaling;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
 						Vector3 scaling = gameObject.transform.localScale;
-						scaling.x = 1.0f;
+						scaling.x = valueError;
 						scaling.z = 1.0f;
 						gameObject.transform.localScale = scaling;
 						return(true);
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
+
+					if(0 >= attributeFloat.CountGetKey())
+					{
+						value = valueError;
+
+						Vector3 scaling = gameObject.transform.localScale;
+						scaling.x = value;
+						scaling.z = 1.0f;
+						gameObject.transform.localScale = scaling;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetScalingX_End;
+					}
+
 					float valuePrevious = float.NaN;
+					int frame;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributeFloat.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributeFloat.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -5721,19 +5837,19 @@ public static partial class LibraryEditor_SpriteStudio6
 							gameObject.transform.localScale = scaling;
 						}
 
-						if(valuePrevious != value)
+						if((0 == i) || (valuePrevious != value))
 						{
-							Keyframe keyframe = new Keyframe();
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							keyframe.value = value;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetScalingX_End:;
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localScale.x", animationCurve);
 
 					return(true);
@@ -5749,31 +5865,45 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						Vector3 scaling = gameObject.transform.localScale;
-						scaling.y = 1.0f;
-						scaling.z = 1.0f;
-						gameObject.transform.localScale = scaling;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
 						Vector3 scaling = gameObject.transform.localScale;
-						scaling.y = 1.0f;
+						scaling.y = valueError;
 						scaling.z = 1.0f;
 						gameObject.transform.localScale = scaling;
 						return(true);
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
+
+					if(0 >= attributeFloat.CountGetKey())
+					{
+						value = valueError;
+
+						Vector3 scaling = gameObject.transform.localScale;
+						scaling.y = value;
+						scaling.z = 1.0f;
+						gameObject.transform.localScale = scaling;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetScalingY;
+					}
+
 					float valuePrevious = float.NaN;
+					int frame;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributeFloat.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributeFloat.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -5788,27 +5918,28 @@ public static partial class LibraryEditor_SpriteStudio6
 							gameObject.transform.localScale = scaling;
 						}
 
-						if(valuePrevious != value)
+						if((0 == i) || (valuePrevious != value))
 						{
-							Keyframe keyframe = new Keyframe();
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							keyframe.value = value;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetScalingY:;
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localScale.y", animationCurve);
 
 					return(true);
 				}
 
-				private static bool AssetCreateDataCurveSetCellRenderrer(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetCellRenderer(	AnimationClip animationClip,
 																			string namePathGameObject,
 																			SpriteRenderer spriteRenderer,
+																			GameObject gameObjectParts,
 																			Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell attributeCell,
 																			int indexAnimation,
 																			int frameStart,
@@ -5817,11 +5948,6 @@ public static partial class LibraryEditor_SpriteStudio6
 																			LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 																		)
 				{
-					if(0 >= attributeCell.CountGetKey())
-					{
-						spriteRenderer.sprite = null;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
@@ -5829,8 +5955,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						return(true);
 					}
 
+					spriteRenderer.sprite = null;
+
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell value = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell valuePrevious = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
+					Library_SpriteStudio6.Data.CellMap.Cell dataCell = new Library_SpriteStudio6.Data.CellMap.Cell();
 
 					/* MEMO: First frame's data is forcibly get. */
 					if(false == attributeCell.ValueGet(out value, frameStart))
@@ -5840,23 +5969,29 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					EditorCurveBinding curveBinding = new EditorCurveBinding();
-					curveBinding.type = typeof(SpriteRenderer);
+					curveBinding.type = typeof(Script_SpriteStudio6_PartsUnityNative);
 					curveBinding.path = namePathGameObject;
-					curveBinding.propertyName = "m_Sprite";
+					curveBinding.propertyName = NameScriptPropertyCell;
 
 					List<ObjectReferenceKeyframe> listKeyFrame = new List<ObjectReferenceKeyframe>();
 					ObjectReferenceKeyframe keyFrame = new ObjectReferenceKeyframe();
-					bool flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, value, frameStart * timePerFrame, informationSSPJ);
+
+					bool flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, ref dataCell, value, frameStart * timePerFrame, informationSSPJ);
 					if(true == flagValueValid)
 					{
 						listKeyFrame.Add(keyFrame);
 						valuePrevious = value;
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
 						if(0 == indexAnimation)
 						{
-							spriteRenderer.sprite = (Sprite)keyFrame.value;
+							if(null != gameObjectParts)
+							{
+								Script_SpriteStudio6_PartsUnityNative scriptParts = gameObjectParts.GetComponent<Script_SpriteStudio6_PartsUnityNative>();
+								if(null != scriptParts)
+								{
+									scriptParts.Cell = (Sprite)keyFrame.value;
+								}
+							}
 						}
 					}
 
@@ -5867,10 +6002,13 @@ public static partial class LibraryEditor_SpriteStudio6
 						frame = attributeCell.ListKey[i].Frame;
 						if(((frameStart + 1) <= frame) && (frameEnd >= frame))
 						{
-							if((valuePrevious.IndexCellMap != value.IndexCellMap) || (valuePrevious.IndexCell != value.IndexCell))
+							frame -= frameStart;
+
+							value = attributeCell.ListKey[i].Value;
+							flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, ref dataCell, value, frame * timePerFrame, informationSSPJ);
+							if(true == flagValueValid)
 							{
-								flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, value, frame * timePerFrame, informationSSPJ);
-								if(true == flagValueValid)
+								if((valuePrevious.IndexCellMap != value.IndexCellMap) || (valuePrevious.IndexCell != value.IndexCell))
 								{
 									listKeyFrame.Add(keyFrame);
 									valuePrevious = value;
@@ -5886,6 +6024,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private static bool AssetCreateDataCurveSetCellMask(	AnimationClip animationClip,
 																		string namePathGameObject,
 																		SpriteMask spriteMask,
+																		GameObject gameObjectParts,
 																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell attributeCell,
 																		int indexAnimation,
 																		int frameStart,
@@ -5894,11 +6033,6 @@ public static partial class LibraryEditor_SpriteStudio6
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 																	)
 				{
-					if(0 >= attributeCell.CountGetKey())
-					{
-						spriteMask.sprite = null;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
@@ -5906,8 +6040,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						return(true);
 					}
 
+					spriteMask.sprite = null;
+
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell value = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell valuePrevious = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
+					Library_SpriteStudio6.Data.CellMap.Cell dataCell = new Library_SpriteStudio6.Data.CellMap.Cell();
 
 					/* MEMO: First frame's data is forcibly get. */
 					if(false == attributeCell.ValueGet(out value, frameStart))
@@ -5919,21 +6056,26 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorCurveBinding curveBinding = new EditorCurveBinding();
 					curveBinding.type = typeof(Script_SpriteStudio6_PartsUnityNative);
 					curveBinding.path = namePathGameObject;
-					curveBinding.propertyName = "MaskSprite";	/* "m_Sprite"; */
+					curveBinding.propertyName = NameScriptPropertyCell;
 
 					List<ObjectReferenceKeyframe> listKeyFrame = new List<ObjectReferenceKeyframe>();
 					ObjectReferenceKeyframe keyFrame = new ObjectReferenceKeyframe();
-					bool flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, value, frameStart * timePerFrame, informationSSPJ);
+					bool flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, ref dataCell, value, frameStart * timePerFrame, informationSSPJ);
 					if(true == flagValueValid)
 					{
 						listKeyFrame.Add(keyFrame);
 						valuePrevious = value;
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
 						if(0 == indexAnimation)
 						{
-							spriteMask.sprite = (Sprite)keyFrame.value;
+							if(null != gameObjectParts)
+							{
+								Script_SpriteStudio6_PartsUnityNative scriptParts = gameObjectParts.GetComponent<Script_SpriteStudio6_PartsUnityNative>();
+								if(null != scriptParts)
+								{
+									scriptParts.Cell = (Sprite)keyFrame.value;
+								}
+							}
 						}
 					}
 
@@ -5944,9 +6086,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						frame = attributeCell.ListKey[i].Frame;
 						if(((frameStart + 1) <= frame) && (frameEnd >= frame))
 						{
+							frame -= frameStart;
+
 							if((valuePrevious.IndexCellMap != value.IndexCellMap) || (valuePrevious.IndexCell != value.IndexCell))
 							{
-								flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, value, frame * timePerFrame, informationSSPJ);
+								flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, ref dataCell, value, frame * timePerFrame, informationSSPJ);
 								if(true == flagValueValid)
 								{
 									listKeyFrame.Add(keyFrame);
@@ -5961,6 +6105,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(true);
 				}
 				private static bool AssetCreateDataObjectGetCell(	ref ObjectReferenceKeyframe keyFrame,
+																	ref Library_SpriteStudio6.Data.CellMap.Cell dataCell,
 																	Library_SpriteStudio6.Data.Animation.Attribute.Cell cell,
 																	float time,
 																	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
@@ -5971,11 +6116,13 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if((0 > indexCellMap) || (informationSSPJ.TableInformationSSCE.Length <= indexCellMap))
 					{
+						dataCell.CleanUp();
 						return(false);
 					}
 					/* MEMO: Caution that both "TableInformationSSCE.TableCell" and "TableInformationSSCE.Data.TableCell" are null(purged). */
 					if((0 > indexCell) || (informationSSPJ.TableInformationSSCE[indexCellMap].TableNameSpriteUnityNative.Length <= indexCell))
 					{
+						dataCell.CleanUp();
 						return(false);
 					}
 
@@ -5995,12 +6142,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					if(0 > indexSprite)
 					{
+						dataCell.CleanUp();
 						return(false);
 					}
 
 					keyFrame.time = time;
 					keyFrame.value = (UnityEngine.Object)listSprite[indexSprite];
 
+					dataCell = informationSSPJ.TableInformationSSCE[indexCellMap].TableCell[indexCell].Data;
 					return(true);
 				}
 
@@ -6027,7 +6176,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					bool flagDraw;
 					int frame;
 					int value = -1;
@@ -6063,17 +6212,17 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						if(true == flagDraw)
 						{
-							if(valuePrevious != value)
+							if((0 == i) || (valuePrevious != value))
 							{
-								Keyframe keyframe = new Keyframe();
+								keyframe = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframe);
 								keyframe.time = i * timePerFrame;
 								keyframe.value = value * 10;
 
 								animationCurve.AddKey(keyframe);
-
-								valuePrevious = value;
 							}
+
+							valuePrevious = value;
 						}
 					}
 
@@ -6099,37 +6248,76 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Material material = spriteRenderer.sharedMaterial;
-						Vector4 blend = material.GetVector("_Blend_LocalScale");
-						blend.x = 0.01f;
-						blend.y = 1.0f;
-						material.SetVector("_Blend_LocalScale", blend);
-
-						material.SetColor("_PartsColor", new Color(1.0f, 1.0f, 1.0f, 0.0f));
 						return(true);
 					}
 
 					AnimationCurve animationCurveBlend = new AnimationCurve();
 					AnimationCurve animationCurveAlpha = new AnimationCurve();
-					AnimationCurve animationCurveColorA = new AnimationCurve();
-					AnimationCurve animationCurveColorR = new AnimationCurve();
-					AnimationCurve animationCurveColorG = new AnimationCurve();
-					AnimationCurve animationCurveColorB = new AnimationCurve();
+					AnimationCurve animationCurveColorALU = new AnimationCurve();
+					AnimationCurve animationCurveColorRLU = new AnimationCurve();
+					AnimationCurve animationCurveColorGLU = new AnimationCurve();
+					AnimationCurve animationCurveColorBLU = new AnimationCurve();
+					AnimationCurve animationCurveColorPowerLU = new AnimationCurve();
+					AnimationCurve animationCurveColorARU = new AnimationCurve();
+					AnimationCurve animationCurveColorRRU = new AnimationCurve();
+					AnimationCurve animationCurveColorGRU = new AnimationCurve();
+					AnimationCurve animationCurveColorBRU = new AnimationCurve();
+					AnimationCurve animationCurveColorPowerRU = new AnimationCurve();
+					AnimationCurve animationCurveColorARD = new AnimationCurve();
+					AnimationCurve animationCurveColorRRD = new AnimationCurve();
+					AnimationCurve animationCurveColorGRD = new AnimationCurve();
+					AnimationCurve animationCurveColorBRD = new AnimationCurve();
+					AnimationCurve animationCurveColorPowerRD = new AnimationCurve();
+					AnimationCurve animationCurveColorALD = new AnimationCurve();
+					AnimationCurve animationCurveColorRLD = new AnimationCurve();
+					AnimationCurve animationCurveColorGLD = new AnimationCurve();
+					AnimationCurve animationCurveColorBLD = new AnimationCurve();
+					AnimationCurve animationCurveColorPowerLD = new AnimationCurve();
+
 					Keyframe keyframeBlend;
 					Keyframe keyframeAlpha;
-					Keyframe keyframeColorA;
-					Keyframe keyframeColorR;
-					Keyframe keyframeColorG;
-					Keyframe keyframeColorB;
+					Keyframe keyframeColorALU;
+					Keyframe keyframeColorRLU;
+					Keyframe keyframeColorGLU;
+					Keyframe keyframeColorBLU;
+					Keyframe keyframeColorPowerLU;
+					Keyframe keyframeColorARU;
+					Keyframe keyframeColorRRU;
+					Keyframe keyframeColorGRU;
+					Keyframe keyframeColorBRU;
+					Keyframe keyframeColorPowerRU;
+					Keyframe keyframeColorARD;
+					Keyframe keyframeColorRRD;
+					Keyframe keyframeColorGRD;
+					Keyframe keyframeColorBRD;
+					Keyframe keyframeColorPowerRD;
+					Keyframe keyframeColorALD;
+					Keyframe keyframeColorRLD;
+					Keyframe keyframeColorGLD;
+					Keyframe keyframeColorBLD;
+					Keyframe keyframeColorPowerLD;
 
 					Library_SpriteStudio6.Data.Animation.Attribute.PartsColor value = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColor();
-					Color valueColor = new Color();
-					Color valueColorPrevious = new Color();
+					Color valueColorLU = new Color();
+					Color valueColorRU = new Color();
+					Color valueColorRD = new Color();
+					Color valueColorLD = new Color();
+					Color valueColorPreviousLU = ColorDefault;
+					Color valueColorPreviousRU = ColorDefault;
+					Color valueColorPreviousRD = ColorDefault;
+					Color valueColorPreviousLD = ColorDefault;
+					float valueColorPowerLU = 1.0f;
+					float valueColorPowerRU = 1.0f;
+					float valueColorPowerRD = 1.0f;
+					float valueColorPowerLD = 1.0f;
+					float valueColorPowerPreviousLU = float.NaN;
+					float valueColorPowerPreviousRU = float.NaN;
+					float valueColorPowerPreviousRD = float.NaN;
+					float valueColorPowerPreviousLD = float.NaN;
 					Library_SpriteStudio6.KindOperationBlend valueBlend;
 					Library_SpriteStudio6.KindOperationBlend valueBlendPrevious;
-					float valueAlpha;
-					float valueAlphaPrevious;
 					float valueOpacity;
+					float valuePreviousOpacity;
 
 					if(false == Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetFloatMultiple(out valueOpacity, attributeRateOpacity, frameStart, 1.0f))
 					{
@@ -6139,78 +6327,177 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						value = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor;
 					}
-					if(Library_SpriteStudio6.KindBoundBlend.VERTEX == value.Bound)
-					{
-						flagWarning = true;
-					}
-#if true
-					valueColor = value.VertexColor[0];
-					valueAlpha = value.RateAlpha[0] * valueOpacity;
-					for(int i=1; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
-					{
-						valueColor += value.VertexColor[i];
-						valueAlpha += value.RateAlpha[i] * valueOpacity;
-					}
-					valueColor *= 0.25f;
-					valueAlpha *= 0.25f;
-#else
-					valueColor = value.VertexColor[0];
-					valueAlpha = value.RateAlpha[0] * valueOpacity;
-#endif
 					valueBlend = value.Operation;
 
-					/* MEMO: Must set before adding Curve to AnimationClip.       */
-					/*       (If set later, animation is not reflected correctly) */
-					if(0 == indexAnimation)
+					switch(value.Bound)
 					{
-						Material material = spriteRenderer.sharedMaterial;
-						Vector4 blend = material.GetVector("_Blend_LocalScale");
-						blend.x = (float)valueBlend + 0.01f;
-						blend.y = valueAlpha;
-						material.SetVector("_Blend_LocalScale", blend);
+						case Library_SpriteStudio6.KindBoundBlend.NON:
+							valueBlend = Library_SpriteStudio6.KindOperationBlend.MIX;
 
-						material.SetColor("_PartsColor", valueColor);
+							valueColorLU =
+							valueColorRU =
+							valueColorRD =
+							valueColorLD = ColorDefault;
+							valueColorPowerLU =
+							valueColorPowerRU =
+							valueColorPowerRD =
+							valueColorPowerLD = 1.0f;
+							break;
+
+						case Library_SpriteStudio6.KindBoundBlend.OVERALL:
+							valueColorLU =
+							valueColorRU =
+							valueColorRD =
+							valueColorLD = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU];
+							valueColorPowerLU =
+							valueColorPowerRU =
+							valueColorPowerRD =
+							valueColorPowerLD = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU];
+							break;
+
+						case Library_SpriteStudio6.KindBoundBlend.VERTEX:
+							valueColorLU = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU];
+							valueColorPowerLU = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU];
+
+							valueColorRU = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU];
+							valueColorPowerRU = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU];
+
+							valueColorRD = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD];
+							valueColorPowerRD = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD];
+
+							valueColorLD = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD];
+							valueColorPowerLD = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD];
+							break;
+
+						default:
+							goto case Library_SpriteStudio6.KindBoundBlend.NON;
 					}
-					valueColorPrevious = valueColor;
+
 					valueBlendPrevious = valueBlend;
-					valueAlphaPrevious = valueAlpha;
-
 					keyframeBlend = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeBlend);
+						keyframeBlend.time = 0 * timePerFrame;
+						keyframeBlend.value = (float)valueBlend + 0.01f;
+						animationCurveBlend.AddKey(keyframeBlend);
+
+					valuePreviousOpacity = valueOpacity;
 					keyframeAlpha = new Keyframe();
-					keyframeColorA = new Keyframe();
-					keyframeColorR = new Keyframe();
-					keyframeColorG = new Keyframe();
-					keyframeColorB = new Keyframe();
-					AssetCreateDataKeyFrameInitialize(ref keyframeBlend);
-					AssetCreateDataKeyFrameInitialize(ref keyframeAlpha);
-					AssetCreateDataKeyFrameInitialize(ref keyframeColorA);
-					AssetCreateDataKeyFrameInitialize(ref keyframeColorR);
-					AssetCreateDataKeyFrameInitialize(ref keyframeColorG);
-					AssetCreateDataKeyFrameInitialize(ref keyframeColorB);
+						AssetCreateDataKeyFrameInitialize(ref keyframeAlpha);
+						keyframeAlpha.time = 0 * timePerFrame;
+						keyframeAlpha.value = valueOpacity;
+						animationCurveAlpha.AddKey(keyframeAlpha);
 
-					keyframeBlend.time = frameStart * timePerFrame;
-					keyframeBlend.value = (float)valueBlend + 0.01f;
-					animationCurveBlend.AddKey(keyframeBlend);
+					valueColorPreviousLU = valueColorLU;
+					keyframeColorALU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorALU);
+						keyframeColorALU.time = 0 * timePerFrame;
+						keyframeColorALU.value = valueColorLU.a;
+						animationCurveColorALU.AddKey(keyframeColorALU);
+					keyframeColorRLU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorRLU);
+						keyframeColorRLU.time = 0 * timePerFrame;
+						keyframeColorRLU.value = valueColorLU.r;
+						animationCurveColorRLU.AddKey(keyframeColorRLU);
+					keyframeColorGLU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorGLU);
+						keyframeColorGLU.time = 0 * timePerFrame;
+						keyframeColorGLU.value = valueColorLU.g;
+						animationCurveColorGLU.AddKey(keyframeColorGLU);
+					keyframeColorBLU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorBLU);
+						keyframeColorBLU.time = 0 * timePerFrame;
+						keyframeColorBLU.value = valueColorLU.b;
+						animationCurveColorBLU.AddKey(keyframeColorBLU);
+					valueColorPowerPreviousLU = valueColorPowerLU;
+					keyframeColorPowerLU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerLU);
+						keyframeColorPowerLU.time = 0 * timePerFrame;
+						keyframeColorPowerLU.value = valueColorPowerLU;
+						animationCurveColorPowerLU.AddKey(keyframeColorPowerLU);
 
-					keyframeAlpha.time = frameStart * timePerFrame;
-					keyframeAlpha.value = valueAlpha;
-					animationCurveAlpha.AddKey(keyframeAlpha);
+					valueColorPreviousRU = valueColorRU;
+					keyframeColorARU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorARU);
+						keyframeColorARU.time = 0 * timePerFrame;
+						keyframeColorARU.value = valueColorRU.a;
+						animationCurveColorARU.AddKey(keyframeColorARU);
+					keyframeColorRRU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorRRU);
+						keyframeColorRRU.time = 0 * timePerFrame;
+						keyframeColorRRU.value = valueColorRU.r;
+						animationCurveColorRRU.AddKey(keyframeColorRRU);
+					keyframeColorGRU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorGRU);
+						keyframeColorGRU.time = 0 * timePerFrame;
+						keyframeColorGRU.value = valueColorRU.g;
+						animationCurveColorGRU.AddKey(keyframeColorGRU);
+					keyframeColorBRU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorBRU);
+						keyframeColorBRU.time = 0 * timePerFrame;
+						keyframeColorBRU.value = valueColorRU.b;
+						animationCurveColorBRU.AddKey(keyframeColorBRU);
+					valueColorPowerPreviousRU = valueColorPowerRU;
+					keyframeColorPowerRU = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerRU);
+						keyframeColorPowerRU.time = 0 * timePerFrame;
+						keyframeColorPowerRU.value = valueColorPowerRU;
+						animationCurveColorPowerRU.AddKey(keyframeColorPowerRU);
 
-					keyframeColorA.time = frameStart * timePerFrame;
-					keyframeColorA.value = valueColor.a;
-					animationCurveColorA.AddKey(keyframeColorA);
+					valueColorPreviousRD = valueColorRD;
+					keyframeColorARD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorARD);
+						keyframeColorARD.time = 0 * timePerFrame;
+						keyframeColorARD.value = valueColorRD.a;
+						animationCurveColorARD.AddKey(keyframeColorARD);
+					keyframeColorRRD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorRRD);
+						keyframeColorRRD.time = 0 * timePerFrame;
+						keyframeColorRRD.value = valueColorRD.r;
+						animationCurveColorRRD.AddKey(keyframeColorRRD);
+					keyframeColorGRD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorGRD);
+						keyframeColorGRD.time = 0 * timePerFrame;
+						keyframeColorGRD.value = valueColorRD.g;
+						animationCurveColorGRD.AddKey(keyframeColorGRD);
+					keyframeColorBRD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorBRD);
+						keyframeColorBRD.time = 0 * timePerFrame;
+						keyframeColorBRD.value = valueColorRD.b;
+						animationCurveColorBRD.AddKey(keyframeColorBRD);
+					valueColorPowerPreviousRD = valueColorPowerRD;
+					keyframeColorPowerRD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerRD);
+						keyframeColorPowerRD.time = 0 * timePerFrame;
+						keyframeColorPowerRD.value = valueColorPowerRD;
+						animationCurveColorPowerRD.AddKey(keyframeColorPowerRD);
 
-					keyframeColorR.time = frameStart * timePerFrame;
-					keyframeColorR.value = valueColor.r;
-					animationCurveColorR.AddKey(keyframeColorR);
-
-					keyframeColorG.time = frameStart * timePerFrame;
-					keyframeColorG.value = valueColor.g;
-					animationCurveColorG.AddKey(keyframeColorG);
-
-					keyframeColorB.time = frameStart * timePerFrame;
-					keyframeColorB.value = valueColor.b;
-					animationCurveColorB.AddKey(keyframeColorB);
+					valueColorPreviousLD = valueColorLD;
+					keyframeColorALD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorALD);
+						keyframeColorALD.time = 0 * timePerFrame;
+						keyframeColorALD.value = valueColorLD.a;
+						animationCurveColorALD.AddKey(keyframeColorALD);
+					keyframeColorRLD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorRLD);
+						keyframeColorRLD.time = 0 * timePerFrame;
+						keyframeColorRLD.value = valueColorLD.r;
+						animationCurveColorRLD.AddKey(keyframeColorRLD);
+					keyframeColorGLD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorGLD);
+						keyframeColorGLD.time = 0 * timePerFrame;
+						keyframeColorGLD.value = valueColorLD.g;
+						animationCurveColorGLD.AddKey(keyframeColorGLD);
+					keyframeColorBLD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorBLD);
+						keyframeColorBLD.time = 0 * timePerFrame;
+						keyframeColorBLD.value = valueColorLD.b;
+						animationCurveColorBLD.AddKey(keyframeColorBLD);
+					valueColorPowerPreviousLD = valueColorPowerLD;
+					keyframeColorPowerLD = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerLD);
+						keyframeColorPowerLD.time = 0 * timePerFrame;
+						keyframeColorPowerLD.value = valueColorPowerLD;
+						animationCurveColorPowerLD.AddKey(keyframeColorPowerLD);
 
 					int frame;
 					for(int i=1; i<countFrameRange; i++)
@@ -6225,87 +6512,300 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							value = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor;
 						}
-						if(Library_SpriteStudio6.KindBoundBlend.VERTEX == value.Bound)
-						{
-							flagWarning = true;
-						}
-#if true
-						valueColor = value.VertexColor[0];
-						valueAlpha = value.RateAlpha[0] * valueOpacity;
-						for(int j=1; j<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; j++)
-						{
-							valueColor += value.VertexColor[j];
-							valueAlpha += value.RateAlpha[j] * valueOpacity;
-						}
-						valueColor *= 0.25f;
-						valueAlpha *= 0.25f;
-#else
-						valueColor = value.VertexColor[0];
-						valueAlpha = value.RateAlpha[0] * valueOpacity;
-#endif
 						valueBlend = value.Operation;
 
-						if(valueColorPrevious.a != valueColor.a)
+						switch(value.Bound)
 						{
-							keyframeColorA.time = frame * timePerFrame;
-							keyframeColorA.value = valueColor.a;
-							animationCurveColorA.AddKey(keyframeColorA);
+							case Library_SpriteStudio6.KindBoundBlend.NON:
+								valueBlend = Library_SpriteStudio6.KindOperationBlend.MIX;
 
-							valueColorPrevious.a = valueColor.a;
-						}
+								valueColorLU =
+								valueColorRU =
+								valueColorRD =
+								valueColorLD = ColorDefault;
+								valueColorPowerLU =
+								valueColorPowerRU =
+								valueColorPowerRD =
+								valueColorPowerLD = 1.0f;
+								break;
 
-						if(valueColorPrevious.r != valueColor.r)
-						{
-							keyframeColorR.time = frame * timePerFrame;
-							keyframeColorR.value = valueColor.r;
-							animationCurveColorR.AddKey(keyframeColorR);
+							case Library_SpriteStudio6.KindBoundBlend.OVERALL:
+								valueColorLU =
+								valueColorRU =
+								valueColorRD =
+								valueColorLD = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU];
+								valueColorPowerLU =
+								valueColorPowerRU =
+								valueColorPowerRD =
+								valueColorPowerLD = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU];
+								break;
 
-							valueColorPrevious.r = valueColor.r;
-						}
+							case Library_SpriteStudio6.KindBoundBlend.VERTEX:
+								valueColorLU = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU];
+								valueColorPowerLU = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU];
 
-						if(valueColorPrevious.g != valueColor.g)
-						{
-							keyframeColorG.time = frame * timePerFrame;
-							keyframeColorG.value = valueColor.g;
-							animationCurveColorG.AddKey(keyframeColorG);
+								valueColorRU = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU];
+								valueColorPowerRU = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU];
 
-							valueColorPrevious.g = valueColor.g;
-						}
+								valueColorRD = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD];
+								valueColorPowerRD = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD];
 
-						if(valueColorPrevious.a != valueColor.a)
-						{
-							keyframeColorB.time = frame * timePerFrame;
-							keyframeColorB.value = valueColor.b;
-							animationCurveColorB.AddKey(keyframeColorB);
+								valueColorLD = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD];
+								valueColorPowerLD = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD];
+								break;
 
-							valueColorPrevious.b = valueColor.b;
+							default:
+								goto case Library_SpriteStudio6.KindBoundBlend.NON;
 						}
 
 						if(valueBlendPrevious != valueBlend)
 						{
-							keyframeBlend.time = frame * timePerFrame;
-							keyframeBlend.value = (float)valueBlend + 0.01f;
-							animationCurveBlend.AddKey(keyframeBlend);
-
 							valueBlendPrevious = valueBlend;
+							keyframeBlend = new Keyframe();
+								AssetCreateDataKeyFrameInitialize(ref keyframeBlend);
+								keyframeBlend.time = i * timePerFrame;
+								keyframeBlend.value = (float)valueBlend + 0.01f;
+								animationCurveBlend.AddKey(keyframeBlend);
+						}
+						if(valuePreviousOpacity != valueOpacity)
+						{
+							valuePreviousOpacity = valueOpacity;
+							keyframeAlpha = new Keyframe();
+								AssetCreateDataKeyFrameInitialize(ref keyframeAlpha);
+								keyframeAlpha.time = i * timePerFrame;
+								keyframeAlpha.value = valueOpacity;
+								animationCurveAlpha.AddKey(keyframeAlpha);
 						}
 
-						if(valueAlphaPrevious != valueAlpha)
+						if(valueColorPreviousLU != valueColorLU)
 						{
-							keyframeAlpha.time = frame * timePerFrame;
-							keyframeAlpha.value = valueAlpha;
-							animationCurveAlpha.AddKey(keyframeAlpha);
+							if(valueColorPreviousLU.a != valueColorLU.a)
+							{
+								keyframeColorALU = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorALU);
+									keyframeColorALU.time = i * timePerFrame;
+									keyframeColorALU.value = valueColorLU.a;
+									animationCurveColorALU.AddKey(keyframeColorALU);
+							}
 
-							valueAlphaPrevious = valueAlpha;
+							if(valueColorPreviousLU.r != valueColorLU.r)
+							{
+								keyframeColorRLU = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorRLU);
+									keyframeColorRLU.time = i * timePerFrame;
+									keyframeColorRLU.value = valueColorLU.r;
+									animationCurveColorRLU.AddKey(keyframeColorRLU);
+							}
+
+							if(valueColorPreviousLU.g != valueColorLU.g)
+							{
+								keyframeColorGLU = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorGLU);
+									keyframeColorGLU.time = i * timePerFrame;
+									keyframeColorGLU.value = valueColorLU.g;
+									animationCurveColorGLU.AddKey(keyframeColorGLU);
+							}
+
+							if(valueColorPreviousLU.b != valueColorLU.b)
+							{
+								keyframeColorBLU = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorBLU);
+									keyframeColorBLU.time = i * timePerFrame;
+									keyframeColorBLU.value = valueColorLU.b;
+									animationCurveColorBLU.AddKey(keyframeColorBLU);
+							}
+
+							valueColorPreviousLU = valueColorLU;
+						}
+						if(valueColorPowerPreviousLU != valueColorPowerLU)
+						{
+							valueColorPowerPreviousLU = valueColorPowerLU;
+
+							keyframeColorPowerLU = new Keyframe();
+								AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerLU);
+								keyframeColorPowerLU.time = i * timePerFrame;
+								keyframeColorPowerLU.value = valueColorPowerLU;
+								animationCurveColorPowerLU.AddKey(keyframeColorPowerLU);
+						}
+
+						if(valueColorPreviousRU != valueColorRU)
+						{
+							if(valueColorPreviousRU.a != valueColorRU.a)
+							{
+								keyframeColorARU = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorARU);
+									keyframeColorARU.time = i * timePerFrame;
+									keyframeColorARU.value = valueColorRU.a;
+									animationCurveColorARU.AddKey(keyframeColorARU);
+							}
+
+							if(valueColorPreviousRU.r != valueColorRU.r)
+							{
+								keyframeColorRRU = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorRRU);
+									keyframeColorRRU.time = i * timePerFrame;
+									keyframeColorRRU.value = valueColorRU.r;
+									animationCurveColorRRU.AddKey(keyframeColorRRU);
+							}
+
+							if(valueColorPreviousRU.g != valueColorRU.g)
+							{
+								keyframeColorGRU = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorGRU);
+									keyframeColorGRU.time = i * timePerFrame;
+									keyframeColorGRU.value = valueColorRU.g;
+									animationCurveColorGRU.AddKey(keyframeColorGRU);
+							}
+
+							if(valueColorPreviousRU.b != valueColorRU.b)
+							{
+								keyframeColorBRU = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorBRU);
+									keyframeColorBRU.time = i * timePerFrame;
+									keyframeColorBRU.value = valueColorRU.b;
+									animationCurveColorBRU.AddKey(keyframeColorBRU);
+							}
+
+							valueColorPreviousRU = valueColorRU;
+						}
+						if(valueColorPowerPreviousRU != valueColorPowerRU)
+						{
+							valueColorPowerPreviousRU = valueColorPowerRU;
+							keyframeColorPowerRU = new Keyframe();
+								AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerRU);
+								keyframeColorPowerRU.time = i * timePerFrame;
+								keyframeColorPowerRU.value = valueColorPowerRU;
+								animationCurveColorPowerRU.AddKey(keyframeColorPowerRU);
+						}
+
+						if(valueColorPreviousRD != valueColorRD)
+						{
+							if(valueColorPreviousRD.a != valueColorRD.a)
+							{
+								keyframeColorARD = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorARD);
+									keyframeColorARD.time = frame * timePerFrame;
+									keyframeColorARD.value = valueColorRD.a;
+									animationCurveColorARD.AddKey(keyframeColorARD);
+							}
+
+							if(valueColorPreviousRD.r != valueColorRD.r)
+							{
+								keyframeColorRRD = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorRRD);
+									keyframeColorRRD.time = i * timePerFrame;
+									keyframeColorRRD.value = valueColorRD.r;
+									animationCurveColorRRD.AddKey(keyframeColorRRD);
+							}
+
+							if(valueColorPreviousRD.g != valueColorRD.g)
+							{
+								keyframeColorGRD = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorGRD);
+									keyframeColorGRD.time = i * timePerFrame;
+									keyframeColorGRD.value = valueColorRD.g;
+									animationCurveColorGRD.AddKey(keyframeColorGRD);
+							}
+
+							if(valueColorPreviousRD.b != valueColorRD.b)
+							{
+								keyframeColorBRD = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorBRD);
+									keyframeColorBRD.time = i * timePerFrame;
+									keyframeColorBRD.value = valueColorRD.b;
+									animationCurveColorBRD.AddKey(keyframeColorBRD);
+							}
+
+							valueColorPreviousRD = valueColorRD;
+						}
+						if(valueColorPowerPreviousRD != valueColorPowerRD)
+						{
+							valueColorPowerPreviousRD = valueColorPowerRD;
+							keyframeColorPowerRD = new Keyframe();
+								AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerRD);
+								keyframeColorPowerRD.time = i * timePerFrame;
+								keyframeColorPowerRD.value = valueColorPowerRD;
+								animationCurveColorPowerRD.AddKey(keyframeColorPowerRD);
+						}
+
+						if(valueColorPreviousLD != valueColorLD)
+						{
+							if(valueColorPreviousLD.a != valueColorLD.a)
+							{
+								keyframeColorALD = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorALD);
+									keyframeColorALD.time = i * timePerFrame;
+									keyframeColorALD.value = valueColorLD.a;
+									animationCurveColorALD.AddKey(keyframeColorALD);
+							}
+
+							if(valueColorPreviousLD.r != valueColorLD.r)
+							{
+								keyframeColorRLD = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorRLD);
+									keyframeColorRLD.time = i * timePerFrame;
+									keyframeColorRLD.value = valueColorLD.r;
+									animationCurveColorRLD.AddKey(keyframeColorRLD);
+							}
+
+							if(valueColorPreviousLD.g != valueColorLD.g)
+							{
+								keyframeColorGLD = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorGLD);
+									keyframeColorGLD.time = i * timePerFrame;
+									keyframeColorGLD.value = valueColorLD.g;
+									animationCurveColorGLD.AddKey(keyframeColorGLD);
+							}
+
+							if(valueColorPreviousLD.b != valueColorLD.b)
+							{
+								keyframeColorBLD = new Keyframe();
+									AssetCreateDataKeyFrameInitialize(ref keyframeColorBLD);
+									keyframeColorBLD.time = i * timePerFrame;
+									keyframeColorBLD.value = valueColorLD.b;
+									animationCurveColorBLD.AddKey(keyframeColorBLD);
+							}
+
+							valueColorPreviousLD = valueColorLD;
+						}
+						if(valueColorPowerPreviousLD != valueColorPowerLD)
+						{
+							valueColorPowerPreviousLD = valueColorPowerLD;
+							keyframeColorPowerLD = new Keyframe();
+								AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerLD);
+								keyframeColorPowerLD.time = i * timePerFrame;
+								keyframeColorPowerLD.value = valueColorPowerLD;
+								animationCurveColorPowerLD.AddKey(keyframeColorPowerLD);
 						}
 					}
 
-					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material._Blend_LocalScale.x", animationCurveBlend);
-					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material._Blend_LocalScale.y", animationCurveAlpha);
-					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material._PartsColor.a", animationCurveColorA);
-					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material._PartsColor.r", animationCurveColorR);
-					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material._PartsColor.g", animationCurveColorG);
-					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material._PartsColor.b", animationCurveColorB);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyBlendParam + ".x", animationCurveBlend);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyBlendParam + ".y", animationCurveAlpha);
+
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLU + ".a", animationCurveColorALU);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLU + ".r", animationCurveColorRLU);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLU + ".g", animationCurveColorGLU);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLU + ".b", animationCurveColorBLU);
+
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRU + ".a", animationCurveColorARU);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRU + ".r", animationCurveColorRRU);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRU + ".g", animationCurveColorGRU);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRU + ".b", animationCurveColorBRU);
+
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRD + ".a", animationCurveColorARD);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRD + ".r", animationCurveColorRRD);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRD + ".g", animationCurveColorGRD);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRD + ".b", animationCurveColorBRD);
+
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLD + ".a", animationCurveColorALD);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLD + ".r", animationCurveColorRLD);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLD + ".g", animationCurveColorGLD);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLD + ".b", animationCurveColorBLD);
+
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorOpacity + ".x", animationCurveColorPowerLU);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorOpacity + ".y", animationCurveColorPowerRU);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorOpacity + ".z", animationCurveColorPowerRD);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorOpacity + ".w", animationCurveColorPowerLD);
 
 					return(true);
 				}
@@ -6324,11 +6824,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Material material = spriteRenderer.sharedMaterial;
-						Vector4 blend = material.GetVector("_Blend_LocalScale");
-						blend.z = 1.0f;
-						blend.w = 1.0f;
-						material.SetVector("_Blend_LocalScale", blend);
 						return(true);
 					}
 
@@ -6351,25 +6846,17 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					valueXPrevious = valueX;
 					valueYPrevious = valueY;
-					/* MEMO: Must set before adding Curve to AnimationClip.       */
-					/*       (If set later, animation is not reflected correctly) */
-					if(0 == indexAnimation)
-					{
-						Material material = spriteRenderer.sharedMaterial;
-						Vector4 blend = material.GetVector("_Blend_LocalScale");
-						blend.z = valueX;
-						blend.w = valueY;
-						material.SetVector("_Blend_LocalScale", blend);
-					}
 
 					keyframeX = new Keyframe();
 					keyframeY = new Keyframe();
 
-					keyframeX.time = frameStart * timePerFrame;
+					AssetCreateDataKeyFrameInitialize(ref keyframeX);
+					keyframeX.time = 0 * timePerFrame;
 					keyframeX.value = valueX;
 					animationCurveX.AddKey(keyframeX);
 
-					keyframeY.time = frameStart * timePerFrame;
+					AssetCreateDataKeyFrameInitialize(ref keyframeY);
+					keyframeY.time = 0 * timePerFrame;
 					keyframeY.value = valueY;
 					animationCurveY.AddKey(keyframeY);
 
@@ -6377,18 +6864,20 @@ public static partial class LibraryEditor_SpriteStudio6
 					for(int i=1; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
-						if(false == attributeScaleXLocal.ValueGet(out valueX, frameStart))
+
+						if(false == attributeScaleXLocal.ValueGet(out valueX, frame))
 						{
 							valueX = 1.0f;
 						}
-						if(false == attributeScaleYLocal.ValueGet(out valueY, frameStart))
+						if(false == attributeScaleYLocal.ValueGet(out valueY, frame))
 						{
 							valueY = 1.0f;
 						}
 
 						if(valueXPrevious != valueX)
 						{
-							keyframeX.time = frame * timePerFrame;
+							AssetCreateDataKeyFrameInitialize(ref keyframeX);
+							keyframeX.time = i * timePerFrame;
 							keyframeX.value = valueX;
 							animationCurveX.AddKey(keyframeX);
 
@@ -6397,7 +6886,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						if(valueYPrevious != valueY)
 						{
-							keyframeY.time = frame * timePerFrame;
+							AssetCreateDataKeyFrameInitialize(ref keyframeY);
+							keyframeY.time = i * timePerFrame;
 							keyframeY.value = valueY;
 							animationCurveY.AddKey(keyframeY);
 
@@ -6405,8 +6895,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
-					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material._Blend_LocalScale.z", animationCurveX);
-					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material._Blend_LocalScale.w", animationCurveY);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyCellPivotLocalScale + ".z", animationCurveX);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyCellPivotLocalScale + ".w", animationCurveY);
 
 					return(true);
 				}
@@ -6438,18 +6928,24 @@ public static partial class LibraryEditor_SpriteStudio6
 						frame = attributeUserData.ListKey[i].Frame;
 						if((frameStart <= frame) && (frameEnd >= frame))
 						{
+							frame -= frameStart;
+
 							if(true == attributeUserData.ListKey[i].Value.IsNumber)
 							{
+								animationEvent.time = frame * timePerFrame;
 								animationEvent.intParameter = attributeUserData.ListKey[i].Value.NumberInt;
 								animationEvent.functionName = "FunctionEventInt";
+
+								listAnimationEvent.Add(animationEvent);
 							}
 							if(true == attributeUserData.ListKey[i].Value.IsText)
 							{
+								animationEvent.time = frame * timePerFrame;
 								animationEvent.stringParameter = string.Copy(attributeUserData.ListKey[i].Value.Text);
 								animationEvent.functionName = "FunctionEventText";
-							}
 
-							listAnimationEvent.Add(animationEvent);
+								listAnimationEvent.Add(animationEvent);
+							}
 						}
 					}
 
@@ -6467,13 +6963,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameEnd,
 																		float timePerFrame,
 																		float valueError
-																)
+																	)
 				{
-					if(0 >= attributePowerMask.CountGetKey())
-					{
-						spriteMask.alphaCutoff = 0.0001f;
-						return(true);
-					}
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
@@ -6481,13 +6972,32 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					AnimationCurve animationCurve = new AnimationCurve();
-
+					Keyframe keyframe;
 					float value;
-					float valuePrevious = float.NaN;
 					float valueMask;
+
+					if(0 >= attributePowerMask.CountGetKey())
+					{
+						valueMask = 0.0001f;
+
+						spriteMask.alphaCutoff = valueMask;
+
+						keyframe = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframe);
+						keyframe.time = 0 * timePerFrame;
+						keyframe.value = valueMask;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetPowerMask_End;
+					}
+
+					float valuePrevious = float.NaN;
+					int frame;
 					for(int i=0; i<countFrameRange; i++)
 					{
-						if(false == attributePowerMask.ValueGet(out value, (i + frameStart)))
+						frame = i + frameStart;
+
+						if(false == attributePowerMask.ValueGet(out value, frame))
 						{
 							value = valueError;
 						}
@@ -6498,9 +7008,9 @@ public static partial class LibraryEditor_SpriteStudio6
 							spriteMask.alphaCutoff = value;
 						}
 
-						if(valuePrevious != value)
+						if((0 == i) || (valuePrevious != value))
 						{
-							Keyframe keyframe = new Keyframe();
+							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
 							keyframe.time = i * timePerFrame;
 							valueMask = (255.0f - Mathf.Floor(value)) * (1.0f / 255.0f);
@@ -6509,14 +7019,210 @@ public static partial class LibraryEditor_SpriteStudio6
 								valueMask = 0.0001f;
 							}
 							keyframe.value = valueMask;
-
 							animationCurve.AddKey(keyframe);
-
-							valuePrevious = value;
 						}
+
+						valuePrevious = value;
 					}
 
+				AssetCreateDataCurveSetPowerMask_End:;
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteMask), "m_MaskAlphaCutoff", animationCurve);
+
+					return(true);
+				}
+
+				private static bool AssetCreateDataCurveSetVertexCorrection(	AnimationClip animationClip,
+																				string namePathGameObject,
+																				SpriteRenderer spriteRenderer,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection attributeVertexCorrection,
+																				int indexAnimation,
+																				int frameStart,
+																				int frameEnd,
+																				float timePerFrame
+																		)
+				{
+					int countFrameRange = (frameEnd - frameStart) + 1;
+					if(1 > countFrameRange)
+					{
+						return(true);
+					}
+
+					AnimationCurve animationCurveLUx = new AnimationCurve();
+					AnimationCurve animationCurveLUy = new AnimationCurve();
+					AnimationCurve animationCurveRUx = new AnimationCurve();
+					AnimationCurve animationCurveRUy = new AnimationCurve();
+					AnimationCurve animationCurveRDx = new AnimationCurve();
+					AnimationCurve animationCurveRDy = new AnimationCurve();
+					AnimationCurve animationCurveLDx = new AnimationCurve();
+					AnimationCurve animationCurveLDy = new AnimationCurve();
+
+					Keyframe keyframeLUx;
+					Keyframe keyframeLUy;
+					Keyframe keyframeRUx;
+					Keyframe keyframeRUy;
+					Keyframe keyframeRDx;
+					Keyframe keyframeRDy;
+					Keyframe keyframeLDx;
+					Keyframe keyframeLDy;
+
+					if(0 >= attributeVertexCorrection.CountGetKey())
+					{
+						keyframeLUx = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeLUx);
+						keyframeLUx.time = 0.0f;
+						keyframeLUx.value = 0.0f;
+						animationCurveLUx.AddKey(keyframeLUx);
+
+						keyframeLUy = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeLUy);
+						keyframeLUy.time = 0.0f;
+						keyframeLUy.value = 0.0f;
+						animationCurveLUy.AddKey(keyframeLUy);
+
+						keyframeRUx = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeRUx);
+						keyframeRUx.time = 0.0f;
+						keyframeRUx.value = 0.0f;
+						animationCurveRUx.AddKey(keyframeRUx);
+
+						keyframeRUy = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeRUy);
+						keyframeRUy.time = 0.0f;
+						keyframeRUy.value = 0.0f;
+						animationCurveRUy.AddKey(keyframeRUy);
+
+						keyframeRDx = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeRDx);
+						keyframeRDx.time = 0.0f;
+						keyframeRDx.value = 0.0f;
+						animationCurveRDx.AddKey(keyframeRDx);
+
+						keyframeRDy = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeRDy);
+						keyframeRDy.time = 0.0f;
+						keyframeRDy.value = 0.0f;
+						animationCurveRDy.AddKey(keyframeRDy);
+
+						keyframeLDx = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeLDx);
+						keyframeLDx.time = 0.0f;
+						keyframeLDx.value = 0.0f;
+						animationCurveLDx.AddKey(keyframeLDx);
+
+						keyframeLDy = new Keyframe();
+						AssetCreateDataKeyFrameInitialize(ref keyframeLDy);
+						keyframeLDy.time = 0.0f;
+						keyframeLDy.value = 0.0f;
+						animationCurveLDy.AddKey(keyframeLDy);
+
+						goto AssetCreateDataCurveSetVertexCorrection_End;
+					}
+
+					Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection value = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection();
+					Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection valuePrevious = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection();
+					int frame;
+					float valueCoordinate;
+					for(int i=0; i<countFrameRange; i++)
+					{
+						frame = i + frameStart;
+
+						if(false == attributeVertexCorrection.ValueGet(out value, frame))
+						{
+							value = Library_SpriteStudio6.Data.Animation.Attribute.DefaultVertexCorrection;
+						}
+
+						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x;
+						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x != valueCoordinate))
+						{
+							keyframeLUx = new Keyframe();
+							AssetCreateDataKeyFrameInitialize(ref keyframeLUx);
+							keyframeLUx.time = i * timePerFrame;
+							keyframeLUx.value = valueCoordinate;
+							animationCurveLUx.AddKey(keyframeLUx);
+						}
+
+						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].y;
+						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].y != valueCoordinate))
+						{
+							keyframeLUy = new Keyframe();
+							AssetCreateDataKeyFrameInitialize(ref keyframeLUy);
+							keyframeLUy.time = i * timePerFrame;
+							keyframeLUy.value = valueCoordinate;
+							animationCurveLUy.AddKey(keyframeLUy);
+						}
+
+						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].x;
+						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].x != valueCoordinate))
+						{
+							keyframeRUx = new Keyframe();
+							AssetCreateDataKeyFrameInitialize(ref keyframeRUx);
+							keyframeRUx.time = i * timePerFrame;
+							keyframeRUx.value = valueCoordinate;
+							animationCurveRUx.AddKey(keyframeRUx);
+						}
+
+						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].y;
+						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].y != valueCoordinate))
+						{
+							keyframeRUy = new Keyframe();
+							AssetCreateDataKeyFrameInitialize(ref keyframeRUy);
+							keyframeRUy.time = i * timePerFrame;
+							keyframeRUy.value = valueCoordinate;
+							animationCurveRUy.AddKey(keyframeRUy);
+						}
+
+						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].x;
+						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].x != valueCoordinate))
+						{
+							keyframeRDx = new Keyframe();
+							AssetCreateDataKeyFrameInitialize(ref keyframeRDx);
+							keyframeRDx.time = i * timePerFrame;
+							keyframeRDx.value = valueCoordinate;
+							animationCurveRDx.AddKey(keyframeRDx);
+						}
+
+						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].y;
+						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].y != valueCoordinate))
+						{
+							keyframeRDy = new Keyframe();
+							AssetCreateDataKeyFrameInitialize(ref keyframeRDy);
+							keyframeRDy.time = i * timePerFrame;
+							keyframeRDy.value = valueCoordinate;
+							animationCurveRDy.AddKey(keyframeRDy);
+						}
+
+						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x;
+						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x != valueCoordinate))
+						{
+							keyframeLDx = new Keyframe();
+							AssetCreateDataKeyFrameInitialize(ref keyframeLDx);
+							keyframeLDx.time = i * timePerFrame;
+							keyframeLDx.value = valueCoordinate;
+							animationCurveLDx.AddKey(keyframeLDx);
+						}
+
+						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y;
+						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y != valueCoordinate))
+						{
+							keyframeLDy = new Keyframe();
+							AssetCreateDataKeyFrameInitialize(ref keyframeLDy);
+							keyframeLDy.time = i * timePerFrame;
+							keyframeLDy.value = valueCoordinate;
+							animationCurveLDy.AddKey(keyframeLDy);
+						}
+
+						valuePrevious = value;
+					}
+
+				AssetCreateDataCurveSetVertexCorrection_End:;
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetLURU + ".x", animationCurveLUx);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetLURU + ".y", animationCurveLUy);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetLURU + ".z", animationCurveRUx);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetLURU + ".w", animationCurveRUy);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetRDLD + ".x", animationCurveRDx);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetRDLD + ".y", animationCurveRDy);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetRDLD + ".z", animationCurveLDx);
+					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetRDLD + ".w", animationCurveLDy);
 
 					return(true);
 				}
@@ -6837,6 +7543,24 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(false);
 				}
 				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				private const string NameShaderPropertyBlendParam = "_BlendParam";
+				private const string NameShaderPropertyPartsColorLU = "_PartsColor_LU";
+				private const string NameShaderPropertyPartsColorRU = "_PartsColor_RU";
+				private const string NameShaderPropertyPartsColorRD = "_PartsColor_RD";
+				private const string NameShaderPropertyPartsColorLD = "_PartsColor_LD";
+				private const string NameShaderPropertyPartsColorOpacity = "_PartsColor_Opacity";
+				private const string NameShaderPropertyCellPivotLocalScale = "_CellPivot_LocalScale";
+				private const string NameShaderPropertyCellRectangle = "_CellRectangle";
+				private const string NameShaderPropertyVertexOffsetLURU = "_VertexOffset_LURU";
+				private const string NameShaderPropertyVertexOffsetRDLD = "_VertexOffset_RDLD";
+
+				private const string NameScriptPropertyCell = "Cell";
+
+				private readonly static Color ColorDefault = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+				#endregion Enums & Constants
 			}
 			#endregion Classes, Structs & Interfaces
 		}

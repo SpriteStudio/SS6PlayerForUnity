@@ -78,9 +78,17 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Blend_LocalScale: {r: 3.01, g: 1, b: 1, a: 1}
+    - _BlendParam: {r: 0.01, g: 1, b: 1, a: 0}
+    - _CellPivot_LocalScale: {r: 0, g: 0, b: 1, a: 1}
+    - _CellRectangle: {r: 0, g: 0, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _PartsColor: {r: 1, g: 0.29803923, b: 0.18431373, a: 1}
+    - _PartsColor_LD: {r: 1, g: 1, b: 1, a: 0}
+    - _PartsColor_LU: {r: 1, g: 1, b: 1, a: 0}
+    - _PartsColor_Opacity: {r: 1, g: 1, b: 1, a: 1}
+    - _PartsColor_RD: {r: 1, g: 1, b: 1, a: 0}
+    - _PartsColor_RU: {r: 1, g: 1, b: 1, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _VertexOffset_LURU: {r: 0, g: 0, b: 0, a: 0}
+    - _VertexOffset_RDLD: {r: 0, g: 0, b: 0, a: 0}

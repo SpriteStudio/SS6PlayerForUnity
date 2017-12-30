@@ -1162,7 +1162,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							tableNameSprite[i] = string.Copy(nameCell);
 						}
-						informationSSCE.TableCell = null;	/* Purge WorkArea */
+//						informationSSCE.TableCell = null;	/* Purge WorkArea */
 					}
 					return(true);
 
