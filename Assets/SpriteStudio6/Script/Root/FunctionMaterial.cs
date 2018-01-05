@@ -462,7 +462,7 @@ public partial class Script_SpriteStudio6_Root
 					index = IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, (Library_SpriteStudio6.KindMasking)i);
 					index += indexTop;
 
-					material = tableMaterial[i];
+					material = tableMaterial[index];
 					if(true == flagMaterialNew)
 					{	/* Create Material */
 						if(null == material)

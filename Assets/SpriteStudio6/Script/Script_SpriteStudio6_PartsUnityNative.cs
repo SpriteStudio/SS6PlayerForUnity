@@ -24,7 +24,7 @@ public partial class Script_SpriteStudio6_PartsUnityNative :MonoBehaviour
 
 	private SpriteRenderer InstanceSpriteRenderer = null;
 	private SpriteMask InstanceSpriteMask = null;
-	private MaterialPropertyBlock PropertyMaterial = null;
+	private static MaterialPropertyBlock PropertyMaterial = null;
 	private static int IDMaterialRectangleCell = -1;
 	private static int IDMaterialPivotCell = -1;
 	#endregion Variables & Properties
