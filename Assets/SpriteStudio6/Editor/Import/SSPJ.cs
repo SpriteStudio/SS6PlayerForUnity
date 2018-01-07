@@ -1237,6 +1237,23 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
+					/* SSAEs (SkinnedMesh) */
+					int countParts;
+					for(int i=0; i<countSSAE; i++)
+					{
+						countParts = informationSSPJ.TableInformationSSAE[i].TableParts.Length;
+						for(int j=0; j<countParts; j++)
+						{
+							LibraryEditor_SpriteStudio6.Import.SSAE.ModeUnityNative.AssetNameDecideDataMesh(	ref setting,
+																												informationSSPJ,
+																												informationSSPJ.TableInformationSSAE[i],
+																												j,
+																												nameOutputAssetFolderBase,
+																												null
+																											);
+						}
+					}
+
 					/* Track existing assets */
 					Texture2D[] tableTextureNew = new Texture2D[countTexture];
 

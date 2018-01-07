@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.0.10";
+	public const string SignatureVersionAsset = "1.0.14";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -1593,6 +1593,18 @@ public static partial class Library_SpriteStudio6
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Screen"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Exclude"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Inverse")
+			};
+
+			public readonly static UnityEngine.Shader[] TableSkinnedMeshUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
+			{
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Mix"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Add"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Subtract"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Multiple"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/MultipleNA"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Screen"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Exclude"),
+				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Inverse")
 			};
 			#endregion Enums & Constants
 		}

@@ -1045,6 +1045,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	Library_SpriteStudio6.KindOperationBlend operationTarget
 																)
 				{
+#if false
 					const string messageLogPrefix = "Create Asset(Material-Animation)";
 
 					/* MEMO: "Unity-Native" mode does not have "MASK_PRE" and "MASK". */
@@ -1062,7 +1063,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
 					EditorUtility.SetDirty(material);
 					AssetDatabase.SaveAssets();
-
+#endif
 					return(true);
 
 //				AssetCreateMaterialAnimation_ErrorEnd:;

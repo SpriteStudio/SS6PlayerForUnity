@@ -12,7 +12,7 @@ float4 _PartsColor_RU;
 float4 _PartsColor_RD;
 float4 _PartsColor_LD;
 float4 _PartsColor_Opacity;	/* .x:LU / .y:RU / .z:RD / .w:LD */
-float4 _CellPivot_LocalScale;	/* .xy:Pivot.xy : .zw:LocalScale.xy */
+float4 _CellPivot_LocalScale;	/* .xy:Pivot.xy / .zw:LocalScale.xy */
 float4 _CellRectangle;	/* .xy:CellPositionXY / .zw:CellSizeXY */
 float4 _VertexOffset_LURU;	/* .xy:LU.xy / .zw:RD.xy */
 float4 _VertexOffset_RDLD;	/* .xy:RD.xy / .zw:LD.xy */
@@ -39,7 +39,8 @@ InputPS VS_main(InputVS input)
 	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 
 #if defined(UNITY_INSTANCING_ENABLED)
-	input.vertex.xy *= _Flip.xy;
+//	input.vertex.xy *= _Flip.xy;
+	vertex.xy *= _Flip.xy;
 #endif
 
 	/* Set Mapping-UV */
