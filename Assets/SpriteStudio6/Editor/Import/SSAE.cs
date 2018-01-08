@@ -3102,20 +3102,51 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							/* Set Order for "Draw" */
 							/* MEMO: In "Root"part, first-drawing part's index is stored. */
+#if false
 							TableParts[0].TableOrderDraw[frame] = (0 < countIndexPartsSort) ? listIndexPartsSort[0] : -1;
 							for(int i=1; i<countIndexPartsSort; i++)
 							{
 								TableParts[listIndexPartsSort[i - 1]].TableOrderDraw[frame] = listIndexPartsSort[i];
 							}
+#else
+							if(0 < countIndexPartsSort)
+							{
+								TableParts[0].TableOrderDraw[frame] = listIndexPartsSort[0];
+								for(int i=1; i<countIndexPartsSort; i++)
+								{
+									TableParts[listIndexPartsSort[i - 1]].TableOrderDraw[frame] = listIndexPartsSort[i];
+								}
+								TableParts[listIndexPartsSort[countIndexPartsSort - 1]].TableOrderDraw[frame] = -1;
+							}
+							else
+							{
+								TableParts[0].TableOrderDraw[frame] = -1;
+							}
+#endif
 
 							/* Set Order for "PreDraw" */
 							countIndexPartsSort = listIndexPartsSortPreDraw.Count;
+#if false
 							TableParts[0].TableOrderPreDraw[frame] = (0 < countIndexPartsSort) ? listIndexPartsSortPreDraw[0] : -1;
 							for(int i=1; i<countIndexPartsSort; i++)
 							{
 								TableParts[listIndexPartsSortPreDraw[i - 1]].TableOrderPreDraw[frame] = listIndexPartsSortPreDraw[i];
 							}
-
+#else
+							if(0 < countIndexPartsSort)
+							{
+								TableParts[0].TableOrderPreDraw[frame] = listIndexPartsSortPreDraw[0];
+								for(int i=1; i<countIndexPartsSort; i++)
+								{
+									TableParts[listIndexPartsSortPreDraw[i - 1]].TableOrderPreDraw[frame] = listIndexPartsSortPreDraw[i];
+								}
+								TableParts[listIndexPartsSortPreDraw[countIndexPartsSort - 1]].TableOrderPreDraw[frame] = -1;
+							}
+							else
+							{
+								TableParts[0].TableOrderPreDraw[frame] = -1;
+							}
+#endif
 							listIndexPartsSort.Clear();
 							listIndexPartsSortPreDraw.Clear();
 						}

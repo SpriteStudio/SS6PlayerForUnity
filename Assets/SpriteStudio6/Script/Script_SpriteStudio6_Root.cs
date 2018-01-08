@@ -361,6 +361,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 		/* Check Track-End */
 		int indexTrackSlave = -1;
+		bool flagDecodeNextForce = false;
 		bool flagStopAllTrack = true;
 		bool flagRequestPlayEndTrack;
 		int indexAnimation;
@@ -372,6 +373,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				indexAnimation = TableControlTrack[i].ArgumentContainer.IndexAnimation;
 
 				/* Check Transition-End */
+				flagDecodeNextForce = false;
 				if(true == TableControlTrack[i].StatusIsRequestTransitionEnd)
 				{
 					indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
@@ -391,6 +393,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 														TableControlTrack[i].ArgumentContainer.IndexAnimation
 													);
 						}
+						flagDecodeNextForce = true;
 					}
 				}
 
@@ -426,6 +429,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.DECODE_ATTRIBUTE
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.TRANSITION_START
 											);
+			if(true == flagDecodeNextForce)
+			{
+				TableControlTrack[i].Status |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.DECODE_ATTRIBUTE;
+			}
+
 			TableControlTrack[i].TimeElapseReplacement = 0.0f;
 #endif
 		}
@@ -779,6 +787,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			if(TableControlParts[i].IndexControlTrack == indexTrackMaskter)
 			{
 				TableControlParts[i].TRSMaster = TableControlParts[i].TRSSlave;
+				/* MEMO: Re-decode all attribute at next update. */
+				TableControlParts[i].CacheClearAttribute(false);
 			}
 		}
 
