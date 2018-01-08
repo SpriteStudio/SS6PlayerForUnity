@@ -1827,16 +1827,22 @@ public static partial class Library_SpriteStudio6
 						Status &= ~(FlagBitStatus.EFFECT_IGNORE_ATTRIBUTE | FlagBitStatus.EFFECT_PLAY_INDEPENDENT);
 					}
 
-					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
-					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
-
 					TRSMaster.CleanUp();
 					TRSSlave.CleanUp();
 
-					ParameterSprite.AnimationChange(flagClearCellApply);
+					CacheClearAttribute(flagClearCellApply);
+				}
+				internal void CacheClearAttribute(bool flagClearCellApply)
+				{
+					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
+					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
 
 					FramePreviousUpdateUnderControl = -1;
 					FramePreviousUpdateRadiusCollision = -1;
+					FrameKeyStatusAnimationFrame = -1;
+					StatusAnimationFrame.Flags = Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.INITIAL;
+
+					ParameterSprite.AnimationChange(flagClearCellApply);
 				}
 				private void DrawMesh(	Script_SpriteStudio6_Root instanceRoot,
 										int idParts,
