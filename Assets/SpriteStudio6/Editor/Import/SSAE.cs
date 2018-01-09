@@ -2042,8 +2042,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public string NameGameObjectAnimationControlUnityNative;
 				public Transform[] TableTransformBoneUnityNative;
 				public int[] TableIDPartsBoneUnityNative;
-				public int SortingOffsetMaxUnityNative;
-				public int SortingOffsetPartsDrawUnityNative;
+				public int CountDrawPartsMaxUnityNative;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -2085,8 +2084,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					NameGameObjectAnimationControlUnityNative = "";
 					TableTransformBoneUnityNative = null;
 					TableIDPartsBoneUnityNative = null;
-					SortingOffsetMaxUnityNative = 0;
-					SortingOffsetPartsDrawUnityNative = 0;
+					CountDrawPartsMaxUnityNative = 0;
 				}
 
 				public string FileNameGetFullPath()
@@ -6477,16 +6475,15 @@ public static partial class LibraryEditor_SpriteStudio6
 								keyframe = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframe);
 								keyframe.time = i * timePerFrame;
-								keyframe.value = value * informationSSAE.SortingOffsetPartsDrawUnityNative;
+								keyframe.value = value;
 
 								animationCurve.AddKey(keyframe);
 							}
 
 							valuePrevious = value;
-							value *= informationSSAE.SortingOffsetPartsDrawUnityNative;
-							if(value > informationSSAE.SortingOffsetMaxUnityNative)
+							if(value > informationSSAE.CountDrawPartsMaxUnityNative)
 							{
-								informationSSAE.SortingOffsetMaxUnityNative = value;
+								informationSSAE.CountDrawPartsMaxUnityNative = value;
 							}
 						}
 					}
@@ -8522,8 +8519,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							scriptRoot.TableTransformBonePoint[i] = informationSSAE.TableParts[indexBonePoint].GameObjectUnityNative.transform;
 						}
 
-						scriptRoot.SortingOffsetMax = informationSSAE.SortingOffsetMaxUnityNative;
-						scriptRoot.SortingOffsetPartsDraw = informationSSAE.SortingOffsetPartsDrawUnityNative;
+						scriptRoot.CountDrawPartsMax = informationSSAE.CountDrawPartsMaxUnityNative;
+						scriptRoot.SortingOffsetPartsDraw = 1;
 					}
 
 					/* Attach Animation Holder */

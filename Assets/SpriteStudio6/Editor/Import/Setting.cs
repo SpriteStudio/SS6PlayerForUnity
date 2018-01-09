@@ -985,7 +985,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagCreateHolderAsset;
 				public bool FlagInvisibleToHideAll;
 				public bool FlagTrackAssets;
-				public int SortingOrderOffset;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -995,8 +994,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagTextureReadable,
 									bool flagCreateHolderAsset,
 									bool flagInvisibleToHideAll,
-									bool flagTrackAssets,
-									int sortingOrderOffset
+									bool flagTrackAssets
 								)
 				{
 					FlagCreateControlGameObject = flagCreateControlGameObject;
@@ -1005,7 +1003,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagCreateHolderAsset = flagCreateHolderAsset;
 					FlagInvisibleToHideAll = flagInvisibleToHideAll;
 					FlagTrackAssets = flagTrackAssets;
-					SortingOrderOffset = sortingOrderOffset;
 				}
 
 				public void CleanUp()
@@ -1021,7 +1018,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagCreateHolderAsset = EditorPrefs.GetBool(PrefsKeyFlagCreateHolderAsset, Default.FlagCreateHolderAsset);
 					FlagInvisibleToHideAll = EditorPrefs.GetBool(PrefsKeyFlagInvisibleToHideAll, Default.FlagInvisibleToHideAll);
 					FlagTrackAssets = EditorPrefs.GetBool(PrefsKeyFlagTrackAssets, Default.FlagTrackAssets);
-					SortingOrderOffset = EditorPrefs.GetInt(PrefsKeySortingOrderOffset, Default.SortingOrderOffset);
 
 					return(true);
 				}
@@ -1034,14 +1030,13 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetBool(PrefsKeyFlagCreateHolderAsset, FlagCreateHolderAsset);
 					EditorPrefs.SetBool(PrefsKeyFlagInvisibleToHideAll, FlagInvisibleToHideAll);
 					EditorPrefs.SetBool(PrefsKeyFlagTrackAssets, FlagTrackAssets);
-					EditorPrefs.SetInt(PrefsKeySortingOrderOffset, SortingOrderOffset);
 
 					return(true);
 				}
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[7];
+					string[] textEncode = new string[6];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateControlGameObject);
@@ -1061,9 +1056,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrackAssets);
 					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAssets, textValue);
-
-					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.IntEncode(SortingOrderOffset);
-					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySortingOrderOffset, textValue);
 
 					return(textEncode);
 				}
@@ -1096,18 +1088,6 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagTrackAssets = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
-						case TextKeySortingOrderOffset:
-							SortingOrderOffset = LibraryEditor_SpriteStudio6.Utility.ExternalText.IntDecode(textArgument[1]);
-							if(0 >= SortingOrderOffset)
-							{
-								SortingOrderOffset = SortingOrderOffsetDefault;
-							}
-							if(SortingOrderOffsetMaximum < SortingOrderOffset)
-							{
-								SortingOrderOffset = SortingOrderOffsetMaximum;
-							}
-							return(true);
-
 						default:
 							break;
 					}
@@ -1123,7 +1103,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagCreateHolderAsset = "FlagCreateHolderAsset";
 				private const string KeyFlagInvisibleToHideAll = "FlagInvisibleToHideAll";
 				private const string KeyFlagTrackAssets = "FlagTrackAssets";
-				private const string KeyFlagSortingOrderOffset = "SortingOrderOffset";
 
 				private const string TextKeyPrefix = "Basic_";
 				private const string TextKeyFlagCreateControlGameObject = TextKeyPrefix + KeyFlagCreateControlGameObject;
@@ -1132,7 +1111,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyFlagCreateHolderAsset = TextKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string TextKeyFlagInvisibleToHideAll = TextKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string TextKeyFlagTrackAssets = TextKeyPrefix + KeyFlagTrackAssets;
-				private const string TextKeySortingOrderOffset = TextKeyPrefix + KeyFlagSortingOrderOffset;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagCreateControlGameObject = PrefsKeyPrefix + KeyFlagCreateControlGameObject;
@@ -1141,10 +1119,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagCreateHolderAsset = PrefsKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string PrefsKeyFlagInvisibleToHideAll = PrefsKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string PrefsKeyFlagTrackAssets = PrefsKeyPrefix + KeyFlagTrackAssets;
-				private const string PrefsKeySortingOrderOffset = PrefsKeyPrefix + KeyFlagSortingOrderOffset;
-
-				public static int SortingOrderOffsetDefault = 3;
-				public static int SortingOrderOffsetMaximum = 100;
 
 				private readonly static GroupBasic Default = new GroupBasic(
 					true,						/* FlagCreateControlGameObject */
@@ -1152,8 +1126,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					false,						/* FlagTextureReadable */
 					true,						/* FlagCreateHolderAsset */
 					false,						/* FlagInvisibleToHideAll */
-					true,						/* FlagTrackAssets */
-					SortingOrderOffsetDefault	/* SortingOrderOffset */
+					true						/* FlagTrackAssets */
 				);
 				#endregion Enums & Constants
 			}

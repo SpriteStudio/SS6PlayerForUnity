@@ -910,7 +910,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					/* Create Asset: Animation (AnimationClip) */
-					informationSSAE.SortingOffsetPartsDrawUnityNative = setting.Basic.SortingOrderOffset;
 					int countAnimation = informationSSAE.TableAnimation.Length;
 					for(int j=0; j<countAnimation; j++)
 					{
