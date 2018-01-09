@@ -490,6 +490,23 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("Add \"Asset-Holder\" script of used asset (AnimationClip etc).");
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
+
+				SettingImport.Basic.SortingOrderOffset = EditorGUILayout.IntField("Sorting-Order offset", SettingImport.Basic.SortingOrderOffset);
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Increasing \"Renderer.sortingOrder\" per drawing-part. (Min:1 to Max:"
+												+ LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.SortingOrderOffsetMaximum.ToString()
+										);
+				EditorGUILayout.LabelField("Do not set 0 or a negative value. (When set, return to initial value.)");
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+				if(0 >= SettingImport.Basic.SortingOrderOffset)
+				{
+					SettingImport.Basic.SortingOrderOffset = LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.SortingOrderOffsetDefault;
+				}
+				if(LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.SortingOrderOffsetMaximum < SettingImport.Basic.SortingOrderOffset)
+				{
+					SettingImport.Basic.SortingOrderOffset = LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.SortingOrderOffsetMaximum;
+				}
 				break;
 
 			default:

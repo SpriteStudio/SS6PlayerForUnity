@@ -910,6 +910,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					/* Create Asset: Animation (AnimationClip) */
+					informationSSAE.SortingOffsetPartsDrawUnityNative = setting.Basic.SortingOrderOffset;
 					int countAnimation = informationSSAE.TableAnimation.Length;
 					for(int j=0; j<countAnimation; j++)
 					{
@@ -1687,6 +1688,21 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 				}
 				return(false);
+			}
+
+			public static string IntEncode(int value)
+			{
+				return(value.ToString());
+			}
+
+			public static int IntDecode(string text)
+			{
+				int value;
+				if(false == int.TryParse(text, out value))
+				{
+					value = 0;
+				}
+				return(value);
 			}
 
 			public static string FloatEncode(float value)
