@@ -19,7 +19,7 @@ public partial class Script_SpriteStudio6_RootUnityNative : MonoBehaviour
 	#region Variables & Properties
 	public int SortingOrder;
 
-	public int SortingOffsetMax;
+	public int CountDrawPartsMax;
 	public int SortingOffsetPartsDraw;
 	public Transform[] TableTransformBonePoint;
 	#endregion Variables & Properties

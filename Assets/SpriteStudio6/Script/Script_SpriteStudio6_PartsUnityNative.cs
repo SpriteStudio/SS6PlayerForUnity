@@ -126,12 +126,18 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 
 		/* MEMO: "SpriteRenderer", "SpriteMask" and "SkinnedMeshRenderer" do not coexist. */
 		int sortingOrder = 0;
+		int sortingOffsetParts = 1;
 		if(null != PartsRoot)
 		{
 			sortingOrder = PartsRoot.SortingOrder;
+			sortingOffsetParts = PartsRoot.SortingOffsetPartsDraw;
+			if(0 >= sortingOffsetParts)
+			{
+				sortingOffsetParts = 1;
+			}
 		}
 		int sortingOrderBase = sortingOrder;
-		sortingOrder += (int)OrderInLayer;
+		sortingOrder += ((int)OrderInLayer) * sortingOffsetParts;
 
 		/* Sprite (SpriteRenderer) */
 		if(null != InstanceSpriteRenderer)
