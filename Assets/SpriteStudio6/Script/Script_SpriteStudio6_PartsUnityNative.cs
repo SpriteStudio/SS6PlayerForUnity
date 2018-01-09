@@ -17,6 +17,8 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
+	public Script_SpriteStudio6_RootUnityNative PartsRoot;
+
 	/* MEMO: Can not control except float from "AnimationClip". */
 	public float OrderInLayer;
 
@@ -123,14 +125,21 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		}
 
 		/* MEMO: "SpriteRenderer", "SpriteMask" and "SkinnedMeshRenderer" do not coexist. */
+		int sortingOrder = 0;
+		if(null != PartsRoot)
+		{
+			sortingOrder = PartsRoot.SortingOrder;
+		}
+		int sortingOrderBase = sortingOrder;
+		sortingOrder += (int)OrderInLayer;
 
 		/* Sprite (SpriteRenderer) */
 		if(null != InstanceSpriteRenderer)
 		{
-			if(OrderInLayerPrevious != OrderInLayer)
+			if(OrderInLayerPrevious != sortingOrder)
 			{
-				InstanceSpriteRenderer.sortingOrder = (int)OrderInLayer;
-				OrderInLayerPrevious = OrderInLayer;
+				InstanceSpriteRenderer.sortingOrder = sortingOrder;
+				OrderInLayerPrevious = sortingOrder;
 			}
 
 			if(CellPrevious != Cell)
@@ -167,10 +176,11 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		/* Mask (SpriteMask) */
 		if(null != InstanceSpriteMask)
 		{
-			if(OrderInLayerPrevious != OrderInLayer)
+			if(OrderInLayerPrevious != sortingOrder)
 			{
-				InstanceSpriteMask.frontSortingOrder = (int)OrderInLayer;
-				OrderInLayerPrevious = OrderInLayer;
+				InstanceSpriteMask.frontSortingOrder = sortingOrder;
+				InstanceSpriteMask.backSortingOrder = sortingOrderBase - PartsRoot.SortingOffsetPartsDraw;
+				OrderInLayerPrevious = sortingOrder;
 			}
 
 			if(null != Cell)
@@ -185,10 +195,10 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		/* Mesh (SkinnedMeshRenderer) */
 		if(null != InstanceSkinnedMeshRenderer)
 		{
-			if(OrderInLayerPrevious != OrderInLayer)
+			if(OrderInLayerPrevious != sortingOrder)
 			{
-				InstanceSkinnedMeshRenderer.sortingOrder = (int)OrderInLayer;
-				OrderInLayerPrevious = OrderInLayer;
+				InstanceSkinnedMeshRenderer.sortingOrder = sortingOrder;
+				OrderInLayerPrevious = sortingOrder;
 			}
 
 			if(CellMeshPrevious != CellMesh)
@@ -233,10 +243,10 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		/* Mesh (SkinnedMeshRenderer) */
 		if(null != InstanceMeshRenderer)
 		{
-			if(OrderInLayerPrevious != OrderInLayer)
+			if(OrderInLayerPrevious != sortingOrder)
 			{
-				InstanceMeshRenderer.sortingOrder = (int)OrderInLayer;
-				OrderInLayerPrevious = OrderInLayer;
+				InstanceMeshRenderer.sortingOrder = sortingOrder;
+				OrderInLayerPrevious = sortingOrder;
 			}
 
 			if(CellMeshPrevious != CellMesh)

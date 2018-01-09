@@ -162,8 +162,7 @@ public static partial class Library_SpriteStudio6
 			}
 
 			internal void Update(	Script_SpriteStudio6_RootEffect instanceRoot,
-									Library_SpriteStudio6.KindMasking masking,
-									ref Matrix4x4 matrixCorrection
+									Library_SpriteStudio6.KindMasking masking
 								)
 			{
 				/* Check WorkArea lost */
@@ -177,7 +176,7 @@ public static partial class Library_SpriteStudio6
 													Quaternion.Euler(0.0f, 0.0f, 0.0f),
 													instanceRoot.RateScaleLocal
 												);
-				MatrixRoot = matrixCorrection *instanceRoot.transform.localToWorldMatrix *  matrix;
+				MatrixRoot = instanceRoot.transform.localToWorldMatrix *  matrix;
 				CountParticleDraw = 0;
 
 				/* Emitters' Random-Seed Refresh */
@@ -971,9 +970,10 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Scale */
-					Scale.x = 
-					Scale.y = 1.0f;
-//					Scale.z = 1.0f;
+//					Scale.x = 
+//					Scale.y = 1.0f;
+////					Scale.z = 1.0f;
+					Scale = Vector2.one;
 					float scaleRate = 1.0f;
 
 					if(0 != (flagData & Library_SpriteStudio6.Data.Effect.Emitter.FlagBit.SCALE_START))
@@ -991,7 +991,8 @@ public static partial class Library_SpriteStudio6
 						scaleEnd.z = 1.0f;
 						scaleRateEnd = dataEmitter.ScaleRateEnd.Main + random.RandomFloat(dataEmitter.ScaleRateEnd.Sub);
 
-						Scale = Vector2.Lerp(Scale, scaleEnd, rateLife);
+//						Scale = Vector2.Lerp(Scale, scaleEnd, rateLife);
+						Scale = Vector3.Lerp(Scale, scaleEnd, rateLife);
 						scaleRate = Mathf.Lerp(scaleRate, scaleRateEnd, rateLife);
 					}
 					Scale *= scaleRate;

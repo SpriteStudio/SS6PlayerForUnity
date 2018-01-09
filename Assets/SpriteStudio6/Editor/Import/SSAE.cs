@@ -2042,6 +2042,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				public string NameGameObjectAnimationControlUnityNative;
 				public Transform[] TableTransformBoneUnityNative;
 				public int[] TableIDPartsBoneUnityNative;
+				public int SortingOffsetMaxUnityNative;
+				public int SortingOffsetPartsDrawUnityNative;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -2083,6 +2085,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					NameGameObjectAnimationControlUnityNative = "";
 					TableTransformBoneUnityNative = null;
 					TableIDPartsBoneUnityNative = null;
+					SortingOffsetMaxUnityNative = 0;
+					SortingOffsetPartsDrawUnityNative = 0;
 				}
 
 				public string FileNameGetFullPath()
@@ -2143,7 +2147,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					public SkinnedMeshRenderer SkinnedMeshRendererUnityNative;	/* Temporary */
 					public MeshRenderer MeshRendererUnityNative;	/* Temporary */
 					public MeshFilter MeshFilterUnityNative;	/* Temporary */
-					public Script_SpriteStudio6_PartsUnityNative ScriptPartsUnityNative;	/* Temporary */
+					public Script_SpriteStudio6_RootUnityNative ScriptRootUnityNative;
+					public Script_SpriteStudio6_PartsUnityNative ScriptPartsUnityNative;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -2182,6 +2187,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						SkinnedMeshRendererUnityNative = null;
 						MeshRendererUnityNative = null;
 						MeshFilterUnityNative = null;
+						ScriptRootUnityNative = null;
 						ScriptPartsUnityNative = null;
 					}
 					#endregion Functions
@@ -5052,7 +5058,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																	i,
 																	indexAnimation,
 																	frameStart, frameEnd, timePerFrame,
-																	informationSSPJ
+																	informationSSPJ,
+																	informationSSAE
 																);
 								break;
 
@@ -5112,7 +5119,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																	i,
 																	indexAnimation,
 																	frameStart, frameEnd, timePerFrame,
-																	informationSSPJ
+																	informationSSPJ,
+																	informationSSAE
 																);
 								break;
 
@@ -5209,7 +5217,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																	i,
 																	indexAnimation,
 																	frameStart, frameEnd, timePerFrame,
-																	informationSSPJ
+																	informationSSPJ,
+																	informationSSAE
 																);
 								break;
 						}
@@ -6412,7 +6421,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		float timePerFrame,
-																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
+																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																		LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
 																	)
 				{
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation.Parts informationAnimationParts = null;
@@ -6467,12 +6477,17 @@ public static partial class LibraryEditor_SpriteStudio6
 								keyframe = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframe);
 								keyframe.time = i * timePerFrame;
-								keyframe.value = value * 10;
+								keyframe.value = value * informationSSAE.SortingOffsetPartsDrawUnityNative;
 
 								animationCurve.AddKey(keyframe);
 							}
 
 							valuePrevious = value;
+							value *= informationSSAE.SortingOffsetPartsDrawUnityNative;
+							if(value > informationSSAE.SortingOffsetMaxUnityNative)
+							{
+								informationSSAE.SortingOffsetMaxUnityNative = value;
+							}
 						}
 					}
 
@@ -7787,6 +7802,12 @@ public static partial class LibraryEditor_SpriteStudio6
 					if(0 <= idPartsParent)
 					{
 						gameObjectParent = informationSSAE.TableParts[idPartsParent].GameObjectUnityNative;
+						informationParts.ScriptRootUnityNative = informationSSAE.TableParts[idPartsParent].ScriptRootUnityNative;
+					}
+					else
+					{
+						gameObjectParent = null;
+						informationParts.ScriptRootUnityNative = null;
 					}
 
 					switch(informationParts.Data.Feature)
@@ -7880,6 +7901,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						goto ConvertPartsAnimationGameObjectCreate_ErrorEnd;
 					}
 
+					informationParts.ScriptRootUnityNative = informationParts.GameObjectUnityNative.AddComponent<Script_SpriteStudio6_RootUnityNative>();
+					if(null == informationParts.ScriptRootUnityNative)
+					{
+						goto ConvertPartsAnimationGameObjectCreate_ErrorEnd;
+					}
+
 					informationParts.GameObjectUnityNative.SetActive(true);
 					goto ConvertPartsAnimationGameObjectCreate_End;
 
@@ -7951,6 +7978,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						goto ConvertPartsAnimationGameObjectCreate_ErrorEnd;
 					}
+					informationParts.ScriptPartsUnityNative.PartsRoot = informationParts.ScriptRootUnityNative;
 //					informationParts.ScriptPartsUnityNative.Cell = 
 					informationParts.ScriptPartsUnityNative.CellMesh = null;	/* Disuse */
 					informationParts.ScriptPartsUnityNative.TextureMesh = null;	/* Disuse */
@@ -7971,13 +7999,14 @@ public static partial class LibraryEditor_SpriteStudio6
 						goto ConvertPartsAnimationGameObjectCreate_ErrorEnd;
 					}
 					informationParts.SpriteMaskUnityNative.isCustomRangeActive = true;
-					informationParts.SpriteMaskUnityNative.backSortingOrder = -10;
+//					informationParts.SpriteMaskUnityNative.backSortingOrder = -1;
 
 					informationParts.ScriptPartsUnityNative = informationParts.GameObjectUnityNative.AddComponent<Script_SpriteStudio6_PartsUnityNative>();
 					if(null == informationParts.ScriptPartsUnityNative)
 					{
 						goto ConvertPartsAnimationGameObjectCreate_ErrorEnd;
 					}
+					informationParts.ScriptPartsUnityNative.PartsRoot = informationParts.ScriptRootUnityNative;
 //					informationParts.ScriptPartsUnityNative.Cell = 
 					informationParts.ScriptPartsUnityNative.CellMesh = null;	/* Disuse */
 					informationParts.ScriptPartsUnityNative.TextureMesh = null;	/* Disuse */
@@ -8038,6 +8067,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						goto ConvertPartsAnimationGameObjectCreate_ErrorEnd;
 					}
+					informationParts.ScriptPartsUnityNative.PartsRoot = informationParts.ScriptRootUnityNative;
 					informationParts.ScriptPartsUnityNative.Cell = null;	/* Disuse */
 //					informationParts.ScriptPartsUnityNative.CellMesh = 
 //					informationParts.ScriptPartsUnityNative.TextureMesh = 
@@ -8471,6 +8501,29 @@ public static partial class LibraryEditor_SpriteStudio6
 							LogError(messageLogPrefix, "Failure to create Prefab", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 							goto AssetCreatePrefab_ErrorEnd;
 						}
+					}
+
+					/* Set Root Information */
+					Script_SpriteStudio6_RootUnityNative scriptRoot = gameObjectRoot.GetComponent<Script_SpriteStudio6_RootUnityNative>();
+					if(null != scriptRoot)
+					{
+						/* Set BonePoint Transform */
+						int countBonePoint = informationSSAE.CatalogParts.ListIDPartsBonePoint.Count;
+						scriptRoot.TableTransformBonePoint = new Transform[countBonePoint];
+						if(null == scriptRoot.TableTransformBonePoint)
+						{
+							LogError(messageLogPrefix, "Not Enough Memory (Bone-Point Table)", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+							goto AssetCreatePrefab_ErrorEnd;
+						}
+						int indexBonePoint;
+						for(int i=0; i<countBonePoint; i++)
+						{
+							indexBonePoint = informationSSAE.CatalogParts.ListIDPartsBonePoint[i];
+							scriptRoot.TableTransformBonePoint[i] = informationSSAE.TableParts[indexBonePoint].GameObjectUnityNative.transform;
+						}
+
+						scriptRoot.SortingOffsetMax = informationSSAE.SortingOffsetMaxUnityNative;
+						scriptRoot.SortingOffsetPartsDraw = informationSSAE.SortingOffsetPartsDrawUnityNative;
 					}
 
 					/* Attach Animation Holder */
