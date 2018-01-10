@@ -220,7 +220,6 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
 			if(true == RendererBootUpDraw(false))
 			{
-				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
 				float timeElapsed = FunctionExecTimeElapse(this);
 #if UNITY_EDITOR
 				/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
@@ -231,16 +230,14 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 #endif
 				LateUpdateMain(	timeElapsed,
 								false,
-								Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
-								ref matrixInverseMeshRenderer
+								Library_SpriteStudio6.KindMasking.FOLLOW_DATA
 							);
 			}
 		}
 	}
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
-									Library_SpriteStudio6.KindMasking masking,
-									ref Matrix4x4 matrixCorrection
+									Library_SpriteStudio6.KindMasking masking
 								)
 	{
 		/* MEMO: "flagForceMasking" is ignored when "flagValidMaskSetting" is true. */
@@ -282,7 +279,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		int countControlParts = TableControlParts.Length;
 		for(int i=0; i<countControlParts; i++)
 		{
-			TableControlParts[i].Update(this, i, ref matrixCorrection);
+			TableControlParts[i].Update(this, i);
 		}
 
 		/* Recover Draw-Cluster & Component for Rendering */
@@ -319,8 +316,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				TableControlParts[idPartsDrawNext].PreDraw(	this,
 															idPartsDrawNext,
 															flagHide,
-															masking,
-															ref matrixCorrection
+															masking
 														);
 				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextPreDraw;
 			}
@@ -335,8 +331,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			TableControlParts[idPartsDrawNext].Draw(	this,
 														idPartsDrawNext,
 														flagHide,
-														masking,
-														ref matrixCorrection
+														masking
 													);
 			idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
 		}
@@ -361,6 +356,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 		/* Check Track-End */
 		int indexTrackSlave = -1;
+		bool flagDecodeNextForce = false;
 		bool flagStopAllTrack = true;
 		bool flagRequestPlayEndTrack;
 		int indexAnimation;
@@ -372,6 +368,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				indexAnimation = TableControlTrack[i].ArgumentContainer.IndexAnimation;
 
 				/* Check Transition-End */
+				flagDecodeNextForce = false;
 				if(true == TableControlTrack[i].StatusIsRequestTransitionEnd)
 				{
 					indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
@@ -391,6 +388,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 														TableControlTrack[i].ArgumentContainer.IndexAnimation
 													);
 						}
+						flagDecodeNextForce = true;
 					}
 				}
 
@@ -426,6 +424,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.DECODE_ATTRIBUTE
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.TRANSITION_START
 											);
+			if(true == flagDecodeNextForce)
+			{
+				TableControlTrack[i].Status |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.DECODE_ATTRIBUTE;
+			}
+
 			TableControlTrack[i].TimeElapseReplacement = 0.0f;
 #endif
 		}
@@ -779,6 +782,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			if(TableControlParts[i].IndexControlTrack == indexTrackMaskter)
 			{
 				TableControlParts[i].TRSMaster = TableControlParts[i].TRSSlave;
+				/* MEMO: Re-decode all attribute at next update. */
+				TableControlParts[i].CacheClearAttribute(false);
 			}
 		}
 

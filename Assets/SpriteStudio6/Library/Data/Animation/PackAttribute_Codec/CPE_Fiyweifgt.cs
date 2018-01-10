@@ -219,7 +219,7 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if(frame == outFrameKey)
+							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
@@ -283,7 +283,7 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if(frame == outFrameKey)
+							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
@@ -347,7 +347,7 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if(frame == outFrameKey)
+							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
@@ -411,7 +411,7 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if(frame == outFrameKey)
+							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
@@ -475,7 +475,7 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if(frame == outFrameKey)
+							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
@@ -539,7 +539,7 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if(frame == outFrameKey)
+							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}

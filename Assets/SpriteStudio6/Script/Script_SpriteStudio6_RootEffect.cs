@@ -205,7 +205,6 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
 			if(true == RendererBootUpDraw(false))
 			{
-				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
 				float timeElapsed = FunctionExecTimeElapse(this);
 #if UNITY_EDITOR
 				/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
@@ -216,16 +215,14 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 #endif
 				LateUpdateMain(	timeElapsed,
 								false,
-								Library_SpriteStudio6.KindMasking.THROUGH,	/* FOLLOW_DATA */
-								ref matrixInverseMeshRenderer
+								Library_SpriteStudio6.KindMasking.THROUGH	/* FOLLOW_DATA */
 							);
 			}
 		}
 	}
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
-									Library_SpriteStudio6.KindMasking masking,
-									ref Matrix4x4 matrixCorrection
+									Library_SpriteStudio6.KindMasking masking
 								)
 	{
 		if(0 == (Status & FlagBitStatus.VALID))
@@ -291,7 +288,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Update & Draw Effect */
 		if(false == flagHide)
 		{
-			ControlEffect.Update(this, masking, ref matrixCorrection);
+			ControlEffect.Update(this, masking);
 		}
 
 		/* Mesh Combine & Set to Renderer */

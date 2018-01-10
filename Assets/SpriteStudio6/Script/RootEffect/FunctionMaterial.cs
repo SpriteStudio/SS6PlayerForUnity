@@ -299,7 +299,7 @@ public partial class Script_SpriteStudio6_RootEffect
 					index = IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, (Library_SpriteStudio6.KindMasking)i);
 					index += indexTop;
 
-					material = tableMaterial[i];
+					material = tableMaterial[index];
 					if(true == flagMaterialNew)
 					{	/* Create Material */
 						if(null == material)

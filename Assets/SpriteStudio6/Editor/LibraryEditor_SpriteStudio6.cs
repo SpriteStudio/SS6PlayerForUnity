@@ -290,6 +290,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							)
 						{	/* Not overwrite */
 							flagCreateAssetData = false;
+							informationTexture.PrefabTexture.FlagUpdate[0] = false;
 						}
 					}
 					if(true == flagCreateAssetData)
@@ -346,6 +347,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									)
 								{	/* Not overwrite */
 									flagCreateAssetData = false;
+									informationTexture.MaterialAnimationSS6PU.FlagUpdate[indexMaterial] = false;
 								}
 							}
 
@@ -406,6 +408,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									)
 								{	/* Not overwrite */
 									flagCreateAssetData = false;
+									informationTexture.MaterialEffectSS6PU.FlagUpdate[indexMaterial] = false;
 								}
 							}
 
@@ -488,6 +491,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						)
 					{	/* Not overwrite */
 						flagCreateAssetData = false;
+						informationSSPJ.DataCellMapSS6PU.FlagUpdate[0] = false;
 					}
 				}
 				if(true == flagCreateAssetData)
@@ -551,6 +555,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							)
 						{	/* Not overwrite */
 							flagCreateAssetData = false;
+							informationSSEE.DataEffectSS6PU.FlagUpdate[0] = false;
 						}
 					}
 					if(true == flagCreateAssetData)
@@ -588,6 +593,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							)
 						{	/* Not overwrite */
 							flagCreateAssetData = false;
+							informationSSEE.PrefabEffectSS6PU.FlagUpdate[0] = false;
 						}
 					}
 					if(true == flagCreateAssetData)
@@ -655,6 +661,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							)
 						{	/* Not overwrite */
 							flagCreateAssetData = false;
+							informationSSAE.DataAnimationSS6PU.FlagUpdate[0] = false;
 						}
 					}
 					if(true == flagCreateAssetData)
@@ -705,6 +712,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							)
 						{	/* Not overwrite */
 							flagCreateAssetData = false;
+							informationSSAE.PrefabAnimationSS6PU.FlagUpdate[0] = false;
 						}
 					}
 					if(true == flagCreateAssetData)
@@ -852,6 +860,55 @@ public static partial class LibraryEditor_SpriteStudio6
 						goto ExecUnityNative_ErrorEnd;
 					}
 
+					/* Convert SSAEs: Create Bone-Information */
+					SSAE.ModeUnityNative.CreateBoneInformation(ref setting, informationSSPJ, informationSSAE);
+
+					/* Create Asset: Mesh-Bind (Skinned-Mesh) */
+					int countParts = informationSSAE.TableParts.Length;
+					for(int j=0; j<countParts; j++)
+					{
+						flagCreateAssetData = true;
+						if(	(false == string.IsNullOrEmpty(informationSSAE.TableParts[j].DataMeshSkinnedUnityNative.TableName[0]))
+							&& (null == informationSSAE.TableParts[j].DataMeshSkinnedUnityNative.TableData[0])
+							)
+						{	/* New */
+							/* Create Output Asset-Folder */
+							LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																				informationSSAE.TableParts[j].DataMeshSkinnedUnityNative.TableName[0]
+																			);
+							if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+							{
+								LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+								goto ExecUnityNative_ErrorEnd;
+							}
+						}
+						else
+						{	/* Exist */
+							if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagDataAnimation,
+																														informationSSAE.TableParts[j].DataMeshSkinnedUnityNative.TableName[0],
+																														"Data Skinned-Mesh"
+																													)
+								)
+							{	/* Not overwrite */
+								flagCreateAssetData = false;
+								informationSSAE.TableParts[j].DataMeshSkinnedUnityNative.FlagUpdate[0] = false;
+							}
+						}
+						if(true == flagCreateAssetData)
+						{
+							/* MEMO: In this process only Bind-Pose are not determined. */
+							/*       Bind-Pose are determined at runtime.               */
+							/* MEMO: Since processing to optimize bones used in this function to the minimum is performed, */
+							/*       set each "Mesh" part's "Script_SpriteStudio6_PartsUnityNative.TableTransformBone".    */
+							/*       In addition, replace component for mesh parts not assigned bones with                 */
+							/*        "MeshFilter & MeshRendere" within this function.                                     */
+							if(false == SSAE.ModeUnityNative.AssetCreateDataMesh(ref setting, informationSSPJ, informationSSAE, j))
+							{
+								goto ExecUnityNative_ErrorEnd;
+							}
+						}
+					}
+
 					/* Create Asset: Animation (AnimationClip) */
 					int countAnimation = informationSSAE.TableAnimation.Length;
 					for(int j=0; j<countAnimation; j++)
@@ -878,6 +935,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								)
 							{	/* Not overwrite */
 								flagCreateAssetData = false;
+								informationSSAE.DataAnimationUnityNative.FlagUpdate[j] = false;
 							}
 						}
 						if(true == flagCreateAssetData)
@@ -912,6 +970,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							)
 						{	/* Not overwrite */
 							flagCreateAssetData = false;
+							informationSSAE.PrefabAnimationUnityNative.FlagUpdate[0] = false;
 						}
 					}
 					if(true == flagCreateAssetData)
@@ -966,6 +1025,7 @@ public static partial class LibraryEditor_SpriteStudio6
 		}
 
 		public const string NameExtentionMaterial = ".mat";
+		public const string NameExtentionMesh = ".asset";
 		public const string NameExtentionScriptableObject = ".asset";
 		public const string NameExtensionPrefab = ".prefab";
 
@@ -980,6 +1040,7 @@ public static partial class LibraryEditor_SpriteStudio6
 		{
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
+			public bool[] FlagUpdate;
 			public string[] TableName;
 			public _Type[] TableData;
 			#endregion Variables & Properties
@@ -988,16 +1049,19 @@ public static partial class LibraryEditor_SpriteStudio6
 			#region Functions
 			public void CleanUp()
 			{
+				FlagUpdate = null;
 				TableName = null;
 				TableData = null;
 			}
 
 			public void BootUp(int count)
 			{
+				FlagUpdate = new bool[count];
 				TableName = new string[count];
 				TableData = new _Type[count];
 				for(int i=0; i<count; i++)
 				{
+					FlagUpdate[i] = true;
 					TableName[i] = null;
 					TableData[i] = null;
 				}
@@ -1623,6 +1687,21 @@ public static partial class LibraryEditor_SpriteStudio6
 						break;
 				}
 				return(false);
+			}
+
+			public static string IntEncode(int value)
+			{
+				return(value.ToString());
+			}
+
+			public static int IntDecode(string text)
+			{
+				int value;
+				if(false == int.TryParse(text, out value))
+				{
+					value = 0;
+				}
+				return(value);
 			}
 
 			public static string FloatEncode(float value)

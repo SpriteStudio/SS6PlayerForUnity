@@ -228,6 +228,7 @@ public static partial class Library_SpriteStudio6
 
 						CLEAR = 0x00000000,
 						MASK = (VALID | HIDE | FLIP_X | FLIP_Y | FLIP_TEXTURE_X | FLIP_TEXTURE_Y | ID_PARTS_NEXTPREDRAW | ID_PARTS_NEXTDRAW),
+						INITIAL = (VALID | ID_PARTS_NEXTDRAW | ID_PARTS_NEXTPREDRAW),
 					}
 
 					public enum ShiftFlagBit

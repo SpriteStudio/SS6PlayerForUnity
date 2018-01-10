@@ -90,7 +90,12 @@ public static partial class Library_SpriteStudio6
 
 				public float RandomFloat(float valueMax)
 				{
-					return((float)(genrand_uint32() * (valueMax / 4294967296.0f)));	/* 8388607.0f */
+//					return((float)(genrand_uint32() * (valueMax / 4294967296.0f)));	/* 8388607.0f */
+//					return((float)(genrand_uint32() * (valueMax * (1.0f/ 4294967296.0f))));	/* 8388607.0f */
+					SeedNow = SeedNow ^ (SeedNow << 13);
+					SeedNow = SeedNow ^ (SeedNow >> 17);
+					SeedNow = SeedNow ^ (SeedNow << 15);
+					return((float)SeedNow * (valueMax * (1.0f/ 4294967296.0f)));
 				}
 
 				public int RandomN(int valueMax)

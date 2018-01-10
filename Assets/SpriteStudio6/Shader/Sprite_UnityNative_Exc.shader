@@ -38,8 +38,16 @@ Shader "Custom/SpriteStudio6/UnityNative/Sprite/Exclude"
 		[PerRendererData] _AlphaTex("External Alpha", 2D) = "white" {}
 		[PerRendererData] _EnableExternalAlpha("Enable External Alpha", Float) = 0
 
-		[HideInInspector] _Blend_LocalScale(" BlendParam_LocalScale", Vector) = (0, 1, 1, 1)
-		[HideInInspector] _PartsColor("Parts Color", Color) = (1, 1, 1, 0)
+		[HideInInspector] _BlendParam("BlendParam", Vector) = (0.01, 1, 0, 0)
+		[HideInInspector] _PartsColor_LU("Parts Color LU", Color) = (1, 1, 1, 0)
+		[HideInInspector] _PartsColor_RU("Parts Color RU", Color) = (1, 1, 1, 0)
+		[HideInInspector] _PartsColor_RD("Parts Color RD", Color) = (1, 1, 1, 0)
+		[HideInInspector] _PartsColor_LD("Parts Color LD", Color) = (1, 1, 1, 0)
+		[HideInInspector] _PartsColor_Opacity("Parts Color Opacity", Vector) = (1, 1, 1, 1)
+		[HideInInspector] _CellPivot_LocalScale("Cell Pivot Local Scale", Vector) = (0, 0, 1, 1)
+		[HideInInspector] _CellRectangle("Cell Rectangle", Vector) = (0, 0, 1, 1)
+		[HideInInspector] _VertexOffset_LURU("VertexOffset LURU", Vector) = (0, 0, 0, 0)
+		[HideInInspector] _VertexOffset_RDLD("VertexOffset RDLD", Vector) = (0, 0, 0, 0)
 	}
 
 	SubShader
