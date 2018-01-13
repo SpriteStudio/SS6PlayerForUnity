@@ -132,6 +132,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 		/* Reset Animation */
 		if(true == flagUpdate)
 		{
+			InstanceRoot.AnimationStop(-1);
 			InstanceRoot.AnimationPlayInitial();
 		}
 	}
