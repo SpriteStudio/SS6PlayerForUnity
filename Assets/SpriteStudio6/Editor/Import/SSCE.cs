@@ -389,6 +389,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						importer.alphaIsTransparency = true;
 						importer.npotScale = TextureImporterNPOTScale.None;
 						importer.textureType = TextureImporterType.Sprite;
+						importer.spriteImportMode = SpriteImportMode.Multiple;
+						importer.spritePackingTag = LibraryEditor_SpriteStudio6.Import.NameTagSpritePackerTexture;
 
 						switch(informationTexture.Wrap)
 						{
@@ -1233,6 +1235,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					TextureImporter importer = TextureImporter.GetAtPath(informationTexture.PrefabTexture.TableName[0]) as TextureImporter;
 					importer.spriteImportMode = SpriteImportMode.Multiple;
+					importer.spritePackingTag = LibraryEditor_SpriteStudio6.Import.NameTagSpritePackerTexture;
 					importer.spritesheet = informationTexture.ListSpriteMetaDataUnityNative.ToArray();
 					importer.spritePixelsPerUnit = 1.0f;
 					bool flagEnableRead = false;
