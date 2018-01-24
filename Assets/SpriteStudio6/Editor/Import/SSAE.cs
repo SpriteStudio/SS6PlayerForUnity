@@ -2141,7 +2141,12 @@ public static partial class LibraryEditor_SpriteStudio6
 					public string NameGameObjectUnityNative;
 					public GameObject GameObjectUnityNative;	/* Temporary */
 					public SpriteRenderer SpriteRendererUnityNative;	/* Temporary */
+#if UNITY_2017_1_OR_NEWER
 					public SpriteMask SpriteMaskUnityNative;	/* Temporary */
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 					public SkinnedMeshRenderer SkinnedMeshRendererUnityNative;	/* Temporary */
 					public MeshRenderer MeshRendererUnityNative;	/* Temporary */
 					public MeshFilter MeshFilterUnityNative;	/* Temporary */
@@ -2181,7 +2186,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						NameGameObjectUnityNative = "";
 						GameObjectUnityNative = null;
 						SpriteRendererUnityNative = null;
+#if UNITY_2017_1_OR_NEWER
 						SpriteMaskUnityNative = null;
+#else
+						/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+						/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 						SkinnedMeshRendererUnityNative = null;
 						MeshRendererUnityNative = null;
 						MeshFilterUnityNative = null;
@@ -4900,7 +4910,12 @@ public static partial class LibraryEditor_SpriteStudio6
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation.Parts informationAnimationParts = null;
 					GameObject gameObjectParts = null;
 					SpriteRenderer spriteRendererParts = null;
+#if UNITY_2017_1_OR_NEWER
 					SpriteMask spriteMaskParts = null;
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 					SkinnedMeshRenderer skinnedMeshRendererParts = null;
 					MeshRenderer meshRendererParts = null;
 					Script_SpriteStudio6_PartsUnityNative scriptParts = null;
@@ -4917,7 +4932,12 @@ public static partial class LibraryEditor_SpriteStudio6
 							continue;
 						}
 						spriteRendererParts = informationSSAE.TableParts[i].SpriteRendererUnityNative;
+#if UNITY_2017_1_OR_NEWER
 						spriteMaskParts = informationSSAE.TableParts[i].SpriteMaskUnityNative;
+#else
+						/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+						/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 						skinnedMeshRendererParts = informationSSAE.TableParts[i].SkinnedMeshRendererUnityNative;
 						meshRendererParts = informationSSAE.TableParts[i].MeshRendererUnityNative;
 						scriptParts = informationSSAE.TableParts[i].ScriptPartsUnityNative;
@@ -5067,6 +5087,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+#if UNITY_2017_1_OR_NEWER
 								if(null != spriteMaskParts)
 								{
 									/* MEMO: Sprite can not set to SpriteMask ? */
@@ -5120,6 +5141,10 @@ public static partial class LibraryEditor_SpriteStudio6
 																	informationSSPJ,
 																	informationSSAE
 																);
+#else
+								/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+								/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -6209,6 +6234,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
+#if UNITY_2017_1_OR_NEWER
 				private static bool AssetCreateDataCurveSetCellMask(	AnimationClip animationClip,
 																		string namePathGameObject,
 																		SpriteMask spriteMask,
@@ -6292,6 +6318,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
+#else
+				/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+				/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 				private static bool AssetCreateDataCurveSetCellSkinnedMesh(	AnimationClip animationClip,
 																			string namePathGameObject,
 																			System.Type type,
@@ -7462,7 +7492,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
-
+#if UNITY_2017_1_OR_NEWER
 				private static bool AssetCreateDataCurveSetPowerMask(	AnimationClip animationClip,
 																		string namePathGameObject,
 																		SpriteMask spriteMask,
@@ -7539,6 +7569,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
+#else
+				/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+				/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 
 				private static bool AssetCreateDataCurveSetVertexCorrection(	AnimationClip animationClip,
 																				string namePathGameObject,
@@ -7792,7 +7826,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					informationParts.GameObjectUnityNative = null;
 					informationParts.SpriteRendererUnityNative = null;
+#if UNITY_2017_1_OR_NEWER
 					informationParts.SpriteMaskUnityNative = null;
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 
 					GameObject gameObjectParent = null;
 					int idPartsParent = informationParts.Data.IDParent;
@@ -7854,10 +7893,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						informationParts.ScriptPartsUnityNative = null;
 					}
+#if UNITY_2017_1_OR_NEWER
 					if(null != informationParts.SpriteMaskUnityNative)
 					{
 						informationParts.SpriteMaskUnityNative = null;
 					}
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 					if(null != informationParts.SpriteRendererUnityNative)
 					{
 						informationParts.SpriteRendererUnityNative = null;
@@ -7961,6 +8005,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeInv;
 							break;
 					}
+#if UNITY_2017_1_OR_NEWER
 					if(true == informationParts.FlagMasking)
 					{
 						informationParts.SpriteRendererUnityNative.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
@@ -7969,6 +8014,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						informationParts.SpriteRendererUnityNative.maskInteraction = SpriteMaskInteraction.None;
 					}
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 
 					informationParts.ScriptPartsUnityNative = informationParts.GameObjectUnityNative.AddComponent<Script_SpriteStudio6_PartsUnityNative>();
 					if(null == informationParts.ScriptPartsUnityNative)
@@ -7984,6 +8033,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					goto ConvertPartsAnimationGameObjectCreate_End;
 
 				ConvertPartsAnimationGameObjectCreate_MaskCreate:;
+#if UNITY_2017_1_OR_NEWER
 					informationParts.GameObjectUnityNative = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(name, false, gameObjectParent);
 					if(null == informationParts.GameObjectUnityNative)
 					{
@@ -8010,6 +8060,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					informationParts.GameObjectUnityNative.SetActive(true);
 					goto ConvertPartsAnimationGameObjectCreate_End;
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+					goto ConvertPartsAnimationGameObjectCreate_NULLCreate;
+#endif
 
 				ConvertPartsAnimationGameObjectCreate_Mesh:;
 					informationParts.GameObjectUnityNative = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(name, false, gameObjectParent);
@@ -8552,7 +8607,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(null != scriptParts)
 						{
 							scriptParts.InstanceSpriteRenderer = informationParts.SpriteRendererUnityNative;
+#if UNITY_2017_1_OR_NEWER
 							scriptParts.InstanceSpriteMask = informationParts.SpriteMaskUnityNative;
+#else
+							/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+							/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 							scriptParts.InstanceSkinnedMeshRenderer = informationParts.SkinnedMeshRendererUnityNative;
 							scriptParts.InstanceMeshRenderer = informationParts.MeshRendererUnityNative;
 							scriptParts.InstanceMeshFilter = informationParts.MeshFilterUnityNative;

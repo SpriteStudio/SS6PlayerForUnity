@@ -6,6 +6,7 @@
 //
 sampler2D _MainTex;
 sampler2D _AlphaTex;
+// float _EnableExternalAlpha;
 
 #if defined(SV_Target)
 fixed4 PS_main(InputPS input) : SV_Target

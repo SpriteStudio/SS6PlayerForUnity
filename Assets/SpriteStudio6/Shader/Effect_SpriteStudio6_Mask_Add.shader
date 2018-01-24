@@ -9,6 +9,8 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"
 	Properties
 	{
 		_MainTex("Base (RGB)", 2D) = "white" {}
+		[PerRendererData] _AlphaTex("External Alpha", 2D) = "white" {}
+		[PerRendererData] _EnableExternalAlpha("Enable External Alpha", Float) = 0
 	}
 
 	SubShader
@@ -39,6 +41,8 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"
 			CGPROGRAM
 			#pragma vertex VS_main
 			#pragma fragment PS_main
+
+			#pragma multi_compile _ ETC1_EXTERNAL_ALPHA
 
 			#include "UnityCG.cginc"
 

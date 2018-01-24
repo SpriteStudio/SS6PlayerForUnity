@@ -1029,6 +1029,8 @@ public static partial class LibraryEditor_SpriteStudio6
 		public const string NameExtentionScriptableObject = ".asset";
 		public const string NameExtensionPrefab = ".prefab";
 
+		public const string NameTagSpritePackerTexture = "SpriteStudio";
+
 		public const ReplacePrefabOptions OptionPrefabReplace = ReplacePrefabOptions.ReplaceNameBased;
 
 		#endregion Enums & Constants
