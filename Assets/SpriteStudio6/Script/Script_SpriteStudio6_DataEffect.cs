@@ -121,8 +121,8 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	}
 	#endregion Enums & Constants
 
-	/* ----------------------------------------------- Deligates */
-	#region Deligates
+	/* ----------------------------------------------- Delegates */
+	#region Delegates
 	private delegate void FunctionSignatureBootUpFunction();
-	#endregion Deligates
+	#endregion Delegates
 }

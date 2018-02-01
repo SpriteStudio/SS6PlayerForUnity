@@ -31,6 +31,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	public InformationPlay[] TableInformationPlay;
 	public Library_SpriteStudio6.Control.Animation.Parts[] TableControlParts;
 
+	internal List<int> ListPartsDraw = null;
+	internal List<int> ListPartsPreDraw = null;
+
 	private FlagBitStatus Status = FlagBitStatus.CLEAR;
 	internal bool StatusIsValid
 	{
@@ -75,7 +78,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 	}
 
-	/* MEMO: bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
+	/* MEMO: Bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
 	/*       In principle, do not change the value. Correctly operation is not guaranteed.               */
 	internal float RateOpacity
 	{
@@ -99,6 +102,33 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		{
 			RateScaleLocalForce = value;
 			Status |= FlagBitStatus.UPDATE_RATE_SCALELOCAL;
+		}
+	}
+
+	/* MEMO: Do not use "StatusIsAnimationSynthesize". */
+	/*       (Internal processing only)                */
+	internal bool StatusIsAnimationSynthesize
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.ANIMATION_SYNTHESIZE));
+		}
+		set
+		{
+#if false
+			/* MEMO: Original processing */
+			if(true == value)
+			{
+				Status |= FlagBitStatus.ANIMATION_SYNTHESIZE;
+			}
+			else
+			{
+				Status &= ~FlagBitStatus.ANIMATION_SYNTHESIZE;
+			}
+#else
+			/* MEMO: Once turn true, will not return to false. */
+			Status |= FlagBitStatus.ANIMATION_SYNTHESIZE;
+#endif
 		}
 	}
 
@@ -184,6 +214,12 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			goto StartMain_ErrorEnd;
 		}
 
+		/* Boot up Draw-Chain */
+		if(false == ChainDrawBootUp())
+		{
+			goto StartMain_ErrorEnd;
+		}
+
 		/* Boot up Draw-Cluster */
 		/* MEMO: CAUTION. Caution that Parent-"Root" is not necessarily initialized earlier in generation order of GameObjects on the scene. */
 		/*       ("ClusterDraw" is set null if before the parent's start)                                                                    */
@@ -262,7 +298,14 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			return;
 		}
 
+		/* Get Hidden state */
 		bool flagHide = flagHideDefault | FlagHideForce;
+
+		/* Clear Draw-Chain */
+		if(false == ChainDrawBootUp())
+		{	/* Failure Clear Draw-Chain */
+			return;
+		}
 
 		/* Update Base */
 		BaseLateUpdate(timeElapsed);
@@ -280,10 +323,18 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 		/* Update Parts' Common-Parameters (GameObject etc.) */
 		int countControlParts = TableControlParts.Length;
+		int indexTrackRoot = TableControlParts[0].IndexControlTrack;	/* (0 < countControlParts) ? TableControlParts[0].IndexControlTrack : -1; */
+		Status &= ~FlagBitStatus.ANIMATION_SYNTHESIZE;
 		for(int i=0; i<countControlParts; i++)
 		{
-			TableControlParts[i].Update(this, i, ref matrixCorrection);
+			TableControlParts[i].Update(	this,
+											i,
+											flagHide,
+											ref matrixCorrection,
+											indexTrackRoot
+									);
 		}
+		bool flagAnimationSynthesize = (0 != (Status & FlagBitStatus.ANIMATION_SYNTHESIZE));	/* ? true : false */
 
 		/* Recover Draw-Cluster & Component for Rendering */
 		if(null == ClusterDraw)
@@ -294,51 +345,91 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			}
 		}
 
-		/* MEMO: Execute combining and drawing only at Highest-Parent-Root. */
-		/* Clean Draw-Cluster & Component for Rendering */
-		if(null == InstanceRootParent)
-		{
-			ClusterDraw.DataPurge();
-
-//			if(false == RendererBootUpDraw(false))
-//			{	/* Recovery failure */
-//				return;
-//			}
-		}
-
-		/* Exec Pre-Drawing */
-		/* MEMO: First render all "Mask"s.                                                                              */
-		/*       After that, render "Mask"s again according to priority at "Draw" timing. (Process of removing "Mask"s) */
-		/* MEMO: Caution that rendering "Mask"s is only Highest-Parent-Root. ("Instance"s and "Effect"s do not render "Mask"s) */
+		/* Exec Drawing */
+		/* MEMO: At "Pre-Draw" ...                                                                                             */
+		/*       First render all "Mask"s.                                                                                     */
+		/*       After that, render "Mask"s again according to priority at "Draw" timing. (Process of removing "Mask"s)        */
+		/*       Caution that rendering "Mask"s is only Highest-Parent-Root. ("Instance"s and "Effect"s do not render "Mask"s) */
+		/* MEMO: At "Draw" ...                                                                                                 */
+		/*       Caution that "Instance" and "Effect" are update in draw.                                                      */
+		/*       Hidden "Normal" parts are not processed.(Not included in the Draw-Order-Chain)                                */
 		int idPartsDrawNext;
-		if(null == InstanceRootParent)
+		if(true == flagAnimationSynthesize)
 		{
-			idPartsDrawNext = TableControlParts[0].IDPartsNextPreDraw;
-			while(0 <= idPartsDrawNext)
+			int countChainDraw;
+
+			/* Sort Draw-Chain */
+			/* MEMO: "PreDraw"'s drawing order is reversed, but since sort-key is inversed, not necessary to exec "Reverse()" after "Sort()". */
+			ListPartsPreDraw.Sort();
+			ListPartsDraw.Sort();
+
+			if(null == InstanceRootParent)
 			{
-				TableControlParts[idPartsDrawNext].PreDraw(	this,
+				/* Clean Draw-Cluster & Component for Rendering */
+				/* MEMO: Execute combining and drawing only at Highest-Parent-Root. */
+				ClusterDraw.DataPurge();
+
+				/* Exec "Pre-Draw" */
+				countChainDraw = ListPartsPreDraw.Count;
+				for(int i=0; i<countChainDraw; i++)
+				{
+					idPartsDrawNext = ListPartsPreDraw[i] & Library_SpriteStudio6.Control.Animation.MaskSortKeyIDParts;
+					TableControlParts[idPartsDrawNext].PreDraw(	this,
+																idPartsDrawNext,
+																flagHide,
+																masking,
+																ref matrixCorrection
+															);
+				}
+			}
+
+			/* Exec "Draw" */
+			countChainDraw = ListPartsDraw.Count;
+			for(int i=0; i<countChainDraw; i++)
+			{
+				idPartsDrawNext = ListPartsDraw[i] & Library_SpriteStudio6.Control.Animation.MaskSortKeyIDParts;
+				TableControlParts[idPartsDrawNext].Draw(	this,
 															idPartsDrawNext,
 															flagHide,
 															masking,
 															ref matrixCorrection
 														);
-				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextPreDraw;
 			}
 		}
-
-		/* Exec Drawing */
-		/* MEMO: Caution that "Instance" and "Effect" are update in draw. */
-		/* MEMO: Hidden "Normal" parts are not processed.(Not included in the Draw-Order-Chain) */
-		idPartsDrawNext = TableControlParts[0].IDPartsNextDraw;
-		while(0 <= idPartsDrawNext)
+		else
 		{
-			TableControlParts[idPartsDrawNext].Draw(	this,
-														idPartsDrawNext,
-														flagHide,
-														masking,
-														ref matrixCorrection
-													);
-			idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
+			if(null == InstanceRootParent)
+			{
+				/* Clean Draw-Cluster & Component for Rendering */
+				/* MEMO: Execute combining and drawing only at Highest-Parent-Root. */
+				ClusterDraw.DataPurge();
+
+				/* Exec "Pre-Draw" */
+				idPartsDrawNext = TableControlParts[0].IDPartsNextPreDraw;
+				while(0 <= idPartsDrawNext)
+				{
+					TableControlParts[idPartsDrawNext].PreDraw(	this,
+																idPartsDrawNext,
+																flagHide,
+																masking,
+																ref matrixCorrection
+															);
+					idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextPreDraw;
+				}
+			}
+
+			/* Exec "Draw" */
+			idPartsDrawNext = TableControlParts[0].IDPartsNextDraw;
+			while(0 <= idPartsDrawNext)
+			{
+				TableControlParts[idPartsDrawNext].Draw(	this,
+															idPartsDrawNext,
+															flagHide,
+															masking,
+															ref matrixCorrection
+														);
+				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
+			}
 		}
 
 		/* Mesh Combine & Set to Renderer */
@@ -622,9 +713,50 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				goto ControlBootUpParts_ErrorEnd;
 			}
 		}
+
 		return(true);
 
 	ControlBootUpParts_ErrorEnd:;
+		return(false);
+	}
+
+	private bool ChainDrawBootUp()
+	{
+		int CountParts;
+		if(null == ListPartsPreDraw)
+		{
+			CountParts = DataAnimation.CountGetPartsPreDraw();
+			if(0 >= CountParts)
+			{
+				CountParts = 1;
+			}
+			ListPartsPreDraw = new List<int>(CountParts);
+			if(null == ListPartsPreDraw)
+			{
+				goto ChainDrawBootUp_ErrorEnd;
+			}
+		}
+		ListPartsPreDraw.Clear();
+		if(null == ListPartsDraw)
+		{
+			CountParts = DataAnimation.CountGetPartsDraw();
+			if(0 >= CountParts)
+			{
+				CountParts = 1;
+			}
+			ListPartsDraw = new List<int>(CountParts);
+			if(null == ListPartsPreDraw)
+			{
+				goto ChainDrawBootUp_ErrorEnd;
+			}
+		}
+		ListPartsDraw.Clear();
+
+		return(true);
+
+	ChainDrawBootUp_ErrorEnd:;
+		ListPartsPreDraw = null;
+		ListPartsDraw = null;
 		return(false);
 	}
 
@@ -839,6 +971,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 		CHANGE_TABLEMATERIAL = 0x00800000,
 		CHANGE_CELLMAP = 0x00400000,
+
+		ANIMATION_SYNTHESIZE = 0x00080000,
 
 		CLEAR = 0x00000000,
 	}

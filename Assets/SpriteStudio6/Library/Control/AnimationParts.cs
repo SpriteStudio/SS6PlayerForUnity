@@ -51,6 +51,10 @@ public static partial class Library_SpriteStudio6
 					(int)Library_SpriteStudio6.KindVertex.RU,
 				}
 			};
+
+			public const int CountShiftSortKeyPriority = 16;
+			public const int MaskSortKeyPriority = 0x7fff0000;	/* -16384 to 16383 */
+			public const int MaskSortKeyIDParts = 0x0000ffff;	/* -32788 to 32767 */
 			#endregion Enums & Constants
 
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -111,6 +115,7 @@ public static partial class Library_SpriteStudio6
 
 				internal BufferAttribute<Vector2> ScaleLocal;
 				internal BufferAttribute<float> RateOpacity;
+				internal BufferAttribute<int> Priority;
 
 				internal BufferParameterSprite ParameterSprite;
 				#endregion Variables & Properties
@@ -148,6 +153,7 @@ public static partial class Library_SpriteStudio6
 
 					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
 					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
+					Priority.CleanUp();	Priority.Value = 0;
 
 					ParameterSprite.CleanUp();
 				}
@@ -178,7 +184,6 @@ public static partial class Library_SpriteStudio6
 							PrefabUnderControl = null;
 							InstanceGameObjectUnderControl = null;
 
-							/* Clean up Sprite/Mesh Buffer */
 							if(false == ParameterSprite.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2, countPartsSprite, false))
 							{
 								goto BootUp_ErrorEnd;
@@ -225,7 +230,6 @@ public static partial class Library_SpriteStudio6
 							PrefabUnderControl = null;
 							InstanceGameObjectUnderControl = null;
 
-							/* Clean up Sprite/Mesh Buffer */
 							if(false == ParameterSprite.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2, countPartsSprite, true))
 							{
 								goto BootUp_ErrorEnd;
@@ -349,7 +353,12 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
-				internal void Update(Script_SpriteStudio6_Root instanceRoot, int idParts, ref Matrix4x4 matrixCorrection)
+				internal void Update(	Script_SpriteStudio6_Root instanceRoot,
+										int idParts,
+										bool flagHideDefault,
+										ref Matrix4x4 matrixCorrection,
+										int indexTrackRoot
+									)
 				{
 					/* MEMO: Since "Track-Transition" and frame-jump at stop must be processed, should not return only by judging playing. */
 
@@ -395,21 +404,25 @@ public static partial class Library_SpriteStudio6
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 							UpdateNormal(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, false, indexTrackRoot);
 							break;
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 							/* Update Instance */
 							/* MEMO: No processing */
 //							UpdateInstance(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, true, false, indexTrackRoot);
 							break;
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 							/* Update Effect */
 							/* MEMO: No processing */
 //							UpdateEffect(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, true, false, indexTrackRoot);
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 							UpdateNormal(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, true, indexTrackRoot);
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -425,6 +438,7 @@ public static partial class Library_SpriteStudio6
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 							UpdateMesh(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, false, indexTrackRoot);
 							break;
 					}
 
@@ -826,6 +840,17 @@ public static partial class Library_SpriteStudio6
 					{
 						Status |= FlagBitStatus.UPDATE_RATEOPACITY;
 					}
+
+					/* Get Rate-Opacity */
+					/* MEMO: "RateOpacity" are data that must be constantly updated in most parts, so decode here. */
+#if UNITY_EDITOR
+					if(null != dataAnimationParts.Priority.Function)
+					{
+						dataAnimationParts.Priority.Function.ValueGet(ref Priority.Value, ref Priority.FrameKey, dataAnimationParts.Priority, ref controlTrack.ArgumentContainer);
+					}
+#else
+					dataAnimationParts.Priority.Function.ValueGet(ref Priority.Value, ref Priority.FrameKey, dataAnimationParts.Priority, ref controlTrack.ArgumentContainer);
+#endif
 				}
 
 				private void UpdateUserData(	Script_SpriteStudio6_Root instanceRoot,
@@ -1179,6 +1204,37 @@ public static partial class Library_SpriteStudio6
 					/* MEMO: Since specification of pre-calculating has not been decided, currently use "UpdatePlain". */
 					ParameterSprite.StatusSetFlip(ref StatusAnimationFrame);
 					ParameterSprite.UpdatePlain(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
+				}
+
+				private void UpdateSetPartsDraw(	Script_SpriteStudio6_Root instanceRoot,
+													int idParts,
+													bool flagHideDefault,
+													bool flagSetForce,
+													bool flagMask,
+													int indexTrackRoot
+												)
+				{
+					if(	(true == flagSetForce)
+						|| ((false == flagHideDefault) && (0 == (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))))
+					)
+					{
+						/* Set Draw-Chain */
+						int keySort;
+						if(true == flagMask)
+						{
+							/* MEMO: At "PreDraw", "Mask"'s drawing order is reverse. */
+							keySort = (Priority.Value << (-CountShiftSortKeyPriority)) | idParts;
+							instanceRoot.ListPartsDraw.Add(keySort);
+						}
+						keySort = (Priority.Value << CountShiftSortKeyPriority) | idParts;
+						instanceRoot.ListPartsDraw.Add(keySort);
+
+						/* Set "Animation Synthesize" */
+						if(indexTrackRoot != IndexControlTrack)
+						{
+							instanceRoot.StatusIsAnimationSynthesize = true;
+						}
+					}
 				}
 
 				private void UpdateColliderRectangle(	Script_SpriteStudio6_Root instanceRoot,
@@ -1836,6 +1892,7 @@ public static partial class Library_SpriteStudio6
 				{
 					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
 					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
+					Priority.CleanUp();	Priority.Value = 0;
 
 					FramePreviousUpdateUnderControl = -1;
 					FramePreviousUpdateRadiusCollision = -1;

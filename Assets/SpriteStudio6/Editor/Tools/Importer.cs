@@ -840,6 +840,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			EditorGUILayout.LabelField("Only when packing \"RateOpacity\", \"Standard CPE\" is used.");
 			EditorGUI.indentLevel = levelIndent;
 		}
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Priority, "Priority", ref PullDownPackAttributeAnimation.Priority);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PartsColor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.VertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.VertexCorrection);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.OffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.OffsetPivot);
@@ -1423,6 +1424,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute Scaling;
 		public Attribute ScalingLocal;
 		public Attribute RateOpacity;
+		public Attribute Priority;
 		public Attribute PartsColor;
 		public Attribute VertexCorrection;
 		public Attribute OffsetPivot;
@@ -1448,6 +1450,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			Scaling.CleanUp();
 			ScalingLocal.CleanUp();
 			RateOpacity.CleanUp();
+			Priority.CleanUp();
 			PartsColor.CleanUp();
 			VertexCorrection.CleanUp();
 			OffsetPivot.CleanUp();
@@ -1519,6 +1522,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].RateOpacity;
 			}
 			RateOpacity.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].Priority;
+			}
+			Priority.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{

@@ -162,6 +162,12 @@ public static partial class LibraryEditor_SpriteStudio6
 				    informationSSPJ.flagBlendImagePremultipliedAlpha = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
 				}
 
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/vertexAnimeFloat", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+				    informationSSPJ.flagVertexAnimeFloat = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
+				}
+
 				/* Get CellMap FileNames */
 				System.Xml.XmlNodeList nodeList = null;
 				List<string> listNameFile = new List<string>();
@@ -285,6 +291,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Texture.KindFilter FilterTexture;
 				public bool flagConvertImagePremultipliedAlpha;
 				public bool flagBlendImagePremultipliedAlpha;
+				public bool flagVertexAnimeFloat;
 
 				public string NameDirectoryBaseTexture;
 				public LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture[] TableInformationTexture;
@@ -322,6 +329,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					FilterTexture = Library_SpriteStudio6.Data.Texture.KindFilter.NEAREST;
 					flagConvertImagePremultipliedAlpha = false;
 					flagBlendImagePremultipliedAlpha = false;
+					flagVertexAnimeFloat = false;
 
 					NameDirectoryBaseTexture = "";
 					ListNameTexture = null;

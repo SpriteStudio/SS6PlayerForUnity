@@ -1897,6 +1897,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Scaling;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack ScalingLocal;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Priority;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PartsColor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack VertexCorrection;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack OffsetPivot;
@@ -1920,6 +1921,7 @@ public static partial class LibraryEditor_SpriteStudio6
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack scaling,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack scalingLocal,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack rateOpacity,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack priority,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack partsColor,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack vertexCorrection,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack offsetPivot,
@@ -1941,6 +1943,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					Scaling = scaling;
 					ScalingLocal = scalingLocal;
 					RateOpacity = rateOpacity;
+					Priority = priority;
 					PartsColor = partsColor;
 					VertexCorrection = vertexCorrection;
 					OffsetPivot = offsetPivot;
@@ -1969,6 +1972,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					Scaling = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyScaling, (int)Default.Scaling));
 					ScalingLocal = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyScalingLocal, (int)Default.ScalingLocal));
 					RateOpacity = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyRateOpacity, (int)Default.RateOpacity));
+					Priority = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPriority, (int)Default.Priority));
 					PartsColor = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPartsColor, (int)Default.PartsColor));
 					VertexCorrection = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyVertexCorrection, (int)Default.VertexCorrection));
 					OffsetPivot = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyOffsetPivot, (int)Default.OffsetPivot));
@@ -1993,6 +1997,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetInt(PrefsKeyScaling, (int)Scaling);
 					EditorPrefs.SetInt(PrefsKeyScalingLocal, (int)ScalingLocal);
 					EditorPrefs.SetInt(PrefsKeyRateOpacity, (int)RateOpacity);
+					EditorPrefs.SetInt(PrefsKeyPriority, (int)Priority);
 					EditorPrefs.SetInt(PrefsKeyPartsColor, (int)PartsColor);
 					EditorPrefs.SetInt(PrefsKeyPositionAnchor, (int)PositionAnchor);
 					EditorPrefs.SetInt(PrefsKeyRadiusCollision, (int)RadiusCollision);
@@ -2013,7 +2018,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[19];
+					string[] textEncode = new string[20];
 					string textValue;
 
 					textValue = NameGetPackKind(Status);
@@ -2037,41 +2042,44 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = NameGetPackKind(RateOpacity);
 					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRateOpacity, textValue);
 
+					textValue = NameGetPackKind(Priority);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPriority, textValue);
+
 					textValue = NameGetPackKind(PartsColor);
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPartsColor, textValue);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPartsColor, textValue);
 
 					textValue = NameGetPackKind(VertexCorrection);
-					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyVertexCorrection, textValue);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyVertexCorrection, textValue);
 
 					textValue = NameGetPackKind(OffsetPivot);
-					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyOffsetPivot, textValue);
+					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyOffsetPivot, textValue);
 
 					textValue = NameGetPackKind(PositionAnchor);
-					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionAnchor, textValue);
+					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionAnchor, textValue);
 
 					textValue = NameGetPackKind(SizeForce);
-					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySizeForce, textValue);
+					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySizeForce, textValue);
 
 					textValue = NameGetPackKind(PositionTexture);
-					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionTexture, textValue);
+					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionTexture, textValue);
 
 					textValue = NameGetPackKind(RotationTexture);
-					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRotationTexture, textValue);
+					textEncode[14] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRotationTexture, textValue);
 
 					textValue = NameGetPackKind(ScalingTexture);
-					textEncode[14] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyScalingTexture, textValue);
+					textEncode[15] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyScalingTexture, textValue);
 
 					textValue = NameGetPackKind(RadiusCollision);
-					textEncode[15] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRadiusCollision, textValue);
+					textEncode[16] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRadiusCollision, textValue);
 
 					textValue = NameGetPackKind(UserData);
-					textEncode[16] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyUserData, textValue);
+					textEncode[17] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyUserData, textValue);
 
 					textValue = NameGetPackKind(Instance);
-					textEncode[17] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyInstance, textValue);
+					textEncode[18] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyInstance, textValue);
 
 					textValue = NameGetPackKind(Effect);
-					textEncode[18] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffect, textValue);
+					textEncode[19] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffect, textValue);
 
 					return(textEncode);
 				}
@@ -2107,6 +2115,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyRateOpacity:
 							RateOpacity = KindGetPackName(textArgument[1]);
+							return(true);
+
+						case TextKeyPriority:
+							Priority = KindGetPackName(textArgument[1]);
 							return(true);
 
 						case TextKeyPartsColor:
@@ -2214,6 +2226,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						RateOpacity = PackError;
 					}
+					if(false == capacityPack[(int)Priority].Priority)
+					{
+						Priority = PackError;
+					}
 					if(false == capacityPack[(int)PartsColor].PartsColor)
 					{
 						PartsColor = PackError;
@@ -2308,6 +2324,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyScaling = "Scaling";
 				private const string KeyScalingLocal = "ScalingLocal";
 				private const string KeyRateOpacity = "RateOpacity";
+				private const string KeyPriority = "Priority";
 				private const string KeyPartsColor = "PartsColor";
 				private const string KeyVertexCorrection = "VertexCorrection";
 				private const string KeyOffsetPivot = "OffsetPivot";
@@ -2341,6 +2358,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyScaling = TextKeyPrefix + KeyScaling;
 				private const string TextKeyScalingLocal = TextKeyPrefix + KeyScalingLocal;
 				private const string TextKeyRateOpacity = TextKeyPrefix + KeyRateOpacity;
+				private const string TextKeyPriority = TextKeyPrefix + KeyPriority;
 				private const string TextKeyPartsColor = TextKeyPrefix + KeyPartsColor;
 				private const string TextKeyVertexCorrection = TextKeyPrefix + KeyVertexCorrection;
 				private const string TextKeyOffsetPivot = TextKeyPrefix + KeyOffsetPivot;
@@ -2374,6 +2392,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyScaling = PrefsKeyPrefix + KeyScaling;
 				private const string PrefsKeyScalingLocal = PrefsKeyPrefix + KeyScalingLocal;
 				private const string PrefsKeyRateOpacity = PrefsKeyPrefix + KeyRateOpacity;
+				private const string PrefsKeyPriority = PrefsKeyPrefix + KeyPriority;
 				private const string PrefsKeyPartsColor = PrefsKeyPrefix + KeyPartsColor;
 				private const string PrefsKeyVertexCorrection = PrefsKeyPrefix + KeyVertexCorrection;
 				private const string PrefsKeyOffsetPivot = PrefsKeyPrefix + KeyOffsetPivot;
@@ -2407,6 +2426,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Scaling */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* ScalingLocal */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RateOpacity */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Priority */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PartsColor */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* VertexCorrection */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* OffsetPivot */
@@ -2790,24 +2810,129 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
-				private const string KeyAnimationUnityNativeMix = "AnimationUnityNativeMix";
-				private const string KeyAnimationUnityNativeAdd = "AnimationUnityNativeAdd";
-				private const string KeyAnimationUnityNativeSub = "AnimationUnityNativeSub";
-				private const string KeyAnimationUnityNativeMul = "AnimationUnityNativeMul";
-				private const string KeyAnimationUnityNativeMulNA = "AnimationUnityNativeMulNA";
-				private const string KeyAnimationUnityNativeScr = "AnimationUnityNativeScr";
-				private const string KeyAnimationUnityNativeExc = "AnimationUnityNativeExc";
-				private const string KeyAnimationUnityNativeInv = "AnimationUnityNativeInv";
-				private const string KeySkinnedMeshUnityNativeMix = "SkinnedMeshUnityNativeMix";
-				private const string KeySkinnedMeshUnityNativeAdd = "SkinnedMeshUnityNativeAdd";
-				private const string KeySkinnedMeshUnityNativeSub = "SkinnedMeshUnityNativeSub";
-				private const string KeySkinnedMeshUnityNativeMul = "SkinnedMeshUnityNativeMul";
-				private const string KeySkinnedMeshUnityNativeMulNA = "SkinnedMeshUnityNativeMulNA";
-				private const string KeySkinnedMeshUnityNativeScr = "SkinnedMeshUnityNativeScr";
-				private const string KeySkinnedMeshUnityNativeExc = "SkinnedMeshUnityNativeExc";
-				private const string KeySkinnedMeshUnityNativeInv = "SkinnedMeshUnityNativeInv";
+				private const string KeyKindAnimation = "Animation";
+				private const string KeyKindEffect = "Effect";
+				private const string KeyKindSkinnedMesh = "SkinnedMesh";
+
+				private const string KeyModeSS6PU = "SS6PU";
+				private const string KeyModeUnityNative = "UnityNative";
+
+				private const string KeyMaskingMask = "Masking";
+				private const string KeyMaskingThrough = "Through";
+
+				private const string KeyOperationMaskPreDraw = "MaskPreDraw";
+				private const string KeyOperationMaskDraw = "MaskDraw";
+				private const string KeyOperationMix = "Mix";
+				private const string KeyOperationAdd = "Add";
+				private const string KeyOperationSub = "Sub";
+				private const string KeyOperationMul = "Mul";
+				private const string KeyOperationMulNA = "MulNA";
+				private const string KeyOperationScr = "Scr";
+				private const string KeyOperationExc = "Exc";
+				private const string KeyOperationInv = "Inv";
+
+				private const string KeyAnimationSS6PUThroughMaskPreDraw = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMaskPreDraw;
+				private const string KeyAnimationSS6PUThroughMaskDraw = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMaskDraw;
+				private const string KeyAnimationSS6PUThroughMix = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMix;
+				private const string KeyAnimationSS6PUThroughAdd = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationAdd;
+				private const string KeyAnimationSS6PUThroughSub = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationSub;
+				private const string KeyAnimationSS6PUThroughMul = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMul;
+				private const string KeyAnimationSS6PUThroughMulNA = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMulNA;
+				private const string KeyAnimationSS6PUThroughScr = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationScr;
+				private const string KeyAnimationSS6PUThroughExc = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationExc;
+				private const string KeyAnimationSS6PUThroughInv = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationInv;
+				private const string KeyEffectSS6PUThroughMaskPreDraw = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMaskPreDraw;
+				private const string KeyEffectSS6PUThroughMaskDraw = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMaskDraw;
+				private const string KeyEffectSS6PUThroughMix = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMix;
+				private const string KeyEffectSS6PUThroughAdd = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationAdd;
+				private const string KeyEffectSS6PUThroughSub = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationSub;
+				private const string KeyEffectSS6PUThroughMul = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMul;
+				private const string KeyEffectSS6PUThroughMulNA = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMulNA;
+				private const string KeyEffectSS6PUThroughScr = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationScr;
+				private const string KeyEffectSS6PUThroughExc = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationExc;
+				private const string KeyEffectSS6PUThroughInv = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationInv;
+
+				private const string KeyAnimationSS6PUMaskingMaskPreDraw = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationMaskPreDraw;
+				private const string KeyAnimationSS6PUMaskingMaskDraw = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationMaskDraw;
+				private const string KeyAnimationSS6PUMaskingMix = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationMix;
+				private const string KeyAnimationSS6PUMaskingAdd = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationAdd;
+				private const string KeyAnimationSS6PUMaskingSub = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationSub;
+				private const string KeyAnimationSS6PUMaskingMul = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationMul;
+				private const string KeyAnimationSS6PUMaskingMulNA = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationMulNA;
+				private const string KeyAnimationSS6PUMaskingScr = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationScr;
+				private const string KeyAnimationSS6PUMaskingExc = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationExc;
+				private const string KeyAnimationSS6PUMaskingInv = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationInv;
+				private const string KeyEffectSS6PUMaskingMaskPreDraw = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationMaskPreDraw;
+				private const string KeyEffectSS6PUMaskingMaskDraw = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationMaskDraw;
+				private const string KeyEffectSS6PUMaskingMix = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationMix;
+				private const string KeyEffectSS6PUMaskingAdd = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationAdd;
+				private const string KeyEffectSS6PUMaskingSub = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationSub;
+				private const string KeyEffectSS6PUMaskingMul = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationMul;
+				private const string KeyEffectSS6PUMaskingMulNA = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationMulNA;
+				private const string KeyEffectSS6PUMaskingScr = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationScr;
+				private const string KeyEffectSS6PUMaskingExc = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationExc;
+				private const string KeyEffectSS6PUMaskingInv = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationInv;
+
+				private const string KeyAnimationUnityNativeMix = KeyKindAnimation + KeyModeUnityNative + KeyOperationMix;
+				private const string KeyAnimationUnityNativeAdd = KeyKindAnimation + KeyModeUnityNative+ KeyOperationAdd;
+				private const string KeyAnimationUnityNativeSub = KeyKindAnimation + KeyModeUnityNative+ KeyOperationSub;
+				private const string KeyAnimationUnityNativeMul = KeyKindAnimation + KeyModeUnityNative+ KeyOperationMul;
+				private const string KeyAnimationUnityNativeMulNA = KeyKindAnimation + KeyModeUnityNative+ KeyOperationMulNA;
+				private const string KeyAnimationUnityNativeScr = KeyKindAnimation + KeyModeUnityNative+ KeyOperationScr;
+				private const string KeyAnimationUnityNativeExc = KeyKindAnimation + KeyModeUnityNative+ KeyOperationExc;
+				private const string KeyAnimationUnityNativeInv = KeyKindAnimation + KeyModeUnityNative+ KeyOperationInv;
+				private const string KeySkinnedMeshUnityNativeMix = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationMix;
+				private const string KeySkinnedMeshUnityNativeAdd = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationAdd;
+				private const string KeySkinnedMeshUnityNativeSub = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationSub;
+				private const string KeySkinnedMeshUnityNativeMul = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationMul;
+				private const string KeySkinnedMeshUnityNativeMulNA = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationMulNA;
+				private const string KeySkinnedMeshUnityNativeScr = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationScr;
+				private const string KeySkinnedMeshUnityNativeExc = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationExc;
+				private const string KeySkinnedMeshUnityNativeInv = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationInv;
 
 				private const string TextKeyPrefix = "PresetMaterial_";
+
+				private const string TextKeyAnimationSS6PUThroughMaskPreDraw = TextKeyPrefix + KeyAnimationSS6PUThroughMaskPreDraw;
+				private const string TextKeyAnimationSS6PUThroughMaskDraw = TextKeyPrefix + KeyAnimationSS6PUThroughMaskDraw;
+				private const string TextKeyAnimationSS6PUThroughMix = TextKeyPrefix + KeyAnimationSS6PUThroughMix;
+				private const string TextKeyAnimationSS6PUThroughAdd = TextKeyPrefix + KeyAnimationSS6PUThroughAdd;
+				private const string TextKeyAnimationSS6PUThroughSub = TextKeyPrefix + KeyAnimationSS6PUThroughSub;
+				private const string TextKeyAnimationSS6PUThroughMul = TextKeyPrefix + KeyAnimationSS6PUThroughMul;
+				private const string TextKeyAnimationSS6PUThroughMulNA = TextKeyPrefix + KeyAnimationSS6PUThroughMulNA;
+				private const string TextKeyAnimationSS6PUThroughScr = TextKeyPrefix + KeyAnimationSS6PUThroughScr;
+				private const string TextKeyAnimationSS6PUThroughExc = TextKeyPrefix + KeyAnimationSS6PUThroughExc;
+				private const string TextKeyAnimationSS6PUThroughInv = TextKeyPrefix + KeyAnimationSS6PUThroughInv;
+				private const string TextKeyEffectSS6PUThroughMaskPreDraw = TextKeyPrefix + KeyEffectSS6PUThroughMaskPreDraw;
+				private const string TextKeyEffectSS6PUThroughMaskDraw = TextKeyPrefix + KeyEffectSS6PUThroughMaskDraw;
+				private const string TextKeyEffectSS6PUThroughMix = TextKeyPrefix + KeyEffectSS6PUThroughMix;
+				private const string TextKeyEffectSS6PUThroughAdd = TextKeyPrefix + KeyEffectSS6PUThroughAdd;
+				private const string TextKeyEffectSS6PUThroughSub = TextKeyPrefix + KeyEffectSS6PUThroughSub;
+				private const string TextKeyEffectSS6PUThroughMul = TextKeyPrefix + KeyEffectSS6PUThroughMul;
+				private const string TextKeyEffectSS6PUThroughMulNA = TextKeyPrefix + KeyEffectSS6PUThroughMulNA;
+				private const string TextKeyEffectSS6PUThroughScr = TextKeyPrefix + KeyEffectSS6PUThroughScr;
+				private const string TextKeyEffectSS6PUThroughExc = TextKeyPrefix + KeyEffectSS6PUThroughExc;
+				private const string TextKeyEffectSS6PUThroughInv = TextKeyPrefix + KeyEffectSS6PUThroughInv;
+				private const string TextKeyAnimationSS6PUMaskingMaskPreDraw = TextKeyPrefix + KeyAnimationSS6PUMaskingMaskPreDraw;
+				private const string TextKeyAnimationSS6PUMaskingMaskDraw = TextKeyPrefix + KeyAnimationSS6PUMaskingMaskDraw;
+				private const string TextKeyAnimationSS6PUMaskingMix = TextKeyPrefix + KeyAnimationSS6PUMaskingMix;
+				private const string TextKeyAnimationSS6PUMaskingAdd = TextKeyPrefix + KeyAnimationSS6PUMaskingAdd;
+				private const string TextKeyAnimationSS6PUMaskingSub = TextKeyPrefix + KeyAnimationSS6PUMaskingSub;
+				private const string TextKeyAnimationSS6PUMaskingMul = TextKeyPrefix + KeyAnimationSS6PUMaskingMul;
+				private const string TextKeyAnimationSS6PUMaskingMulNA = TextKeyPrefix + KeyAnimationSS6PUMaskingMulNA;
+				private const string TextKeyAnimationSS6PUMaskingScr = TextKeyPrefix + KeyAnimationSS6PUMaskingScr;
+				private const string TextKeyAnimationSS6PUMaskingExc = TextKeyPrefix + KeyAnimationSS6PUMaskingExc;
+				private const string TextKeyAnimationSS6PUMaskingInv = TextKeyPrefix + KeyAnimationSS6PUMaskingInv;
+				private const string TextKeyEffectSS6PUMaskingMaskPreDraw = TextKeyPrefix + KeyEffectSS6PUMaskingMaskPreDraw;
+				private const string TextKeyEffectSS6PUMaskingMaskDraw = TextKeyPrefix + KeyEffectSS6PUMaskingMaskDraw;
+				private const string TextKeyEffectSS6PUMaskingMix = TextKeyPrefix + KeyEffectSS6PUMaskingMix;
+				private const string TextKeyEffectSS6PUMaskingAdd = TextKeyPrefix + KeyEffectSS6PUMaskingAdd;
+				private const string TextKeyEffectSS6PUMaskingSub = TextKeyPrefix + KeyEffectSS6PUMaskingSub;
+				private const string TextKeyEffectSS6PUMaskingMul = TextKeyPrefix + KeyEffectSS6PUMaskingMul;
+				private const string TextKeyEffectSS6PUMaskingMulNA = TextKeyPrefix + KeyEffectSS6PUMaskingMulNA;
+				private const string TextKeyEffectSS6PUMaskingScr = TextKeyPrefix + KeyEffectSS6PUMaskingScr;
+				private const string TextKeyEffectSS6PUMaskingExc = TextKeyPrefix + KeyEffectSS6PUMaskingExc;
+				private const string TextKeyEffectSS6PUMaskingInv = TextKeyPrefix + KeyEffectSS6PUMaskingInv;
+
 				private const string TextKeyAnimationUnityNativeMix = TextKeyPrefix + KeyAnimationUnityNativeMix;
 				private const string TextKeyAnimationUnityNativeAdd = TextKeyPrefix + KeyAnimationUnityNativeAdd;
 				private const string TextKeyAnimationUnityNativeSub = TextKeyPrefix + KeyAnimationUnityNativeSub;
@@ -2826,6 +2951,48 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeySkinnedMeshUnityNativeInv = TextKeyPrefix + KeySkinnedMeshUnityNativeInv;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
+
+				private const string PrefsKeyAnimationSS6PUThroughMaskPreDraw = PrefsKeyPrefix + KeyAnimationSS6PUThroughMaskPreDraw;
+				private const string PrefsKeyAnimationSS6PUThroughMaskDraw = PrefsKeyPrefix + KeyAnimationSS6PUThroughMaskDraw;
+				private const string PrefsKeyAnimationSS6PUThroughMix = PrefsKeyPrefix + KeyAnimationSS6PUThroughMix;
+				private const string PrefsKeyAnimationSS6PUThroughAdd = PrefsKeyPrefix + KeyAnimationSS6PUThroughAdd;
+				private const string PrefsKeyAnimationSS6PUThroughSub = PrefsKeyPrefix + KeyAnimationSS6PUThroughSub;
+				private const string PrefsKeyAnimationSS6PUThroughMul = PrefsKeyPrefix + KeyAnimationSS6PUThroughMul;
+				private const string PrefsKeyAnimationSS6PUThroughMulNA = PrefsKeyPrefix + KeyAnimationSS6PUThroughMulNA;
+				private const string PrefsKeyAnimationSS6PUThroughScr = PrefsKeyPrefix + KeyAnimationSS6PUThroughScr;
+				private const string PrefsKeyAnimationSS6PUThroughExc = PrefsKeyPrefix + KeyAnimationSS6PUThroughExc;
+				private const string PrefsKeyAnimationSS6PUThroughInv = PrefsKeyPrefix + KeyAnimationSS6PUThroughInv;
+				private const string PrefsKeyEffectSS6PUThroughMaskPreDraw = PrefsKeyPrefix + KeyEffectSS6PUThroughMaskPreDraw;
+				private const string PrefsKeyEffectSS6PUThroughMaskDraw = PrefsKeyPrefix + KeyEffectSS6PUThroughMaskDraw;
+				private const string PrefsKeyEffectSS6PUThroughMix = PrefsKeyPrefix + KeyEffectSS6PUThroughMix;
+				private const string PrefsKeyEffectSS6PUThroughAdd = PrefsKeyPrefix + KeyEffectSS6PUThroughAdd;
+				private const string PrefsKeyEffectSS6PUThroughSub = PrefsKeyPrefix + KeyEffectSS6PUThroughSub;
+				private const string PrefsKeyEffectSS6PUThroughMul = PrefsKeyPrefix + KeyEffectSS6PUThroughMul;
+				private const string PrefsKeyEffectSS6PUThroughMulNA = PrefsKeyPrefix + KeyEffectSS6PUThroughMulNA;
+				private const string PrefsKeyEffectSS6PUThroughScr = PrefsKeyPrefix + KeyEffectSS6PUThroughScr;
+				private const string PrefsKeyEffectSS6PUThroughExc = PrefsKeyPrefix + KeyEffectSS6PUThroughExc;
+				private const string PrefsKeyEffectSS6PUThroughInv = PrefsKeyPrefix + KeyEffectSS6PUThroughInv;
+				private const string PrefsKeyAnimationSS6PUMaskingMaskPreDraw = PrefsKeyPrefix + KeyAnimationSS6PUMaskingMaskPreDraw;
+				private const string PrefsKeyAnimationSS6PUMaskingMaskDraw = PrefsKeyPrefix + KeyAnimationSS6PUMaskingMaskDraw;
+				private const string PrefsKeyAnimationSS6PUMaskingMix = PrefsKeyPrefix + KeyAnimationSS6PUMaskingMix;
+				private const string PrefsKeyAnimationSS6PUMaskingAdd = PrefsKeyPrefix + KeyAnimationSS6PUMaskingAdd;
+				private const string PrefsKeyAnimationSS6PUMaskingSub = PrefsKeyPrefix + KeyAnimationSS6PUMaskingSub;
+				private const string PrefsKeyAnimationSS6PUMaskingMul = PrefsKeyPrefix + KeyAnimationSS6PUMaskingMul;
+				private const string PrefsKeyAnimationSS6PUMaskingMulNA = PrefsKeyPrefix + KeyAnimationSS6PUMaskingMulNA;
+				private const string PrefsKeyAnimationSS6PUMaskingScr = PrefsKeyPrefix + KeyAnimationSS6PUMaskingScr;
+				private const string PrefsKeyAnimationSS6PUMaskingExc = PrefsKeyPrefix + KeyAnimationSS6PUMaskingExc;
+				private const string PrefsKeyAnimationSS6PUMaskingInv = PrefsKeyPrefix + KeyAnimationSS6PUMaskingInv;
+				private const string PrefsKeyEffectSS6PUMaskingMaskPreDraw = PrefsKeyPrefix + KeyEffectSS6PUMaskingMaskPreDraw;
+				private const string PrefsKeyEffectSS6PUMaskingMaskDraw = PrefsKeyPrefix + KeyEffectSS6PUMaskingMaskDraw;
+				private const string PrefsKeyEffectSS6PUMaskingMix = PrefsKeyPrefix + KeyEffectSS6PUMaskingMix;
+				private const string PrefsKeyEffectSS6PUMaskingAdd = PrefsKeyPrefix + KeyEffectSS6PUMaskingAdd;
+				private const string PrefsKeyEffectSS6PUMaskingSub = PrefsKeyPrefix + KeyEffectSS6PUMaskingSub;
+				private const string PrefsKeyEffectSS6PUMaskingMul = PrefsKeyPrefix + KeyEffectSS6PUMaskingMul;
+				private const string PrefsKeyEffectSS6PUMaskingMulNA = PrefsKeyPrefix + KeyEffectSS6PUMaskingMulNA;
+				private const string PrefsKeyEffectSS6PUMaskingScr = PrefsKeyPrefix + KeyEffectSS6PUMaskingScr;
+				private const string PrefsKeyEffectSS6PUMaskingExc = PrefsKeyPrefix + KeyEffectSS6PUMaskingExc;
+				private const string PrefsKeyEffectSS6PUMaskingInv = PrefsKeyPrefix + KeyEffectSS6PUMaskingInv;
+
 				private const string PrefsKeyAnimationUnityNativeMix = PrefsKeyPrefix + KeyAnimationUnityNativeMix;
 				private const string PrefsKeyAnimationUnityNativeAdd = PrefsKeyPrefix + KeyAnimationUnityNativeAdd;
 				private const string PrefsKeyAnimationUnityNativeSub = PrefsKeyPrefix + KeyAnimationUnityNativeSub;
