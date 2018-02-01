@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379835e446767444b98eb288010fcce, type: 3}
   m_Name: da_Eye
   m_EditorClassIdentifier: 
-  Version: 65538
+  Version: 65539
   TableMaterial:
   - {fileID: 2100000, guid: 045054ee8a64e38458351cbd7ad24c31, type: 2}
   - {fileID: 2100000, guid: dc5635f63ebb85e4daf5c9ec3f9b699d, type: 2}
@@ -151,6 +151,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -239,6 +243,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 0.75
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 00000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -329,6 +338,11 @@ MonoBehaviour:
         - 1
         - 0.5
         - 0
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 01000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -419,6 +433,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -507,6 +525,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 0.75
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 00000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -595,6 +618,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 01000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -643,6 +671,40 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+  TableAnimationPartsSetup:
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
   Dictionary_CPE_Flyweight:
     TableValueInt: 
     TableValueFloat: []

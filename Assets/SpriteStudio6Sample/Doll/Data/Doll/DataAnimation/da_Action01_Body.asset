@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379835e446767444b98eb288010fcce, type: 3}
   m_Name: da_Action01_Body
   m_EditorClassIdentifier: 
-  Version: 65538
+  Version: 65539
   TableMaterial:
   - {fileID: 2100000, guid: 045054ee8a64e38458351cbd7ad24c31, type: 2}
   - {fileID: 2100000, guid: dc5635f63ebb85e4daf5c9ec3f9b699d, type: 2}
@@ -755,6 +755,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -840,6 +844,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -925,6 +933,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1031,6 +1043,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1121,6 +1137,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 06000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1206,6 +1227,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1295,6 +1320,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1383,6 +1413,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0f000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1488,6 +1523,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 0.1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 10000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1579,6 +1619,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0f000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1696,6 +1741,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1824,6 +1874,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 16000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1941,6 +1996,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2070,6 +2130,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 16000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2187,6 +2252,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2285,6 +2354,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000000180000002000100038001000400020005800200060003000780030008000400
+        TableValue: 230000001e00000019000000140000000f0000000a0000000500000000000000fbffffff
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2377,6 +2451,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1e000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2479,6 +2558,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2571,6 +2654,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 24000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2688,6 +2776,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2778,6 +2870,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 23000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2871,6 +2968,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1e000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -2973,6 +3075,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3065,6 +3171,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 24000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3155,6 +3266,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 0.06
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 10000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3260,6 +3376,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 05000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3365,6 +3486,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 19000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3457,6 +3583,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3549,6 +3680,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3669,6 +3805,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 19000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3776,6 +3917,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3869,6 +4015,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -3998,6 +4149,10 @@ MonoBehaviour:
         - 0.14999998
         - 0.100000024
         - 0.050000012
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4093,6 +4248,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4178,6 +4337,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4291,6 +4454,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4402,6 +4569,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4519,6 +4690,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 06000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4619,6 +4795,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4708,6 +4888,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4796,6 +4981,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0f000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -4984,6 +5174,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 0.1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 10000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -5075,6 +5270,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0f000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -5202,6 +5402,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -5449,6 +5654,11 @@ MonoBehaviour:
         - 0.95
         - 0.975
         - 0.9875
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 16000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -5567,6 +5777,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -5815,6 +6030,11 @@ MonoBehaviour:
         - 0.95
         - 0.975
         - 0.9875
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 16000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -5964,6 +6184,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6061,6 +6285,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 000000001780000018000100198001001a0002001b8002001c0003001d8003001e000400
+        TableValue: fbffffff00000000050000000a0000000f00000014000000190000001e00000023000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6153,6 +6382,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1e000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6287,6 +6521,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6379,6 +6617,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 24000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6530,6 +6773,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6620,6 +6867,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 23000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6713,6 +6965,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1e000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6849,6 +7106,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -6941,6 +7202,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 24000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7128,6 +7394,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 0.06
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 10000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7249,6 +7520,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 05000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7369,6 +7645,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 19000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7461,6 +7742,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7553,6 +7839,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7695,6 +7986,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 19000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7807,6 +8103,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7900,6 +8201,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -7981,6 +8287,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -8071,6 +8381,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -8156,6 +8470,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -8263,6 +8581,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -8353,6 +8675,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -8501,6 +8827,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 06000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -8616,6 +8947,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -8704,6 +9039,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -8792,6 +9132,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0f000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -9019,6 +9364,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 0.1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 10000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -9109,6 +9459,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 0f000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -9194,6 +9549,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -9451,6 +9811,11 @@ MonoBehaviour:
         - 0.80833334
         - 0.8041667
         - 0.8
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 16000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -9536,6 +9901,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -9793,6 +10163,11 @@ MonoBehaviour:
         - 0.80833334
         - 0.8041667
         - 0.8
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 16000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -9926,6 +10301,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10016,6 +10395,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 23000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10108,6 +10492,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1e000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10251,6 +10640,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10343,6 +10736,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 24000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10476,6 +10874,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10566,6 +10968,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 23000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10658,6 +11065,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1e000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10801,6 +11213,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -10893,6 +11309,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 24000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11123,6 +11544,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 0.06
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 10000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11231,6 +11657,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 05000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11338,6 +11769,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 19000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11430,6 +11866,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11522,6 +11963,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11629,6 +12075,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 19000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11721,6 +12172,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 14000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11813,6 +12269,11 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue:
+        - TableCode: 00000000
+        TableValue: 1a000000
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11894,6 +12355,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -11942,6 +12407,370 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+  TableAnimationPartsSetup:
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
   Dictionary_CPE_Flyweight:
     TableValueInt: 
     TableValueFloat: []
