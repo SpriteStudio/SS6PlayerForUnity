@@ -34,6 +34,7 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributeRateOpacity = "RateOpacity";
 					public const string NameAttributeRateOpacityLocal = "RateOpacityLocal";
 					public const string NameAttributePowerMask = "PowerMask";
+					public const string NameAttributePriority = "Priority";
 					public const string NameAttributePartsColor = "PartsColor";
 					public const string NameAttributeVertexCorrection = "VertexCorrection";
 					public const string NameAttributeOffsetPivot = "OffsetPivot";

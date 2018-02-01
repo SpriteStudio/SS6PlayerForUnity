@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.0.21";
+	public const string SignatureVersionAsset = "1.0.23";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -324,6 +324,7 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;	/* used in Sprite, Mask, Instance, Effect */
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt Priority;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;	/* used in Sprite, Mask (Contents different) */
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
 
@@ -357,6 +358,7 @@ public static partial class Library_SpriteStudio6
 					ScalingLocal = null;
 
 					RateOpacity = null;
+					Priority = null;
 					PartsColor = null;
 					VertexCorrection = null;
 

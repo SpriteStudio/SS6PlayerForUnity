@@ -30,6 +30,7 @@ public static partial class Library_SpriteStudio6
 						true,	/* Scaling */
 						true,	/* ScalingLocal */
 						true,	/* RateOpacity */
+						true,	/* Priority */
 						true,	/* PartsColor */
 						true,	/* VertexCorrection */
 						true,	/* OffsetPivot */

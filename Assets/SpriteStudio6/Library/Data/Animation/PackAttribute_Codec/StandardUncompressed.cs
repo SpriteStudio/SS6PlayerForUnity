@@ -23,25 +23,26 @@ public static partial class Library_SpriteStudio6
 					/* ----------------------------------------------- Enums & Constants */
 					#region Enums & Constants
 					public readonly static Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer Capacity = new Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer(
-						true,		/* Status */
-						true,		/* Cell */
-						false,		/* Position *//* Use only in front stage of other pack formats, since performance is very poor. */
-						false,		/* Rotation *//* Use only in front stage of other pack formats, since performance is very poor. */
-						false,		/* Scaling *//* Use only in front stage of other pack formats, since performance is very poor. */
-						true,		/* ScalingLocal */
-						true,		/* RateOpacity */
-						true,		/* PartsColor */
-						true,		/* VertexCorrection */
-						true,		/* OffsetPivot */
-						true,		/* PositionAnchor */
-						true,		/* SizeForce */
-						true,		/* PositionTexture */
-						true,		/* RotationTexture */
-						true,		/* ScalingTexture */
-						false,		/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
-						false,		/* UserData (Trigger) *//* Not Supported */
-						false,		/* Instance (Trigger) *//* Not Supported */
-						false		/* Effect (Trigger) *//* Not Supported */
+						true,	/* Status */
+						true,	/* Cell */
+						false,	/* Position *//* Use only in front stage of other pack formats, since performance is very poor. */
+						false,	/* Rotation *//* Use only in front stage of other pack formats, since performance is very poor. */
+						false,	/* Scaling *//* Use only in front stage of other pack formats, since performance is very poor. */
+						true,	/* ScalingLocal */
+						true,	/* RateOpacity */
+						true,	/* Priority */
+						true,	/* PartsColor */
+						true,	/* VertexCorrection */
+						true,	/* OffsetPivot */
+						true,	/* PositionAnchor */
+						true,	/* SizeForce */
+						true,	/* PositionTexture */
+						true,	/* RotationTexture */
+						true,	/* ScalingTexture */
+						false,	/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
+						false,	/* UserData (Trigger) *//* Not Supported */
+						false,	/* Instance (Trigger) *//* Not Supported */
+						false	/* Effect (Trigger) *//* Not Supported */
 					);
 
 					public const string ID = "StandardUncompressed";
