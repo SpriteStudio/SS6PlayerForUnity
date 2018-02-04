@@ -2682,7 +2682,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						return(true);
 					}
 
-
 					public bool StatusSetParts(	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 												LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
 											)

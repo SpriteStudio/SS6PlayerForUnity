@@ -361,6 +361,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																						)
 									)
 								{
+									LogError(messageLogPrefix, "Material-Animation [" + ((Library_SpriteStudio6.KindOperationBlend)j).ToString() + "," + ((Library_SpriteStudio6.KindMasking)k).ToString()
+																+ "] could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
 									goto ExecSS6PU_ErrorEnd;
 								}
 							}
@@ -422,6 +424,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																					)
 									)
 								{
+									LogError(messageLogPrefix, "Material-Effect [" + ((Library_SpriteStudio6.KindOperationBlend)j).ToString() + "," + ((Library_SpriteStudio6.KindMasking)k).ToString()
+																+ "] could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
 									goto ExecSS6PU_ErrorEnd;
 								}
 							}

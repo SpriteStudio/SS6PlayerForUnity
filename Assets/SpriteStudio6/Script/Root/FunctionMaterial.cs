@@ -465,6 +465,8 @@ public partial class Script_SpriteStudio6_Root
 					material = tableMaterial[index];
 					if(true == flagMaterialNew)
 					{	/* Create Material */
+#if false
+						/* MEMO: Before Ver.1.0.26 */
 						if(null == material)
 						{
 							material = new UnityEngine.Material(Library_SpriteStudio6.Data.Shader.ShaderGetAnimation(	(Library_SpriteStudio6.KindOperationBlend)j,
@@ -476,9 +478,29 @@ public partial class Script_SpriteStudio6_Root
 						{
 							material = new UnityEngine.Material(material);
 						}
+#else
+						/* MEMO: After Ver.1.0.26 */
+						if(null == material)
+						{
+							material = Library_SpriteStudio6.Data.Shader.MaterialCreateAnimation(	(Library_SpriteStudio6.KindOperationBlend)j,
+																									(Library_SpriteStudio6.KindMasking)i
+																							);
+						}
+						else
+						{
+							UnityEngine.Material materialNew = new UnityEngine.Material(material);
+							if(null != materialNew)
+							{
+								materialNew.CopyPropertiesFromMaterial(material);
+							}
+							material = materialNew;
+						}
+#endif
 					}
 					else
 					{	/* Overwrite Material */
+#if false
+						/* MEMO: Before Ver.1.0.26 */
 						if(null == material)
 						{
 							material = new UnityEngine.Material(Library_SpriteStudio6.Data.Shader.ShaderGetAnimation(	(Library_SpriteStudio6.KindOperationBlend)j,
@@ -486,6 +508,15 @@ public partial class Script_SpriteStudio6_Root
 																													)
 															);
 						}
+#else
+						/* MEMO: After Ver.1.0.26 */
+						if(null == material)
+						{
+							material = Library_SpriteStudio6.Data.Shader.MaterialCreateAnimation(	(Library_SpriteStudio6.KindOperationBlend)j,
+																									(Library_SpriteStudio6.KindMasking)i
+																							);
+						}
+#endif
 					}
 					material.mainTexture = texture;
 					tableMaterial[index] = material;

@@ -911,24 +911,288 @@ public static partial class LibraryEditor_SpriteStudio6
 					const string messageLogPrefix = "Create Asset(Material-Animation)";
 
 					int indexTable = Script_SpriteStudio6_Root.Material.IndexGetTable(0, operationTarget, masking);
+					if((Library_SpriteStudio6.KindMasking.MASK == masking)
+						&& ((Library_SpriteStudio6.KindOperationBlend.MASK_PRE == operationTarget) || (Library_SpriteStudio6.KindOperationBlend.MASK == operationTarget))
+					)
+					{
+						/* MEMO: Different slot, same material. */
+						int indexTableSub = Script_SpriteStudio6_Root.Material.IndexGetTable(0, operationTarget, Library_SpriteStudio6.KindMasking.THROUGH);
+						informationTexture.MaterialAnimationSS6PU.TableData[indexTable] = informationTexture.MaterialAnimationSS6PU.TableData[indexTableSub];
+						return(true);
+					}
+
+					string namePropertyCheck = null;
 					Material material = null;
 					material = informationTexture.MaterialAnimationSS6PU.TableData[indexTable];
 					if(null == material)
 					{
-						material = new Material(Library_SpriteStudio6.Data.Shader.ShaderGetAnimation(operationTarget, masking));
+						material = AssetCreateMaterialAnimationNewMaterial(ref setting, ref namePropertyCheck, informationSSPJ, informationTexture, operationTarget, masking);
+
+						if(null == material)
+						{
+							goto AssetCreateMaterialAnimation_ErrorEnd;
+						}
 
 						AssetDatabase.CreateAsset(material, informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
 						informationTexture.MaterialAnimationSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialAnimationSS6PU.TableName[indexTable]);
 					}
 
-					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
-					EditorUtility.SetDirty(material);
-					AssetDatabase.SaveAssets();
+					if(null != material)
+					{
+						/* MEMO: New shader is applied from version 1.0.26.                                                                      */
+						/*       Differences are identified by the existence of a property which does not exist in the shader before Ver.1.0.26. */
+						if(false == material.HasProperty(namePropertyCheck))
+						{	/* Before Ver.1.0.26 shaders */
+							/* Replace to new shader */
+							Material materialNew = AssetCreateMaterialAnimationNewMaterial(ref setting, ref namePropertyCheck, informationSSPJ, informationTexture, operationTarget, masking);
+							if(null == materialNew)
+							{
+								goto AssetCreateMaterialAnimation_ErrorEnd;
+							}
+							material.shader = materialNew.shader;
+							material.CopyPropertiesFromMaterial(materialNew); 
+						}
+
+						material.mainTexture = informationTexture.PrefabTexture.TableData[0];
+						EditorUtility.SetDirty(material);
+						AssetDatabase.SaveAssets();
+					}
 
 					return(true);
 
-//				AssetCreateMaterialAnimation_ErrorEnd:;
-//					return(false);
+				AssetCreateMaterialAnimation_ErrorEnd:;
+					return(false);
+				}
+				private static Material AssetCreateMaterialAnimationNewMaterial(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																					ref string namePropertyCheck,
+																					LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																					Information.Texture informationTexture,
+																					Library_SpriteStudio6.KindOperationBlend operationTarget,
+																					Library_SpriteStudio6.KindMasking masking
+																			)
+				{
+					int indexTableSub = -1;
+					Material material = null;
+					const string namePropertyStencil = "_StencilOperation";
+					const string namePropertySprite = "_BlendSource";
+
+					switch(operationTarget)
+					{
+						case Library_SpriteStudio6.KindOperationBlend.MASK_PRE:
+							namePropertyCheck = namePropertyStencil;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									indexTableSub = Script_SpriteStudio6_Root.Material.IndexGetTable(0, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, Library_SpriteStudio6.KindMasking.MASK);
+									material = informationTexture.MaterialAnimationSS6PU.TableData[indexTableSub];
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									indexTableSub = Script_SpriteStudio6_Root.Material.IndexGetTable(0, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, Library_SpriteStudio6.KindMasking.THROUGH);
+									material = informationTexture.MaterialAnimationSS6PU.TableData[indexTableSub];
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+
+							if(null == material)
+							{
+								material = setting.PresetMaterial.AnimationSS6PUStencilPreDraw;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.MASK:
+							namePropertyCheck = namePropertyStencil;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									indexTableSub = Script_SpriteStudio6_Root.Material.IndexGetTable(0, Library_SpriteStudio6.KindOperationBlend.MASK, Library_SpriteStudio6.KindMasking.MASK);
+									material = informationTexture.MaterialAnimationSS6PU.TableData[indexTableSub];
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									indexTableSub = Script_SpriteStudio6_Root.Material.IndexGetTable(0, Library_SpriteStudio6.KindOperationBlend.MASK, Library_SpriteStudio6.KindMasking.THROUGH);
+									material = informationTexture.MaterialAnimationSS6PU.TableData[indexTableSub];
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+
+							if(null == material)
+							{
+								material = setting.PresetMaterial.AnimationSS6PUStencilDraw;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.MIX:
+							namePropertyCheck = namePropertySprite;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.AnimationSS6PUThroughMix;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.AnimationSS6PUMaskMix;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.ADD:
+							namePropertyCheck = namePropertySprite;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.AnimationSS6PUThroughAdd;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.AnimationSS6PUMaskAdd;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.SUB:
+							namePropertyCheck = namePropertySprite;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.AnimationSS6PUThroughSub;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.AnimationSS6PUMaskSub;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.MUL:
+							namePropertyCheck = namePropertySprite;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.AnimationSS6PUThroughMul;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.AnimationSS6PUMaskMul;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.MUL_NA:
+							namePropertyCheck = namePropertySprite;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.AnimationSS6PUThroughMulNA;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.AnimationSS6PUMaskMulNA;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.SCR:
+							namePropertyCheck = namePropertySprite;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.AnimationSS6PUThroughScr;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.AnimationSS6PUMaskScr;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.EXC:
+							namePropertyCheck = namePropertySprite;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.AnimationSS6PUThroughExc;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.AnimationSS6PUMaskExc;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlend.INV:
+							namePropertyCheck = namePropertySprite;
+
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.AnimationSS6PUThroughInv;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.AnimationSS6PUMaskInv;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						default:
+							material = null;
+							break;
+					}
+
+					if(null != material)
+					{
+						material = new Material(material);
+					}
+
+					return(material);
 				}
 
 				public static bool AssetCreateMaterialEffect(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
@@ -941,24 +1205,108 @@ public static partial class LibraryEditor_SpriteStudio6
 					const string messageLogPrefix = "Create Asset(Material-Effect)";
 
 					int indexTable = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, operationTarget, masking);
+					string namePropertyCheck = null;
 					Material material = null;
 					material = informationTexture.MaterialEffectSS6PU.TableData[indexTable];
 					if(null == material)
 					{
-						material = new Material(Library_SpriteStudio6.Data.Shader.ShaderGetEffect(operationTarget, masking));
+						material = AssetCreateMaterialEffectNewMaterial(ref setting, ref namePropertyCheck, informationSSPJ, informationTexture, operationTarget, masking);
+
+						if(null == material)
+						{
+							goto AssetCreateMaterialEffect_ErrorEnd;
+						}
 
 						AssetDatabase.CreateAsset(material, informationTexture.MaterialEffectSS6PU.TableName[indexTable]);
 						informationTexture.MaterialEffectSS6PU.TableData[indexTable] = AssetDatabase.LoadAssetAtPath<Material>(informationTexture.MaterialEffectSS6PU.TableName[indexTable]);
 					}
 
-					material.mainTexture = informationTexture.PrefabTexture.TableData[0];
-					EditorUtility.SetDirty(material);
-					AssetDatabase.SaveAssets();
+					if(null != material)
+					{
+						/* MEMO: New shader is applied from version 1.0.26.                                                                      */
+						/*       Differences are identified by the existence of a property which does not exist in the shader before Ver.1.0.26. */
+						if(false == material.HasProperty(namePropertyCheck))
+						{	/* Before Ver.1.0.26 shaders */
+							/* Replace to new shader */
+							Material materialNew = AssetCreateMaterialEffectNewMaterial(ref setting, ref namePropertyCheck, informationSSPJ, informationTexture, operationTarget, masking);
+							if(null == materialNew)
+							{
+								goto AssetCreateMaterialEffect_ErrorEnd;
+							}
+							material.shader = materialNew.shader;
+							material.CopyPropertiesFromMaterial(materialNew); 
+						}
+
+						material.mainTexture = informationTexture.PrefabTexture.TableData[0];
+						EditorUtility.SetDirty(material);
+						AssetDatabase.SaveAssets();
+					}
 
 					return(true);
 
-//				AssetCreateMaterialEffect_ErrorEnd:;
-//					return(false);
+				AssetCreateMaterialEffect_ErrorEnd:;
+					return(false);
+				}
+				private static Material AssetCreateMaterialEffectNewMaterial(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																				ref string namePropertyCheck,
+																				LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																				Information.Texture informationTexture,
+																				Library_SpriteStudio6.KindOperationBlendEffect operationTarget,
+																				Library_SpriteStudio6.KindMasking masking
+																			)
+				{
+					Material material = null;
+					const string namePropertyEffect = "_BlendSource";
+
+					namePropertyCheck = namePropertyEffect;
+
+					switch(operationTarget)
+					{
+						case Library_SpriteStudio6.KindOperationBlendEffect.MIX:
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.EffectSS6PUThroughMix;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.EffectSS6PUMaskMix;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						case Library_SpriteStudio6.KindOperationBlendEffect.ADD:
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material = setting.PresetMaterial.EffectSS6PUThroughAdd;
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material = setting.PresetMaterial.EffectSS6PUMaskAdd;
+									break;
+
+								default:
+									material = null;
+									break;
+							}
+							break;
+
+						default:
+							material = null;
+							break;
+					}
+
+					if(null != material)
+					{
+						material = new Material(material);
+					}
+
+					return(material);
 				}
 
 				public static bool ConvertCellMap(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
