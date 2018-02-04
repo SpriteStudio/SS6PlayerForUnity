@@ -106,10 +106,12 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	public enum KindVersion
 	{
 		SS5PU = 0,	/* Before SS5PU *//* (Reserved) */
-		CODE_010000,	/* SS6PU Ver.1.0.0 */
+		CODE_010000,	/* = 0x00010000 (Miss) */	/* SS6PU Ver.1.0.0 */
+		CODE_010001 = 0x00010001,	/* SS6PU Ver.1.0.26 */
+			/* MEMO: Shaders changed to integrated type */
 
 		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010000
+		SUPPORT_LATEST = CODE_010001
 	}
 
 	[System.Flags]

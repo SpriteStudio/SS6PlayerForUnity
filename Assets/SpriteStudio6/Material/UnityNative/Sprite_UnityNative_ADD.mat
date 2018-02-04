@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Sprite_UnityNative_ADD
-  m_Shader: {fileID: 4800000, guid: 2c1c183f2b7ef914e872ea2bcad44fa2, type: 3}
+  m_Shader: {fileID: 4800000, guid: 778af36b1fa70ed47b074db61b2065e8, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -60,7 +60,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - PixelSnap: 0
+    - _BlendDestination: 1
+    - _BlendOperation: 0
+    - _BlendSource: 5
     - _BumpScale: 1
+    - _CompareStencil: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -70,13 +74,15 @@ Material:
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
+    - _NotDiscardPixel: 0
     - _OcclusionStrength: 1
+    - _OutputPixelPMA: 0
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
     - _BlendParam: {r: 0.01, g: 1, b: 1, a: 0}
     - _CellPivot_LocalScale: {r: 0, g: 0, b: 1, a: 1}

@@ -360,9 +360,11 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			/* MEMO: Add "PackAttribute's Dictionaries" */
 		CODE_010003 = 0x00010003,	/* SS6PU Ver.1.0.23 */
 			/* MEMO: Add "DataSetup" */
+		CODE_010004 = 0x00010004,	/* SS6PU Ver.1.0.26 */
+			/* MEMO: Shaders changed to integrated type */
 
 		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010003
+		SUPPORT_LATEST = CODE_010004
 	}
 	#endregion Enums & Constants
 
