@@ -302,6 +302,8 @@ public partial class Script_SpriteStudio6_RootEffect
 					material = tableMaterial[index];
 					if(true == flagMaterialNew)
 					{	/* Create Material */
+#if false
+						/* MEMO: Before Ver.1.0.26 */
 						if(null == material)
 						{
 							material = new UnityEngine.Material(Library_SpriteStudio6.Data.Shader.ShaderGetEffect(	(Library_SpriteStudio6.KindOperationBlendEffect)j,
@@ -313,16 +315,46 @@ public partial class Script_SpriteStudio6_RootEffect
 						{
 							material = new UnityEngine.Material(material);
 						}
+#else
+						/* MEMO: After Ver.1.0.26 */
+						if(null == material)
+						{
+							material = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(	(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																								(Library_SpriteStudio6.KindMasking)i
+																							);
+						}
+						else
+						{
+							UnityEngine.Material materialNew = new UnityEngine.Material(material);
+							if(null != materialNew)
+							{
+								materialNew.CopyPropertiesFromMaterial(material);
+							}
+							material = materialNew;
+						}
+#endif
+
 					}
 					else
 					{	/* Overwrite Material */
+#if false
+						/* MEMO: Before Ver.1.0.26 */
 						if(null == material)
 						{
-							material = new UnityEngine.Material(Library_SpriteStudio6.Data.Shader.ShaderGetAnimation(	(Library_SpriteStudio6.KindOperationBlend)j,
-																														(Library_SpriteStudio6.KindMasking)i
-																													)
+							material = new UnityEngine.Material(Library_SpriteStudio6.Data.Shader.ShaderGetEffect(	(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																													(Library_SpriteStudio6.KindMasking)i
+																												)
 															);
 						}
+#else
+						/* MEMO: After Ver.1.0.26 */
+						if(null == material)
+						{
+							material = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(	(Library_SpriteStudio6.KindOperationBlendEffect)j,
+																								(Library_SpriteStudio6.KindMasking)i
+																							);
+						}
+#endif
 					}
 					material.mainTexture = texture;
 					tableMaterial[index] = material;

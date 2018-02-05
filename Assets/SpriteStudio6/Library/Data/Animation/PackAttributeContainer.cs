@@ -27,6 +27,7 @@ public static partial class Library_SpriteStudio6
 					false,		/* Scaling */
 					false,		/* ScalingLocal */
 					false,		/* RateOpacity */
+					false,		/* Priority */
 					false,		/* PartsColor */
 					false,		/* VertexCorrection */
 					false,		/* OffsetPivot */
@@ -244,6 +245,13 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.RATE_OPACITY));
 						}
 					}
+					public bool Priority
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.PRIORITY));
+						}
+					}
 					public bool PartsColor
 					{
 						get
@@ -339,6 +347,7 @@ public static partial class Library_SpriteStudio6
 												bool scaling,
 												bool scalingLocal,
 												bool rateOpacity,
+												bool priority,
 												bool partsColor,
 												bool vertexCorrection,
 												bool offsetPivot,
@@ -364,6 +373,7 @@ public static partial class Library_SpriteStudio6
 						Flags |= (true == scalingLocal) ? FlagBit.SCALING_LOCAL : (FlagBit)0;
 
 						Flags |= (true == rateOpacity) ? FlagBit.RATE_OPACITY : (FlagBit)0;
+						Flags |= (true == priority) ? FlagBit.PRIORITY : (FlagBit)0;
 						Flags |= (true == partsColor) ? FlagBit.PARTS_COLOR : (FlagBit)0;
 						Flags |= (true == vertexCorrection) ? FlagBit.VERTEX_CORRECTION : (FlagBit)0;
 
@@ -394,18 +404,19 @@ public static partial class Library_SpriteStudio6
 						SCALING = 0x00000010,
 						SCALING_LOCAL = 0x00000020,
 						RATE_OPACITY = 0x00000040,
-						PARTS_COLOR = 0x00000080,
-						VERTEX_CORRECTION = 0x00000100,
-						OFFSET_PIVOT = 0x00000200,
-						POSITION_ANCHOR = 0x00000400,
-						SIZE_FORCE = 0x00000800,
-						POSITION_TEXTURE = 0x00001000,
-						ROTATION_TEXTURE = 0x00002000,
-						SCALING_TEXTURE = 0x00004000,
-						RADIUS_COLLISION = 0x00008000,
-						USER_DATA = 0x00010000,
-						INSTANCE = 0x00020000,
-						EFFECT = 0x00040000,
+						PRIORITY = 0x00000080,
+						PARTS_COLOR = 0x00000100,
+						VERTEX_CORRECTION = 0x00000200,
+						OFFSET_PIVOT = 0x00000400,
+						POSITION_ANCHOR = 0x00000800,
+						SIZE_FORCE = 0x00001000,
+						POSITION_TEXTURE = 0x00002000,
+						ROTATION_TEXTURE = 0x00004000,
+						SCALING_TEXTURE = 0x00008000,
+						RADIUS_COLLISION = 0x00010000,
+						USER_DATA = 0x00020000,
+						INSTANCE = 0x00040000,
+						EFFECT = 0x00080000,
 					}
 					#endregion Enums & Constants
 				}

@@ -6,6 +6,7 @@
 //
 sampler2D _MainTex;
 sampler2D _AlphaTex;
+// float _EnableExternalAlpha;
 
 #if defined(SV_Target)
 fixed4 PS_main(InputPS input) : SV_Target
@@ -50,11 +51,11 @@ fixed4 PS_main(InputPS input) : COLOR0
 
 	pixel = color[input.Texture00UV.z];
 #endif
+#if defined(PS_OUTPUT_PMA)
+	pixel.xyz *= pixelA;
+#endif
 	pixel.a = pixelA;
 
-#if !defined(PS_NOT_CLAMP_COLOR)
-	pixel = saturate(pixel);
-#endif
 	output = pixel;
 
 	return(output);

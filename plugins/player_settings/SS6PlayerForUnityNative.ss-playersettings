@@ -30,6 +30,7 @@
 			<item>PRIO</item>
 			<item>HIDE</item>
 			<item>PCOL</item>
+			<item>VERT</item>
 			<item>MASK</item>
 			<item>USER</item>
 		</attributes>
@@ -55,6 +56,8 @@
 		</boundsTypes>
 		<features>
 			<item>mask</item>
+			<item>bone</item>
+			<item>mesh</item>
 		</features>
 		<enablePMASettings>0</enablePMASettings>
 		<convertImageToPMA>0</convertImageToPMA>

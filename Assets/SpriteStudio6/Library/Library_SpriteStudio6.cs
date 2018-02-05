@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.0.18";
+	public const string SignatureVersionAsset = "1.0.26";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -324,6 +324,7 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;	/* used in Sprite, Mask, Instance, Effect */
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt Priority;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;	/* used in Sprite, Mask (Contents different) */
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
 
@@ -357,6 +358,7 @@ public static partial class Library_SpriteStudio6
 					ScalingLocal = null;
 
 					RateOpacity = null;
+					Priority = null;
 					PartsColor = null;
 					VertexCorrection = null;
 
@@ -1539,6 +1541,346 @@ public static partial class Library_SpriteStudio6
 
 				return(TableSpriteUnityNative[(int)operationBlend]);
 			}
+
+			public static UnityEngine.Material MaterialCreateAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking)
+			{
+				if((Library_SpriteStudio6.KindOperationBlend.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
+				{
+					return(null);
+				}
+
+				UnityEngine.Material material = null;
+				switch(operationBlend)
+				{
+					case Library_SpriteStudio6.KindOperationBlend.MASK_PRE:
+						material = new Material(StencilSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyStencilOperation)
+							{
+								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.IncrementWrap);
+							}
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.MASK:
+						material = new Material(StencilSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyStencilOperation)
+							{
+								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.DecrementWrap);
+							}
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.MIX:
+						material = new Material(SpriteSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.ADD:
+						material = new Material(SpriteSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.SUB:
+						material = new Material(SpriteSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.ReverseSubtract);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.MUL:
+						material = new Material(SpriteSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.DstColor);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.MUL_NA:
+						material = new Material(SpriteSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.Zero);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.SrcColor);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.SCR:
+						material = new Material(SpriteSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.EXC:
+						material = new Material(SpriteSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcColor);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.INV:
+						material = new Material(SpriteSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.Zero);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlend.TERMINATOR:
+						/* MEMO: All "Sprite" Common Setting */
+						if(0 <= IDPropertyCompareStencil)
+						{
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Always);
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Greater);
+									break;
+							}
+						}
+						if(0 <= IDPropertyZWrite)
+						{
+							material.SetFloat(IDPropertyZWrite, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						}
+						if(0 <= IDPropertyOutputPixelPMA)
+						{
+							material.SetFloat(IDPropertyOutputPixelPMA, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						}
+						break;
+				}
+
+				return(material);
+			}
+
+			public static UnityEngine.Material MaterialCreateEffect(Library_SpriteStudio6.KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking)
+			{
+				if((Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend))
+				{
+					return(null);
+				}
+
+				UnityEngine.Material material = null;
+				switch(operationBlend)
+				{
+					case Library_SpriteStudio6.KindOperationBlendEffect.MIX:
+						material = new Material(EffectSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlendEffect.ADD:
+						material = new Material(EffectSS6PU);
+						if(null != material)
+						{
+							if(0 <= IDPropertyBlendSource)
+							{
+								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+							}
+							if(0 <= IDPropertyBlendDestination)
+							{
+								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
+							}
+							if(0 <= IDPropertyBlendOperation)
+							{
+								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+							}
+							if(0 <= IDPropertyNotDiscardPixel)
+							{
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
+							}
+							goto case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
+						}
+						break;
+
+					case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR:
+						/* MEMO: All "Effect" Common Setting */
+						if(0 <= IDPropertyCompareStencil)
+						{
+							switch(masking)
+							{
+								case Library_SpriteStudio6.KindMasking.THROUGH:
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Always);
+									break;
+
+								case Library_SpriteStudio6.KindMasking.MASK:
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Greater);
+									break;
+							}
+						}
+						if(0 <= IDPropertyZWrite)
+						{
+							material.SetFloat(IDPropertyZWrite, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						}
+						if(0 <= IDPropertyOutputPixelPMA)
+						{
+							material.SetFloat(IDPropertyOutputPixelPMA, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						}
+						break;
+				}
+
+				return(material);
+			}
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */
@@ -1606,6 +1948,22 @@ public static partial class Library_SpriteStudio6
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Exclude"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Inverse")
 			};
+
+			public readonly static UnityEngine.Shader SpriteSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite");
+			public readonly static UnityEngine.Shader EffectSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect");
+			public readonly static UnityEngine.Shader StencilSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil");
+
+			public readonly static int IDPropertyStencilOperation = UnityEngine.Shader.PropertyToID("_StencilOperation");
+			public readonly static int IDPropertyBlendSource = UnityEngine.Shader.PropertyToID("_BlendSource");
+			public readonly static int IDPropertyBlendDestination = UnityEngine.Shader.PropertyToID("_BlendDestination");
+			public readonly static int IDPropertyBlendOperation = UnityEngine.Shader.PropertyToID("_BlendOperation");
+			public readonly static int IDPropertyCompareStencil = UnityEngine.Shader.PropertyToID("_CompareStencil");
+			public readonly static int IDPropertyZWrite = UnityEngine.Shader.PropertyToID("_ZWrite");
+			public readonly static int IDPropertyNotDiscardPixel = UnityEngine.Shader.PropertyToID("_NotDiscardPixel");
+			public readonly static int IDPropertyOutputPixelPMA = UnityEngine.Shader.PropertyToID("_OutputPixelPMA");
+			public readonly static int IDPropertyAlphaTex = UnityEngine.Shader.PropertyToID("_AlphaTex");
+			public readonly static int IDPropertyEnableExternalAlpha = UnityEngine.Shader.PropertyToID("_EnableExternalAlpha");
+
 			#endregion Enums & Constants
 		}
 		#endregion Classes, Structs & Interfaces

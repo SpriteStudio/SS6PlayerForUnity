@@ -5,6 +5,8 @@
 //	All rights reserved.
 //
 sampler2D _MainTex;
+sampler2D _AlphaTex;
+float _EnableExternalAlpha;
 
 #if defined(SV_Target)
 fixed4 PS_main(InputPS input) : SV_Target
@@ -15,6 +17,10 @@ fixed4 PS_main(InputPS input) : COLOR0
 	fixed4 output;
 
 	fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
+#if defined(ETC1_EXTERNAL_ALPHA)
+	fixed4 alpha = tex2D(_AlphaTex, input.Texture00UV.xy);
+	pixel.a = lerp(pixel.a, alpha.r, _EnableExternalAlpha);
+#endif
 	pixel *= input.ColorMain;
 #if !defined(PS_NOT_DISCARD)
 	if(0.0f >= pixel.a)
@@ -43,11 +49,11 @@ fixed4 PS_main(InputPS input) : COLOR0
 
 	pixel = color[input.Texture00UV.z];
 #endif
+#if defined(PS_OUTPUT_PMA)
+	pixel.xyz *= pixelA;
+#endif
 	pixel.a = pixelA;
 
-#if !defined(PS_NOT_CLAMP_COLOR)
-	pixel = saturate(pixel);
-#endif
 	output = pixel;
 
 	return(output);

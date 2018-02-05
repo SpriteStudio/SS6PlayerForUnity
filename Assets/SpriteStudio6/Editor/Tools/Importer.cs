@@ -320,6 +320,13 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent;
 			}
 
+			SettingOption.ModeSS6PU.FlagFoldOutPresetMaterial = EditorGUILayout.Foldout(SettingOption.ModeSS6PU.FlagFoldOutPresetMaterial, "Advanced Options: Preset Material");
+			if(true == SettingOption.ModeSS6PU.FlagFoldOutPresetMaterial)
+			{
+				FoldOutExecPresetMaterial(levelIndent + 1);
+				EditorGUI.indentLevel = levelIndent;
+			}
+
 			levelIndent--;
 			EditorGUI.indentLevel = levelIndent;
 		}
@@ -840,6 +847,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			EditorGUILayout.LabelField("Only when packing \"RateOpacity\", \"Standard CPE\" is used.");
 			EditorGUI.indentLevel = levelIndent;
 		}
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Priority, "Priority", ref PullDownPackAttributeAnimation.Priority);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PartsColor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.VertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.VertexCorrection);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.OffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.OffsetPivot);
@@ -868,29 +876,88 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 	private void FoldOutExecPresetMaterial(int levelIndent)
 	{
-		EditorGUI.indentLevel = levelIndent;
+		switch(SettingImport.Mode)
+		{
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
+				EditorGUI.indentLevel = levelIndent;
 
-		EditorGUILayout.LabelField("Set each blend-operation's materials.");
-		EditorGUILayout.Space();
+				EditorGUILayout.LabelField("Set each blend-operation's materials. (Materials are duplicated)");
+				EditorGUILayout.Space();
 
-		SettingImport.PresetMaterial.AnimationUnityNativeMix = EditorGUILayout.ObjectField("[Sprite]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMix, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeAdd = EditorGUILayout.ObjectField("[Sprite]Add", SettingImport.PresetMaterial.AnimationUnityNativeAdd, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeSub = EditorGUILayout.ObjectField("[Sprite]Sub", SettingImport.PresetMaterial.AnimationUnityNativeSub, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeMul = EditorGUILayout.ObjectField("[Sprite]Mul", SettingImport.PresetMaterial.AnimationUnityNativeMul, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeMulNA = EditorGUILayout.ObjectField("[Sprite]MulNA", SettingImport.PresetMaterial.AnimationUnityNativeMulNA, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeScr = EditorGUILayout.ObjectField("[Sprite]Scr", SettingImport.PresetMaterial.AnimationUnityNativeScr, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeExc = EditorGUILayout.ObjectField("[Sprite]Exc", SettingImport.PresetMaterial.AnimationUnityNativeExc, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.AnimationUnityNativeInv = EditorGUILayout.ObjectField("[Sprite]Inv", SettingImport.PresetMaterial.AnimationUnityNativeInv, typeof(Material), false) as Material;
-		EditorGUILayout.Space();
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix = EditorGUILayout.ObjectField("[Mesh]Mix", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd = EditorGUILayout.ObjectField("[Mesh]Add", SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub = EditorGUILayout.ObjectField("[Mesh]Sub", SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul = EditorGUILayout.ObjectField("[Mesh]Mul", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeMulNA = EditorGUILayout.ObjectField("[Mesh]MulNA", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMulNA, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr = EditorGUILayout.ObjectField("[Mesh]Scr", SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc = EditorGUILayout.ObjectField("[Mesh]Exc", SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc, typeof(Material), false) as Material;
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv = EditorGUILayout.ObjectField("[Mesh]Inv", SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv, typeof(Material), false) as Material;
-		EditorGUILayout.Space();
+				SettingImport.PresetMaterial.AnimationSS6PUStencilPreDraw = EditorGUILayout.ObjectField("[Mask]Pre-Draw", SettingImport.PresetMaterial.AnimationSS6PUStencilPreDraw, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationSS6PUStencilDraw = EditorGUILayout.ObjectField("[Mask]Draw", SettingImport.PresetMaterial.AnimationSS6PUStencilDraw, typeof(Material), false) as Material;
+				EditorGUILayout.Space();
+
+				SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialThrough = EditorGUILayout.Foldout(SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialThrough, "for parts Not-Masked");
+				if(true == SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialThrough)
+				{
+					EditorGUI.indentLevel = levelIndent + 1;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughMix = EditorGUILayout.ObjectField("[Sprite]Mix", SettingImport.PresetMaterial.AnimationSS6PUThroughMix, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughAdd = EditorGUILayout.ObjectField("[Sprite]Add", SettingImport.PresetMaterial.AnimationSS6PUThroughAdd, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughSub = EditorGUILayout.ObjectField("[Sprite]Sub", SettingImport.PresetMaterial.AnimationSS6PUThroughSub, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughMul = EditorGUILayout.ObjectField("[Sprite]Mul", SettingImport.PresetMaterial.AnimationSS6PUThroughMul, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughMulNA = EditorGUILayout.ObjectField("[Sprite]MulNA", SettingImport.PresetMaterial.AnimationSS6PUThroughMulNA, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughScr = EditorGUILayout.ObjectField("[Sprite]Scr", SettingImport.PresetMaterial.AnimationSS6PUThroughScr, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughExc = EditorGUILayout.ObjectField("[Sprite]Exc", SettingImport.PresetMaterial.AnimationSS6PUThroughExc, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughInv = EditorGUILayout.ObjectField("[Sprite]Inv", SettingImport.PresetMaterial.AnimationSS6PUThroughInv, typeof(Material), false) as Material;
+					EditorGUILayout.Space();
+					SettingImport.PresetMaterial.EffectSS6PUThroughMix = EditorGUILayout.ObjectField("[Effect]Mix", SettingImport.PresetMaterial.EffectSS6PUThroughMix, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.EffectSS6PUThroughAdd = EditorGUILayout.ObjectField("[Effect]Add", SettingImport.PresetMaterial.EffectSS6PUThroughAdd, typeof(Material), false) as Material;
+					EditorGUI.indentLevel = levelIndent;
+				}
+
+				EditorGUILayout.Space();
+				SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialMask = EditorGUILayout.Foldout(SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialMask, "for parts Masked");
+				if(true == SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialMask)
+				{
+					EditorGUI.indentLevel = levelIndent + 1;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskMix = EditorGUILayout.ObjectField("[Sprite]Mix", SettingImport.PresetMaterial.AnimationSS6PUMaskMix, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskAdd = EditorGUILayout.ObjectField("[Sprite]Add", SettingImport.PresetMaterial.AnimationSS6PUMaskAdd, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskSub = EditorGUILayout.ObjectField("[Sprite]Sub", SettingImport.PresetMaterial.AnimationSS6PUMaskSub, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskMul = EditorGUILayout.ObjectField("[Sprite]Mul", SettingImport.PresetMaterial.AnimationSS6PUMaskMul, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskMulNA = EditorGUILayout.ObjectField("[Sprite]MulNA", SettingImport.PresetMaterial.AnimationSS6PUMaskMulNA, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskScr = EditorGUILayout.ObjectField("[Sprite]Scr", SettingImport.PresetMaterial.AnimationSS6PUMaskScr, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskExc = EditorGUILayout.ObjectField("[Sprite]Exc", SettingImport.PresetMaterial.AnimationSS6PUMaskExc, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskInv = EditorGUILayout.ObjectField("[Sprite]Inv", SettingImport.PresetMaterial.AnimationSS6PUMaskInv, typeof(Material), false) as Material;
+					EditorGUILayout.Space();
+					SettingImport.PresetMaterial.EffectSS6PUMaskMix = EditorGUILayout.ObjectField("[Effect]Mix", SettingImport.PresetMaterial.EffectSS6PUMaskMix, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.EffectSS6PUMaskAdd = EditorGUILayout.ObjectField("[Effect]Add", SettingImport.PresetMaterial.EffectSS6PUMaskAdd, typeof(Material), false) as Material;
+					EditorGUI.indentLevel = levelIndent;
+				}
+				EditorGUILayout.Space();
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+				EditorGUI.indentLevel = levelIndent;
+
+				EditorGUILayout.LabelField("Set each blend-operation's materials.");
+				EditorGUILayout.Space();
+
+				SettingImport.PresetMaterial.AnimationUnityNativeMix = EditorGUILayout.ObjectField("[Sprite]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMix, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeAdd = EditorGUILayout.ObjectField("[Sprite]Add", SettingImport.PresetMaterial.AnimationUnityNativeAdd, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeSub = EditorGUILayout.ObjectField("[Sprite]Sub", SettingImport.PresetMaterial.AnimationUnityNativeSub, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeMul = EditorGUILayout.ObjectField("[Sprite]Mul", SettingImport.PresetMaterial.AnimationUnityNativeMul, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeMulNA = EditorGUILayout.ObjectField("[Sprite]MulNA", SettingImport.PresetMaterial.AnimationUnityNativeMulNA, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeScr = EditorGUILayout.ObjectField("[Sprite]Scr", SettingImport.PresetMaterial.AnimationUnityNativeScr, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeExc = EditorGUILayout.ObjectField("[Sprite]Exc", SettingImport.PresetMaterial.AnimationUnityNativeExc, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeInv = EditorGUILayout.ObjectField("[Sprite]Inv", SettingImport.PresetMaterial.AnimationUnityNativeInv, typeof(Material), false) as Material;
+				EditorGUILayout.Space();
+				SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix = EditorGUILayout.ObjectField("[Mesh]Mix", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd = EditorGUILayout.ObjectField("[Mesh]Add", SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub = EditorGUILayout.ObjectField("[Mesh]Sub", SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul = EditorGUILayout.ObjectField("[Mesh]Mul", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.SkinnedMeshUnityNativeMulNA = EditorGUILayout.ObjectField("[Mesh]MulNA", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMulNA, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr = EditorGUILayout.ObjectField("[Mesh]Scr", SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc = EditorGUILayout.ObjectField("[Mesh]Exc", SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv = EditorGUILayout.ObjectField("[Mesh]Inv", SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv, typeof(Material), false) as Material;
+				EditorGUILayout.Space();
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.BATCH_IMPORTER:
+			default:
+				/* MEMO: Not reach here. */
+				break;
+		}
 	}
 	#endregion Functions
 
@@ -993,6 +1060,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public bool FlagFoldOutRuleNameAssetSample;
 			public bool FlagFoldOutRuleNameAssetFolder;
 			public bool FlagFoldOutPackAttributeAnimation;
+			public bool FlagFoldOutPresetMaterial;
+			public bool FlagFoldOutPresetMaterialThrough;
+			public bool FlagFoldOutPresetMaterialMask;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1006,7 +1076,10 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 								bool flagFoldOutRuleNameAsset,
 								bool flagFoldOutRuleNameAssetSample,
 								bool flagFoldOutRuleNameAssetFolder,
-								bool flagFoldOutPackAttributeAnimation
+								bool flagFoldOutPackAttributeAnimation,
+								bool flagFoldOutPresetMaterial,
+								bool flagFoldOutPresetMaterialThrough,
+								bool flagFoldOutPresetMaterialMask
 							)
 			{
 				FlagFoldOutBasic = flagFoldOutBasic;
@@ -1020,6 +1093,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagFoldOutRuleNameAssetSample = flagFoldOutRuleNameAssetSample;
 				FlagFoldOutRuleNameAssetFolder = flagFoldOutRuleNameAssetFolder;
 				FlagFoldOutPackAttributeAnimation = flagFoldOutPackAttributeAnimation;
+				FlagFoldOutPresetMaterial = flagFoldOutPresetMaterial;
+				FlagFoldOutPresetMaterialThrough = flagFoldOutPresetMaterialThrough;
+				FlagFoldOutPresetMaterialMask = flagFoldOutPresetMaterialMask;
 			}
 
 			public void CleanUp()
@@ -1040,6 +1116,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagFoldOutRuleNameAssetSample = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, Default.FlagFoldOutRuleNameAssetSample);
 				FlagFoldOutRuleNameAssetFolder = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAssetFolder, Default.FlagFoldOutRuleNameAssetFolder);
 				FlagFoldOutPackAttributeAnimation = EditorPrefs.GetBool(PrefsKeyFlagFoldOutPackAttributeAnimation, Default.FlagFoldOutPackAttributeAnimation);
+				FlagFoldOutPresetMaterial = EditorPrefs.GetBool(PrefsKeyFlagFoldFlagFoldOutPresetMaterial, Default.FlagFoldOutPresetMaterial);
+				FlagFoldOutPresetMaterialThrough = EditorPrefs.GetBool(PrefsKeyFlagFlagFoldOutPresetMaterialThrough, Default.FlagFoldOutPresetMaterialThrough);
+				FlagFoldOutPresetMaterialMask = EditorPrefs.GetBool(PrefsKeyFlagFlagFoldOutPresetMaterialMask, Default.FlagFoldOutPresetMaterialMask);
 
 				return(true);
 			}
@@ -1057,6 +1136,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, FlagFoldOutRuleNameAssetSample);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetFolder, FlagFoldOutRuleNameAssetFolder);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutPackAttributeAnimation, FlagFoldOutPackAttributeAnimation);
+				EditorPrefs.SetBool(PrefsKeyFlagFoldFlagFoldOutPresetMaterial, FlagFoldOutPresetMaterial);
+				EditorPrefs.SetBool(PrefsKeyFlagFlagFoldOutPresetMaterialThrough, FlagFoldOutPresetMaterialThrough);
+				EditorPrefs.SetBool(PrefsKeyFlagFlagFoldOutPresetMaterialMask, FlagFoldOutPresetMaterialMask);
 
 				return(true);
 			}
@@ -1075,6 +1157,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			private const string PrefsKeyFlagFoldOutRuleNameAssetSample = PrefsKeyPrefix + "FlagFoldOutRuleNameAssetSample";
 			private const string PrefsKeyFlagFoldOutRuleNameAssetFolder = PrefsKeyPrefix + "FlagFoldOutRuleNameAssetFolder";
 			private const string PrefsKeyFlagFoldOutPackAttributeAnimation = PrefsKeyPrefix + "FlagFoldOutPackAttributeAnimation";
+			private const string PrefsKeyFlagFoldFlagFoldOutPresetMaterial = PrefsKeyPrefix + "FlagFoldOutPresetMaterial";
+			private const string PrefsKeyFlagFlagFoldOutPresetMaterialThrough = PrefsKeyPrefix + "FlagFoldOutPresetMaterialThrough";
+			private const string PrefsKeyFlagFlagFoldOutPresetMaterialMask = PrefsKeyPrefix + "FlagFoldOutPresetMaterialMask";
 
 			private readonly static GroupSS6PU Default = new GroupSS6PU(
 				false,	/* FlagFoldOutBasic */
@@ -1086,7 +1171,10 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				false,	/* FlagFoldOutRuleNameAsset */
 				true,	/* FlagFoldOutRuleNameAssetSample */
 				false,	/* FlagFoldOutRuleNameAssetFolder */
-				false	/* FlagFoldOutPackAttributeAnimation */
+				false,	/* FlagFoldOutPackAttributeAnimation */
+				false,	/* FlagFoldFlagFoldOutPresetMaterial */
+				false,	/* FlagFlagFoldOutPresetMaterialThrough */
+				false	/* FlagFlagFoldOutPresetMaterialMask */
 			);
 			#endregion Enums & Constants
 		}
@@ -1423,6 +1511,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute Scaling;
 		public Attribute ScalingLocal;
 		public Attribute RateOpacity;
+		public Attribute Priority;
 		public Attribute PartsColor;
 		public Attribute VertexCorrection;
 		public Attribute OffsetPivot;
@@ -1448,6 +1537,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			Scaling.CleanUp();
 			ScalingLocal.CleanUp();
 			RateOpacity.CleanUp();
+			Priority.CleanUp();
 			PartsColor.CleanUp();
 			VertexCorrection.CleanUp();
 			OffsetPivot.CleanUp();
@@ -1519,6 +1609,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].RateOpacity;
 			}
 			RateOpacity.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].Priority;
+			}
+			Priority.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{

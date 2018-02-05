@@ -37,8 +37,8 @@ InputPS VS_main(InputVS input)
 #endif
 
 	temp = input.vertex;
-//	temp = UnityObjectToClipPos(temp);
-	temp = mul(UNITY_MATRIX_VP, temp);
+	temp = UnityObjectToClipPos(temp);
+//	temp = mul(UNITY_MATRIX_VP, temp);
 	output.PositionDraw = temp;
 	output.Position = temp;
 

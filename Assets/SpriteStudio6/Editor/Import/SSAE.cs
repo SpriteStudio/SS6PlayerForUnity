@@ -5,6 +5,7 @@
 	All rights reserved.
 */
 // #define BONEINDEX_CONVERT_PARTSID
+// #define STORE_ANIMATIONSETUP_FULL
 
 using System.Collections;
 using System.Collections.Generic;
@@ -1729,6 +1730,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									/* Add Key-Data */
+									data.Value.Flags |= Library_SpriteStudio6.Data.Animation.Attribute.UserData.FlagBit.VALID;
 									informationAnimationParts.UserData.ListKey.Add(data);
 								}
 								break;
@@ -1812,6 +1814,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									data.Value.RateTime *= SignRateSpeed;
 
 									/* Add Key-Data */
+									data.Value.Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.VALID;
 									informationAnimationParts.Instance.ListKey.Add(data);
 								}
 								break;
@@ -1851,6 +1854,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 
 									/* Add Key-Data */
+									data.Value.Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Effect.FlagBit.VALID;
 									informationAnimationParts.Effect.ListKey.Add(data);
 								}
 								break;
@@ -2141,7 +2145,12 @@ public static partial class LibraryEditor_SpriteStudio6
 					public string NameGameObjectUnityNative;
 					public GameObject GameObjectUnityNative;	/* Temporary */
 					public SpriteRenderer SpriteRendererUnityNative;	/* Temporary */
+#if UNITY_2017_1_OR_NEWER
 					public SpriteMask SpriteMaskUnityNative;	/* Temporary */
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 					public SkinnedMeshRenderer SkinnedMeshRendererUnityNative;	/* Temporary */
 					public MeshRenderer MeshRendererUnityNative;	/* Temporary */
 					public MeshFilter MeshFilterUnityNative;	/* Temporary */
@@ -2181,7 +2190,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						NameGameObjectUnityNative = "";
 						GameObjectUnityNative = null;
 						SpriteRendererUnityNative = null;
+#if UNITY_2017_1_OR_NEWER
 						SpriteMaskUnityNative = null;
+#else
+						/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+						/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 						SkinnedMeshRendererUnityNative = null;
 						MeshRendererUnityNative = null;
 						MeshFilterUnityNative = null;
@@ -2390,6 +2404,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Cell.ListKey.Clear();
 
 									animationParts.PartsColor.ListKey.Clear();
+									animationParts.Priority.ListKey.Clear();
 									animationParts.VertexCorrection.ListKey.Clear();
 
 									animationParts.PivotOffsetX.ListKey.Clear();
@@ -2550,6 +2565,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.FlipX.ListKey.Clear();
 									animationParts.FlipY.ListKey.Clear();
 
+									animationParts.Priority.ListKey.Clear();
 									animationParts.PartsColor.ListKey.Clear();
 									animationParts.VertexCorrection.ListKey.Clear();
 
@@ -2583,6 +2599,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.ScalingXLocal.ListKey.Clear();
 									animationParts.ScalingYLocal.ListKey.Clear();
 
+									animationParts.Priority.ListKey.Clear();
 									animationParts.RateOpacityLocal.ListKey.Clear();
 
 									animationParts.FlipX.ListKey.Clear();
@@ -2664,7 +2681,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						return(true);
 					}
-
 
 					public bool StatusSetParts(	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 												LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
@@ -3668,6 +3684,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					int countParts = informationSSAE.TableParts.Length;
 					Library_SpriteStudio6.Data.Parts.Animation[] tablePartsRuntime = new Library_SpriteStudio6.Data.Parts.Animation[countParts];
+					if(null == tablePartsRuntime)
+					{
+						goto AssetCreateData_ErrorEnd;
+					}
 					for(int i=0; i<countParts; i++)
 					{
 						tablePartsRuntime[i] = informationSSAE.TableParts[i].Data;
@@ -3676,11 +3696,222 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					int countAnimation = informationSSAE.TableAnimation.Length;
 					Library_SpriteStudio6.Data.Animation[] tableAnimationRuntime = new Library_SpriteStudio6.Data.Animation[countAnimation];
+					if(null == tableAnimationRuntime)
+					{
+						goto AssetCreateData_ErrorEnd;
+					}
 					for(int i=0; i<countAnimation; i++)
 					{
 						tableAnimationRuntime[i] = informationSSAE.TableAnimation[i].Data;
 					}
 					dataAnimation.TableAnimation = tableAnimationRuntime;
+
+					if(null != informationSSAE.AnimationSetup)
+					{	/* Has Setup animation */
+						if(null != informationSSAE.AnimationSetup.TableParts)
+						{	/* Has Animation-Parts table */
+							Script_SpriteStudio6_DataAnimation.DataSetup[] tableAnimationPartsSetup = new Script_SpriteStudio6_DataAnimation.DataSetup[countParts];
+							if(null == tableAnimationPartsSetup)
+							{
+								goto AssetCreateData_ErrorEnd;
+							}
+
+							LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation.Parts informationAnimationParts = null;
+#if STORE_ANIMATIONSETUP_FULL
+							Library_SpriteStudio6.Data.Animation.Attribute.Status dataStatus = new Library_SpriteStudio6.Data.Animation.Attribute.Status();
+#endif
+							for(int i=0; i<countParts; i++)
+							{
+								informationAnimationParts = informationSSAE.AnimationSetup.TableParts[i];
+
+								tableAnimationPartsSetup[i].CleanUp();
+
+#if STORE_ANIMATIONSETUP_FULL
+								{
+									/* MEMO: "Status" is absolutely written. */
+									bool valueAttribute;
+
+									dataStatus.CleanUp();
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolOR(	out valueAttribute,
+																														informationAnimationParts.Hide,
+																														0,
+																														true
+																													);
+									dataStatus.Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.HIDE : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
+
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolToggle(	out valueAttribute,
+																															informationAnimationParts.FlipX,
+																															0
+																														);
+									dataStatus.Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_X : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
+
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolToggle(	out valueAttribute,
+																															informationAnimationParts.FlipY,
+																															0
+																														);
+									dataStatus.Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_Y : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
+
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolToggle(	out valueAttribute,
+																															informationAnimationParts.TextureFlipX,
+																															0
+																														);
+									dataStatus.Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_X : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
+
+									Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolToggle(	out valueAttribute,
+																															informationAnimationParts.TextureFlipY,
+																															0
+																														);
+									dataStatus.Flags |= (true == valueAttribute) ? Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_Y : Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.CLEAR;
+
+									dataStatus.Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTDRAW;
+									dataStatus.Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.ID_PARTS_NEXTPREDRAW;
+
+									dataStatus.Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.VALID;
+
+									tableAnimationPartsSetup[i].Status = dataStatus;
+								}
+
+								if(0 < informationAnimationParts.PositionX.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Position.x = informationAnimationParts.PositionX.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.PositionY.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Position.y = informationAnimationParts.PositionY.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.PositionZ.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Position.z = informationAnimationParts.PositionZ.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.RotationX.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Rotation.x = informationAnimationParts.RotationX.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.RotationY.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Rotation.y = informationAnimationParts.RotationY.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.RotationZ.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Rotation.z = informationAnimationParts.RotationZ.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.ScalingX.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Scaling.x = informationAnimationParts.ScalingX.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.ScalingY.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Scaling.y = informationAnimationParts.ScalingY.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.ScalingXLocal.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].ScalingLocal.x = informationAnimationParts.ScalingXLocal.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.ScalingYLocal.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].ScalingLocal.y = informationAnimationParts.ScalingYLocal.ListKey[0].Value;
+								}
+
+								/* MEMO: "RateOpacity" is absolutely written. */
+								informationAnimationParts.RateOpacity.ValueGet(out tableAnimationPartsSetup[i].RateOpacity, 0);
+								if(0 < informationAnimationParts.RateOpacityLocal.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].RateOpacity = informationAnimationParts.RateOpacityLocal.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.PowerMask.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].PowerMask = (int)informationAnimationParts.PowerMask.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.Priority.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Priority = informationAnimationParts.Priority.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.PartsColor.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].PartsColor = informationAnimationParts.PartsColor.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.VertexCorrection.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].VertexCorrection = informationAnimationParts.VertexCorrection.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.PivotOffsetX.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].OffsetPivot.x = informationAnimationParts.PivotOffsetX.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.PivotOffsetY.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].OffsetPivot.y = informationAnimationParts.PivotOffsetY.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.AnchorPositionX.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].PositionAnchor.x = informationAnimationParts.AnchorPositionX.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.AnchorPositionY.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].PositionAnchor.y = informationAnimationParts.AnchorPositionY.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.SizeForceX.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].SizeForce.x = informationAnimationParts.SizeForceX.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.SizeForceY.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].SizeForce.y = informationAnimationParts.SizeForceY.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.TexturePositionX.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].PositionTexture.x = informationAnimationParts.TexturePositionX.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.TexturePositionY.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].PositionTexture.y = informationAnimationParts.TexturePositionY.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.TextureRotation.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].RotationTexture = informationAnimationParts.TextureRotation.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.TextureScalingX.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].ScalingTexture.x = informationAnimationParts.TextureScalingX.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.TextureScalingY.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].ScalingTexture.y = informationAnimationParts.TextureScalingY.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.RadiusCollision.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].RadiusCollision = informationAnimationParts.RadiusCollision.ListKey[0].Value;
+								}
+
+								if(0 < informationAnimationParts.Instance.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Instance = informationAnimationParts.Instance.ListKey[0].Value;
+								}
+								if(0 < informationAnimationParts.Effect.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].Effect = informationAnimationParts.Effect.ListKey[0].Value;
+								}
+#endif
+								if(0 < informationAnimationParts.UserData.CountGetKey())
+								{
+									tableAnimationPartsSetup[i].UserData = informationAnimationParts.UserData.ListKey[0].Value;
+								}
+							}
+							dataAnimation.TableAnimationPartsSetup = tableAnimationPartsSetup;
+						}
+					}
 
 					dataAnimation.CatalogParts.TableIDPartsNULL = informationSSAE.CatalogParts.ListIDPartsNULL.ToArray();
 					dataAnimation.CatalogParts.TableIDPartsTriangle2 = informationSSAE.CatalogParts.ListIDPartsTriangle2.ToArray();
@@ -3703,8 +3934,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 
-//				AssetCreateData_ErrorEnd:;
-//					return(false);
+				AssetCreateData_ErrorEnd:;
+					informationSSAE.DataAnimationSS6PU.TableData[0] = null;
+					return(false);
 				}
 
 				public static bool AssetCreatePrefab(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
@@ -4428,6 +4660,21 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 							}
 
+							dataAnimation.TableParts[j].Priority = PackAttribute.FactoryInt(setting.PackAttributeAnimation.Priority);
+							if(false == dataAnimation.TableParts[j].Priority.Function.Pack(	dataAnimation.TableParts[j].Priority,
+																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePriority,
+																							countFrame,
+																							informationAnimationParts.StatusParts,
+																							informationAnimationParts.TableOrderDraw,
+																							informationAnimationParts.TableOrderPreDraw,
+																							informationAnimationParts.Priority
+																						)
+								)
+							{
+								LogError(messageLogPrefix, "Failure Packing Attribute \"Priority\" Animation-Name[" + informationAnimation.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+								goto ConvertData_ErrorEnd;
+							}
+
 							dataAnimation.TableParts[j].PartsColor = PackAttribute.FactoryPartsColor(setting.PackAttributeAnimation.PartsColor);
 							if(false == dataAnimation.TableParts[j].PartsColor.Function.Pack(	dataAnimation.TableParts[j].PartsColor,
 																								Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePartsColor,
@@ -4900,7 +5147,12 @@ public static partial class LibraryEditor_SpriteStudio6
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation.Parts informationAnimationParts = null;
 					GameObject gameObjectParts = null;
 					SpriteRenderer spriteRendererParts = null;
+#if UNITY_2017_1_OR_NEWER
 					SpriteMask spriteMaskParts = null;
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 					SkinnedMeshRenderer skinnedMeshRendererParts = null;
 					MeshRenderer meshRendererParts = null;
 					Script_SpriteStudio6_PartsUnityNative scriptParts = null;
@@ -4917,7 +5169,12 @@ public static partial class LibraryEditor_SpriteStudio6
 							continue;
 						}
 						spriteRendererParts = informationSSAE.TableParts[i].SpriteRendererUnityNative;
+#if UNITY_2017_1_OR_NEWER
 						spriteMaskParts = informationSSAE.TableParts[i].SpriteMaskUnityNative;
+#else
+						/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+						/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 						skinnedMeshRendererParts = informationSSAE.TableParts[i].SkinnedMeshRendererUnityNative;
 						meshRendererParts = informationSSAE.TableParts[i].MeshRendererUnityNative;
 						scriptParts = informationSSAE.TableParts[i].ScriptPartsUnityNative;
@@ -5067,6 +5324,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+#if UNITY_2017_1_OR_NEWER
 								if(null != spriteMaskParts)
 								{
 									/* MEMO: Sprite can not set to SpriteMask ? */
@@ -5120,6 +5378,10 @@ public static partial class LibraryEditor_SpriteStudio6
 																	informationSSPJ,
 																	informationSSAE
 																);
+#else
+								/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+								/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -6209,6 +6471,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
+#if UNITY_2017_1_OR_NEWER
 				private static bool AssetCreateDataCurveSetCellMask(	AnimationClip animationClip,
 																		string namePathGameObject,
 																		SpriteMask spriteMask,
@@ -6292,6 +6555,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
+#else
+				/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+				/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 				private static bool AssetCreateDataCurveSetCellSkinnedMesh(	AnimationClip animationClip,
 																			string namePathGameObject,
 																			System.Type type,
@@ -7462,7 +7729,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
-
+#if UNITY_2017_1_OR_NEWER
 				private static bool AssetCreateDataCurveSetPowerMask(	AnimationClip animationClip,
 																		string namePathGameObject,
 																		SpriteMask spriteMask,
@@ -7539,6 +7806,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
+#else
+				/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+				/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 
 				private static bool AssetCreateDataCurveSetVertexCorrection(	AnimationClip animationClip,
 																				string namePathGameObject,
@@ -7792,7 +8063,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					informationParts.GameObjectUnityNative = null;
 					informationParts.SpriteRendererUnityNative = null;
+#if UNITY_2017_1_OR_NEWER
 					informationParts.SpriteMaskUnityNative = null;
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 
 					GameObject gameObjectParent = null;
 					int idPartsParent = informationParts.Data.IDParent;
@@ -7854,10 +8130,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						informationParts.ScriptPartsUnityNative = null;
 					}
+#if UNITY_2017_1_OR_NEWER
 					if(null != informationParts.SpriteMaskUnityNative)
 					{
 						informationParts.SpriteMaskUnityNative = null;
 					}
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 					if(null != informationParts.SpriteRendererUnityNative)
 					{
 						informationParts.SpriteRendererUnityNative = null;
@@ -7961,6 +8242,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeInv;
 							break;
 					}
+#if UNITY_2017_1_OR_NEWER
 					if(true == informationParts.FlagMasking)
 					{
 						informationParts.SpriteRendererUnityNative.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
@@ -7969,6 +8251,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						informationParts.SpriteRendererUnityNative.maskInteraction = SpriteMaskInteraction.None;
 					}
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 
 					informationParts.ScriptPartsUnityNative = informationParts.GameObjectUnityNative.AddComponent<Script_SpriteStudio6_PartsUnityNative>();
 					if(null == informationParts.ScriptPartsUnityNative)
@@ -7984,6 +8270,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					goto ConvertPartsAnimationGameObjectCreate_End;
 
 				ConvertPartsAnimationGameObjectCreate_MaskCreate:;
+#if UNITY_2017_1_OR_NEWER
 					informationParts.GameObjectUnityNative = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(name, false, gameObjectParent);
 					if(null == informationParts.GameObjectUnityNative)
 					{
@@ -8010,6 +8297,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					informationParts.GameObjectUnityNative.SetActive(true);
 					goto ConvertPartsAnimationGameObjectCreate_End;
+#else
+					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+					goto ConvertPartsAnimationGameObjectCreate_NULLCreate;
+#endif
 
 				ConvertPartsAnimationGameObjectCreate_Mesh:;
 					informationParts.GameObjectUnityNative = Library_SpriteStudio6.Utility.Asset.GameObjectCreate(name, false, gameObjectParent);
@@ -8552,7 +8844,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(null != scriptParts)
 						{
 							scriptParts.InstanceSpriteRenderer = informationParts.SpriteRendererUnityNative;
+#if UNITY_2017_1_OR_NEWER
 							scriptParts.InstanceSpriteMask = informationParts.SpriteMaskUnityNative;
+#else
+							/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+							/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 							scriptParts.InstanceSkinnedMeshRenderer = informationParts.SkinnedMeshRendererUnityNative;
 							scriptParts.InstanceMeshRenderer = informationParts.MeshRendererUnityNative;
 							scriptParts.InstanceMeshFilter = informationParts.MeshFilterUnityNative;

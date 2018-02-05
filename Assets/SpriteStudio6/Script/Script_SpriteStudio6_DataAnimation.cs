@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+// #define STORE_ANIMATIONSETUP_FULL
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +23,14 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	public Library_SpriteStudio6.Data.Parts.Animation.Catalog CatalogParts;
 
 	public Library_SpriteStudio6.Data.Animation[] TableAnimation;
+	public DataSetup[] TableAnimationPartsSetup;
+	internal bool IsAnimationSetup
+	{
+		get
+		{
+			return((null != TableAnimationPartsSetup) && (0 < TableAnimationPartsSetup.Length));
+		}
+	}
 
 	/* PackAttribute's Dictionaries */
 //	public Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.Dictionary Dictionary_StandardUnCompressed;
@@ -71,6 +81,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		CatalogParts.CleanUp();
 
 		TableAnimation = null;
+		TableAnimationPartsSetup = null;
 
 		SignatureBootUpFunction = null;
 	}
@@ -82,42 +93,152 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 	public int CountGetPartsSprite()
 	{
-		int countParts = TableParts.Length;
 		int count = 0;
-		for(int i=0; i<countParts; i++)
-		{
-			switch(TableParts[i].Feature)
+		if(KindVersion.CODE_010001 > Version)
+		{	/* "CatalogParts" not implemented */
+			int countParts = TableParts.Length;
+			for(int i=0; i<countParts; i++)
 			{
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
-					break;
+				switch(TableParts[i].Feature)
+				{
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+						break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
-					count++;
-					break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+						count++;
+						break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
-					break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+						break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
-					/* MEMO: "Mask"s are drawn twice(Predraw + Draw). */
-					count += 2;
-					break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+						/* MEMO: "Mask"s are drawn twice(Predraw + Draw). */
+						count += 2;
+						break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
-					break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+						break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
-					/* MEMO: Not count. (not sprite) */
-					break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+						/* MEMO: Not count. (not sprite) */
+						break;
+				}
 			}
+		}
+		else
+		{
+			count =		CatalogParts.TableIDPartsTriangle2.Length
+						+ CatalogParts.TableIDPartsTriangle4.Length
+						+ (	CatalogParts.TableIDPartsMaskTriangle2.Length
+							+ CatalogParts.TableIDPartsMaskTriangle4.Length
+							) * 2;
+		}
+		return(count);
+	}
+
+	public int CountGetPartsDraw()
+	{
+		int count = 0;
+		if(KindVersion.CODE_010001 > Version)
+		{	/* "CatalogParts" not implemented */
+			int countParts = TableParts.Length;
+			for(int i=0; i<countParts; i++)
+			{
+				switch(TableParts[i].Feature)
+				{
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+						count++;
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+						count++;
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+						count++;
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+						/* MEMO: Not count. (not sprite) */
+						break;
+				}
+			}
+		}
+		else
+		{
+			count =		CatalogParts.TableIDPartsTriangle2.Length
+						+ CatalogParts.TableIDPartsTriangle4.Length
+						+ CatalogParts.TableIDPartsMaskTriangle2.Length
+						+ CatalogParts.TableIDPartsMaskTriangle4.Length;
+		}
+		return(count);
+	}
+
+	public int CountGetPartsPreDraw()
+	{
+		int count = 0;
+		if(KindVersion.CODE_010001 > Version)
+		{	/* "CatalogParts" not implemented */
+			int countParts = TableParts.Length;
+			for(int i=0; i<countParts; i++)
+			{
+				switch(TableParts[i].Feature)
+				{
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+						count++;
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+						break;
+				}
+			}
+		}
+		else
+		{
+			count =		CatalogParts.TableIDPartsMaskTriangle2.Length
+						+ CatalogParts.TableIDPartsMaskTriangle4.Length;
 		}
 		return(count);
 	}
@@ -200,6 +321,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].ScalingLocal);
 
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RateOpacity);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(TableAnimation[i].TableParts[j].Priority);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(TableAnimation[i].TableParts[j].PartsColor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(TableAnimation[i].TableParts[j].VertexCorrection);
 
@@ -233,17 +355,328 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		CODE_010000 = 0x00010000,	/* SS6PU Ver.0.8.0 */
 		CODE_010001 = 0x00010001,	/* SS6PU Ver.0.9.0 */
 			/* MEMO: Add "Library_SpriteStudio6.Data.Parts.Animation.CountMesh" */
-			/* MEMO: Add "Library_SpriteStudio6.Data.Parts.Animation.Category" */
+			/* MEMO: Add "Library_SpriteStudio6.Data.Parts.Animation.Catalog" */
 		CODE_010002 = 0x00010002,	/* SS6PU Ver.0.9.8 */
 			/* MEMO: Add "PackAttribute's Dictionaries" */
+		CODE_010003 = 0x00010003,	/* SS6PU Ver.1.0.23 */
+			/* MEMO: Add "DataSetup" */
+		CODE_010004 = 0x00010004,	/* SS6PU Ver.1.0.26 */
+			/* MEMO: Shaders changed to integrated type */
 
 		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010002
+		SUPPORT_LATEST = CODE_010004
 	}
 	#endregion Enums & Constants
 
-	/* ----------------------------------------------- Deligates */
-	#region Deligates
+	/* ----------------------------------------------- Classes, Structs & Interfaces */
+	#region Classes, Structs & Interfaces
+	[System.Serializable]
+	public struct DataSetup
+	{
+		/* ----------------------------------------------- Variables & Properties */
+		#region Variables & Properties
+#if STORE_ANIMATIONSETUP_FULL
+		public Library_SpriteStudio6.Data.Animation.Attribute.Status Status;
+
+		public Vector3 Position;
+		public Vector3 Rotation;
+		public Vector2 Scaling;
+		public Vector2 ScalingLocal;
+
+		public float RateOpacity;
+		public float RateOpacityLocal;
+		public int PowerMask;
+		public int Priority;
+		public Library_SpriteStudio6.Data.Animation.Attribute.PartsColor PartsColor;
+		public Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection VertexCorrection;
+
+		public Vector2 OffsetPivot;
+		public Vector2 PositionAnchor;
+		public Vector2 SizeForce;
+		public Vector2 PositionTexture;
+		public float RotationTexture;
+		public Vector2 ScalingTexture;
+
+		public float RadiusCollision;
+
+		public Library_SpriteStudio6.Data.Animation.Attribute.Instance Instance;
+		public Library_SpriteStudio6.Data.Animation.Attribute.Effect Effect;
+#endif
+		public Library_SpriteStudio6.Data.Animation.Attribute.UserData UserData;
+
+#if STORE_ANIMATIONSETUP_FULL
+		public bool IsStatus
+		{
+			get
+			{
+				return(Status.IsValid);
+			}
+		}
+		public bool IsPositionX
+		{
+			get
+			{
+				return(!float.IsNaN(Position.x));
+			}
+		}
+		public bool IsPositionY
+		{
+			get
+			{
+				return(!float.IsNaN(Position.y));
+			}
+		}
+		public bool IsPositionZ
+		{
+			get
+			{
+				return(!float.IsNaN(Position.z));
+			}
+		}
+		public bool IsRotationX
+		{
+			get
+			{
+				return(!float.IsNaN(Rotation.x));
+			}
+		}
+		public bool IsRotationY
+		{
+			get
+			{
+				return(!float.IsNaN(Rotation.y));
+			}
+		}
+		public bool IsRotationZ
+		{
+			get
+			{
+				return(!float.IsNaN(Rotation.z));
+			}
+		}
+		public bool IsScalingX
+		{
+			get
+			{
+				return(!float.IsNaN(Scaling.x));
+			}
+		}
+		public bool IsScalingY
+		{
+			get
+			{
+				return(!float.IsNaN(Scaling.y));
+			}
+		}
+		public bool IsScalingLocalX
+		{
+			get
+			{
+				return(!float.IsNaN(ScalingLocal.x));
+			}
+		}
+		public bool IsScalingLocalY
+		{
+			get
+			{
+				return(!float.IsNaN(ScalingLocal.y));
+			}
+		}
+		public bool IsRateOpacity
+		{
+			get
+			{
+				return(!float.IsNaN(RateOpacity));
+			}
+		}
+		public bool IsRateOpacityLocal
+		{
+			get
+			{
+				return(!float.IsNaN(RateOpacityLocal));
+			}
+		}
+		public bool IsPowerMask
+		{
+			get
+			{
+				return(int.MinValue != PowerMask);
+			}
+		}
+		public bool IsPriority
+		{
+			get
+			{
+				return(int.MinValue != Priority);
+			}
+		}
+		public bool IsPartsColor
+		{
+			get
+			{
+				return(Library_SpriteStudio6.KindBoundBlend.NON != PartsColor.Bound);
+			}
+		}
+		public bool IsVertexCorrection
+		{
+			get
+			{
+				return((null != VertexCorrection.Coordinate) && (0 < VertexCorrection.Coordinate.Length));
+			}
+		}
+		public bool IsOffsetPivotX
+		{
+			get
+			{
+				return(!float.IsNaN(OffsetPivot.x));
+			}
+		}
+		public bool IsOffsetPivotY
+		{
+			get
+			{
+				return(!float.IsNaN(OffsetPivot.y));
+			}
+		}
+		public bool IsPositionAnchorX
+		{
+			get
+			{
+				return(!float.IsNaN(PositionAnchor.x));
+			}
+		}
+		public bool IsPositionAnchorY
+		{
+			get
+			{
+				return(!float.IsNaN(PositionAnchor.y));
+			}
+		}
+		public bool IsSizeForceX
+		{
+			get
+			{
+				return(!float.IsNaN(SizeForce.x));
+			}
+		}
+		public bool IsSizeForceY
+		{
+			get
+			{
+				return(!float.IsNaN(SizeForce.y));
+			}
+		}
+		public bool IsPositionTextureX
+		{
+			get
+			{
+				return(!float.IsNaN(PositionTexture.x));
+			}
+		}
+		public bool IsPositionTextureY
+		{
+			get
+			{
+				return(!float.IsNaN(PositionTexture.y));
+			}
+		}
+		public bool IsRotationTexture
+		{
+			get
+			{
+				return(!float.IsNaN(RotationTexture));
+			}
+		}
+		public bool IsScalingTextureX
+		{
+			get
+			{
+				return(!float.IsNaN(ScalingTexture.x));
+			}
+		}
+		public bool IsScalingTextureY
+		{
+			get
+			{
+				return(!float.IsNaN(ScalingTexture.y));
+			}
+		}
+		public bool IsRadiusCollision
+		{
+			get
+			{
+				return(!float.IsNaN(RadiusCollision));
+			}
+		}
+		public bool IsInstance
+		{
+			get
+			{
+				return(Instance.IsValid);
+			}
+		}
+		public bool IsEffect
+		{
+			get
+			{
+				return(Effect.IsValid);
+			}
+		}
+#endif
+
+		public bool IsUserData
+		{
+			get
+			{
+				return(UserData.IsValid);
+			}
+		}
+		#endregion Variables & Properties
+
+		/* ----------------------------------------------- Functions */
+		#region Functions
+		public void CleanUp()
+		{
+#if STORE_ANIMATIONSETUP_FULL
+			int valueInitialInt = int.MinValue;
+			float valueInitialFloat = float.NaN;
+			Vector2 valueInitialVector2 = new Vector2(float.NaN, float.NaN);
+			Vector3 valueInitialVector3 = new Vector3(float.NaN, float.NaN, float.NaN);
+
+			Status = Library_SpriteStudio6.Data.Animation.Attribute.DefaultStatus;
+
+			Position = valueInitialVector3;
+			Rotation = valueInitialVector3;
+			Scaling = valueInitialVector2;
+			ScalingLocal = valueInitialVector2;
+
+			RateOpacity = valueInitialFloat;
+			RateOpacityLocal = valueInitialFloat;
+			PowerMask = valueInitialInt;
+			Priority = valueInitialInt;
+			PartsColor.CleanUp();	/* = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor; */
+			VertexCorrection.CleanUp();
+
+			OffsetPivot = valueInitialVector2;
+			PositionAnchor = valueInitialVector2;
+			SizeForce = valueInitialVector2;
+			PositionTexture = valueInitialVector2;
+			RotationTexture = valueInitialFloat;
+			ScalingTexture = valueInitialVector2;
+
+			RadiusCollision = valueInitialFloat;
+
+			Instance = Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance;
+			Effect = Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect;
+#endif
+			UserData = Library_SpriteStudio6.Data.Animation.Attribute.DefaultUseData;
+		}
+		#endregion Functions
+	}
+	#endregion Classes, Structs & Interfaces
+
+	/* ----------------------------------------------- Delegates */
+	#region Delegates
 	private delegate void FunctionSignatureBootUpFunction();
-	#endregion Deligates
+	#endregion Delegates
 }

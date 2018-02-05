@@ -33,7 +33,12 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 	public Transform[] TableTransformBone;
 
 	public SpriteRenderer InstanceSpriteRenderer;
+#if UNITY_2017_1_OR_NEWER
 	public SpriteMask InstanceSpriteMask;
+#else
+	/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+	/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 	public SkinnedMeshRenderer InstanceSkinnedMeshRenderer;
 	public MeshRenderer InstanceMeshRenderer;	/* For mesh to which no bone is assigned. */
 	public MeshFilter InstanceMeshFilter;	/* For mesh to which no bone is assigned. */
@@ -66,11 +71,16 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 			goto Start_End;
 		}
 
+#if UNITY_2017_1_OR_NEWER
 //		InstanceSpriteMask = gameObject.GetComponent<SpriteMask>();
 		if(null != InstanceSpriteMask)
 		{
 			goto Start_End;
 		}
+#else
+		/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+		/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 
 //		InstanceSkinnedMeshRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
 		if(null != InstanceSkinnedMeshRenderer)
@@ -136,7 +146,10 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 				sortingOffsetParts = 1;
 			}
 		}
+#if UNITY_2017_1_OR_NEWER
 		int sortingOrderBase = sortingOrder;
+#else
+#endif
 		sortingOrder += ((int)OrderInLayer) * sortingOffsetParts;
 
 		/* Sprite (SpriteRenderer) */
@@ -180,6 +193,7 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		}
 
 		/* Mask (SpriteMask) */
+#if UNITY_2017_1_OR_NEWER
 		if(null != InstanceSpriteMask)
 		{
 			if(OrderInLayerPrevious != sortingOrder)
@@ -197,6 +211,10 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 
 			return;
 		}
+#else
+		/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+		/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
 
 		/* Mesh (SkinnedMeshRenderer) */
 		if(null != InstanceSkinnedMeshRenderer)

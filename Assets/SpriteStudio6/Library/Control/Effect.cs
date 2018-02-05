@@ -162,7 +162,8 @@ public static partial class Library_SpriteStudio6
 			}
 
 			internal void Update(	Script_SpriteStudio6_RootEffect instanceRoot,
-									Library_SpriteStudio6.KindMasking masking
+									Library_SpriteStudio6.KindMasking masking,
+									ref Matrix4x4 matrixCorrection
 								)
 			{
 				/* Check WorkArea lost */
@@ -176,7 +177,7 @@ public static partial class Library_SpriteStudio6
 													Quaternion.Euler(0.0f, 0.0f, 0.0f),
 													instanceRoot.RateScaleLocal
 												);
-				MatrixRoot = instanceRoot.transform.localToWorldMatrix *  matrix;
+				MatrixRoot = matrixCorrection * instanceRoot.transform.localToWorldMatrix * matrix;
 				CountParticleDraw = 0;
 
 				/* Emitters' Random-Seed Refresh */
