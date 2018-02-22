@@ -37,7 +37,7 @@ public static partial class LibraryEditor_SpriteStudio6
 										string nameFileLog	/* Full-Path */
 									)
 			{
-				const string messageLogPrefix = "Batch-Importer";
+//				const string messageLogPrefix = "Batch-Importer";
 
 				if(true == string.IsNullOrEmpty(nameFileList))
 				{

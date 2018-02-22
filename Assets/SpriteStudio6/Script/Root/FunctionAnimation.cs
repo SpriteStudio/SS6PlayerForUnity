@@ -105,6 +105,10 @@ public partial class Script_SpriteStudio6_Root
 		Frame Per Second (In principle, omit specifying this value)<br>
 		0 == Conforms to animation<br>
 		default: 0
+	@param	dataAnimation
+		External reference Animation-Data (Scriptable Object)<br>
+		null == Apply previous setting.<br>
+		default: null
 	@retval	Return-Value
 		true == Success<br>
 		false == Failure (Error)
@@ -129,7 +133,8 @@ public partial class Script_SpriteStudio6_Root
 								int frameRangeOffsetStart = int.MinValue,
 								string labelRangeEnd = null,
 								int frameRangeOffsetEnd = int.MaxValue,
-								int framePerSecond = 0
+								int framePerSecond = 0,
+								Script_SpriteStudio6_DataAnimation dataAnimation = null
 							)
 	{
 		/* MEMO: Execute initialization to properly process play immediately after instantiating. */
@@ -160,6 +165,15 @@ public partial class Script_SpriteStudio6_Root
 			}
 			TableControlTrack[indexTrack].Stop();
 			TableControlTrack[indexTrack].Transition(-1, 0.0f);
+		}
+
+		if(null == dataAnimation)
+		{
+			dataAnimation = TableInformationPlay[indexTrack].DataAnimation;
+		}
+		if(null == dataAnimation)
+		{
+			dataAnimation = DataAnimation;
 		}
 
 		indexAnimation = (0 > indexAnimation) ? TableInformationPlay[indexTrack].IndexAnimation : indexAnimation;
@@ -216,13 +230,14 @@ public partial class Script_SpriteStudio6_Root
 
 		if(0 >= framePerSecond)
 		{
-			framePerSecond = DataAnimation.TableAnimation[indexAnimation].FramePerSecond;
+			framePerSecond = dataAnimation.TableAnimation[indexAnimation].FramePerSecond;
 		}
 
 		/* Update play-Information */
 //		TableInformationPlay[indexTrack].FlagSetInitial = 
 //		TableInformationPlay[indexTrack].FlagStopInitial = 
-		TableInformationPlay[indexTrack].NameAnimation = DataAnimation.TableAnimation[indexAnimation].Name;
+		TableInformationPlay[indexTrack].DataAnimation = dataAnimation;
+		TableInformationPlay[indexTrack].NameAnimation = dataAnimation.TableAnimation[indexAnimation].Name;
 		TableInformationPlay[indexTrack].IndexAnimation = indexAnimation;
 		TableInformationPlay[indexTrack].FlagPingPong = flagPingPong;
 		TableInformationPlay[indexTrack].LabelStart = labelRangeStart;	/* string.Copt(labelRangeStart); */
@@ -236,7 +251,7 @@ public partial class Script_SpriteStudio6_Root
 		/* Get range */
 		int frameRangeStart = 0;
 		int frameRangeEnd = 0;
-		DataAnimation.TableAnimation[indexAnimation].FrameRangeGet(	out frameRangeStart, out frameRangeEnd,
+		dataAnimation.TableAnimation[indexAnimation].FrameRangeGet(	out frameRangeStart, out frameRangeEnd,
 																	labelRangeStart,
 																	frameRangeOffsetStart,
 																	labelRangeEnd,
@@ -266,6 +281,7 @@ public partial class Script_SpriteStudio6_Root
 
 		/* Start Playing */
 		return(TableControlTrack[indexTrack].Start(	this,
+													dataAnimation,
 													indexAnimation,
 													frameRangeStart,
 													frameRangeEnd,

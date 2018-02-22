@@ -985,6 +985,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	{
 		/* ----------------------------------------------- Variables & Properties */
 		#region Variables & Properties
+		public Script_SpriteStudio6_DataAnimation DataAnimation;
+
 		public bool FlagSetInitial;
 		public bool FlagStopInitial;
 
@@ -1004,6 +1006,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		#region Functions
 		public void CleanUp()
 		{
+			DataAnimation = null;
+
 			FlagSetInitial = false;
 			FlagStopInitial = false;
 

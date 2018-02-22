@@ -255,6 +255,7 @@ public static partial class Library_SpriteStudio6
 				}
 
 				public bool Start(	Script_SpriteStudio6_Root instanceRoot,
+									Script_SpriteStudio6_DataAnimation dataAnimation,
 									int indexAnimation,
 									int frameRangeStart,
 									int frameRangeEnd,
@@ -276,14 +277,14 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Reset Animation */
-					ArgumentContainer.DataAnimation = instanceRoot.DataAnimation;
+					ArgumentContainer.DataAnimation = dataAnimation;
 					ArgumentContainer.IndexAnimation = indexAnimation;
 					ArgumentContainer.FramePrevious = -1;
 
 					/* Set datas */
 					Status &= FlagBitStatus.VALID;	/* Clear */
 
-					Status = (true == flagPingpong) ? (Status | FlagBitStatus.STYLE_PINGPONG) : (Status & ~FlagBitStatus.STYLE_PINGPONG); 
+					Status = (true == flagPingpong) ? (Status | FlagBitStatus.STYLE_PINGPONG) : (Status & ~FlagBitStatus.STYLE_PINGPONG);
 					Status &= ~FlagBitStatus.STYLE_REVERSE;
 					RateTime = rateTime;
 					if(0.0f > RateTime)

@@ -881,17 +881,18 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
 				EditorGUI.indentLevel = levelIndent;
 
-				EditorGUILayout.LabelField("Set each blend-operation's materials. (Materials are duplicated)");
-				EditorGUILayout.Space();
-
-				SettingImport.PresetMaterial.AnimationSS6PUStencilPreDraw = EditorGUILayout.ObjectField("[Mask]Pre-Draw", SettingImport.PresetMaterial.AnimationSS6PUStencilPreDraw, typeof(Material), false) as Material;
-				SettingImport.PresetMaterial.AnimationSS6PUStencilDraw = EditorGUILayout.ObjectField("[Mask]Draw", SettingImport.PresetMaterial.AnimationSS6PUStencilDraw, typeof(Material), false) as Material;
-				EditorGUILayout.Space();
-
 				SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialThrough = EditorGUILayout.Foldout(SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialThrough, "for parts Not-Masked");
 				if(true == SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialThrough)
 				{
 					EditorGUI.indentLevel = levelIndent + 1;
+					EditorGUILayout.LabelField("Set each blend-operation's materials.");
+					EditorGUILayout.LabelField("(Materials will be duplicated for each importing SSPJ data.)");
+					EditorGUILayout.Space();
+
+					SettingImport.PresetMaterial.AnimationSS6PUThroughStencilPreDraw = EditorGUILayout.ObjectField("[Mask]Pre-Draw", SettingImport.PresetMaterial.AnimationSS6PUThroughStencilPreDraw, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUThroughStencilDraw = EditorGUILayout.ObjectField("[Mask]Draw", SettingImport.PresetMaterial.AnimationSS6PUThroughStencilDraw, typeof(Material), false) as Material;
+					EditorGUILayout.Space();
+
 					SettingImport.PresetMaterial.AnimationSS6PUThroughMix = EditorGUILayout.ObjectField("[Sprite]Mix", SettingImport.PresetMaterial.AnimationSS6PUThroughMix, typeof(Material), false) as Material;
 					SettingImport.PresetMaterial.AnimationSS6PUThroughAdd = EditorGUILayout.ObjectField("[Sprite]Add", SettingImport.PresetMaterial.AnimationSS6PUThroughAdd, typeof(Material), false) as Material;
 					SettingImport.PresetMaterial.AnimationSS6PUThroughSub = EditorGUILayout.ObjectField("[Sprite]Sub", SettingImport.PresetMaterial.AnimationSS6PUThroughSub, typeof(Material), false) as Material;
@@ -903,14 +904,22 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 					EditorGUILayout.Space();
 					SettingImport.PresetMaterial.EffectSS6PUThroughMix = EditorGUILayout.ObjectField("[Effect]Mix", SettingImport.PresetMaterial.EffectSS6PUThroughMix, typeof(Material), false) as Material;
 					SettingImport.PresetMaterial.EffectSS6PUThroughAdd = EditorGUILayout.ObjectField("[Effect]Add", SettingImport.PresetMaterial.EffectSS6PUThroughAdd, typeof(Material), false) as Material;
+					EditorGUILayout.Space();
 					EditorGUI.indentLevel = levelIndent;
 				}
 
-				EditorGUILayout.Space();
 				SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialMask = EditorGUILayout.Foldout(SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialMask, "for parts Masked");
 				if(true == SettingOption.ModeSS6PU.FlagFoldOutPresetMaterialMask)
 				{
 					EditorGUI.indentLevel = levelIndent + 1;
+					EditorGUILayout.LabelField("Set each blend-operation's materials.");
+					EditorGUILayout.LabelField("(Materials will be duplicated for each importing SSPJ data.)");
+					EditorGUILayout.Space();
+
+					SettingImport.PresetMaterial.AnimationSS6PUMaskStencilPreDraw = EditorGUILayout.ObjectField("[Mask]Pre-Draw", SettingImport.PresetMaterial.AnimationSS6PUMaskStencilPreDraw, typeof(Material), false) as Material;
+					SettingImport.PresetMaterial.AnimationSS6PUMaskStencilDraw = EditorGUILayout.ObjectField("[Mask]Draw", SettingImport.PresetMaterial.AnimationSS6PUMaskStencilDraw, typeof(Material), false) as Material;
+					EditorGUILayout.Space();
+
 					SettingImport.PresetMaterial.AnimationSS6PUMaskMix = EditorGUILayout.ObjectField("[Sprite]Mix", SettingImport.PresetMaterial.AnimationSS6PUMaskMix, typeof(Material), false) as Material;
 					SettingImport.PresetMaterial.AnimationSS6PUMaskAdd = EditorGUILayout.ObjectField("[Sprite]Add", SettingImport.PresetMaterial.AnimationSS6PUMaskAdd, typeof(Material), false) as Material;
 					SettingImport.PresetMaterial.AnimationSS6PUMaskSub = EditorGUILayout.ObjectField("[Sprite]Sub", SettingImport.PresetMaterial.AnimationSS6PUMaskSub, typeof(Material), false) as Material;
@@ -922,6 +931,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 					EditorGUILayout.Space();
 					SettingImport.PresetMaterial.EffectSS6PUMaskMix = EditorGUILayout.ObjectField("[Effect]Mix", SettingImport.PresetMaterial.EffectSS6PUMaskMix, typeof(Material), false) as Material;
 					SettingImport.PresetMaterial.EffectSS6PUMaskAdd = EditorGUILayout.ObjectField("[Effect]Add", SettingImport.PresetMaterial.EffectSS6PUMaskAdd, typeof(Material), false) as Material;
+					EditorGUILayout.Space();
 					EditorGUI.indentLevel = levelIndent;
 				}
 				EditorGUILayout.Space();

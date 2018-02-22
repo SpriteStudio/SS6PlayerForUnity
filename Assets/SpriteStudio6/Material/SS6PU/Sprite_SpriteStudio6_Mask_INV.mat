@@ -63,7 +63,7 @@ Material:
     - _BlendOperation: 0
     - _BlendSource: 4
     - _BumpScale: 1
-    - _CompareStencil: 5
+    - _CompareStencil: 3
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
