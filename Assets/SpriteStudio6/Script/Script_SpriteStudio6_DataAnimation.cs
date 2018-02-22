@@ -362,9 +362,12 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			/* MEMO: Add "DataSetup" */
 		CODE_010004 = 0x00010004,	/* SS6PU Ver.1.0.26 */
 			/* MEMO: Shaders changed to integrated type */
+		CODE_010005 = 0x00010005,	/* SS6PU Ver.1.0.27 */
+			/* MEMO: Shader's stencil-test are changed.  */
+			/* MEMO: "Mask" parts' materials are separated for masking and nonmasking. */
 
 		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010004
+		SUPPORT_LATEST = CODE_010005
 	}
 	#endregion Enums & Constants
 

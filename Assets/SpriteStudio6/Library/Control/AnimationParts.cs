@@ -2699,6 +2699,7 @@ public static partial class Library_SpriteStudio6
 						Vector2 positionMapping = PositionCell;
 
 						/* Check Masking */
+#if false
 						if(true == flagPreDraw)
 						{
 							masking = Library_SpriteStudio6.KindMasking.THROUGH;
@@ -2710,6 +2711,12 @@ public static partial class Library_SpriteStudio6
 								masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
 							}
 						}
+#else
+						if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
+						{
+							masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
+						}
+#endif
 						if(Masking != masking)
 						{
 							Masking = masking;
@@ -2881,6 +2888,7 @@ public static partial class Library_SpriteStudio6
 						/* Update Material */
 						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
 						{
+#if false
 							if(true == flagPreDraw)
 							{
 								/* MEMO: When "flagPreDraw" is true, only when "Mask"'s first time drawing. */
@@ -2897,6 +2905,21 @@ public static partial class Library_SpriteStudio6
 																			Masking
 																		);
 							}
+#else
+							if(true == flagPreDraw)
+							{
+								int indexCellMap = DataCellApply.IndexCellMap;
+								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking);
+								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking);
+							}
+							else
+							{
+								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
+																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
+																			masking
+																		);
+							}
+#endif
 						}
 
 						/* Set to Draw-Cluster */
@@ -2951,6 +2974,7 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Check Masking */
+#if false
 						if(true == flagPreDraw)
 						{
 							masking = Library_SpriteStudio6.KindMasking.THROUGH;
@@ -2962,6 +2986,12 @@ public static partial class Library_SpriteStudio6
 								masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
 							}
 						}
+#else
+						if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
+						{
+							masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
+						}
+#endif
 						if(Masking != masking)
 						{
 							Masking = masking;
@@ -3106,6 +3136,7 @@ public static partial class Library_SpriteStudio6
 						/* Update Material */
 						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
 						{
+#if false
 							if(true == flagPreDraw)
 							{
 								/* MEMO: When "flagPreDraw" is true, only when "Mask"'s first time drawing. */
@@ -3122,6 +3153,24 @@ public static partial class Library_SpriteStudio6
 																			Masking
 																		);
 							}
+#else
+							if(true == flagPreDraw)
+							{
+								/* MEMO: When "flagPreDraw" is true, only when "Mask"'s first time drawing. */
+								/*       Set fixed values.                                                  */
+								/* MEMO: Update material for "Draw" as well. */
+								indexCellMap = DataCellApply.IndexCellMap;
+								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking);
+								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking);
+							}
+							else
+							{
+								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
+																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
+																			masking
+																		);
+							}
+#endif
 						}
 
 						/* Set to Draw-Cluster */

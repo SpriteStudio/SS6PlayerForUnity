@@ -31,7 +31,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil"
 			ZWRITE Off
 			Stencil
 			{
-				Ref 1
+				Ref 0
 				Comp Always
 				Pass [_StencilOperation]
 			}

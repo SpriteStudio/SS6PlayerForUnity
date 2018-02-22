@@ -1014,15 +1014,17 @@ public static partial class LibraryEditor_SpriteStudio6
 					if(null != dataOverride)
 					{	/* Specified */
 						informationSSEE.DataEffectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(dataOverride);
-						informationSSEE.DataEffectSS6PU.TableData[0] = dataOverride;
 					}
 					else
 					{	/* Default */
 						informationSSEE.DataEffectSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU, nameOutputAssetFolderBase)
 																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU, informationSSEE.NameFileBody, informationSSPJ.NameFileBody)
 																		+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
-						informationSSEE.DataEffectSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataEffect>(informationSSEE.DataEffectSS6PU.TableName[0]);
+						dataOverride = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataEffect>(informationSSEE.DataEffectSS6PU.TableName[0]);
 					}
+
+					informationSSEE.DataEffectSS6PU.TableData[0] = dataOverride;
+					informationSSEE.DataEffectSS6PU.Version[0] = (null != dataOverride) ? (int)(dataOverride.Version) : (int)Script_SpriteStudio6_DataEffect.KindVersion.SS5PU;
 
 					return(true);
 
@@ -1050,6 +1052,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationSSEE.PrefabEffectSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<GameObject>(informationSSEE.PrefabEffectSS6PU.TableName[0]);
 					}
 
+					/* MEMO: "Control-Prefab" creates only the name. */
+					informationSSEE.PrefabEffectSS6PU.Version[0] = -1;
+
 					return(true);
 
 //				AssetNameDecide_ErroeEnd:;
@@ -1061,7 +1066,7 @@ public static partial class LibraryEditor_SpriteStudio6
 													LibraryEditor_SpriteStudio6.Import.SSEE.Information informationSSEE
 												)
 				{
-					const string messageLogPrefix = "Create Asset(Data-Effect)";
+//					const string messageLogPrefix = "Create Asset(Data-Effect)";
 
 					Script_SpriteStudio6_DataEffect dataEffect = informationSSEE.DataEffectSS6PU.TableData[0];
 					if(null == dataEffect)

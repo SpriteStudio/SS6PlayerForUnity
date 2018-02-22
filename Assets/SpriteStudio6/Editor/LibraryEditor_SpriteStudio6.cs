@@ -1047,6 +1047,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
 			public bool[] FlagUpdate;
+			public int[] Version;
 			public string[] TableName;
 			public _Type[] TableData;
 			#endregion Variables & Properties
@@ -1056,6 +1057,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			public void CleanUp()
 			{
 				FlagUpdate = null;
+				Version = null;
 				TableName = null;
 				TableData = null;
 			}
@@ -1063,11 +1065,13 @@ public static partial class LibraryEditor_SpriteStudio6
 			public void BootUp(int count)
 			{
 				FlagUpdate = new bool[count];
+				Version = new int[count];
 				TableName = new string[count];
 				TableData = new _Type[count];
 				for(int i=0; i<count; i++)
 				{
 					FlagUpdate[i] = true;
+					Version[i] = -1;
 					TableName[i] = null;
 					TableData[i] = null;
 				}

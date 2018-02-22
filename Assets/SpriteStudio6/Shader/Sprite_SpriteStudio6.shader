@@ -38,8 +38,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite"
 			ZWRITE [_ZWrite]
 			Stencil
 			{
-				Ref 1
-				ReadMask 1
+				Ref 0
 				Comp [_CompareStencil]
 				Pass Keep
 			}

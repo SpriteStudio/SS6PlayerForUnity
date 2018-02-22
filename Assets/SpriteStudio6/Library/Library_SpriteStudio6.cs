@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.0.26";
+	public const string SignatureVersionAsset = "1.0.27";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -1558,8 +1558,18 @@ public static partial class Library_SpriteStudio6
 						{
 							if(0 <= IDPropertyStencilOperation)
 							{
-								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.IncrementWrap);
+								switch(masking)
+								{
+									case Library_SpriteStudio6.KindMasking.THROUGH:
+										material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.IncrementWrap);
+										break;
+
+									case Library_SpriteStudio6.KindMasking.MASK:
+										material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.Invert);
+										break;
+								}
 							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
 						}
 						break;
 
@@ -1569,8 +1579,18 @@ public static partial class Library_SpriteStudio6
 						{
 							if(0 <= IDPropertyStencilOperation)
 							{
-								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.DecrementWrap);
+								switch(masking)
+								{
+									case Library_SpriteStudio6.KindMasking.THROUGH:
+										material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.DecrementWrap);
+										break;
+
+									case Library_SpriteStudio6.KindMasking.MASK:
+										material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.Invert);
+										break;
+								}
 							}
+							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
 						}
 						break;
 
@@ -1594,7 +1614,7 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+							goto default;
 						}
 						break;
 
@@ -1618,7 +1638,7 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+							goto default;
 						}
 						break;
 
@@ -1642,7 +1662,7 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+							goto default;
 						}
 						break;
 
@@ -1666,7 +1686,7 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+							goto default;
 						}
 						break;
 
@@ -1690,7 +1710,7 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+							goto default;
 						}
 						break;
 
@@ -1714,7 +1734,7 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+							goto default;
 						}
 						break;
 
@@ -1738,7 +1758,7 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+							goto default;
 						}
 						break;
 
@@ -1762,11 +1782,15 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
+							goto default;
 						}
 						break;
 
 					case Library_SpriteStudio6.KindOperationBlend.TERMINATOR:
+						/* MEMO: All "Mask" Common Setting */
+						break;
+
+					default:
 						/* MEMO: All "Sprite" Common Setting */
 						if(0 <= IDPropertyCompareStencil)
 						{
@@ -1777,17 +1801,18 @@ public static partial class Library_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.KindMasking.MASK:
-									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Greater);
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Equal);
 									break;
 							}
 						}
+
 						if(0 <= IDPropertyZWrite)
 						{
-							material.SetFloat(IDPropertyZWrite, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+							material.SetFloat(IDPropertyZWrite, 0.0f);	/* false */
 						}
 						if(0 <= IDPropertyOutputPixelPMA)
 						{
-							material.SetFloat(IDPropertyOutputPixelPMA, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+							material.SetFloat(IDPropertyOutputPixelPMA, 0.0f);	/* false */
 						}
 						break;
 				}
@@ -1825,7 +1850,7 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
+							goto default;
 						}
 						break;
 
@@ -1849,11 +1874,14 @@ public static partial class Library_SpriteStudio6
 							{
 								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
-							goto case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR;
+							goto default;
 						}
 						break;
 
 					case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR:
+						break;
+
+					default:
 						/* MEMO: All "Effect" Common Setting */
 						if(0 <= IDPropertyCompareStencil)
 						{
@@ -1885,6 +1913,7 @@ public static partial class Library_SpriteStudio6
 
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
+			/* MEMO: Legacy */
 			public readonly static UnityEngine.Shader[] TableSpriteThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
@@ -1899,6 +1928,7 @@ public static partial class Library_SpriteStudio6
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Inverse")
 			};
 
+			/* MEMO: Legacy */
 			public readonly static UnityEngine.Shader[] TableSpriteMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
@@ -1913,18 +1943,21 @@ public static partial class Library_SpriteStudio6
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Inverse")
 			};
 
+			/* MEMO: Legacy */
 			public readonly static UnityEngine.Shader[] TableEffectThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Add"),
 			};
 
+			/* MEMO: Legacy */
 			public readonly static UnityEngine.Shader[] TableEffectMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Mix"),
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"),
 			};
 
+			/* MEMO: Legacy */
 			public readonly static UnityEngine.Shader[] TableSpriteUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Mix"),
@@ -1937,6 +1970,7 @@ public static partial class Library_SpriteStudio6
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Inverse")
 			};
 
+			/* MEMO: Legacy */
 			public readonly static UnityEngine.Shader[] TableSkinnedMeshUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
 			{
 				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Mix"),
@@ -1952,17 +1986,30 @@ public static partial class Library_SpriteStudio6
 			public readonly static UnityEngine.Shader SpriteSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite");
 			public readonly static UnityEngine.Shader EffectSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect");
 			public readonly static UnityEngine.Shader StencilSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil");
+			public readonly static UnityEngine.Shader SpriteUnityNative = UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite");
+			public readonly static UnityEngine.Shader SkinnedMeshUnityNative = UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh");
 
-			public readonly static int IDPropertyStencilOperation = UnityEngine.Shader.PropertyToID("_StencilOperation");
-			public readonly static int IDPropertyBlendSource = UnityEngine.Shader.PropertyToID("_BlendSource");
-			public readonly static int IDPropertyBlendDestination = UnityEngine.Shader.PropertyToID("_BlendDestination");
-			public readonly static int IDPropertyBlendOperation = UnityEngine.Shader.PropertyToID("_BlendOperation");
-			public readonly static int IDPropertyCompareStencil = UnityEngine.Shader.PropertyToID("_CompareStencil");
-			public readonly static int IDPropertyZWrite = UnityEngine.Shader.PropertyToID("_ZWrite");
-			public readonly static int IDPropertyNotDiscardPixel = UnityEngine.Shader.PropertyToID("_NotDiscardPixel");
-			public readonly static int IDPropertyOutputPixelPMA = UnityEngine.Shader.PropertyToID("_OutputPixelPMA");
-			public readonly static int IDPropertyAlphaTex = UnityEngine.Shader.PropertyToID("_AlphaTex");
-			public readonly static int IDPropertyEnableExternalAlpha = UnityEngine.Shader.PropertyToID("_EnableExternalAlpha");
+			public const string NamePropertyStencilOperation = "_StencilOperation";
+			public const string NamePropertyBlendSource = "_BlendSource";
+			public const string NamePropertyBlendDestination = "_BlendDestination";
+			public const string NamePropertyBlendOperation = "_BlendOperation";
+			public const string NamePropertyCompareStencil = "_CompareStencil";
+			public const string NamePropertyZWrite = "_ZWrite";
+			public const string NamePropertyNotDiscardPixel = "_NotDiscardPixel";
+			public const string NamePropertyOutputPixelPMA = "_OutputPixelPMA";
+			public const string NamePropertyAlphaTex = "_AlphaTex";
+			public const string NamePropertyEnableExternalAlpha = "_EnableExternalAlpha";
+
+			public readonly static int IDPropertyStencilOperation = UnityEngine.Shader.PropertyToID(NamePropertyStencilOperation);
+			public readonly static int IDPropertyBlendSource = UnityEngine.Shader.PropertyToID(NamePropertyBlendSource);
+			public readonly static int IDPropertyBlendDestination = UnityEngine.Shader.PropertyToID(NamePropertyBlendDestination);
+			public readonly static int IDPropertyBlendOperation = UnityEngine.Shader.PropertyToID(NamePropertyBlendOperation);
+			public readonly static int IDPropertyCompareStencil = UnityEngine.Shader.PropertyToID(NamePropertyCompareStencil);
+			public readonly static int IDPropertyZWrite = UnityEngine.Shader.PropertyToID(NamePropertyZWrite);
+			public readonly static int IDPropertyNotDiscardPixel = UnityEngine.Shader.PropertyToID(NamePropertyNotDiscardPixel);
+			public readonly static int IDPropertyOutputPixelPMA = UnityEngine.Shader.PropertyToID(NamePropertyOutputPixelPMA);
+			public readonly static int IDPropertyAlphaTex = UnityEngine.Shader.PropertyToID(NamePropertyAlphaTex);
+			public readonly static int IDPropertyEnableExternalAlpha = UnityEngine.Shader.PropertyToID(NamePropertyEnableExternalAlpha);
 
 			#endregion Enums & Constants
 		}
