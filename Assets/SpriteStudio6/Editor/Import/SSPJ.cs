@@ -780,6 +780,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					/* Track existing assets */
 					Script_SpriteStudio6_DataCellMap dataCellMapOld = null;	/* Pair with SSPJ (Always 1) */
+//					Script_SpriteStudio6_DataCellMap.KindVersion versionCellMapOld = Script_SpriteStudio6_DataCellMap.KindVersion.SS5PU;	/* disuse now */
 					Material[] tableMaterialAnimationOld = null;
 					Material[,,] tableMaterialAnimationtNew = new Material[countSSCE, (int)Library_SpriteStudio6.KindMasking.TERMINATOR, (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL];
 					Material[] tableMaterialEffectOld = null;
@@ -787,8 +788,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					Texture2D[] tableTextureNew = new Texture2D[countTexture];
 					Script_SpriteStudio6_Root[] tableScriptRootOld = new Script_SpriteStudio6_Root[countSSAE];
 					Script_SpriteStudio6_DataAnimation[] tableDataAnimationOld = new Script_SpriteStudio6_DataAnimation[countSSAE];
+					Script_SpriteStudio6_DataAnimation.KindVersion versionAnimationOld = Script_SpriteStudio6_DataAnimation.KindVersion.SS5PU;
 					Script_SpriteStudio6_RootEffect[] tableScriptRootEffectOld = new Script_SpriteStudio6_RootEffect[countSSEE];
 					Script_SpriteStudio6_DataEffect[] tableDataEffectOld = new Script_SpriteStudio6_DataEffect[countSSEE];
+					Script_SpriteStudio6_DataEffect.KindVersion versionEffectOld = Script_SpriteStudio6_DataEffect.KindVersion.SS5PU;
 					if(	(null == tableMaterialAnimationtNew) || (null == tableMaterialEffectNew) || (null == tableTextureNew)
 						|| (null == tableScriptRootOld) || (null == tableDataAnimationOld)
 						|| (null == tableScriptRootEffectOld) || (null == tableDataEffectOld)
@@ -830,15 +833,25 @@ public static partial class LibraryEditor_SpriteStudio6
 									if(null != tableScriptRootOld[i])
 									{	/* Valid Animation-prefab */
 										tableDataAnimationOld[i] = tableScriptRootOld[i].DataAnimation;
-										if((null != tableDataAnimationOld[i]) && (null == tableMaterialAnimationOld))
+										if(null != tableDataAnimationOld[i])
 										{
-											/* MEMO: Do not get Root's TableMaterial. (Not imported original data) */
-											tableMaterialAnimationOld = tableDataAnimationOld[i].TableMaterial;
+											if(null == tableMaterialAnimationOld)
+											{
+												/* MEMO: Do not get Root's TableMaterial. (Not imported original data) */
+												tableMaterialAnimationOld = tableDataAnimationOld[i].TableMaterial;
+											}
+
+											if((Script_SpriteStudio6_DataAnimation.KindVersion.SS5PU == versionAnimationOld) || (tableDataAnimationOld[i].Version < versionAnimationOld))
+											{
+												/* MEMO: Extract minimum version */
+												versionAnimationOld = tableDataAnimationOld[i].Version;
+											}
 										}
 
 										if(null == dataCellMapOld)
 										{
 											dataCellMapOld = tableScriptRootOld[i].DataCellMap;
+//											versionCellMapOld = dataCellMapOld.Version;	/* disuse now */
 										}
 									}
 								}
@@ -860,15 +873,25 @@ public static partial class LibraryEditor_SpriteStudio6
 									if(null != tableScriptRootEffectOld[i])
 									{	/* Valid Effect-prefab */
 										tableDataEffectOld[i] = tableScriptRootEffectOld[i].DataEffect;
-										if((null != tableDataEffectOld[i]) && (null == tableMaterialEffectOld))
+										if(null != tableDataEffectOld[i])
 										{
-											/* MEMO: Do not get RootEffect's TableMaterial. (Not imported original data) */
-											tableMaterialEffectOld = tableDataEffectOld[i].TableMaterial;
+											if(null == tableMaterialEffectOld)
+											{
+												/* MEMO: Do not get RootEffect's TableMaterial. (Not imported original data) */
+												tableMaterialEffectOld = tableDataEffectOld[i].TableMaterial;
+											}
+
+											if((Script_SpriteStudio6_DataEffect.KindVersion.SS5PU == versionEffectOld) || (tableDataEffectOld[i].Version < versionEffectOld))
+											{
+												/* MEMO: Extract minimum version */
+												versionEffectOld = tableDataEffectOld[i].Version;
+											}
 										}
 
 										if(null == dataCellMapOld)
 										{
 											dataCellMapOld = tableScriptRootEffectOld[i].DataCellMap;
+//											versionCellMapOld = dataCellMapOld.Version;	/* disunse now */
 										}
 									}
 								}
@@ -890,6 +913,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							int indexCellMapNew;
 							int indexMaterialOld;
 							int indexTextureNew;
+							Library_SpriteStudio6.KindOperationBlend operationBlend;
+							Library_SpriteStudio6.KindOperationBlendEffect operationBlendEffect;
 							Material material;
 
 							for(int i=0; i<countCellMapOld; i++)
@@ -907,8 +932,9 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												for(int k=0; k<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL; k++)
 												{
+													operationBlend = (Library_SpriteStudio6.KindOperationBlend)(k + (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR);
 													indexMaterialOld = Script_SpriteStudio6_Root.Material.IndexGetTable(	i,
-																															(Library_SpriteStudio6.KindOperationBlend)(k + (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR),
+																															operationBlend,
 																															(Library_SpriteStudio6.KindMasking)j
 																													);
 													if(0 <= indexMaterialOld)
@@ -930,8 +956,9 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												for(int k=0; k<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL; k++)
 												{
+													operationBlendEffect = (Library_SpriteStudio6.KindOperationBlendEffect)(k + (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR);
 													indexMaterialOld = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(	i,
-																																(Library_SpriteStudio6.KindOperationBlendEffect)(k + (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR),
+																																operationBlendEffect,
 																																(Library_SpriteStudio6.KindMasking)j
 																															);
 													if(0 <= indexMaterialOld)
@@ -1004,7 +1031,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																												nameOutputAssetFolderBase,
 																												(Library_SpriteStudio6.KindOperationBlend)j,
 																												Library_SpriteStudio6.KindMasking.THROUGH,
-																												tableMaterialAnimationtNew[i, (int)Library_SpriteStudio6.KindMasking.THROUGH, indexMaterialBlend]
+																												tableMaterialAnimationtNew[i, (int)Library_SpriteStudio6.KindMasking.THROUGH, indexMaterialBlend],
+																												versionAnimationOld
 																											);
 
 							LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideMaterialAnimation(	ref setting,
@@ -1013,7 +1041,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																												nameOutputAssetFolderBase,
 																												(Library_SpriteStudio6.KindOperationBlend)j,
 																												Library_SpriteStudio6.KindMasking.MASK,
-																												tableMaterialAnimationtNew[i, (int)Library_SpriteStudio6.KindMasking.MASK, indexMaterialBlend]
+																												tableMaterialAnimationtNew[i, (int)Library_SpriteStudio6.KindMasking.MASK, indexMaterialBlend],
+																												versionAnimationOld
 																											);
 						}
 
@@ -1028,7 +1057,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																												nameOutputAssetFolderBase,
 																												(Library_SpriteStudio6.KindOperationBlendEffect)j,
 																												Library_SpriteStudio6.KindMasking.THROUGH,
-																												tableMaterialEffectNew[i, (int)Library_SpriteStudio6.KindMasking.THROUGH, indexMaterialBlend]
+																												tableMaterialEffectNew[i, (int)Library_SpriteStudio6.KindMasking.THROUGH, indexMaterialBlend],
+																												versionEffectOld
 																											);
 
 							LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideMaterialEffect(	ref setting,
@@ -1037,7 +1067,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																												nameOutputAssetFolderBase,
 																												(Library_SpriteStudio6.KindOperationBlendEffect)j,
 																												Library_SpriteStudio6.KindMasking.MASK,
-																												tableMaterialEffectNew[i, (int)Library_SpriteStudio6.KindMasking.MASK, indexMaterialBlend]
+																												tableMaterialEffectNew[i, (int)Library_SpriteStudio6.KindMasking.MASK, indexMaterialBlend],
+																												versionEffectOld
 																											);
 						}
 					}
@@ -1071,21 +1102,23 @@ public static partial class LibraryEditor_SpriteStudio6
 				private static bool AssetNameDecideCellMap(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 															string nameOutputAssetFolderBase,
-															Script_SpriteStudio6_DataCellMap cellMapOverride
+															Script_SpriteStudio6_DataCellMap dataOverride
 														)
 				{
-					if(null != cellMapOverride)
+					if(null != dataOverride)
 					{	/* Specified */
-						informationSSPJ.DataCellMapSS6PU.TableName[0] = AssetDatabase.GetAssetPath(cellMapOverride);
-						informationSSPJ.DataCellMapSS6PU.TableData[0] = cellMapOverride;
+						informationSSPJ.DataCellMapSS6PU.TableName[0] = AssetDatabase.GetAssetPath(dataOverride);
 					}
 					else
 					{	/* Default */
 						informationSSPJ.DataCellMapSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU, nameOutputAssetFolderBase)
 																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU, informationSSPJ.NameFileBody, informationSSPJ.NameFileBody)
 																		+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
-						informationSSPJ.DataCellMapSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataCellMap>(informationSSPJ.DataCellMapSS6PU.TableName[0]);
+						dataOverride = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataCellMap>(informationSSPJ.DataCellMapSS6PU.TableName[0]);
 					}
+
+					informationSSPJ.DataCellMapSS6PU.TableData[0] = dataOverride;
+					informationSSPJ.DataCellMapSS6PU.Version[0] = (null != dataOverride) ? (int)(dataOverride.Version) : (int)Script_SpriteStudio6_DataCellMap.KindVersion.SS5PU;
 
 					return(true);
 

@@ -3612,15 +3612,16 @@ public static partial class LibraryEditor_SpriteStudio6
 					if(null != dataOverride)
 					{	/* Specified */
 						informationSSAE.DataAnimationSS6PU.TableName[0] = AssetDatabase.GetAssetPath(dataOverride);
-						informationSSAE.DataAnimationSS6PU.TableData[0] = dataOverride;
 					}
 					else
 					{	/* Default */
 						informationSSAE.DataAnimationSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_SS6PU, nameOutputAssetFolderBase)
 																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_SS6PU, informationSSAE.NameFileBody, informationSSPJ.NameFileBody)
 																		+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
-						informationSSAE.DataAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataAnimation>(informationSSAE.DataAnimationSS6PU.TableName[0]);
+						dataOverride = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataAnimation>(informationSSAE.DataAnimationSS6PU.TableName[0]);
 					}
+					informationSSAE.DataAnimationSS6PU.TableData[0] = dataOverride;
+					informationSSAE.DataAnimationSS6PU.Version[0] = (null != dataOverride) ? (int)(dataOverride.Version) : (int)Script_SpriteStudio6_DataAnimation.KindVersion.SS5PU;
 
 					return(true);
 
@@ -3658,6 +3659,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				+ informationSSAE.NameGameObjectAnimationControlSS6PU
 																				+ LibraryEditor_SpriteStudio6.Import.NameExtensionPrefab;
 					informationSSAE.PrefabControlAnimationSS6PU.TableData[0] = AssetDatabase.LoadAssetAtPath<GameObject>(informationSSAE.PrefabControlAnimationSS6PU.TableName[0]);
+					informationSSAE.PrefabControlAnimationSS6PU.Version[0] = -1;
 
 					return(true);
 
@@ -3670,7 +3672,7 @@ public static partial class LibraryEditor_SpriteStudio6
 													LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
 												)
 				{
-					const string messageLogPrefix = "Create Asset(Data-Animation)";
+//					const string messageLogPrefix = "Create Asset(Data-Animation)";
 
 					Script_SpriteStudio6_DataAnimation dataAnimation = informationSSAE.DataAnimationSS6PU.TableData[0];
 					if(null == dataAnimation)
@@ -8649,7 +8651,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int[] tableIndexBoneUse
 																	)
 				{
-					const int limitBone = 4;
+//					const int limitBone = 4;
 					int countBone = tableBindMeshBone.Length;
 					if(0 == countBone)
 					{
