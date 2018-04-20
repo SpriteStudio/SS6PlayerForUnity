@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.0.27";
+	public const string SignatureVersionAsset = "1.0.28";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
