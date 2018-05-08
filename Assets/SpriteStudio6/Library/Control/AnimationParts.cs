@@ -1854,7 +1854,18 @@ public static partial class Library_SpriteStudio6
 
 					/* Set to Draw-Cluster */
 					/* MEMO: Use same value as in "PreDraw", except for shaders and Draw-Chain. */
+#if false
 					ParameterSprite.DrawAddCluster(instanceRoot.ClusterDraw, ParameterSprite.ChainDrawMask, ParameterSprite.MaterialDrawMask);
+#else
+					instanceRoot.ClusterDraw.VertexAdd(	ParameterSprite.ChainDrawMask,
+														ParameterSprite.CountVertex,
+														ParameterSprite.CoordinateTransformDraw,
+														ParameterSprite.ColorPartsDraw,
+														ParameterSprite.UVTextureDraw,
+														ParameterSprite.ParameterBlendDraw,
+														ParameterSprite.MaterialDrawMask
+													);
+#endif
 				}
 
 				internal void AnimationChange()
@@ -2691,6 +2702,7 @@ public static partial class Library_SpriteStudio6
 							return;
 						}
 
+						bool flagTriangle4 = ((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex);	/* ? true : false */
 						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
 
 						Vector2 sizeSprite = SizeSprite;
@@ -2699,24 +2711,10 @@ public static partial class Library_SpriteStudio6
 						Vector2 positionMapping = PositionCell;
 
 						/* Check Masking */
-#if false
-						if(true == flagPreDraw)
-						{
-							masking = Library_SpriteStudio6.KindMasking.THROUGH;
-						}
-						else
-						{
-							if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
-							{
-								masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
-							}
-						}
-#else
 						if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
 						{
 							masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
 						}
-#endif
 						if(Masking != masking)
 						{
 							Masking = masking;
@@ -2803,7 +2801,7 @@ public static partial class Library_SpriteStudio6
 							}
 							tableColor = null;
 
-							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
+							if(flagTriangle4)	/* (true == flagTriangle4) */
 							{
 								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].x = operationBlend;
 								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.C].y = rateOpacity * (sumAlpha * 0.25f);
@@ -2822,7 +2820,7 @@ public static partial class Library_SpriteStudio6
 							float top = (-pivotSprite.y) * scaleMeshY;
 							float bottom = (sizeSprite.y - pivotSprite.y) * scaleMeshY;
 
-							if((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex)
+							if(flagTriangle4)	/* (true == flagTriangle4) */
 							{	/* 4-Triangles Mesh */
 								/* Set Mapping (Center) */
 								Vector2 uv2C = UVTextureDraw[0];
@@ -2873,6 +2871,7 @@ public static partial class Library_SpriteStudio6
 
 						/* Transform Coordinates */
 						/* MEMO: Prevent double effect MeshRenderer's world-matrix and InstanceTransform's world-matrix. */
+#if false
 						Matrix4x4 matrixTransform =	matrixCorrection
 													* instanceTransform.localToWorldMatrix
 													* Matrix4x4.Scale(new Vector3(	controlParts.ScaleLocal.Value.x * instanceRoot.RateScaleLocal.x,
@@ -2884,28 +2883,56 @@ public static partial class Library_SpriteStudio6
 						{
 							CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(CoordinateDraw[i]);
 						}
+#else
+						/* MEMO: Reduce matrix-multiplication. */
+						float scaleLocalX = controlParts.ScaleLocal.Value.x * instanceRoot.RateScaleLocal.x;
+						float scaleLocalY = controlParts.ScaleLocal.Value.y * instanceRoot.RateScaleLocal.y;
+						Matrix4x4 matrixTransform =	matrixCorrection * instanceTransform.localToWorldMatrix;
+						Vector3 coordinate;
+
+#if false
+						for(int i=0; i<CountVertex; i++)
+						{
+							coordinate = CoordinateDraw[i];
+							coordinate.x *= scaleLocalX;
+							coordinate.y *= scaleLocalY;
+							CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(coordinate);
+						}
+#else
+						/* MEMO: Expand "for" loop. */
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.LU] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.RU] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.RD] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.LD] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						if(flagTriangle4)	/* (true == flagTriangle4) */
+						{	/* 4-Triangles Mesh */
+							coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.C];
+							coordinate.x *= scaleLocalX;
+							coordinate.y *= scaleLocalY;
+							CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.C] = matrixTransform.MultiplyPoint3x4(coordinate);
+						}
+#endif
+#endif
 
 						/* Update Material */
 						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
 						{
-#if false
-							if(true == flagPreDraw)
-							{
-								/* MEMO: When "flagPreDraw" is true, only when "Mask"'s first time drawing. */
-								/*       Set fixed values.                                                  */
-								/* MEMO: Update material for "Draw" as well. */
-								int indexCellMap = DataCellApply.IndexCellMap;
-								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, Library_SpriteStudio6.KindMasking.THROUGH);
-								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, Library_SpriteStudio6.KindMasking.THROUGH);
-							}
-							else
-							{
-								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
-																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
-																			Masking
-																		);
-							}
-#else
 							if(true == flagPreDraw)
 							{
 								int indexCellMap = DataCellApply.IndexCellMap;
@@ -2919,11 +2946,22 @@ public static partial class Library_SpriteStudio6
 																			masking
 																		);
 							}
-#endif
 						}
 
 						/* Set to Draw-Cluster */
+#if false
 						DrawAddCluster(instanceRoot.ClusterDraw, ChainDraw, MaterialDraw);
+#else
+						instanceRoot.ClusterDraw.VertexAdd(	ChainDraw,
+															CountVertex,
+															CoordinateTransformDraw,
+															ColorPartsDraw,
+															UVTextureDraw,
+															ParameterBlendDraw,
+															MaterialDraw
+														);
+#endif
+
 
 						/* MEMO: "UPDATE" flags need to be cleared after add to Draw-Cluster.       */
 						/*       (Because "Draw" may not be executed even if "Update" is executed.) */
@@ -2974,24 +3012,10 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Check Masking */
-#if false
-						if(true == flagPreDraw)
-						{
-							masking = Library_SpriteStudio6.KindMasking.THROUGH;
-						}
-						else
-						{
-							if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
-							{
-								masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
-							}
-						}
-#else
 						if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
 						{
 							masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
 						}
-#endif
 						if(Masking != masking)
 						{
 							Masking = masking;
@@ -3136,24 +3160,6 @@ public static partial class Library_SpriteStudio6
 						/* Update Material */
 						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
 						{
-#if false
-							if(true == flagPreDraw)
-							{
-								/* MEMO: When "flagPreDraw" is true, only when "Mask"'s first time drawing. */
-								/*       Set fixed values.                                                  */
-								/* MEMO: Update material for "Draw" as well. */
-								indexCellMap = DataCellApply.IndexCellMap;
-								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, Library_SpriteStudio6.KindMasking.THROUGH);
-								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, Library_SpriteStudio6.KindMasking.THROUGH);
-							}
-							else
-							{
-								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
-																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
-																			Masking
-																		);
-							}
-#else
 							if(true == flagPreDraw)
 							{
 								/* MEMO: When "flagPreDraw" is true, only when "Mask"'s first time drawing. */
@@ -3170,11 +3176,21 @@ public static partial class Library_SpriteStudio6
 																			masking
 																		);
 							}
-#endif
 						}
 
 						/* Set to Draw-Cluster */
+#if false
 						DrawAddClusterMesh(instanceRoot.ClusterDraw, ChainDraw, MaterialDraw);
+#else
+						instanceRoot.ClusterDraw.VertexAddMesh(	ChainDraw,
+																CoordinateTransformDraw,
+																ColorPartsDraw,
+																UVTextureDraw,
+																ParameterBlendDraw,
+																IndexVertexDraw,
+																MaterialDraw
+															);
+#endif
 
 						/* MEMO: "UPDATE" flags need to be cleared after add to Draw-Cluster.       */
 						/*       (Because "Draw" may not be executed even if "Update" is executed.) */
@@ -3276,6 +3292,7 @@ public static partial class Library_SpriteStudio6
 						return;
 					}
 
+#if false
 					internal void DrawAddCluster(Library_SpriteStudio6.Draw.Cluster cluster, Library_SpriteStudio6.Draw.Cluster.Chain chain, Material material)
 					{
 						cluster.VertexAdd(	chain,
@@ -3299,6 +3316,7 @@ public static partial class Library_SpriteStudio6
 												material
 											);
 					}
+#endif
 					#endregion Functions
 
 					/* ----------------------------------------------- Enums & Constants */

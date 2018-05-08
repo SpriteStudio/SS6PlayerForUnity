@@ -115,20 +115,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 		set
 		{
-#if false
-			/* MEMO: Original processing */
-			if(true == value)
-			{
-				Status |= FlagBitStatus.ANIMATION_SYNTHESIZE;
-			}
-			else
-			{
-				Status &= ~FlagBitStatus.ANIMATION_SYNTHESIZE;
-			}
-#else
 			/* MEMO: Once turn true, will not return to false. */
 			Status |= FlagBitStatus.ANIMATION_SYNTHESIZE;
-#endif
 		}
 	}
 
