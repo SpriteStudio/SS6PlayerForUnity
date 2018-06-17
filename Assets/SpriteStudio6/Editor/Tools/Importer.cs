@@ -952,6 +952,15 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				SettingImport.PresetMaterial.AnimationUnityNativeExc = EditorGUILayout.ObjectField("[Sprite]Exc", SettingImport.PresetMaterial.AnimationUnityNativeExc, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.AnimationUnityNativeInv = EditorGUILayout.ObjectField("[Sprite]Inv", SettingImport.PresetMaterial.AnimationUnityNativeInv, typeof(Material), false) as Material;
 				EditorGUILayout.Space();
+				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMix = EditorGUILayout.ObjectField("[Sprite]Mix", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMix, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchAdd = EditorGUILayout.ObjectField("[Sprite]Add", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchAdd, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchSub = EditorGUILayout.ObjectField("[Sprite]Sub", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchSub, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMul = EditorGUILayout.ObjectField("[Sprite]Mul", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMul, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMulNA = EditorGUILayout.ObjectField("[Sprite]MulNA", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMulNA, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr = EditorGUILayout.ObjectField("[Sprite]Scr", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchExc = EditorGUILayout.ObjectField("[Sprite]Exc", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchExc, typeof(Material), false) as Material;
+				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchInv = EditorGUILayout.ObjectField("[Sprite]Inv", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchInv, typeof(Material), false) as Material;
+				EditorGUILayout.Space();
 				SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix = EditorGUILayout.ObjectField("[Mesh]Mix", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd = EditorGUILayout.ObjectField("[Mesh]Add", SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub = EditorGUILayout.ObjectField("[Mesh]Sub", SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub, typeof(Material), false) as Material;
