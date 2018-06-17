@@ -5137,9 +5137,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					/* Create AnimationClip */
 					dataAnimation.ClearCurves();
-					float framePerSecond = (float)informationAnimation.Data.FramePerSecond;
-					dataAnimation.frameRate = framePerSecond;
-					float timePerFrame = 1.0f / framePerSecond;
+					int framePerSecond = informationAnimation.Data.FramePerSecond;
+					dataAnimation.frameRate = (float)framePerSecond;
 
 					int frameStart = informationAnimation.Data.FrameValidStart;
 					int frameEnd = informationAnimation.Data.FrameValidEnd;
@@ -5186,21 +5185,21 @@ public static partial class LibraryEditor_SpriteStudio6
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.PositionX,
 															indexAnimation,
-															frameStart, frameEnd, timePerFrame,
+															frameStart, frameEnd, framePerSecond,
 															0.0f
 														);
 						AssetCreateDataCurveSetPositionY(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.PositionY,
 															indexAnimation,
-															frameStart, frameEnd, timePerFrame,
+															frameStart, frameEnd, framePerSecond,
 															0.0f
 														);
 						AssetCreateDataCurveSetPositionZ(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.PositionZ,
 															indexAnimation,
-															frameStart, frameEnd, timePerFrame,
+															frameStart, frameEnd, framePerSecond,
 															0.0f
 														);
 
@@ -5208,21 +5207,21 @@ public static partial class LibraryEditor_SpriteStudio6
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.RotationX,
 															indexAnimation,
-															frameStart, frameEnd, timePerFrame,
+															frameStart, frameEnd, framePerSecond,
 															0.0f
 														);
 						AssetCreateDataCurveSetRotationY(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.RotationY,
 															indexAnimation,
-															frameStart, frameEnd, timePerFrame,
+															frameStart, frameEnd, framePerSecond,
 															0.0f
 														);
 						AssetCreateDataCurveSetRotationZ(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.RotationZ,
 															indexAnimation,
-															frameStart, frameEnd, timePerFrame,
+															frameStart, frameEnd, framePerSecond,
 															0.0f
 														);
 
@@ -5230,20 +5229,20 @@ public static partial class LibraryEditor_SpriteStudio6
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.ScalingX,
 															indexAnimation,
-															frameStart, frameEnd, timePerFrame,
+															frameStart, frameEnd, framePerSecond,
 															1.0f
 														);
 						AssetCreateDataCurveSetScalingY(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.ScalingY,
 															indexAnimation,
-															frameStart, frameEnd, timePerFrame,
+															frameStart, frameEnd, framePerSecond,
 															1.0f
 														);
 
 						AssetCreateDataCurveSetUserData(	dataAnimation,
 															informationAnimationParts.UserData,
-															frameStart, frameEnd, timePerFrame
+															frameStart, frameEnd, framePerSecond
 														);
 
 						switch(informationParts.Data.Feature)
@@ -5260,7 +5259,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		nameGameObject, spriteRendererParts, gameObjectParts,
 																		informationAnimationParts.Cell,
 																		indexAnimation,
-																		frameStart, frameEnd, timePerFrame,
+																		frameStart, frameEnd, framePerSecond,
 																		informationSSPJ
 																	);
 
@@ -5268,7 +5267,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	nameGameObject, typeof(SpriteRenderer), spriteRendererParts,
 																	informationAnimationParts.Hide,
 																	indexAnimation,
-																	frameStart, frameEnd, timePerFrame,
+																	frameStart, frameEnd, framePerSecond,
 																	true
 																);
 
@@ -5279,7 +5278,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					informationAnimationParts.PartsColor,
 																					informationAnimationParts.RateOpacityLocal,
 																					indexAnimation,
-																					frameStart, frameEnd, timePerFrame
+																					frameStart, frameEnd, framePerSecond
 																				);
 									}
 									else
@@ -5289,7 +5288,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					informationAnimationParts.PartsColor,
 																					informationAnimationParts.RateOpacity,
 																					indexAnimation,
-																					frameStart, frameEnd, timePerFrame
+																					frameStart, frameEnd, framePerSecond
 																				);
 									}
 
@@ -5298,14 +5297,14 @@ public static partial class LibraryEditor_SpriteStudio6
  																		informationAnimationParts.ScalingXLocal,
 																		informationAnimationParts.ScalingYLocal,
 																		indexAnimation,
-																		frameStart, frameEnd, timePerFrame
+																		frameStart, frameEnd, framePerSecond
 																	);
 
 									AssetCreateDataCurveSetVertexCorrection(	dataAnimation,
 																				nameGameObject, spriteRendererParts,
  																				informationAnimationParts.VertexCorrection,
 																				indexAnimation,
-																				frameStart, frameEnd, timePerFrame
+																				frameStart, frameEnd, framePerSecond
 																			);
 								}
 
@@ -5314,7 +5313,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	informationAnimation,
 																	i,
 																	indexAnimation,
-																	frameStart, frameEnd, timePerFrame,
+																	frameStart, frameEnd, framePerSecond,
 																	informationSSPJ,
 																	informationSSAE
 																);
@@ -5335,7 +5334,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		nameGameObject, spriteMaskParts, gameObjectParts,
 																		informationAnimationParts.Cell,
 																		indexAnimation,
-																		frameStart, frameEnd, timePerFrame,
+																		frameStart, frameEnd, framePerSecond,
 																		informationSSPJ
 																	);
 
@@ -5344,7 +5343,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		informationAnimationParts.Hide,
 																		informationAnimationParts.PowerMask,
 																		indexAnimation,
-																		frameStart, frameEnd, timePerFrame,
+																		frameStart, frameEnd, framePerSecond,
 																		true
 																	);
 
@@ -5352,7 +5351,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		nameGameObject,  spriteMaskParts,
 																		informationAnimationParts.PowerMask,
 																		indexAnimation,
-																		frameStart, frameEnd, timePerFrame,
+																		frameStart, frameEnd, framePerSecond,
 																		0.0f
 																	);
 
@@ -5376,7 +5375,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	informationAnimation,
 																	i,
 																	indexAnimation,
-																	frameStart, frameEnd, timePerFrame,
+																	frameStart, frameEnd, framePerSecond,
 																	informationSSPJ,
 																	informationSSAE
 																);
@@ -5417,7 +5416,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				informationParts.DataMeshSkinnedUnityNative.TableData[0],
 																				informationAnimationParts.Cell,
 																				indexAnimation,
-																				frameStart, frameEnd, timePerFrame,
+																				frameStart, frameEnd, framePerSecond,
 																				informationSSPJ
 																			);
 
@@ -5425,7 +5424,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		nameGameObject, typeRenderer, rendererParts,
 																		informationAnimationParts.Hide,
 																		indexAnimation,
-																		frameStart, frameEnd, timePerFrame,
+																		frameStart, frameEnd, framePerSecond,
 																		true
 																	);
 
@@ -5437,7 +5436,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							informationAnimationParts.PartsColor,
 																							informationAnimationParts.RateOpacityLocal,
 																							indexAnimation,
-																							frameStart, frameEnd, timePerFrame,
+																							frameStart, frameEnd, framePerSecond,
 																							ref flagBoundVertex
 																						);
 										}
@@ -5448,7 +5447,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																							informationAnimationParts.PartsColor,
 																							informationAnimationParts.RateOpacity,
 																							indexAnimation,
-																							frameStart, frameEnd, timePerFrame,
+																							frameStart, frameEnd, framePerSecond,
 																							ref flagBoundVertex
 																						);
 										}
@@ -5478,7 +5477,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	informationAnimation,
 																	i,
 																	indexAnimation,
-																	frameStart, frameEnd, timePerFrame,
+																	frameStart, frameEnd, framePerSecond,
 																	informationSSPJ,
 																	informationSSAE
 																);
@@ -5496,11 +5495,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						if(0 < informationAnimationParts.PivotOffsetX.CountGetKey())
 						{
-							LogWarning(messageLogPrefix, "Unsupported Attribute \"X Pivot Offse\" Parts[" + i.ToString() + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+							LogWarning(messageLogPrefix, "Unsupported Attribute \"X Pivot Offset\" Parts[" + i.ToString() + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 						}
 						if(0 < informationAnimationParts.PivotOffsetY.CountGetKey())
 						{
-							LogWarning(messageLogPrefix, "Unsupported Attribute \"Y Pivot Offset\" Parts[" + i.ToString() + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+							LogWarning(messageLogPrefix, "Unsupported Attribute \"Y Pivot Offsett\" Parts[" + i.ToString() + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 						}
 						if(0 < informationAnimationParts.AnchorPositionX.CountGetKey())
 						{
@@ -5575,9 +5574,27 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				private static void AssetCreateDataKeyFrameInitialize(ref Keyframe keyframe)
 				{
+					/* MEMO: Before Ver.1.0.28, (keyframes') curve were initialized in this function. */
+					/*       But after Ver.1.0.30, curves are set in "AssetCreateCurveSetTangent".    */
+					/*       (For modification due to "Keyframe.tangentMode"'s obsolete)              */
+#if false
 					keyframe.tangentMode = 31;
+#endif
 					keyframe.inTangent = float.PositiveInfinity;
 					keyframe.outTangent = float.PositiveInfinity;
+				}
+				private static float AssetCreateDataTimeGetFrame(int frameNo, int framePerSecond)
+				{
+					return((float)frameNo / (float)framePerSecond);
+				}
+				private static void AssetCreateCurveSetTangent(AnimationCurve animationCurve)
+				{
+					int count = animationCurve.length;
+					for(int i=0; i<count; i++)
+					{
+						AnimationUtility.SetKeyLeftTangentMode(animationCurve, i, AnimationUtility.TangentMode.Constant);
+						AnimationUtility.SetKeyRightTangentMode(animationCurve, i, AnimationUtility.TangentMode.Constant);
+					}
 				}
 
 				private static bool AssetCreateDataCurveSetHide(	AnimationClip animationClip,
@@ -5588,7 +5605,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	int indexAnimation,
 																	int frameStart,
 																	int frameEnd,
-																	float timePerFrame,
+																	int framePerSecond,
 																	bool valueError
 																	)
 				{
@@ -5612,7 +5629,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					Keyframe keyframe = new Keyframe();
 					AssetCreateDataKeyFrameInitialize(ref keyframe);
-					keyframe.time = 0;
+					keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 					keyframe.value = (true == value) ? 0.0f : 1.0f;
 					if(0 == indexAnimation)
 					{
@@ -5637,7 +5654,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = (true == value) ? 0.0f : 1.0f;
 
 							animationCurve.AddKey(keyframe);
@@ -5646,6 +5663,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						valuePrevious = value;
 					}
 
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, type, "m_Enabled", animationCurve);
 
 					return(true);
@@ -5659,7 +5677,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		bool valueError
 																	)
 				{
@@ -5692,7 +5710,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					Keyframe keyframe = new Keyframe();
 					AssetCreateDataKeyFrameInitialize(ref keyframe);
-					keyframe.time = 0;
+					keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 					keyframe.value = (true == value) ? 0.0f : 1.0f;
 					if(0 == indexAnimation)
 					{
@@ -5725,7 +5743,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = (true == value) ? 0.0f : 1.0f;
 
 							animationCurve.AddKey(keyframe);
@@ -5734,6 +5752,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						valuePrevious = value;
 					}
 
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, type, "m_Enabled", animationCurve);
 
 					return(true);
@@ -5746,7 +5765,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -5773,7 +5792,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = value;
 						animationCurve.AddKey(keyframe);
 
@@ -5813,7 +5832,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = value;
 							animationCurve.AddKey(keyframe);
 						}
@@ -5824,11 +5843,12 @@ public static partial class LibraryEditor_SpriteStudio6
 					/*       - end frame: for ensuring animation length */
 					keyframe = new Keyframe();
 					AssetCreateDataKeyFrameInitialize(ref keyframe);
-					keyframe.time = countFrameRange * timePerFrame;
+					keyframe.time = AssetCreateDataTimeGetFrame(countFrameRange, framePerSecond);
 					keyframe.value = valuePrevious;	/* Last value */
 					animationCurve.AddKey(keyframe);
 
 				AssetCreateDataCurveSetPositionX_End:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.x", animationCurve);
 
 					return(true);
@@ -5840,7 +5860,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -5867,7 +5887,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = value;
 						animationCurve.AddKey(keyframe);
 
@@ -5898,7 +5918,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = value;
 							animationCurve.AddKey(keyframe);
 						}
@@ -5907,6 +5927,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetPositionY_End:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.y", animationCurve);
 
 					return(true);
@@ -5918,7 +5939,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -5945,7 +5966,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = value;
 						animationCurve.AddKey(keyframe);
 
@@ -5976,7 +5997,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = value;
 							animationCurve.AddKey(keyframe);
 						}
@@ -5985,6 +6006,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetPositionZ_End:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.z", animationCurve);
 
 					return(true);
@@ -5997,7 +6019,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -6024,7 +6046,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = value;
 						animationCurve.AddKey(keyframe);
 
@@ -6055,7 +6077,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = value;
 							animationCurve.AddKey(keyframe);
 						}
@@ -6064,6 +6086,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetRotationX_End:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.x", animationCurve);
 
 					return(true);
@@ -6075,7 +6098,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -6102,7 +6125,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = value;
 						animationCurve.AddKey(keyframe);
 
@@ -6133,7 +6156,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = value;
 							animationCurve.AddKey(keyframe);
 						}
@@ -6142,6 +6165,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetRotationY_End:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.y", animationCurve);
 
 					return(true);
@@ -6153,7 +6177,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -6180,7 +6204,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = value;
 						animationCurve.AddKey(keyframe);
 
@@ -6211,7 +6235,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = value;
 							animationCurve.AddKey(keyframe);
 						}
@@ -6220,6 +6244,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetRotationZ_End:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.z", animationCurve);
 
 					return(true);
@@ -6232,7 +6257,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -6261,7 +6286,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = value;
 						animationCurve.AddKey(keyframe);
 
@@ -6293,7 +6318,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = value;
 							animationCurve.AddKey(keyframe);
 						}
@@ -6302,6 +6327,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetScalingX_End:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localScale.x", animationCurve);
 
 					return(true);
@@ -6313,7 +6339,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -6342,7 +6368,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = value;
 						animationCurve.AddKey(keyframe);
 
@@ -6374,7 +6400,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							keyframe.value = value;
 							animationCurve.AddKey(keyframe);
 						}
@@ -6383,6 +6409,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetScalingY:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localScale.y", animationCurve);
 
 					return(true);
@@ -6396,7 +6423,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 																	)
 				{
@@ -6428,7 +6455,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					List<ObjectReferenceKeyframe> listKeyFrame = new List<ObjectReferenceKeyframe>();
 					ObjectReferenceKeyframe keyFrame = new ObjectReferenceKeyframe();
 
-					bool flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, ref dataCell, value, frameStart * timePerFrame, informationSSPJ);
+					bool flagValueValid = AssetCreateDataObjectGetCell(	ref keyFrame, ref dataCell,
+																		value, 
+																		AssetCreateDataTimeGetFrame(frameStart, framePerSecond),
+																		informationSSPJ
+																	);
 					if(true == flagValueValid)
 					{
 						listKeyFrame.Add(keyFrame);
@@ -6457,7 +6488,11 @@ public static partial class LibraryEditor_SpriteStudio6
 							frame -= frameStart;
 
 							value = attributeCell.ListKey[i].Value;
-							flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, ref dataCell, value, frame * timePerFrame, informationSSPJ);
+							flagValueValid = AssetCreateDataObjectGetCell(	ref keyFrame, ref dataCell,
+																			value,
+																			AssetCreateDataTimeGetFrame(frame, framePerSecond),
+																			informationSSPJ
+																		);
 							if(true == flagValueValid)
 							{
 								if((valuePrevious.IndexCellMap != value.IndexCellMap) || (valuePrevious.IndexCell != value.IndexCell))
@@ -6482,7 +6517,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 																	)
 				{
@@ -6513,7 +6548,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					List<ObjectReferenceKeyframe> listKeyFrame = new List<ObjectReferenceKeyframe>();
 					ObjectReferenceKeyframe keyFrame = new ObjectReferenceKeyframe();
-					bool flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, ref dataCell, value, frameStart * timePerFrame, informationSSPJ);
+					bool flagValueValid = AssetCreateDataObjectGetCell(	ref keyFrame, ref dataCell,
+																		value,
+																		AssetCreateDataTimeGetFrame(frameStart, framePerSecond),
+																		informationSSPJ
+																	);
 					if(true == flagValueValid)
 					{
 						listKeyFrame.Add(keyFrame);
@@ -6543,7 +6582,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							if((valuePrevious.IndexCellMap != value.IndexCellMap) || (valuePrevious.IndexCell != value.IndexCell))
 							{
-								flagValueValid = AssetCreateDataObjectGetCell(ref keyFrame, ref dataCell, value, frame * timePerFrame, informationSSPJ);
+								flagValueValid = AssetCreateDataObjectGetCell(	ref keyFrame, ref dataCell,
+																				value,
+																				AssetCreateDataTimeGetFrame(frame, framePerSecond),
+																				informationSSPJ
+																			);
 								if(true == flagValueValid)
 								{
 									listKeyFrame.Add(keyFrame);
@@ -6571,7 +6614,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																			int indexAnimation,
 																			int frameStart,
 																			int frameEnd,
-																			float timePerFrame,
+																			int framePerSecond,
 																			LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 																		)
 				{
@@ -6611,15 +6654,17 @@ public static partial class LibraryEditor_SpriteStudio6
 					curveBindingTexture.path = namePathGameObject;
 					curveBindingTexture.propertyName = NameScriptPropertyTextureMesh;
 
+					float time = AssetCreateDataTimeGetFrame(0, framePerSecond);
+
 					List<ObjectReferenceKeyframe> listKeyFrameMesh = new List<ObjectReferenceKeyframe>();
 					ObjectReferenceKeyframe keyFrameMesh = new ObjectReferenceKeyframe();
-					keyFrameMesh.time = 0.0f;
+					keyFrameMesh.time = time;
 					keyFrameMesh.value = (UnityEngine.Object)meshSetUp;
 					listKeyFrameMesh.Add(keyFrameMesh);
 
 					List<ObjectReferenceKeyframe> listKeyFrameTexture = new List<ObjectReferenceKeyframe>();
 					ObjectReferenceKeyframe keyFrameTexture = new ObjectReferenceKeyframe();
-					keyFrameTexture.time = 0.0f;
+					keyFrameTexture.time = time;
 					keyFrameTexture.value = (UnityEngine.Object)textureMesh;
 					listKeyFrameTexture.Add(keyFrameTexture);
 
@@ -6687,7 +6732,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 																		LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
 																	)
@@ -6743,7 +6788,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframe = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframe);
-								keyframe.time = i * timePerFrame;
+								keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 								keyframe.value = value;
 
 								animationCurve.AddKey(keyframe);
@@ -6757,7 +6802,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
-					animationClip.SetCurve(namePathGameObject, typeof(Script_SpriteStudio6_PartsUnityNative), "OrderInLayer", animationCurve);
+					AssetCreateCurveSetTangent(animationCurve);
+					animationClip.SetCurve(namePathGameObject, typeof(Script_SpriteStudio6_PartsUnityNative), NameScriptPropertyOrderInLayer, animationCurve);
 
 					return(true);
 				}
@@ -6770,7 +6816,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				int indexAnimation,
 																				int frameStart,
 																				int frameEnd,
-																				float timePerFrame
+																				int framePerSecond
 																			)
 				{
 					/* MEMO: Even if no attribute's key-data, key-frame is always generated.           */
@@ -6903,129 +6949,131 @@ public static partial class LibraryEditor_SpriteStudio6
 							goto case Library_SpriteStudio6.KindBoundBlend.NON;
 					}
 
+					float time = AssetCreateDataTimeGetFrame(0, framePerSecond);
+
 					valueBlendPrevious = valueBlend;
 					keyframeBlend = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeBlend);
-						keyframeBlend.time = 0 * timePerFrame;
+						keyframeBlend.time = time;
 						keyframeBlend.value = (float)valueBlend + 0.01f;
 						animationCurveBlend.AddKey(keyframeBlend);
 
 					valuePreviousOpacity = valueOpacity;
 					keyframeAlpha = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeAlpha);
-						keyframeAlpha.time = 0 * timePerFrame;
+						keyframeAlpha.time = time;
 						keyframeAlpha.value = valueOpacity;
 						animationCurveAlpha.AddKey(keyframeAlpha);
 
 					valueColorPreviousLU = valueColorLU;
 					keyframeColorALU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorALU);
-						keyframeColorALU.time = 0 * timePerFrame;
+						keyframeColorALU.time = time;
 						keyframeColorALU.value = valueColorLU.a;
 						animationCurveColorALU.AddKey(keyframeColorALU);
 					keyframeColorRLU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorRLU);
-						keyframeColorRLU.time = 0 * timePerFrame;
+						keyframeColorRLU.time = time;
 						keyframeColorRLU.value = valueColorLU.r;
 						animationCurveColorRLU.AddKey(keyframeColorRLU);
 					keyframeColorGLU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorGLU);
-						keyframeColorGLU.time = 0 * timePerFrame;
+						keyframeColorGLU.time = time;
 						keyframeColorGLU.value = valueColorLU.g;
 						animationCurveColorGLU.AddKey(keyframeColorGLU);
 					keyframeColorBLU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorBLU);
-						keyframeColorBLU.time = 0 * timePerFrame;
+						keyframeColorBLU.time = time;
 						keyframeColorBLU.value = valueColorLU.b;
 						animationCurveColorBLU.AddKey(keyframeColorBLU);
 					valueColorPowerPreviousLU = valueColorPowerLU;
 					keyframeColorPowerLU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerLU);
-						keyframeColorPowerLU.time = 0 * timePerFrame;
+						keyframeColorPowerLU.time = time;
 						keyframeColorPowerLU.value = valueColorPowerLU;
 						animationCurveColorPowerLU.AddKey(keyframeColorPowerLU);
 
 					valueColorPreviousRU = valueColorRU;
 					keyframeColorARU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorARU);
-						keyframeColorARU.time = 0 * timePerFrame;
+						keyframeColorARU.time = time;
 						keyframeColorARU.value = valueColorRU.a;
 						animationCurveColorARU.AddKey(keyframeColorARU);
 					keyframeColorRRU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorRRU);
-						keyframeColorRRU.time = 0 * timePerFrame;
+						keyframeColorRRU.time = time;
 						keyframeColorRRU.value = valueColorRU.r;
 						animationCurveColorRRU.AddKey(keyframeColorRRU);
 					keyframeColorGRU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorGRU);
-						keyframeColorGRU.time = 0 * timePerFrame;
+						keyframeColorGRU.time = time;
 						keyframeColorGRU.value = valueColorRU.g;
 						animationCurveColorGRU.AddKey(keyframeColorGRU);
 					keyframeColorBRU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorBRU);
-						keyframeColorBRU.time = 0 * timePerFrame;
+						keyframeColorBRU.time = time;
 						keyframeColorBRU.value = valueColorRU.b;
 						animationCurveColorBRU.AddKey(keyframeColorBRU);
 					valueColorPowerPreviousRU = valueColorPowerRU;
 					keyframeColorPowerRU = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerRU);
-						keyframeColorPowerRU.time = 0 * timePerFrame;
+						keyframeColorPowerRU.time = time;
 						keyframeColorPowerRU.value = valueColorPowerRU;
 						animationCurveColorPowerRU.AddKey(keyframeColorPowerRU);
 
 					valueColorPreviousRD = valueColorRD;
 					keyframeColorARD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorARD);
-						keyframeColorARD.time = 0 * timePerFrame;
+						keyframeColorARD.time = time;
 						keyframeColorARD.value = valueColorRD.a;
 						animationCurveColorARD.AddKey(keyframeColorARD);
 					keyframeColorRRD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorRRD);
-						keyframeColorRRD.time = 0 * timePerFrame;
+						keyframeColorRRD.time = time;
 						keyframeColorRRD.value = valueColorRD.r;
 						animationCurveColorRRD.AddKey(keyframeColorRRD);
 					keyframeColorGRD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorGRD);
-						keyframeColorGRD.time = 0 * timePerFrame;
+						keyframeColorGRD.time = time;
 						keyframeColorGRD.value = valueColorRD.g;
 						animationCurveColorGRD.AddKey(keyframeColorGRD);
 					keyframeColorBRD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorBRD);
-						keyframeColorBRD.time = 0 * timePerFrame;
+						keyframeColorBRD.time = time;
 						keyframeColorBRD.value = valueColorRD.b;
 						animationCurveColorBRD.AddKey(keyframeColorBRD);
 					valueColorPowerPreviousRD = valueColorPowerRD;
 					keyframeColorPowerRD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerRD);
-						keyframeColorPowerRD.time = 0 * timePerFrame;
+						keyframeColorPowerRD.time = time;
 						keyframeColorPowerRD.value = valueColorPowerRD;
 						animationCurveColorPowerRD.AddKey(keyframeColorPowerRD);
 
 					valueColorPreviousLD = valueColorLD;
 					keyframeColorALD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorALD);
-						keyframeColorALD.time = 0 * timePerFrame;
+						keyframeColorALD.time = time;
 						keyframeColorALD.value = valueColorLD.a;
 						animationCurveColorALD.AddKey(keyframeColorALD);
 					keyframeColorRLD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorRLD);
-						keyframeColorRLD.time = 0 * timePerFrame;
+						keyframeColorRLD.time = time;
 						keyframeColorRLD.value = valueColorLD.r;
 						animationCurveColorRLD.AddKey(keyframeColorRLD);
 					keyframeColorGLD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorGLD);
-						keyframeColorGLD.time = 0 * timePerFrame;
+						keyframeColorGLD.time = time;
 						keyframeColorGLD.value = valueColorLD.g;
 						animationCurveColorGLD.AddKey(keyframeColorGLD);
 					keyframeColorBLD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorBLD);
-						keyframeColorBLD.time = 0 * timePerFrame;
+						keyframeColorBLD.time = time;
 						keyframeColorBLD.value = valueColorLD.b;
 						animationCurveColorBLD.AddKey(keyframeColorBLD);
 					valueColorPowerPreviousLD = valueColorPowerLD;
 					keyframeColorPowerLD = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerLD);
-						keyframeColorPowerLD.time = 0 * timePerFrame;
+						keyframeColorPowerLD.time = time;
 						keyframeColorPowerLD.value = valueColorPowerLD;
 						animationCurveColorPowerLD.AddKey(keyframeColorPowerLD);
 
@@ -7088,12 +7136,14 @@ public static partial class LibraryEditor_SpriteStudio6
 								goto case Library_SpriteStudio6.KindBoundBlend.NON;
 						}
 
+						time = AssetCreateDataTimeGetFrame(i, framePerSecond);
+
 						if(valueBlendPrevious != valueBlend)
 						{
 							valueBlendPrevious = valueBlend;
 							keyframeBlend = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeBlend);
-								keyframeBlend.time = i * timePerFrame;
+								keyframeBlend.time = time;
 								keyframeBlend.value = (float)valueBlend + 0.01f;
 								animationCurveBlend.AddKey(keyframeBlend);
 						}
@@ -7102,7 +7152,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							valuePreviousOpacity = valueOpacity;
 							keyframeAlpha = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeAlpha);
-								keyframeAlpha.time = i * timePerFrame;
+								keyframeAlpha.time = time;
 								keyframeAlpha.value = valueOpacity;
 								animationCurveAlpha.AddKey(keyframeAlpha);
 						}
@@ -7113,7 +7163,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorALU = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorALU);
-									keyframeColorALU.time = i * timePerFrame;
+									keyframeColorALU.time = time;
 									keyframeColorALU.value = valueColorLU.a;
 									animationCurveColorALU.AddKey(keyframeColorALU);
 							}
@@ -7122,7 +7172,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorRLU = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorRLU);
-									keyframeColorRLU.time = i * timePerFrame;
+									keyframeColorRLU.time = time;
 									keyframeColorRLU.value = valueColorLU.r;
 									animationCurveColorRLU.AddKey(keyframeColorRLU);
 							}
@@ -7131,7 +7181,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorGLU = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorGLU);
-									keyframeColorGLU.time = i * timePerFrame;
+									keyframeColorGLU.time = time;
 									keyframeColorGLU.value = valueColorLU.g;
 									animationCurveColorGLU.AddKey(keyframeColorGLU);
 							}
@@ -7140,7 +7190,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorBLU = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorBLU);
-									keyframeColorBLU.time = i * timePerFrame;
+									keyframeColorBLU.time = time;
 									keyframeColorBLU.value = valueColorLU.b;
 									animationCurveColorBLU.AddKey(keyframeColorBLU);
 							}
@@ -7153,7 +7203,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							keyframeColorPowerLU = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerLU);
-								keyframeColorPowerLU.time = i * timePerFrame;
+								keyframeColorPowerLU.time = time;
 								keyframeColorPowerLU.value = valueColorPowerLU;
 								animationCurveColorPowerLU.AddKey(keyframeColorPowerLU);
 						}
@@ -7164,7 +7214,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorARU = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorARU);
-									keyframeColorARU.time = i * timePerFrame;
+									keyframeColorARU.time = time;
 									keyframeColorARU.value = valueColorRU.a;
 									animationCurveColorARU.AddKey(keyframeColorARU);
 							}
@@ -7173,7 +7223,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorRRU = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorRRU);
-									keyframeColorRRU.time = i * timePerFrame;
+									keyframeColorRRU.time = time;
 									keyframeColorRRU.value = valueColorRU.r;
 									animationCurveColorRRU.AddKey(keyframeColorRRU);
 							}
@@ -7182,7 +7232,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorGRU = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorGRU);
-									keyframeColorGRU.time = i * timePerFrame;
+									keyframeColorGRU.time = time;
 									keyframeColorGRU.value = valueColorRU.g;
 									animationCurveColorGRU.AddKey(keyframeColorGRU);
 							}
@@ -7191,7 +7241,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorBRU = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorBRU);
-									keyframeColorBRU.time = i * timePerFrame;
+									keyframeColorBRU.time = time;
 									keyframeColorBRU.value = valueColorRU.b;
 									animationCurveColorBRU.AddKey(keyframeColorBRU);
 							}
@@ -7203,7 +7253,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							valueColorPowerPreviousRU = valueColorPowerRU;
 							keyframeColorPowerRU = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerRU);
-								keyframeColorPowerRU.time = i * timePerFrame;
+								keyframeColorPowerRU.time = time;
 								keyframeColorPowerRU.value = valueColorPowerRU;
 								animationCurveColorPowerRU.AddKey(keyframeColorPowerRU);
 						}
@@ -7214,7 +7264,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorARD = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorARD);
-									keyframeColorARD.time = frame * timePerFrame;
+									keyframeColorARD.time = time;
 									keyframeColorARD.value = valueColorRD.a;
 									animationCurveColorARD.AddKey(keyframeColorARD);
 							}
@@ -7223,7 +7273,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorRRD = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorRRD);
-									keyframeColorRRD.time = i * timePerFrame;
+									keyframeColorRRD.time = time;
 									keyframeColorRRD.value = valueColorRD.r;
 									animationCurveColorRRD.AddKey(keyframeColorRRD);
 							}
@@ -7232,7 +7282,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorGRD = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorGRD);
-									keyframeColorGRD.time = i * timePerFrame;
+									keyframeColorGRD.time = time;
 									keyframeColorGRD.value = valueColorRD.g;
 									animationCurveColorGRD.AddKey(keyframeColorGRD);
 							}
@@ -7241,7 +7291,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorBRD = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorBRD);
-									keyframeColorBRD.time = i * timePerFrame;
+									keyframeColorBRD.time = time;
 									keyframeColorBRD.value = valueColorRD.b;
 									animationCurveColorBRD.AddKey(keyframeColorBRD);
 							}
@@ -7253,7 +7303,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							valueColorPowerPreviousRD = valueColorPowerRD;
 							keyframeColorPowerRD = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerRD);
-								keyframeColorPowerRD.time = i * timePerFrame;
+								keyframeColorPowerRD.time = time;
 								keyframeColorPowerRD.value = valueColorPowerRD;
 								animationCurveColorPowerRD.AddKey(keyframeColorPowerRD);
 						}
@@ -7264,7 +7314,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorALD = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorALD);
-									keyframeColorALD.time = i * timePerFrame;
+									keyframeColorALD.time = time;
 									keyframeColorALD.value = valueColorLD.a;
 									animationCurveColorALD.AddKey(keyframeColorALD);
 							}
@@ -7273,7 +7323,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorRLD = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorRLD);
-									keyframeColorRLD.time = i * timePerFrame;
+									keyframeColorRLD.time = time;
 									keyframeColorRLD.value = valueColorLD.r;
 									animationCurveColorRLD.AddKey(keyframeColorRLD);
 							}
@@ -7282,7 +7332,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorGLD = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorGLD);
-									keyframeColorGLD.time = i * timePerFrame;
+									keyframeColorGLD.time = time;
 									keyframeColorGLD.value = valueColorLD.g;
 									animationCurveColorGLD.AddKey(keyframeColorGLD);
 							}
@@ -7291,7 +7341,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorBLD = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorBLD);
-									keyframeColorBLD.time = i * timePerFrame;
+									keyframeColorBLD.time = time;
 									keyframeColorBLD.value = valueColorLD.b;
 									animationCurveColorBLD.AddKey(keyframeColorBLD);
 							}
@@ -7303,38 +7353,60 @@ public static partial class LibraryEditor_SpriteStudio6
 							valueColorPowerPreviousLD = valueColorPowerLD;
 							keyframeColorPowerLD = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeColorPowerLD);
-								keyframeColorPowerLD.time = i * timePerFrame;
+								keyframeColorPowerLD.time = time;
 								keyframeColorPowerLD.value = valueColorPowerLD;
 								animationCurveColorPowerLD.AddKey(keyframeColorPowerLD);
 						}
 					}
 
+					AssetCreateCurveSetTangent(animationCurveBlend);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyBlendParam + ".x", animationCurveBlend);
+					AssetCreateCurveSetTangent(animationCurveAlpha);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyBlendParam + ".y", animationCurveAlpha);
 
+					AssetCreateCurveSetTangent(animationCurveColorALU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLU + ".a", animationCurveColorALU);
+					AssetCreateCurveSetTangent(animationCurveColorRLU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLU + ".r", animationCurveColorRLU);
+					AssetCreateCurveSetTangent(animationCurveColorGLU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLU + ".g", animationCurveColorGLU);
+					AssetCreateCurveSetTangent(animationCurveColorBLU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLU + ".b", animationCurveColorBLU);
 
+					AssetCreateCurveSetTangent(animationCurveColorARU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRU + ".a", animationCurveColorARU);
+					AssetCreateCurveSetTangent(animationCurveColorRRU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRU + ".r", animationCurveColorRRU);
+					AssetCreateCurveSetTangent(animationCurveColorGRU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRU + ".g", animationCurveColorGRU);
+					AssetCreateCurveSetTangent(animationCurveColorBRU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRU + ".b", animationCurveColorBRU);
 
+					AssetCreateCurveSetTangent(animationCurveColorARD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRD + ".a", animationCurveColorARD);
+					AssetCreateCurveSetTangent(animationCurveColorRRD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRD + ".r", animationCurveColorRRD);
+					AssetCreateCurveSetTangent(animationCurveColorGRD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRD + ".g", animationCurveColorGRD);
+					AssetCreateCurveSetTangent(animationCurveColorBRD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorRD + ".b", animationCurveColorBRD);
 
+					AssetCreateCurveSetTangent(animationCurveColorALD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLD + ".a", animationCurveColorALD);
+					AssetCreateCurveSetTangent(animationCurveColorRLD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLD + ".r", animationCurveColorRLD);
+					AssetCreateCurveSetTangent(animationCurveColorGLD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLD + ".g", animationCurveColorGLD);
+					AssetCreateCurveSetTangent(animationCurveColorBLD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorLD + ".b", animationCurveColorBLD);
 
+					AssetCreateCurveSetTangent(animationCurveColorPowerLU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorOpacity + ".x", animationCurveColorPowerLU);
+					AssetCreateCurveSetTangent(animationCurveColorPowerRU);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorOpacity + ".y", animationCurveColorPowerRU);
+					AssetCreateCurveSetTangent(animationCurveColorPowerRD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorOpacity + ".z", animationCurveColorPowerRD);
+					AssetCreateCurveSetTangent(animationCurveColorPowerLD);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyPartsColorOpacity + ".w", animationCurveColorPowerLD);
 
 					return(true);
@@ -7348,7 +7420,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					int indexAnimation,
 																					int frameStart,
 																					int frameEnd,
-																					float timePerFrame,
+																					int framePerSecond,
 																					ref bool flagBoundVertex
 																				)
 				{
@@ -7424,45 +7496,47 @@ public static partial class LibraryEditor_SpriteStudio6
 							goto case Library_SpriteStudio6.KindBoundBlend.NON;
 					}
 
+					float time = AssetCreateDataTimeGetFrame(0, framePerSecond);
+
 					valueBlendPrevious = valueBlend;
 					keyframeBlend = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeBlend);
-						keyframeBlend.time = 0 * timePerFrame;
+						keyframeBlend.time = time;
 						keyframeBlend.value = (float)valueBlend + 0.01f;
 						animationCurveBlend.AddKey(keyframeBlend);
 
 					valuePreviousOpacity = valueOpacity;
 					keyframeAlpha = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeAlpha);
-						keyframeAlpha.time = 0 * timePerFrame;
+						keyframeAlpha.time = time;
 						keyframeAlpha.value = valueOpacity;
 						animationCurveAlpha.AddKey(keyframeAlpha);
 
 					valueColorPrevious = valueColor;
 					keyframeColorA = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorA);
-						keyframeColorA.time = 0 * timePerFrame;
+						keyframeColorA.time = time;
 						keyframeColorA.value = valueColor.a;
 						animationCurveColorA.AddKey(keyframeColorA);
 					keyframeColorR = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorR);
-						keyframeColorR.time = 0 * timePerFrame;
+						keyframeColorR.time = time;
 						keyframeColorR.value = valueColor.r;
 						animationCurveColorR.AddKey(keyframeColorR);
 					keyframeColorG = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorG);
-						keyframeColorG.time = 0 * timePerFrame;
+						keyframeColorG.time = time;
 						keyframeColorG.value = valueColor.g;
 						animationCurveColorG.AddKey(keyframeColorG);
 					keyframeColorB = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorB);
-						keyframeColorB.time = 0 * timePerFrame;
+						keyframeColorB.time = time;
 						keyframeColorB.value = valueColor.b;
 						animationCurveColorB.AddKey(keyframeColorB);
 					valueColorPowerPrevious = valueColorPower;
 					keyframeColorPower = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeColorPower);
-						keyframeColorPower.time = 0 * timePerFrame;
+						keyframeColorPower.time = time;
 						keyframeColorPower.value = valueColorPower;
 						animationCurveColorPower.AddKey(keyframeColorPower);
 
@@ -7505,12 +7579,14 @@ public static partial class LibraryEditor_SpriteStudio6
 								goto case Library_SpriteStudio6.KindBoundBlend.NON;
 						}
 
+						time = AssetCreateDataTimeGetFrame(i, framePerSecond);
+
 						if(valueBlendPrevious != valueBlend)
 						{
 							valueBlendPrevious = valueBlend;
 							keyframeBlend = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeBlend);
-								keyframeBlend.time = i * timePerFrame;
+								keyframeBlend.time = time;
 								keyframeBlend.value = (float)valueBlend + 0.01f;
 								animationCurveBlend.AddKey(keyframeBlend);
 						}
@@ -7519,7 +7595,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							valuePreviousOpacity = valueOpacity;
 							keyframeAlpha = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeAlpha);
-								keyframeAlpha.time = i * timePerFrame;
+								keyframeAlpha.time = time;
 								keyframeAlpha.value = valueOpacity;
 								animationCurveAlpha.AddKey(keyframeAlpha);
 						}
@@ -7530,7 +7606,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorA = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorA);
-									keyframeColorA.time = i * timePerFrame;
+									keyframeColorA.time = time;
 									keyframeColorA.value = valueColor.a;
 									animationCurveColorA.AddKey(keyframeColorA);
 							}
@@ -7539,7 +7615,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorR = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorR);
-									keyframeColorR.time = i * timePerFrame;
+									keyframeColorR.time = time;
 									keyframeColorR.value = valueColor.r;
 									animationCurveColorR.AddKey(keyframeColorR);
 							}
@@ -7548,7 +7624,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorG = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorG);
-									keyframeColorG.time = i * timePerFrame;
+									keyframeColorG.time = time;
 									keyframeColorG.value = valueColor.g;
 									animationCurveColorG.AddKey(keyframeColorG);
 							}
@@ -7557,7 +7633,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{
 								keyframeColorB = new Keyframe();
 									AssetCreateDataKeyFrameInitialize(ref keyframeColorB);
-									keyframeColorB.time = i * timePerFrame;
+									keyframeColorB.time = time;
 									keyframeColorB.value = valueColor.b;
 									animationCurveColorB.AddKey(keyframeColorB);
 							}
@@ -7570,19 +7646,26 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							keyframeColorPower = new Keyframe();
 								AssetCreateDataKeyFrameInitialize(ref keyframeColorPower);
-								keyframeColorPower.time = i * timePerFrame;
+								keyframeColorPower.time = time;
 								keyframeColorPower.value = valueColorPower;
 								animationCurveColorPower.AddKey(keyframeColorPower);
 						}
 					}
 
+					AssetCreateCurveSetTangent(animationCurveBlend);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyBlendParam + ".x", animationCurveBlend);
+					AssetCreateCurveSetTangent(animationCurveAlpha);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyBlendParam + ".y", animationCurveAlpha);
+					AssetCreateCurveSetTangent(animationCurveColorPower);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyBlendParam + ".z", animationCurveColorPower);
 
+					AssetCreateCurveSetTangent(animationCurveColorA);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyPartsColorSkinnedMesh + ".a", animationCurveColorA);
+					AssetCreateCurveSetTangent(animationCurveColorR);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyPartsColorSkinnedMesh + ".r", animationCurveColorR);
+					AssetCreateCurveSetTangent(animationCurveColorG);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyPartsColorSkinnedMesh + ".g", animationCurveColorG);
+					AssetCreateCurveSetTangent(animationCurveColorB);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyPartsColorSkinnedMesh + ".b", animationCurveColorB);
 
 					return(true);
@@ -7596,7 +7679,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame
+																		int framePerSecond
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
@@ -7628,13 +7711,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					keyframeX = new Keyframe();
 					keyframeY = new Keyframe();
 
+					float time = AssetCreateDataTimeGetFrame(0, framePerSecond);
+
 					AssetCreateDataKeyFrameInitialize(ref keyframeX);
-					keyframeX.time = 0 * timePerFrame;
+					keyframeX.time = time;
 					keyframeX.value = valueX;
 					animationCurveX.AddKey(keyframeX);
 
 					AssetCreateDataKeyFrameInitialize(ref keyframeY);
-					keyframeY.time = 0 * timePerFrame;
+					keyframeY.time = time;
 					keyframeY.value = valueY;
 					animationCurveY.AddKey(keyframeY);
 
@@ -7652,10 +7737,12 @@ public static partial class LibraryEditor_SpriteStudio6
 							valueY = 1.0f;
 						}
 
+						time = AssetCreateDataTimeGetFrame(i, framePerSecond);
+
 						if(valueXPrevious != valueX)
 						{
 							AssetCreateDataKeyFrameInitialize(ref keyframeX);
-							keyframeX.time = i * timePerFrame;
+							keyframeX.time = time;
 							keyframeX.value = valueX;
 							animationCurveX.AddKey(keyframeX);
 
@@ -7665,7 +7752,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(valueYPrevious != valueY)
 						{
 							AssetCreateDataKeyFrameInitialize(ref keyframeY);
-							keyframeY.time = i * timePerFrame;
+							keyframeY.time = time;
 							keyframeY.value = valueY;
 							animationCurveY.AddKey(keyframeY);
 
@@ -7673,7 +7760,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
+					AssetCreateCurveSetTangent(animationCurveX);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyCellPivotLocalScale + ".z", animationCurveX);
+					AssetCreateCurveSetTangent(animationCurveY);
 					animationClip.SetCurve(namePathGameObject, type, "material." + NameShaderPropertyCellPivotLocalScale + ".w", animationCurveY);
 
 					return(true);
@@ -7683,7 +7772,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData attributeUserData,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame
+																		int framePerSecond
 																	)
 				{
 					if(0 >= attributeUserData.CountGetKey())
@@ -7710,7 +7799,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							if(true == attributeUserData.ListKey[i].Value.IsNumber)
 							{
-								animationEvent.time = frame * timePerFrame;
+								animationEvent.time = AssetCreateDataTimeGetFrame(frame, framePerSecond);
 								animationEvent.intParameter = attributeUserData.ListKey[i].Value.NumberInt;
 								animationEvent.functionName = "FunctionEventInt";
 
@@ -7718,7 +7807,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 							if(true == attributeUserData.ListKey[i].Value.IsText)
 							{
-								animationEvent.time = frame * timePerFrame;
+								animationEvent.time = AssetCreateDataTimeGetFrame(frame, framePerSecond);
 								animationEvent.stringParameter = string.Copy(attributeUserData.ListKey[i].Value.Text);
 								animationEvent.functionName = "FunctionEventText";
 
@@ -7739,7 +7828,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int indexAnimation,
 																		int frameStart,
 																		int frameEnd,
-																		float timePerFrame,
+																		int framePerSecond,
 																		float valueError
 																	)
 				{
@@ -7762,7 +7851,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = 0 * timePerFrame;
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 						keyframe.value = valueMask;
 						animationCurve.AddKey(keyframe);
 
@@ -7790,7 +7879,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = i * timePerFrame;
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
 							valueMask = (255.0f - Mathf.Floor(value)) * (1.0f / 255.0f);
 							if(0.0f == valueMask)
 							{
@@ -7804,6 +7893,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetPowerMask_End:;
+					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteMask), "m_MaskAlphaCutoff", animationCurve);
 
 					return(true);
@@ -7820,7 +7910,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				int indexAnimation,
 																				int frameStart,
 																				int frameEnd,
-																				float timePerFrame
+																				int framePerSecond
 																		)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
@@ -7847,53 +7937,55 @@ public static partial class LibraryEditor_SpriteStudio6
 					Keyframe keyframeLDx;
 					Keyframe keyframeLDy;
 
+					float time = AssetCreateDataTimeGetFrame(0, framePerSecond);
+
 					if(0 >= attributeVertexCorrection.CountGetKey())
 					{
 						keyframeLUx = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeLUx);
-						keyframeLUx.time = 0.0f;
+						keyframeLUx.time = time;
 						keyframeLUx.value = 0.0f;
 						animationCurveLUx.AddKey(keyframeLUx);
 
 						keyframeLUy = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeLUy);
-						keyframeLUy.time = 0.0f;
+						keyframeLUy.time = time;
 						keyframeLUy.value = 0.0f;
 						animationCurveLUy.AddKey(keyframeLUy);
 
 						keyframeRUx = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeRUx);
-						keyframeRUx.time = 0.0f;
+						keyframeRUx.time = time;
 						keyframeRUx.value = 0.0f;
 						animationCurveRUx.AddKey(keyframeRUx);
 
 						keyframeRUy = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeRUy);
-						keyframeRUy.time = 0.0f;
+						keyframeRUy.time = time;
 						keyframeRUy.value = 0.0f;
 						animationCurveRUy.AddKey(keyframeRUy);
 
 						keyframeRDx = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeRDx);
-						keyframeRDx.time = 0.0f;
+						keyframeRDx.time = time;
 						keyframeRDx.value = 0.0f;
 						animationCurveRDx.AddKey(keyframeRDx);
 
 						keyframeRDy = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeRDy);
-						keyframeRDy.time = 0.0f;
+						keyframeRDy.time = time;
 						keyframeRDy.value = 0.0f;
 						animationCurveRDy.AddKey(keyframeRDy);
 
 						keyframeLDx = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeLDx);
-						keyframeLDx.time = 0.0f;
+						keyframeLDx.time = time;
 						keyframeLDx.value = 0.0f;
 						animationCurveLDx.AddKey(keyframeLDx);
 
 						keyframeLDy = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframeLDy);
-						keyframeLDy.time = 0.0f;
+						keyframeLDy.time = time;
 						keyframeLDy.value = 0.0f;
 						animationCurveLDy.AddKey(keyframeLDy);
 
@@ -7902,6 +7994,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection value = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection();
 					Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection valuePrevious = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection();
+					valuePrevious.BootUp();
+					for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
+					{
+						valuePrevious.Coordinate[i].x = float.NaN;
+						valuePrevious.Coordinate[i].y = float.NaN;
+					}
 					int frame;
 					float valueCoordinate;
 					for(int i=0; i<countFrameRange; i++)
@@ -7913,12 +8011,14 @@ public static partial class LibraryEditor_SpriteStudio6
 							value = Library_SpriteStudio6.Data.Animation.Attribute.DefaultVertexCorrection;
 						}
 
+						time = AssetCreateDataTimeGetFrame(i, framePerSecond);
+
 						valueCoordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x;
 						if((0 == i) || (valuePrevious.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x != valueCoordinate))
 						{
 							keyframeLUx = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframeLUx);
-							keyframeLUx.time = i * timePerFrame;
+							keyframeLUx.time = time;
 							keyframeLUx.value = valueCoordinate;
 							animationCurveLUx.AddKey(keyframeLUx);
 						}
@@ -7928,7 +8028,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframeLUy = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframeLUy);
-							keyframeLUy.time = i * timePerFrame;
+							keyframeLUy.time = time;
 							keyframeLUy.value = valueCoordinate;
 							animationCurveLUy.AddKey(keyframeLUy);
 						}
@@ -7938,7 +8038,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframeRUx = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframeRUx);
-							keyframeRUx.time = i * timePerFrame;
+							keyframeRUx.time = time;
 							keyframeRUx.value = valueCoordinate;
 							animationCurveRUx.AddKey(keyframeRUx);
 						}
@@ -7948,7 +8048,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframeRUy = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframeRUy);
-							keyframeRUy.time = i * timePerFrame;
+							keyframeRUy.time = time;
 							keyframeRUy.value = valueCoordinate;
 							animationCurveRUy.AddKey(keyframeRUy);
 						}
@@ -7958,7 +8058,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframeRDx = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframeRDx);
-							keyframeRDx.time = i * timePerFrame;
+							keyframeRDx.time = time;
 							keyframeRDx.value = valueCoordinate;
 							animationCurveRDx.AddKey(keyframeRDx);
 						}
@@ -7968,7 +8068,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframeRDy = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframeRDy);
-							keyframeRDy.time = i * timePerFrame;
+							keyframeRDy.time = time;
 							keyframeRDy.value = valueCoordinate;
 							animationCurveRDy.AddKey(keyframeRDy);
 						}
@@ -7978,7 +8078,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframeLDx = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframeLDx);
-							keyframeLDx.time = i * timePerFrame;
+							keyframeLDx.time = time;
 							keyframeLDx.value = valueCoordinate;
 							animationCurveLDx.AddKey(keyframeLDx);
 						}
@@ -7988,7 +8088,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							keyframeLDy = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframeLDy);
-							keyframeLDy.time = i * timePerFrame;
+							keyframeLDy.time = time;
 							keyframeLDy.value = valueCoordinate;
 							animationCurveLDy.AddKey(keyframeLDy);
 						}
@@ -7997,13 +8097,21 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetVertexCorrection_End:;
+					AssetCreateCurveSetTangent(animationCurveLUx);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetLURU + ".x", animationCurveLUx);
+					AssetCreateCurveSetTangent(animationCurveLUy);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetLURU + ".y", animationCurveLUy);
+					AssetCreateCurveSetTangent(animationCurveRUx);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetLURU + ".z", animationCurveRUx);
+					AssetCreateCurveSetTangent(animationCurveRUy);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetLURU + ".w", animationCurveRUy);
+					AssetCreateCurveSetTangent(animationCurveRDx);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetRDLD + ".x", animationCurveRDx);
+					AssetCreateCurveSetTangent(animationCurveRDy);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetRDLD + ".y", animationCurveRDy);
+					AssetCreateCurveSetTangent(animationCurveLDx);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetRDLD + ".z", animationCurveLDx);
+					AssetCreateCurveSetTangent(animationCurveLDy);
 					animationClip.SetCurve(namePathGameObject, typeof(SpriteRenderer), "material." + NameShaderPropertyVertexOffsetRDLD + ".w", animationCurveLDy);
 
 					return(true);
@@ -8057,9 +8165,10 @@ public static partial class LibraryEditor_SpriteStudio6
 																		)
 				{
 					const string messageLogPrefix = "Convert Animation-Parts";
-
+					bool flagNonBatch = ConvertPartsAnimationGameObjectCreateCheckBatch(ref setting,informationSSPJ, informationSSAE, idParts);
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Parts informationParts = informationSSAE.TableParts[idParts];
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Parts informationPartsParent = null;
+
 					string name = informationParts.Data.Name;
 					string nameTypeParts = "";
 
@@ -8220,28 +8329,44 @@ public static partial class LibraryEditor_SpriteStudio6
 					switch(informationParts.Data.OperationBlendTarget)
 					{
 						case Library_SpriteStudio6.KindOperationBlend.MIX:
-							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeMix;
+							informationParts.SpriteRendererUnityNative.material = (false == flagNonBatch)
+																					? setting.PresetMaterial.AnimationUnityNativeMix
+																					: setting.PresetMaterial.AnimationUnityNativeNonBatchMix;
 							break;
 						case Library_SpriteStudio6.KindOperationBlend.ADD:
-							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeAdd;
+							informationParts.SpriteRendererUnityNative.material = (false == flagNonBatch)
+																					? setting.PresetMaterial.AnimationUnityNativeAdd
+																					: setting.PresetMaterial.AnimationUnityNativeNonBatchAdd;
 							break;
 						case Library_SpriteStudio6.KindOperationBlend.SUB:
-							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeSub;
+							informationParts.SpriteRendererUnityNative.material = (false == flagNonBatch)
+																					? setting.PresetMaterial.AnimationUnityNativeSub
+																					: setting.PresetMaterial.AnimationUnityNativeNonBatchSub;
 							break;
 						case Library_SpriteStudio6.KindOperationBlend.MUL:
-							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeMul;
+							informationParts.SpriteRendererUnityNative.material = (false == flagNonBatch)
+																					? setting.PresetMaterial.AnimationUnityNativeMul
+																					: setting.PresetMaterial.AnimationUnityNativeNonBatchMul;
 							break;
 						case Library_SpriteStudio6.KindOperationBlend.MUL_NA:
-							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeMulNA;
+							informationParts.SpriteRendererUnityNative.material = (false == flagNonBatch)
+																					? setting.PresetMaterial.AnimationUnityNativeMulNA
+																					: setting.PresetMaterial.AnimationUnityNativeNonBatchMulNA;
 							break;
 						case Library_SpriteStudio6.KindOperationBlend.SCR:
-							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeScr;
+							informationParts.SpriteRendererUnityNative.material = (false == flagNonBatch)
+																					? setting.PresetMaterial.AnimationUnityNativeScr
+																					: setting.PresetMaterial.AnimationUnityNativeNonBatchScr;
 							break;
 						case Library_SpriteStudio6.KindOperationBlend.EXC:
-							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeExc;
+							informationParts.SpriteRendererUnityNative.material = (false == flagNonBatch)
+																					? setting.PresetMaterial.AnimationUnityNativeExc
+																					: setting.PresetMaterial.AnimationUnityNativeNonBatchExc;
 							break;
 						case Library_SpriteStudio6.KindOperationBlend.INV:
-							informationParts.SpriteRendererUnityNative.material = setting.PresetMaterial.AnimationUnityNativeInv;
+							informationParts.SpriteRendererUnityNative.material = (false == flagNonBatch)
+																					? setting.PresetMaterial.AnimationUnityNativeInv
+																					: setting.PresetMaterial.AnimationUnityNativeNonBatchInv;
 							break;
 					}
 #if UNITY_2017_1_OR_NEWER
@@ -8365,6 +8490,113 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					informationParts.GameObjectUnityNative.SetActive(true);
 					goto ConvertPartsAnimationGameObjectCreate_End;
+				}
+				private static bool ConvertPartsAnimationGameObjectCreateCheckBatch(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																						LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																						LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE,
+																						int idParts
+																				)
+				{
+					int countAnimation = informationSSAE.TableAnimation.Length;
+					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation.Parts informationAnimationParts = null;
+					bool flagNonBatch = false;
+					int frameStart;
+					int frameCount;
+					for(int i=0; i<countAnimation; i++)
+					{
+						informationAnimationParts = informationSSAE.TableAnimation[i].TableParts[idParts];
+						frameStart = informationSSAE.TableAnimation[i].Data.FrameValidStart;
+						frameCount = informationSSAE.TableAnimation[i].Data.CountFrameValid;
+
+						/* MEMO: Suppress batching when attributes are used that cause inconvenience if sprites are batched. */
+						flagNonBatch |= ConvertPartsAnimationGameObjectCreateCheckBatchFloat(informationAnimationParts.ScalingXLocal, frameStart, frameCount, 1.0f);
+						flagNonBatch |= ConvertPartsAnimationGameObjectCreateCheckBatchFloat(informationAnimationParts.ScalingYLocal, frameStart, frameCount, 1.0f);
+
+						flagNonBatch |= ConvertPartsAnimationGameObjectCreateCheckBatchFloatInherit(informationAnimationParts.RateOpacity, frameStart, frameCount, 1.0f);
+						flagNonBatch |= ConvertPartsAnimationGameObjectCreateCheckBatchFloat(informationAnimationParts.RateOpacityLocal, frameStart, frameCount, 1.0f);
+
+						flagNonBatch |= ConvertPartsAnimationGameObjectCreateCheckBatchVertexCorrection(informationAnimationParts.VertexCorrection, frameStart, frameCount);
+						flagNonBatch |= (0 < informationAnimationParts.PartsColor.CountGetKey()) ? true : false;
+					}
+
+					return(flagNonBatch);
+				}
+				private static bool ConvertPartsAnimationGameObjectCreateCheckBatchFloat(	Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attribute,
+																							int frameStart,
+																							int frameCount,
+																							float valueDefault
+																						)
+				{
+					float valueKey;
+					for(int i=frameStart; i<(frameStart + frameCount); i++)
+					{
+						if(false == attribute.ValueGet(out valueKey, i))
+						{	/* No-key */
+							return(false);
+						}
+
+						if(valueDefault != valueKey)
+						{
+							return(true);
+						}
+					}
+
+					return(false);
+				}
+				private static bool ConvertPartsAnimationGameObjectCreateCheckBatchFloatInherit(	Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attribute,
+																									int frameStart,
+																									int frameCount,
+																									float valueDefault
+																							)
+				{
+					float valueKey;
+					for(int i=frameStart; i<(frameStart + frameCount); i++)
+					{
+						if(false == Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetFloatMultiple(out valueKey, attribute, i, 1.0f))
+						{	/* No-key */
+							return(false);
+						}
+
+						if(valueDefault != valueKey)
+						{
+							return(true);
+						}
+					}
+
+					return(false);
+				}
+				private static bool ConvertPartsAnimationGameObjectCreateCheckBatchPartsColor(	Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection attribute,
+																								int frameStart,
+																								int frameCount
+																							)
+				{
+					return(0 < attribute.CountGetKey());
+				}
+				private static bool ConvertPartsAnimationGameObjectCreateCheckBatchVertexCorrection(	Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection attribute,
+																										int frameStart,
+																										int frameCount
+																								)
+				{
+					Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection valueKey = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection();
+					int countVertex;
+					for(int i=frameStart; i<(frameStart + frameCount); i++)
+					{
+						if(false == attribute.ValueGet(out valueKey, i))
+						{	/* No-key */
+							return(false);
+						}
+
+						countVertex = valueKey.Coordinate.Length;
+						for(int j=0; j<countVertex; j++)
+						{
+							if((0.0f != valueKey.Coordinate[j].x) || (0.0f != valueKey.Coordinate[j].y))
+							{
+								return(true);
+							}
+						}
+					}
+
+					return(false);
 				}
 
 				public static bool AssetCreateDataMesh(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
@@ -8988,13 +9220,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string NameShaderPropertyPartsColorOpacity = "_PartsColor_Opacity";
 				private const string NameShaderPropertyVertexOffsetLURU = "_VertexOffset_LURU";
 				private const string NameShaderPropertyVertexOffsetRDLD = "_VertexOffset_RDLD";
-				/* MEMO: "CellPivot(_CellPivot_LocalScale.xy)" and "CellRectangle" are set from script (Script_SpriteStudio6_PartsUnityNative.cs) not animationClip. */
 				private const string NameShaderPropertyCellPivotLocalScale = "_CellPivot_LocalScale";
 				private const string NameShaderPropertyCellRectangle = "_CellRectangle";
-
-				/* MEMO: In case of shader for SkinnedMesh, "Part-Color's Opacity" is stored in "_BlendParam.z". */
 				private const string NameShaderPropertyPartsColorSkinnedMesh = "_PartsColor";
 
+				private const string NameScriptPropertyOrderInLayer = "OrderInLayer";
 				private const string NameScriptPropertyCell = "Cell";
 				private const string NameScriptPropertyCellMesh = "CellMesh";
 				private const string NameScriptPropertyTextureMesh = "TextureMesh";

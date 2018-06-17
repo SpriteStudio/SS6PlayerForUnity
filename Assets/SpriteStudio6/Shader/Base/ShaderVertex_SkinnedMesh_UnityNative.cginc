@@ -6,8 +6,8 @@
 //
 fixed4 _Color;	// Material Color.
 
-float4 _BlendParam;	/* .x:Blend-Operation / .y:Opacity / .z:PartsColor.Opacity / .w:(no used) */
-float4 _PartsColor;
+//float4 _BlendParam;	/* .x:Blend-Operation / .y:Opacity / .z:PartsColor.Opacity / .w:(no used) */
+//float4 _PartsColor;
 
 #if defined(RESTRICT_SHADER_MODEL_3)
 /* MEMO: ".x" is not used, now. */
