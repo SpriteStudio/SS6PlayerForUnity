@@ -79,7 +79,7 @@ public static partial class Library_SpriteStudio6
 				internal Script_SpriteStudio6_RootEffect InstanceRootEffectUnderControl;
 				internal int FramePreviousUpdateUnderControl;
 				internal Library_SpriteStudio6.Data.Animation.Attribute.Instance DataInstance;
-				internal Library_SpriteStudio6.Data.Animation.Attribute.Effect DataEffect;
+//				internal Library_SpriteStudio6.Data.Animation.Attribute.Effect DataEffect;
 
 				public Script_SpriteStudio6_Collider InstanceScriptCollider;
 				internal int FramePreviousUpdateRadiusCollision;
@@ -139,7 +139,7 @@ public static partial class Library_SpriteStudio6
 					InstanceRootEffectUnderControl = null;
 					FramePreviousUpdateUnderControl = -1;
 					DataInstance.CleanUp();
-					DataEffect.CleanUp();
+//					DataEffect.CleanUp();
 
 //					InstanceScriptCollider =
 					FramePreviousUpdateRadiusCollision = -1;
@@ -1593,8 +1593,11 @@ public static partial class Library_SpriteStudio6
 								bool flagPlayReverseInstanceData = (0.0f > DataInstance.RateTime) ? true : false;
 								bool flagPlayReverseInstance = flagPlayReverseInstanceData ^ flagPlayReverse;
 
-								/* Start Animation */
-								InstancePlayStart(instanceRoot, flagPlayReverse);
+								/* Set Animation */
+								InstancePlayStart(	instanceRoot,
+//													controlTrack.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f)
+													((true == flagPlayReverse) ? -1.0f : 1.0f)
+												);
 
 								/* Adjust Starting-Time */
 								/* MEMO: Necessary to set time, not frame. Because parent's elapsed time has a small excess. */
@@ -1603,8 +1606,9 @@ public static partial class Library_SpriteStudio6
 									flagTimeWrap = flagTopFrame & flagPlayReverseInstanceData;
 									if(frameKey <= frame)
 									{   /* Immediately */
-										timeOffset = (float)(frameKey - controlTrack.FrameStart);
-										timeOffset = controlTrack.TimeElapsed - (timeOffset * controlTrack.TimePerFrame);
+										/* MEMO: Calculate "Instance"'s elapsed-time in the frame range. */
+										timeOffset = controlTrack.TimeElapsed - ((float)(frameKey - controlTrack.FrameStart) * controlTrack.TimePerFrame);
+										timeOffset *= Mathf.Abs(DataInstance.RateTime);
 										InstanceRootUnderControl.TableControlTrack[0].TimeSkip(timeOffset, flagPlayReverse, flagTimeWrap);
 									}
 									else
@@ -1628,8 +1632,9 @@ public static partial class Library_SpriteStudio6
 									flagTimeWrap = flagTopFrame & flagPlayReverseInstanceData;
 									if(frameKey <= frame)
 									{   /* Immediately */
-										timeOffset = (float)(frameKey - controlTrack.FrameStart);
-										timeOffset = controlTrack.TimeElapsed - (timeOffset * controlTrack.TimePerFrame);
+										/* MEMO: Calculate "Instance"'s elapsed-time in the frame range. */
+										timeOffset = controlTrack.TimeElapsed - ((float)(frameKey - controlTrack.FrameStart) * controlTrack.TimePerFrame);
+										timeOffset *= Mathf.Abs(DataInstance.RateTime);
 										InstanceRootUnderControl.TableControlTrack[0].TimeSkip(timeOffset, flagPlayReverse, flagTimeWrap);
 									}
 									else
@@ -1683,7 +1688,7 @@ public static partial class Library_SpriteStudio6
 									| FlagBitStatus.UPDATE_RATEOPACITY
 							);
 				}
-				internal bool InstancePlayStart(Script_SpriteStudio6_Root instanceRoot, bool flagPlayReverse)
+				internal bool InstancePlayStart(Script_SpriteStudio6_Root instanceRoot, float rateTime)
 				{
 					if(0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.INDEPENDENT))
 					{
@@ -1705,7 +1710,7 @@ public static partial class Library_SpriteStudio6
 																	IndexAnimationUnderControl,
 																	DataInstance.PlayCount,
 																	0,
-																	DataInstance.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f),
+																	DataInstance.RateTime * rateTime,
 																	((0 != (DataInstance.Flags & Library_SpriteStudio6.Data.Animation.Attribute.Instance.FlagBit.PINGPONG)) ? Library_SpriteStudio6.KindStylePlay.PINGPONG : Library_SpriteStudio6.KindStylePlay.NORMAL),
 																	DataInstance.LabelStart,
 																	DataInstance.OffsetStart,
@@ -1715,6 +1720,7 @@ public static partial class Library_SpriteStudio6
 																)
 						);
 				}
+
 				private void DrawEffect(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -1794,15 +1800,19 @@ public static partial class Library_SpriteStudio6
 								{	/* Immediately */
 									/* Play-Start */
 									InstanceRootEffectUnderControl.AnimationPlay(	1,
-																					dataEffect.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f),
+//																					controlTrack.RateTime * ((true == flagPlayReverse) ? -1.0f : 1.0f) * dataEffect.RateTime,
+																					((true == flagPlayReverse) ? -1.0f : 1.0f) * dataEffect.RateTime,
 																					controlTrack.FramePerSecond
 																				);
 
 									InstanceRootEffectUnderControl.SeedOffsetSet((uint)controlTrack.CountLoop);
 
 									/* Adjust Time */
-									timeOffset = controlTrack.TimeElapsed - ((float)((frameKey - controlTrack.FrameStart) - dataEffect.FrameStart) * controlTrack.TimePerFrame);
-									InstanceRootEffectUnderControl.TimeElapse(timeOffset, false);
+									/* MEMO: Calculate "Effect"'s elapsed-time in the frame range. */
+									timeOffset = controlTrack.TimeElapsed - ((float)(frameKey - controlTrack.FrameStart) * controlTrack.TimePerFrame);
+									timeOffset *= dataEffect.RateTime;	/* "Effect" does not have a negative speed. */
+									timeOffset += InstanceRootEffectUnderControl.TimeGetFramePosition(dataEffect.FrameStart);
+									InstanceRootEffectUnderControl.TimeSkip(timeOffset, false);
 
 									/* Status Update */
 									FramePreviousUpdateUnderControl = frameKey;
@@ -1824,12 +1834,14 @@ public static partial class Library_SpriteStudio6
 					InstanceRootEffectUnderControl.RateScaleLocal = scaleLocal;
 
 					InstanceRootEffectUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
-
-					InstanceRootEffectUnderControl.LateUpdateMain(	timeElapsed,
-																	flagHide,
-																	(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
-																	ref matrixCorrection
-																);
+					if(false == flagHide)
+					{
+						InstanceRootEffectUnderControl.LateUpdateMain(	timeElapsed,
+																		flagHide,
+																		(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
+																		ref matrixCorrection
+																	);
+					}
 
 					Status &= ~(	FlagBitStatus.UPDATE_SCALELOCAL
 									| FlagBitStatus.UPDATE_RATEOPACITY

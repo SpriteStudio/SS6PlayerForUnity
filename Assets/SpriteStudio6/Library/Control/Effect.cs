@@ -181,7 +181,7 @@ public static partial class Library_SpriteStudio6
 				CountParticleDraw = 0;
 
 				/* Emitters' Random-Seed Refresh */
-				int frame = (int)(instanceRoot.Frame);
+				int frame = (int)instanceRoot.Frame;
 				int frameTarget = frame;
 				int countLoop = 0;
 				if(0 == (Status & FlagBitStatus.INFINITE))
@@ -971,9 +971,6 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Scale */
-//					Scale.x = 
-//					Scale.y = 1.0f;
-////					Scale.z = 1.0f;
 					Scale = Vector2.one;
 					float scaleRate = 1.0f;
 
@@ -992,7 +989,6 @@ public static partial class Library_SpriteStudio6
 						scaleEnd.z = 1.0f;
 						scaleRateEnd = dataEmitter.ScaleRateEnd.Main + random.RandomFloat(dataEmitter.ScaleRateEnd.Sub);
 
-//						Scale = Vector2.Lerp(Scale, scaleEnd, rateLife);
 						Scale = Vector3.Lerp(Scale, scaleEnd, rateLife);
 						scaleRate = Mathf.Lerp(scaleRate, scaleRateEnd, rateLife);
 					}
@@ -1008,14 +1004,15 @@ public static partial class Library_SpriteStudio6
 						Vector2 vectorPosition;
 						float positionXGravity = dataEmitter.GravityPointPosition.x;
 						float positionYGravity = dataEmitter.GravityPointPosition.y;
-						vectorPosition.x = positionXGravity - (offsetX + PositionX);
-						vectorPosition.y = positionYGravity - (offsetY + PositionY);
+//						vectorPosition.x = positionXGravity - (offsetX + PositionX);
+//						vectorPosition.y = positionYGravity - (offsetY + PositionY);
+						vectorPosition.x = positionXGravity - (offsetX + emitter.Position.x);
+						vectorPosition.y = positionYGravity - (offsetY + emitter.Position.y);
 						Vector2 vectorNormal = vectorPosition.normalized;
 						float gravityPower = dataEmitter.GravityPointPower;
 						if(0.0f < gravityPower)
 						{
 							float eFrame = (vectorPosition.magnitude / gravityPower) * 0.9f;
-//							float gFrame = (frame >= (int)eFrame) ? (eFrame * 0.9f) : frame;
 							float gFrame = (frameRelative >= (int)eFrame) ? (eFrame * 0.9f) : frameRelative;
 
 							vectorNormal = vectorNormal * gravityPower * gFrame;
@@ -1023,7 +1020,6 @@ public static partial class Library_SpriteStudio6
 							PositionY += vectorNormal.y;
 
 							float Blend = OutQuad(gFrame, eFrame, 0.9f, 0.0f);
-//							Blend += (frame / life * 0.1f);
 							Blend += (frameRelative / life * 0.1f);
 
 							PositionX = PositionX + ((positionXGravity - PositionX) * Blend);	/* CAUTION!: Don't use "Mathf.Lerp" */
@@ -1032,7 +1028,6 @@ public static partial class Library_SpriteStudio6
 						else
 						{
 							/* MEMO: In the case negative power, Simply repulsion. Attenuation due to distance is not taken into account. */
-//							vectorNormal = vectorNormal * gravityPower * frame;
 							vectorNormal = vectorNormal * gravityPower * frameRelative;
 							PositionX += vectorNormal.x;
 							PositionY += vectorNormal.y;

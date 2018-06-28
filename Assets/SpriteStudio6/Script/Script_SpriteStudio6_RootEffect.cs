@@ -320,10 +320,6 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 						| FlagBitStatus.CHANGE_CELLMAP
 					);
 	}
-	internal void TimeElapse(float time, bool flagReverseParent)
-	{	/* MEMO: In principle, This Function is for calling from "Library_SpriteStudio6.Control.Animation.Parts.DrawEffect". */
-		TimeElapsed = time;
-	}
 	#endregion MonoBehaviour-Functions
 
 	/* ----------------------------------------------- Functions */
@@ -409,6 +405,16 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		System.TimeSpan SecNow = TimeNow - TimeUnixEpoch;
 		
 		return(RandomKeyMakeID + (uint)SecNow.TotalSeconds);
+	}
+
+	internal void TimeSkip(float time, bool flagReverseParent)
+	{	/* MEMO: In principle, This Function is for calling from "Library_SpriteStudio6.Control.Animation.Parts.DrawEffect". */
+		TimeElapsed = time;
+	}
+
+	internal float TimeGetFramePosition(int frame)
+	{	/* MEMO: In principle, This Function is for calling from "Library_SpriteStudio6.Control.Animation.Parts.DrawEffect". */
+		return((float)frame * TimePerFrame);
 	}
 
 	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_RootEffect scriptRoot)
