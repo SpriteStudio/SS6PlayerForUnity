@@ -319,7 +319,7 @@ public static partial class Library_SpriteStudio6
 					CountLoop = 0;
 					TimeElapsed = (ArgumentContainer.Frame - FrameStart) * TimePerFrame;
 					TimeElapsedNow = 0.0f;
-					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, FrameStart, FrameEnd);
+//					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, FrameStart, FrameEnd);
 
 					Status |= FlagBitStatus.PLAYING;
 					Status |= FlagBitStatus.PLAYING_START;
@@ -679,7 +679,7 @@ public static partial class Library_SpriteStudio6
 				Update_End:;
 					{
 						int frame = (int)(TimeElapsed / TimePerFrame);
-						frame = Mathf.Clamp(frame, 0, (FrameRange - 1));
+//						frame = Mathf.Clamp(frame, 0, (FrameRange - 1));
 						frame += FrameStart;
 						if(	((frame != ArgumentContainer.FramePrevious) || (0 != (Status & FlagBitStatus.PLAYING_TURN)))
 							|| (true == flagStopJumpTime)
@@ -735,7 +735,7 @@ public static partial class Library_SpriteStudio6
 //					TimeElapseReplacement = 0.0f;
 //				}
 
-				public void TimeSkip(float time, bool flagReverseParent, bool flagRangeEnd)
+				public void TimeSkip(float time, bool flagReverseParent, bool flagWrapRange)
 				{	/* MEMO: In principle, This Function is for calling from "DrawInstance". */
 					if(0.0f > time)
 					{	/* Wait Infinity */
@@ -743,8 +743,8 @@ public static partial class Library_SpriteStudio6
 						return;
 					}
 
-					bool flagPongPong = (0 != (Status & FlagBitStatus.STYLE_PINGPONG)) ? true : false;
-					bool flagReverseStyle = (0 != (Status & FlagBitStatus.STYLE_REVERSE)) ? true : false;
+					bool flagPongPong = (0 != (Status & FlagBitStatus.STYLE_PINGPONG));	/* ? true : false */
+					bool flagReverseStyle = (0 != (Status & FlagBitStatus.STYLE_REVERSE));	/* ? true : false */
 					float timeLoop = TimeRange * ((true == flagPongPong) ? 2.0f : 1.0f);
 					float timeCursor = time;
 					int countLoop = 0;
@@ -837,22 +837,27 @@ public static partial class Library_SpriteStudio6
 					}
 					else
 					{	/* Play-Style: One-Way */
-						Status &= ~FlagBitStatus.PLAYING_REVERSE;
 						if(true == flagReverseStyle)
 						{	/* Play-Stype: One-Way & Reverse */
 							Status |= FlagBitStatus.PLAYING_REVERSE;
+							if(false == flagReverseParent)
+							{
+								timeCursor = TimeRange - timeCursor;
+							}
 						}
 						else
 						{	/* Play-Stype: One-Way & Foward */
-//							Status &= ~FlagBitStatus.PLAYING_REVERSE;
+							Status &= ~FlagBitStatus.PLAYING_REVERSE;
+							if(true == flagReverseParent)
+							{
+								timeCursor = TimeRange - timeCursor;
+							}
 						}
-						timeCursor = (true == flagRangeEnd) ? (TimeRange - timeCursor) : timeCursor;
 					}
 
 					TimeElapsed = timeCursor;
-
 					int frame = (int)(TimeElapsed / TimePerFrame);
-					frame = Mathf.Clamp(frame, 0, (FrameRange - 1));
+//					frame = Mathf.Clamp(frame, 0, (FrameRange - 1));
 					frame += FrameStart;
 					ArgumentContainer.Frame = frame;
 				}
@@ -941,8 +946,8 @@ public static partial class Library_SpriteStudio6
 
 					DECODE_ATTRIBUTE = 0x0008000,
 
-					IGNORE_USERDATA = 0x00008000,
-					IGNORE_SKIPLOOP = 0x00004000,
+					IGNORE_USERDATA = 0x00000800,
+					IGNORE_SKIPLOOP = 0x00000400,
 
 					TRANSITION_START = 0x00000080,
 					TRANSITION_CANCEL_PAUSE = 0x00000040,
