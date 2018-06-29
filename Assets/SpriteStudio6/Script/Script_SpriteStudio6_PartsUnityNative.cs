@@ -155,19 +155,23 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		/* Sprite (SpriteRenderer) */
 		if(null != InstanceSpriteRenderer)
 		{
+			/* Priority Set */
 			if(OrderInLayerPrevious != sortingOrder)
 			{
 				InstanceSpriteRenderer.sortingOrder = sortingOrder;
 				OrderInLayerPrevious = sortingOrder;
 			}
 
-			if(CellPrevious != Cell)
+			if(null != PropertyMaterial)
 			{
-				InstanceSpriteRenderer.sprite = Cell;
+				InstanceSpriteRenderer.GetPropertyBlock(PropertyMaterial);
 
-				if(null != PropertyMaterial)
+				/* Cell Set */
+				if(CellPrevious != Cell)
 				{
-					InstanceSpriteRenderer.GetPropertyBlock(PropertyMaterial);
+					/* MEMO: Not enough to just set cell to "SpriteRenderer". (Need to set texture to shader) */
+					InstanceSpriteRenderer.sprite = Cell;
+					PropertyMaterial.SetTexture(IDMaterialMainTexture, Cell.texture);
 
 					Vector4 temp;
 					Rect rectangleCell = Cell.rect;
@@ -184,9 +188,10 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 					temp.y = rectangleCell.height - pivot.y;
 					PropertyMaterial.SetVector(IDMaterialPivotCell, temp);
 
-					InstanceSpriteRenderer.SetPropertyBlock(PropertyMaterial);
+					CellPrevious = Cell;
 				}
-				CellPrevious = Cell;
+
+				InstanceSpriteRenderer.SetPropertyBlock(PropertyMaterial);
 			}
 
 			return;
@@ -313,6 +318,10 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		}
 	}
 	#endregion MonoBehaviour-Functions
+
+	/* ----------------------------------------------- Enums & Constants */
+	#region Enums & Constants
+	#endregion Enums & Constants
 
 	/* ----------------------------------------------- Functions */
 	#region Functions

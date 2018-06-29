@@ -2483,6 +2483,14 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Material AnimationUnityNativeScr;
 				public Material AnimationUnityNativeExc;
 				public Material AnimationUnityNativeInv;
+				public Material AnimationUnityNativeNonBatchMix;
+				public Material AnimationUnityNativeNonBatchAdd;
+				public Material AnimationUnityNativeNonBatchSub;
+				public Material AnimationUnityNativeNonBatchMul;
+				public Material AnimationUnityNativeNonBatchMulNA;
+				public Material AnimationUnityNativeNonBatchScr;
+				public Material AnimationUnityNativeNonBatchExc;
+				public Material AnimationUnityNativeNonBatchInv;
 
 				public Material SkinnedMeshUnityNativeMix;
 				public Material SkinnedMeshUnityNativeAdd;
@@ -2528,6 +2536,14 @@ public static partial class LibraryEditor_SpriteStudio6
 											string animationUnityNativeScr,
 											string animationUnityNativeExc,
 											string animationUnityNativeInv,
+											string animationUnityNativeNonBatchMix,
+											string animationUnityNativeNonBatchAdd,
+											string animationUnityNativeNonBatchSub,
+											string animationUnityNativeNonBatchMul,
+											string animationUnityNativeNonBatchMulNA,
+											string animationUnityNativeNonBatchScr,
+											string animationUnityNativeNonBatchExc,
+											string animationUnityNativeNonBatchInv,
 											string skinnedMeshUnityNativeMix,
 											string skinnedMeshUnityNativeAdd,
 											string skinnedMeshUnityNativeSub,
@@ -2572,6 +2588,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					AnimationUnityNativeScr = MaterialLoadPath(PathGet(animationUnityNativeScr));
 					AnimationUnityNativeExc = MaterialLoadPath(PathGet(animationUnityNativeExc));
 					AnimationUnityNativeInv = MaterialLoadPath(PathGet(animationUnityNativeInv));
+
+					AnimationUnityNativeNonBatchMix = MaterialLoadPath(PathGet(animationUnityNativeNonBatchMix));
+					AnimationUnityNativeNonBatchAdd = MaterialLoadPath(PathGet(animationUnityNativeNonBatchAdd));
+					AnimationUnityNativeNonBatchSub = MaterialLoadPath(PathGet(animationUnityNativeNonBatchSub));
+					AnimationUnityNativeNonBatchMul = MaterialLoadPath(PathGet(animationUnityNativeNonBatchMul));
+					AnimationUnityNativeNonBatchMulNA = MaterialLoadPath(PathGet(animationUnityNativeNonBatchMulNA));
+					AnimationUnityNativeNonBatchScr = MaterialLoadPath(PathGet(animationUnityNativeNonBatchScr));
+					AnimationUnityNativeNonBatchExc = MaterialLoadPath(PathGet(animationUnityNativeNonBatchExc));
+					AnimationUnityNativeNonBatchInv = MaterialLoadPath(PathGet(animationUnityNativeNonBatchInv));
 
 					SkinnedMeshUnityNativeMix = MaterialLoadPath(PathGet(skinnedMeshUnityNativeMix));
 					SkinnedMeshUnityNativeAdd = MaterialLoadPath(PathGet(skinnedMeshUnityNativeAdd));
@@ -2687,6 +2712,30 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeInv, GUIDGetMaterial(Default.AnimationUnityNativeInv));
 					AnimationUnityNativeInv = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchMix, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchMix));
+					AnimationUnityNativeNonBatchMix = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchAdd, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchAdd));
+					AnimationUnityNativeNonBatchAdd = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchSub, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchSub));
+					AnimationUnityNativeNonBatchSub = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchMul, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchMul));
+					AnimationUnityNativeNonBatchMul = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchMulNA, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchMulNA));
+					AnimationUnityNativeNonBatchMulNA = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchScr, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchScr));
+					AnimationUnityNativeNonBatchScr = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchExc, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchExc));
+					AnimationUnityNativeNonBatchExc = MaterialGetGUID(guid);
+
+					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchInv, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchInv));
+					AnimationUnityNativeNonBatchInv = MaterialGetGUID(guid);
 
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeySkinnedMeshUnityNativeMix, GUIDGetMaterial(Default.SkinnedMeshUnityNativeMix));
 					SkinnedMeshUnityNativeMix = MaterialGetGUID(guid);
@@ -2815,6 +2864,30 @@ public static partial class LibraryEditor_SpriteStudio6
 					guid = GUIDGetMaterial(AnimationUnityNativeInv);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeInv, guid);
 
+					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchMix);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchMix, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchAdd);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchAdd, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchSub);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchSub, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchMul);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchMul, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchMulNA);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchMulNA, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchScr);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchScr, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchExc);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchExc, guid);
+
+					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchInv);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchInv, guid);
+
 					guid = GUIDGetMaterial(SkinnedMeshUnityNativeMix);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeySkinnedMeshUnityNativeMix, guid);
 
@@ -2844,7 +2917,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[40];
+					string[] textEncode = new string[48];
 					string textValue;
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughStencilPreDraw));
@@ -2943,29 +3016,53 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeInv));
 					textEncode[31] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeInv, textValue);
 
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchMix));
+					textEncode[32] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMix, textValue);
+
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchAdd));
+					textEncode[33] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchAdd, textValue);
+
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchSub));
+					textEncode[34] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchSub, textValue);
+
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchMul));
+					textEncode[35] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMul, textValue);
+
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchMulNA));
+					textEncode[36] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMulNA, textValue);
+
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchScr));
+					textEncode[37] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchScr, textValue);
+
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchExc));
+					textEncode[38] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchExc, textValue);
+
+					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchInv));
+					textEncode[39] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchInv, textValue);
+
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeMix));
-					textEncode[32] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMix, textValue);
+					textEncode[40] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMix, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeAdd));
-					textEncode[33] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeAdd, textValue);
+					textEncode[41] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeAdd, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeSub));
-					textEncode[34] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeSub, textValue);
+					textEncode[42] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeSub, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeMul));
-					textEncode[35] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMul, textValue);
+					textEncode[43] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMul, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeMulNA));
-					textEncode[36] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMulNA, textValue);
+					textEncode[44] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMulNA, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeScr));
-					textEncode[37] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeScr, textValue);
+					textEncode[45] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeScr, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeExc));
-					textEncode[38] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeExc, textValue);
+					textEncode[46] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeExc, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeInv));
-					textEncode[39] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeInv, textValue);
+					textEncode[47] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeInv, textValue);
 
 					return(textEncode);
 				}
@@ -2978,7 +3075,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughStencilPreDraw:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughStencilPreDraw));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughStencilPreDraw));
 							}
 							AnimationSS6PUThroughStencilPreDraw = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -2986,7 +3083,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughStencilDraw:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughStencilDraw));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughStencilDraw));
 							}
 							AnimationSS6PUThroughStencilDraw = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -2994,7 +3091,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMix));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMix));
 							}
 							AnimationSS6PUThroughMix = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3002,7 +3099,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughAdd:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughAdd));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughAdd));
 							}
 							AnimationSS6PUThroughAdd = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3010,7 +3107,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughSub:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughSub));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughSub));
 							}
 							AnimationSS6PUThroughSub = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3018,7 +3115,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughMul:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMul));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMul));
 							}
 							AnimationSS6PUThroughMul = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3026,7 +3123,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughMulNA:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMulNA));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMulNA));
 							}
 							AnimationSS6PUThroughMulNA = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3034,7 +3131,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughScr:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughScr));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughScr));
 							}
 							AnimationSS6PUThroughScr = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3042,7 +3139,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughExc:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughExc));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughExc));
 							}
 							AnimationSS6PUThroughExc = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3050,7 +3147,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUThroughInv:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughInv));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughInv));
 							}
 							AnimationSS6PUThroughInv = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3058,7 +3155,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskStencilPreDraw:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskStencilPreDraw));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskStencilPreDraw));
 							}
 							AnimationSS6PUMaskStencilPreDraw = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3066,7 +3163,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskStencilDraw:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskStencilDraw));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskStencilDraw));
 							}
 							AnimationSS6PUMaskStencilDraw = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3074,7 +3171,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMix));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMix));
 							}
 							AnimationSS6PUMaskMix = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3082,7 +3179,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskAdd:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskAdd));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskAdd));
 							}
 							AnimationSS6PUMaskAdd = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3090,7 +3187,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskSub:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskSub));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskSub));
 							}
 							AnimationSS6PUMaskSub = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3098,7 +3195,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskMul:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMul));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMul));
 							}
 							AnimationSS6PUMaskMul = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3106,7 +3203,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskMulNA:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMulNA));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMulNA));
 							}
 							AnimationSS6PUMaskMulNA = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3114,7 +3211,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskScr:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskScr));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskScr));
 							}
 							AnimationSS6PUMaskScr = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3122,7 +3219,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskExc:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskExc));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskExc));
 							}
 							AnimationSS6PUMaskExc = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3130,7 +3227,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationSS6PUMaskInv:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskInv));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskInv));
 							}
 							AnimationSS6PUMaskInv = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3138,7 +3235,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyEffectSS6PUThroughMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.EffectSS6PUThroughMix));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.EffectSS6PUThroughMix));
 							}
 							EffectSS6PUThroughMix = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3146,7 +3243,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyEffectSS6PUThroughAdd:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.EffectSS6PUThroughAdd));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.EffectSS6PUThroughAdd));
 							}
 							EffectSS6PUThroughAdd = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3154,7 +3251,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyEffectSS6PUMaskMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.EffectSS6PUMaskMix));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.EffectSS6PUMaskMix));
 							}
 							EffectSS6PUMaskMix = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3162,7 +3259,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyEffectSS6PUMaskAdd:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.EffectSS6PUMaskAdd));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.EffectSS6PUMaskAdd));
 							}
 							EffectSS6PUMaskAdd = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3170,7 +3267,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationUnityNativeMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeMix));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeMix));
 							}
 							AnimationUnityNativeMix = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3178,7 +3275,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationUnityNativeAdd:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeAdd));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeAdd));
 							}
 							AnimationUnityNativeAdd = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3186,7 +3283,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationUnityNativeSub:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeSub));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeSub));
 							}
 							AnimationUnityNativeSub = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3194,7 +3291,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationUnityNativeMul:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeMul));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeMul));
 							}
 							AnimationUnityNativeMul = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3202,7 +3299,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationUnityNativeMulNA:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeMulNA));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeMulNA));
 							}
 							AnimationUnityNativeMulNA = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3210,7 +3307,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationUnityNativeScr:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeScr));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeScr));
 							}
 							AnimationUnityNativeScr = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3218,7 +3315,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationUnityNativeExc:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeExc));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeExc));
 							}
 							AnimationUnityNativeExc = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3226,15 +3323,79 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyAnimationUnityNativeInv:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeInv));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeInv));
 							}
 							AnimationUnityNativeInv = MaterialLoadPath(PathGet(namePathMaterial));
+							return(true);
+
+						case TextKeyAnimationUnityNativeNonBatchMix:
+							if(true == string.IsNullOrEmpty(namePathMaterial))
+							{
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchMix));
+							}
+							AnimationUnityNativeNonBatchMix = MaterialLoadPath(PathGet(namePathMaterial));
+							return(true);
+
+						case TextKeyAnimationUnityNativeNonBatchAdd:
+							if(true == string.IsNullOrEmpty(namePathMaterial))
+							{
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchAdd));
+							}
+							AnimationUnityNativeNonBatchAdd = MaterialLoadPath(PathGet(namePathMaterial));
+							return(true);
+
+						case TextKeyAnimationUnityNativeNonBatchSub:
+							if(true == string.IsNullOrEmpty(namePathMaterial))
+							{
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchSub));
+							}
+							AnimationUnityNativeNonBatchSub = MaterialLoadPath(PathGet(namePathMaterial));
+							return(true);
+
+						case TextKeyAnimationUnityNativeNonBatchMul:
+							if(true == string.IsNullOrEmpty(namePathMaterial))
+							{
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchMul));
+							}
+							AnimationUnityNativeNonBatchMul = MaterialLoadPath(PathGet(namePathMaterial));
+							return(true);
+
+						case TextKeyAnimationUnityNativeNonBatchMulNA:
+							if(true == string.IsNullOrEmpty(namePathMaterial))
+							{
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchMulNA));
+							}
+							AnimationUnityNativeNonBatchMulNA = MaterialLoadPath(PathGet(namePathMaterial));
+							return(true);
+
+						case TextKeyAnimationUnityNativeNonBatchScr:
+							if(true == string.IsNullOrEmpty(namePathMaterial))
+							{
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchScr));
+							}
+							AnimationUnityNativeNonBatchScr = MaterialLoadPath(PathGet(namePathMaterial));
+							return(true);
+
+						case TextKeyAnimationUnityNativeNonBatchExc:
+							if(true == string.IsNullOrEmpty(namePathMaterial))
+							{
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchExc));
+							}
+							AnimationUnityNativeNonBatchExc = MaterialLoadPath(PathGet(namePathMaterial));
+							return(true);
+
+						case TextKeyAnimationUnityNativeNonBatchInv:
+							if(true == string.IsNullOrEmpty(namePathMaterial))
+							{
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchInv));
+							}
+							AnimationUnityNativeNonBatchInv = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
 
 						case TextKeySkinnedMeshUnityNativeMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeMix));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeMix));
 							}
 							SkinnedMeshUnityNativeMix = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3242,7 +3403,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeySkinnedMeshUnityNativeAdd:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeAdd));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeAdd));
 							}
 							SkinnedMeshUnityNativeAdd = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3250,7 +3411,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeySkinnedMeshUnityNativeSub:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeSub));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeSub));
 							}
 							SkinnedMeshUnityNativeSub = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3258,7 +3419,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeySkinnedMeshUnityNativeMul:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeMul));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeMul));
 							}
 							SkinnedMeshUnityNativeMul = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3266,7 +3427,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeySkinnedMeshUnityNativeMulNA:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeMulNA));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeMulNA));
 							}
 							SkinnedMeshUnityNativeMulNA = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3274,7 +3435,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeySkinnedMeshUnityNativeScr:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeScr));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeScr));
 							}
 							SkinnedMeshUnityNativeScr = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3282,7 +3443,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeySkinnedMeshUnityNativeExc:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeExc));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeExc));
 							}
 							SkinnedMeshUnityNativeExc = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3290,7 +3451,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeySkinnedMeshUnityNativeInv:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
-								namePathMaterial =  PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeInv));
+								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeInv));
 							}
 							SkinnedMeshUnityNativeInv = MaterialLoadPath(PathGet(namePathMaterial));
 							return(true);
@@ -3371,6 +3532,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyMaskingMask = "Mask";
 				private const string KeyMaskingThrough = "Through";
 
+				private const string KeyNonBatch = "NonBatch";
+
 				private const string KeyOperationStencilPreDraw = "StencilPreDraw";
 				private const string KeyOperationStencilDraw = "StencilDraw";
 				private const string KeyOperationMix = "Mix";
@@ -3410,21 +3573,29 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyEffectSS6PUMaskAdd = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationAdd;
 
 				private const string KeyAnimationUnityNativeMix = KeyKindAnimation + KeyModeUnityNative + KeyOperationMix;
-				private const string KeyAnimationUnityNativeAdd = KeyKindAnimation + KeyModeUnityNative+ KeyOperationAdd;
-				private const string KeyAnimationUnityNativeSub = KeyKindAnimation + KeyModeUnityNative+ KeyOperationSub;
-				private const string KeyAnimationUnityNativeMul = KeyKindAnimation + KeyModeUnityNative+ KeyOperationMul;
-				private const string KeyAnimationUnityNativeMulNA = KeyKindAnimation + KeyModeUnityNative+ KeyOperationMulNA;
-				private const string KeyAnimationUnityNativeScr = KeyKindAnimation + KeyModeUnityNative+ KeyOperationScr;
-				private const string KeyAnimationUnityNativeExc = KeyKindAnimation + KeyModeUnityNative+ KeyOperationExc;
-				private const string KeyAnimationUnityNativeInv = KeyKindAnimation + KeyModeUnityNative+ KeyOperationInv;
-				private const string KeySkinnedMeshUnityNativeMix = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationMix;
-				private const string KeySkinnedMeshUnityNativeAdd = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationAdd;
-				private const string KeySkinnedMeshUnityNativeSub = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationSub;
-				private const string KeySkinnedMeshUnityNativeMul = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationMul;
-				private const string KeySkinnedMeshUnityNativeMulNA = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationMulNA;
-				private const string KeySkinnedMeshUnityNativeScr = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationScr;
-				private const string KeySkinnedMeshUnityNativeExc = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationExc;
-				private const string KeySkinnedMeshUnityNativeInv = KeyKindSkinnedMesh + KeyModeUnityNative+ KeyOperationInv;
+				private const string KeyAnimationUnityNativeAdd = KeyKindAnimation + KeyModeUnityNative + KeyOperationAdd;
+				private const string KeyAnimationUnityNativeSub = KeyKindAnimation + KeyModeUnityNative + KeyOperationSub;
+				private const string KeyAnimationUnityNativeMul = KeyKindAnimation + KeyModeUnityNative + KeyOperationMul;
+				private const string KeyAnimationUnityNativeMulNA = KeyKindAnimation + KeyModeUnityNative + KeyOperationMulNA;
+				private const string KeyAnimationUnityNativeScr = KeyKindAnimation + KeyModeUnityNative + KeyOperationScr;
+				private const string KeyAnimationUnityNativeExc = KeyKindAnimation + KeyModeUnityNative + KeyOperationExc;
+				private const string KeyAnimationUnityNativeInv = KeyKindAnimation + KeyModeUnityNative + KeyOperationInv;
+				private const string KeyAnimationUnityNativeNonBatchMix = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationMix;
+				private const string KeyAnimationUnityNativeNonBatchAdd = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationAdd;
+				private const string KeyAnimationUnityNativeNonBatchSub = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationSub;
+				private const string KeyAnimationUnityNativeNonBatchMul = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationMul;
+				private const string KeyAnimationUnityNativeNonBatchMulNA = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationMulNA;
+				private const string KeyAnimationUnityNativeNonBatchScr = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationScr;
+				private const string KeyAnimationUnityNativeNonBatchExc = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationExc;
+				private const string KeyAnimationUnityNativeNonBatchInv = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationInv;
+				private const string KeySkinnedMeshUnityNativeMix = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationMix;
+				private const string KeySkinnedMeshUnityNativeAdd = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationAdd;
+				private const string KeySkinnedMeshUnityNativeSub = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationSub;
+				private const string KeySkinnedMeshUnityNativeMul = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationMul;
+				private const string KeySkinnedMeshUnityNativeMulNA = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationMulNA;
+				private const string KeySkinnedMeshUnityNativeScr = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationScr;
+				private const string KeySkinnedMeshUnityNativeExc = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationExc;
+				private const string KeySkinnedMeshUnityNativeInv = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationInv;
 
 				private const string TextKeyPrefix = "PresetMaterial_";
 
@@ -3464,6 +3635,14 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyAnimationUnityNativeScr = TextKeyPrefix + KeyAnimationUnityNativeScr;
 				private const string TextKeyAnimationUnityNativeExc = TextKeyPrefix + KeyAnimationUnityNativeExc;
 				private const string TextKeyAnimationUnityNativeInv = TextKeyPrefix + KeyAnimationUnityNativeInv;
+				private const string TextKeyAnimationUnityNativeNonBatchMix = TextKeyPrefix + KeyAnimationUnityNativeNonBatchMix;
+				private const string TextKeyAnimationUnityNativeNonBatchAdd = TextKeyPrefix + KeyAnimationUnityNativeNonBatchAdd;
+				private const string TextKeyAnimationUnityNativeNonBatchSub = TextKeyPrefix + KeyAnimationUnityNativeNonBatchSub;
+				private const string TextKeyAnimationUnityNativeNonBatchMul = TextKeyPrefix + KeyAnimationUnityNativeNonBatchMul;
+				private const string TextKeyAnimationUnityNativeNonBatchMulNA = TextKeyPrefix + KeyAnimationUnityNativeNonBatchMulNA;
+				private const string TextKeyAnimationUnityNativeNonBatchScr = TextKeyPrefix + KeyAnimationUnityNativeNonBatchScr;
+				private const string TextKeyAnimationUnityNativeNonBatchExc = TextKeyPrefix + KeyAnimationUnityNativeNonBatchExc;
+				private const string TextKeyAnimationUnityNativeNonBatchInv = TextKeyPrefix + KeyAnimationUnityNativeNonBatchInv;
 				private const string TextKeySkinnedMeshUnityNativeMix = TextKeyPrefix + KeySkinnedMeshUnityNativeMix;
 				private const string TextKeySkinnedMeshUnityNativeAdd = TextKeyPrefix + KeySkinnedMeshUnityNativeAdd;
 				private const string TextKeySkinnedMeshUnityNativeSub = TextKeyPrefix + KeySkinnedMeshUnityNativeSub;
@@ -3511,6 +3690,14 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyAnimationUnityNativeScr = PrefsKeyPrefix + KeyAnimationUnityNativeScr;
 				private const string PrefsKeyAnimationUnityNativeExc = PrefsKeyPrefix + KeyAnimationUnityNativeExc;
 				private const string PrefsKeyAnimationUnityNativeInv = PrefsKeyPrefix + KeyAnimationUnityNativeInv;
+				private const string PrefsKeyAnimationUnityNativeNonBatchMix = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchMix;
+				private const string PrefsKeyAnimationUnityNativeNonBatchAdd = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchAdd;
+				private const string PrefsKeyAnimationUnityNativeNonBatchSub = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchSub;
+				private const string PrefsKeyAnimationUnityNativeNonBatchMul = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchMul;
+				private const string PrefsKeyAnimationUnityNativeNonBatchMulNA = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchMulNA;
+				private const string PrefsKeyAnimationUnityNativeNonBatchScr = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchScr;
+				private const string PrefsKeyAnimationUnityNativeNonBatchExc = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchExc;
+				private const string PrefsKeyAnimationUnityNativeNonBatchInv = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchInv;
 				private const string PrefsKeySkinnedMeshUnityNativeMix = PrefsKeyPrefix + KeySkinnedMeshUnityNativeMix;
 				private const string PrefsKeySkinnedMeshUnityNativeAdd = PrefsKeyPrefix + KeySkinnedMeshUnityNativeAdd;
 				private const string PrefsKeySkinnedMeshUnityNativeSub = PrefsKeyPrefix + KeySkinnedMeshUnityNativeSub;
@@ -3523,49 +3710,57 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string namePathRoot = "Assets";
 
 				private readonly static GroupPresetMaterial Default = new GroupPresetMaterial(
-					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Thru_PreDraw.mat",		/* AnimationSS6PUThroughStencilPreDraw */
-					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Thru_Draw.mat",			/* AnimationSS6PUStencilDraw */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MIX.mat",			/* AnimationSS6PUThroughMix */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_ADD.mat",			/* AnimationSS6PUThroughAdd */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_SUB.mat",			/* AnimationSS6PUThroughSub */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MUL.mat",			/* AnimationSS6PUThroughMul */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MUL_NA.mat",		/* AnimationSS6PUThroughMulNA */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_SCR.mat",			/* AnimationSS6PUThroughScr */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_EXC.mat",			/* AnimationSS6PUThroughExc */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_INV.mat",			/* AnimationSS6PUThroughInv */
-					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Mask_PreDraw.mat",		/* AnimationSS6PUMaskStencilPreDraw */
-					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Mask_Draw.mat",			/* AnimationSS6PUMaskStencilDraw */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MIX.mat",			/* AnimationSS6PUMaskMix */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_ADD.mat",			/* AnimationSS6PUMaskAdd */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_SUB.mat",			/* AnimationSS6PUMaskSub */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MUL.mat",			/* AnimationSS6PUMaskMul */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MUL_NA.mat",		/* AnimationSS6PUMaskMulNA */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_SCR.mat",			/* AnimationSS6PUMaskScr */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_EXC.mat",			/* AnimationSS6PUMaskExc */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_INV.mat",			/* AnimationSS6PUMaskInv */
+					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Thru_PreDraw.mat",			/* AnimationSS6PUThroughStencilPreDraw */
+					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Thru_Draw.mat",				/* AnimationSS6PUStencilDraw */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MIX.mat",				/* AnimationSS6PUThroughMix */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_ADD.mat",				/* AnimationSS6PUThroughAdd */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_SUB.mat",				/* AnimationSS6PUThroughSub */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MUL.mat",				/* AnimationSS6PUThroughMul */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MUL_NA.mat",			/* AnimationSS6PUThroughMulNA */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_SCR.mat",				/* AnimationSS6PUThroughScr */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_EXC.mat",				/* AnimationSS6PUThroughExc */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_INV.mat",				/* AnimationSS6PUThroughInv */
+					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Mask_PreDraw.mat",			/* AnimationSS6PUMaskStencilPreDraw */
+					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Mask_Draw.mat",				/* AnimationSS6PUMaskStencilDraw */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MIX.mat",				/* AnimationSS6PUMaskMix */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_ADD.mat",				/* AnimationSS6PUMaskAdd */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_SUB.mat",				/* AnimationSS6PUMaskSub */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MUL.mat",				/* AnimationSS6PUMaskMul */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MUL_NA.mat",			/* AnimationSS6PUMaskMulNA */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_SCR.mat",				/* AnimationSS6PUMaskScr */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_EXC.mat",				/* AnimationSS6PUMaskExc */
+					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_INV.mat",				/* AnimationSS6PUMaskInv */
 
-					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Thru_MIX.mat",			/* EffectSS6PUThroughMix */
-					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Thru_ADD.mat",			/* EffectSS6PUThroughAdd */
-					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Mask_MIX.mat",			/* EffectSS6PUMaskMix */
-					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Mask_ADD.mat",			/* EffectSS6PUMaskAdd */
+					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Thru_MIX.mat",				/* EffectSS6PUThroughMix */
+					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Thru_ADD.mat",				/* EffectSS6PUThroughAdd */
+					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Mask_MIX.mat",				/* EffectSS6PUMaskMix */
+					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Mask_ADD.mat",				/* EffectSS6PUMaskAdd */
 
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MIX.mat",			/* AnimationUnityNativeMix */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_ADD.mat",			/* AnimationUnityNativeAdd */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SUB.mat",			/* AnimationUnityNativeSub */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL.mat",			/* AnimationUnityNativeMul */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL_NA.mat",			/* AnimationUnityNativeMulNA */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SCR.mat",			/* AnimationUnityNativeScr */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_EXC.mat",			/* AnimationUnityNativeExc */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_INV.mat",			/* AnimationUnityNativeInv */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MIX.mat",				/* AnimationUnityNativeMix */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_ADD.mat",				/* AnimationUnityNativeAdd */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SUB.mat",				/* AnimationUnityNativeSub */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL.mat",				/* AnimationUnityNativeMul */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL_NA.mat",				/* AnimationUnityNativeMulNA */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SCR.mat",				/* AnimationUnityNativeScr */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_EXC.mat",				/* AnimationUnityNativeExc */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_INV.mat",				/* AnimationUnityNativeInv */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MIX.mat",		/* AnimationUnityNativeNonBatchMix */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_ADD.mat",		/* AnimationUnityNativeNonBatchAdd */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_SUB.mat",		/* AnimationUnityNativeNonBatchSub */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MUL.mat",		/* AnimationUnityNativeNonBatchMul */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MUL_NA.mat",	/* AnimationUnityNativeNonBatchMulNA */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_SCR.mat",		/* AnimationUnityNativeNonBatchScr */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_EXC.mat",		/* AnimationUnityNativeNonBatchExc */
+					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_INV.mat",		/* AnimationUnityNativeNonBatchInv */
 
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MIX.mat",		/* SkinnedMeshUnityNativeMix */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_ADD.mat",		/* SkinnedMeshUnityNativeAdd */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_SUB.mat",		/* SkinnedMeshUnityNativeSub */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MUL.mat",		/* SkinnedMeshUnityNativeMul */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MUL_NA.mat",	/* SkinnedMeshUnityNativeMulNA */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_SCR.mat",		/* SkinnedMeshUnityNativeScr */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_EXC.mat",		/* SkinnedMeshUnityNativeExc */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_INV.mat"		/* SkinnedMeshUnityNativeInv */
+					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MIX.mat",			/* SkinnedMeshUnityNativeMix */
+					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_ADD.mat",			/* SkinnedMeshUnityNativeAdd */
+					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_SUB.mat",			/* SkinnedMeshUnityNativeSub */
+					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MUL.mat",			/* SkinnedMeshUnityNativeMul */
+					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MUL_NA.mat",		/* SkinnedMeshUnityNativeMulNA */
+					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_SCR.mat",			/* SkinnedMeshUnityNativeScr */
+					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_EXC.mat",			/* SkinnedMeshUnityNativeExc */
+					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_INV.mat"			/* SkinnedMeshUnityNativeInv */
 				);
 				#endregion Enums & Constants
 			}

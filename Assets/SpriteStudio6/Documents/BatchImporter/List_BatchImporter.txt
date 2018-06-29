@@ -205,6 +205,20 @@
 *
 *
 * ---------------------
+* Basic_FlagCreateHolderAsset > Flag
+*   Flag ... true / false (bool)
+*            true == create Asset-Holder
+*            false == no-create Asset-Holder
+* 
+* When "Convert to Unity-Native" mode, This is same function as "Options: Basic > Create Asset-Holder" option in the import settings.
+* "Asset-Holder" is a script that collects animation-clips that can be assigned to animation data.
+*  ("Script_SpriteStudio6_HolderAssetUnityNative" component)
+*
+* e.g.:
+*  Basic_FlagCreateHolderAsset > true
+*
+*
+* ---------------------
 * Basic_FlagInvisibleToHideAll > Flag
 *   Flag ... true / false (bool)
 *            true == same as checked
@@ -265,6 +279,7 @@
 * ConfirmOverWrite_FlagMaterialAnimation > Flag
 * ConfirmOverWrite_FlagMaterialEffect > Flag
 * ConfirmOverWrite_FlagTexture > Flag
+* 
 *   Flag ... true / false (bool)
 *            true == same as checked
 *            false == same as unchecked
@@ -324,6 +339,7 @@
 * CheckVersion_FlagInvalidSSCE > Flag
 * CheckVersion_FlagInvalidSSAE > Flag
 * CheckVersion_FlagInvalidSSEE > Flag
+* 
 *   Flag ... true / false (bool)
 *            true == same as checked
 *            false == same as unchecked
@@ -365,6 +381,7 @@
 * RuleNameAsset_NamePrefixAnimationClipUnityNative > PrefixName
 * RuleNameAsset_NamePrefixMaterialAnimatorUnityNative > PrefixName
 * RuleNameAsset_NamePrefixMaterialParticleUnityNative > PrefixName
+* 
 *   PrefixName ... Filename's prefix text
 *                  (Empty) == No prefix
 * 
@@ -406,6 +423,7 @@
 * RuleNameAssetFolder_NameFolderAnimationClipUnityNative > FolderName
 * RuleNameAssetFolder_NameFolderMaterialAnimatorUnityNative > FolderName
 * RuleNameAssetFolder_NameFolderMaterialParticleUnityNative > FolderName
+* 
 *   FolderName ... Sub-Folder Name
 * 
 * This is same function as ...
@@ -449,6 +467,7 @@
 * PackAttributeAnimation_UserData > FormatName
 * PackAttributeAnimation_Instance > FormatName
 * PackAttributeAnimation_Effect > FormatName
+* 
 *   FormatName ... Data format name
 *                  StandardUncompressed == format "Standard Uncompressed"
 *                  StandardCPE == format "Standard CPE"
@@ -513,6 +532,70 @@
 * 
 *
 * ---------------------
+* PresetMaterial_AnimationSS6PUThroughStencilPreDraw > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughStencilDraw > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughMix > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughAdd > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughSub > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughMul > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughMulNA > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughScr > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughExc > MaterialPath
+* PresetMaterial_AnimationSS6PUThroughInv > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskStencilPreDraw > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskStencilDraw > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskMix > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskAdd > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskSub > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskMul > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskMulNA > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskScr > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskExc > MaterialPath
+* PresetMaterial_AnimationSS6PUMaskInv > MaterialPath
+* PresetMaterial_EffectSS6PUThroughMix > MaterialPath
+* PresetMaterial_EffectSS6PUThroughAdd > MaterialPath
+* PresetMaterial_EffectSS6PUMaskMix > MaterialPath
+* PresetMaterial_EffectSS6PUMaskAdd > MaterialPath
+* 
+*   MaterialPath ... Material Asset-Path (Full Path)
+*                  Material's Asset Path.
+*                  Do not include "Assets" at the head like other commands' path.
+*                  ("Assets/subFolder/sample.mat" -> "/subFolder/sample.mat")
+*                  However, relative path can not be specified.
+* 
+* When "SpriteStudio6 Player" mode, change material that importer will assign to AnimationData for target-blending.
+* This is same function as ...
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Mask]Pre-Draw"
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Mask]Draw"
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Sprite]Mix" (Mix)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Sprite]Add" (Add)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Sprite]Sub" (Subtract)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Sprite]Mul" (Multiple)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Sprite]MulNA" (Multiple-NonAlpha)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Sprite]Scr" (Screen)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Sprite]Exc" (Exclude)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Sprite]Inv" (Inverse)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Effect]Mix" (Mix)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Not-Maskd > [Effect]Add" (Add)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Mask]Pre-Draw"
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Mask]Draw"
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Sprite]Mix" (Mix)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Sprite]Add" (Add)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Sprite]Sub" (Subtract)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Sprite]Mul" (Multiple)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Sprite]MulNA" (Multiple-NonAlpha)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Sprite]Scr" (Screen)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Sprite]Exc" (Exclude)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Sprite]Inv" (Inverse)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Effect]Mix" (Mix)
+* - "Advanced Options > Advanced Options: Preset Material > for parts Maskd > [Effect]Add" (Add)
+* ... options in the import settings.
+* 
+* e.g.:
+*  PresetMaterial_EffectSS6PUThroughMix > /Materials/PresetMaterial/forSS6PU_Mix.mat
+*
+* 
+* ---------------------
 * PresetMaterial_AnimationUnityNativeMix > MaterialPath
 * PresetMaterial_AnimationUnityNativeAdd > MaterialPath
 * PresetMaterial_AnimationUnityNativeSub > MaterialPath
@@ -521,6 +604,23 @@
 * PresetMaterial_AnimationUnityNativeScr > MaterialPath
 * PresetMaterial_AnimationUnityNativeExc > MaterialPath
 * PresetMaterial_AnimationUnityNativeInv > MaterialPath
+* PresetMaterial_AnimationUnityNativeNonBatchMix > MaterialPath
+* PresetMaterial_AnimationUnityNativeNonBatchAdd > MaterialPath
+* PresetMaterial_AnimationUnityNativeNonBatchSub > MaterialPath
+* PresetMaterial_AnimationUnityNativeNonBatchMul > MaterialPath
+* PresetMaterial_AnimationUnityNativeNonBatchMulNA > MaterialPath
+* PresetMaterial_AnimationUnityNativeNonBatchScr > MaterialPath
+* PresetMaterial_AnimationUnityNativeNonBatchExc > MaterialPath
+* PresetMaterial_AnimationUnityNativeNonBatchInv > MaterialPath
+* PresetMaterial_SkinnedMeshUnityNativeMix > MaterialPath
+* PresetMaterial_SkinnedMeshUnityNativeAdd > MaterialPath
+* PresetMaterial_SkinnedMeshUnityNativeSub > MaterialPath
+* PresetMaterial_SkinnedMeshUnityNativeMul > MaterialPath
+* PresetMaterial_SkinnedMeshUnityNativeMulNA > MaterialPath
+* PresetMaterial_SkinnedMeshUnityNativeScr > MaterialPath
+* PresetMaterial_SkinnedMeshUnityNativeExc > MaterialPath
+* PresetMaterial_SkinnedMeshUnityNativeInv > MaterialPath
+* 
 *   MaterialPath ... Material Asset-Path (Full Path)
 *                  Material's Asset Path.
 *                  Do not include "Assets" at the head like other commands' path.
@@ -529,20 +629,44 @@
 * 
 * When "Convert to Unity-Native" mode, change material that importer will assign to sprites for target-blending.
 * This is same function as ...
-* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Mix" (Mix)
-* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Add" (Add)
-* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Sub" (Subtract)
-* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Mul" (Multiple)
-* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]MulNA" (Multiple-NonAlpha)
-* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Scr" (Screen)
-* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Exc" (Exclude)
-* - "Advanced Options > Advanced Options: Preset Material >[Unity-Native]Inv" (Inverse)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite]Mix" (Mix)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite]Add" (Add)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite]Sub" (Subtract)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite]Mul" (Multiple)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite]MulNA" (Multiple-NonAlpha)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite]Scr" (Screen)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite]Exc" (Exclude)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite]Inv" (Inverse)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite-NB]Mix" (Mix)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite-NB]Add" (Add)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite-NB]Sub" (Subtract)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite-NB]Mul" (Multiple)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite-NB]MulNA" (Multiple-NonAlpha)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite-NB]Scr" (Screen)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite-NB]Exc" (Exclude)
+* - "Advanced Options > Advanced Options: Preset Material >[Sprite-NB]Inv" (Inverse)
+* - "Advanced Options > Advanced Options: Preset Material >[Mesh]Mix" (Mix)
+* - "Advanced Options > Advanced Options: Preset Material >[Mesh]Add" (Add)
+* - "Advanced Options > Advanced Options: Preset Material >[Mesh]Sub" (Subtract)
+* - "Advanced Options > Advanced Options: Preset Material >[Mesh]Mul" (Multiple)
+* - "Advanced Options > Advanced Options: Preset Material >[Mesh]MulNA" (Multiple-NonAlpha)
+* - "Advanced Options > Advanced Options: Preset Material >[Mesh]Scr" (Screen)
+* - "Advanced Options > Advanced Options: Preset Material >[Mesh]Exc" (Exclude)
+* - "Advanced Options > Advanced Options: Preset Material >[Mesh]Inv" (Inverse)
 * ... options in the import settings.
+*
+* If the following functions are used of the "normal" parts, material that set to
+*  "PresetMaterial_AnimationUnityNativeNonBatch" is used. (Sprites are not batched)
+* - Local X/Y Scale
+* - Opacity
+* - Local Opacity
+* - Parts Color
+* - Vertex Deformation
 * 
 * e.g.:
 *  PresetMaterial_AnimationUnityNativeMulNA > /Materials/PresetMaterial/Add.mat
 *
-* 
+*
 
 * ---------------------
 * CAUTION: The following is a sample of how to write, do not try importing with this Batch-List.

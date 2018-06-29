@@ -407,7 +407,8 @@ public partial class Script_SpriteStudio6_Root
 			int indexTrack = controlParts.IndexControlTrack;
 			if(0 <= indexTrack)
 			{
-				return(controlParts.InstancePlayStart(this, TableControlTrack[indexTrack].StatusIsPlayingReverse));
+				float rateTimeControlTrack = TableControlTrack[indexTrack].RateTime * ((true == TableControlTrack[indexTrack].StatusIsPlayingReverse) ? -1.0f : 1.0f);
+				return(controlParts.InstancePlayStart(this, rateTimeControlTrack));
 			}
 		}
 
