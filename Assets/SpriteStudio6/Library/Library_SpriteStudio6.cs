@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.0.35";
+	public const string SignatureVersionAsset = "1.0.36";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -3574,6 +3574,26 @@ public static partial class Library_SpriteStudio6
 					intersection.x = LU.x + ca * (RD.x - LU.x);
 					intersection.y = LU.y + ca * (RD.y - LU.y);
 				}
+			}
+
+			public static void QuaternionGetEulerAngels(out Quaternion quaternion, ref Vector3 angelsQuler)
+			{
+				float fixedValue = Mathf.Deg2Rad * 0.5f;
+				float halfX = angelsQuler.x * fixedValue;
+				float halfY = angelsQuler.y * fixedValue;
+				float halfZ = angelsQuler.z * fixedValue;
+				float cosHalfX = Mathf.Cos(halfX);
+				float sinHalfX = Mathf.Sin(halfX);
+				float cosHalfY = Mathf.Cos(halfY);
+				float sinHalfY = Mathf.Sin(halfY);
+				float cosHalfZ = Mathf.Cos(halfZ);
+				float sinHalfZ = Mathf.Sin(halfZ);
+
+				/* MEMO: X-Y-Z (SpriteStudio6) */
+				quaternion.w = (cosHalfX * cosHalfY * cosHalfZ) - (sinHalfX * sinHalfY * sinHalfZ);
+				quaternion.x = (sinHalfX * cosHalfY * cosHalfZ) + (cosHalfX * sinHalfY * sinHalfZ);
+				quaternion.y = (cosHalfX * sinHalfY * cosHalfZ) - (sinHalfX * cosHalfY * sinHalfZ);
+				quaternion.z = (cosHalfX * cosHalfY * sinHalfZ) + (sinHalfX * sinHalfY * cosHalfZ);
 			}
 			#endregion Functions
 		}

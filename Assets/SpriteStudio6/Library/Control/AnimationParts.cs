@@ -661,7 +661,11 @@ public static partial class Library_SpriteStudio6
 						/* Set Transform-Rotation */
 						if(true == flagUpdate)
 						{
-							transform.localEulerAngles = valueTRSMaster;
+							/* MEMO: "SpriteStudio6" and "Unity" have different rotation order.  */
+							Quaternion localQuaternion;
+							Library_SpriteStudio6.Utility.Math.QuaternionGetEulerAngels(out localQuaternion, ref valueTRSMaster);
+							transform.localRotation = localQuaternion;
+
 							Status |= FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
 						}
 					}
@@ -699,7 +703,12 @@ public static partial class Library_SpriteStudio6
 
 						/* Set Transform-Rotation */
 						/* MEMO: As blending rate always changes, not check attribute updates. */
-						transform.localEulerAngles = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+						/* MEMO: "SpriteStudio6" and "Unity" have different rotation order.  */
+						Vector3 localEulerAngels = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+						Quaternion localQuaternion;
+						Library_SpriteStudio6.Utility.Math.QuaternionGetEulerAngels(out localQuaternion, ref localEulerAngels);
+						transform.localRotation = localQuaternion;
+
 						Status |= FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
 					}
 
