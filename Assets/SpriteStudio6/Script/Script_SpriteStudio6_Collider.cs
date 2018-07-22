@@ -32,9 +32,11 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 //	{
 //	}
 
-//	void Start()
-//	{
-//	}
+	void Start()
+	{
+		SizeRectangle = InstanceColliderBox.size;
+		PivotRectangle = InstanceColliderBox.center;
+	}
 
 //	void Update()
 //	{

@@ -1258,7 +1258,8 @@ public static partial class Library_SpriteStudio6
 						return;
 					}
 
-					if(0 != (ParameterSprite.Status & BufferParameterSprite.FlagBitStatus.UPDATE_COORDINATE))
+//					if(0 != (ParameterSprite.Status & BufferParameterSprite.FlagBitStatus.UPDATE_COORDINATE))
+					if(0 != (ParameterSprite.Status & BufferParameterSprite.FlagBitStatus.UPDATE_COLLIDERRECTANGLE_NOWFRAME))
 					{
 						/* MEMO: "Local-Scale" does not affect "Circle Collision". */
 						Vector2 sizeSprite = ParameterSprite.SizeSprite;
@@ -1267,6 +1268,8 @@ public static partial class Library_SpriteStudio6
 						pivotSprite.x *= -1.0f;
 
 						InstanceScriptCollider.ColliderSetRectangle(ref sizeSprite, ref pivotSprite);
+
+						ParameterSprite.Status &= ~BufferParameterSprite.FlagBitStatus.UPDATE_COLLIDERRECTANGLE_NOWFRAME;
 					}
 				}
 
@@ -2254,6 +2257,7 @@ public static partial class Library_SpriteStudio6
 									| FlagBitStatus.UPDATE_PARAMETERBLEND
 									| FlagBitStatus.UPDATE_COLORPARTS
 									| FlagBitStatus.UPDATE_MASKING
+									| FlagBitStatus.UPDATE_COORDINATE_NOWFRAME
 								);
 
 						return(true);
@@ -2431,6 +2435,9 @@ public static partial class Library_SpriteStudio6
 
 						/* Create sprite data (from cell to use) */
 						/* MEMO: If do not always decode "Cell", malfunctions at restoration after cell-change. */
+						/* MEMO: Since "UPDATE_COORDINATE" is cumulative status for drawing, it is necessary   */
+						/*        to judge "Cell"-changing in current frame with "UPDATE_COORDINATE_NOWFRAME". */
+						/*       If judge only with UPDATE_COORDINATE, miss-update with non-drawing parts.     */
 #if UNITY_EDITOR
 						if(null != dataAnimationParts.Cell.Function)
 						{
@@ -2454,6 +2461,7 @@ public static partial class Library_SpriteStudio6
 									Status |= FlagBitStatus.UPDATE_UVTEXTURE;
 									Status |= FlagBitStatus.UPDATE_COORDINATE;
 									Status |= FlagBitStatus.UPDATE_TRANSFORM_TEXTURE;
+									Status |= FlagBitStatus.UPDATE_COORDINATE_NOWFRAME;
 								}
 							}
 						}
@@ -2466,6 +2474,7 @@ public static partial class Library_SpriteStudio6
 
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
 							Status |= FlagBitStatus.UPDATE_UVTEXTURE;
+							Status |= FlagBitStatus.UPDATE_COORDINATE_NOWFRAME;
 						}
 						statusControlParts &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
 
@@ -2499,8 +2508,9 @@ public static partial class Library_SpriteStudio6
 							SizeTexture = Library_SpriteStudio6.Control.Animation.SizeTextureDefault;
 
 							SizeCell = Library_SpriteStudio6.Control.Animation.SizeTextureDefault;
-							PivotCell = Vector2.zero;
-							PositionCell =Vector2.zero;
+//							PivotCell = Vector2.zero;
+							PivotCell = SizeCell * 0.5f;
+							PositionCell = Vector2.zero;
 						}
 						else
 						{	/* Valid */
@@ -2515,7 +2525,8 @@ public static partial class Library_SpriteStudio6
 						Vector2 pivotSprite = PivotCell;
 
 						/* Correct Sprite data (by attributes) */
-						bool flagRecalcSizeSprite = false;
+//						bool flagRecalcSizeSprite = false;
+						bool flagRecalcSizeSprite = (0 != (Status & FlagBitStatus.UPDATE_COORDINATE_NOWFRAME));	/* ? true : false */
 #if UNITY_EDITOR
 						if(null != dataAnimationParts.OffsetPivot.Function)
 						{
@@ -2577,10 +2588,12 @@ public static partial class Library_SpriteStudio6
 							}
 						}
 
-						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
+//						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
+						if(true == flagRecalcSizeSprite)
 						{	/* Re-Set Sprite's Size & Pivot (only when coordinates updateed) */
 							SizeSprite = sizeSprite;
 							PivotSprite = pivotSprite;
+							Status |= FlagBitStatus.UPDATE_COLLIDERRECTANGLE_NOWFRAME;
 						}
 
 						/* Get Texture-Transform */
@@ -2701,6 +2714,9 @@ public static partial class Library_SpriteStudio6
 						{
 							VertexCorrection.Value.Coordinate = tableCoordinateVertexCorrectionOld;
 						}
+
+						/* Clear One-time status */
+						Status &= ~FlagBitStatus.UPDATE_COORDINATE_NOWFRAME;
 
 						return(true);
 					}
@@ -3345,7 +3361,7 @@ public static partial class Library_SpriteStudio6
 					[System.Flags]
 					internal enum FlagBitStatus
 					{
-						/* Common */
+						/* Common (Accumulated until drawed) */
 						NO_DRAW = 0x40000000,	/* Not "Hide" ... for when no cell designation */
 
 						UPDATE_COORDINATE = 0x08000000,
@@ -3354,6 +3370,10 @@ public static partial class Library_SpriteStudio6
 						UPDATE_COLORPARTS = 0x01000000,
 
 						UPDATE_MASKING = 0x00800000,
+
+						/* Common (One-time) */
+						UPDATE_COORDINATE_NOWFRAME = 0x00080000,
+						UPDATE_COLLIDERRECTANGLE_NOWFRAME = 0x00040000,
 
 						/* for Plain */
 						UPDATE_TRANSFORM_TEXTURE = 0x00008000,
