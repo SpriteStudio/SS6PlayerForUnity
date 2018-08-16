@@ -1684,7 +1684,7 @@ public static partial class Library_SpriteStudio6
 							}
 							if(0 <= IDPropertyNotDiscardPixel)
 							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
 							goto default;
 						}
@@ -1732,7 +1732,7 @@ public static partial class Library_SpriteStudio6
 							}
 							if(0 <= IDPropertyNotDiscardPixel)
 							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
 							goto default;
 						}
