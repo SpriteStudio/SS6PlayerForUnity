@@ -704,9 +704,9 @@ public static partial class Library_SpriteStudio6
 						/* Set Transform-Rotation */
 						/* MEMO: As blending rate always changes, not check attribute updates. */
 						/* MEMO: "SpriteStudio6" and "Unity" have different rotation order.  */
-						Vector3 localEulerAngels = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
+						Vector3 localEulerAngles = (valueTRSMaster * rateTransitionInverse) + (valueTRSSlave * rateTransition);
 						Quaternion localQuaternion;
-						Library_SpriteStudio6.Utility.Math.QuaternionGetEulerAngels(out localQuaternion, ref localEulerAngels);
+						Library_SpriteStudio6.Utility.Math.QuaternionGetEulerAngels(out localQuaternion, ref localEulerAngles);
 						transform.localRotation = localQuaternion;
 
 						Status |= FlagBitStatus.CHANGE_TRANSFORM_ROTATION;
