@@ -1556,8 +1556,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(errorValue);
 				}
 
-				System.Xml.XmlNode NodeVersion = attributeNodeRoot["version"];
-				string versionText = NodeVersion.Value;
+				System.Xml.XmlNode nodeVersion = attributeNodeRoot["version"];
+				string versionText = nodeVersion.Value;
 				int version = LibraryEditor_SpriteStudio6.Utility.Text.TextToVersion(versionText);
 				if(-1 == version)
 				{

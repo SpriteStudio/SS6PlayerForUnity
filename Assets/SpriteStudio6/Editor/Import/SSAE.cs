@@ -116,7 +116,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Decode Tags */
 				System.Xml.NameTable nodeNameSpace = new System.Xml.NameTable();
 				System.Xml.XmlNamespaceManager managerNameSpace = new System.Xml.XmlNamespaceManager(nodeNameSpace);
-				System.Xml.XmlNodeList listNode= null;
+				System.Xml.XmlNodeList listNode = null;
 
 				/* Decode Parts-Data */
 				listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "Model/partList/value", managerNameSpace);

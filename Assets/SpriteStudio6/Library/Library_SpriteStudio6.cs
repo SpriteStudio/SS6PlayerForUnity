@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.0.39";
+	public const string SignatureVersionAsset = "1.0.40";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -1684,7 +1684,7 @@ public static partial class Library_SpriteStudio6
 							}
 							if(0 <= IDPropertyNotDiscardPixel)
 							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
 							goto default;
 						}
@@ -1732,7 +1732,7 @@ public static partial class Library_SpriteStudio6
 							}
 							if(0 <= IDPropertyNotDiscardPixel)
 							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
+								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
 							}
 							goto default;
 						}
@@ -3576,12 +3576,12 @@ public static partial class Library_SpriteStudio6
 				}
 			}
 
-			public static void QuaternionGetEulerAngels(out Quaternion quaternion, ref Vector3 angelsEuler)
+			public static void QuaternionGetEulerAngels(out Quaternion quaternion, ref Vector3 anglesEuler)
 			{
 				float fixedValue = Mathf.Deg2Rad * 0.5f;
-				float halfX = angelsEuler.x * fixedValue;
-				float halfY = angelsEuler.y * fixedValue;
-				float halfZ = angelsEuler.z * fixedValue;
+				float halfX = anglesEuler.x * fixedValue;
+				float halfY = anglesEuler.y * fixedValue;
+				float halfZ = anglesEuler.z * fixedValue;
 				float cosHalfX = Mathf.Cos(halfX);
 				float sinHalfX = Mathf.Sin(halfX);
 				float cosHalfY = Mathf.Cos(halfY);
