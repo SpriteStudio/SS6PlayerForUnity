@@ -85,6 +85,7 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 //		InstanceSkinnedMeshRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
 		if(null != InstanceSkinnedMeshRenderer)
 		{
+#if false
 			/* Create Bind-Pose */
 			Matrix4x4 matrixLocalToWorld = transform.localToWorldMatrix;
 			if(null != TableTransformBone)
@@ -103,7 +104,9 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 			}
 
 			InstanceSkinnedMeshRenderer.bones = TableTransformBone;
-
+#else
+			TableMatrixBindPose = null;
+#endif
  			goto Start_End;
 		}
 
@@ -112,7 +115,7 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
  			goto Start_End;
 		}
 
-	Start_ErrorEnd:;
+//	Start_ErrorEnd:;
 		return;
 
 	Start_End:;
@@ -224,6 +227,26 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		/* Mesh (SkinnedMeshRenderer) */
 		if(null != InstanceSkinnedMeshRenderer)
 		{
+			if(null == TableMatrixBindPose)
+			{
+				/* Create Bind-Pose */
+				Matrix4x4 matrixLocalToWorld = transform.localToWorldMatrix;
+				if(null != TableTransformBone)
+				{
+					int countTransformBone = TableTransformBone.Length;
+					TableMatrixBindPose = new Matrix4x4[countTransformBone];
+					if(null != TableMatrixBindPose)
+					{
+						for(int i=0; i<countTransformBone; i++)
+						{
+							TableMatrixBindPose[i] = TableTransformBone[i].worldToLocalMatrix * matrixLocalToWorld;
+						}
+					}
+				}
+
+				InstanceSkinnedMeshRenderer.bones = TableTransformBone;
+			}
+
 			if(OrderInLayerPrevious != sortingOrder)
 			{
 				InstanceSkinnedMeshRenderer.sortingOrder = sortingOrder;
