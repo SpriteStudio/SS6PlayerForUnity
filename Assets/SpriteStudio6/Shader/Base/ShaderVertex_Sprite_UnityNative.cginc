@@ -137,7 +137,7 @@ InputPS VS_main(InputVS input)
 #else
 	temp = _CellPivot_LocalScale;
 #endif
-	vertex.xy *= UnityObjectToClipPos(_CellPivot_LocalScale).zw;
+	vertex.xy *= mul(unity_ObjectToWorld, _CellPivot_LocalScale).zw;
 	tempVert = vertex;
 
 	vertex = UnityObjectToClipPos(tempVert);
