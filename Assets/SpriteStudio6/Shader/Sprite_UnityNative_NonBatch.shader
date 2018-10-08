@@ -38,17 +38,6 @@ Shader "Custom/SpriteStudio6/UnityNative/Sprite_NonBatch"
 		[PerRendererData] _AlphaTex("External Alpha", 2D) = "white" {}
 		[PerRendererData] _EnableExternalAlpha("Enable External Alpha", Float) = 0
 
-		[HideInInspector] _BlendParam("BlendParam", Vector) = (0.01, 1, 0, 0)
-		[HideInInspector] _PartsColor_LU("Parts Color LU", Color) = (1, 1, 1, 0)
-		[HideInInspector] _PartsColor_RU("Parts Color RU", Color) = (1, 1, 1, 0)
-		[HideInInspector] _PartsColor_RD("Parts Color RD", Color) = (1, 1, 1, 0)
-		[HideInInspector] _PartsColor_LD("Parts Color LD", Color) = (1, 1, 1, 0)
-		[HideInInspector] _PartsColor_Opacity("Parts Color Opacity", Vector) = (1, 1, 1, 1)
-		[HideInInspector] _CellPivot_LocalScale("Cell Pivot Local Scale", Vector) = (0, 0, 1, 1)
-		[HideInInspector] _CellRectangle("Cell Rectangle", Vector) = (0, 0, 1, 1)
-		[HideInInspector] _VertexOffset_LURU("VertexOffset LURU", Vector) = (0, 0, 0, 0)
-		[HideInInspector] _VertexOffset_RDLD("VertexOffset RDLD", Vector) = (0, 0, 0, 0)
-
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendSource("Blend Source", Float) = 0
 		[Enum(UnityEngine.Rendering.BlendMode)] _BlendDestination("Blend Destination", Float) = 0
 		[Enum(UnityEngine.Rendering.BlendOp)] _BlendOperation("Blend Operation", Float) = 0
@@ -90,6 +79,7 @@ Shader "Custom/SpriteStudio6/UnityNative/Sprite_NonBatch"
 			#include "UnityCG.cginc"
 
 			#define RESTRICT_SHADER_MODEL_3
+//			#define RESTRICT_UNITY_2017_2
 			#pragma multi_compile _ PS_NOT_DISCARD
 			#pragma multi_compile _ PS_OUTPUT_PMA
 			#include "Base/Shader_Data_UnityNative.cginc"

@@ -22,7 +22,8 @@ InputPS VS_main(InputVS input)
 {
 	InputPS output;
 	float4 temp;
-	float indexBlend = floor(_BlendParam.x);
+	float4 temp2;
+	float indexBlend = floor(BlendParam.x);
 
 	UNITY_SETUP_INSTANCE_ID(input);
 	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
@@ -39,10 +40,12 @@ InputPS VS_main(InputVS input)
 // #else
 #endif
 
-	output.ColorOverlay = _PartsColor;
+	output.ColorOverlay = PartsColor;
 
-	temp = input.color * _RendererColor * _Color;
-	temp.a *= _BlendParam.y * _BlendParam.z;
+	temp2 = RendererColor;
+	temp = input.color * temp2 * _Color;
+	temp2 = BlendParam;
+	temp.a *= temp2.y * temp2.z;
 	output.ColorMain = temp;
 
 	temp = UnityObjectToClipPos(input.vertex);

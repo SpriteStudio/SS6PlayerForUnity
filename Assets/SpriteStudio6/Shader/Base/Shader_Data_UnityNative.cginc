@@ -5,60 +5,77 @@
 //	All rights reserved.
 //
 #if defined(UNITY_INSTANCING_ENABLED)
-UNITY_INSTANCING_BUFFER_START(PerDrawSprite)
-// SpriteRenderer.Color while Non-Batched/Instanced.
-UNITY_DEFINE_INSTANCED_PROP(fixed4, unity_SpriteRendererColorArray)
-// this could be smaller but that's how bit each entry is regardless of type
-UNITY_DEFINE_INSTANCED_PROP(fixed2, unity_SpriteFlipArray)
+	/* MEMO: Caution! If variable-name actually defined ("_...") are changed, can not receive values output by animation-clip. */
+	UNITY_INSTANCING_BUFFER_START(PerDrawSprite)
 
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_BlendParam)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_PartsColor_LU)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_PartsColor_RU)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_PartsColor_RD)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_PartsColor_LD)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_PartsColor_Opacity)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_CellPivot_LocalScale)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_CellRectangle)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_VertexOffset_LURU)
-UNITY_DEFINE_INSTANCED_PROP(float4, ss6pu_VertexOffset_RDLD)
-UNITY_INSTANCING_BUFFER_END(PerDrawSprite)
+	UNITY_DEFINE_INSTANCED_PROP(fixed4, _RendererColor)
+	UNITY_DEFINE_INSTANCED_PROP(fixed2, _Flip)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _BlendParam)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _PartsColor_LU)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _PartsColor_RU)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _PartsColor_RD)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _PartsColor_LD)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _PartsColor_Opacity)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _CellPivot_LocalScale)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _CellRectangle)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _VertexOffset_LURU)
+	UNITY_DEFINE_INSTANCED_PROP(float4, _VertexOffset_RDLD)
 
-#define _RendererColor unity_SpriteRendererColorArray[unity_InstanceID]
-#define _Flip unity_SpriteFlipArray[unity_InstanceID]
+	UNITY_INSTANCING_BUFFER_END(PerDrawSprite)
 
-#define _BlendParam ss6pu_BlendParam[unity_InstanceID]
-#define _PartsColor_LU ss6pu_PartsColor_LU[unity_InstanceID]
-#define _PartsColor_RU ss6pu_PartsColor_RU[unity_InstanceID]
-#define _PartsColor_RD ss6pu_PartsColor_RD[unity_InstanceID]
-#define _PartsColor_LD ss6pu_PartsColor_LD[unity_InstanceID]
-#define _PartsColor_Opacity ss6pu_PartsColor_Opacity[unity_InstanceID]
-#define _CellPivot_LocalScale ss6pu_CellPivot_LocalScale[unity_InstanceID]
-#define _CellRectangle ss6pu_CellRectangle[unity_InstanceID]
-#define _VertexOffset_LURU ss6pu_VertexOffset_LURU[unity_InstanceID]
-#define _VertexOffset_RDLD ss6pu_VertexOffset_RDLD[unity_InstanceID]
+	#define RendererColor UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _RendererColor)
+	#define Flip UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _Flip)
+	#define BlendParam UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _BlendParam)
+	#define PartsColor_LU UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _PartsColor_LU)
+	#define PartsColor_RU UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _PartsColor_RU)
+	#define PartsColor_RD UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _PartsColor_RD)
+	#define PartsColor_LD UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _PartsColor_LD)
+	#define PartsColor_Opacity UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _PartsColor_Opacity)
+	#define CellPivot_LocalScale UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _CellPivot_LocalScale)
+	#define CellRectangle UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _CellRectangle)
+	#define VertexOffset_LURU UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _VertexOffset_LURU)[unity_InstanceID]
+	#define VertexOffset_RDLD UNITY_ACCESS_INSTANCED_PROP(PerDrawSprite, _VertexOffset_RDLD)
 
-#define _PartsColor _PartsColor_LU
-#endif
+	#define PartsColor _PartsColor_LU
+
+#else
+#endif /* defined(UNITY_INSTANCING_ENABLED) */
+
 
 CBUFFER_START(UnityPerDrawSprite)
-#if !defined(UNITY_INSTANCING_ENABLED)
-fixed4 _RendererColor;
-float4 _Flip;
+#if defined(UNITY_INSTANCING_ENABLED)
+#else
+	fixed4 _RendererColor;
+	float4 _Flip;
+	float4 _BlendParam;	/* .x:Blend-Operation / .y:Opacity / .zw:(no used) */
+	float4 _PartsColor_LU;
+	float4 _PartsColor_RU;
+	float4 _PartsColor_RD;
+	float4 _PartsColor_LD;
+	float4 _PartsColor_Opacity;	/* .x:LU / .y:RU / .z:RD / .w:LD */
+	float4 _CellPivot_LocalScale;	/* .xy:Pivot.xy / .zw:LocalScale.xy */
+	float4 _CellRectangle;	/* .xy:CellPositionXY / .zw:CellSizeXY */
+	float4 _VertexOffset_LURU;	/* .xy:LU.xy / .zw:RD.xy */
+	float4 _VertexOffset_RDLD;	/* .xy:RD.xy / .zw:LD.xy */
 
-float4 _BlendParam;	/* .x:Blend-Operation / .y:Opacity / .zw:(no used) */
-float4 _PartsColor_LU;
-float4 _PartsColor_RU;
-float4 _PartsColor_RD;
-float4 _PartsColor_LD;
-float4 _PartsColor_Opacity;	/* .x:LU / .y:RU / .z:RD / .w:LD */
-float4 _CellPivot_LocalScale;	/* .xy:Pivot.xy / .zw:LocalScale.xy */
-float4 _CellRectangle;	/* .xy:CellPositionXY / .zw:CellSizeXY */
-float4 _VertexOffset_LURU;	/* .xy:LU.xy / .zw:RD.xy */
-float4 _VertexOffset_RDLD;	/* .xy:RD.xy / .zw:LD.xy */
+	#define RendererColor _RendererColor
+	#define Flip _Flip
 
-#define _PartsColor _PartsColor_LU
+	#define BlendParam _BlendParam
+	#define PartsColor_LU _PartsColor_LU
+	#define PartsColor_RU _PartsColor_RU
+	#define PartsColor_RD _PartsColor_RD
+	#define PartsColor_LD _PartsColor_LD
+	#define PartsColor_Opacity _PartsColor_Opacity
+	#define CellPivot_LocalScale _CellPivot_LocalScale
+	#define CellRectangle _CellRectangle
+	#define VertexOffset_LURU _VertexOffset_LURU
+	#define VertexOffset_RDLD _VertexOffset_RDLD
+
+	#define PartsColor PartsColor_LU
 #endif
-float _EnableExternalAlpha;
+
+	float _EnableExternalAlpha;
 CBUFFER_END
 
 struct InputVS
@@ -82,7 +99,7 @@ struct InputPS
 	float4 PositionDraw : TEXCOORD7;
 #if defined(RESTRICT_SHADER_MODEL_3)
 	float4	ParameterOverlay : TEXCOORD1;
-// #else
+#else
 #endif
 	UNITY_VERTEX_OUTPUT_STEREO
 };
