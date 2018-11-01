@@ -25,6 +25,11 @@ public class Script_SpriteStudio6_DataCellMap : ScriptableObject
 		TableCellMap = null;
 	}
 
+	public bool VersionCheckRuntime()
+	{
+		return(((KindVersion.SUPPORT_EARLIEST <= Version) && (KindVersion.SUPPORT_LATEST >= Version)));	/* ? true : false */
+	}
+
 	public int CountGetCellMap()
 	{
 		return((null == TableCellMap) ? -1 : TableCellMap.Length);
@@ -58,13 +63,13 @@ public class Script_SpriteStudio6_DataCellMap : ScriptableObject
 	#region Enums & Constants
 	public enum KindVersion
 	{
+		SUPPORT_EARLIEST = CODE_010000,
+		SUPPORT_LATEST = CODE_010001,
+
 		SS5PU = 0x00000000,	/* Before SS5PU *//* (Reserved) */
 		CODE_010000 = 0x00010000,	/* SS6PU Ver.0.8.0 */
 		CODE_010001 = 0x00010001,	/* SS6PU Ver.0.9.0 */
 			/* MEMO: Change Members "Library_SpriteStudio6.Data.CellMap.Cell.DataMesh" */
-
-		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010001
 	}
 	#endregion Enums & Constants
 }

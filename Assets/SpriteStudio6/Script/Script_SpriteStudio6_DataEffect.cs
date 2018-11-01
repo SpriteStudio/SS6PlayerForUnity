@@ -66,6 +66,11 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 		Version = (KindVersion)(-1);
 	}
 
+	public bool VersionCheckRuntime()
+	{
+		return(((KindVersion.SUPPORT_EARLIEST <= Version) && (KindVersion.SUPPORT_LATEST >= Version)));	/* ? true : false */
+	}
+
 	public int CountGetParts()
 	{
 		return((null != TableParts) ? TableParts.Length : -1);
@@ -105,15 +110,15 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	#region Enums & Constants
 	public enum KindVersion
 	{
+		SUPPORT_EARLIEST = CODE_010000,
+		SUPPORT_LATEST = CODE_010001,
+
 		SS5PU = 0,	/* Before SS5PU *//* (Reserved) */
 		CODE_010000,	/* = 0x00010000 (Miss) */	/* SS6PU Ver.1.0.0 */
 		CODE_010001 = 0x00010001,	/* SS6PU Ver.1.0.26 */
 			/* MEMO: Shaders changed to integrated type */
 		CODE_010002 = 0x00010002,	/* SS6PU Ver.1.0.27 */
 			/* MEMO: Shader's stencil-test are changed.  */
-
-		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010001
 	}
 
 	[System.Flags]

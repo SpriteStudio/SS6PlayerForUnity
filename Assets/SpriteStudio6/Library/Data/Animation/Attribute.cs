@@ -104,6 +104,8 @@ public static partial class Library_SpriteStudio6
 				public readonly static Instance DefaultInstance = new Instance(Instance.FlagBit.CLEAR, 0, 1.0f, 0, 0, "", "");
 
 				public readonly static Effect DefaultEffect = new Effect(Effect.FlagBit.CLEAR, 0, 1.0f);
+
+				public readonly static Deform DefaultDeform = new Deform(new Vector2[0]);
 				#endregion Enums & Constants
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -812,6 +814,142 @@ public static partial class Library_SpriteStudio6
 
 						CLEAR = 0x00000000,
 					}
+					#endregion Enums & Constants
+				}
+
+				[System.Serializable]
+				public struct Deform
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public Vector2[] TableCoordinate;
+
+					public bool IsValid
+					{
+						get
+						{
+							return(!((null == TableCoordinate) || (0 >= TableCoordinate.Length)));	/* ((null == TableCoordinate) || (0 >= TableCoordinate.Length)) ? false : true */
+						}
+					}
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public Deform(Vector2[] tableCoordinate)
+					{
+						TableCoordinate = tableCoordinate;
+					}
+
+					public void CleanUp()
+					{
+						TableCoordinate = null;
+					}
+
+					public bool BootUp(int countVertex)
+					{
+						if(0 > countVertex)
+						{
+							CleanUp();
+						}
+						else
+						{
+							TableCoordinate = new Vector2[countVertex];
+							if(null == TableCoordinate)
+							{
+								return(false);
+							}
+
+							for(int i=0; i<countVertex; i++)
+							{
+								TableCoordinate[i] = Vector2.zero;
+							}
+						}
+						return(true);
+					}
+
+					public void Duplicate(Deform original)
+					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
+						if(null == original.TableCoordinate)
+						{
+							TableCoordinate = null;
+						}
+						else
+						{
+							int countVertex = original.TableCoordinate.Length;
+							TableCoordinate = new Vector2[countVertex];
+							for(int i=0; i<countVertex; i++)
+							{
+								TableCoordinate[i] = original.TableCoordinate[i];
+							}
+						}
+#else
+						/* MEMO: Shallow copy */
+						TableCoordinate = original.TableCoordinate;
+#endif
+					}
+
+					public override bool Equals(System.Object target)
+					{
+						if((null == target) || (GetType() != target.GetType()))
+						{
+							return(false);
+						}
+
+						Deform targetData = (Deform)target;
+						if(null == TableCoordinate)
+						{
+							if((null == targetData.TableCoordinate) || (0 == targetData.TableCoordinate.Length))
+							{
+								return(true);
+							}
+							return(false);
+						}
+						if(null == targetData.TableCoordinate)
+						{
+							if(0 == TableCoordinate.Length)
+							{
+								return(true);
+							}
+						}
+
+						int countVertex = TableCoordinate.Length;
+						if(countVertex != targetData.TableCoordinate.Length)
+						{
+							return(false);
+						}
+
+						for(int i=0; i<countVertex; i++)
+						{
+							if(TableCoordinate[i] != targetData.TableCoordinate[i])
+							{
+								return(false);
+							}
+						}
+						return(true);
+					}
+
+					public override int GetHashCode()
+					{
+						return(base.GetHashCode());
+					}
+
+					public void CoordinateReset()
+					{
+						if(null != TableCoordinate)
+						{
+							int count = TableCoordinate.Length;
+							for(int i=0; i<count; i++)
+							{
+								TableCoordinate[i] = Vector2.zero;
+							}
+						}
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
 					#endregion Enums & Constants
 				}
 				#endregion Classes, Structs & Interfaces

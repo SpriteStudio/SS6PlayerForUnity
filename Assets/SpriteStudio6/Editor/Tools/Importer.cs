@@ -860,6 +860,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.UserData, "UserData", ref PullDownPackAttributeAnimation.UserData);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Instance, "Instance", ref PullDownPackAttributeAnimation.Instance);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Effect, "Effect", ref PullDownPackAttributeAnimation.Effect);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Deform, "Deform", ref PullDownPackAttributeAnimation.Deform);
 		EditorGUILayout.Space();
 	}
 	private void PullDownExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)
@@ -1543,6 +1544,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute UserData;
 		public Attribute Instance;
 		public Attribute Effect;
+		public Attribute Deform;
 		#endregion Variables & Properties
 
 		/* ----------------------------------------------- Functions */
@@ -1569,6 +1571,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			UserData.CleanUp();
 			Instance.CleanUp();
 			Effect.CleanUp();
+			Deform.CleanUp();
 		}
 
 		public void BootUp()
@@ -1706,6 +1709,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].Effect;
 			}
 			Effect.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].Deform;
+			}
+			Deform.BootUp(tableFlagEnablePack);
 
 			SettingImport.PackAttributeAnimation.Adjust();
 		}

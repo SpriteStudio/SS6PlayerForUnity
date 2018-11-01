@@ -163,7 +163,8 @@ public static partial class Library_SpriteStudio6
 
 			internal void Update(	Script_SpriteStudio6_RootEffect instanceRoot,
 									Library_SpriteStudio6.KindMasking masking,
-									ref Matrix4x4 matrixCorrection
+									ref Matrix4x4 matrixCorrection,
+									bool flagPlanarization
 								)
 			{
 				/* Check WorkArea lost */
@@ -178,6 +179,14 @@ public static partial class Library_SpriteStudio6
 													instanceRoot.RateScaleLocal
 												);
 				MatrixRoot = matrixCorrection * instanceRoot.transform.localToWorldMatrix * matrix;
+				if(true == flagPlanarization)
+				{
+					/* MEMO: Z-coordinate is always set to 0 after transformation. */
+					MatrixRoot[2, 0] = 
+					MatrixRoot[2, 1] = 
+					MatrixRoot[2, 2] = 
+					MatrixRoot[2, 3] = 0.0f;
+				}
 				CountParticleDraw = 0;
 
 				/* Emitters' Random-Seed Refresh */

@@ -22,8 +22,8 @@ public static partial class Library_SpriteStudio6
 				{
 					STANDARD_UNCOMPRESSED = 0,	/* Standard-Uncompressed (Plain Array) */
 					STANDARD_CPE,	/* Standard-Compressed (Changing-Point Extracting) */
-					CPE_FLYWEIGHT,	/* CPE & GoF-Flyweight */
-					CPE_INTERPOLATE,	/* CPE & GoF-Flyweight */
+					CPE_FLYWEIGHT,	/* CPE & GoF-Flyweight (Commonized CPE's dictionary) */
+					CPE_INTERPOLATE,	/* CPE & Interpolate (Linear,Acceleration and Deceleration: Interpolate / Other: CPE) */
 
 					TERMINATOR,
 				}
@@ -343,6 +343,31 @@ public static partial class Library_SpriteStudio6
 
 						case KindTypePack.CPE_INTERPOLATE:
 							container.Function = null;	/* Not Support */
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionDeform(ContainerDeform container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionDeform;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionDeform;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionDeform;
 							break;
 
 						default:
