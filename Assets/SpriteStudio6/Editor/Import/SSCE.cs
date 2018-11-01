@@ -1592,27 +1592,12 @@ public static partial class LibraryEditor_SpriteStudio6
 							rectangleCell.position = positionCell;
 							rectangleCell.size = sizeCell;
 							spriteMetaData.rect = rectangleCell;
-							pivotCell = informationSSCE.TableCell[i].Data.Pivot;
-							if(0.0f == pivotCell.x)
-							{
-								/* MEMO: Set immediate value for no causing rounding error. */
-								pivotCell.x = 0.5f;
-							}
-							else
-							{
-								pivotCell.x = pivotCell.x / rectangleCell.width;
-							}
-							if(0.0f == pivotCell.y)
-							{
-								/* MEMO: Set immediate value for no causing rounding error. */
-								pivotCell.y = 0.5f;
-							}
-							else
-							{
-								pivotCell.y = 1.0f - (pivotCell.y / rectangleCell.height);
-							}
+
+							pivotCell.x = informationSSCE.TableCell[i].Data.Pivot.x / sizeCell.x;
+							pivotCell.y = 1.0f - (informationSSCE.TableCell[i].Data.Pivot.y / sizeCell.y);
+
 							spriteMetaData.pivot = pivotCell;
-							spriteMetaData.alignment = 9;	/* Custom */
+							spriteMetaData.alignment = (int)SpriteAlignment.Custom;
 
 							listSpriteMetaData.Add(spriteMetaData);
 
@@ -1654,7 +1639,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								countRetry++;
 								name = nameCell + "_" + countRetry.ToString();
 								flagRetry = true;
-								break;	/* Break i-loop */
+								break;	/* i-loop */
 							}
 						}
 					}

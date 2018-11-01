@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379835e446767444b98eb288010fcce, type: 3}
   m_Name: da_BitmapFontNumeric_Complex
   m_EditorClassIdentifier: 
-  Version: 65538
+  Version: 65792
   TableMaterial:
   - {fileID: 2100000, guid: f0be25fe18230594788a326eec5239c1, type: 2}
   - {fileID: 2100000, guid: 8f80675c4e8264b449c628fc8618a111, type: 2}
@@ -41,9 +41,11 @@ MonoBehaviour:
     Feature: 0
     CountMesh: 0
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -58,12 +60,14 @@ MonoBehaviour:
     ID: 1
     IDParent: 0
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -78,12 +82,14 @@ MonoBehaviour:
     ID: 2
     IDParent: 0
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -98,12 +104,14 @@ MonoBehaviour:
     ID: 3
     IDParent: 0
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -118,12 +126,14 @@ MonoBehaviour:
     ID: 4
     IDParent: 0
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -138,12 +148,14 @@ MonoBehaviour:
     ID: 5
     IDParent: 0
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -158,12 +170,14 @@ MonoBehaviour:
     ID: 6
     IDParent: 0
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -178,12 +192,14 @@ MonoBehaviour:
     ID: 7
     IDParent: 0
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -198,12 +214,14 @@ MonoBehaviour:
     ID: 8
     IDParent: 0
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -216,12 +234,10 @@ MonoBehaviour:
     NameAnimationUnderControl: 
   CatalogParts:
     TableIDPartsNULL: 
-    TableIDPartsTriangle2: 
-    TableIDPartsTriangle4: 0100000002000000030000000400000005000000060000000700000008000000
+    TableIDPartsNormal: 0100000002000000030000000400000005000000060000000700000008000000
     TableIDPartsInstance: 
     TableIDPartsEffect: 
-    TableIDPartsMaskTriangle2: 
-    TableIDPartsMaskTriangle4: 
+    TableIDPartsMask: 
     TableIDPartsJoint: 
     TableIDPartsBone: 
     TableIDPartsMoveNode: 
@@ -232,10 +248,13 @@ MonoBehaviour:
   - Name: NoMove
     FramePerSecond: 30
     CountFrame: 24
+    SizeCanvasX: 320
+    SizeCanvasY: 320
     FrameValidStart: 0
     FrameValidEnd: 23
     CountFrameValid: 24
     DepthIK: 3
+    ModeSort: 0
     TableLabel: []
     TableParts:
     - StatusParts: 1089732608
@@ -271,6 +290,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -312,7 +335,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 17000000
         TableValue:
-        - Flags: 8
+        - Flags: 1073741832
           NumberInt: 0
           Rectangle:
             serializedVersion: 2
@@ -330,6 +353,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -368,6 +398,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -416,6 +450,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -454,6 +495,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -502,6 +547,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -540,6 +592,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -588,6 +644,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -626,6 +689,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -674,6 +741,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -712,6 +786,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -760,6 +838,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -798,6 +883,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -846,6 +935,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -884,6 +980,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -932,6 +1032,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -970,6 +1077,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1018,13 +1129,23 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
   - Name: Vibration
     FramePerSecond: 30
     CountFrame: 30
+    SizeCanvasX: 320
+    SizeCanvasY: 320
     FrameValidStart: 3
     FrameValidEnd: 26
     CountFrameValid: 24
     DepthIK: 3
+    ModeSort: 0
     TableLabel: []
     TableParts:
     - StatusParts: 1089732608
@@ -1060,6 +1181,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1101,7 +1226,7 @@ MonoBehaviour:
         TableCodeValue:
         - TableCode: 1a000000
         TableValue:
-        - Flags: 8
+        - Flags: 1073741832
           NumberInt: 0
           Rectangle:
             serializedVersion: 2
@@ -1119,6 +1244,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -1160,6 +1292,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1208,6 +1344,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -1249,6 +1392,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1297,6 +1444,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -1338,6 +1492,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1386,6 +1544,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -1427,6 +1592,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1475,6 +1644,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -1516,6 +1692,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1564,6 +1744,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -1605,6 +1792,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1653,6 +1844,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -1694,6 +1892,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1742,6 +1944,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1090256896
       Status:
         TypePack: 1
@@ -1783,6 +1992,10 @@ MonoBehaviour:
         - TableCode: 00000000
         TableValue:
         - 1
+      Priority:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: 
       PartsColor:
         TypePack: 1
         TableCodeValue: []
@@ -1831,6 +2044,113 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
+  TableAnimationPartsSetup:
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
+  - UserData:
+      Flags: 0
+      NumberInt: 0
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+      Coordinate: {x: 0, y: 0}
+      Text: 
   Dictionary_CPE_Flyweight:
     TableValueInt: 
     TableValueFloat: []

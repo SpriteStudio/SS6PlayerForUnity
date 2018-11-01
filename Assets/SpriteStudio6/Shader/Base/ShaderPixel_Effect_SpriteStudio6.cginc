@@ -28,6 +28,8 @@ fixed4 PS_main(InputPS Input) : COLOR0
 		discard;
 	}
 #endif
+	pixel = saturate(pixel);
+
 #if defined(PS_OUTPUT_PMA)
 	pixel.xyz *= pixel.a;
 #endif

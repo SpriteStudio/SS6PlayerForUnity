@@ -1,0 +1,354 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 194737b46e04ff84a936435d5601662f, type: 3}
+  m_Name: dc_Comipo
+  m_EditorClassIdentifier: 
+  Version: 65537
+  TableCellMap:
+  - Name: Clothes1
+    SizeOriginal: {x: 256, y: 256}
+    TableCell:
+    - Name: BackArm
+      Rectangle:
+        serializedVersion: 2
+        x: 176
+        y: 56
+        width: 48
+        height: 56
+      Pivot: {x: 16, y: 11}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: BackFoot
+      Rectangle:
+        serializedVersion: 2
+        x: 80
+        y: 200
+        width: 32
+        height: 40
+      Pivot: {x: 11, y: 6}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: BackHand
+      Rectangle:
+        serializedVersion: 2
+        x: 224
+        y: 216
+        width: 32
+        height: 40
+      Pivot: {x: 15, y: 13}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: BackShoulder
+      Rectangle:
+        serializedVersion: 2
+        x: 128
+        y: 56
+        width: 48
+        height: 56
+      Pivot: {x: 16, y: 11.999999}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: BackThigh
+      Rectangle:
+        serializedVersion: 2
+        x: 40
+        y: 160
+        width: 40
+        height: 72
+      Pivot: {x: 15, y: 10}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Base
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 232
+        width: 80
+        height: 24
+      Pivot: {x: 40, y: 12}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Body
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 104
+        height: 96
+      Pivot: {x: 59, y: 78}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: FrontArm
+      Rectangle:
+        serializedVersion: 2
+        x: 152
+        y: 0
+        width: 48
+        height: 56
+      Pivot: {x: 14, y: 14}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: FrontFoot
+      Rectangle:
+        serializedVersion: 2
+        x: 80
+        y: 160
+        width: 32
+        height: 40
+      Pivot: {x: 11, y: 7.9999995}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: FrontHand
+      Rectangle:
+        serializedVersion: 2
+        x: 224
+        y: 176
+        width: 32
+        height: 40
+      Pivot: {x: 15, y: 12}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: FrontShoulder
+      Rectangle:
+        serializedVersion: 2
+        x: 104
+        y: 0
+        width: 48
+        height: 56
+      Pivot: {x: 18, y: 11}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: FrontThigh
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 160
+        width: 40
+        height: 72
+      Pivot: {x: 15, y: 11.000001}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Scarf
+      Rectangle:
+        serializedVersion: 2
+        x: 200
+        y: 0
+        width: 16
+        height: 40
+      Pivot: {x: 12, y: 3.9999998}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Skirt
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 96
+        width: 128
+        height: 56
+      Pivot: {x: 70, y: 11.999999}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+  - Name: Face
+    SizeOriginal: {x: 256, y: 256}
+    TableCell:
+    - Name: Ear
+      Rectangle:
+        serializedVersion: 2
+        x: 120
+        y: 216
+        width: 32
+        height: 40
+      Pivot: {x: 16, y: 20}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Eye
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 40
+      Pivot: {x: 16, y: 20}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Eye2
+      Rectangle:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 40
+      Pivot: {x: 16, y: 20}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Eyebrow
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 40
+        width: 32
+        height: 24
+      Pivot: {x: 16, y: 12}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Face
+      Rectangle:
+        serializedVersion: 2
+        x: 152
+        y: 144
+        width: 104
+        height: 112
+      Pivot: {x: 56, y: 97}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Mouth
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 64
+        width: 24
+        height: 16
+      Pivot: {x: 12, y: 8}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Mouth2
+      Rectangle:
+        serializedVersion: 2
+        x: 24
+        y: 64
+        width: 24
+        height: 16
+      Pivot: {x: 12, y: 8}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Mouth3
+      Rectangle:
+        serializedVersion: 2
+        x: 48
+        y: 64
+        width: 24
+        height: 16
+      Pivot: {x: 12, y: 8}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Neck
+      Rectangle:
+        serializedVersion: 2
+        x: 88
+        y: 216
+        width: 32
+        height: 40
+      Pivot: {x: 21, y: 27}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+  - Name: Hair
+    SizeOriginal: {x: 256, y: 256}
+    TableCell:
+    - Name: BackHairTail
+      Rectangle:
+        serializedVersion: 2
+        x: 136
+        y: 88
+        width: 88
+        height: 80
+      Pivot: {x: 7.0000014, y: 9.000001}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: BackHair_1
+      Rectangle:
+        serializedVersion: 2
+        x: 88
+        y: 0
+        width: 80
+        height: 88
+      Pivot: {x: 40, y: 44}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: BackHair_2
+      Rectangle:
+        serializedVersion: 2
+        x: 96
+        y: 96
+        width: 40
+        height: 104
+      Pivot: {x: 24, y: 0}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: BackHair_3
+      Rectangle:
+        serializedVersion: 2
+        x: 48
+        y: 96
+        width: 48
+        height: 104
+      Pivot: {x: 24, y: -7.9999995}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: FrontHair
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 88
+        height: 96
+      Pivot: {x: 67, y: 3}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: Ribbon
+      Rectangle:
+        serializedVersion: 2
+        x: 168
+        y: 0
+        width: 88
+        height: 80
+      Pivot: {x: 38, y: 50}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 
+    - Name: SideHair
+      Rectangle:
+        serializedVersion: 2
+        x: 0
+        y: 96
+        width: 48
+        height: 136
+      Pivot: {x: 26, y: 10.000002}
+      Mesh:
+        TableCoordinate: []
+        TableIndexVertex: 

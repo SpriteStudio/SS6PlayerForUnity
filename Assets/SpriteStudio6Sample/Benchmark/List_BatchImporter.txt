@@ -1,0 +1,44 @@
+* ==========================================
+* Batch-Importer List-File
+* ==========================================
+* 
+*	SpriteStudio6 Player for Unity
+* 
+*	Copyright(C) Web Technology Corp. 
+*	All rights reserved.
+* 
+* ------------------------------------------
+* MEMO:
+*  Syntax-explanation of Batch-Importer's list-file is described
+*   in "Assets/SpriteStudio6/Documents/BatchImporter/List_BatchImporter.txt".
+*
+* CAUTION:
+*  You can not use "SpriteStudio5 Player for Unity"'s list-file because commands are completely different.
+*
+* ------------------------------------------
+
+* [Folder Setting]
+? NameBaseFolderSetting > SpriteStudioProject/
+? NameBaseFolderData > SpriteStudioProject/
+* ? NameBaseFolderAsset > /SpriteStudio6Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/
+
+* [Import Setting]
+? SettingFile > SS6PU_ImportSetting.txt
+
+* ------------- for SS6Player Mode
+* [Import Mode]
+? Common_Mode > SS6PU
+? NameBaseFolderAsset > /SpriteStudio6Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/SS6P/
+
+* [Files]
+Comipo/Comipo.sspj
+
+* ------------- for Unity-Native Mode
+* [Import Mode]
+? Common_Mode > UNITY_NATIVE
+? NameBaseFolderAsset > /SpriteStudio6Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/UnityNative/
+
+* [Files]
+Comipo/Comipo.sspj
+
+* [EoL]

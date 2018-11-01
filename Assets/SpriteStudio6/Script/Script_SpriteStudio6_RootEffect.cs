@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+#define MESSAGE_DATAVERSION_INVALID
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -138,6 +140,22 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	#region MonoBehaviour-Functions
 	void Awake()
 	{
+		if((null == DataCellMap) || (null == DataEffect))
+		{	/* Data invalid */
+			return;
+		}
+		if((false == DataEffect.VersionCheckRuntime()) || (false == DataCellMap.VersionCheckRuntime()))
+		{	/* Data-Version invalid */
+#if MESSAGE_DATAVERSION_INVALID
+			Debug.LogError(	"SS6PU Error(Runtime): Not supported data-version. Need to re-import data. GameObject[" + name
+							+ "] Effect[" + DataEffect.Version.ToString()
+							+ "] CellMap[" + DataCellMap.Version.ToString()
+							+ "]"
+				);
+#endif
+			return;
+		}
+
 		/* Awake Base-Class */
 		BaseAwake();
 	}
@@ -156,7 +174,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/*        (without processing with ScriptableObject's Awake or OnEnable) */
 		/*        is to stabilize execution such when re-compile.                */
 		if((null == DataCellMap) || (null == DataEffect))
-		{
+		{	/* Data invalid */
+			goto Start_ErrorEnd;
+		}
+		if((false == DataCellMap.VersionCheckRuntime()) || (false == DataEffect.VersionCheckRuntime()))
+		{	/* Data-Version invalid */
 			goto Start_ErrorEnd;
 		}
 		FunctionBootUpDataEffect();
@@ -217,7 +239,8 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 				LateUpdateMain(	timeElapsed,
 								false,
 								Library_SpriteStudio6.KindMasking.THROUGH,	/* FOLLOW_DATA */
-								ref matrixInverseMeshRenderer
+								ref matrixInverseMeshRenderer,
+								false
 							);
 			}
 		}
@@ -225,7 +248,8 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
 									Library_SpriteStudio6.KindMasking masking,
-									ref Matrix4x4 matrixCorrection
+									ref Matrix4x4 matrixCorrection,
+									bool flagPlanarization
 								)
 	{
 		if(0 == (Status & FlagBitStatus.VALID))
@@ -291,7 +315,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Update & Draw Effect */
 		if(false == flagHide)
 		{
-			ControlEffect.Update(this, masking, ref matrixCorrection);
+			ControlEffect.Update(this, masking, ref matrixCorrection, flagPlanarization);
 		}
 
 		/* Mesh Combine & Set to Renderer */

@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6379835e446767444b98eb288010fcce, type: 3}
   m_Name: da_Eye
   m_EditorClassIdentifier: 
-  Version: 65539
+  Version: 65792
   TableMaterial:
   - {fileID: 2100000, guid: 045054ee8a64e38458351cbd7ad24c31, type: 2}
   - {fileID: 2100000, guid: dc5635f63ebb85e4daf5c9ec3f9b699d, type: 2}
@@ -41,9 +41,11 @@ MonoBehaviour:
     Feature: 0
     CountMesh: 0
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -58,12 +60,14 @@ MonoBehaviour:
     ID: 1
     IDParent: 0
     TableIDChild: 02000000
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -78,12 +82,14 @@ MonoBehaviour:
     ID: 2
     IDParent: 1
     TableIDChild: 
-    Feature: 3
+    Feature: 2
     CountMesh: 4
     Mesh:
+      CountVertex: 0
       TableVertex: []
       TableRateUV: []
       TableIndexVertex: 
+      CountVertexDeform: 0
     LabelColor:
       Form: 0
       Color:
@@ -96,12 +102,10 @@ MonoBehaviour:
     NameAnimationUnderControl: 
   CatalogParts:
     TableIDPartsNULL: 
-    TableIDPartsTriangle2: 
-    TableIDPartsTriangle4: 0100000002000000
+    TableIDPartsNormal: 0100000002000000
     TableIDPartsInstance: 
     TableIDPartsEffect: 
-    TableIDPartsMaskTriangle2: 
-    TableIDPartsMaskTriangle4: 
+    TableIDPartsMask: 
     TableIDPartsJoint: 
     TableIDPartsBone: 
     TableIDPartsMoveNode: 
@@ -112,10 +116,13 @@ MonoBehaviour:
   - Name: Blink
     FramePerSecond: 30
     CountFrame: 10
+    SizeCanvasX: 320
+    SizeCanvasY: 320
     FrameValidStart: 0
     FrameValidEnd: 9
     CountFrameValid: 10
     DepthIK: 3
+    ModeSort: 0
     TableLabel: []
     TableParts:
     - StatusParts: 1090256896
@@ -203,6 +210,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1211891712
       Status:
         TypePack: 1
@@ -296,6 +310,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1211891712
       Status:
         TypePack: 1
@@ -391,13 +412,23 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
   - Name: Wait
     FramePerSecond: 30
     CountFrame: 15
+    SizeCanvasX: 320
+    SizeCanvasY: 320
     FrameValidStart: 0
     FrameValidEnd: 14
     CountFrameValid: 15
     DepthIK: 3
+    ModeSort: 0
     TableLabel: []
     TableParts:
     - StatusParts: 1090256896
@@ -485,6 +516,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1211891712
       Status:
         TypePack: 1
@@ -578,6 +616,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
     - StatusParts: 1211891712
       Status:
         TypePack: 1
@@ -671,6 +716,13 @@ MonoBehaviour:
         TypePack: 1
         TableCodeValue: []
         TableValue: []
+      Deform:
+        TypePack: 3
+        TableCodeValue:
+        - TableCode: 
+        TableValue: []
+        CountVertexMesh: 0
+        TableIndexVertex: 
   TableAnimationPartsSetup:
   - UserData:
       Flags: 0

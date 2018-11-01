@@ -413,16 +413,18 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 				return(true);
 
-			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+//			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+//			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 				break;
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 				return(true);
 
-			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+//			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+//			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 				break;
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:

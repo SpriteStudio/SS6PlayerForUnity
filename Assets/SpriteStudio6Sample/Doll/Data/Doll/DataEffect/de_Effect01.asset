@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 854a5a324e3218743b933d869553c231, type: 3}
   m_Name: de_Effect01
   m_EditorClassIdentifier: 
-  Version: 1
+  Version: 65537
   TableMaterial:
   - {fileID: 2100000, guid: 6a5d8f29bfc294845a2702d17e7386de, type: 2}
   - {fileID: 2100000, guid: 6da2d6f6daa0a124599b490445f59788, type: 2}

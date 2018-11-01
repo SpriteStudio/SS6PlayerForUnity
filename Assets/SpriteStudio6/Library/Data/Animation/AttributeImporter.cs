@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+// #define ATTRIBUTE_DUPLICATE_DEEP
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -47,6 +49,7 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributeUserData = "UserData";
 					public const string NameAttributeInstance = "Instance";
 					public const string NameAttributeEffect = "Effect";
+					public const string NameAttributeDeform = "Deform";
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -593,6 +596,125 @@ public static partial class Library_SpriteStudio6
 						#endregion Functions
 					}
 
+					public class AttributeDeform : Attribute<DataDeform>
+					{
+						/* MEMO: Attribute "Deform" does not use struct-for-runtime like other "Attribute" derived classes.   */
+						/*       (Because how-to-store-data is different for importers and for runtime. This struct converted */
+						/*        to "Library_SpriteStudio6.Data.Animation.Attribute.Deform" in "PackAttribute_Codec/*.cs".)  */
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public override bool ValueGet(out DataDeform valueOutput, int frame)
+						{
+							int indexStart = IndexGetFramePrevious(frame);
+							int indexEnd = IndexGetFrameNext(frame);
+
+							if(0 > frame)
+							{
+								goto ValueGet_ErrorEnd;
+							}
+							if(0 > indexStart)
+							{	/* Front blank */
+								if(0 > indexEnd)
+								{	/* No Key */
+									goto ValueGet_ErrorEnd;
+								}
+								valueOutput = ListKey[indexEnd].Value;
+								return(false);
+							}
+							else
+							{
+								if(0 > indexEnd)
+								{	/* End Blank */
+									valueOutput = ListKey[indexStart].Value;
+									return(false);
+								}
+							}
+
+							/* MEMO: "countVertexMesh" is the same for any key data. (The number of Mesh-Cell's vertices) */
+							int countVertexMesh = ListKey[indexStart].Value.CountVertexMesh;
+							valueOutput.CountVertexMesh = countVertexMesh;
+							valueOutput.TableVertex = new DataDeform.Vertex[countVertexMesh];
+							Vector2 coordinateStart;
+							Vector2 coordinateEnd;
+							int indexVertexStart;
+							int indexVertexEnd;
+							bool flagNotShift;
+							for(int i=0; i<countVertexMesh; i++)
+							{
+								coordinateStart = Vector2.zero;
+								coordinateEnd = Vector2.zero;
+								flagNotShift = false;
+
+								valueOutput.TableVertex[i].Index = i;
+								indexVertexStart = IndexGetTableVertex(ListKey[indexStart].Value.TableVertex, i);
+								indexVertexEnd = IndexGetTableVertex(ListKey[indexEnd].Value.TableVertex, i);
+								if(0 <= indexVertexStart)
+								{
+									coordinateStart = ListKey[indexStart].Value.TableVertex[indexVertexStart].Coordinate;
+									flagNotShift |= true;
+								}
+								if(0 <= indexVertexEnd)
+								{
+									coordinateEnd = ListKey[indexEnd].Value.TableVertex[indexVertexEnd].Coordinate;
+									flagNotShift |= true;
+								}
+								if(false == flagNotShift)
+								{
+									valueOutput.TableVertex[i].Coordinate = Vector2.zero;
+								}
+								else
+								{
+									valueOutput.TableVertex[i].Coordinate.x = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
+																																			frame,
+																																			ListKey[indexStart].Frame,
+																																			coordinateStart.x,
+																																			ListKey[indexEnd].Frame,
+																																			coordinateEnd.x,
+																																			ListKey[indexStart].FrameCurveStart,
+																																			ListKey[indexStart].ValueCurveStart,
+																																			ListKey[indexStart].FrameCurveEnd,
+																																			ListKey[indexStart].ValueCurveEnd
+																																		);
+									valueOutput.TableVertex[i].Coordinate.y = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
+																																			frame,
+																																			ListKey[indexStart].Frame,
+																																			coordinateStart.y,
+																																			ListKey[indexEnd].Frame,
+																																			coordinateEnd.y,
+																																			ListKey[indexStart].FrameCurveStart,
+																																			ListKey[indexStart].ValueCurveStart,
+																																			ListKey[indexStart].FrameCurveEnd,
+																																			ListKey[indexStart].ValueCurveEnd
+																																		);
+								}
+							}
+							return(true);
+
+						ValueGet_ErrorEnd:;
+							valueOutput = Default;
+							return(false);
+						}
+						private static int IndexGetTableVertex(DataDeform.Vertex[] tableVertex, int indexVertex)
+						{
+							int count = tableVertex.Length;
+							for(int i=0; i<count; i++)
+							{
+								if(indexVertex == tableVertex[i].Index)
+								{
+									return(i);
+								}
+							}
+							return(-1);
+						}
+						#endregion Functions
+
+						/* ----------------------------------------------- Enums & Constants */
+						#region Enums & Constants
+						private readonly static DataDeform.Vertex[] DefaultDeformVertex = new DataDeform.Vertex[0];
+						public readonly static DataDeform Default = new DataDeform(0, DefaultDeformVertex);
+						#endregion Enums & Constants
+					}
+
 					public abstract class Attribute<_Type>
 						where _Type : struct
 					{
@@ -874,6 +996,177 @@ public static partial class Library_SpriteStudio6
 								ValueCurveEnd = 0.0f;
 							}
 							#endregion Functions
+						}
+						#endregion Classes, Structs & Interfaces
+					}
+
+					public struct DataDeform
+					{
+						/* MEMO: Alternative to "Library_SpriteStudio6.Data.Animation.Attribute.Deform" used only in importer. */
+
+						/* ----------------------------------------------- Variables & Properties */
+						#region Variables & Properties
+						public int CountVertexMesh;
+						public Vertex[] TableVertex;
+						#endregion Variables & Properties
+
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public DataDeform(int countVertexMesh, Vertex[] tableVertex)
+						{
+							CountVertexMesh = countVertexMesh;
+							TableVertex = tableVertex;
+						}
+
+						public void CleanUp()
+						{
+							CountVertexMesh = 0;
+							TableVertex = null;
+						}
+
+						public bool BootUp(int countVertexMesh)
+						{
+							if(0 > countVertexMesh)
+							{
+								CleanUp();
+							}
+							else
+							{
+								CountVertexMesh = countVertexMesh;
+								TableVertex = new Vertex[countVertexMesh];
+								if(null == TableVertex)
+								{
+									return(false);
+								}
+
+								for(int i=0; i<countVertexMesh; i++)
+								{
+									TableVertex[i].Index = i;
+									TableVertex[i].Coordinate = Vector2.zero;
+								}
+							}
+							return(true);
+						}
+
+						public void Duplicate(DataDeform original)
+						{
+#if ATTRIBUTE_DUPLICATE_DEEP
+							/* MEMO: Deep copy */
+							CountVertexMesh = original.CountVertexMesh;
+							if(null == original.TableVertex)
+							{
+								TableVertex = null;
+							}
+							else
+							{
+								int countVertex = original.TableVertex.Length;
+								TableVertex = new Vertex[countVertex];
+								for(int i=0; i<countVertex; i++)
+								{
+									TableVertex[i].Duplicate(original.TableVertex[i]);
+								}
+							}
+#else
+							/* MEMO: Shallow copy */
+							CountVertexMesh = original.CountVertexMesh;
+							TableVertex = original.TableVertex;
+#endif
+						}
+
+						public override bool Equals(System.Object target)
+						{
+							if((null == target) || (GetType() != target.GetType()))
+							{
+								return(false);
+							}
+
+							DataDeform targetData = (DataDeform)target;
+							if(CountVertexMesh != targetData.CountVertexMesh)
+							{
+								return(false);
+							}
+							if(null == TableVertex)
+							{
+								if(null != targetData.TableVertex)
+								{
+									return(false);
+								}
+							}
+							else
+							{
+								int countVertex = TableVertex.Length;
+								for(int i=0; i<countVertex; i++)
+								{
+									if(false == TableVertex[i].Equals(targetData.TableVertex[i]))
+									{
+										return(false);
+									}
+								}
+							}
+
+							return(true);
+						}
+
+						public override int GetHashCode()
+						{
+							return(base.GetHashCode());
+						}
+						#endregion Functions
+
+						/* ----------------------------------------------- Enums & Constants */
+						#region Enums & Constants
+						#endregion Enums & Constants
+
+						/* ----------------------------------------------- Classes, Structs & Interfaces */
+						#region Classes, Structs & Interfaces
+						public struct Vertex
+						{
+							/* ----------------------------------------------- Variables & Properties */
+							#region Variables & Properties
+							public int Index;
+							public Vector2 Coordinate;
+							#endregion Variables & Properties
+
+							/* ----------------------------------------------- Functions */
+							#region Functions
+							public Vertex(int index, ref Vector2 coordinate)
+							{
+								Index = index;
+								Coordinate = coordinate;
+							}
+
+							public void CleanUp()
+							{
+								Index = -1;
+								Coordinate = Vector2.zero;
+							}
+
+							public void Duplicate(Vertex original)
+							{
+								Index = original.Index;
+								Coordinate = original.Coordinate;
+							}
+
+							public override bool Equals(System.Object target)
+							{
+								if((null == target) || (GetType() != target.GetType()))
+								{
+									return(false);
+								}
+
+								Vertex targetData = (Vertex)target;
+								return((Index == targetData.Index) && (Coordinate == targetData.Coordinate));
+							}
+
+							public override int GetHashCode()
+							{
+								return(base.GetHashCode());
+							}
+							#endregion Functions
+
+							/* ----------------------------------------------- Enums & Constants */
+							#region Enums & Constants
+							#endregion Enums & Constants
 						}
 						#endregion Classes, Structs & Interfaces
 					}

@@ -47,6 +47,7 @@
 			<item>USER</item>
 			<item>IPRM</item>
 			<item>EFCT</item>
+			<item>DEFM</item>
 		</attributes>
 		<alphaBlendTypes>
 			<item>mix</item>

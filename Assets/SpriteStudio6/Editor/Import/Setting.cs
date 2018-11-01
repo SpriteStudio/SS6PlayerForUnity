@@ -1910,6 +1910,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack UserData;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Instance;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Effect;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Deform;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -1933,7 +1934,8 @@ public static partial class LibraryEditor_SpriteStudio6
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack radiusCollision,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack userData,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack instance,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack effect
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack effect,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack deform
 												)
 				{
 					Status = status;
@@ -1956,6 +1958,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					UserData = userData;
 					Instance = instance;
 					Effect = effect;
+					Deform = deform;
 				}
 
 				public void CleanUp()
@@ -1985,6 +1988,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					UserData = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyUserData, (int)Default.UserData));
 					Instance = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyInstance, (int)Default.Instance));
 					Effect = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyEffect, (int)Default.Effect));
+					Deform = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyDeform, (int)Default.Deform));
 
 					return(true);
 				}
@@ -2004,6 +2008,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetInt(PrefsKeyUserData, (int)UserData);
 					EditorPrefs.SetInt(PrefsKeyInstance, (int)Instance);
 					EditorPrefs.SetInt(PrefsKeyEffect, (int)Effect);
+					EditorPrefs.SetInt(PrefsKeyDeform, (int)Deform);
 
 					EditorPrefs.SetInt(PrefsKeyCell, (int)Cell);
 					EditorPrefs.SetInt(PrefsKeySizeForce, (int)SizeForce);
@@ -2018,7 +2023,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[20];
+					string[] textEncode = new string[21];
 					string textValue;
 
 					textValue = NameGetPackKind(Status);
@@ -2080,6 +2085,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = NameGetPackKind(Effect);
 					textEncode[19] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffect, textValue);
+
+					textValue = NameGetPackKind(Deform);
+					textEncode[20] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyDeform, textValue);
 
 					return(textEncode);
 				}
@@ -2173,6 +2181,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyEffect:
 							Effect = KindGetPackName(textArgument[1]);
+							return(true);
+
+						case TextKeyDeform:
+							Deform = KindGetPackName(textArgument[1]);
 							return(true);
 
 						case TextKeyFixIndexCellMap:	/* Obsolete command */
@@ -2278,6 +2290,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						Effect = PackError;
 					}
+					if(false == capacityPack[(int)Deform].Deform)
+					{
+						Deform = PackError;
+					}
 				}
 
 				private static void BootUpNamePack()
@@ -2337,6 +2353,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyUserData = "UserData";
 				private const string KeyInstance = "Instance";
 				private const string KeyEffect = "Effect";
+				private const string KeyDeform = "Deform";
 				/* Obsolete */	private const string KeyPlainCell = "PlainCell";
 				/* Obsolete */	private const string KeyPlainSizeForce = "PlainSizeForce";
 				/* Obsolete */	private const string KeyPlainVertexCorrection = "PlainVertexCorrection";
@@ -2371,6 +2388,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyUserData = TextKeyPrefix + KeyUserData;
 				private const string TextKeyInstance = TextKeyPrefix + KeyInstance;
 				private const string TextKeyEffect = TextKeyPrefix + KeyEffect;
+				private const string TextKeyDeform = TextKeyPrefix + KeyDeform;
 				/* Obsolete */	private const string TextKeyPlainCell = TextKeyPrefix + KeyPlainCell;
 				/* Obsolete */	private const string TextKeyPlainSizeForce = TextKeyPrefix + KeyPlainSizeForce;
 				/* Obsolete */	private const string TextKeyPlainVertexCorrection = TextKeyPrefix + KeyPlainVertexCorrection;
@@ -2405,6 +2423,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyUserData = PrefsKeyPrefix + KeyUserData;
 				private const string PrefsKeyInstance = PrefsKeyPrefix + KeyInstance;
 				private const string PrefsKeyEffect = PrefsKeyPrefix + KeyEffect;
+				private const string PrefsKeyDeform = PrefsKeyPrefix + KeyDeform;
 				/* Obsolete */	private const string PrefsKeyPlainCell = PrefsKeyPrefix + KeyPlainCell;
 				/* Obsolete */	private const string PrefsKeyPlainSizeForce = PrefsKeyPrefix + KeyPlainSizeForce;
 				/* Obsolete */	private const string PrefsKeyPlainVertexCorrection = PrefsKeyPrefix + KeyPlainVertexCorrection;
@@ -2438,7 +2457,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RadiusCollision */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* UserData */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Instance */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE	/* Effect */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Effect */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE	/* Deform */
 				);
 				#endregion Enums & Constants
 			}
