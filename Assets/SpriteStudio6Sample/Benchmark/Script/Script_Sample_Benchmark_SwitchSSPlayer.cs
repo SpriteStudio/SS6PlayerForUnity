@@ -21,7 +21,7 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 	/* - How to load Animation data from "Resources" folder                   */
 	/* - How to receive user data callbacks in "Unity-Native" mode            */
 	/* - Test-program for measuring the number of animation objects           */
-	/*    that can be displayed per second.                                   */
+	/*    that can be displayed per frame.                                    */
 	#endregion Notes
 
 	public GameObject GameObjectActiveSS6P;		// for activating run of "SS6Player" mode.
