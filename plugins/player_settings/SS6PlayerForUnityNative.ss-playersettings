@@ -3,7 +3,7 @@
 	<item>
 		<available>1</available>
 		<id>SS6PlayerForUnity(Unity-Native)</id>
-		<caption>SS6PlayerForUnity(Unity-Native) v1.0.14</caption>
+		<caption>SS6PlayerForUnity(Unity-Native) v1.1.0</caption>
 		<platform>any</platform>
 		<inputProjectFormat>sspj</inputProjectFormat>
 		<inputAnimeFormat>ssae</inputAnimeFormat>
