@@ -3,7 +3,7 @@
 	<item>
 		<available>1</available>
 		<id>SS6PlayerForUnity</id>
-		<caption>SS6PlayerForUnity v1.0.0</caption>
+		<caption>SS6PlayerForUnity v1.1.0</caption>
 		<platform>any</platform>
 		<inputProjectFormat>sspj</inputProjectFormat>
 		<inputAnimeFormat>ssae</inputAnimeFormat>
@@ -47,6 +47,7 @@
 			<item>USER</item>
 			<item>IPRM</item>
 			<item>EFCT</item>
+			<item>DEFM</item>
 		</attributes>
 		<alphaBlendTypes>
 			<item>mix</item>
