@@ -86,6 +86,11 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		SignatureBootUpFunction = null;
 	}
 
+	public bool VersionCheckRuntime()
+	{
+		return(((KindVersion.SUPPORT_EARLIEST <= Version) && (KindVersion.SUPPORT_LATEST >= Version)));	/* ? true : false */
+	}
+
 	public int CountGetParts()
 	{
 		return(TableParts.Length);
@@ -105,8 +110,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 						break;
 
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 						count++;
 						break;
 
@@ -114,8 +120,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 						break;
 
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 						/* MEMO: "Mask"s are drawn twice(Predraw + Draw). */
 						count += 2;
 						break;
@@ -135,11 +142,12 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		}
 		else
 		{
-			count =		CatalogParts.TableIDPartsTriangle2.Length
-						+ CatalogParts.TableIDPartsTriangle4.Length
-						+ (	CatalogParts.TableIDPartsMaskTriangle2.Length
-							+ CatalogParts.TableIDPartsMaskTriangle4.Length
-							) * 2;
+//			count =		CatalogParts.TableIDPartsTriangle2.Length
+//						+ CatalogParts.TableIDPartsTriangle4.Length
+//						+ (	CatalogParts.TableIDPartsMaskTriangle2.Length
+//							+ CatalogParts.TableIDPartsMaskTriangle4.Length
+//							) * 2;
+			count = CatalogParts.TableIDPartsNormal.Length + (CatalogParts.TableIDPartsMask.Length * 2);
 		}
 		return(count);
 	}
@@ -158,8 +166,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 						break;
 
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 						count++;
 						break;
 
@@ -168,8 +177,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 						count++;
 						break;
 
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 						count++;
 						break;
 
@@ -188,10 +198,11 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		}
 		else
 		{
-			count =		CatalogParts.TableIDPartsTriangle2.Length
-						+ CatalogParts.TableIDPartsTriangle4.Length
-						+ CatalogParts.TableIDPartsMaskTriangle2.Length
-						+ CatalogParts.TableIDPartsMaskTriangle4.Length;
+//			count =		CatalogParts.TableIDPartsTriangle2.Length
+//						+ CatalogParts.TableIDPartsTriangle4.Length
+//						+ CatalogParts.TableIDPartsMaskTriangle2.Length
+//						+ CatalogParts.TableIDPartsMaskTriangle4.Length;
+			count = CatalogParts.TableIDPartsNormal.Length + CatalogParts.TableIDPartsMask.Length;
 		}
 		return(count);
 	}
@@ -210,16 +221,18 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 						break;
 
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 						break;
 
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 						count++;
 						break;
 
@@ -237,8 +250,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		}
 		else
 		{
-			count =		CatalogParts.TableIDPartsMaskTriangle2.Length
-						+ CatalogParts.TableIDPartsMaskTriangle4.Length;
+//			count =		CatalogParts.TableIDPartsMaskTriangle2.Length
+//						+ CatalogParts.TableIDPartsMaskTriangle4.Length;
+			count = CatalogParts.TableIDPartsNormal.Length;
 		}
 		return(count);
 	}
@@ -337,6 +351,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionUserData(TableAnimation[i].TableParts[j].UserData);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInstance(TableAnimation[i].TableParts[j].Instance);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionEffect(TableAnimation[i].TableParts[j].Effect);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionDeform(TableAnimation[i].TableParts[j].Deform);
 			}
 		}
 	}
@@ -351,6 +366,9 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	#region Enums & Constants
 	public enum KindVersion
 	{
+		SUPPORT_EARLIEST = CODE_010100,
+		SUPPORT_LATEST = CODE_010100,
+
 		SS5PU = 0,	/* Before SS5PU *//* (Reserved) */
 		CODE_010000 = 0x00010000,	/* SS6PU Ver.0.8.0 */
 		CODE_010001 = 0x00010001,	/* SS6PU Ver.0.9.0 */
@@ -366,8 +384,13 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			/* MEMO: Shader's stencil-test are changed.  */
 			/* MEMO: "Mask" parts' materials are separated for masking and nonmasking. */
 
-		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010005
+		/* MEMO: Before "CODE_010005", can not play on SS6PU Ver.1.1.0. */
+		CODE_010100 = 0x00010100,	/* SS6PU Ver.1.1.0 */
+			/* MEMO: Abolition of (NORMAL/MASK)_TRIANGLE2" "_ TRIANGLE4".                                                     */
+			/*       Always divide "Normal (Sprite)" and "Mask" into 4 triangles according to SpriteStudio6's specifications. */
+			/* MEMO: Support "Mesh Deformation" */
+			/* MEMO: Support "Z-Position" Priority */
+			/* MEMO: Support "Anchor" */
 	}
 	#endregion Enums & Constants
 
@@ -404,6 +427,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 		public Library_SpriteStudio6.Data.Animation.Attribute.Instance Instance;
 		public Library_SpriteStudio6.Data.Animation.Attribute.Effect Effect;
+		public DataDeform Deform;
 #endif
 		public Library_SpriteStudio6.Data.Animation.Attribute.UserData UserData;
 
@@ -625,6 +649,13 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				return(Effect.IsValid);
 			}
 		}
+		public bool IsDeform
+		{
+			get
+			{
+				return(0 < Deform.CountVertexMesh);
+			}
+		}
 #endif
 
 		public bool IsUserData
@@ -671,10 +702,46 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 
 			Instance = Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance;
 			Effect = Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect;
+			Deform = DefaultDeform;
 #endif
 			UserData = Library_SpriteStudio6.Data.Animation.Attribute.DefaultUseData;
 		}
 		#endregion Functions
+
+		/* ----------------------------------------------- Enums & Constants */
+		#region Enums & Constants
+		public readonly static DataDeform DefaultDeform = new DataDeform(0);
+		#endregion Enums & Constants
+
+		/* ----------------------------------------------- Classes, Structs & Interfaces */
+		#region Classes, Structs & Interfaces
+		public struct DataDeform
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			public int CountVertexMesh;
+			public int[] TableIndexVertex;
+			public Vector2[] TableCoordinate;
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public DataDeform(int dummy)
+			{
+				CountVertexMesh = 0;
+				TableIndexVertex = null;
+				TableCoordinate = null;
+			}
+
+			public void CleanUp()
+			{
+				CountVertexMesh = 0;
+				TableIndexVertex = null;
+				TableCoordinate = null;
+			}
+			#endregion Functions
+		}
+		#endregion Classes, Structs & Interfaces
 	}
 	#endregion Classes, Structs & Interfaces
 

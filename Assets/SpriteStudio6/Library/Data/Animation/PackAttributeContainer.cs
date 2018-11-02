@@ -39,7 +39,8 @@ public static partial class Library_SpriteStudio6
 					false,		/* RadiusCollision */
 					false,		/* UserData (Trigger) */
 					false,		/* Instance (Trigger) */
-					false		/* Effect (Trigger) */
+					false,		/* Effect (Trigger) */
+					false		/* Deform */
 				);
 #endif
 				#endregion Enums & Constants
@@ -116,6 +117,10 @@ public static partial class Library_SpriteStudio6
 				public interface InterfaceContainerEffect : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Effect,
 																				ContainerEffect,
 																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect
+																			> {}
+				public interface InterfaceContainerDeform : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Deform,
+																				ContainerDeform,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeDeform
 																			> {}
 
 				public interface InterfaceContainer<_TypeValue, _TypeContainer, _TypeSource>
@@ -336,6 +341,13 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.EFFECT));
 						}
 					}
+					public bool Deform
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.DEFORM));
+						}
+					}
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -359,7 +371,8 @@ public static partial class Library_SpriteStudio6
 												bool radiusCollision,
 												bool userData,
 												bool instance,
-												bool effect
+												bool effect,
+												bool deform
 											)
 					{
 						Flags = 0;
@@ -389,6 +402,7 @@ public static partial class Library_SpriteStudio6
 						Flags |= (true == userData) ? FlagBit.USER_DATA : (FlagBit)0;
 						Flags |= (true == instance) ? FlagBit.INSTANCE : (FlagBit)0;
 						Flags |= (true == effect) ? FlagBit.EFFECT : (FlagBit)0;
+						Flags |= (true == deform) ? FlagBit.DEFORM : (FlagBit)0;
 					}
 					#endregion Functions
 
@@ -417,6 +431,7 @@ public static partial class Library_SpriteStudio6
 						USER_DATA = 0x00020000,
 						INSTANCE = 0x00040000,
 						EFFECT = 0x00080000,
+						DEFORM = 0x00100000,
 					}
 					#endregion Enums & Constants
 				}

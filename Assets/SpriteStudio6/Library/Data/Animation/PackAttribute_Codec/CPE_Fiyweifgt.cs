@@ -42,7 +42,8 @@ public static partial class Library_SpriteStudio6
 						true,	/* RadiusCollision */
 						false,	/* UserData (Trigger) */
 						false,	/* Instance (Trigger) */
-						false	/* Effect (Trigger) */
+						false,	/* Effect (Trigger) */
+						false	/* Deform */
 					);
 
 					public const string ID = "CPE_Flyweight";
@@ -58,6 +59,7 @@ public static partial class Library_SpriteStudio6
 //					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
+//					internal readonly static InterfaceFunctionDeform FunctionDeform = new InterfaceFunctionDeform();
 
 					[System.Flags]
 					private enum FlagBit
@@ -256,7 +258,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							/* MEMO: In advance, encode Standard CPE. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt dataStandardCPE = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt();
@@ -320,7 +322,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							/* MEMO: In advance, encode Standard CPE. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat dataStandardCPE = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat();
@@ -384,7 +386,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 2 (X, Y) */
+						{	/* MEMO: "listKeyData.Length" is always 2 (X, Y) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							/* MEMO: In advance, encode Standard CPE. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 dataStandardCPE = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2();
@@ -448,7 +450,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 3 (X, Y, Z) */
+						{	/* MEMO: "listKeyData.Length" is always 3 (X, Y, Z) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							/* MEMO: In advance, encode Standard CPE. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 dataStandardCPE = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3();
@@ -512,7 +514,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							/* MEMO: In advance, encode Standard CPE. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor dataStandardCPE = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor();
@@ -576,7 +578,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							/* MEMO: In advance, encode Standard CPE. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection dataStandardCPE = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection();
@@ -588,6 +590,10 @@ public static partial class Library_SpriteStudio6
 						}
 						#endregion Functions
 					}
+
+					/* MEMO: "Deform" is not supported.                                                                 */
+					/*       Reason is that since data size is large per a key-data, dictionary is consumpted a lot of. */
+
 					#endregion Classes, Structs & Interfaces
 
 					/* ----------------------------------------------- Functions */

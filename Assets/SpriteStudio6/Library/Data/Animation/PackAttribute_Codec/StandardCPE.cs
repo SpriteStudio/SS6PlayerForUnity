@@ -42,7 +42,8 @@ public static partial class Library_SpriteStudio6
 						true,	/* RadiusCollision */
 						true,	/* UserData (Trigger) */
 						true,	/* Instance (Trigger) */
-						true	/* Effect (Trigger) */
+						true,	/* Effect (Trigger) */
+						true	/* Deform */
 					);
 
 					public const string ID = "StandardCPE";
@@ -58,6 +59,7 @@ public static partial class Library_SpriteStudio6
 					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
 					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
+					internal readonly static InterfaceFunctionDeform FunctionDeform = new InterfaceFunctionDeform();
 
 					/* MEMO: Originally "private", but other decoders need these values, so set to "public". */
 					[System.Flags]
@@ -140,7 +142,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
@@ -205,7 +207,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
@@ -270,7 +272,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 2 (X, Y) */
+						{	/* MEMO: "listKeyData.Length" is always 2 (X, Y) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
@@ -335,7 +337,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 3 (X, Y, Z) */
+						{	/* MEMO: "listKeyData.Length" is always 3 (X, Y, Z) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
@@ -400,7 +402,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 5 (Hide, FlipX, FlipY, FlipTextureX, FlipTextureY) */
+						{	/* MEMO: "listKeyData.Length" is always 5 (Hide, FlipX, FlipY, FlipTextureX, FlipTextureY) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
@@ -465,7 +467,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
@@ -530,7 +532,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
@@ -595,7 +597,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection();
 							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
@@ -660,7 +662,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
@@ -737,7 +739,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInstance[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
@@ -814,7 +816,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeEffect[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
@@ -834,6 +836,97 @@ public static partial class Library_SpriteStudio6
 								container.TableValue[i] = listKeyData[0].ListKey[i].Value;
 							}
 							return(true);
+						}
+						#endregion Functions
+					}
+
+					public class InterfaceFunctionDeform : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerDeform
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							int countVertexMesh = container.CountVertexMesh;
+							if(0 >= countVertexMesh)
+							{
+								return(false);	/* outValue is not overwritten. */
+							}
+							/* MEMO: Must be "outValue.TableCoordinate.Length == container.CountVertexMesh". */
+							if((null == outValue.TableCoordinate) || (countVertexMesh > outValue.TableCoordinate.Length))
+							{	/* Error */
+								return(false);	/* outValue is not overwritten. */
+							}
+
+							int frame = argument.Frame;
+							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
+							{
+								return(false);
+							}
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetDeform(ref outValue, ref outFrameKey, frame, container.TableCodeValue[0].TableCode, container.TableValue, container));
+						}
+
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							int countVertexMesh = container.CountVertexMesh;
+							if(0 >= countVertexMesh)
+							{
+								return(false);	/* outValue is not overwritten. */
+							}
+							/* MEMO: Must be "outValue.TableCoordinate.Length == container.CountVertexMesh". */
+							if((null == outValue.TableCoordinate) || (countVertexMesh > outValue.TableCoordinate.Length))
+							{	/* Error */
+								return(false);	/* outValue is not overwritten. */
+							}
+
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndexDeform(ref outValue, ref outFrameKey, index, container.TableCodeValue[0].TableCode, container.TableValue, container));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(0);
+							}
+							return(container.TableCodeValue[0].TableCode.Length);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeDeform[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 */
+							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionDeform(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
+
+							/* MEMO: Copy data except for each frame data. */
+							container.CountVertexMesh = dataUncompressed.CountVertexMesh;
+							container.TableIndexVertex = dataUncompressed.TableIndexVertex;
+
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
 						}
 						#endregion Functions
 					}
@@ -896,6 +989,69 @@ public static partial class Library_SpriteStudio6
 						return(true);	/* outValue is overwritten. */
 					}
 
+					public static bool ValueGetDeform(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+														ref int outFrameKey,
+														int frame,
+														int[] tableStatus,
+														Library_SpriteStudio6.Data.Animation.Attribute.Deform[] tableValue,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container
+													)
+					{
+#if UNITY_EDITOR
+						if((null == tableValue) || (null == tableStatus))
+						{
+							/* MEMO: May reach before deserialization direct-after import. */
+							return(false);
+						}
+#endif
+						int frameKey = -1;
+						int status;
+						int indexMinimum = 0;
+						int indexMaximum = tableStatus.Length - 1;
+						int index;
+						while(indexMinimum != indexMaximum)
+						{
+							index = indexMinimum + indexMaximum;
+							index = (index >> 1) + (index & 1);	/* (index / 2) + (index % 2) */
+							frameKey = tableStatus[index] & (int)FlagBit.FRAMEKEY;
+							if(frame == frameKey)
+							{
+								indexMinimum = indexMaximum = index;
+							}
+							else
+							{
+								if((frame < frameKey) || (-1 == frameKey))
+								{
+									indexMaximum = index - 1;
+								}
+								else
+								{
+									indexMinimum = index;
+								}
+							}
+						}
+
+						status = tableStatus[indexMinimum];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(outFrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						outFrameKey = frameKey;
+						index = (status & (int)FlagBit.INDEX) >> 15;
+
+						int countVertexChange = container.TableIndexVertex.Length;
+						int[] tableIndexVertex = container.TableIndexVertex;
+						Vector2[] tableCoordinate = tableValue[index].TableCoordinate;
+						Vector2[] tableCoordinateOutput = outValue.TableCoordinate;
+						for(int i=0; i<countVertexChange; i++)
+						{
+							tableCoordinateOutput[tableIndexVertex[i]] = tableCoordinate[i];
+						}
+
+						return(true);	/* outValue is overwritten. */
+					}
+
 					public static bool ValueGetIndex<_Type>(	ref _Type outValue,
 																ref int outFrameKey,
 																int index,
@@ -910,6 +1066,31 @@ public static partial class Library_SpriteStudio6
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
 						outValue = tableValue[index];
+						return(true);
+					}
+
+					public static bool ValueGetIndexDeform(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+																ref int outFrameKey,
+																int index,
+																int[] tableStatus,
+																Library_SpriteStudio6.Data.Animation.Attribute.Deform[] tableValue,
+																Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container
+															)
+					{
+						int status;
+						status = tableStatus[index];
+						outFrameKey = status & (int)FlagBit.FRAMEKEY;
+						index = (status & (int)FlagBit.INDEX) >> 15;
+
+						int countVertexChange = container.TableIndexVertex.Length;
+						int[] tableIndexVertex = container.TableIndexVertex;
+						Vector2[] tableCoordinate = tableValue[index].TableCoordinate;
+						Vector2[] tableCoordinateOutput = outValue.TableCoordinate;
+						for(int i=0; i<countVertexChange; i++)
+						{
+							tableCoordinateOutput[tableIndexVertex[i]] = tableCoordinate[i];
+						}
+
 						return(true);
 					}
 
@@ -947,7 +1128,7 @@ public static partial class Library_SpriteStudio6
 									if(true == listValue[j].Equals(valuePrevious))
 									{
 										index = j;
-										break;	/* Break for j-Loop */
+										break;	/* j-Loop */
 									}
 								}
 								if(0 > index)

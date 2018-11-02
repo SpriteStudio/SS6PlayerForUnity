@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+#define MESSAGE_DATAVERSION_INVALID
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +35,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 
 	internal List<int> ListPartsDraw = null;
 	internal List<int> ListPartsPreDraw = null;
+
+	public bool FlagPlanarization;
+	public int OrderInLayer;
 
 	private FlagBitStatus Status = FlagBitStatus.CLEAR;
 	internal bool StatusIsValid
@@ -148,6 +153,23 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	#region MonoBehaviour-Functions
 	void Awake()
 	{
+		/* Data Version Check */
+		if((null == DataCellMap) || (null == DataAnimation))
+		{	/* Data invalid */
+			return;
+		}
+		if((false == DataCellMap.VersionCheckRuntime() || (false == DataAnimation.VersionCheckRuntime())))
+		{	/* Data-Version invalid */
+#if MESSAGE_DATAVERSION_INVALID
+			Debug.LogError(	"SS6PU Error(Runtime): Not supported data-version. Need to re-import data. GameObject[" + name
+							+ "] Animation[" + DataAnimation.Version.ToString()
+							+ "] CellMap[" + DataCellMap.Version.ToString()
+							+ "]"
+				);
+#endif
+			return;
+		}
+
 		/* Awake Base-Class */
 		BaseAwake();
 	}
@@ -166,7 +188,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/*        (without processing with ScriptableObject's Awake or OnEnable) */
 		/*        is to stabilize execution such when re-compile.                */
 		if((null == DataCellMap) || (null == DataAnimation))
-		{
+		{	/* Data invalid */
+			goto StartMain_ErrorEnd;
+		}
+		if((false == DataCellMap.VersionCheckRuntime() || (false == DataAnimation.VersionCheckRuntime())))
+		{	/* Data-Version invalid */
 			goto StartMain_ErrorEnd;
 		}
 		FunctionBootUpDataAnimation();
@@ -244,7 +270,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
 			if(true == RendererBootUpDraw(false))
 			{
-				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
+				Matrix4x4 matrixInverseMeshRenderer = Matrix4x4.identity;
 				float timeElapsed = FunctionExecTimeElapse(this);
 #if UNITY_EDITOR
 				/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
@@ -256,7 +282,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				LateUpdateMain(	timeElapsed,
 								false,
 								Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
-								ref matrixInverseMeshRenderer
+								ref matrixInverseMeshRenderer,
+								true,
+								FlagPlanarization
 							);
 			}
 		}
@@ -264,11 +292,11 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
 									Library_SpriteStudio6.KindMasking masking,
-									ref Matrix4x4 matrixCorrection
+									ref Matrix4x4 matrixCorrection,
+									bool flagInitializeMatrixCorrection,
+									bool flagPlanarization
 								)
 	{
-		/* MEMO: "flagForceMasking" is ignored when "flagValidMaskSetting" is true. */
-
 		if(0 == (Status & FlagBitStatus.VALID))
 		{	/* Status invalid */
 			return;
@@ -310,10 +338,21 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		}
 
 		/* Update Parts' Common-Parameters (GameObject etc.) */
+		/* MEMO: In case of the most-Parent-"Root" node, if MeshRenderer's matrix is not acquired after updating Transform first, "matrixCorrection" shifts 1 frame. */
 		int countControlParts = TableControlParts.Length;
 		int indexTrackRoot = TableControlParts[0].IndexControlTrack;	/* (0 < countControlParts) ? TableControlParts[0].IndexControlTrack : -1; */
 		Status &= ~FlagBitStatus.ANIMATION_SYNTHESIZE;
-		for(int i=0; i<countControlParts; i++)
+		TableControlParts[0].Update(	this,
+										0,
+										flagHide,
+										ref matrixCorrection,
+										indexTrackRoot
+								);
+		if(true == flagInitializeMatrixCorrection)
+		{
+			matrixCorrection = InstanceMeshRenderer.localToWorldMatrix.inverse;
+		}
+		for(int i=1; i<countControlParts; i++)
 		{
 			TableControlParts[i].Update(	this,
 											i,
@@ -341,6 +380,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		/* MEMO: At "Draw" ...                                                                                                 */
 		/*       Caution that "Instance" and "Effect" are update in draw.                                                      */
 		/*       Hidden "Normal" parts are not processed.(Not included in the Draw-Order-Chain)                                */
+		/* MEMO: Before 1.0.x, draw-order are baked. */
 		int idPartsDrawNext;
 		if(true == flagAnimationSynthesize)
 		{
@@ -366,7 +406,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 																idPartsDrawNext,
 																flagHide,
 																masking,
-																ref matrixCorrection
+																ref matrixCorrection,
+																flagPlanarization
 															);
 				}
 			}
@@ -380,7 +421,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 															idPartsDrawNext,
 															flagHide,
 															masking,
-															ref matrixCorrection
+															ref matrixCorrection,
+															flagPlanarization
 														);
 			}
 		}
@@ -400,7 +442,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 																idPartsDrawNext,
 																flagHide,
 																masking,
-																ref matrixCorrection
+																ref matrixCorrection,
+																flagPlanarization
 															);
 					idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextPreDraw;
 				}
@@ -414,7 +457,8 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 															idPartsDrawNext,
 															flagHide,
 															masking,
-															ref matrixCorrection
+															ref matrixCorrection,
+															flagPlanarization
 														);
 				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
 			}
@@ -433,6 +477,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 				if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
 				{
 					InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
+					InstanceMeshRenderer.sortingOrder = OrderInLayer;
 				}
 			}
 			InstanceMeshFilter.sharedMesh = MeshCombined;
@@ -800,8 +845,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 			{
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
@@ -826,8 +872,9 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 					}
 					break;
 
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:

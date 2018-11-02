@@ -19,6 +19,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 	private SerializedProperty PropertyDataAnimation;
 	private SerializedProperty PropertyTableMaterial;
 	private SerializedProperty PropertyHideForce;
+	private SerializedProperty PropertyFlagPlanarization;
+	private SerializedProperty PropertyOrderInLayer;
 	private SerializedProperty PropertyCountTrack;
 	private SerializedProperty PropertyInformationPlay;
 	#endregion Variables & Properties
@@ -34,6 +36,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 		PropertyDataAnimation = serializedObject.FindProperty("DataAnimation");
 		PropertyTableMaterial = serializedObject.FindProperty("TableMaterial");
 		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
+		PropertyFlagPlanarization = serializedObject.FindProperty("FlagPlanarization");
+		PropertyOrderInLayer = serializedObject.FindProperty("OrderInLayer");
 		PropertyCountTrack = serializedObject.FindProperty("LimitTrack");
 		PropertyInformationPlay = serializedObject.FindProperty("TableInformationPlay");
 	}
@@ -79,8 +83,17 @@ public class Inspector_SpriteStudio6_Root : Editor
 		PropertyInformationPlay.isExpanded = EditorGUILayout.Foldout(PropertyInformationPlay.isExpanded, "Initial/Preview Play Setting");
 		if(true == PropertyInformationPlay.isExpanded)
 		{
+			/* Order-In-Layer (SortingOrder) */
+			PropertyOrderInLayer.intValue = EditorGUILayout.IntField("Order In Layer", PropertyOrderInLayer.intValue);
+			EditorGUILayout.LabelField("(0: Default)");
+			EditorGUILayout.Space();
+
 			/* Hide */
 			PropertyHideForce.boolValue = EditorGUILayout.Toggle("Hide Force", PropertyHideForce.boolValue);
+//			EditorGUILayout.Space();
+
+			/* Planarization (Cancellation Rotate Sprite) */
+			PropertyFlagPlanarization.boolValue = EditorGUILayout.Toggle("Planarization", PropertyFlagPlanarization.boolValue);
 			EditorGUILayout.Space();
 
 			/* Track */

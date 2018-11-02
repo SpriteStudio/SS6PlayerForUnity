@@ -467,6 +467,7 @@
 * PackAttributeAnimation_UserData > FormatName
 * PackAttributeAnimation_Instance > FormatName
 * PackAttributeAnimation_Effect > FormatName
+* PackAttributeAnimation_Deform > FormatName
 * 
 *   FormatName ... Data format name
 *                  StandardUncompressed == format "Standard Uncompressed"
@@ -494,6 +495,7 @@
 * - "Advanced Options > Advanced Options: Attribute data Packing > UserData"
 * - "Advanced Options > Advanced Options: Attribute data Packing > Instance"
 * - "Advanced Options > Advanced Options: Attribute data Packing > Effect"
+* - "Advanced Options > Advanced Options: Attribute data Packing > Deform"
 * ... options in the import settings.
 * 
 * Caution!

@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.0.41";
+	public const string SignatureVersionAsset = "1.1.0";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -73,9 +73,9 @@ public static partial class Library_SpriteStudio6
 		C,	/* Center (TRIANGLE4) */
 
 		TERMINATOR,
-		TERMINATOR4 = TERMINATOR,
-		TERMINATOR3 = LD,	/* for "Mesh" */
-		TERMINATOR2 = C
+		TERMINATOR4 = TERMINATOR,	/* for "Normal(Sprite)" */
+		TERMINATOR3 = LD,			/* for "Mesh" */
+		TERMINATOR2 = C				/* for "Effect" */
 	}
 
 	public enum KindStylePlay
@@ -135,11 +135,15 @@ public static partial class Library_SpriteStudio6
 			public int FramePerSecond;
 			public int CountFrame;
 
+			public int SizeCanvasX;
+			public int SizeCanvasY;
+
 			public int FrameValidStart;
 			public int FrameValidEnd;
 			public int CountFrameValid;
 
 			public int DepthIK;
+			public KindModeSort ModeSort;
 
 			public Label[] TableLabel;
 			public Parts[] TableParts;
@@ -153,11 +157,15 @@ public static partial class Library_SpriteStudio6
 				FramePerSecond = 0;
 				CountFrame = 0;
 
+				SizeCanvasX = 1;
+				SizeCanvasY = 1;
+
 				FrameValidStart = 0;
 				FrameValidEnd = 0;
 				CountFrameValid = 0;
 
 				DepthIK = 0;
+				ModeSort = KindModeSort.PRIORITY;
 
 				TableLabel = null;
 				TableParts = null;
@@ -305,6 +313,15 @@ public static partial class Library_SpriteStudio6
 			}
 			#endregion Functions
 
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			public enum KindModeSort
+			{
+				PRIORITY = 0,				/* Attribute "Priority" */
+				POSITION_Z,					/* Transformed Z-Position */
+			}
+			#endregion Enums & Constants
+
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
 			#region Classes, Structs & Interfaces
 			[System.Serializable]
@@ -340,6 +357,7 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData UserData;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect Effect;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform Deform;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -486,6 +504,44 @@ public static partial class Library_SpriteStudio6
 				public class ContainerInstance : Container<Library_SpriteStudio6.Data.Animation.Attribute.Instance, InterfaceContainerInstance> {}
 				[System.Serializable]
 				public class ContainerEffect : Container<Library_SpriteStudio6.Data.Animation.Attribute.Effect, InterfaceContainerEffect> {}
+				[System.Serializable]
+				public class ContainerDeform : Container<Library_SpriteStudio6.Data.Animation.Attribute.Deform, InterfaceContainerDeform>
+				{
+					/* MEMO: This class has a slightly different implementation from other "Container" derived classes. */
+					/*       (Has additional data that affects key-datas in common.)                                    */
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public int CountVertexMesh;	/* for Error-Check */
+					public int[] TableIndexVertex;
+
+					public bool IsValid
+					{
+						get
+						{
+							return(!((null == TableIndexVertex) || (0 >= TableIndexVertex.Length)));	/* !(true : false) == false : true */
+						}
+					}
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public new void CleanUp()
+					{
+						base.CleanUp();
+
+						CountVertexMesh = 0;
+						TableIndexVertex = null;
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
+					#endregion Enums & Constants
+
+					/* ----------------------------------------------- Classes, Structs & Interfaces */
+					#region Classes, Structs & Interfaces
+					#endregion Classes, Structs & Interfaces
+				}
 				#endregion Classes, Structs & Interfaces
 
 				/* Part: SpriteStudio6/Library/Data/Animation/PackAttributeFunction.cs */
@@ -1214,6 +1270,8 @@ public static partial class Library_SpriteStudio6
 				#region Enums & Constants
 				public enum KindFeature
 				{	/* ERROR/NON: -1 */
+#if false
+					/* MEMO: Ver.0.8.0 - 1.0.39 */
 					ROOT = 0,	/* Root-Parts (Subspecies of "NULL"-Parts) */
 					NULL,
 					NORMAL_TRIANGLE2,	/* No use Vertex-Collection Sprite-Parts */
@@ -1235,6 +1293,29 @@ public static partial class Library_SpriteStudio6
 					TERMINATOR,
 					NORMAL = TERMINATOR,	/* NORMAL_TRIANGLE2 or NORMAL_TRIANGLE4 *//* only during import */
 					MASK,	/* MASK_TRIANGLE2 or MASK_TRIANGLE4 *//* only during import */
+#else
+					/* MEMO: Ver.1.1.0 - */
+					/* MEMO: Abolished to switch type of triangulating of rectangle.(With or without using "Vertex Deformation(Correction)")            */
+					/*       Always divided into 4 triangles, and center's coordinate is the intersection of lines through midpoints of opposite-sides. */
+					/*       However, "Effect"'s particle is always divided into 2 triangles.                                                           */
+					ROOT = 0,	/* Root-Parts (Subspecies of "NULL"-Parts) */
+					NULL,
+					NORMAL,
+
+					INSTANCE,
+					EFFECT,
+
+					MASK,
+
+					JOINT,
+					BONE,
+					MOVENODE,
+					CONSTRAINT,
+					BONEPOINT,
+					MESH,
+
+					TERMINATOR,
+#endif
 				}
 
 				public enum KindCollision
@@ -1322,18 +1403,28 @@ public static partial class Library_SpriteStudio6
 				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
+					public int CountVertex;	/* number of "Cell-Mesh"'s vertices. */
+
+					/* for Skeletal-animation */
 					public Vertex[] TableVertex;
 					public Vector2[] TableRateUV;
 					public int[] TableIndexVertex;
+
+					/* for Deform */
+					public int CountVertexDeform;	/* Same as number of "Cell-Mesh"'s vertices. (0 when not use "Deform") */
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
 					public void CleanUp()
 					{
+						CountVertex = 0;
+
 						TableVertex = null;
 						TableRateUV = null;
 						TableIndexVertex = null;
+
+						CountVertexDeform = 0;
 					}
 					#endregion Functions
 
@@ -1404,12 +1495,14 @@ public static partial class Library_SpriteStudio6
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
 					public int[] TableIDPartsNULL;
-					public int[] TableIDPartsTriangle2;
-					public int[] TableIDPartsTriangle4;
+//					public int[] TableIDPartsTriangle2;
+//					public int[] TableIDPartsTriangle4;
+					public int[] TableIDPartsNormal;
 					public int[] TableIDPartsInstance;
 					public int[] TableIDPartsEffect;
-					public int[] TableIDPartsMaskTriangle2;
-					public int[] TableIDPartsMaskTriangle4;
+//					public int[] TableIDPartsMaskTriangle2;
+//					public int[] TableIDPartsMaskTriangle4;
+					public int[] TableIDPartsMask;
 					public int[] TableIDPartsJoint;
 					public int[] TableIDPartsBone;
 					public int[] TableIDPartsMoveNode;
@@ -1423,13 +1516,15 @@ public static partial class Library_SpriteStudio6
 					public void CleanUp()
 					{
 						TableIDPartsNULL = null;
-						TableIDPartsTriangle2 = null;
-						TableIDPartsTriangle4 = null;
+//						TableIDPartsTriangle2 = null;
+//						TableIDPartsTriangle4 = null;
+						TableIDPartsNormal = null;
 						TableIDPartsInstance = null;
 						TableIDPartsEffect = null;
 						TableIDPartsJoint = null;
-						TableIDPartsMaskTriangle2 = null;
-						TableIDPartsMaskTriangle4 = null;
+//						TableIDPartsMaskTriangle2 = null;
+//						TableIDPartsMaskTriangle4 = null;
+						TableIDPartsMask = null;
 						TableIDPartsBone = null;
 						TableIDPartsMoveNode = null;
 						TableIDPartsConstraint = null;
@@ -1490,57 +1585,57 @@ public static partial class Library_SpriteStudio6
 		{
 			/* ----------------------------------------------- Functions */
 			#region Functions
-			public static UnityEngine.Shader ShaderGetAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking)
-			{
-				if((Library_SpriteStudio6.KindOperationBlend.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
-				{
-					return(null);
-				}
+//			public static UnityEngine.Shader ShaderGetAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking)
+//			{
+//				if((Library_SpriteStudio6.KindOperationBlend.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
+//				{
+//					return(null);
+//				}
+//
+//				switch(masking)
+//				{
+//					case Library_SpriteStudio6.KindMasking.THROUGH:
+//						return(TableSpriteThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR]);
+//
+//					case Library_SpriteStudio6.KindMasking.MASK:
+//						return(TableSpriteMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR]);
+//
+//					default:
+//						break;
+//				}
+//				return(null);
+//			}
 
-				switch(masking)
-				{
-					case Library_SpriteStudio6.KindMasking.THROUGH:
-						return(TableSpriteThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR]);
+//			public static UnityEngine.Shader ShaderGetEffect(Library_SpriteStudio6.KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking)
+//			{
+//				if((Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend))
+//				{
+//					return(null);
+//				}
+//
+//				switch(masking)
+//				{
+//					case Library_SpriteStudio6.KindMasking.THROUGH:
+//						return(TableEffectThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR]);
+//
+//					case Library_SpriteStudio6.KindMasking.MASK:
+//						return(TableEffectMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR]);
+//
+//					default:
+//						break;
+//				}
+//				return(null);
+//			}
 
-					case Library_SpriteStudio6.KindMasking.MASK:
-						return(TableSpriteMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR]);
-
-					default:
-						break;
-				}
-				return(null);
-			}
-
-			public static UnityEngine.Shader ShaderGetEffect(Library_SpriteStudio6.KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking)
-			{
-				if((Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend))
-				{
-					return(null);
-				}
-
-				switch(masking)
-				{
-					case Library_SpriteStudio6.KindMasking.THROUGH:
-						return(TableEffectThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR]);
-
-					case Library_SpriteStudio6.KindMasking.MASK:
-						return(TableEffectMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR]);
-
-					default:
-						break;
-				}
-				return(null);
-			}
-
-			public static UnityEngine.Shader ShaderGetAnimationUnityNative(Library_SpriteStudio6.KindOperationBlend operationBlend)
-			{
-				if((Library_SpriteStudio6.KindOperationBlend.MIX > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
-				{
-					return(null);
-				}
-
-				return(TableSpriteUnityNative[(int)operationBlend]);
-			}
+//			public static UnityEngine.Shader ShaderGetAnimationUnityNative(Library_SpriteStudio6.KindOperationBlend operationBlend)
+//			{
+//				if((Library_SpriteStudio6.KindOperationBlend.MIX > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
+//				{
+//					return(null);
+//				}
+//
+//				return(TableSpriteUnityNative[(int)operationBlend]);
+//			}
 
 			public static UnityEngine.Material MaterialCreateAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking)
 			{
@@ -1914,79 +2009,80 @@ public static partial class Library_SpriteStudio6
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
 			/* MEMO: Legacy */
-			public readonly static UnityEngine.Shader[] TableSpriteThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
-			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/Draw"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Subtract"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Multiple"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/MultipleNA"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Screen"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Exclude"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Inverse")
-			};
+//			public readonly static UnityEngine.Shader[] TableSpriteThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
+//			{
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/Draw"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Mix"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Add"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Subtract"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Multiple"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/MultipleNA"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Screen"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Exclude"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Inverse")
+//			};
 
 			/* MEMO: Legacy */
-			public readonly static UnityEngine.Shader[] TableSpriteMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
-			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/Draw"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Subtract"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Multiple"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/MultipleNA"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Screen"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Exclude"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Inverse")
-			};
+//			public readonly static UnityEngine.Shader[] TableSpriteMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
+//			{
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/Draw"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Mix"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Add"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Subtract"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Multiple"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/MultipleNA"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Screen"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Exclude"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Inverse")
+//			};
 
 			/* MEMO: Legacy */
-			public readonly static UnityEngine.Shader[] TableEffectThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
-			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Add"),
-			};
+//			public readonly static UnityEngine.Shader[] TableEffectThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
+//			{
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Mix"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Add"),
+//			};
+
+//			/* MEMO: Legacy */
+//			public readonly static UnityEngine.Shader[] TableEffectMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
+//			{
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Mix"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"),
+//			};
 
 			/* MEMO: Legacy */
-			public readonly static UnityEngine.Shader[] TableEffectMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
-			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"),
-			};
+//			public readonly static UnityEngine.Shader[] TableSpriteUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
+//			{
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Mix"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Add"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Subtract"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Multiple"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/MultipleNA"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Screen"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Exclude"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Inverse")
+//			};
 
-			/* MEMO: Legacy */
-			public readonly static UnityEngine.Shader[] TableSpriteUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
-			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Subtract"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Multiple"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/MultipleNA"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Screen"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Exclude"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Inverse")
-			};
-
-			/* MEMO: Legacy */
-			public readonly static UnityEngine.Shader[] TableSkinnedMeshUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
-			{
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Mix"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Add"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Subtract"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Multiple"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/MultipleNA"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Screen"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Exclude"),
-				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Inverse")
-			};
+//			/* MEMO: Legacy */
+//			public readonly static UnityEngine.Shader[] TableSkinnedMeshUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
+//			{
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Mix"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Add"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Subtract"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Multiple"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/MultipleNA"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Screen"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Exclude"),
+//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Inverse")
+//			};
 
 			public readonly static UnityEngine.Shader SpriteSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite");
 			public readonly static UnityEngine.Shader EffectSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect");
 			public readonly static UnityEngine.Shader StencilSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil");
 			public readonly static UnityEngine.Shader SpriteUnityNative = UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite");
+			public readonly static UnityEngine.Shader SpriteUnityNativeNonBatch = UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite_NonBatch");
 			public readonly static UnityEngine.Shader SkinnedMeshUnityNative = UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh");
 
 			public const string NamePropertyStencilOperation = "_StencilOperation";

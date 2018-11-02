@@ -42,7 +42,8 @@ public static partial class Library_SpriteStudio6
 						false,	/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
 						false,	/* UserData (Trigger) *//* Not Supported */
 						false,	/* Instance (Trigger) *//* Not Supported */
-						false	/* Effect (Trigger) *//* Not Supported */
+						false,	/* Effect (Trigger) *//* Not Supported */
+						true	/* Deform */
 					);
 
 					public const string ID = "StandardUncompressed";
@@ -58,6 +59,7 @@ public static partial class Library_SpriteStudio6
 //					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
+					internal readonly static InterfaceFunctionDeform FunctionDeform = new InterfaceFunctionDeform();
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Dictionary-Functions */
@@ -113,7 +115,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
+						{	/* MEMO: "listKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							if(0 >= listKeyData[0].CountGetKey())
@@ -176,7 +178,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							/* MEMO: In attributes with the float value, default value when has no key differs only "RateOpacity". */
@@ -272,7 +274,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 2 (X, Y) *//* MEMO: No inheritance is related to attribute stored in this type. */
+						{	/* MEMO: "listKeyData.Length" is always 2 (X, Y) *//* MEMO: No inheritance is related to attribute stored in this type. */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							if((0 >= listKeyData[0].CountGetKey()) && (0 >= listKeyData[1].CountGetKey()))
@@ -358,7 +360,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 3 (X, Y, Z) *//* MEMO: No inheritance is related to attribute stored in this type. */
+						{	/* MEMO: "listKeyData.Length" is always 3 (X, Y, Z) *//* MEMO: No inheritance is related to attribute stored in this type. */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							if((0 >= listKeyData[0].CountGetKey()) && (0 >= listKeyData[1].CountGetKey()) && (0 >= listKeyData[2].CountGetKey()))
@@ -431,7 +433,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 5 (Hide, FlipX, FlipY, FlipTextureX, FlipTextureY) */
+						{	/* MEMO: "listKeyData.Length" is always 5 (Hide, FlipX, FlipY, FlipTextureX, FlipTextureY) */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							/* MEMO: Attribute"Status" is never omitted. */
@@ -528,7 +530,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
+						{	/* MEMO: "listKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							if(0 >= listKeyData[0].CountGetKey())
@@ -583,7 +585,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
+						{	/* MEMO: "listKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							if(0 >= listKeyData[0].CountGetKey())
@@ -638,7 +640,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
+						{	/* MEMO: "listKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 
 							if(0 >= listKeyData[0].CountGetKey())
@@ -664,6 +666,127 @@ public static partial class Library_SpriteStudio6
 					/* MEMO: Not Support */
 //					public class InterfaceFunctionEffect : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerEffect
 
+					public class InterfaceFunctionDeform : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerDeform
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							int countVertexMesh = container.CountVertexMesh;
+							if(0 >= countVertexMesh)
+							{
+								return(false);	/* outValue is not overwritten. */
+							}
+							/* MEMO: Must be "outValue.TableCoordinate.Length == container.CountVertexMesh". */
+							if((null == outValue.TableCoordinate) || (countVertexMesh > outValue.TableCoordinate.Length))
+							{	/* Error */
+								return(false);	/* outValue is not overwritten. */
+							}
+
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGetDeform(ref outValue, ref outFrameKey, argument.Frame, container.TableValue, container));
+						}
+
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							int countVertexMesh = container.CountVertexMesh;
+							if(0 >= countVertexMesh)
+							{
+								return(false);	/* outValue is not overwritten. */
+							}
+							/* MEMO: Must be "outValue.TableCoordinate.Length == container.CountVertexMesh". */
+							if((null == outValue.TableCoordinate) || (countVertexMesh > outValue.TableCoordinate.Length))
+							{	/* Error */
+								return(false);	/* outValue is not overwritten. */
+							}
+
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGetDeform(ref outValue, ref outFrameKey, index, container.TableValue, container));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container)
+						{
+							return(container.TableValue.Length);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeDeform[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
+
+							if(0 >= listKeyData[0].CountGetKey())
+							{
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Deform[0];
+								return(true);
+							}
+
+							Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform valueDeform = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform();
+							int countVertexMesh = listKeyData[0].ListKey[0].Value.CountVertexMesh;
+							Vector2[,] tableValueFull = new Vector2[countVertexMesh, countFrame];
+							for(int i=0; i<countFrame; i++)
+							{
+								listKeyData[0].ValueGet(out valueDeform, i);
+								for(int j=0; j<countVertexMesh; j++)
+								{
+									tableValueFull[j, i] = valueDeform.TableVertex[j].Coordinate;
+								}
+							}
+							/* MEMO: Extract only vertexes having coordinate changed. */
+							List<int> listIndexVertexChange = new List<int>(countVertexMesh);
+							listIndexVertexChange.Clear();
+							bool flagShiftCoordinate;
+							for(int i=0; i<countVertexMesh; i++)
+							{
+								flagShiftCoordinate = false;
+								for(int j=0; j<countVertexMesh; j++)
+								{
+									if(Vector2.zero != tableValueFull[i, j])
+									{
+										flagShiftCoordinate = true;
+										break;	/* j-Loop */
+									}
+								}
+
+								if(true == flagShiftCoordinate)
+								{
+									listIndexVertexChange.Add(i);
+								}
+							}
+
+							int countVertexChange = listIndexVertexChange.Count;
+							container.CountVertexMesh = countVertexMesh;
+							container.TableIndexVertex = listIndexVertexChange.ToArray();
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Deform[countFrame];
+							int indexVertex;
+							for(int i=0; i<countFrame; i++)
+							{
+								container.TableValue[i].BootUp(countVertexChange);
+								for(int j=0; j<countVertexChange; j++)
+								{
+									indexVertex = listIndexVertexChange[j];
+									container.TableValue[i].TableCoordinate[j] = tableValueFull[indexVertex, i];
+								}
+							}
+							listIndexVertexChange.Clear();
+							listIndexVertexChange = null;
+
+							return(true);
+						}
+						#endregion Functions
+					}
 					#endregion Classes, Structs & Interfaces
 
 					/* ----------------------------------------------- Functions */
@@ -691,8 +814,44 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 
-						outValue = tableValue[frame];
 						outFrameKey = frame;
+						outValue = tableValue[frame];
+						return(true);
+					}
+
+					public static bool ValueGetDeform(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+														ref int outFrameKey,
+														int frame,
+														Library_SpriteStudio6.Data.Animation.Attribute.Deform[] tableValue,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container
+													)
+					{
+#if UNITY_EDITOR
+						if(null == tableValue)
+						{
+							/* MEMO: May reach before deserialization direct-after import. */
+							return(false);
+						}
+#endif
+						if((0 > frame) || (tableValue.Length <= frame))
+						{
+							return(false);
+						}
+						if(outFrameKey == frame)
+						{
+							return(false);
+						}
+
+						outFrameKey = frame;
+
+						int countVertexChange = container.TableIndexVertex.Length;
+						int[] tableIndexVertex = container.TableIndexVertex;
+						Vector2[] tableCoordinate = tableValue[frame].TableCoordinate;
+						Vector2[] tableCoordinateOutput = outValue.TableCoordinate;
+						for(int i=0; i<countVertexChange; i++)
+						{
+							tableCoordinateOutput[tableIndexVertex[i]] = tableCoordinate[i];
+						}
 						return(true);
 					}
 					#endregion Functions
