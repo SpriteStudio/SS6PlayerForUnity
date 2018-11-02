@@ -42,7 +42,8 @@ public static partial class Library_SpriteStudio6
 						true,	/* RadiusCollision */
 						false,	/* UserData (Trigger) */
 						false,	/* Instance (Trigger) */
-						false	/* Effect (Trigger) */
+						false,	/* Effect (Trigger) */
+						true	/* Deform */
 					);
 
 					public const string ID = "CPE_Interpolate";
@@ -58,6 +59,7 @@ public static partial class Library_SpriteStudio6
 //					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
+					internal readonly static InterfaceFunctionDeform FunctionDeform = new InterfaceFunctionDeform();
 
 					[System.Flags]
 					private enum FlagBit
@@ -169,7 +171,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeInt[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							if(0 >= countFrame)
 							{
@@ -254,7 +256,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							if(0 >= countFrame)
 							{
@@ -360,7 +362,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 2 (X, Y) *//* MEMO: No inheritance is related to attribute stored in this type. */
+						{	/* MEMO: "listKeyData.Length" is always 2 (X, Y) *//* MEMO: No inheritance is related to attribute stored in this type. */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							if(0 >= countFrame)
 							{
@@ -460,7 +462,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 3 (X, Y, Z) */
+						{	/* MEMO: "listKeyData.Length" is always 3 (X, Y, Z) */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							if(0 >= countFrame)
 							{
@@ -563,7 +565,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributePartsColor[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							if(0 >= countFrame)
 							{
@@ -649,7 +651,7 @@ public static partial class Library_SpriteStudio6
 											int[] tableOrderPreDraw,
 											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection[] listKeyData
 										)
-						{	/* MEMO: "ListKeyData.Length" is always 1 */
+						{	/* MEMO: "listKeyData.Length" is always 1 */
 							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
 							if(0 >= countFrame)
 							{
@@ -672,6 +674,107 @@ public static partial class Library_SpriteStudio6
 																																		dataUncompressed.TableValue,
 																																		listKeyData[0]	/* Always 1 */
 																																	);
+							container.TableValue = listValue.ToArray();
+
+							return(flagSuccess);
+						}
+						#endregion Functions
+					}
+
+					public class InterfaceFunctionDeform : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerDeform
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+												ref int outFrameKey,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							int countVertexMesh = container.CountVertexMesh;
+							if(0 >= countVertexMesh)
+							{
+								return(false);	/* outValue is not overwritten. */
+							}
+							int frame = argument.Frame;
+							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
+							{
+								return(false);
+							}
+							/* MEMO: Must be "outValue.TableCoordinate.Length == container.CountVertexMesh". */
+							if((null == outValue.TableCoordinate) || (countVertexMesh > outValue.TableCoordinate.Length))
+							{	/* Error */
+								return(false);	/* outValue is not overwritten. */
+							}
+
+							if(true == Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Interpolate.ValueGetDeform(ref outValue, container.TableCodeValue[0].TableCode, container.TableValue, container, frame, outFrameKey))
+							{
+								outFrameKey = frame;
+								return(true);
+							}
+							return(false);
+						}
+
+						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+													ref int outFrameKey,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							/* MEMO: Not Support */
+							/* MEMO: Originally need to implemented, but since this function is used only for "UserData", */
+							/*       there is no problem at present. (This format does not support to "UserData")         */
+							return(false);
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container)
+						{
+							/* MEMO: Not Support */
+							/* MEMO: Originally need to implemented, but since this function is used only for "UserData", */
+							/*       there is no problem at present. (This format does not support to "UserData")         */
+							return(-1);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeDeform[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 */
+							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
+							if(0 >= countFrame)
+							{
+								container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Deform[0];
+								return(true);
+							}
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* Always 1 */
+
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionDeform(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);	/* Always 1 */
+
+							/* MEMO: Copy data except for each frame data. */
+							container.CountVertexMesh = dataUncompressed.CountVertexMesh;
+							container.TableIndexVertex = dataUncompressed.TableIndexVertex;
+
+							bool flagSuccess = true;
+							List<Library_SpriteStudio6.Data.Animation.Attribute.Deform> listValue = new List<Library_SpriteStudio6.Data.Animation.Attribute.Deform>(countFrame);
+							listValue.Clear();
+							flagSuccess &= Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Interpolate.CompressDeform(	out container.TableCodeValue[0].TableCode,
+																																listValue,
+																																dataUncompressed.TableValue,
+																																listKeyData[0]	/* Always 1 */
+																															);
 							container.TableValue = listValue.ToArray();
 
 							return(flagSuccess);
@@ -1232,7 +1335,7 @@ public static partial class Library_SpriteStudio6
 
 					public static bool ValueGetPartsColor(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColor outValue,
 															int[] tableStatus,
-															 Library_SpriteStudio6.Data.Animation.Attribute.PartsColor[] tableValue,
+															Library_SpriteStudio6.Data.Animation.Attribute.PartsColor[] tableValue,
 															int frame,
 															int framePrevious
 														)
@@ -1298,6 +1401,9 @@ public static partial class Library_SpriteStudio6
 							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
 						}
 
+						/* MEMO: Since this process is called many times, formula-functions are        */
+						/*        inlined without using "Library_SpriteStudio6.Utility.Interpolation". */
+						/*       (Optimizing for speed.)                                               */
 						switch(formula)
 						{
 							case KindFormula.LINEAR:
@@ -1428,7 +1534,7 @@ public static partial class Library_SpriteStudio6
 
 					public static bool ValueGetVertexCorrection(	ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue,
 																	int[] tableStatus,
-																	 Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection[] tableValue,
+																	Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection[] tableValue,
 																	int frame,
 																	int framePrevious
 																)
@@ -1458,7 +1564,7 @@ public static partial class Library_SpriteStudio6
 						float rate;
 						Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection value;
 						Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection valueEnd;
-						Vector2 Coordinate;
+						Vector2 coordinate;
 						while(indexMinimum != indexMaximum)
 						{
 							index = indexMinimum + indexMaximum;
@@ -1493,6 +1599,9 @@ public static partial class Library_SpriteStudio6
 							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
 						}
 
+						/* MEMO: Since this process is called many times, formula-functions are        */
+						/*        inlined without using "Library_SpriteStudio6.Utility.Interpolation". */
+						/*       (Optimizing for speed.)                                               */
 						switch(formula)
 						{
 							case KindFormula.LINEAR:
@@ -1505,14 +1614,14 @@ public static partial class Library_SpriteStudio6
 								valueEnd = tableValue[indexEnd];
 
 								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - Coordinate) * rate) + Coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - coordinate) * rate) + coordinate;
 
 								return(true);	/* Updated */
 
@@ -1527,14 +1636,14 @@ public static partial class Library_SpriteStudio6
 
 								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
 								rate *= rate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - Coordinate) * rate) + Coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - coordinate) * rate) + coordinate;
 
 								return(true);	/* Updated */
 
@@ -1548,18 +1657,17 @@ public static partial class Library_SpriteStudio6
 								valueEnd = tableValue[indexEnd];
 
 								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
-
 								rate = 1.0f - rate;
 								rate *= rate;
 								rate = 1.0f - rate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - Coordinate) * rate) + Coordinate;
-								Coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
-								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - Coordinate) * rate) + Coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
+								outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - coordinate) * rate) + coordinate;
 
 								return(true);	/* Updated */
 
@@ -1580,6 +1688,168 @@ public static partial class Library_SpriteStudio6
 
 								/* MEMO: Even if has reference to array, since caller manages buffer, no problem to shallow copy. */
 								outValue = tableValue[index];
+								return(true);	/* Updated */
+						}
+
+						return(false);
+					}
+
+					public static bool ValueGetDeform(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
+														int[] tableStatus,
+														Library_SpriteStudio6.Data.Animation.Attribute.Deform[] tableValue,
+														Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
+														int frame,
+														int framePrevious
+														
+													)
+					{
+#if UNITY_EDITOR
+						if((null == tableValue) || (null == tableStatus))
+						{
+							/* MEMO: May reach before deserialization direct-after import. */
+							return(false);
+						}
+#endif
+						if(0 >= tableStatus.Length)
+						{
+							return(false);
+						}
+
+						KindFormula formula;
+						int frameKey = -1;
+						int frameKeyEnd;
+						int indexStatusLast = tableStatus.Length - 1;
+						int status;
+						int statusEnd;
+						int indexMinimum = 0;
+						int indexMaximum = indexStatusLast;
+						int index;
+						int indexEnd;
+						float rate;
+						Vector2[] tableCoordinateStart;
+						Vector2[] tableCoordinateEnd;
+						while(indexMinimum != indexMaximum)
+						{
+							index = indexMinimum + indexMaximum;
+							index = (index >> 1) + (index & 1);	/* (index / 2) + (index % 2) */
+							frameKey = tableStatus[index] & (int)FlagBit.FRAMEKEY;
+							if(frame == frameKey)
+							{
+								indexMinimum = indexMaximum = index;
+							}
+							else
+							{
+								if((frame < frameKey) || (-1 == frameKey))
+								{
+									indexMaximum = index - 1;
+								}
+								else
+								{
+									indexMinimum = index;
+								}
+							}
+						}
+
+						status = tableStatus[indexMinimum];
+						frameKey = status & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+						index = (status & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+						if(indexStatusLast <= indexMinimum)
+						{	/* Not Interpolate */
+							formula = KindFormula.CPE;
+						}
+						else
+						{
+							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
+						}
+
+						/* MEMO: Since this process is called many times, formula-functions are        */
+						/*        inlined without using "Library_SpriteStudio6.Utility.Interpolation". */
+						/*       (Optimizing for speed.)                                               */
+						int[] tableIndexVertex = container.TableIndexVertex;
+						int countVertexChange = tableIndexVertex.Length;
+						Vector2[] tableCoordinateOutput = outValue.TableCoordinate;
+						Vector2 coordinate;
+						switch(formula)
+						{
+							case KindFormula.LINEAR:
+								tableCoordinateStart = tableValue[index].TableCoordinate;
+
+								indexMinimum++;
+								statusEnd = tableStatus[indexMinimum];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								tableCoordinateEnd = tableValue[indexEnd].TableCoordinate;
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								for(int i=0; i<countVertexChange; i++)
+								{
+									coordinate = tableCoordinateStart[i];
+									tableCoordinateOutput[tableIndexVertex[i]] = ((tableCoordinateEnd[i] - coordinate) * rate) + coordinate;
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula.ACCELERATE:
+								tableCoordinateStart = tableValue[index].TableCoordinate;
+
+								indexMinimum++;
+								statusEnd = tableStatus[indexMinimum];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								tableCoordinateEnd = tableValue[indexEnd].TableCoordinate;
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate *= rate;
+								for(int i=0; i<countVertexChange; i++)
+								{
+									coordinate = tableCoordinateStart[i];
+									tableCoordinateOutput[tableIndexVertex[i]] = ((tableCoordinateEnd[i] - coordinate) * rate) + coordinate;
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula.DECELERATE:
+								tableCoordinateStart = tableValue[index].TableCoordinate;
+
+								indexMinimum++;
+								statusEnd = tableStatus[indexMinimum];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								tableCoordinateEnd = tableValue[indexEnd].TableCoordinate;
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate = 1.0f - rate;
+								rate *= rate;
+								rate = 1.0f - rate;
+								for(int i=0; i<countVertexChange; i++)
+								{
+									coordinate = tableCoordinateStart[i];
+									tableCoordinateOutput[tableIndexVertex[i]] = ((tableCoordinateEnd[i] - coordinate) * rate) + coordinate;
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula._RESERVED_04:
+								break;
+							case KindFormula._RESERVED_03:
+								break;
+							case KindFormula._RESERVED_02:
+								break;
+							case KindFormula._RESERVED_01:
+								break;
+
+							case KindFormula.CPE:
+								if(framePrevious == frameKey)
+								{
+									return(false);	/* Not Updated. */
+								}
+
+								/* MEMO: Even if has reference to array, since caller manages buffer, no problem to shallow copy. */
+								tableCoordinateStart = tableValue[index].TableCoordinate;
+								for(int i=0; i<countVertexChange; i++)
+								{
+									tableCoordinateOutput[tableIndexVertex[i]] = tableCoordinateStart[i];
+								}
 								return(true);	/* Updated */
 						}
 
@@ -2296,6 +2566,128 @@ public static partial class Library_SpriteStudio6
 									for(int j=frame; j<frameNext; j++)
 									{
 										if(	(null == value.Coordinate)	/* Not set */
+											|| (false == value.Equals(tableValueUncompressed[j]))
+											)
+										{
+											value = tableValueUncompressed[j];
+											index = ListSetValue(listValue, value);
+
+											status = StatusGet(formula, index, j);
+											listStatus.Add(status);
+										}
+									}
+									break;
+							}
+						}
+
+						tableCodeValue = listStatus.ToArray();
+						listStatus.Clear();
+						listStatus = null;
+
+						return(true);
+					}
+					public static bool CompressDeform(	out int[] tableCodeValue,
+														List<Library_SpriteStudio6.Data.Animation.Attribute.Deform> listValue,
+														Library_SpriteStudio6.Data.Animation.Attribute.Deform[] tableValueUncompressed,
+														Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeDeform listKeyData
+													)
+					{
+						int countFrame = tableValueUncompressed.Length;
+						int countKeyData = listKeyData.CountGetKey();
+						if(0 >= countKeyData)
+						{	/* No key-data */
+							/* MEMO: Do not mess "listValue". */
+							tableCodeValue = new int[0];
+							return(true);
+						}
+
+						List<int> listStatus = new List<int>(countFrame);
+						listStatus.Clear();
+
+						int index;
+						int frame;
+						int frameNext;
+						int status;
+						Library_SpriteStudio6.Data.Animation.Attribute.Deform value = new Library_SpriteStudio6.Data.Animation.Attribute.Deform();
+						Library_SpriteStudio6.Utility.Interpolation.KindFormula formulaSource;
+						KindFormula formula;
+						for(int i=0; i<countKeyData; i++)
+						{
+							if((countKeyData - 1) <= i)
+							{	/* Doesn't have next key */
+								formulaSource = Utility.Interpolation.KindFormula.NON;
+								frame = listKeyData.ListKey[i].Frame;
+								frameNext = countFrame;
+
+								i = countKeyData;	/* Force end */
+							}
+							else
+							{
+								formulaSource = listKeyData.ListKey[i].Formula;
+								frame = listKeyData.ListKey[i].Frame;
+								frameNext = listKeyData.ListKey[i + 1].Frame;
+							}
+							if(countFrame <= frame)
+							{	/* Error */
+								break;
+							}
+
+							/* Set data each formula */
+							switch(formulaSource)
+							{
+								/* Type: Interpolate */
+								case Utility.Interpolation.KindFormula.LINEAR:
+									formula = KindFormula.LINEAR;
+
+									value = tableValueUncompressed[frame];
+									index = ListSetValue(listValue, value);
+
+									if(true == value.Equals(tableValueUncompressed[frameNext]))
+									{	/* Not change in range */
+										formula = KindFormula.CPE;
+									}
+									status = StatusGet(formula, index, frame);
+									listStatus.Add(status);
+									break;
+
+								case Utility.Interpolation.KindFormula.ACCELERATE:
+									formula = KindFormula.ACCELERATE;
+
+									value = tableValueUncompressed[frame];
+									index = ListSetValue(listValue, value);
+
+									if(true == value.Equals(tableValueUncompressed[frameNext]))
+									{	/* Not change in range */
+										formula = KindFormula.CPE;
+									}
+									status = StatusGet(formula, index, frame);
+									listStatus.Add(status);
+									break;
+
+								case Utility.Interpolation.KindFormula.DECELERATE:
+									formula = KindFormula.DECELERATE;
+
+									value = tableValueUncompressed[frame];
+									index = ListSetValue(listValue, value);
+
+									if(true == value.Equals(tableValueUncompressed[frameNext]))
+									{	/* Not change in range */
+										formula = KindFormula.CPE;
+									}
+									status = StatusGet(formula, index, frame);
+									listStatus.Add(status);
+									break;
+
+								/* Type: CPE */
+								case Utility.Interpolation.KindFormula.NON:
+								case Utility.Interpolation.KindFormula.HERMITE:
+								case Utility.Interpolation.KindFormula.BEZIER:
+									formula = KindFormula.CPE;
+
+									value.CleanUp();
+									for(int j=frame; j<frameNext; j++)
+									{
+										if(	(null == value.TableCoordinate)	/* Not set */
 											|| (false == value.Equals(tableValueUncompressed[j]))
 											)
 										{

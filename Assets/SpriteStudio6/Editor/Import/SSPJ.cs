@@ -54,6 +54,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						goto Parse_ErrorEnd;
 
 					case KindVersion.CODE_020000:
+					case KindVersion.CODE_020001:
 						break;
 
 					default:
@@ -266,9 +267,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				CODE_010200 = 0x00010200,	/* after SS5.5.0 beta-3 */
 				CODE_010201 = 0x00010201,	/* after SS5.7.0 beta */
 				CODE_020000 = 0x00020000,	/* after SS6.0.0 */
+				CODE_020001 = 0x00020001,	/* after SS6.2.0 */
 
 				TARGET_EARLIEST = CODE_020000,
-				TARGET_LATEST = CODE_020000
+				TARGET_LATEST = CODE_020001
 			}
 
 			private const string ExtentionFile = ".sspj";
@@ -664,7 +666,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							{	/* All Queued */
 								tableIndexSSAE[index] = i;
 								index++;
-								break;	/* Break for-Loop */
+								break;	/* i-Loop */
 							}
 						}
 					}

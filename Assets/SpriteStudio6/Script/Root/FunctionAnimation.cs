@@ -396,7 +396,7 @@ public partial class Script_SpriteStudio6_Root
 			if(true == TableControlTrack[i].StatusIsPlaying)
 			{
 				flagStopAll = false;
-				break;	/* Break i-Loop */
+				break;	/* i-Loop */
 			}
 		}
 
