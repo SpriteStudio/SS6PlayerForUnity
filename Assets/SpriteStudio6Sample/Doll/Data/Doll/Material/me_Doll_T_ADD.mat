@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: me_Doll_T_ADD
   m_Shader: {fileID: 4800000, guid: a29a25a302801aa4d8e32eea378c25bb, type: 3}

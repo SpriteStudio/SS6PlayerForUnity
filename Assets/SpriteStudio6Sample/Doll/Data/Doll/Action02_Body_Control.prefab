@@ -8,18 +8,18 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1991542499088938}
-  m_IsPrefabAsset: 1
---- !u!1 &1991542499088938
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1979429363348204}
+  m_IsPrefabParent: 1
+--- !u!1 &1979429363348204
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 6
+  serializedVersion: 5
   m_Component:
-  - component: {fileID: 4198962622563024}
-  - component: {fileID: 114250284303850786}
+  - component: {fileID: 4365911266314190}
+  - component: {fileID: 114487283477874670}
   m_Layer: 0
   m_Name: Action02_Body_Control
   m_TagString: Untagged
@@ -27,12 +27,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4198962622563024
+--- !u!4 &4365911266314190
 Transform:
   m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1991542499088938}
+  m_GameObject: {fileID: 1979429363348204}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -40,16 +40,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114250284303850786
+--- !u!114 &114487283477874670
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1991542499088938}
+  m_GameObject: {fileID: 1979429363348204}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5c7529314aa313948beb3850fb023713, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PrefabAnimation: {fileID: 1093784560900538, guid: 36b7396b75b6bf34d9850ca208cf0abc,
+  PrefabAnimation: {fileID: 1693009241159322, guid: 36b7396b75b6bf34d9850ca208cf0abc,
     type: 2}
