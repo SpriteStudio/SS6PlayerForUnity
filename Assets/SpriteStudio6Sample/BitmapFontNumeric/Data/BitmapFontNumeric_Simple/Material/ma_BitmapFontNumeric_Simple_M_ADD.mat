@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: ma_BitmapFontNumeric_Simple_M_ADD
   m_Shader: {fileID: 4800000, guid: 22fe2befb7cc0344fba213b8cdddb5b7, type: 3}

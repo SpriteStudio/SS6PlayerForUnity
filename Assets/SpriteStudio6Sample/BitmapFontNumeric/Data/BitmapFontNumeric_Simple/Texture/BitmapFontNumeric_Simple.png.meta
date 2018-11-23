@@ -1,9 +1,10 @@
 fileFormatVersion: 2
 guid: 1dcd2fb1acb2d0e4fbad00b1ed27d88f
-timeCreated: 1508855699
+timeCreated: 1542965587
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
+  externalObjects: {}
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -39,7 +40,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 0
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -57,18 +58,20 @@ TextureImporter:
   platformSettings:
   - buildTarget: DefaultTexturePlatform
     maxTextureSize: 4096
+    resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
     sprites: []
     outline: []
     physicsShape: []
-  spritePackingTag: 
+  spritePackingTag: SpriteStudio
   userData: 
   assetBundleName: 
   assetBundleVariant: 
