@@ -751,7 +751,7 @@ public static partial class Library_SpriteStudio6
 							for(int i=0; i<countVertexMesh; i++)
 							{
 								flagShiftCoordinate = false;
-								for(int j=0; j<countVertexMesh; j++)
+								for(int j=0; j<countFrame; j++)
 								{
 									if(Vector2.zero != tableValueFull[i, j])
 									{

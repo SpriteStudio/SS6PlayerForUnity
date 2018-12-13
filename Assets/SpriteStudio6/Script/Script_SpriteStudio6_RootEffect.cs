@@ -445,6 +445,11 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	{
 		return(Time.deltaTime);
 	}
+
+	/* Part: SpriteStudio6/Script/RootEffect/FunctionAnimation.cs */
+	/* Part: SpriteStudio6/Script/RootEffect/FunctionCell.cs */
+	/* Part: SpriteStudio6/Script/RootEffect/FunctionMaterial.cs */
+	/* Part: SpriteStudio6/Script/Root/FunctionMisc.cs */
 	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */
