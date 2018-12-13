@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.1.0";
+	public const string SignatureVersionAsset = "1.1.1";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -2539,64 +2539,6 @@ public static partial class Library_SpriteStudio6
 				InstanceMeshRenderer = null;
 				MeshCombined = null;
 				return(false);
-			}
-
-			/* ******************************************************** */
-			//! Create "AdditionalColor" Parameter
-			/*!
-			@param
-				(None)
-			@retval	Return-Value
-				"AdditionalColor" Setting Buffer
-		
-			Get the Parameter-Buffer of "AdditionalColor" for instances of this class.<br>
-			AdditionalColor" perform additional color processing to instances of this class's derived class.
-			 ("Script_SpriteStudio6_Root", "Script_SpriteStudio6_RootEffect")<br>
-			Caution that the effect differs for each derived class.<br>
-			<br>
-			- Script_SpriteStudio 6_Root (Animation)<br>
-			Overwrite "Parts Color" attribute state for all sprite data used in animation. (No effect to "Mask")<br>
-			<br>
-			- Script_SpriteStudio6_RootEffect (Effect)<br>
-			Execute processing equivalent to animation's "Parts Color" attribute for all particles' vertex-color used in "Effect".<br>
-			(The result color is "particles' vertex-color processed with AdditionalColor" * "pixel of particle")<br>
-			<br>
-			When continue using AdditionalColor, need not to call this function more than once.<br>
-			<br>
-			The detail of how to set, refer to the commentary of "Library_SpriteStudio6.Control.AdditionalColor".<br>
-			*/
-			public Library_SpriteStudio6.Control.AdditionalColor AdditionalColorCreate()
-			{
-				if(null == AdditionalColor)
-				{
-					AdditionalColor = new Library_SpriteStudio6.Control.AdditionalColor();
-					if(null == AdditionalColor)
-					{	/* Error */
-						return(null);
-					}
-					AdditionalColor.BootUp();
-				}
-
-				return(AdditionalColor);
-			}
-
-			/* ******************************************************** */
-			//! Release "AdditionalColor" Parameter
-			/*!
-			@param
-				(None)
-			@retval	Return-Value
-				(None)
-
-			Release the Parameter-Buffer of "AdditionalColor".<br>
-			And stop processing AdditionalColor.<br>
-			(Animation and "Effect"s return to state not using AdditionalColor)<br>
-			<br>
-			To use AdditionalColor again after using this function, use "AdditionalColorCreate" function and re-get parameter-buffer.<br>
-			*/
-			public void AdditionalColorRelease()
-			{
-				AdditionalColor = null;
 			}
 			#endregion Functions
 
