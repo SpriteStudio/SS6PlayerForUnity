@@ -1215,7 +1215,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Effect.KindFeature.EMITTER:
-								/* MEMO: ”Emitter”always has only 1 child(definitely "Particle"). */
+								/* MEMO: "Emitter" always has only 1 child(definitely "Particle"). */
 								workAreaRebuildParts[countPartsRebuild].IndexParts = i;
 								workAreaRebuildParts[countPartsRebuild].IndexPartsChildParicle = informationSSEE.TableParts[i].Data.TableIDChild[0];
 								workAreaRebuildParts[countPartsRebuild].IndexEmitter = countEmitter;
