@@ -4,6 +4,8 @@
 	Copyright(C) Web Technology Corp. 
 	All rights reserved.
 */
+#define CHANGE_DEFORM_DECODING
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -733,22 +735,87 @@ public static partial class Library_SpriteStudio6
 								return(true);
 							}
 
+#if CHANGE_DEFORM_DECODING
+							/* MEMO: All deformed vertices are listed since key-datas have been normalized. */
+							/*       However, no-change coordinates are not checked.                        */
+							int countVertexChangeKeyData = listKeyData[0].ListKey[0].Value.CountVertexMesh;	/* Same at all key-data */
+
+							/* Create deformed-vertices list */
+							List<int> listIndexVertexChange = new List<int>(countVertexChangeKeyData);
+							listIndexVertexChange.Clear();
+							List<int> listIndexTable = new List<int>(countVertexChangeKeyData);
+							listIndexTable.Clear();
+							for(int i=0; i<countVertexChangeKeyData; i++)
+							{
+								listIndexVertexChange.Add(listKeyData[0].ListKey[0].Value.TableVertex[i].Index);
+								listIndexTable.Add(i);
+							}
+
+							/* Expand all deformd-vertices coordinate */
 							Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform valueDeform = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform();
-							int countVertexMesh = listKeyData[0].ListKey[0].Value.CountVertexMesh;
-							Vector2[,] tableValueFull = new Vector2[countVertexMesh, countFrame];
+							Vector2[,] tableValueFull = new Vector2[countVertexChangeKeyData, countFrame];
 							for(int i=0; i<countFrame; i++)
 							{
 								listKeyData[0].ValueGet(out valueDeform, i);
-								for(int j=0; j<countVertexMesh; j++)
+								for(int j=0; j<countVertexChangeKeyData; j++)
+								{
+									tableValueFull[j, i] = valueDeform.TableVertex[j].Coordinate;
+								}
+							}
+
+							/* Extract only vertexes having coordinate shifted. */
+							bool flagChangeCoordinate;
+							for(int i=0; i<countVertexChangeKeyData; i++)
+							{
+								flagChangeCoordinate = false;
+								for(int j=0; j<countFrame; j++)
+								{
+									if(Vector2.zero != tableValueFull[i, j])
+									{
+										flagChangeCoordinate = true;
+										break;	/* j-Loop */
+									}
+								}
+
+								if(false == flagChangeCoordinate)
+								{
+									/* Delete from lists */
+									listIndexVertexChange.RemoveAt(i);
+									listIndexTable.RemoveAt(i);
+								}
+							}
+
+							int countVertexChange = listIndexVertexChange.Count;
+							container.CountVertexMesh = countVertexChange;
+							container.TableIndexVertex = listIndexVertexChange.ToArray();
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Deform[countFrame];
+							int indexTable;
+							for(int i=0; i<countFrame; i++)
+							{
+								container.TableValue[i].BootUp(countVertexChange);
+								for(int j=0; j<countVertexChange; j++)
+								{
+									indexTable = listIndexTable[j];
+									container.TableValue[i].TableCoordinate[j] = tableValueFull[indexTable, i];
+								}
+							}
+#else
+							Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform valueDeform = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform();
+							int countVertexChangeKeyData = listKeyData[0].ListKey[0].Value.CountVertexMesh;	/* Same at all key-data */
+							Vector2[,] tableValueFull = new Vector2[countVertexChangeKeyData, countFrame];
+							for(int i=0; i<countFrame; i++)
+							{
+								listKeyData[0].ValueGet(out valueDeform, i);
+								for(int j=0; j<countVertexChangeKeyData; j++)
 								{
 									tableValueFull[j, i] = valueDeform.TableVertex[j].Coordinate;
 								}
 							}
 							/* MEMO: Extract only vertexes having coordinate changed. */
-							List<int> listIndexVertexChange = new List<int>(countVertexMesh);
+							List<int> listIndexVertexChange = new List<int>(countVertexChangeKeyData);
 							listIndexVertexChange.Clear();
 							bool flagShiftCoordinate;
-							for(int i=0; i<countVertexMesh; i++)
+							for(int i=0; i<countVertexChangeKeyData; i++)
 							{
 								flagShiftCoordinate = false;
 								for(int j=0; j<countFrame; j++)
@@ -767,7 +834,7 @@ public static partial class Library_SpriteStudio6
 							}
 
 							int countVertexChange = listIndexVertexChange.Count;
-							container.CountVertexMesh = countVertexMesh;
+							container.CountVertexMesh = countVertexChange;
 							container.TableIndexVertex = listIndexVertexChange.ToArray();
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Deform[countFrame];
 							int indexVertex;
@@ -780,6 +847,8 @@ public static partial class Library_SpriteStudio6
 									container.TableValue[i].TableCoordinate[j] = tableValueFull[indexVertex, i];
 								}
 							}
+#endif
+
 							listIndexVertexChange.Clear();
 							listIndexVertexChange = null;
 

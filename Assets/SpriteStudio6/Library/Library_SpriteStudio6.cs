@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.1.1";
+	public const string SignatureVersionAsset = "1.1.3";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -1411,7 +1411,7 @@ public static partial class Library_SpriteStudio6
 					public int[] TableIndexVertex;
 
 					/* for Deform */
-					public int CountVertexDeform;	/* Same as number of "Cell-Mesh"'s vertices. (0 when not use "Deform") */
+					public int CountVertexDeform;	/* same as "CountVertex" when use "Deform". (0 when not use) */
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */

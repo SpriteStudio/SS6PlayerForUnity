@@ -16,7 +16,7 @@ public partial class Script_SpriteStudio6_Root
 	//! Get "Playing (animation)" status
 	/*!
 	@param	indexTrack
-		Play-Track index<br>
+		Track index (0 origin)<br>
 		-1 == Target the animation object
 	@retval	Return-Value
 		true == Now-playing<br>
@@ -50,7 +50,7 @@ public partial class Script_SpriteStudio6_Root
 	//! Get "Pausing (animation)" status
 	/*!
 	@param	indexTrack
-		Play-Track index<br>
+		Track index (0 origin)<br>
 		-1 == All tracks
 	@retval	Return-Value
 		true == Pausing (Now-Suspended)<br>
@@ -260,9 +260,9 @@ public partial class Script_SpriteStudio6_Root
 	//! Transition the animation
 	/*!
 	@param	indexTrack
-		Track index of now playing (Master track)
+		Track index of now playing (Master track. 0 origin)
 	@param	indexTrackSlave
-		Track index to manage transition destination animation (Slave track)<br>
+		Track index to manage transition destination animation (Slave track. 0 origin)<br>
 		-1 == Cancel transition
 	@param	time
 		Time to transition (1.0f = 1 second)
@@ -364,7 +364,7 @@ public partial class Script_SpriteStudio6_Root
 	//! Get Animation's index (Playing on track)
 	/*!
 	@param	indexTrack
-		Track index
+		Track index (0 origin)
 	@retval	Return-Value
 		Animation's index<br>
 		-1 == Error / Not playing
@@ -417,7 +417,7 @@ public partial class Script_SpriteStudio6_Root
 	//! Get Svale-Track's index
 	/*!
 	@param	indexTrack
-		Track index to set pause-status (0 origin)
+		Track index (0 origin)
 	@retval	Return-Value
 		Slave-Track's index<br>
 		-1 == Error / Not transitioned
@@ -443,8 +443,8 @@ public partial class Script_SpriteStudio6_Root
 	//! Changing animations' playing speed
 	/*!
 	@param	indexTrack
-		Track index to set pause-status (0 origin)<br>
-		-1 == Set pause-status all tracks.
+		Track index (0 origin)<br>
+		-1 == All tracks
 	@param	rateTime
 		Coefficient of time-passage of animation.<br>
 		Minus Value is given, Animation is played backwards.
@@ -492,8 +492,8 @@ public partial class Script_SpriteStudio6_Root
 	//! Get animations' playing speed
 	/*!
 	@param	indexTrack
-		Track index to set pause-status (0 origin)<br>
-		-1 == Set pause-status all tracks.
+		Track index (0 origin)<br>
+		-1 == All tracks
 	@retval	Return-Value
 		Coefficient of time-passage of animation.<br>
 		float.NaN == Failure (Error)
@@ -525,7 +525,7 @@ public partial class Script_SpriteStudio6_Root
 	//! Get remaining play count
 	/*!
 	@param	indexTrack
-		Track index
+		Track index (0 origin)
 	@retval	Return-Value
 		remaining play count<br>
 		0 == Infinite loop (No finish)<br>
