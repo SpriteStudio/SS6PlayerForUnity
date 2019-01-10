@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.1.3";
+	public const string SignatureVersionAsset = "1.1.4";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -3337,7 +3337,7 @@ public static partial class Library_SpriteStudio6
 					tableMaterialNew[i] = tableMaterial[i];
 				}
 
-				return(tableMaterial);
+				return(tableMaterialNew);
 			}
 
 			public static UnityEngine.Material[] TableCopyDeep(UnityEngine.Material[] tableMaterial)
@@ -3359,7 +3359,7 @@ public static partial class Library_SpriteStudio6
 					tableMaterialNew[i] = new UnityEngine.Material(tableMaterial[i]);
 				}
 
-				return(tableMaterial);
+				return(tableMaterialNew);
 			}
 			#endregion Functions
 		}
