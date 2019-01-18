@@ -32,6 +32,140 @@ public partial class Script_SpriteStudio6_Root
 	}
 
 	/* ******************************************************** */
+	//! Create "AdditionalColor" Parameter
+	/*!
+	@param	flagInvolveChildren
+		true == Children are set same buffer.<br>
+		false == only oneself.<br>
+		default: true
+	@retval	Return-Value
+		"AdditionalColor" Setting Buffer
+
+	Get(Create) the Parameter-Buffer of "AdditionalColor" for instances of this class.<br>
+	<br>
+	Caution that "Additional-Color" affects differs for each animation-object.<br>
+	<br>
+	- Script_SpriteStudio 6_Root (Animation)<br>
+	Overwrite "Parts Color" attribute state for all sprite data used in animation. (No effect to "Mask")<br>
+	<br>
+	- Script_SpriteStudio6_RootEffect (Effect)<br>
+	Execute processing equivalent to animation's "Parts Color" attribute for all particles' vertex-color used in "Effect".<br>
+	(The result color is "particles' vertex-color processed with AdditionalColor" * "pixel of particle")<br>
+	<br>
+	When continue using AdditionalColor, need not to call this function more than once.<br>
+	<br>
+	The detail of how to set, refer to the commentary of "Library_SpriteStudio6.Control.AdditionalColor".<br>
+	*/
+	public Library_SpriteStudio6.Control.AdditionalColor AdditionalColorCreate(bool flagInvolveChildren=true)
+	{
+		Library_SpriteStudio6.Control.AdditionalColor additionalColor = AdditionalColor;
+		if(null == additionalColor)
+		{
+			/* Create Parameter-instance */
+			additionalColor = new Library_SpriteStudio6.Control.AdditionalColor();
+			if(null == additionalColor)
+			{	/* Error */
+				return(null);
+			}
+			additionalColor.BootUp();
+
+			if(true == flagInvolveChildren)
+			{
+				AdditionalColorSet(additionalColor);
+			}
+			else
+			{
+				AdditionalColor = additionalColor;
+			}
+		}
+		return(additionalColor);
+	}
+	private void AdditionalColorSet(Library_SpriteStudio6.Control.AdditionalColor additionalColor)
+	{
+		AdditionalColor = additionalColor;
+
+		if((null != DataAnimation) && (null != TableControlParts))
+		{
+			int count;
+			int indexParts;
+			int[] tableIndexParts = null;
+
+			/* Set child-"Instance"s */
+			tableIndexParts = DataAnimation.CatalogParts.TableIDPartsInstance;
+			if(null != tableIndexParts)
+			{
+				count = tableIndexParts.Length;
+				for(int i=0; i<count; i++)
+				{
+					indexParts = tableIndexParts[i];
+					if(null != TableControlParts[indexParts].InstanceRootUnderControl)
+					{
+						TableControlParts[indexParts].InstanceRootUnderControl.AdditionalColorSet(additionalColor);
+					}
+				}
+			}
+
+			/* Set child-"Effect"s */
+			tableIndexParts = DataAnimation.CatalogParts.TableIDPartsEffect;
+			if(null != tableIndexParts)
+			{
+				count = tableIndexParts.Length;
+				for(int i=0; i<count; i++)
+				{
+					indexParts = tableIndexParts[i];
+					if(null != TableControlParts[indexParts].InstanceRootEffectUnderControl)
+					{
+						TableControlParts[indexParts].InstanceRootEffectUnderControl.AdditionalColor = additionalColor;
+					}
+				}
+			}
+		}
+	}
+
+	/* ******************************************************** */
+	//! Release "AdditionalColor" Parameter
+	/*!
+	@param	flagInvolveChildren
+		true == Children are set same buffer.<br>
+		false == only oneself.<br>
+		default: true
+	@retval	Return-Value
+		(None)
+
+	Release the Parameter-Buffer of "AdditionalColor".<br>
+	And stop processing AdditionalColor.<br>
+	(Animation and "Effect"s return to state not using AdditionalColor)<br>
+	<br>
+	To use AdditionalColor again after using this function, use "AdditionalColorCreate" function and re-get parameter-buffer.<br>
+	*/
+	public void AdditionalColorRelease(bool flagInvolveChildren=true)
+	{
+		if(true == flagInvolveChildren)
+		{
+			AdditionalColorSet(null);
+		}
+		else
+		{
+			AdditionalColor = null;
+		}
+	}
+
+	/* ******************************************************** */
+	//! Get "AdditionalColor" Parameter
+	/*!
+	@param	
+	@retval	Return-Value
+		"AdditionalColor" Setting Buffer<br>
+		null == No-set(Not created)
+
+	Get (now-set) Parameter-Buffer of "AdditionalColor" for instances of this class.<br>
+	*/
+	public Library_SpriteStudio6.Control.AdditionalColor AdditionalColorGet()
+	{
+		return(AdditionalColor);
+	}
+
+	/* ******************************************************** */
 	//! Cancel Transform refresh
 	/*!
 	@param	idParts

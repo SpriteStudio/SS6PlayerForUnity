@@ -66,7 +66,7 @@ public partial class Script_SpriteStudio6_RootEffect
 	(In principle, "SpriteStudio6" sorts cell maps and cells in each cell map in alphabetical order of names.
 	 As a result, 0-origined-indexes are sequentially assigned to sorted cells and CellMaps)<br>
 	<br>
-	Honestly, do not recommend building CellMaps from scratch without using ÅhSpriteStudio6Åh.<br>
+	Honestly, do not recommend building CellMaps from scratch without using "SpriteStudio6".<br>
 	*/
 	public bool TableSetCellMap(Library_SpriteStudio6.Data.CellMap[] tableCellMap)
 	{
@@ -535,7 +535,7 @@ public partial class Script_SpriteStudio6_RootEffect
 			true == Success<br>
 			false == Failure (Error)
 
-		Set a shallow-copy of "cell" in cell of ÅhindexCellOutputÅh in CellMap.<br>
+		Set a shallow-copy of "cell" in cell of "indexCellOutput" in CellMap.<br>
 		*/
 		public static bool CopyShallow(	Library_SpriteStudio6.Data.CellMap cellMapOutput,
 										int indexCellOutput,
@@ -558,7 +558,7 @@ public partial class Script_SpriteStudio6_RootEffect
 			true == Success<br>
 			false == Failure (Error)
 
-		Set a deep-copy of "cell" in cell of ÅhindexCellOutputÅh in CellMap.<br>
+		Set a deep-copy of "cell" in cell of "indexCellOutput" in CellMap.<br>
 		*/
 		public static bool CopyDeep(	Library_SpriteStudio6.Data.CellMap cellMapOutput,
 										int indexCellOutput,

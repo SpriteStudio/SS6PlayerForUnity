@@ -390,7 +390,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			/*       Always divide "Normal (Sprite)" and "Mask" into 4 triangles according to SpriteStudio6's specifications. */
 			/* MEMO: Support "Mesh Deformation" */
 			/* MEMO: Support "Z-Position" Priority */
-			/* MEMO: Support "Anchor" */
 	}
 	#endregion Enums & Constants
 

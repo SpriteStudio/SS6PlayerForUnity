@@ -5,6 +5,7 @@
 	All rights reserved.
 */
 // #define ATTRIBUTE_DUPLICATE_DEEP
+#define CHANGE_DEFORM_DECODING
 
 using System.Collections;
 using System.Collections.Generic;
@@ -636,11 +637,42 @@ public static partial class Library_SpriteStudio6
 							valueOutput.TableVertex = new DataDeform.Vertex[countVertexMesh];
 							Vector2 coordinateStart;
 							Vector2 coordinateEnd;
+#if CHANGE_DEFORM_DECODING
+#else
 							int indexVertexStart;
 							int indexVertexEnd;
 							bool flagNotShift;
+#endif
 							for(int i=0; i<countVertexMesh; i++)
 							{
+#if CHANGE_DEFORM_DECODING
+								valueOutput.TableVertex[i].Index = ListKey[indexStart].Value.TableVertex[i].Index;
+								coordinateStart = ListKey[indexStart].Value.TableVertex[i].Coordinate;
+								coordinateEnd = ListKey[indexEnd].Value.TableVertex[i].Coordinate;
+
+								valueOutput.TableVertex[i].Coordinate.x = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
+																																		frame,
+																																		ListKey[indexStart].Frame,
+																																		coordinateStart.x,
+																																		ListKey[indexEnd].Frame,
+																																		coordinateEnd.x,
+																																		ListKey[indexStart].FrameCurveStart,
+																																		ListKey[indexStart].ValueCurveStart,
+																																		ListKey[indexStart].FrameCurveEnd,
+																																		ListKey[indexStart].ValueCurveEnd
+																																	);
+								valueOutput.TableVertex[i].Coordinate.y = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
+																																		frame,
+																																		ListKey[indexStart].Frame,
+																																		coordinateStart.y,
+																																		ListKey[indexEnd].Frame,
+																																		coordinateEnd.y,
+																																		ListKey[indexStart].FrameCurveStart,
+																																		ListKey[indexStart].ValueCurveStart,
+																																		ListKey[indexStart].FrameCurveEnd,
+																																		ListKey[indexStart].ValueCurveEnd
+																																	);
+#else
 								coordinateStart = Vector2.zero;
 								coordinateEnd = Vector2.zero;
 								flagNotShift = false;
@@ -687,6 +719,7 @@ public static partial class Library_SpriteStudio6
 																																			ListKey[indexStart].ValueCurveEnd
 																																		);
 								}
+#endif
 							}
 							return(true);
 
@@ -694,6 +727,8 @@ public static partial class Library_SpriteStudio6
 							valueOutput = Default;
 							return(false);
 						}
+#if CHANGE_DEFORM_DECODING
+#else
 						private static int IndexGetTableVertex(DataDeform.Vertex[] tableVertex, int indexVertex)
 						{
 							int count = tableVertex.Length;
@@ -706,6 +741,121 @@ public static partial class Library_SpriteStudio6
 							}
 							return(-1);
 						}
+#endif
+
+#if CHANGE_DEFORM_DECODING
+						public void Normalize(int countVertexValid)
+						{
+							/* MEMO: Attribute "Deform" requires special correcting processing.                                                           */
+							/*       Reasons are as follows.                                                                                              */
+							/*       - The number of vertex-datas in "Deform" may over or under the nunber of Cell-Mesh's vertices in some cases.         */
+							/*         e.g.) When the Cell-Mesh at editing the "Deform" is different from actually used, datas may not be consistent.     */
+							/*               Originally, under(flow) occurs with data of the omitted vertices. This behavior is correct as specification. */
+							/*               But occurs even when "Deform" data of different number of vertices is applied.                               */
+							/* Re-Collect indexes of shifting vertices */
+							Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform.Vertex[] tableVertex;
+							int countVertex;
+							int indexVertex;
+
+							List<int> listIndexVertex = new List<int>();
+							listIndexVertex.Clear();
+
+							List<int> listKeyDelete = new List<int>();
+							listKeyDelete.Clear();
+
+							int countKey = CountGetKey();
+							if(0 >= countKey)
+							{
+								return;
+							}
+
+							bool flagDeleteKey;
+							bool flagHasVertex;
+							for(int i=0; i<countKey; i++)
+							{
+								/* MEMO: Delete key-data when has only invalid-range vertex data. */
+								flagDeleteKey = true;
+								flagHasVertex = false;
+
+								tableVertex = ListKey[i].Value.TableVertex;
+								if(null != tableVertex)
+								{
+									countVertex = tableVertex.Length;	/* CountVertexMesh */
+									for(int j=0; j<countVertex; j++)
+									{
+										flagHasVertex = true;
+
+										indexVertex = tableVertex[j].Index;
+										if((0 > countVertexValid) || (indexVertex < countVertexValid))
+										{
+											flagDeleteKey = false;
+
+											if(false == listIndexVertex.Contains(indexVertex))
+											{
+												listIndexVertex.Add(indexVertex);
+											}
+										}
+									}
+								}
+
+								if(true == (flagHasVertex & flagDeleteKey))
+								{	/* Has no valid-data */
+									listKeyDelete.Add(i);
+								}
+							}
+							listIndexVertex.Sort();
+							listKeyDelete.Sort();
+
+							/* Delete no-data key */
+							countVertex = listKeyDelete.Count; /* Recycle */
+							for(int i=(countVertex-1); i>=0; i--)
+							{
+								ListKey.RemoveAt(listKeyDelete[i]);
+							}
+							listKeyDelete.Clear();
+							listKeyDelete = null;
+
+							/* Re-Construct all key-datas */
+							countKey = CountGetKey();	/* Re-Get */
+							countVertex = listIndexVertex.Count;
+							int indexTableVertex;
+							Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform dataDeform;
+							for(int i=0; i<countKey; i++)
+							{
+								tableVertex = new DataDeform.Vertex[countVertex];
+
+								/* Clear */
+								for(int j=0; j<countVertex; j++)
+								{
+									tableVertex[j].Index = listIndexVertex[j];
+									tableVertex[j].Coordinate = Vector2.zero;
+								}
+
+								/* Re-Set Coordinate */
+								int countVertexSource = ListKey[i].Value.TableVertex.Length;
+								for(int j=0; j<countVertexSource; j++)
+								{
+									indexVertex = ListKey[i].Value.TableVertex[j].Index;
+									indexTableVertex = listIndexVertex.IndexOf(indexVertex);
+									if(0 <= indexTableVertex)
+									{
+										tableVertex[indexTableVertex].Index = indexVertex;
+										tableVertex[indexTableVertex].Coordinate = ListKey[i].Value.TableVertex[j].Coordinate;
+									}
+								}
+
+								/* Set new data */
+								dataDeform = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform();
+								dataDeform.CountVertexMesh = countVertex;
+								dataDeform.TableVertex = tableVertex;
+								ListKey[i].Value = dataDeform;
+							}
+
+							listIndexVertex.Clear();
+							listIndexVertex = null;
+						}
+#else
+#endif
 						#endregion Functions
 
 						/* ----------------------------------------------- Enums & Constants */

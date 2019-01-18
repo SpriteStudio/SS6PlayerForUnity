@@ -1421,7 +1421,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{	/* Convert-SS6PU Pass-1 ... Transfer necessary data from the temporary. */
 //					const string messageLogPrefix = "Convert (CellMap)";
 
-					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* ”UnityEngine.Texture” and my "Texture", class-names are conflict unless fully-qualified. */
+					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* "UnityEngine.Texture" and my "Texture", class-names are conflict unless fully-qualified. */
 					if(0 <= informationSSCE.IndexTexture)
 					{
 						informationTexture = informationSSPJ.TableInformationTexture[informationSSCE.IndexTexture];
@@ -1535,7 +1535,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					List<SpriteMetaData> listSpriteMetaData = null;
 					string[] tableNameSprite = null;
 
-					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* ”UnityEngine.Texture” and my "Texture", class-names are conflict unless fully-qualified. */
+					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* "UnityEngine.Texture" and my "Texture", class-names are conflict unless fully-qualified. */
 					if(0 <= informationSSCE.IndexTexture)
 					{
 						informationTexture = informationSSPJ.TableInformationTexture[informationSSCE.IndexTexture];

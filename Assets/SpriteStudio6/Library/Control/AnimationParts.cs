@@ -3164,15 +3164,22 @@ public static partial class Library_SpriteStudio6
 								}
 							}
 
-							/* Calculate Coordinate (Fix-Animation only) */
+							/* Calculate Coordinate */
 							if(null != CoordinateDraw)
-							{	/* Fix-Animation */
+							{	/* not Skeletal-Animation */
 								Vector2 pivot = cellMap.TableCell[indexCell].Pivot;
 								Vector2[] tableVertexCell = cellMap.TableCell[indexCell].Mesh.TableCoordinate;
 								for(int i=0; i<CountVertex; i++)
 								{
 									CoordinateDraw[i] = tableVertexCell[i] - pivot;
 									CoordinateDraw[i].y *= -1.0f;
+								}
+								if(null != DeformDraw)
+								{	/* Use Deform */
+									for(int i=0; i<CountVertex; i++)
+									{
+										DeformDraw[i] = CoordinateDraw[i];
+									}
 								}
 							}
 
@@ -3227,7 +3234,7 @@ public static partial class Library_SpriteStudio6
 						}
 
 						if(0 >= countTableBindMesh)
-						{	/* not Skeletal-Animation (has no Bind-Mesh) */
+						{	/* not Skeletal-Animation */
 							if(true == Deform.Value.IsValid)
 							{	/* Use Deform */
 								/* Transform including "Deform" */
