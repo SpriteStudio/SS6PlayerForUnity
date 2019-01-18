@@ -765,7 +765,8 @@ public static partial class Library_SpriteStudio6
 
 							/* Extract only vertexes having coordinate shifted. */
 							bool flagChangeCoordinate;
-							for(int i=0; i<countVertexChangeKeyData; i++)
+//							for(int i=0; i<countVertexChangeKeyData; i++)
+							for(int i=(countVertexChangeKeyData - 1); i>=0; i--)
 							{
 								flagChangeCoordinate = false;
 								for(int j=0; j<countFrame; j++)
