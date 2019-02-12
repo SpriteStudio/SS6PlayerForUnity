@@ -73,19 +73,17 @@ public partial class Script_SpriteStudio6_Root
 
 		if(0 > indexTrack)
 		{
-			bool flagPlay = false;
 			for(int i=0; i<countTrack; i++)
 			{
-				if(true == TableControlTrack[indexTrack].StatusIsPlaying)
+				if(true == TableControlTrack[i].StatusIsPlaying)
 				{
-					flagPlay |= true;
-					if(false == TableControlTrack[indexTrack].StatusIsPausing)
+					if(true == TableControlTrack[i].StatusIsPausing)
 					{
-						return(false);
+						return(true);
 					}
 				}
 			}
-			return(flagPlay);
+			return(false);
 		}
 
 		if(countTrack <= indexTrack)
