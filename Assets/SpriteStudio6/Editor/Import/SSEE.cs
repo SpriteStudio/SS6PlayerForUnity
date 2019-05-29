@@ -1116,17 +1116,26 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Create? Update? */
 					if(null == informationSSEE.PrefabEffectSS6PU.TableData[0])
 					{	/* New */
+#if UNITY_2018_4_OR_NEWER
+						/* MEMO: Process nothing, now. */
+#else
 						informationSSEE.PrefabEffectSS6PU.TableData[0] = PrefabUtility.CreateEmptyPrefab(informationSSEE.PrefabEffectSS6PU.TableName[0]);
+
 						if(null == informationSSEE.PrefabEffectSS6PU.TableData[0])
 						{
 							LogError(messageLogPrefix, "Failure to create Prefab", informationSSEE.FileNameGetFullPath(), informationSSPJ);
 							goto AssetCreatePrefab_ErrorEnd;
 						}
+#endif
 					}
 					else
 					{	/* Exist */
 						/* MEMO: Do not instantiate old prefabs. Instantiates up to objects under control, and mixed in updated prefab. */
 						gameObjectRoot = (GameObject)informationSSEE.PrefabEffectSS6PU.TableData[0];
+#if UNITY_2018_4_OR_NEWER
+						informationSSEE.PrefabEffectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(gameObjectRoot);
+#else
+#endif
 						scriptRoot = gameObjectRoot.GetComponent<Script_SpriteStudio6_RootEffect>();
 						if(null != scriptRoot)
 						{
@@ -1165,10 +1174,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					gameObjectRoot.SetActive(true);
 
 					/* Fixing Prefab */
+#if UNITY_2018_4_OR_NEWER
+					informationSSEE.PrefabEffectSS6PU.TableData[0] = PrefabUtility.SaveAsPrefabAsset(gameObjectRoot, informationSSEE.PrefabEffectSS6PU.TableName[0]);
+#else
 					informationSSEE.PrefabEffectSS6PU.TableData[0] = PrefabUtility.ReplacePrefab(	gameObjectRoot,
 																									informationSSEE.PrefabEffectSS6PU.TableData[0],
 																									LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
 																								);
+#endif
 					AssetDatabase.SaveAssets();
 
 					/* Destroy Temporary */

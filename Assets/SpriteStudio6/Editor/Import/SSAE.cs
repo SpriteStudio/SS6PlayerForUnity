@@ -216,6 +216,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					string[] valueTextSplitParameter = null;
 					int countVertex;
 					int countBone;
+					int countParameterBone;
 
 					foreach(System.Xml.XmlNode nodeBindMesh in listNode)
 					{
@@ -225,9 +226,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(false == string.IsNullOrEmpty(nodeBindMesh.InnerText))
 						{
 							/* MEMO: Bind-Mesh data format is in following.                                                        */
-							/*       VertexBlock-0, VettexBlock-1, .... VertexBlock-x, 0, 0, 0, 0, (m = number of Vertices)        */
+							/*       VertexBlock-0, VettexBlock-1, .... VertexBlock-x, (x = number of Vertices)                    */
 							/*       *) VertexBlock: n [Bone-Index Weight(%) X Y] [Bone-Index Weight(%) X Y]... (Repeat "n" times) */
-							/*       *2) "0, 0, 0, 0" is terminator.                                                               */
 							Library_SpriteStudio6.Data.Parts.Animation.BindMesh.Vertex bindVertex = new Library_SpriteStudio6.Data.Parts.Animation.BindMesh.Vertex();
 
 							valueTextSplitVertex = nodeBindMesh.InnerText.Split(',');
@@ -245,7 +245,13 @@ public static partial class LibraryEditor_SpriteStudio6
 									valueTextSplitParameter = valueTextSplitVertex[i].Split(' ');
 
 									/* Get Bone-count */
+									/* MEMO: No-effective bones(weight=0) are counted to VertexBlock's "n(number of Bone)" sometimes, so check real data size. */
 									countBone =  LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplitParameter[0]);
+									countParameterBone = (valueTextSplitParameter.Length - 1) / 4;	/* "- 1": Bone-Count / "/ 4": number of Parameter */
+									if(countBone != countParameterBone)	{
+										countBone = countParameterBone;
+									}
+
 									if(0 < countBone)
 									{	/* not Terminator */
 										bindVertex.CleanUp();
@@ -4314,17 +4320,25 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Create? Update? */
 					if(null == informationSSAE.PrefabAnimationSS6PU.TableData[0])
 					{	/* New */
+#if UNITY_2018_4_OR_NEWER
+						/* MEMO: Process nothing, now. */
+#else
 						informationSSAE.PrefabAnimationSS6PU.TableData[0] = PrefabUtility.CreateEmptyPrefab(informationSSAE.PrefabAnimationSS6PU.TableName[0]);
 						if(null == informationSSAE.PrefabAnimationSS6PU.TableData[0])
 						{
 							LogError(messageLogPrefix, "Failure to create Prefab", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 							goto AssetCreatePrefab_ErrorEnd;
 						}
+#endif
 					}
 					else
 					{	/* Exist */
 						/* MEMO: Do not instantiate old prefabs. Instantiates up to objects under control, and mixed in updated prefab. */
 						gameObjectRoot = (GameObject)informationSSAE.PrefabAnimationSS6PU.TableData[0];
+#if UNITY_2018_4_OR_NEWER
+						informationSSAE.PrefabAnimationSS6PU.TableName[0] = AssetDatabase.GetAssetPath(gameObjectRoot);
+#else
+#endif
 						scriptRoot = gameObjectRoot.GetComponent<Script_SpriteStudio6_Root>();
 						if(null != scriptRoot)
 						{
@@ -4586,10 +4600,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					gameObjectRoot.SetActive(true);
 
 					/* Fixing Prefab */
+#if UNITY_2018_4_OR_NEWER
+					informationSSAE.PrefabAnimationSS6PU.TableData[0] = PrefabUtility.SaveAsPrefabAsset(gameObjectRoot, informationSSAE.PrefabAnimationSS6PU.TableName[0]);
+#else
 					informationSSAE.PrefabAnimationSS6PU.TableData[0] = PrefabUtility.ReplacePrefab(	gameObjectRoot,
 																										informationSSAE.PrefabAnimationSS6PU.TableData[0],
 																										LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
 																									);
+#endif
 					AssetDatabase.SaveAssets();
 
 					/* Destroy Temporary */
@@ -4614,6 +4632,18 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* Create Prefab */
 						gameObjectControl.SetActive(true);
 
+#if UNITY_2018_4_OR_NEWER
+						UnityEngine.Object prefabControl = informationSSAE.PrefabControlAnimationSS6PU.TableData[0];
+						if(null == prefabControl)
+						{
+							/* MEMO: Process nothing, now. */
+						}
+						else
+						{
+							informationSSAE.PrefabControlAnimationSS6PU.TableName[0] = AssetDatabase.GetAssetPath(prefabControl);
+						}
+						informationSSAE.PrefabControlAnimationSS6PU.TableData[0] = PrefabUtility.SaveAsPrefabAsset(gameObjectControl, informationSSAE.PrefabControlAnimationSS6PU.TableName[0]);
+#else
 						UnityEngine.Object prefabControl = informationSSAE.PrefabControlAnimationSS6PU.TableData[0];
 						if(null == prefabControl)
 						{
@@ -4623,6 +4653,7 @@ public static partial class LibraryEditor_SpriteStudio6
 														prefabControl,
 														LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
 													);
+#endif
 						AssetDatabase.SaveAssets();
 
 						/* Destroy Temporary */
@@ -9452,13 +9483,25 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Create? Update? */
 					if(null == informationSSAE.PrefabAnimationUnityNative.TableData[0])
 					{	/* New */
+#if UNITY_2018_4_OR_NEWER
+						/* MEMO: Process nothing, now. */
+#else
 						informationSSAE.PrefabAnimationUnityNative.TableData[0] = PrefabUtility.CreateEmptyPrefab(informationSSAE.PrefabAnimationUnityNative.TableName[0]);
 						if(null == informationSSAE.PrefabAnimationUnityNative.TableData[0])
 						{
 							LogError(messageLogPrefix, "Failure to create Prefab", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 							goto AssetCreatePrefab_ErrorEnd;
 						}
+#endif
 					}
+#if UNITY_2018_4_OR_NEWER
+					else
+					{
+						informationSSAE.PrefabAnimationUnityNative.TableName[0] = AssetDatabase.GetAssetPath((GameObject)informationSSAE.PrefabAnimationUnityNative.TableData[0]);
+					}
+#else
+#endif
+
 
 					/* Set Root Information */
 					Script_SpriteStudio6_RootUnityNative scriptRoot = gameObjectRoot.GetComponent<Script_SpriteStudio6_RootUnityNative>();
@@ -9525,10 +9568,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					/* Fixing Prefab */
+#if UNITY_2018_4_OR_NEWER
+					informationSSAE.PrefabAnimationUnityNative.TableData[0] = PrefabUtility.SaveAsPrefabAsset(gameObjectRoot, informationSSAE.PrefabAnimationUnityNative.TableName[0]);
+#else
 					informationSSAE.PrefabAnimationUnityNative.TableData[0] = PrefabUtility.ReplacePrefab(	gameObjectRoot,
 																											informationSSAE.PrefabAnimationUnityNative.TableData[0],
 																											LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
 																										);
+#endif
 					AssetDatabase.SaveAssets();
 
 					/* Destroy Temporary */
@@ -9552,6 +9599,18 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* Create Prefab */
 						gameObjectControl.SetActive(true);
 
+#if UNITY_2018_4_OR_NEWER
+						UnityEngine.Object prefabControl = informationSSAE.PrefabControlAnimationUnityNative.TableData[0];
+						if(null == prefabControl)
+						{
+							/* MEMO: Process nothing, now. */
+						}
+						else
+						{
+							informationSSAE.PrefabControlAnimationUnityNative.TableName[0] = AssetDatabase.GetAssetPath(prefabControl);
+						}
+						informationSSAE.PrefabControlAnimationUnityNative.TableData[0] = PrefabUtility.SaveAsPrefabAsset(gameObjectControl, informationSSAE.PrefabControlAnimationUnityNative.TableName[0]);
+#else
 						UnityEngine.Object prefabControl = informationSSAE.PrefabControlAnimationUnityNative.TableData[0];
 						if(null == prefabControl)
 						{
@@ -9561,6 +9620,7 @@ public static partial class LibraryEditor_SpriteStudio6
 														prefabControl,
 														LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
 													);
+#endif
 						AssetDatabase.SaveAssets();
 
 						/* Destroy Temporary */
