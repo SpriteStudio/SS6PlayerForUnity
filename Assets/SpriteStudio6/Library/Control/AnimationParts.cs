@@ -862,7 +862,10 @@ public static partial class Library_SpriteStudio6
 												ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 											)
 				{
-					if((true == controlTrack.StatusIsIgnoreUserData) || (false == controlTrack.StatusIsDecodeAttribute) || (null == instanceRoot.FunctionUserData))
+					if(	(true == controlTrack.StatusIsIgnoreUserData)
+						|| (true == controlTrack.StatusIsIgnoreNextUpdateUserData)
+						|| (false == controlTrack.StatusIsDecodeAttribute)
+						|| (null == instanceRoot.FunctionUserData))
 					{	/* No Need to decode UserData-s */
 						return;
 					}

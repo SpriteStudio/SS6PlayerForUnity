@@ -106,6 +106,13 @@ public static partial class Library_SpriteStudio6
 						return(0 != (Status & FlagBitStatus.IGNORE_SKIPLOOP));
 					}
 				}
+				internal bool StatusIsIgnoreNextUpdateUserData
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA));
+					}
+				}
 				internal bool StatusIsTransitionStart
 				{
 					get
@@ -323,6 +330,7 @@ public static partial class Library_SpriteStudio6
 
 					Status |= FlagBitStatus.PLAYING;
 					Status |= FlagBitStatus.PLAYING_START;
+					Status &= ~FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA;
 
 					FrameRange = (FrameEnd - FrameStart) + 1;
 					TimeRange = (float)FrameRange * TimePerFrame;
@@ -730,7 +738,11 @@ public static partial class Library_SpriteStudio6
 //				{
 //					if((FlagBitStatus.VALID | FlagBitStatus.PLAYING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)))
 //					{	/* Not-Playing */
-//						Status &= ~(FlagBitStatus.PLAYING_START | FlagBitStatus.DECODE_ATTRIBUTE | FlagBitStatus.TRANSITION_START);
+//						Status &= ~(	FlagBitStatus.PLAYING_START
+//										| FlagBitStatus.DECODE_ATTRIBUTE
+//										| FlagBitStatus.TRANSITION_START
+//										| FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA
+//									);
 //					}
 //					TimeElapseReplacement = 0.0f;
 //				}
@@ -948,6 +960,7 @@ public static partial class Library_SpriteStudio6
 
 					IGNORE_USERDATA = 0x00000800,
 					IGNORE_SKIPLOOP = 0x00000400,
+					IGNORE_NEXTUPDATE_USERDATA = 0x00000200,
 
 					TRANSITION_START = 0x00000080,
 					TRANSITION_CANCEL_PAUSE = 0x00000040,
