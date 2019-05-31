@@ -73,19 +73,17 @@ public partial class Script_SpriteStudio6_Root
 
 		if(0 > indexTrack)
 		{
-			bool flagPlay = false;
 			for(int i=0; i<countTrack; i++)
 			{
-				if(true == TableControlTrack[indexTrack].StatusIsPlaying)
+				if(true == TableControlTrack[i].StatusIsPlaying)
 				{
-					flagPlay |= true;
-					if(false == TableControlTrack[indexTrack].StatusIsPausing)
+					if(true == TableControlTrack[i].StatusIsPausing)
 					{
-						return(false);
+						return(true);
 					}
 				}
 			}
-			return(flagPlay);
+			return(false);
 		}
 
 		if(countTrack <= indexTrack)
@@ -551,6 +549,227 @@ public partial class Script_SpriteStudio6_Root
 		}
 
 		return(TableControlTrack[indexTrack].TimesPlay);
+	}
+
+	/* ******************************************************** */
+	//! Get range of Track-Cursor
+	/*!
+	@param	indexTrack
+		Track index (0 origin)
+	@retval	Return-Value
+		Track-Cursor range<br>
+		float.Nan == Error / Not playing
+
+	Gets Track-Cursor's maximum value in now-playing animation.<br>
+	"Track-Cursor" is position of now-playing animation's timeline.<br>
+	As a matter of fact, "Track-Cursor" is the value from "0.0" to
+		"animation timeline length (seconds)".(The Absolute time of
+		the position on timeline)<br>
+	However, when the animation is played round-trip(PINGPONG),
+		the range is doubled and "Track- Cursor" value also differs
+		between forward and return.<br>
+	*/
+	public float RangeGetCursor(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(float.NaN);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(float.NaN);
+		}
+
+		if(false == TableControlTrack[indexTrack].StatusIsPlaying)
+		{
+			return(float.NaN);
+		}
+
+		float timeRange = TableControlTrack[indexTrack].TimeRange;
+		if(true == TableControlTrack[indexTrack].StatusIsPlayStylePingpong)
+		{	/* Play-Style: PingPong */
+			timeRange *= 2.0f;
+		}
+		return(timeRange);
+	}
+
+	/* ******************************************************** */
+	//! Get Track-Cursor
+	/*!
+	@param	indexTrack
+		Track index (0 origin)
+	@retval	Return-Value
+		Track-Cursor (Seek point)<br>
+		-1.0f == Waiting for stating animation. (in delay)<br>
+		float.NaN == Error / Not playing
+
+	Get Track-Cursor of now-playing animation.<br>
+	When play-status is "waiting to start" due to conditions such
+		as data, this function returns -1.0f.<br>
+	*/
+	public float CursorGet(int indexTrack)
+	{
+		if(null == TableControlTrack)
+		{
+			return(float.NaN);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(float.NaN);
+		}
+
+		if(false == TableControlTrack[indexTrack].StatusIsPlaying)
+		{
+			return(float.NaN);
+		}
+		if(0.0f < TableControlTrack[indexTrack].TimeDelay)
+		{	/* In delay */
+			return(-1.0f);
+		}
+
+		float timeCursor = TableControlTrack[indexTrack].TimeElapsed;
+		if(true == TableControlTrack[indexTrack].StatusIsPlayStylePingpong)
+		{	/* Play-Style: PingPong */
+			if(TableControlTrack[indexTrack].StatusIsPlayingReverse != TableControlTrack[indexTrack].StatusIsPlayStyleReverse)
+			{	/* Return */
+				timeCursor += TableControlTrack[indexTrack].TimeRange;
+			}
+		}
+		return(timeCursor);
+	}
+
+	/* ******************************************************** */
+	//! Set Track-Cursor
+	/*!
+	@param	indexTrack
+		Track index (0 origin)
+	@param	cursor
+		Track-Cursor (Absolute time on animation's timeline)
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Set Track-Cursor of now-playing animation.<br>
+	This function is "CursorGet"'s paired function.<br>
+	When update animation at directry-after this function,
+		"User-Data"s between previous and new cursor is not
+		decode (ignored).<br>
+	<br>
+	Note: This function may change the specification in near future.<br>
+	*/
+	public bool CursorSet(int indexTrack, float cursor)
+	{
+		if((true == float.IsNaN(cursor)) || (0.0f > cursor))
+		{	/* Invalid value or In delay */
+			return(false);
+		}
+
+		if(null == TableControlTrack)
+		{
+			return(false);
+		}
+
+		int countTrack = TableControlTrack.Length;
+		if(0 > indexTrack)
+		{	/* All Tracks */
+			bool flagSucceed = false;
+			for(int i=0; i<countTrack; i++)
+			{
+				flagSucceed |= CursorSetMain(i, cursor);
+			}
+
+			return(flagSucceed);
+		}
+
+		if(countTrack <= indexTrack)	{
+			return(false);
+		}
+		CursorSetMain(indexTrack, cursor);
+
+		return(true);
+	}
+	private bool CursorSetMain(int indexTrack, float cursor)
+	{
+		if(false == TableControlTrack[indexTrack].StatusIsPlaying)
+		{
+			return(false);
+		}
+
+		float rangeCursor = TableControlTrack[indexTrack].TimeRange;
+		if(true == TableControlTrack[indexTrack].StatusIsPlayStylePingpong)
+		{	/* Play-Style: PingPong */
+			bool flagReverse = TableControlTrack[indexTrack].StatusIsPlayStyleReverse;
+			if(rangeCursor <= cursor)
+			{	/* Return */
+				cursor -= rangeCursor;
+				flagReverse = !flagReverse;
+			}
+			if(true == flagReverse)
+			{
+				TableControlTrack[indexTrack].Status |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_REVERSE;
+			}
+			else
+			{
+				TableControlTrack[indexTrack].Status &= ~Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.PLAYING_REVERSE;
+			}
+		}
+
+		if(rangeCursor < cursor)
+		{	/* Range Over */
+			return(false);
+		}
+
+		/* MEMO: No decode User-Data as the elapsed section is abnormal. */
+		TableControlTrack[indexTrack].Status |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA;
+		TableControlTrack[indexTrack].TimeElapsed = cursor;
+
+		return(true);
+	}
+
+	/* ******************************************************** */
+	//! Snap Track-Cursor to frame.
+	/*!
+	@param	indexTrack
+		Track index (0 origin)
+	@param	cursor
+		Track-Cursor
+	@retval	Return-Value
+		Snapped value of Track-Cursor<br>
+		float.NaN == Error / Not playing
+
+	Snaps Track-Cursor to a frame.<br>
+	Calculated according to FPS of now-playing animation.<br>
+	<br>
+	Note: This function may change the specification in near future.<br>
+	*/
+	public float CursorSnapFrame(int indexTrack, float cursor)
+	{
+		if((true == float.IsNaN(cursor)) || (0.0f > cursor))
+		{	/* Invalid value or In delay */
+			return(float.NaN);
+		}
+
+		if(null == TableControlTrack)
+		{
+			return(float.NaN);
+		}
+
+		if((0 > indexTrack) || (TableControlTrack.Length <= indexTrack))
+		{
+			return(float.NaN);
+		}
+
+		if(false == TableControlTrack[indexTrack].StatusIsPlaying)
+		{
+			return(float.NaN);
+		}
+
+		float frameFloat = cursor * (float)TableControlTrack[indexTrack].FramePerSecond;
+		int frame = (int)((true == TableControlTrack[indexTrack].StatusIsPlayingReverse) ? Mathf.Ceil(frameFloat) : Mathf.Floor(frameFloat));
+
+		return((float)frame * TableControlTrack[indexTrack].TimePerFrame);
 	}
 	#endregion Functions
 }
