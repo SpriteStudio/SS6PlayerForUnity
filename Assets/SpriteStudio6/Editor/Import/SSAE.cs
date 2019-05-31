@@ -4320,7 +4320,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Create? Update? */
 					if(null == informationSSAE.PrefabAnimationSS6PU.TableData[0])
 					{	/* New */
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 						/* MEMO: Process nothing, now. */
 #else
 						informationSSAE.PrefabAnimationSS6PU.TableData[0] = PrefabUtility.CreateEmptyPrefab(informationSSAE.PrefabAnimationSS6PU.TableName[0]);
@@ -4335,7 +4335,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					{	/* Exist */
 						/* MEMO: Do not instantiate old prefabs. Instantiates up to objects under control, and mixed in updated prefab. */
 						gameObjectRoot = (GameObject)informationSSAE.PrefabAnimationSS6PU.TableData[0];
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 						informationSSAE.PrefabAnimationSS6PU.TableName[0] = AssetDatabase.GetAssetPath(gameObjectRoot);
 #else
 #endif
@@ -4600,7 +4600,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					gameObjectRoot.SetActive(true);
 
 					/* Fixing Prefab */
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 					informationSSAE.PrefabAnimationSS6PU.TableData[0] = PrefabUtility.SaveAsPrefabAsset(gameObjectRoot, informationSSAE.PrefabAnimationSS6PU.TableName[0]);
 #else
 					informationSSAE.PrefabAnimationSS6PU.TableData[0] = PrefabUtility.ReplacePrefab(	gameObjectRoot,
@@ -4632,7 +4632,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* Create Prefab */
 						gameObjectControl.SetActive(true);
 
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 						UnityEngine.Object prefabControl = informationSSAE.PrefabControlAnimationSS6PU.TableData[0];
 						if(null == prefabControl)
 						{
@@ -9483,7 +9483,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Create? Update? */
 					if(null == informationSSAE.PrefabAnimationUnityNative.TableData[0])
 					{	/* New */
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 						/* MEMO: Process nothing, now. */
 #else
 						informationSSAE.PrefabAnimationUnityNative.TableData[0] = PrefabUtility.CreateEmptyPrefab(informationSSAE.PrefabAnimationUnityNative.TableName[0]);
@@ -9494,7 +9494,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 #endif
 					}
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 					else
 					{
 						informationSSAE.PrefabAnimationUnityNative.TableName[0] = AssetDatabase.GetAssetPath((GameObject)informationSSAE.PrefabAnimationUnityNative.TableData[0]);
@@ -9568,7 +9568,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					/* Fixing Prefab */
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 					informationSSAE.PrefabAnimationUnityNative.TableData[0] = PrefabUtility.SaveAsPrefabAsset(gameObjectRoot, informationSSAE.PrefabAnimationUnityNative.TableName[0]);
 #else
 					informationSSAE.PrefabAnimationUnityNative.TableData[0] = PrefabUtility.ReplacePrefab(	gameObjectRoot,
@@ -9599,7 +9599,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* Create Prefab */
 						gameObjectControl.SetActive(true);
 
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 						UnityEngine.Object prefabControl = informationSSAE.PrefabControlAnimationUnityNative.TableData[0];
 						if(null == prefabControl)
 						{

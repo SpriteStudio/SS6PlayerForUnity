@@ -1116,7 +1116,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Create? Update? */
 					if(null == informationSSEE.PrefabEffectSS6PU.TableData[0])
 					{	/* New */
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 						/* MEMO: Process nothing, now. */
 #else
 						informationSSEE.PrefabEffectSS6PU.TableData[0] = PrefabUtility.CreateEmptyPrefab(informationSSEE.PrefabEffectSS6PU.TableName[0]);
@@ -1132,7 +1132,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					{	/* Exist */
 						/* MEMO: Do not instantiate old prefabs. Instantiates up to objects under control, and mixed in updated prefab. */
 						gameObjectRoot = (GameObject)informationSSEE.PrefabEffectSS6PU.TableData[0];
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 						informationSSEE.PrefabEffectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(gameObjectRoot);
 #else
 #endif
@@ -1174,7 +1174,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					gameObjectRoot.SetActive(true);
 
 					/* Fixing Prefab */
-#if UNITY_2018_4_OR_NEWER
+#if UNITY_2018_4_OR_NEWER || UNITY_2019_1_OR_NEWER
 					informationSSEE.PrefabEffectSS6PU.TableData[0] = PrefabUtility.SaveAsPrefabAsset(gameObjectRoot, informationSSEE.PrefabEffectSS6PU.TableName[0]);
 #else
 					informationSSEE.PrefabEffectSS6PU.TableData[0] = PrefabUtility.ReplacePrefab(	gameObjectRoot,
