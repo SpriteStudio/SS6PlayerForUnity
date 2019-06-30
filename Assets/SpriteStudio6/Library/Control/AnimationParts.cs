@@ -1260,10 +1260,11 @@ public static partial class Library_SpriteStudio6
 					if(0 != (ParameterSprite.Status & BufferParameterSprite.FlagBitStatus.UPDATE_COLLIDERRECTANGLE_NOWFRAME))
 					{
 						/* MEMO: "Local-Scale" does not affect "Circle Collision". */
-						Vector2 sizeSprite = ParameterSprite.SizeSprite;
-						Vector2 pivotSprite = ParameterSprite.PivotSprite;
+						Vector3 sizeSprite = ParameterSprite.SizeSprite;
+						Vector3 pivotSprite = ParameterSprite.PivotSprite;
 						pivotSprite -= sizeSprite * 0.5f;
 						pivotSprite.x *= -1.0f;
+						sizeSprite.z = instanceRoot.DataAnimation.TableParts[idParts].SizeCollisionZ;
 
 						InstanceScriptCollider.ColliderSetRectangle(ref sizeSprite, ref pivotSprite);
 
@@ -2128,6 +2129,8 @@ public static partial class Library_SpriteStudio6
 					#region Functions
 					internal void CleanUp()
 					{
+						Status = FlagBitStatus.CLEAR;
+
 						MaterialDraw = null;
 						CoordinateTransformDraw = null;
 						CoordinateDraw = null;
@@ -2148,7 +2151,13 @@ public static partial class Library_SpriteStudio6
 
 					internal void AnimationChange(bool flagClearDataCellApply)
 					{
-						Status = FlagBitStatus.CLEAR;
+						/* MEMO: Do not clear dynamic flipping. */
+//						Status = FlagBitStatus.CLEAR;
+						Status &= (	FlagBitStatus.FLIP_COEFFICIENT_X
+									| FlagBitStatus.FLIP_COEFFICIENT_Y
+									| FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_X
+									| FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_Y
+								);
 
 						DataStatusPrevious.CleanUp();
 
@@ -2401,7 +2410,17 @@ public static partial class Library_SpriteStudio6
 					internal void StatusSetFlip(ref Library_SpriteStudio6.Data.Animation.Attribute.Status status)
 					{
 						/* Update Check */
+						Library_SpriteStudio6.Data.Animation.Attribute.Status statusNow = status;
 						Library_SpriteStudio6.Data.Animation.Attribute.Status statusUpdate = new Library_SpriteStudio6.Data.Animation.Attribute.Status();
+						Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit statusAdditionalFlip = (Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit)(
+							(int)(Status & (	FlagBitStatus.FLIP_COEFFICIENT_X
+												| FlagBitStatus.FLIP_COEFFICIENT_Y
+												| FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_X
+												| FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_Y
+											)
+									) << (int)FlagShiftStatus.FLIP_COEFFICIENT_TO_ATTRIBUTE
+							);
+						statusNow.Flags ^= statusAdditionalFlip;
 						if(false == DataStatusPrevious.IsValid)
 						{
 							statusUpdate.Flags =	Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.HIDE
@@ -2413,8 +2432,10 @@ public static partial class Library_SpriteStudio6
 						else
 						{
 							/* MEMO: Extract only changed bits. */
-							statusUpdate.Flags = DataStatusPrevious.Flags ^ status.Flags;
+//							statusUpdate.Flags = DataStatusPrevious.Flags ^ status.Flags;
+							statusUpdate.Flags = DataStatusPrevious.Flags ^ statusNow.Flags;
 						}
+
 						if(0 != (statusUpdate.Flags & (	Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_X
 														| Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_TEXTURE_Y
 													)
@@ -2431,11 +2452,13 @@ public static partial class Library_SpriteStudio6
 						{
 							Status |= FlagBitStatus.UPDATE_COORDINATE;
 						}
-						DataStatusPrevious.Flags = status.Flags;
+//						DataStatusPrevious.Flags = status.Flags;
+						DataStatusPrevious.Flags = statusNow.Flags;
 
 						/* Dicide Sprite's scale (Flipping) & Vertex Order */
 						IndexVertexCollectionTable = 0;
-						if(true == status.IsFlipX)
+//						if(true == status.IsFlipX)
+						if(true == statusNow.IsFlipX)
 						{
 							RateScaleMesh.x = -1.0f;
 							IndexVertexCollectionTable += 1;
@@ -2444,7 +2467,8 @@ public static partial class Library_SpriteStudio6
 						{
 							RateScaleMesh.x = 1.0f;
 						}
-						if(true == status.IsFlipY)
+//						if(true == status.IsFlipY)
+						if(true == statusNow.IsFlipY)
 						{
 							RateScaleMesh.y = -1.0f;
 							IndexVertexCollectionTable += 2;
@@ -2455,7 +2479,8 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Dicide Texture's scale (Flipping) */
-						if(true == status.IsTextureFlipX)
+//						if(true == status.IsTextureFlipX)
+						if(true == statusNow.IsTextureFlipX)
 						{
 							RateScaleTexture.x = -1.0f;
 						}
@@ -2463,7 +2488,8 @@ public static partial class Library_SpriteStudio6
 						{
 							RateScaleTexture.x = 1.0f;
 						}
-						if(true == status.IsTextureFlipY)
+//						if(true == status.IsTextureFlipY)
+						if(true == statusNow.IsTextureFlipY)
 						{
 							RateScaleTexture.y = -1.0f;
 						}
@@ -2843,10 +2869,23 @@ public static partial class Library_SpriteStudio6
 						if(0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_TRANSFORMATION_TEXTURE))
 						{	/* No Transform (Ordinary rectangle) */
 							Vector2 uLR = new Vector2(positionMapping.x, positionMapping.x + sizeMapping.x);
-							float mappingYInverse = SizeTexture.y - positionMapping.y;
-							Vector2 vUD = new Vector2(mappingYInverse, mappingYInverse - sizeMapping.y);
+							float tempFloat = SizeTexture.y - positionMapping.y;	/* mapping-Y Inverse */
+							Vector2 vUD = new Vector2(tempFloat, tempFloat - sizeMapping.y);
 							uLR /= SizeTexture.x;
 							vUD /= SizeTexture.y;
+
+							if(0.0f > RateScaleTexture.x)
+							{	/* Flip X */
+								tempFloat = uLR.x;
+								uLR.x = uLR.y;
+								uLR.y = tempFloat;
+							}
+							if(0.0f > RateScaleTexture.y)
+							{	/* Flip Y */
+								tempFloat = vUD.x;
+								vUD.x = vUD.y;
+								vUD.y = tempFloat;
+							}
 
 							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LU].x = uLR.x;
 							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LU].y = vUD.x;
@@ -3374,6 +3413,7 @@ public static partial class Library_SpriteStudio6
 										| FlagBitStatus.UPDATE_MASKING
 										| FlagBitStatus.UPDATE_DEFORM
 										| FlagBitStatus.UPDATE_TRANSFORM_TEXTURE
+//										| FlagBitStatus.UPDATE_FLIP_COEFFICIENT
 //										| FlagBitStatus.USE_ADDITIONALCOLOR		/* update in "UpdatePlain", so not erase here */
 								);
 						statusControlParts &= ~(	Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL
@@ -3409,11 +3449,21 @@ public static partial class Library_SpriteStudio6
 
 						/* for Plain (Normal/Mesh) */
 						UPDATE_TRANSFORM_TEXTURE = 0x00008000,
+//						UPDATE_FLIP_COEFFICIENT = 0x00004000,	/* FLIP_X,FLIP_Y,FLIP_TEXTURE_X or FLIP_TEXTURE_Y are updated. */
 
 						USE_ADDITIONALCOLOR_PREVIOUS = 0x00000800,
 						USE_ADDITIONALCOLOR = 0x00000400,
+						/* MEMO: Bit-order should be the same as "Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.FLIP_*". */
+						FLIP_COEFFICIENT_X = 0x00000080,	/* Normal(Sprite) Only */
+						FLIP_COEFFICIENT_Y = 0x00000040,	/* Normal(Sprite) Only */
+						FLIP_COEFFICIENT_TEXTURE_X = 0x00000020,	/* Normal(Sprite) Only */
+						FLIP_COEFFICIENT_TEXTURE_Y = 0x00000010,	/* Normal(Sprite) Only */
 
-						CLEAR = 0x00000000
+						CLEAR = 0x00000000,
+					}
+					internal enum FlagShiftStatus
+					{
+						FLIP_COEFFICIENT_TO_ATTRIBUTE = 20,	/* FlagBitStatus.Shift -> Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit */
 					}
 					#endregion Enums & Constants
 				}

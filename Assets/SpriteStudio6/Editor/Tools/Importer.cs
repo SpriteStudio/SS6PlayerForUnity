@@ -489,6 +489,30 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("Unchecked, identify by the same name(file and sub folder) as when first-import.");
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
+
+#if false
+				SettingImport.Basic.NoCreateMaterialUnreferenced = (LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.KindNoCreateMaterialUnreferenced)(EditorGUILayout.Popup("No-Create unreferenced materials", (int)SettingImport.Basic.NoCreateMaterialUnreferenced, NameNoCreateUnreferencedMaterial));
+#else
+				EditorGUILayout.LabelField("No-Create unreferenced Materials");
+				SettingImport.Basic.NoCreateMaterialUnreferenced = (LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.KindNoCreateMaterialUnreferenced)(EditorGUILayout.Popup(string.Empty, (int)SettingImport.Basic.NoCreateMaterialUnreferenced, NameNoCreateUnreferencedMaterial));
+#endif
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Materials unreferenced from all SSAE and SSEE are not created.");
+				EditorGUILayout.LabelField("Existing materials are remained.");
+				EditorGUILayout.LabelField("Check Blending: Determine only from parts' \"Blending Mode\".");
+				EditorGUILayout.LabelField("Check Blending and CellMap: Determine from parts' \"Blending Mode\" and \"Reference Cell\".");
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
+				if(LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.KindNoCreateMaterialUnreferenced.NONE != SettingImport.Basic.NoCreateMaterialUnreferenced)
+				{
+					SettingImport.Basic.FlagDeleteMaterialUnreferenced = EditorGUILayout.ToggleLeft("Delete unreferenced Materials", SettingImport.Basic.FlagDeleteMaterialUnreferenced);
+					EditorGUI.indentLevel = levelIndent + 1;
+					EditorGUILayout.LabelField("Materials unreferenced from created prefabs are deleted.");
+					EditorGUILayout.LabelField("Existing materials are also deleted.");
+					EditorGUI.indentLevel = levelIndent;
+					EditorGUILayout.Space();
+				}
 				break;
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
@@ -571,6 +595,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		SettingImport.Collider.FlagAttachRigidBody = EditorGUILayout.ToggleLeft("Attach Rigid-Body", SettingImport.Collider.FlagAttachRigidBody);
 		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.LabelField("Add \"Rigid-Body\" component when \"Collider\" component is attached to the GameObject of part.");
+		EditorGUILayout.Space();
+		EditorGUI.indentLevel = levelIndent;
+
+		SettingImport.Collider.FlagIsTrigger = EditorGUILayout.ToggleLeft("Set \"Is Trigger\"", SettingImport.Collider.FlagIsTrigger);
+		EditorGUI.indentLevel = levelIndent + 1;
 		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;
 
@@ -989,6 +1018,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		"Convert To Unity-Native",
 
 		"Batch Import",
+	};
+	private readonly static string[] NameNoCreateUnreferencedMaterial = new string[(int)LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.KindNoCreateMaterialUnreferenced.TERMINATOR] {
+		"None (Create all)",
+		"Check only Blending",
+		"Check Blending and CellMaps",
 	};
 
 	private const string NameAssetBody = "(FileName-Body)";

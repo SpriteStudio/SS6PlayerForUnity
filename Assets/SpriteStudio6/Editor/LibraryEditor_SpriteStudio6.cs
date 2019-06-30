@@ -253,6 +253,127 @@ public static partial class LibraryEditor_SpriteStudio6
 			int countSSAE = informationSSPJ.TableInformationSSAE.Length;
 			int countSSEE = informationSSPJ.TableInformationSSEE.Length;
 
+			/* Determine unused materials */
+			/* MEMO: Masking are not judged, because can not make the final decision.    */
+			/*       Determined by parent animation's usage (in "Instance" or "Effect"). */
+			/* MEMO: This flags(usage status) created here are finally reflected to "Import.Assets <Material> .FlagInUse" */
+			/*       in processing "Create Asset: Material" located behind.                                               */
+			bool[,] tableFlagUsedmaterialAnimation = new bool[countTexture, (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL];
+			bool[,] tableFlagUsedmaterialEffect = new bool[countTexture, (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL];
+			if(Setting.GroupBasic.KindNoCreateMaterialUnreferenced.NONE == setting.Basic.NoCreateMaterialUnreferenced)
+			{	/* Create all */
+				int indexSlot;
+				for(int i=0; i<countTexture; i++)
+				{
+					for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+					{
+						indexSlot = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
+						tableFlagUsedmaterialAnimation[i, indexSlot] = true;
+					}
+					for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+					{
+						indexSlot = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
+						tableFlagUsedmaterialEffect[i, indexSlot] = true;
+					}
+				}
+			}
+			else
+			{	/* Create limited */
+				bool flagOnlyBlend = (Setting.GroupBasic.KindNoCreateMaterialUnreferenced.BLENDING == setting.Basic.NoCreateMaterialUnreferenced);	/* ? true : false */
+				int indexSlot;
+				for(int i=0; i<countTexture; i++)
+				{
+					for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+					{
+						indexSlot = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
+						tableFlagUsedmaterialAnimation[i, indexSlot] = false;
+					}
+					for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+					{
+						indexSlot = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
+						tableFlagUsedmaterialEffect[i, indexSlot] = false;
+					}
+				}
+
+				/* Animation */
+				if(0 < countSSAE)
+				{
+					SSAE.Information informationSSAE = null;
+					int countInUse;
+					Library_SpriteStudio6.KindOperationBlend blend;
+					int indexCellMap;
+					int indexBlend;
+					int indexTexture;
+					for(int i=0; i<countSSAE; i++)
+					{
+						informationSSAE = informationSSPJ.TableInformationSSAE[i];
+						countInUse = informationSSAE.ListInUseCellMap.Count;
+						for(int j=0; j<countInUse; j++)
+						{
+							blend = informationSSAE.ListInUseCellMap[j].Blend;
+							indexBlend = (int)(blend - Library_SpriteStudio6.KindOperationBlend.INITIATOR);
+							indexCellMap = informationSSAE.ListInUseCellMap[j].IndexCellMap;
+							if(false == flagOnlyBlend)
+							{	/* Blend */
+								for(int k=0; k<countTexture; k++)
+								{
+									tableFlagUsedmaterialAnimation[k, indexBlend] = true;
+								}
+							}
+							else
+							{	/* Blend & CellMaps */
+								if(0 <= indexCellMap)
+								{
+									indexTexture = informationSSPJ.TableInformationSSCE[indexCellMap].IndexTexture;
+									if(0 <= indexTexture)
+									{
+										tableFlagUsedmaterialAnimation[indexTexture, indexBlend] = true;
+									}
+								}
+							}
+						}
+					}
+				}
+
+				/* Effect */
+				if(0 < countSSEE)
+				{
+					SSEE.Information informationSSEE = null;
+					int countInUse;
+					Library_SpriteStudio6.KindOperationBlendEffect blend;
+					int indexCellMap;
+					int indexTexture;
+					for(int i=0; i<countSSEE; i++)
+					{
+						informationSSEE = informationSSPJ.TableInformationSSEE[i];
+						countInUse = informationSSEE.ListInUseCellMap.Count;
+						for(int j=0; j<countInUse; j++)
+						{
+							blend = informationSSEE.ListInUseCellMap[j].Blend;
+							if(false == flagOnlyBlend)
+							{	/* Blend */
+								for(int k=0; k<countTexture; k++)
+								{
+									tableFlagUsedmaterialEffect[k, (int)blend] = true;
+								}
+							}
+							else
+							{	/* Blend & CellMaps */
+								indexCellMap = informationSSEE.ListInUseCellMap[j].IndexCellMap;
+								if(0 <= indexCellMap)
+								{
+									indexTexture = informationSSPJ.TableInformationSSCE[indexCellMap].IndexTexture;
+									if(0 <= indexTexture)
+									{
+										tableFlagUsedmaterialEffect[indexTexture, (int)blend] = true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
 			/* Create Asset: Texture */
 			/* MEMO: Create Texture-Assets before CellMap for "Trim Transparent-Pixel". */
 			if(0 < countTexture)
@@ -315,6 +436,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Create Materials */
 				SSCE.Information.Texture informationTexture = null;
 				int indexMaterial;
+				int indexMaterialInUse;
 				for(int i=0; i<countTexture; i++)
 				{
 					informationTexture = informationSSPJ.TableInformationTexture[i];
@@ -322,32 +444,44 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						for(int k=(int)Library_SpriteStudio6.KindMasking.THROUGH; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
 						{
+							/* MEMO: The materials'  in-use checking are in fixed to "THROUGH" because "Masking" is not consided. */
 							flagCreateAssetData = true;
 							indexMaterial = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, (Library_SpriteStudio6.KindMasking)k);
-
-							/* Create-Asset */
-							if(null == informationTexture.MaterialAnimationSS6PU.TableData[indexMaterial])
-							{	/* New */
-								/* Create Output Asset-Folder */
-								LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
-																					informationTexture.MaterialAnimationSS6PU.TableName[indexMaterial]
-																				);
-								if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
-								{
-									LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-									goto ExecSS6PU_ErrorEnd;
-								}
+							indexMaterialInUse = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
+								if(false == tableFlagUsedmaterialAnimation[i, indexMaterialInUse])
+							{	/* Unrefererced */
+								flagCreateAssetData = false;
+								informationTexture.MaterialAnimationSS6PU.FlagUpdate[indexMaterial] = false;
+								informationTexture.MaterialAnimationSS6PU.FlagInUse[indexMaterial] = false;
 							}
 							else
-							{	/* Exist */
-								if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialAnimation,
-																															informationTexture.MaterialAnimationSS6PU.TableName[indexMaterial],
-																															"Material Animation"
-																														)
-									)
-								{	/* Not overwrite */
-									flagCreateAssetData = false;
-									informationTexture.MaterialAnimationSS6PU.FlagUpdate[indexMaterial] = false;
+							{	/* Refererced */
+								informationTexture.MaterialAnimationSS6PU.FlagInUse[indexMaterial] = true;
+
+								/* Create-Asset */
+								if(null == informationTexture.MaterialAnimationSS6PU.TableData[indexMaterial])
+								{	/* New */
+									/* Create Output Asset-Folder */
+									LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																						informationTexture.MaterialAnimationSS6PU.TableName[indexMaterial]
+																					);
+									if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+									{
+										LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+										goto ExecSS6PU_ErrorEnd;
+									}
+								}
+								else
+								{	/* Exist */
+									if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialAnimation,
+																																informationTexture.MaterialAnimationSS6PU.TableName[indexMaterial],
+																																"Material Animation"
+																															)
+										)
+									{	/* Not overwrite */
+										flagCreateAssetData = false;
+										informationTexture.MaterialAnimationSS6PU.FlagUpdate[indexMaterial] = false;
+									}
 								}
 							}
 
@@ -378,6 +512,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Create Materials */
 				SSCE.Information.Texture informationTexture = null;
 				int indexMaterial;
+				int indexMaterialInUse;
 				for(int i=0; i<countTexture; i++)
 				{
 					informationTexture = informationSSPJ.TableInformationTexture[i];
@@ -385,32 +520,44 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						for(int k=(int)Library_SpriteStudio6.KindMasking.THROUGH; k<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; k++)
 						{
+							/* MEMO: The materials'  in-use checking are in fixed to "THROUGH" because "Masking" is not consided. */
 							flagCreateAssetData = true;
 							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, (Library_SpriteStudio6.KindMasking)k);
-
-							/* Create-Asset */
-							if(null == informationTexture.MaterialEffectSS6PU.TableData[indexMaterial])
-							{	/* New */
-								/* Create Output Asset-Folder */
-								LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
-																					informationTexture.MaterialEffectSS6PU.TableName[indexMaterial]
-																				);
-								if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
-								{
-									LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-									goto ExecSS6PU_ErrorEnd;
-								}
+							indexMaterialInUse = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
+							if(false == tableFlagUsedmaterialEffect[i, indexMaterialInUse])
+							{	/* Unrefererced */
+								flagCreateAssetData = false;
+								informationTexture.MaterialEffectSS6PU.FlagUpdate[indexMaterial] = false;
+								informationTexture.MaterialEffectSS6PU.FlagInUse[indexMaterial] = false;
 							}
 							else
-							{	/* Exist */
-								if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialEffect,
-																															informationTexture.MaterialEffectSS6PU.TableName[indexMaterial],
-																															"Material Effect"
-																														)
-									)
-								{	/* Not overwrite */
-									flagCreateAssetData = false;
-									informationTexture.MaterialEffectSS6PU.FlagUpdate[indexMaterial] = false;
+							{	/* Refererced */
+								informationTexture.MaterialEffectSS6PU.FlagInUse[indexMaterial] = true;
+
+								/* Create-Asset */
+								if(null == informationTexture.MaterialEffectSS6PU.TableData[indexMaterial])
+								{	/* New */
+									/* Create Output Asset-Folder */
+									LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																						informationTexture.MaterialEffectSS6PU.TableName[indexMaterial]
+																					);
+									if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+									{
+										LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+										goto ExecSS6PU_ErrorEnd;
+									}
+								}
+								else
+								{	/* Exist */
+									if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagMaterialEffect,
+																																informationTexture.MaterialEffectSS6PU.TableName[indexMaterial],
+																																"Material Effect"
+																															)
+										)
+									{	/* Not overwrite */
+										flagCreateAssetData = false;
+										informationTexture.MaterialEffectSS6PU.FlagUpdate[indexMaterial] = false;
+									}
 								}
 							}
 
@@ -509,6 +656,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			/* Pick up Materials */
 			if(false == SSPJ.ModeSS6PU.MaterialPickUp(ref setting, informationSSPJ))
+			{
+				goto ExecSS6PU_ErrorEnd;
+			}
+
+			/* Delete unreferenced Materials */
+			if(false == SSPJ.ModeSS6PU.MaterialDeleteUnreferenced(ref setting, informationSSPJ))
 			{
 				goto ExecSS6PU_ErrorEnd;
 			}
@@ -1050,6 +1203,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
 			public bool[] FlagUpdate;
+			public bool[] FlagInUse;						/* MEMO: Basically used only in materials */
 			public int[] Version;
 			public string[] TableName;
 			public _Type[] TableData;
@@ -1060,6 +1214,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			public void CleanUp()
 			{
 				FlagUpdate = null;
+				FlagInUse = null;
 				Version = null;
 				TableName = null;
 				TableData = null;
@@ -1068,12 +1223,14 @@ public static partial class LibraryEditor_SpriteStudio6
 			public void BootUp(int count)
 			{
 				FlagUpdate = new bool[count];
+				FlagInUse = new bool[count];
 				Version = new int[count];
 				TableName = new string[count];
 				TableData = new _Type[count];
 				for(int i=0; i<count; i++)
 				{
 					FlagUpdate[i] = true;
+					FlagInUse[i] = true;
 					Version[i] = -1;
 					TableName[i] = null;
 					TableData[i] = null;

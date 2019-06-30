@@ -200,6 +200,213 @@ public partial class Script_SpriteStudio6_Root
 
 		return(DataAnimation.TableParts[idParts].LabelColor.Color);
 	}
+
+	/* ******************************************************** */
+	//! Set coefficient for parts' flipping
+	/*!
+	@param	idParts
+		Parts-ID
+	@param	scaleLocalX
+		Coefficient to attribute "Holizontal Flip"<br>
+		true == Flip<br>
+		false == Not Flip
+	@param	scaleLocalY
+		Coefficient to attribute "Vertical Flip"<br>
+		true == Flip<br>
+		false == Not Flip
+	@param	flagFlipImageX
+		Coefficient to attribute "Image H Flip"<br>
+		true == Flip<br>
+		false == Not Flip
+	@param	flagFlipImageY
+		Coefficient to attribute "Image V Flip"<br>
+		true == Flip<br>
+		false == Not Flip
+	@param	flagInvolveChild
+		true == Also set to child-parts<br>
+		false == Set to Only specified part
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Set coefficient for parts' flipping.<br>
+	Values affects additional to animation data. (not "Overwriting")<br>
+	Each corresponds to the following SpriteStudio6's attribute.<br>
+	- flagFlipX : Holizontal Flip (Same as "Local Scale X *= -1.0f")<br>
+	- flagFlipY : Vertical Flip (Same as "Local Scale Y *= -1.0f")<br>
+	- flagFlipImageX : Image H Flip<br>
+	- flagFlipImageY : Image V Flip<br>
+	<br>
+	This function can use to parts type "Normal" or "Mask".<br>
+	Otherwise error(false) is returned.<br>
+	When "flagInvolveChild" is true, same values are set to settable parts in all child-parts.<br>
+	And always return success(true).<br>
+	*/
+	public bool FlipSetParts(int idParts, bool flagFlipX, bool flagFlipY, bool flagFlipImageX, bool flagFlipImageY, bool flagInvolveChild=false)
+	{
+		int countParts = CountGetParts();
+		if(0 >= countParts)
+		{	/* Has no parts */
+			return(false);
+		}
+		if((0 > idParts) || (countParts <= idParts))
+		{	/* Invalid ID */
+			return(false);
+		}
+
+		Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus flags = Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.CLEAR;
+		if(true == flagFlipX)
+		{
+			flags |= Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_X;
+		}
+		if(true == flagFlipY)
+		{
+			flags |= Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_Y;
+		}
+		if(true == flagFlipImageX)
+		{
+			flags |= Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_X;
+		}
+		if(true == flagFlipImageY)
+		{
+			flags |= Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_Y;
+		}
+
+		return(CoefficientSetScalePartsMain(idParts, flags, flagInvolveChild));
+	}
+	private bool CoefficientSetScalePartsMain(int idParts, Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus flags, bool flagInvolveChild)
+	{
+		bool flagSettable = false;
+		switch(DataAnimation.TableParts[idParts].Feature)
+		{
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+//				flagSettable = false;
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+				flagSettable = true;
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+//				flagSettable = false;
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+				flagSettable = true;
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+			default:
+//				flagSettable = false;
+				break;
+		}
+
+		if(true == flagSettable)
+		{
+			TableControlParts[idParts].ParameterSprite.Status &= ~(	Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_X
+																	| Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_Y
+																	| Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_X
+																	| Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_Y
+																);
+//			TableControlParts[idParts].ParameterSprite.Status |= flags | Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.UPDATE_FLIP_COEFFICIENT;
+			TableControlParts[idParts].ParameterSprite.Status |= flags;
+		}
+
+		if(true == flagInvolveChild)
+		{
+			int[] tableIDChild = DataAnimation.TableParts[idParts].TableIDChild;
+			int countChild = tableIDChild.Length;
+			for(int i=0; i<countChild; i++)
+			{
+				/* MEMO: Ignore errors. Because child-parts are not always settable. */
+				CoefficientSetScalePartsMain(tableIDChild[i], flags, true);
+			}
+			return(true);	/* Always true */
+		}
+
+		return(flagSettable);
+	}
+
+	/* ******************************************************** */
+	//! Get coefficient for parts' flipping.<br>
+	/*!
+	@param	flagFlipX
+		(Output) Coefficient to attribute "Holizontal Flip"
+	@param	flagFlipY
+		(Output) Coefficient to attribute "Vertical Flip"
+	@param	flagFlipImageX
+		(Output) Coefficient to attribute "Image H Flip"
+	@param	flagFlipImageY
+		(Output) Coefficient to attribute "Image V Flip"
+	@param	idParts
+		Parts-ID
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Get coefficient for parts' flipping.<br>
+	*/
+	public bool FlipGetParts(out bool flagFlipX, out bool flagFlipY, out bool flagFlipImageX, out bool flagFlipImageY, int idParts)
+	{
+		int countParts = CountGetParts();
+		if(0 >= countParts)
+		{	/* Has no parts */
+			goto CoefficientGetScaleParts_ErrorEnd;
+		}
+		if((0 > idParts) || (countParts <= idParts))
+		{	/* Invalid ID */
+			goto CoefficientGetScaleParts_ErrorEnd;
+		}
+
+		switch(DataAnimation.TableParts[idParts].Feature)
+		{
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+				goto CoefficientGetScaleParts_ErrorEnd;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+				goto CoefficientGetScaleParts_ErrorEnd;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+			default:
+				goto CoefficientGetScaleParts_ErrorEnd;
+		}
+
+		Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus flags = TableControlParts[idParts].ParameterSprite.Status;
+		flagFlipX = (0 != (flags & Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_X));	/* ? true : false */
+		flagFlipY = (0 != (flags & Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_Y));	/* ? true : false */
+		flagFlipImageX = (0 != (flags & Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_X));	/* ? true : false */
+		flagFlipImageY = (0 != (flags & Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.FlagBitStatus.FLIP_COEFFICIENT_TEXTURE_Y));	/* ? true : false */
+
+		return(true);
+
+	CoefficientGetScaleParts_ErrorEnd:;
+		flagFlipX = false;
+		flagFlipY = false;
+		flagFlipImageX = false;
+		flagFlipImageY = false;
+
+		return(false);
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Classes, Structs & Interfaces */

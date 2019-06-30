@@ -22,8 +22,8 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 	private float Radius = 1.0f;	/* Initial value set by importer */
 
 	public BoxCollider InstanceColliderBox;
-	private Vector2 SizeRectangle = Vector2.one;	/* Initial value set by importer */
-	private Vector2 PivotRectangle = Vector2.zero;	/* Initial value set by importer */
+	private Vector3 SizeRectangle = Vector3.one;	/* Initial value set by importer */
+	private Vector3 PivotRectangle = Vector3.zero;	/* Initial value set by importer */
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -34,8 +34,15 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 
 	void Start()
 	{
-		SizeRectangle = InstanceColliderBox.size;
-		PivotRectangle = InstanceColliderBox.center;
+		if(null != InstanceColliderBox)
+		{
+			SizeRectangle = InstanceColliderBox.size;
+			PivotRectangle = InstanceColliderBox.center;
+		}
+		if(null != InstanceColliderCapsule)
+		{
+			Radius = InstanceColliderCapsule.radius;
+		}
 	}
 
 //	void Update()
@@ -51,7 +58,7 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderEnter))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderEnter(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
+			InstanceRoot.FunctionColliderEnter(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, pair);
 		}
 	}
 
@@ -60,7 +67,7 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderExit))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderExit(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
+			InstanceRoot.FunctionColliderExit(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, pair);
 		}
 	}
 
@@ -69,7 +76,7 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderStay))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderStay(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, pair);
+			InstanceRoot.FunctionColliderStay(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, pair);
 		}
 	}
 
@@ -78,7 +85,7 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionEnter))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionEnter(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
+			InstanceRoot.FunctionCollisionEnter(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, contacts);
 		}
 	}
 
@@ -87,7 +94,7 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionExit))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionExit(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
+			InstanceRoot.FunctionCollisionExit(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, contacts);
 		}
 	}
 
@@ -96,7 +103,7 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionStay))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionStay(InstanceRoot, InstanceGamaObject.name, IDParts, InstanceCollider, contacts);
+			InstanceRoot.FunctionCollisionStay(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, contacts);
 		}
 	}
 	#endregion MonoBehaviour-Functions
@@ -139,7 +146,7 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		return(true);
 	}
 
-	internal bool ColliderSetRectangle(ref Vector2 size, ref Vector2 pivot)
+	internal bool ColliderSetRectangle(ref Vector3 size, ref Vector3 pivot)
 	{
 		BootUp();
 		if(null == InstanceColliderBox)
