@@ -132,6 +132,12 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 				informationSSEE.CleanUp();
 				informationSSEE.Version = version;
+				informationSSEE.ListInUseCellMap = new List<Information.InUseCellMap>();
+				if(null == informationSSEE.ListInUseCellMap)
+				{
+					LogError(messageLogPrefix, "Not Enough Memory (In-use Cell-Map list)", nameFile, informationSSPJ);
+					goto Parse_ErrorEnd;
+				}
 
 				/* Get Base-Directories */
 				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out informationSSEE.NameDirectory, out informationSSEE.NameFileBody, out informationSSEE.NameFileExtension, nameFile);
@@ -408,6 +414,12 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					valueText = informationSSPJ.PathGetAbsolute(valueText, LibraryEditor_SpriteStudio6.Import.KindFile.SSCE);
 					informationEmitter.Data.IndexCellMap = informationSSPJ.IndexGetFileName(informationSSPJ.TableNameSSCE, valueText);
+
+					/* Add to In-use-Cell-Map information */
+					if(0 <= informationEmitter.Data.IndexCellMap)
+					{
+						informationSSEE.InUseCellMapAdd(informationEmitter.Data.IndexCellMap, informationEmitter);
+					}
 				}
 				informationEmitter.Data.IndexCell = -1;
 
@@ -875,6 +887,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public Parts[] TableParts;
 
+				public List<InUseCellMap> ListInUseCellMap;
+
 				public Library_SpriteStudio6.Data.Parts.Effect[] TablePartsSS6PU;
 				public Library_SpriteStudio6.Data.Effect.Emitter[] TableEmitterSS6PU;
 				public int[] TableIndexEmitterOrderDrawSS6PU;
@@ -901,6 +915,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					TableParts = null;
 
+					ListInUseCellMap = null;
+
 					TablePartsSS6PU = null;
 					TableEmitterSS6PU = null;
 					TableIndexEmitterOrderDrawSS6PU = null;
@@ -926,6 +942,18 @@ public static partial class LibraryEditor_SpriteStudio6
 
 //				EmitterLimit_ErrorEnd:;
 //					return(false);
+				}
+
+				public void InUseCellMapAdd(int indexCellMap, Parts.Emitter informationEmitter)
+				{
+					InUseCellMap value = new InUseCellMap();
+					value.IndexCellMap = indexCellMap;
+					value.Blend = informationEmitter.Data.OperationBlendTarget;
+
+					if(false == ListInUseCellMap.Contains(value))
+					{
+						ListInUseCellMap.Add(value);
+					}
 				}
 				#endregion Functions
 
@@ -992,6 +1020,24 @@ public static partial class LibraryEditor_SpriteStudio6
 						#endregion Functions
 					}
 					#endregion Classes, Structs & Interfaces
+				}
+
+				public struct InUseCellMap
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public int IndexCellMap;
+					public Library_SpriteStudio6.KindOperationBlendEffect Blend;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						IndexCellMap = -1;
+						Blend = Library_SpriteStudio6.KindOperationBlendEffect.MIX;
+					}
+					#endregion Functions
 				}
 				#endregion Classes, Structs & Interfaces
 			}

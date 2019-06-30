@@ -974,7 +974,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					if(null == material)
 					{
 						material = AssetCreateMaterialAnimationNewMaterial(ref setting, informationSSPJ, informationTexture, operationTarget, masking);
-
 						if(null == material)
 						{
 							goto AssetCreateMaterialAnimation_ErrorEnd;

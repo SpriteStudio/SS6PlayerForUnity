@@ -91,8 +91,8 @@ public static partial class LibraryEditor_SpriteStudio6
 			public string[] Export(	bool flagExportCommon,
 									bool flagExportBasic,
 									bool flagExportPrecalculation,
-									bool flagExportConfirmOverWrite,
 									bool flagExportCollider,
+									bool flagExportConfirmOverWrite,
 									bool flagExportCheckVersion,
 									bool flagExportRuleNameAsset,
 									bool flagExportRuleNameAssetFolder,
@@ -291,8 +291,8 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagExportCommon,
 									bool flagExportBasic,
 									bool flagExportPrecalculation,
-									bool flagExportConfirmOverWrite,
 									bool flagExportCollider,
+									bool flagExportConfirmOverWrite,
 									bool flagExportCheckVersion,
 									bool flagExportRuleNameAsset,
 									bool flagExportRuleNameAssetFolder,
@@ -312,8 +312,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					string[] textLine = Export(	flagExportCommon,
 												flagExportBasic,
 												flagExportPrecalculation,
-												flagExportConfirmOverWrite,
 												flagExportCollider,
+												flagExportConfirmOverWrite,
 												flagExportCheckVersion,
 												flagExportRuleNameAsset,
 												flagExportRuleNameAssetFolder,
@@ -747,6 +747,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
+				public bool FlagIsTrigger;
 				public bool FlagAttachCollider;
 				public bool FlagAttachRigidBody;
 				public float SizeZ;
@@ -756,11 +757,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Functions
 				public GroupCollider(	bool flagAttachColider,
 										bool flagAttachRigidBody,
+										bool flagIsTrigger,
 										float sizeZ
 									)
 				{
 					FlagAttachCollider = flagAttachColider;
 					FlagAttachRigidBody = flagAttachRigidBody;
+					FlagIsTrigger = flagIsTrigger;
 					SizeZ = sizeZ;
 				}
 
@@ -773,6 +776,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					FlagAttachCollider = EditorPrefs.GetBool(PrefsKeyFlagAttachCollider, Default.FlagAttachCollider);
 					FlagAttachRigidBody = EditorPrefs.GetBool(PrefsKeyFlagAttachRigidBody, Default.FlagAttachRigidBody);
+					FlagIsTrigger = EditorPrefs.GetBool(PrefsKeyFlagIsTrigger, Default.FlagIsTrigger);
 					SizeZ = EditorPrefs.GetFloat(PrefsKeySizeZ, Default.SizeZ);
 
 					return(true);
@@ -782,6 +786,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					EditorPrefs.SetBool(PrefsKeyFlagAttachCollider, FlagAttachCollider);
 					EditorPrefs.SetBool(PrefsKeyFlagAttachRigidBody, FlagAttachRigidBody);
+					EditorPrefs.SetBool(PrefsKeyFlagIsTrigger, FlagIsTrigger);
 					EditorPrefs.SetFloat(PrefsKeySizeZ, SizeZ);
 
 					return(true);
@@ -789,7 +794,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[3];
+					string[] textEncode = new string[4];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagAttachCollider);
@@ -798,8 +803,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagAttachRigidBody);
 					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagAttachRigidBody, textValue);
 
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagIsTrigger);
+					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagIsTrigger, textValue);
+
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.FloatEncode(SizeZ);
-					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySizeZ, textValue);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySizeZ, textValue);
 
 					return(textEncode);
 				}
@@ -814,6 +822,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyFlagAttachRigidBody:
 							FlagAttachRigidBody = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagIsTrigger:
+							FlagIsTrigger = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						case TextKeySizeZ:
@@ -831,21 +843,25 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Enums & Constants
 				private const string KeyFlagAttachCollider = "FlagAttachCollider";
 				private const string KeyFlagAttachRigidBody = "FlagAttachRigidBody";
+				private const string KeyFlagIsTrigger = "FlagIsTrigger";
 				private const string KeySizeZ = "SizeZ";
 
 				private const string TextKeyPrefix = "Collider_";
 				private const string TextKeyFlagAttachCollider = TextKeyPrefix + KeyFlagAttachCollider;
 				private const string TextKeyFlagAttachRigidBody = TextKeyPrefix + KeyFlagAttachRigidBody;
+				private const string TextKeyFlagIsTrigger = TextKeyPrefix + KeyFlagIsTrigger;
 				private const string TextKeySizeZ = TextKeyPrefix + KeySizeZ;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagAttachCollider = PrefsKeyPrefix + KeyFlagAttachCollider;
 				private const string PrefsKeyFlagAttachRigidBody = PrefsKeyPrefix + KeyFlagAttachRigidBody;
+				private const string PrefsKeyFlagIsTrigger = PrefsKeyPrefix + KeyFlagIsTrigger;
 				private const string PrefsKeySizeZ = PrefsKeyPrefix + KeySizeZ;
 
 				private readonly static GroupCollider Default = new GroupCollider(
 					true,	/* FlagAttachCollider */
 					false,	/* FlagAttachRigidBody */
+					false,	/* FlagIsTrigger */
 					1.0f	/* SizeZ */
 				);
 				#endregion Enums & Constants
@@ -985,6 +1001,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagCreateHolderAsset;
 				public bool FlagInvisibleToHideAll;
 				public bool FlagTrackAssets;
+				public KindNoCreateMaterialUnreferenced NoCreateMaterialUnreferenced;
+				public bool FlagDeleteMaterialUnreferenced;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -994,7 +1012,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagTextureReadable,
 									bool flagCreateHolderAsset,
 									bool flagInvisibleToHideAll,
-									bool flagTrackAssets
+									bool flagTrackAssets,
+									KindNoCreateMaterialUnreferenced noCreateMaterialUnreferenced,
+									bool flagDeleteMaterialUnreferenced
 								)
 				{
 					FlagCreateControlGameObject = flagCreateControlGameObject;
@@ -1003,6 +1023,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagCreateHolderAsset = flagCreateHolderAsset;
 					FlagInvisibleToHideAll = flagInvisibleToHideAll;
 					FlagTrackAssets = flagTrackAssets;
+					NoCreateMaterialUnreferenced = noCreateMaterialUnreferenced;
+					FlagDeleteMaterialUnreferenced = flagDeleteMaterialUnreferenced;
 				}
 
 				public void CleanUp()
@@ -1018,6 +1040,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagCreateHolderAsset = EditorPrefs.GetBool(PrefsKeyFlagCreateHolderAsset, Default.FlagCreateHolderAsset);
 					FlagInvisibleToHideAll = EditorPrefs.GetBool(PrefsKeyFlagInvisibleToHideAll, Default.FlagInvisibleToHideAll);
 					FlagTrackAssets = EditorPrefs.GetBool(PrefsKeyFlagTrackAssets, Default.FlagTrackAssets);
+					string textDefault = TextGetNoCreateMaterialUnreferenced(Default.NoCreateMaterialUnreferenced);
+					string text = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNoCreateMaterialUnreferenced, textDefault);
+					NoCreateMaterialUnreferenced = KindGetNoCreateMaterialUnreferenced(text);
+					FlagDeleteMaterialUnreferenced = EditorPrefs.GetBool(PrefsKeyFlagDeleteMaterialUnreferenced, Default.FlagDeleteMaterialUnreferenced);
 
 					return(true);
 				}
@@ -1030,13 +1056,16 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetBool(PrefsKeyFlagCreateHolderAsset, FlagCreateHolderAsset);
 					EditorPrefs.SetBool(PrefsKeyFlagInvisibleToHideAll, FlagInvisibleToHideAll);
 					EditorPrefs.SetBool(PrefsKeyFlagTrackAssets, FlagTrackAssets);
+					string text = TextGetNoCreateMaterialUnreferenced(NoCreateMaterialUnreferenced);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNoCreateMaterialUnreferenced, text);
+					EditorPrefs.SetBool(PrefsKeyFlagDeleteMaterialUnreferenced, FlagDeleteMaterialUnreferenced);
 
 					return(true);
 				}
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[6];
+					string[] textEncode = new string[8];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateControlGameObject);
@@ -1056,6 +1085,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrackAssets);
 					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAssets, textValue);
+
+					textValue = TextGetNoCreateMaterialUnreferenced(NoCreateMaterialUnreferenced);
+					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNoCreateMaterialUnreferenced, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDeleteMaterialUnreferenced);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDeleteMaterialUnreferenced, textValue);
 
 					return(textEncode);
 				}
@@ -1088,21 +1123,60 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagTrackAssets = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
+						case TextKeyNoCreateMaterialUnreferenced:
+							NoCreateMaterialUnreferenced = KindGetNoCreateMaterialUnreferenced(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagDeleteMaterialUnreferenced:
+							FlagDeleteMaterialUnreferenced = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
 						default:
 							break;
 					}
 					return(false);
 				}
+
+				private KindNoCreateMaterialUnreferenced KindGetNoCreateMaterialUnreferenced(string text)
+				{
+					string textUpper = text.ToUpper();
+					for(KindNoCreateMaterialUnreferenced i=KindNoCreateMaterialUnreferenced.NONE; i<KindNoCreateMaterialUnreferenced.TERMINATOR; i++)
+					{
+						if(i.ToString() == textUpper)
+						{
+							return(i);
+						}
+					}
+
+					/* MEMO: In case of error, return NON. */
+					return(KindNoCreateMaterialUnreferenced.NONE);
+				}
+
+				private string TextGetNoCreateMaterialUnreferenced(KindNoCreateMaterialUnreferenced kind)
+				{
+					return(kind.ToString());
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
+				public enum KindNoCreateMaterialUnreferenced
+				{
+					NONE = 0,
+					BLENDING,
+					BLENDING_CELLMAP,
+
+					TERMINATOR
+				}
+
 				private const string KeyFlagCreateControlGameObject = "FlagCreateControlGameObject";
 				private const string KeyFlagCreateProjectFolder = "FlagCreateProjectFolder";
 				private const string KeyFlagTextureReadable = "FlagTextureReadable";
 				private const string KeyFlagCreateHolderAsset = "FlagCreateHolderAsset";
 				private const string KeyFlagInvisibleToHideAll = "FlagInvisibleToHideAll";
 				private const string KeyFlagTrackAssets = "FlagTrackAssets";
+				private const string KeyNoCreateMaterialUnreferenced = "NoCreateMaterialUnreferenced";
+				private const string KeyFlagDeleteMaterialUnreferenced = "FlagDeleteMaterialUnreferenced";
 
 				private const string TextKeyPrefix = "Basic_";
 				private const string TextKeyFlagCreateControlGameObject = TextKeyPrefix + KeyFlagCreateControlGameObject;
@@ -1111,6 +1185,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyFlagCreateHolderAsset = TextKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string TextKeyFlagInvisibleToHideAll = TextKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string TextKeyFlagTrackAssets = TextKeyPrefix + KeyFlagTrackAssets;
+				private const string TextKeyNoCreateMaterialUnreferenced = TextKeyPrefix + KeyNoCreateMaterialUnreferenced;
+				private const string TextKeyFlagDeleteMaterialUnreferenced = TextKeyPrefix + KeyFlagDeleteMaterialUnreferenced;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagCreateControlGameObject = PrefsKeyPrefix + KeyFlagCreateControlGameObject;
@@ -1119,14 +1195,18 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagCreateHolderAsset = PrefsKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string PrefsKeyFlagInvisibleToHideAll = PrefsKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string PrefsKeyFlagTrackAssets = PrefsKeyPrefix + KeyFlagTrackAssets;
+				private const string PrefsKeyNoCreateMaterialUnreferenced = PrefsKeyPrefix + KeyNoCreateMaterialUnreferenced;
+				private const string PrefsKeyFlagDeleteMaterialUnreferenced = PrefsKeyPrefix + KeyFlagDeleteMaterialUnreferenced;
 
 				private readonly static GroupBasic Default = new GroupBasic(
-					true,						/* FlagCreateControlGameObject */
-					true,						/* FlagCreateProjectFolder */
-					false,						/* FlagTextureReadable */
-					true,						/* FlagCreateHolderAsset */
-					false,						/* FlagInvisibleToHideAll */
-					true						/* FlagTrackAssets */
+					true,									/* FlagCreateControlGameObject */
+					true,									/* FlagCreateProjectFolder */
+					false,									/* FlagTextureReadable */
+					true,									/* FlagCreateHolderAsset */
+					false,									/* FlagInvisibleToHideAll */
+					true,									/* FlagTrackAssets */
+					KindNoCreateMaterialUnreferenced.NONE,	/* NoCreateMaterialUnreferenced */
+					false									/* FlagDeleteMaterialUnreferenced */
 				);
 				#endregion Enums & Constants
 			}

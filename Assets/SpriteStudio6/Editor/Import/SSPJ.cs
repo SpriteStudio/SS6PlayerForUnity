@@ -1181,10 +1181,14 @@ public static partial class LibraryEditor_SpriteStudio6
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
 							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
 							indexMaterialTexture = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = (0 > indexTexture)
-																							? null
-																							: informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[indexMaterialTexture];
-
+							if((0 > indexTexture) || (false == informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.FlagInUse[indexMaterialTexture]))
+							{
+								informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = null;
+							}
+							else
+							{
+								informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[indexMaterialTexture];
+							}
 						}
 
 						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
@@ -1192,9 +1196,14 @@ public static partial class LibraryEditor_SpriteStudio6
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
 							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
 							indexMaterialTexture = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
-							informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = (0 > indexTexture)
-																							 ? null
-																							: informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[indexMaterialTexture];
+							if((0 > indexTexture) || (false == informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.FlagInUse[indexMaterialTexture]))
+							{
+								informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = null;
+							}
+							else
+							{
+								informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[indexMaterialTexture];
+							}
 						}
 					}
 
@@ -1212,9 +1221,14 @@ public static partial class LibraryEditor_SpriteStudio6
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
 							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
 							indexMaterialTexture = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = (0 > indexTexture)
-																						? null
-																						: informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[indexMaterialTexture];
+							if((0 > indexTexture) || (false == informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.FlagInUse[indexMaterialTexture]))
+							{
+								informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = null;
+							}
+							else
+							{
+								informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[indexMaterialTexture];
+							}
 						}
 
 						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
@@ -1222,9 +1236,14 @@ public static partial class LibraryEditor_SpriteStudio6
 							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
 							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
 							indexMaterialTexture = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
-							informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = (0 > indexTexture)
-																						? null
-																						: informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[indexMaterialTexture];
+							if((0 > indexTexture) || (false == informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.FlagInUse[indexMaterialTexture]))
+							{
+								informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = null;
+							}
+							else
+							{
+								informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[indexMaterialTexture];
+							}
 						}
 					}
 
@@ -1232,6 +1251,108 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				MaterialPickUp_ErrorEnd:;
 					return(false);
+				}
+
+				public static bool MaterialDeleteUnreferenced(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
+															)
+				{
+//					const string messageLogPrefix = "Delete unreferenced Materials";
+
+					if(LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.KindNoCreateMaterialUnreferenced.NONE == setting.Basic.NoCreateMaterialUnreferenced)
+					{	/* Create all materials */
+						return(true);
+					}
+					if(false == setting.Basic.FlagDeleteMaterialUnreferenced)
+					{	/* Delete nothing */
+						return(true);
+					}
+
+					int indexMaterial;
+					int countTexture = informationSSPJ.TableInformationTexture.Length;
+					Material material;
+					string pathAsset;
+					for(int i=0; i<countTexture; i++)
+					{
+						/* Animation */
+						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+						{
+							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
+							if(false == informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.FlagInUse[indexMaterial])
+							{	/* No Referenced */
+								material = informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.TableData[indexMaterial];
+								if(null != material)
+								{	/* Has Asset */
+									pathAsset = AssetDatabase.GetAssetPath(material);
+									if(false == string.IsNullOrEmpty(pathAsset))
+									{
+										AssetDatabase.DeleteAsset(pathAsset);
+									}
+									informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.TableData[indexMaterial] = null;
+								}
+							}
+						}
+
+						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+						{
+							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
+							if(false == informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.FlagInUse[indexMaterial])
+							{	/* No Referenced */
+								material = informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.TableData[indexMaterial];
+								if(null != material)
+								{	/* Has Asset */
+									pathAsset = AssetDatabase.GetAssetPath(material);
+									if(false == string.IsNullOrEmpty(pathAsset))
+									{
+										AssetDatabase.DeleteAsset(pathAsset);
+									}
+									informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.TableData[indexMaterial] = null;
+								}
+							}
+						}
+
+						/* Effect */
+						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+						{
+							indexMaterial =  Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
+							if(false == informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.FlagInUse[indexMaterial])
+							{	/* No Referenced */
+								material = informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.TableData[indexMaterial];
+								if(null != material)
+								{	/* Has Asset */
+									pathAsset = AssetDatabase.GetAssetPath(material);
+									if(false == string.IsNullOrEmpty(pathAsset))
+									{
+										AssetDatabase.DeleteAsset(pathAsset);
+									}
+									informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.TableData[indexMaterial] = null;
+								}
+							}
+						}
+
+						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+						{
+							indexMaterial =  Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
+							if(false == informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.FlagInUse[indexMaterial])
+							{	/* No Referenced */
+								material = informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.TableData[indexMaterial];
+								if(null != material)
+								{	/* Has Asset */
+									pathAsset = AssetDatabase.GetAssetPath(material);
+									if(false == string.IsNullOrEmpty(pathAsset))
+									{
+										AssetDatabase.DeleteAsset(pathAsset);
+									}
+									informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.TableData[indexMaterial] = null;
+								}
+							}
+						}
+					}
+
+					return(true);
+
+//				MaterialDeleteUnreferenced_ErrorEnd:;
+//					return(false);
 				}
 				#endregion Functions
 			}
