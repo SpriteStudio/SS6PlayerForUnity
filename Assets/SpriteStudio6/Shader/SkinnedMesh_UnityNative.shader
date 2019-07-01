@@ -1,4 +1,4 @@
-﻿//
+//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) Web Technology Corp.

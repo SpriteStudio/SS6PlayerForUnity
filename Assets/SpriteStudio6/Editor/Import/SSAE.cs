@@ -30,7 +30,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				const string messageLogPrefix = "Parse SSAE";
 				Information informationSSAE = null;
 
-				/* ".ssce" Load */
+				/* ".ssae" Load */
 				if(false == System.IO.File.Exists(nameFile))
 				{
 					LogError(messageLogPrefix, "File Not Found", nameFile, informationSSPJ);
@@ -62,6 +62,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					case KindVersion.CODE_020000:
 					case KindVersion.CODE_020001:
 					case KindVersion.CODE_020003:
+					case KindVersion.CODE_020004:
 						break;
 
 					default:
@@ -97,6 +98,12 @@ public static partial class LibraryEditor_SpriteStudio6
 				if(null == informationSSAE.ListBone)
 				{
 					LogError(messageLogPrefix, "Not Enough Memory (Bone list)", nameFile, informationSSPJ);
+					goto Parse_ErrorEnd;
+				}
+				informationSSAE.ListInUseCellMap = new List<Information.InUseCellMap>();
+				if(null == informationSSAE.ListInUseCellMap)
+				{
+					LogError(messageLogPrefix, "Not Enough Memory (In-use Cell-Map list)", nameFile, informationSSPJ);
 					goto Parse_ErrorEnd;
 				}
 				informationSSAE.ListBindMesh = new List<Information.BindMesh>();
@@ -193,7 +200,23 @@ public static partial class LibraryEditor_SpriteStudio6
 							informationSSAE.ListBone.Add(null);
 						}
 
+						/* MEMO: Some Beta versions of SS6.3 be outputting an "1 origined" index. */
 						int indexBone;
+						int indexBoneMin = int.MaxValue;
+						foreach(System.Xml.XmlNode nodeBone in listNode)
+						{
+							/* Scan Bone-List */
+							indexBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(nodeBone.InnerText);
+							if((0 <= indexBone) && (indexBoneMin > indexBone))
+							{
+								indexBoneMin = indexBone;
+							}
+						}
+						if(int.MaxValue <= indexBoneMin)	{	/* All Invalid or no bone */
+							indexBoneMin = 0;
+						}
+						informationSSAE.OffsetIndexBone = indexBoneMin;
+
 						string nameBoneParts;
 						foreach(System.Xml.XmlNode nodeBone in listNode)
 						{
@@ -202,7 +225,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							indexBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(nodeBone.InnerText);
 							if(0 <= indexBone)
 							{
-								informationSSAE.ListBone[indexBone] = string.Copy(nameBoneParts);
+								informationSSAE.ListBone[indexBone - indexBoneMin] = string.Copy(nameBoneParts);
 							}
 						}
 					}
@@ -262,7 +285,7 @@ public static partial class LibraryEditor_SpriteStudio6
 										for(int j=0; j<countBone; j++)
 										{
 											indexParameter = (j * 4) + 1;
-											bindVertex.TableBone[j].Index = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplitParameter[indexParameter + 0]);
+											bindVertex.TableBone[j].Index = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplitParameter[indexParameter + 0]) - informationSSAE.OffsetIndexBone;
 											bindVertex.TableBone[j].Weight = (float)(LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueTextSplitParameter[indexParameter + 1])) * 0.01f;
 											bindVertex.TableBone[j].CoordinateOffset.x = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueTextSplitParameter[indexParameter + 2]);
 											bindVertex.TableBone[j].CoordinateOffset.y = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetFloat(valueTextSplitParameter[indexParameter + 3]);
@@ -625,6 +648,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								case KindVersion.CODE_020000:
 								case KindVersion.CODE_020001:
 								case KindVersion.CODE_020003:
+								case KindVersion.CODE_020004:
 									if(0 == informationParts.Data.ID)
 									{
 										informationParts.Inheritance = Information.Parts.KindInheritance.SELF;
@@ -686,6 +710,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								case KindVersion.CODE_020000:
 								case KindVersion.CODE_020001:
 								case KindVersion.CODE_020003:
+								case KindVersion.CODE_020004:
 									{
 										/* MEMO: Attributes'-Tag always exists. */
 										bool valueBool = false;
@@ -1514,6 +1539,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 									/* Add Key-Data */
 									informationAnimationParts.Cell.ListKey.Add(data);
+
+									/* Add to In-use-Cell-Map information */
+									if(0 <= data.Value.IndexCellMap)
+									{
+										informationSSAE.InUseCellMapAdd(data.Value.IndexCellMap, parts);
+									}
 								}
 								break;
 
@@ -2126,9 +2157,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				CODE_020000 = 0x00020000,	/* after SS6.0.0 beta */
 				CODE_020001 = 0x00020001,	/* after SS6.0.0 */
 				CODE_020003 = 0x00020003,	/* after SS6.2.0 */
+				CODE_020004 = 0x00020004,	/* after SS6.3.0 */
 
 				TARGET_EARLIEST = CODE_020000,
-				TARGET_LATEST = CODE_020003
+				TARGET_LATEST = CODE_020004
 			};
 
 			private const string ExtentionFile = ".ssae";
@@ -2152,7 +2184,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				public int[] TableIndexCellMap;
 				public Animation[] TableAnimation;
 				public Animation AnimationSetup;
+				public List<InUseCellMap> ListInUseCellMap;
 
+				public int OffsetIndexBone;
 				public List<string> ListBone;
 				public List<BindMesh> ListBindMesh;
 
@@ -2188,7 +2222,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					TableIndexCellMap = null;
 					TableAnimation = null;
 					AnimationSetup = null;
+					ListInUseCellMap = null;
 
+					OffsetIndexBone = 0;
 					ListBone = null;
 					ListBindMesh = null;
 
@@ -2232,6 +2268,48 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 					return(-1);
+				}
+
+				public void InUseCellMapAdd(int indexCellMap, Parts informationParts)
+				{
+					InUseCellMap value = new InUseCellMap();
+					value.IndexCellMap = indexCellMap;
+					value.Blend = informationParts.Data.OperationBlendTarget;
+
+					switch(informationParts.Data.Feature)
+					{
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+							if(false == ListInUseCellMap.Contains(value))
+							{
+								ListInUseCellMap.Add(value);
+							}
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+							value.Blend = Library_SpriteStudio6.KindOperationBlend.MASK_PRE;
+							if(false == ListInUseCellMap.Contains(value))
+							{
+								ListInUseCellMap.Add(value);
+							}
+							value.Blend = Library_SpriteStudio6.KindOperationBlend.MASK;
+							if(false == ListInUseCellMap.Contains(value))
+							{
+								ListInUseCellMap.Add(value);
+							}
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+							break;
+					}
 				}
 				#endregion Functions
 
@@ -3837,6 +3915,24 @@ public static partial class LibraryEditor_SpriteStudio6
 					#endregion Functions
 				}
 
+				public struct InUseCellMap
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public int IndexCellMap;
+					public Library_SpriteStudio6.KindOperationBlend Blend;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						IndexCellMap = -1;
+						Blend = Library_SpriteStudio6.KindOperationBlend.MIX;
+					}
+					#endregion Functions
+				}
+
 				public static class Catalog
 				{
 					public struct Parts
@@ -4467,7 +4563,7 @@ public static partial class LibraryEditor_SpriteStudio6
 											collider.enabled = true;
 											collider.size = new Vector3(1.0f, 1.0f, setting.Collider.SizeZ);
 											collider.center = Vector2.zero;
-											collider.isTrigger = false;
+											collider.isTrigger = setting.Collider.FlagIsTrigger;
 
 											scriptCollider.InstanceColliderBox = collider;
 
@@ -4495,7 +4591,7 @@ public static partial class LibraryEditor_SpriteStudio6
 											collider.radius = 1.0f;
 											collider.height = setting.Collider.SizeZ;
 											collider.direction = 2;
-											collider.isTrigger = false;
+											collider.isTrigger = setting.Collider.FlagIsTrigger;
 
 											scriptCollider.InstanceColliderCapsule = collider;
 
@@ -4840,6 +4936,18 @@ public static partial class LibraryEditor_SpriteStudio6
 																if(0 <= idPartsBone)
 																{
 																	informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = idPartsBone;
+																}
+#else
+																/* MEMO: Before SS 6.2 (SSAE 2.00.03) this correcting is not necessary.                           */
+																/*       After SS 6.3 (SSAE 2.00.04) the CatalogParts.ListIDPartsBone and bone-list(ListBone) are */
+																/*        in different order, conversion is required.                                             */
+																if(0 <= idPartsBone)
+																{
+																	int indexCatalogBone = informationSSAE.CatalogParts.ListIDPartsBone.IndexOf(idPartsBone);
+																	if(0 <= indexCatalogBone)
+																	{
+																		informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = indexCatalogBone;
+																	}
 																}
 #endif
 															}

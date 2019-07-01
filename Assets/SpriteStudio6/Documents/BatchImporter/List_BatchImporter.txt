@@ -243,6 +243,32 @@
 *
 *
 * ---------------------
+* Basic_NoCreateMaterialUnreferenced > Method
+*   Method ... true / false (bool)
+*              NONE == No-Check(Create all Materials)
+*              BLENDING == Determine only from parts' "Blending Mode".
+*              BLENDING_CELLMAP == Determine from parts' "Blending Mode" and "Reference Cell".
+* 
+* This is same function as "Options: Basic > No-Create unreferenced materials" option in the import settings.
+* 
+* e.g.:
+*  Basic_NoCreateMaterialUnreferenced > ONLY_BLENDING
+*
+*
+* ---------------------
+* Basic_FlagDeleteMaterialUnreferenced > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: Basic > Delete unreferenced materials" option in the import settings.
+* Has no effect when "Basic_NoCreateMaterialUnreferenced" is set to "NONE". (Same as setting to false)
+* 
+* e.g.:
+*  Basic_FlagDeleteMaterialUnreferenced > true
+*
+*
+* ---------------------
 * PreCalculation_FlagFixMesh > Flag
 *   Flag ... true / false (bool)
 *            true == same as checked
@@ -321,6 +347,18 @@
 * 
 * e.g.:
 *  Collider_FlagAttachRigidBody > false
+*
+*
+* ---------------------
+* Collider_FlagIsTrigger > Flag
+*   Flag ... true / false (bool)
+*            true == same as checked
+*            false == same as unchecked
+* 
+* This is same function as "Options: Collider > Is Trigger" option in the import settings.
+* 
+* e.g.:
+*  Collider_FlagIsTrigger > true
 *
 *
 * ---------------------
@@ -624,10 +662,10 @@
 * PresetMaterial_SkinnedMeshUnityNativeInv > MaterialPath
 * 
 *   MaterialPath ... Material Asset-Path (Full Path)
-*                  Material's Asset Path.
-*                  Do not include "Assets" at the head like other commands' path.
-*                  ("Assets/subFolder/sample.mat" -> "/subFolder/sample.mat")
-*                  However, relative path can not be specified.
+*                    Material's Asset Path.
+*                    Do not include "Assets" at the head like other commands' path.
+*                    ("Assets/subFolder/sample.mat" -> "/subFolder/sample.mat")
+*                    However, relative path can not be specified.
 * 
 * When "Convert to Unity-Native" mode, change material that importer will assign to sprites for target-blending.
 * This is same function as ...
