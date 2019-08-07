@@ -194,25 +194,34 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countBoneList = listNode.Count;
 					if(0 < countBoneList)
 					{
+						int indexBone;
+
 						/* MEMO: In reality no need, but in case the bone's index is flying. */
+						int indexBoneMin = int.MaxValue;
+						foreach(System.Xml.XmlNode nodeBone in listNode)
+						{
+							/* Scan Bone-List */
+							indexBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(nodeBone.InnerText);
+							if(0 <= indexBone)
+							{	/* Valid index */
+								if(countBoneList <= indexBone)
+								{
+									countBoneList = indexBone + 1;
+								}
+								if(indexBoneMin > indexBone)
+								{
+									indexBoneMin = indexBone;
+								}
+							}
+						}
 						for(int i=0; i<countBoneList; i++)
 						{
 							informationSSAE.ListBone.Add(null);
 						}
 
 						/* MEMO: Some Beta versions of SS6.3 be outputting an "1 origined" index. */
-						int indexBone;
-						int indexBoneMin = int.MaxValue;
-						foreach(System.Xml.XmlNode nodeBone in listNode)
-						{
-							/* Scan Bone-List */
-							indexBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(nodeBone.InnerText);
-							if((0 <= indexBone) && (indexBoneMin > indexBone))
-							{
-								indexBoneMin = indexBone;
-							}
-						}
-						if(int.MaxValue <= indexBoneMin)	{	/* All Invalid or no bone */
+						if(int.MaxValue <= indexBoneMin)
+						{	/* All Invalid or no bone */
 							indexBoneMin = 0;
 						}
 						informationSSAE.OffsetIndexBone = indexBoneMin;
