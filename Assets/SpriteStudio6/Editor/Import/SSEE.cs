@@ -1158,6 +1158,21 @@ public static partial class LibraryEditor_SpriteStudio6
 					int limitParticleLimit = 0;
 					float rateTime = 1.0f;
 					bool flagHideForce = false;
+					MeshRenderer meshRenderer = null;
+					bool flagExistMeshRendererOriginal = false;
+					UnityEngine.Rendering.LightProbeUsage lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+					UnityEngine.Rendering.ReflectionProbeUsage reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+					Transform probeAnchor = null;
+					UnityEngine.Rendering.ShadowCastingMode shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+					bool receiveShadows = false;
+					MotionVectorGenerationMode motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+					bool lightmapStatic = false;
+					bool allowOcclusionWhenDynamic = false;
+					int lightmapIndex = -1;
+					Vector4 lightmapScaleOffset = Vector4.zero;
+					GameObject lightProbeProxyVolumeOverride = null;
+					int realtimeLightmapIndex = -1;
+					Vector4 realtimeLightmapScaleOffset = Vector4.zero;
 
 					/* Create? Update? */
 					if(null == informationSSEE.PrefabEffectSS6PU.TableData[0])
@@ -1190,6 +1205,29 @@ public static partial class LibraryEditor_SpriteStudio6
 							rateTime = scriptRoot.RateTime;
 						}
 
+						meshRenderer = gameObjectRoot.GetComponent<MeshRenderer>();
+						if(null != meshRenderer)
+						{
+							if(true == setting.Basic.FlagTakeOverLightRenderer)
+							{
+								flagExistMeshRendererOriginal = true;
+
+								lightProbeUsage = meshRenderer.lightProbeUsage;
+								reflectionProbeUsage = meshRenderer.reflectionProbeUsage;
+								probeAnchor = meshRenderer.probeAnchor;
+								shadowCastingMode = meshRenderer.shadowCastingMode;
+								receiveShadows = meshRenderer.receiveShadows;
+								motionVectorGenerationMode = meshRenderer.motionVectorGenerationMode;
+								allowOcclusionWhenDynamic = meshRenderer.allowOcclusionWhenDynamic;
+								lightmapStatic = (0 != (GameObjectUtility.GetStaticEditorFlags(gameObjectRoot) & StaticEditorFlags.LightmapStatic)) ? true : false;
+								lightmapIndex = meshRenderer.lightmapIndex;
+								lightmapScaleOffset = meshRenderer.lightmapScaleOffset;
+								lightProbeProxyVolumeOverride = meshRenderer.lightProbeProxyVolumeOverride;
+								realtimeLightmapIndex = meshRenderer.realtimeLightmapIndex;
+								realtimeLightmapScaleOffset = meshRenderer.realtimeLightmapScaleOffset;
+							}
+						}
+
 						gameObjectRoot = null;
 						scriptRoot = null;
 					}
@@ -1207,6 +1245,10 @@ public static partial class LibraryEditor_SpriteStudio6
 						LogError(messageLogPrefix, "Failure to add component\"Script_SpriteStudio6_RootEffect\"", informationSSEE.FileNameGetFullPath(), informationSSPJ);
 						goto AssetCreatePrefab_ErrorEnd;
 					}
+					if((true == setting.Basic.FlagTakeOverLightRenderer) || (true == setting.Basic.FlagDisableInitialLightRenderer))
+					{
+						meshRenderer = gameObjectRoot.AddComponent<MeshRenderer>();
+					}
 
 					/* Datas Set */
 					scriptRoot.DataCellMap = informationSSPJ.DataCellMapSS6PU.TableData[0];
@@ -1216,6 +1258,47 @@ public static partial class LibraryEditor_SpriteStudio6
 					scriptRoot.LimitParticleDraw = limitParticleLimit;
 					scriptRoot.FlagHideForce = flagHideForce;
 					scriptRoot.RateTime = rateTime;
+
+					if(null != meshRenderer)
+					{
+						if(true == setting.Basic.FlagTakeOverLightRenderer)
+						{
+							if(true == flagExistMeshRendererOriginal)
+							{
+								meshRenderer.lightProbeUsage = lightProbeUsage;
+								meshRenderer.reflectionProbeUsage = reflectionProbeUsage;
+								meshRenderer.probeAnchor = probeAnchor;
+								meshRenderer.shadowCastingMode = shadowCastingMode;
+								meshRenderer.receiveShadows = receiveShadows;
+								meshRenderer.motionVectorGenerationMode = motionVectorGenerationMode;
+								meshRenderer.allowOcclusionWhenDynamic = allowOcclusionWhenDynamic;
+								StaticEditorFlags staticFlag = GameObjectUtility.GetStaticEditorFlags(gameObjectRoot);
+								GameObjectUtility.SetStaticEditorFlags(	gameObjectRoot,
+																		(true == lightmapStatic) ? (staticFlag | StaticEditorFlags.LightmapStatic) : (staticFlag & ~StaticEditorFlags.LightmapStatic)
+																	);
+								meshRenderer.lightmapIndex = lightmapIndex;
+								meshRenderer.lightmapScaleOffset = lightmapScaleOffset;
+								meshRenderer.lightProbeProxyVolumeOverride = lightProbeProxyVolumeOverride;
+								meshRenderer.realtimeLightmapIndex = realtimeLightmapIndex;
+								meshRenderer.realtimeLightmapScaleOffset = realtimeLightmapScaleOffset;
+							}
+						}
+						else
+						{
+							if(true == setting.Basic.FlagDisableInitialLightRenderer)
+							{
+								meshRenderer.lightProbeUsage = lightProbeUsage;
+								meshRenderer.reflectionProbeUsage = reflectionProbeUsage;
+								meshRenderer.probeAnchor = probeAnchor;
+								meshRenderer.shadowCastingMode = shadowCastingMode;
+								meshRenderer.receiveShadows = receiveShadows;
+								meshRenderer.motionVectorGenerationMode = motionVectorGenerationMode;
+								meshRenderer.allowOcclusionWhenDynamic = allowOcclusionWhenDynamic;
+								StaticEditorFlags staticFlag = GameObjectUtility.GetStaticEditorFlags(gameObjectRoot);
+								GameObjectUtility.SetStaticEditorFlags(gameObjectRoot, (staticFlag & ~StaticEditorFlags.LightmapStatic));
+							}
+						}
+					}
 
 					gameObjectRoot.SetActive(true);
 
