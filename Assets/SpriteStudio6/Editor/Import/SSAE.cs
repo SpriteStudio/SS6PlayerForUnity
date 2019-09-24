@@ -194,25 +194,34 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countBoneList = listNode.Count;
 					if(0 < countBoneList)
 					{
+						int indexBone;
+
 						/* MEMO: In reality no need, but in case the bone's index is flying. */
+						int indexBoneMin = int.MaxValue;
+						foreach(System.Xml.XmlNode nodeBone in listNode)
+						{
+							/* Scan Bone-List */
+							indexBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(nodeBone.InnerText);
+							if(0 <= indexBone)
+							{	/* Valid index */
+								if(countBoneList <= indexBone)
+								{
+									countBoneList = indexBone + 1;
+								}
+								if(indexBoneMin > indexBone)
+								{
+									indexBoneMin = indexBone;
+								}
+							}
+						}
 						for(int i=0; i<countBoneList; i++)
 						{
 							informationSSAE.ListBone.Add(null);
 						}
 
 						/* MEMO: Some Beta versions of SS6.3 be outputting an "1 origined" index. */
-						int indexBone;
-						int indexBoneMin = int.MaxValue;
-						foreach(System.Xml.XmlNode nodeBone in listNode)
-						{
-							/* Scan Bone-List */
-							indexBone = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(nodeBone.InnerText);
-							if((0 <= indexBone) && (indexBoneMin > indexBone))
-							{
-								indexBoneMin = indexBone;
-							}
-						}
-						if(int.MaxValue <= indexBoneMin)	{	/* All Invalid or no bone */
+						if(int.MaxValue <= indexBoneMin)
+						{	/* All Invalid or no bone */
 							indexBoneMin = 0;
 						}
 						informationSSAE.OffsetIndexBone = indexBoneMin;
@@ -4412,6 +4421,21 @@ public static partial class LibraryEditor_SpriteStudio6
 					int orderInLayer = 0;
 					int limitTrack = 0;
 					int indexAnimation;
+					MeshRenderer meshRenderer = null;
+					bool flagExistMeshRendererOriginal = false;
+					UnityEngine.Rendering.LightProbeUsage lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+					UnityEngine.Rendering.ReflectionProbeUsage reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+					Transform probeAnchor = null;
+					UnityEngine.Rendering.ShadowCastingMode shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+					bool receiveShadows = false;
+					MotionVectorGenerationMode motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+					bool lightmapStatic = false;
+					bool allowOcclusionWhenDynamic = false;
+					int lightmapIndex = -1;
+					Vector4 lightmapScaleOffset = Vector4.zero;
+					GameObject lightProbeProxyVolumeOverride = null;
+					int realtimeLightmapIndex = -1;
+					Vector4 realtimeLightmapScaleOffset = Vector4.zero;
 
 					/* Create? Update? */
 					if(null == informationSSAE.PrefabAnimationSS6PU.TableData[0])
@@ -4476,6 +4500,29 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 						}
 
+						meshRenderer = gameObjectRoot.GetComponent<MeshRenderer>();
+						if(null != meshRenderer)
+						{
+							if(true == setting.Basic.FlagTakeOverLightRenderer)
+							{
+								flagExistMeshRendererOriginal = true;
+
+								lightProbeUsage = meshRenderer.lightProbeUsage;
+								reflectionProbeUsage = meshRenderer.reflectionProbeUsage;
+								probeAnchor = meshRenderer.probeAnchor;
+								shadowCastingMode = meshRenderer.shadowCastingMode;
+								receiveShadows = meshRenderer.receiveShadows;
+								motionVectorGenerationMode = meshRenderer.motionVectorGenerationMode;
+								allowOcclusionWhenDynamic = meshRenderer.allowOcclusionWhenDynamic;
+								lightmapStatic = (0 != (GameObjectUtility.GetStaticEditorFlags(gameObjectRoot) & StaticEditorFlags.LightmapStatic)) ? true : false;
+								lightmapIndex = meshRenderer.lightmapIndex;
+								lightmapScaleOffset = meshRenderer.lightmapScaleOffset;
+								lightProbeProxyVolumeOverride = meshRenderer.lightProbeProxyVolumeOverride;
+								realtimeLightmapIndex = meshRenderer.realtimeLightmapIndex;
+								realtimeLightmapScaleOffset = meshRenderer.realtimeLightmapScaleOffset;
+							}
+						}
+
 						gameObjectRoot = null;
 						scriptRoot = null;
 					}
@@ -4507,6 +4554,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						LogError(messageLogPrefix, "Failure to add component\"Script_SpriteStudio6_Root\"", informationSSAE.FileNameGetFullPath(), informationSSPJ);
 						goto AssetCreatePrefab_ErrorEnd;
+					}
+					if((true == setting.Basic.FlagTakeOverLightRenderer) || (true == setting.Basic.FlagDisableInitialLightRenderer))
+					{
+						meshRenderer = gameObjectRoot.AddComponent<MeshRenderer>();
 					}
 
 					/* Make GameObject & Parts controllers */
@@ -4691,6 +4742,47 @@ public static partial class LibraryEditor_SpriteStudio6
 						scriptRoot.TableInformationPlay[i].Frame = informationPlayRoot[i].Frame;
 						scriptRoot.TableInformationPlay[i].TimesPlay = informationPlayRoot[i].TimesPlay;
 						scriptRoot.TableInformationPlay[i].RateTime = informationPlayRoot[i].RateTime;
+					}
+
+					if(null != meshRenderer)
+					{
+						if(true == setting.Basic.FlagTakeOverLightRenderer)
+						{
+							if(true == flagExistMeshRendererOriginal)
+							{
+								meshRenderer.lightProbeUsage = lightProbeUsage;
+								meshRenderer.reflectionProbeUsage = reflectionProbeUsage;
+								meshRenderer.probeAnchor = probeAnchor;
+								meshRenderer.shadowCastingMode = shadowCastingMode;
+								meshRenderer.receiveShadows = receiveShadows;
+								meshRenderer.motionVectorGenerationMode = motionVectorGenerationMode;
+								meshRenderer.allowOcclusionWhenDynamic = allowOcclusionWhenDynamic;
+								StaticEditorFlags staticFlag = GameObjectUtility.GetStaticEditorFlags(gameObjectRoot);
+								GameObjectUtility.SetStaticEditorFlags(	gameObjectRoot,
+																		(true == lightmapStatic) ? (staticFlag | StaticEditorFlags.LightmapStatic) : (staticFlag & ~StaticEditorFlags.LightmapStatic)
+																	);
+								meshRenderer.lightmapIndex = lightmapIndex;
+								meshRenderer.lightmapScaleOffset = lightmapScaleOffset;
+								meshRenderer.lightProbeProxyVolumeOverride = lightProbeProxyVolumeOverride;
+								meshRenderer.realtimeLightmapIndex = realtimeLightmapIndex;
+								meshRenderer.realtimeLightmapScaleOffset = realtimeLightmapScaleOffset;
+							}
+						}
+						else
+						{
+							if(true == setting.Basic.FlagDisableInitialLightRenderer)
+							{
+								meshRenderer.lightProbeUsage = lightProbeUsage;
+								meshRenderer.reflectionProbeUsage = reflectionProbeUsage;
+								meshRenderer.probeAnchor = probeAnchor;
+								meshRenderer.shadowCastingMode = shadowCastingMode;
+								meshRenderer.receiveShadows = receiveShadows;
+								meshRenderer.motionVectorGenerationMode = motionVectorGenerationMode;
+								meshRenderer.allowOcclusionWhenDynamic = allowOcclusionWhenDynamic;
+								StaticEditorFlags staticFlag = GameObjectUtility.GetStaticEditorFlags(gameObjectRoot);
+								GameObjectUtility.SetStaticEditorFlags(gameObjectRoot, (staticFlag & ~StaticEditorFlags.LightmapStatic));
+							}
+						}
 					}
 
 					gameObjectRoot.SetActive(true);

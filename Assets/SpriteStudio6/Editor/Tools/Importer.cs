@@ -513,6 +513,16 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 					EditorGUI.indentLevel = levelIndent;
 					EditorGUILayout.Space();
 				}
+
+				SettingImport.Basic.FlagDisableInitialLightRenderer = EditorGUILayout.ToggleLeft("Set disable Renderer's lighting", SettingImport.Basic.FlagDisableInitialLightRenderer);
+				SettingImport.Basic.FlagTakeOverLightRenderer = EditorGUILayout.ToggleLeft("Take over Renderer's light setting", SettingImport.Basic.FlagTakeOverLightRenderer);
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("When check \"Set disable renderer's lighting\", set no-lighting-effect to MeshRenderer.");
+				EditorGUILayout.LabelField("When \"Take over renderer's light setting\" is checked, MeshRenderer's lighting");
+				EditorGUILayout.LabelField("   setting are taken over to the data overwritten.");
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
 				break;
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:

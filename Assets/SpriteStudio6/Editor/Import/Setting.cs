@@ -1003,6 +1003,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagTrackAssets;
 				public KindNoCreateMaterialUnreferenced NoCreateMaterialUnreferenced;
 				public bool FlagDeleteMaterialUnreferenced;
+				public bool FlagDisableInitialLightRenderer;
+				public bool FlagTakeOverLightRenderer;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -1014,7 +1016,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagInvisibleToHideAll,
 									bool flagTrackAssets,
 									KindNoCreateMaterialUnreferenced noCreateMaterialUnreferenced,
-									bool flagDeleteMaterialUnreferenced
+									bool flagDeleteMaterialUnreferenced,
+									bool flagDisableInitialLightRenderer,
+									bool flagTakeOverLightRenderer
 								)
 				{
 					FlagCreateControlGameObject = flagCreateControlGameObject;
@@ -1025,6 +1029,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagTrackAssets = flagTrackAssets;
 					NoCreateMaterialUnreferenced = noCreateMaterialUnreferenced;
 					FlagDeleteMaterialUnreferenced = flagDeleteMaterialUnreferenced;
+					FlagDisableInitialLightRenderer = flagDisableInitialLightRenderer;
+					FlagTakeOverLightRenderer = flagTakeOverLightRenderer;
 				}
 
 				public void CleanUp()
@@ -1044,6 +1050,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					string text = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNoCreateMaterialUnreferenced, textDefault);
 					NoCreateMaterialUnreferenced = KindGetNoCreateMaterialUnreferenced(text);
 					FlagDeleteMaterialUnreferenced = EditorPrefs.GetBool(PrefsKeyFlagDeleteMaterialUnreferenced, Default.FlagDeleteMaterialUnreferenced);
+					FlagDisableInitialLightRenderer = EditorPrefs.GetBool(PrefsKeyFlagDisableInitialLightRenderer, Default.FlagDisableInitialLightRenderer);
+					FlagTakeOverLightRenderer = EditorPrefs.GetBool(PrefsKeyFlagTakeOverLightRenderer, Default.FlagTakeOverLightRenderer);
 
 					return(true);
 				}
@@ -1059,13 +1067,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					string text = TextGetNoCreateMaterialUnreferenced(NoCreateMaterialUnreferenced);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNoCreateMaterialUnreferenced, text);
 					EditorPrefs.SetBool(PrefsKeyFlagDeleteMaterialUnreferenced, FlagDeleteMaterialUnreferenced);
+					EditorPrefs.SetBool(PrefsKeyFlagDisableInitialLightRenderer, FlagDisableInitialLightRenderer);
+					EditorPrefs.SetBool(PrefsKeyFlagTakeOverLightRenderer, FlagTakeOverLightRenderer);
 
 					return(true);
 				}
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[8];
+					string[] textEncode = new string[10];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateControlGameObject);
@@ -1091,6 +1101,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDeleteMaterialUnreferenced);
 					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDeleteMaterialUnreferenced, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDisableInitialLightRenderer);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDisableInitialLightRenderer, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTakeOverLightRenderer);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTakeOverLightRenderer, textValue);
 
 					return(textEncode);
 				}
@@ -1129,6 +1145,14 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyFlagDeleteMaterialUnreferenced:
 							FlagDeleteMaterialUnreferenced = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagDisableInitialLightRenderer:
+							FlagDisableInitialLightRenderer = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagTakeOverLightRenderer:
+							FlagTakeOverLightRenderer = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						default:
@@ -1177,6 +1201,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagTrackAssets = "FlagTrackAssets";
 				private const string KeyNoCreateMaterialUnreferenced = "NoCreateMaterialUnreferenced";
 				private const string KeyFlagDeleteMaterialUnreferenced = "FlagDeleteMaterialUnreferenced";
+				private const string KeyFlagDisableInitialLightRenderer = "FlagDisableInitialLightRenderer";
+				private const string KeyFlagTakeOverLightRenderer = "FlagTakeOverLightRenderer";
 
 				private const string TextKeyPrefix = "Basic_";
 				private const string TextKeyFlagCreateControlGameObject = TextKeyPrefix + KeyFlagCreateControlGameObject;
@@ -1187,6 +1213,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyFlagTrackAssets = TextKeyPrefix + KeyFlagTrackAssets;
 				private const string TextKeyNoCreateMaterialUnreferenced = TextKeyPrefix + KeyNoCreateMaterialUnreferenced;
 				private const string TextKeyFlagDeleteMaterialUnreferenced = TextKeyPrefix + KeyFlagDeleteMaterialUnreferenced;
+				private const string TextKeyFlagDisableInitialLightRenderer = TextKeyPrefix + KeyFlagDisableInitialLightRenderer;
+				private const string TextKeyFlagTakeOverLightRenderer = TextKeyPrefix + KeyFlagTakeOverLightRenderer;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagCreateControlGameObject = PrefsKeyPrefix + KeyFlagCreateControlGameObject;
@@ -1197,6 +1225,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagTrackAssets = PrefsKeyPrefix + KeyFlagTrackAssets;
 				private const string PrefsKeyNoCreateMaterialUnreferenced = PrefsKeyPrefix + KeyNoCreateMaterialUnreferenced;
 				private const string PrefsKeyFlagDeleteMaterialUnreferenced = PrefsKeyPrefix + KeyFlagDeleteMaterialUnreferenced;
+				private const string PrefsKeyFlagDisableInitialLightRenderer = PrefsKeyPrefix + KeyFlagDisableInitialLightRenderer;
+				private const string PrefsKeyFlagTakeOverLightRenderer = PrefsKeyPrefix + KeyFlagTakeOverLightRenderer;
 
 				private readonly static GroupBasic Default = new GroupBasic(
 					true,									/* FlagCreateControlGameObject */
@@ -1206,7 +1236,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					false,									/* FlagInvisibleToHideAll */
 					true,									/* FlagTrackAssets */
 					KindNoCreateMaterialUnreferenced.NONE,	/* NoCreateMaterialUnreferenced */
-					false									/* FlagDeleteMaterialUnreferenced */
+					false,									/* FlagDeleteMaterialUnreferenced */
+					false,									/* FlagDisableInitialLightRenderer */
+					false									/* FlagTakeOverLightRenderer */
 				);
 				#endregion Enums & Constants
 			}
