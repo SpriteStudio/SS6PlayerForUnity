@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -1194,6 +1194,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				/*       Other flags are set in "Information.Animation.StatusSetParts".                                 */
 				informationAnimationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED;
 
+#if false
+				/* MEMO: The parts' inheritance that have data only in Setup will be miss-converted if inheritances is resolved here. */
 				/* Set Inheritance */
 				Information.Parts parts = informationSSAE.TableParts[indexParts];
 				int indexPartsParent = parts.Data.IDParent;
@@ -1217,6 +1219,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationAnimationParts.FlipY.Parent = informationAnimationPartsParent.FlipY;
 					}
 				}
+#else
+				Information.Parts parts = informationSSAE.TableParts[indexParts];
+#endif
 
 				/* Get KeyFrame List */
 				string tagText;
@@ -2493,6 +2498,29 @@ public static partial class LibraryEditor_SpriteStudio6
 								}
 							}
 
+							/* Set Inheritance */
+							int indexPartsParent = parts.Data.IDParent;
+							if(0 <= indexPartsParent)
+							{
+								Parts informationAnimationPartsParent = TableParts[indexPartsParent];
+								if(0 != (parts.FlagInheritance & Information.Parts.FlagBitInheritance.OPACITY_RATE))
+								{
+									animationParts.RateOpacity.Parent = informationAnimationPartsParent.RateOpacity;
+								}
+								if(0 != (parts.FlagInheritance & Information.Parts.FlagBitInheritance.SHOW_HIDE))
+								{
+									animationParts.Hide.Parent = informationAnimationPartsParent.Hide;
+								}
+								if(0 != (parts.FlagInheritance & Information.Parts.FlagBitInheritance.FLIP_X))
+								{
+									animationParts.FlipX.Parent = informationAnimationPartsParent.FlipX;
+								}
+								if(0 != (parts.FlagInheritance & Information.Parts.FlagBitInheritance.FLIP_Y))
+								{
+									animationParts.FlipY.Parent = informationAnimationPartsParent.FlipY;
+								}
+							}
+
 							/* Adjust Top-Frame Key-Data */
 							animationParts.Cell.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.Cell);
 
@@ -2647,9 +2675,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Effect.ListKey.Clear();
 									animationParts.Deform.ListKey.Clear();
 #if CHANGE_DEFORM_DECODING
-										parts.FlagDeform = false;
+									parts.FlagDeform = false;
 #else
-										parts.CountVertexDeform = 0;
+									parts.CountVertexDeform = 0;
 #endif
 									break;
 
@@ -2673,9 +2701,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Effect.ListKey.Clear();
 									animationParts.Deform.ListKey.Clear();
 #if CHANGE_DEFORM_DECODING
-										parts.FlagDeform = false;
+									parts.FlagDeform = false;
 #else
-										parts.CountVertexDeform = 0;
+									parts.CountVertexDeform = 0;
 #endif
 									break;
 
