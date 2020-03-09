@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -1472,7 +1472,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				}
 
 				string namePathNormalized = PathNormalize(namePath);
-				nameDirectory = System.IO.Path.GetDirectoryName(namePathNormalized) + "/";
+				nameDirectory = PathNormalize(System.IO.Path.GetDirectoryName(namePathNormalized) + "/");
 				nameFileBody = System.IO.Path.GetFileNameWithoutExtension(namePathNormalized);
 				nameFileExtention = System.IO.Path.GetExtension(namePathNormalized);
 
