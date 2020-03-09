@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -366,7 +366,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		DataEffect.StatusIsBootup = true;
 	}
 
-	private bool ClusterBootUpDraw()
+	internal bool ClusterBootUpDraw()
 	{
 		CountParticleMax = CountGetDrawMesh();
 
