@@ -1,4 +1,4 @@
-﻿/**
+/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.1.24";
+	public const string SignatureVersionAsset = "1.1.25";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
