@@ -314,7 +314,7 @@ public partial class Script_SpriteStudio6_Root
 				if(0 <= indexTrackSlave)
 				{
 					TableControlTrack[indexTrackSlave].Stop();
-					TableControlTrack[indexTrack].Transition(-1, 0.0f);
+					TableControlTrack[i].Transition(-1, 0.0f);
 				}
 			}
 

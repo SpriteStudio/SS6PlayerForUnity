@@ -252,9 +252,14 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		{
 //			count =		CatalogParts.TableIDPartsMaskTriangle2.Length
 //						+ CatalogParts.TableIDPartsMaskTriangle4.Length;
+#if false
+			/* MEMO: Yuzu. */
 			count = CatalogParts.TableIDPartsNormal.Length;
+#else
+			count = CatalogParts.TableIDPartsMask.Length;
+#endif
 		}
-		return(count);
+		return (count);
 	}
 
 	public int IndexGetParts(string name)

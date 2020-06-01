@@ -844,7 +844,7 @@ public static partial class Library_SpriteStudio6
 						Status |= FlagBitStatus.UPDATE_RATEOPACITY;
 					}
 
-					/* Get Rate-Opacity */
+					/* Get Priority */
 					/* MEMO: "RateOpacity" are data that must be constantly updated in most parts, so decode here. */
 #if UNITY_EDITOR
 					if(null != dataAnimationParts.Priority.Function)
