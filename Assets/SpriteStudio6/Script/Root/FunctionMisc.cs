@@ -541,18 +541,17 @@ public partial class Script_SpriteStudio6_Root
 		dataInstance.LabelEnd = labelRangeEnd;
 		dataInstance.OffsetEnd = frameRangeOffsetEnd;
 
+		controlParts.IndexAnimationUnderControl = indexAnimation;
 		if(false == flagStartImmediate)
 		{
 			controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
+			/* MEMO: When does not start immediaterly, necessary to always decode next key-data, so turn off "Independent time". */
+			controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
 		}
 		else
 		{
 			controlParts.Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
 
-			/* MEMO: When does not start immediately, necessary to always decode next data, so turn off "Independent time" status. */
-			controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
-
-			controlParts.IndexAnimationUnderControl = indexAnimation;
 			controlParts.DataInstance = dataInstance;
 
 			int indexTrack = controlParts.IndexControlTrack;
