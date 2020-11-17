@@ -673,12 +673,12 @@ public static partial class Library_SpriteStudio6
 					return(false);
 				}
 
-				internal bool DrawParticle(Library_SpriteStudio6.Draw.Cluster clusterDraw, ref Matrix4x4 matrixTransform, ref Color ColorVertex)
+				internal bool DrawParticle(Library_SpriteStudio6.Draw.Cluster clusterDraw, ref Matrix4x4 matrixTransform, ref Color colorVertex)
 				{
 					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.LU] = 
 					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.RU] = 
 					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.RD] = 
-					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.LD] = ColorVertex;
+					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.LD] = colorVertex;
 
 					for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
 					{

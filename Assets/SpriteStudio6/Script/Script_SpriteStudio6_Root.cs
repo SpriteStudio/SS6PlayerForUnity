@@ -794,7 +794,7 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		return(false);
 	}
 
-	private bool ClusterBootUpDraw()
+	internal bool ClusterBootUpDraw()
 	{
 		CountSpriteMax = 0;
 		CountMeshMax = 0;
@@ -828,6 +828,64 @@ public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.R
 		CountParticleMax = 0;
 		ClusterDraw = null;
 		return(false);
+	}
+	private bool ClusterResetUnderControl()
+	{
+		if((null == DataAnimation) || (null == TableControlParts))
+		{
+			return(false);
+		}
+
+		int countParts = DataAnimation.TableParts.Length;
+		for(int i=0; i<countParts; i++)
+		{
+			switch(DataAnimation.TableParts[i].Feature)
+			{
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
+//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+					{
+						Script_SpriteStudio6_Root rootUnderControl = TableControlParts[i].InstanceRootUnderControl;
+						if(null != rootUnderControl)
+						{
+							/* MEMO: "Instance" can be nested. */
+							rootUnderControl.ClusterBootUpDraw();
+							rootUnderControl.ClusterResetUnderControl();
+						}
+					}
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+					{
+						Script_SpriteStudio6_RootEffect rootUnderControl = TableControlParts[i].InstanceRootEffectUnderControl;
+						if(null != rootUnderControl)
+						{
+							/* MEMO: "Effect" cannot control any animation-object. */
+							rootUnderControl.ClusterBootUpDraw();
+						}
+					}
+					break;
+
+//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
+//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+					break;
+			}
+		}
+		return(true);
 	}
 
 	internal bool CountGetDrawMesh(ref int countSprite, ref int countMesh, ref int countParticle)

@@ -1,4 +1,4 @@
-﻿/**
+/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -422,7 +422,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/*       Applying "Setup" animation and deleting useless key-datas is processed here.     */
 					/*       Process after parse all animation data since "Setup" animation is not guaranteed */
 					/*        defining at top of the animation-list in SSAE.                                  */
-					informationSSAE.TableAnimation[i].AttributeSolve(informationSSPJ, informationSSAE, setting.Basic.FlagInvisibleToHideAll);
+					informationSSAE.TableAnimation[i].AttributeSolve(ref setting, informationSSPJ, informationSSAE);
 
 					/* Set Part-Status */
 					/* MEMO: Analyze key-data and set each parts' usage status. */
@@ -2474,9 +2474,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						TableParts = null;
 					}
 
-					public bool AttributeSolve(	LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
-												Information informationSSAE,
-												bool flagInvisibleToHideAll
+					public bool AttributeSolve(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+												LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+												Information informationSSAE
 											)
 					{
 						int countParts = TableParts.Length;
@@ -2590,7 +2590,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationParts.FlipX.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.FlipX);
 							animationParts.FlipY.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.FlipY);
 
-							if((true == flagInvisibleToHideAll) && (true == parts.FlagHide))
+							if((true == setting.Basic.FlagInvisibleToHideAll) && (true == parts.FlagHide))
 							{	/* Parts Hide (for Editing), convert to All-Frame-Hide */
 								animationParts.Hide.CleanUpKey();
 
@@ -2641,39 +2641,39 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationParts.Deform.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.Deform);
 
 							/* Delete attributes that should not exist */
-							animationParts.AnchorPositionX.ListKey.Clear();	/* Unsupported */
-							animationParts.AnchorPositionY.ListKey.Clear();	/* Unsupported */
+							animationParts.AnchorPositionX.CleanUpKey();	/* Unsupported */
+							animationParts.AnchorPositionY.CleanUpKey();	/* Unsupported */
 							switch(parts.Data.Feature)
 							{
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 									parts.Data.CountMesh = 0;
 
-									animationParts.Cell.ListKey.Clear();
+									animationParts.Cell.CleanUpKey();
 
-									animationParts.PartsColor.ListKey.Clear();
-									animationParts.Priority.ListKey.Clear();
-									animationParts.VertexCorrection.ListKey.Clear();
+									animationParts.PartsColor.CleanUpKey();
+									animationParts.Priority.CleanUpKey();
+									animationParts.VertexCorrection.CleanUpKey();
 
-									animationParts.PivotOffsetX.ListKey.Clear();
-									animationParts.PivotOffsetY.ListKey.Clear();
+									animationParts.PivotOffsetX.CleanUpKey();
+									animationParts.PivotOffsetY.CleanUpKey();
 
-									animationParts.SizeForceX.ListKey.Clear();
-									animationParts.SizeForceY.ListKey.Clear();
+									animationParts.SizeForceX.CleanUpKey();
+									animationParts.SizeForceY.CleanUpKey();
 
-									animationParts.TexturePositionX.ListKey.Clear();
-									animationParts.TexturePositionY.ListKey.Clear();
-									animationParts.TextureRotation.ListKey.Clear();
-									animationParts.TextureScalingX.ListKey.Clear();
-									animationParts.TextureScalingY.ListKey.Clear();
-									animationParts.TextureFlipX.ListKey.Clear();
-									animationParts.TextureFlipY.ListKey.Clear();
+									animationParts.TexturePositionX.CleanUpKey();
+									animationParts.TexturePositionY.CleanUpKey();
+									animationParts.TextureRotation.CleanUpKey();
+									animationParts.TextureScalingX.CleanUpKey();
+									animationParts.TextureScalingY.CleanUpKey();
+									animationParts.TextureFlipX.CleanUpKey();
+									animationParts.TextureFlipY.CleanUpKey();
 
-									animationParts.PowerMask.ListKey.Clear();
+									animationParts.PowerMask.CleanUpKey();
 
-									animationParts.Instance.ListKey.Clear();
-									animationParts.Effect.ListKey.Clear();
-									animationParts.Deform.ListKey.Clear();
+									animationParts.Instance.CleanUpKey();
+									animationParts.Effect.CleanUpKey();
+									animationParts.Deform.CleanUpKey();
 #if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
 #else
@@ -2695,11 +2695,11 @@ public static partial class LibraryEditor_SpriteStudio6
 //									}
 //									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
 									parts.Data.CountMesh = 4;
-									animationParts.PowerMask.ListKey.Clear();
+									animationParts.PowerMask.CleanUpKey();
 
-									animationParts.Instance.ListKey.Clear();
-									animationParts.Effect.ListKey.Clear();
-									animationParts.Deform.ListKey.Clear();
+									animationParts.Instance.CleanUpKey();
+									animationParts.Effect.CleanUpKey();
+									animationParts.Deform.CleanUpKey();
 #if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
 #else
@@ -2718,46 +2718,46 @@ public static partial class LibraryEditor_SpriteStudio6
 //									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4;
 //
 //								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
-//									animationParts.PowerMask.ListKey.Clear();
+//									animationParts.PowerMask.CleanUpKey();
 //
-//									animationParts.Instance.ListKey.Clear();
-//									animationParts.Effect.ListKey.Clear();
+//									animationParts.Instance.CleanUpKey();
+//									animationParts.Effect.CleanUpKey();
 //									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 									parts.Data.CountMesh = 0;
 
-									animationParts.Cell.ListKey.Clear();
+									animationParts.Cell.CleanUpKey();
 
-									animationParts.FlipX.ListKey.Clear();
-									animationParts.FlipY.ListKey.Clear();
+									animationParts.FlipX.CleanUpKey();
+									animationParts.FlipY.CleanUpKey();
 
-									animationParts.PartsColor.ListKey.Clear();
-									animationParts.VertexCorrection.ListKey.Clear();
+									animationParts.PartsColor.CleanUpKey();
+									animationParts.VertexCorrection.CleanUpKey();
 
-									animationParts.PivotOffsetX.ListKey.Clear();
-									animationParts.PivotOffsetY.ListKey.Clear();
+									animationParts.PivotOffsetX.CleanUpKey();
+									animationParts.PivotOffsetY.CleanUpKey();
 
-									animationParts.SizeForceX.ListKey.Clear();
-									animationParts.SizeForceY.ListKey.Clear();
+									animationParts.SizeForceX.CleanUpKey();
+									animationParts.SizeForceY.CleanUpKey();
 
-									animationParts.TexturePositionX.ListKey.Clear();
-									animationParts.TexturePositionY.ListKey.Clear();
-									animationParts.TextureRotation.ListKey.Clear();
-									animationParts.TextureScalingX.ListKey.Clear();
-									animationParts.TextureScalingY.ListKey.Clear();
-									animationParts.TextureFlipX.ListKey.Clear();
-									animationParts.TextureFlipY.ListKey.Clear();
+									animationParts.TexturePositionX.CleanUpKey();
+									animationParts.TexturePositionY.CleanUpKey();
+									animationParts.TextureRotation.CleanUpKey();
+									animationParts.TextureScalingX.CleanUpKey();
+									animationParts.TextureScalingY.CleanUpKey();
+									animationParts.TextureFlipX.CleanUpKey();
+									animationParts.TextureFlipY.CleanUpKey();
 
-									animationParts.PowerMask.ListKey.Clear();
+									animationParts.PowerMask.CleanUpKey();
 
 									/* MEMO: In "Animation.StatusSetParts" function to be executed later,                               */
 									/*        if all frames are hide status, judge that "Instance" are not used and erase all key data. */
 									/*       Complement key-data for now.                                                               */
 									animationParts.Instance.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.Instance, Library_SpriteStudio6.Data.Animation.Attribute.DefaultInstance, false, false);
 
-									animationParts.Effect.ListKey.Clear();
-									animationParts.Deform.ListKey.Clear();
+									animationParts.Effect.CleanUpKey();
+									animationParts.Deform.CleanUpKey();
 #if CHANGE_DEFORM_DECODING
 										parts.FlagDeform = false;
 #else
@@ -2768,37 +2768,37 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 									parts.Data.CountMesh = 0;
 
-									animationParts.Cell.ListKey.Clear();
+									animationParts.Cell.CleanUpKey();
 
-									animationParts.FlipX.ListKey.Clear();
-									animationParts.FlipY.ListKey.Clear();
+									animationParts.FlipX.CleanUpKey();
+									animationParts.FlipY.CleanUpKey();
 
-									animationParts.PartsColor.ListKey.Clear();
-									animationParts.VertexCorrection.ListKey.Clear();
+									animationParts.PartsColor.CleanUpKey();
+									animationParts.VertexCorrection.CleanUpKey();
 
-									animationParts.PivotOffsetX.ListKey.Clear();
-									animationParts.PivotOffsetY.ListKey.Clear();
+									animationParts.PivotOffsetX.CleanUpKey();
+									animationParts.PivotOffsetY.CleanUpKey();
 
-									animationParts.SizeForceX.ListKey.Clear();
-									animationParts.SizeForceY.ListKey.Clear();
+									animationParts.SizeForceX.CleanUpKey();
+									animationParts.SizeForceY.CleanUpKey();
 
-									animationParts.TexturePositionX.ListKey.Clear();
-									animationParts.TexturePositionY.ListKey.Clear();
-									animationParts.TextureRotation.ListKey.Clear();
-									animationParts.TextureScalingX.ListKey.Clear();
-									animationParts.TextureScalingY.ListKey.Clear();
-									animationParts.TextureFlipX.ListKey.Clear();
-									animationParts.TextureFlipY.ListKey.Clear();
+									animationParts.TexturePositionX.CleanUpKey();
+									animationParts.TexturePositionY.CleanUpKey();
+									animationParts.TextureRotation.CleanUpKey();
+									animationParts.TextureScalingX.CleanUpKey();
+									animationParts.TextureScalingY.CleanUpKey();
+									animationParts.TextureFlipX.CleanUpKey();
+									animationParts.TextureFlipY.CleanUpKey();
 
-									animationParts.PowerMask.ListKey.Clear();
+									animationParts.PowerMask.CleanUpKey();
 
 									/* MEMO: In "Animation.StatusSetParts" function to be executed later,                             */
 									/*        if all frames are hide status, judge that "Effect" are not used and erase all key data. */
 									/*       Complement key-data for now.                                                             */
 									animationParts.Effect.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.Effect, Library_SpriteStudio6.Data.Animation.Attribute.DefaultEffect, false, false);
 
-									animationParts.Instance.ListKey.Clear();
-									animationParts.Deform.ListKey.Clear();
+									animationParts.Instance.CleanUpKey();
+									animationParts.Deform.CleanUpKey();
 #if CHANGE_DEFORM_DECODING
 										parts.FlagDeform = false;
 #else
@@ -2820,9 +2820,9 @@ public static partial class LibraryEditor_SpriteStudio6
 //									}
 //									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
 									parts.Data.CountMesh = 4;
-									animationParts.Instance.ListKey.Clear();
-									animationParts.Effect.ListKey.Clear();
-									animationParts.Deform.ListKey.Clear();
+									animationParts.Instance.CleanUpKey();
+									animationParts.Effect.CleanUpKey();
+									animationParts.Deform.CleanUpKey();
 #if CHANGE_DEFORM_DECODING
 										parts.FlagDeform = false;
 #else
@@ -2841,41 +2841,41 @@ public static partial class LibraryEditor_SpriteStudio6
 //									goto case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4;
 
 //								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
-//									animationParts.Instance.ListKey.Clear();
-//									animationParts.Effect.ListKey.Clear();
+//									animationParts.Instance.CleanUpKey();
+//									animationParts.Effect.CleanUpKey();
 //									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
 									parts.Data.CountMesh = 0;
 
-									animationParts.Cell.ListKey.Clear();
+									animationParts.Cell.CleanUpKey();
 
-									animationParts.FlipX.ListKey.Clear();
-									animationParts.FlipY.ListKey.Clear();
+									animationParts.FlipX.CleanUpKey();
+									animationParts.FlipY.CleanUpKey();
 
-									animationParts.Priority.ListKey.Clear();
-									animationParts.PartsColor.ListKey.Clear();
-									animationParts.VertexCorrection.ListKey.Clear();
+									animationParts.Priority.CleanUpKey();
+									animationParts.PartsColor.CleanUpKey();
+									animationParts.VertexCorrection.CleanUpKey();
 
-									animationParts.PivotOffsetX.ListKey.Clear();
-									animationParts.PivotOffsetY.ListKey.Clear();
+									animationParts.PivotOffsetX.CleanUpKey();
+									animationParts.PivotOffsetY.CleanUpKey();
 
-									animationParts.SizeForceX.ListKey.Clear();
-									animationParts.SizeForceY.ListKey.Clear();
+									animationParts.SizeForceX.CleanUpKey();
+									animationParts.SizeForceY.CleanUpKey();
 
-									animationParts.TexturePositionX.ListKey.Clear();
-									animationParts.TexturePositionY.ListKey.Clear();
-									animationParts.TextureRotation.ListKey.Clear();
-									animationParts.TextureScalingX.ListKey.Clear();
-									animationParts.TextureScalingY.ListKey.Clear();
-									animationParts.TextureFlipX.ListKey.Clear();
-									animationParts.TextureFlipY.ListKey.Clear();
+									animationParts.TexturePositionX.CleanUpKey();
+									animationParts.TexturePositionY.CleanUpKey();
+									animationParts.TextureRotation.CleanUpKey();
+									animationParts.TextureScalingX.CleanUpKey();
+									animationParts.TextureScalingY.CleanUpKey();
+									animationParts.TextureFlipX.CleanUpKey();
+									animationParts.TextureFlipY.CleanUpKey();
 
-									animationParts.PowerMask.ListKey.Clear();
+									animationParts.PowerMask.CleanUpKey();
 
-									animationParts.Instance.ListKey.Clear();
-									animationParts.Effect.ListKey.Clear();
-									animationParts.Deform.ListKey.Clear();
+									animationParts.Instance.CleanUpKey();
+									animationParts.Effect.CleanUpKey();
+									animationParts.Deform.CleanUpKey();
 #if CHANGE_DEFORM_DECODING
 										parts.FlagDeform = false;
 #else
@@ -2886,46 +2886,46 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
 									parts.Data.CountMesh = 0;
 
-									animationParts.Cell.ListKey.Clear();
+									animationParts.Cell.CleanUpKey();
 
-									animationParts.RotationX.ListKey.Clear();
-									animationParts.RotationY.ListKey.Clear();
+									animationParts.RotationX.CleanUpKey();
+									animationParts.RotationY.CleanUpKey();
 
-									animationParts.ScalingXLocal.ListKey.Clear();
-									animationParts.ScalingYLocal.ListKey.Clear();
+									animationParts.ScalingXLocal.CleanUpKey();
+									animationParts.ScalingYLocal.CleanUpKey();
 
-									animationParts.Priority.ListKey.Clear();
-									animationParts.RateOpacityLocal.ListKey.Clear();
+									animationParts.Priority.CleanUpKey();
+									animationParts.RateOpacityLocal.CleanUpKey();
 
-									animationParts.FlipX.ListKey.Clear();
-									animationParts.FlipY.ListKey.Clear();
+									animationParts.FlipX.CleanUpKey();
+									animationParts.FlipY.CleanUpKey();
 
-									animationParts.PartsColor.ListKey.Clear();
-									animationParts.VertexCorrection.ListKey.Clear();
+									animationParts.PartsColor.CleanUpKey();
+									animationParts.VertexCorrection.CleanUpKey();
 
-									animationParts.PivotOffsetX.ListKey.Clear();
-									animationParts.PivotOffsetY.ListKey.Clear();
+									animationParts.PivotOffsetX.CleanUpKey();
+									animationParts.PivotOffsetY.CleanUpKey();
 
-									animationParts.SizeForceX.ListKey.Clear();
-									animationParts.SizeForceY.ListKey.Clear();
+									animationParts.SizeForceX.CleanUpKey();
+									animationParts.SizeForceY.CleanUpKey();
 
-									animationParts.TexturePositionX.ListKey.Clear();
-									animationParts.TexturePositionY.ListKey.Clear();
-									animationParts.TextureRotation.ListKey.Clear();
-									animationParts.TextureScalingX.ListKey.Clear();
-									animationParts.TextureScalingY.ListKey.Clear();
-									animationParts.TextureFlipX.ListKey.Clear();
-									animationParts.TextureFlipY.ListKey.Clear();
+									animationParts.TexturePositionX.CleanUpKey();
+									animationParts.TexturePositionY.CleanUpKey();
+									animationParts.TextureRotation.CleanUpKey();
+									animationParts.TextureScalingX.CleanUpKey();
+									animationParts.TextureScalingY.CleanUpKey();
+									animationParts.TextureFlipX.CleanUpKey();
+									animationParts.TextureFlipY.CleanUpKey();
 
-									animationParts.PowerMask.ListKey.Clear();
+									animationParts.PowerMask.CleanUpKey();
 
-									animationParts.Instance.ListKey.Clear();
-									animationParts.Effect.ListKey.Clear();
-									animationParts.Deform.ListKey.Clear();
+									animationParts.Instance.CleanUpKey();
+									animationParts.Effect.CleanUpKey();
+									animationParts.Deform.CleanUpKey();
 #if CHANGE_DEFORM_DECODING
-										parts.FlagDeform = false;
+									parts.FlagDeform = false;
 #else
-										parts.CountVertexDeform = 0;
+									parts.CountVertexDeform = 0;
 #endif
 									break;
 
@@ -2937,21 +2937,21 @@ public static partial class LibraryEditor_SpriteStudio6
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
-									animationParts.FlipX.ListKey.Clear();
-									animationParts.FlipY.ListKey.Clear();
+									animationParts.FlipX.CleanUpKey();
+									animationParts.FlipY.CleanUpKey();
 
-									animationParts.TexturePositionX.ListKey.Clear();
-									animationParts.TexturePositionY.ListKey.Clear();
-									animationParts.TextureRotation.ListKey.Clear();
-									animationParts.TextureScalingX.ListKey.Clear();
-									animationParts.TextureScalingY.ListKey.Clear();
-									animationParts.TextureFlipX.ListKey.Clear();
-									animationParts.TextureFlipY.ListKey.Clear();
+									animationParts.TexturePositionX.CleanUpKey();
+									animationParts.TexturePositionY.CleanUpKey();
+									animationParts.TextureRotation.CleanUpKey();
+									animationParts.TextureScalingX.CleanUpKey();
+									animationParts.TextureScalingY.CleanUpKey();
+									animationParts.TextureFlipX.CleanUpKey();
+									animationParts.TextureFlipY.CleanUpKey();
 
-									animationParts.PowerMask.ListKey.Clear();
+									animationParts.PowerMask.CleanUpKey();
 
-									animationParts.Instance.ListKey.Clear();
-									animationParts.Effect.ListKey.Clear();
+									animationParts.Instance.CleanUpKey();
+									animationParts.Effect.CleanUpKey();
 
 #if CHANGE_DEFORM_DECODING
 									int countVertexCell = 0;

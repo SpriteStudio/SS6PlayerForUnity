@@ -320,29 +320,46 @@ public partial class Script_SpriteStudio6_Root
 		{
 			return(false);
 		}
-		if((0 > idParts) || (TableControlParts.Length <= idParts))
-		{
-			return(false);
-		}
-		if(Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE != DataAnimation.TableParts[idParts].Feature)
+
+		/* Get now status. */
+		Script_SpriteStudio6_Root scriptInstance = InstanceGet(idParts);
+		if(null == scriptInstance)
 		{
 			return(false);
 		}
 
+		bool flagHideForceOld = scriptInstance.FlagHideForce;
+		bool flagPlanarizationOld = scriptInstance.FlagPlanarization;
+		int orderInLayerOld = scriptInstance.OrderInLayer;
+		float rateOpacityOld = scriptInstance.RateOpacity;
+		Vector2 rateScaleOld = scriptInstance.RateScaleLocal;
+
+		/* Renew "Instance" */
 		Script_SpriteStudio6_Root scriptRootHighest = RootGetHighest();
 		if(null == scriptRootHighest)
 		{
 			scriptRootHighest = this;
 		}
-
-		/* Renew "Instance" */
 		if(false == TableControlParts[idParts].BootUpInstance(this, idParts, true, source))
 		{
 			return(false);
 		}
 
-		/* Rebuild Hiest-Root's Draw buffes */
+		/* Set status. */
+		scriptInstance = InstanceGet(idParts);	/* Get New Instance */
+
+		scriptInstance.FlagHideForce = flagHideForceOld;
+		scriptInstance.FlagPlanarization = flagPlanarizationOld;
+		scriptInstance.OrderInLayer = orderInLayerOld;
+		scriptInstance.RateOpacity = rateOpacityOld;
+		scriptInstance.RateScaleLocal = rateScaleOld;
+
+		/* Rebuild Hiest-Root's Draw buffers */
 		if(false == scriptRootHighest.ClusterBootUpDraw())
+		{
+			return(false);
+		}
+		if(false == scriptRootHighest.ClusterResetUnderControl())
 		{
 			return(false);
 		}
@@ -524,18 +541,17 @@ public partial class Script_SpriteStudio6_Root
 		dataInstance.LabelEnd = labelRangeEnd;
 		dataInstance.OffsetEnd = frameRangeOffsetEnd;
 
+		controlParts.IndexAnimationUnderControl = indexAnimation;
 		if(false == flagStartImmediate)
 		{
 			controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
+			/* MEMO: When does not start immediaterly, necessary to always decode next key-data, so turn off "Independent time". */
+			controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
 		}
 		else
 		{
 			controlParts.Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_IGNORE_EXCEPT_NEXTDATA;
 
-			/* MEMO: When does not start immediately, necessary to always decode next data, so turn off "Independent time" status. */
-			controlParts.Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.INSTANCE_PLAY_INDEPENDENT;
-
-			controlParts.IndexAnimationUnderControl = indexAnimation;
 			controlParts.DataInstance = dataInstance;
 
 			int indexTrack = controlParts.IndexControlTrack;

@@ -1,4 +1,4 @@
-﻿/**
+/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -15,7 +15,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.1.22";
+	public const string SignatureVersionAsset = "1.1.26";
 	public const string SignatureNameDistributor = "Web Technology Corp.";
 	#endregion Signatures
 
@@ -2619,8 +2619,8 @@ public static partial class Library_SpriteStudio6
 					{
 						goto BootUp_ErrorEnd;
 					}
-					ListCoordinate.Clear();
 				}
+				ListCoordinate.Clear();
 
 				if(null == ListColorParts)
 				{
@@ -2637,8 +2637,8 @@ public static partial class Library_SpriteStudio6
 					{
 						goto BootUp_ErrorEnd;
 					}
-					ListColorParts.Clear();
 				}
+				ListColorParts.Clear();
 
 				if(null == ListUVTexture)
 				{
@@ -2655,8 +2655,8 @@ public static partial class Library_SpriteStudio6
 					{
 						goto BootUp_ErrorEnd;
 					}
-					ListUVTexture.Clear();
 				}
+				ListUVTexture.Clear();
 
 				if(null == ListParameterBlend)
 				{
@@ -2673,8 +2673,8 @@ public static partial class Library_SpriteStudio6
 					{
 						goto BootUp_ErrorEnd;
 					}
-					ListParameterBlend.Clear();
 				}
+				ListParameterBlend.Clear();
 
 				if(null == ListIndexVertex)
 				{
@@ -2691,8 +2691,8 @@ public static partial class Library_SpriteStudio6
 					{
 						goto BootUp_ErrorEnd;
 					}
-					ListIndexVertex.Clear();
 				}
+				ListIndexVertex.Clear();
 
 				if(null == ListIndexVertexSplit)
 				{
@@ -2709,8 +2709,8 @@ public static partial class Library_SpriteStudio6
 					{
 						goto BootUp_ErrorEnd;
 					}
-					ListIndexVertexSplit.Clear();
 				}
+				ListIndexVertexSplit.Clear();
 
 				return(true);
 
