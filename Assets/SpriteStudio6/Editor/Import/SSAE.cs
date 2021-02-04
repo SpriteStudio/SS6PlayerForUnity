@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -5858,27 +5858,91 @@ public static partial class LibraryEditor_SpriteStudio6
 						meshRendererParts = informationSSAE.TableParts[i].MeshRendererUnityNative;
 						scriptParts = informationSSAE.TableParts[i].ScriptPartsUnityNative;
 
+						/* Set "Setup"Animation to gameObject */
+						Vector3 position = new Vector3(0.0f, 0.0f, 0.0f);
+						Vector3 rotation = new Vector3(0.0f, 0.0f, 0.0f);
+						Vector3 scaling = new Vector3(1.0f, 1.0f, 1.0f);
+						if(0 < informationSSAE.AnimationSetup.TableParts[i].PositionX.CountGetKey())
+						{
+							position.x = informationSSAE.AnimationSetup.TableParts[i].PositionX.ListKey[0].Value;
+						}
+						if(0 < informationSSAE.AnimationSetup.TableParts[i].PositionY.CountGetKey())
+						{
+							position.y = informationSSAE.AnimationSetup.TableParts[i].PositionY.ListKey[0].Value;
+						}
+						if(0 < informationSSAE.AnimationSetup.TableParts[i].PositionZ.CountGetKey())
+						{
+							position.z = informationSSAE.AnimationSetup.TableParts[i].PositionZ.ListKey[0].Value;
+						}
+						if(0 < informationSSAE.AnimationSetup.TableParts[i].RotationX.CountGetKey())
+						{
+							rotation.x = informationSSAE.AnimationSetup.TableParts[i].RotationX.ListKey[0].Value;
+						}
+						if(0 < informationSSAE.AnimationSetup.TableParts[i].RotationY.CountGetKey())
+						{
+							rotation.y = informationSSAE.AnimationSetup.TableParts[i].RotationY.ListKey[0].Value;
+						}
+						if(0 < informationSSAE.AnimationSetup.TableParts[i].RotationZ.CountGetKey())
+						{
+							rotation.z = informationSSAE.AnimationSetup.TableParts[i].RotationZ.ListKey[0].Value;
+						}
+						if(0 < informationSSAE.AnimationSetup.TableParts[i].ScalingX.CountGetKey())
+						{
+							scaling.x = informationSSAE.AnimationSetup.TableParts[i].ScalingX.ListKey[0].Value;
+						}
+						if(0 < informationSSAE.AnimationSetup.TableParts[i].ScalingY.CountGetKey())
+						{
+							scaling.y = informationSSAE.AnimationSetup.TableParts[i].ScalingY.ListKey[0].Value;
+						}
+						/* MEMO: In case of "Bone"-parts, necessary to correct the "set-up" value. */
+						switch(informationSSAE.TableParts[i].Data.Feature)
+						{
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+								position.x += informationSSAE.TableParts[i].PositionXBone;
+								position.y += informationSSAE.TableParts[i].PositionYBone;
+								rotation.z += informationSSAE.TableParts[i].RotateZBone;
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+								break;
+						}
+						gameObjectParts.transform.localPosition = position;
+						gameObjectParts.transform.localEulerAngles = rotation;
+						gameObjectParts.transform.localScale = scaling;
+
 						/* Set Curves */
 						AssetCreateDataCurveSetPositionX(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.PositionX,
 															indexAnimation,
 															frameStart, frameEnd, framePerSecond,
-															0.0f
+															position.x			// 0.0f;
 														);
 						AssetCreateDataCurveSetPositionY(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.PositionY,
 															indexAnimation,
 															frameStart, frameEnd, framePerSecond,
-															0.0f
+															position.y			// 0.0f
 														);
 						AssetCreateDataCurveSetPositionZ(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.PositionZ,
 															indexAnimation,
 															frameStart, frameEnd, framePerSecond,
-															0.0f
+															position.z			// 0.0f
 														);
 
 						AssetCreateDataCurveSetRotationX(	dataAnimation,
@@ -5886,21 +5950,21 @@ public static partial class LibraryEditor_SpriteStudio6
 															informationAnimationParts.RotationX,
 															indexAnimation,
 															frameStart, frameEnd, framePerSecond,
-															0.0f
+															rotation.x			// 0.0f
 														);
 						AssetCreateDataCurveSetRotationY(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.RotationY,
 															indexAnimation,
 															frameStart, frameEnd, framePerSecond,
-															0.0f
+															rotation.y			// 0.0f
 														);
 						AssetCreateDataCurveSetRotationZ(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.RotationZ,
 															indexAnimation,
 															frameStart, frameEnd, framePerSecond,
-															0.0f
+															rotation.z			// 0.0f
 														);
 
 						AssetCreateDataCurveSetScalingX(	dataAnimation,
@@ -5908,14 +5972,14 @@ public static partial class LibraryEditor_SpriteStudio6
 															informationAnimationParts.ScalingX,
 															indexAnimation,
 															frameStart, frameEnd, framePerSecond,
-															1.0f
+															scaling.x			// 1.0f
 														);
 						AssetCreateDataCurveSetScalingY(	dataAnimation,
 															nameGameObject, gameObjectParts,
 															informationAnimationParts.ScalingY,
 															indexAnimation,
 															frameStart, frameEnd, framePerSecond,
-															1.0f
+															scaling.y			// 1.0f
 														);
 
 						AssetCreateDataCurveSetUserData(	dataAnimation,
@@ -6455,15 +6519,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		int framePerSecond,
-																		float valueError
+																		float valueInitial
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Vector3 position = gameObject.transform.localPosition;
-						position.x = valueError;
-						gameObject.transform.localPosition = position;
 						return(true);
 					}
 
@@ -6473,11 +6534,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(0 >= attributeFloat.CountGetKey())
 					{
-						value = valueError;
-
-						Vector3 position = gameObject.transform.localPosition;
-						position.x = value;
-						gameObject.transform.localPosition = position;
+						value = valueInitial;
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6490,31 +6547,14 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					float valuePrevious = float.NaN;
 					int frame;
-					bool flagForceSetKey;
+					bool flagForceSetKey = true;
 					for(int i=0; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
 
 						if(false == attributeFloat.ValueGet(out value, frame))
 						{
-							value = valueError;
-						}
-
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							Vector3 position = gameObject.transform.localPosition;
-							position.x = value;
-							gameObject.transform.localPosition = position;
-						}
-
-						/* MEMO: Forcibly create key-data.                  */
-						/*       - first frame: for initialize              */
-						flagForceSetKey = false;
-						if(0 == i)
-						{
-							flagForceSetKey = true;
+							value = valueInitial;
 						}
 
 						if((flagForceSetKey == true) || (valuePrevious != value))
@@ -6526,6 +6566,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationCurve.AddKey(keyframe);
 						}
 
+						flagForceSetKey = false;
 						valuePrevious = value;
 					}
 					/* MEMO: Forcibly create key-data.                  */
@@ -6550,15 +6591,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		int framePerSecond,
-																		float valueError
+																		float valueInitial
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Vector3 position = gameObject.transform.localPosition;
-						position.y = valueError;
-						gameObject.transform.localPosition = position;
 						return(true);
 					}
 
@@ -6568,11 +6606,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(0 >= attributeFloat.CountGetKey())
 					{
-						value = valueError;
-
-						Vector3 position = gameObject.transform.localPosition;
-						position.y = value;
-						gameObject.transform.localPosition = position;
+						value = valueInitial;
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6585,25 +6619,17 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					float valuePrevious = float.NaN;
 					int frame;
+					bool flagForceSetKey = true;
 					for(int i=0; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
 
 						if(false == attributeFloat.ValueGet(out value, frame))
 						{
-							value = valueError;
+							value = valueInitial;
 						}
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							Vector3 position = gameObject.transform.localPosition;
-							position.y = value;
-							gameObject.transform.localPosition = position;
-						}
-
-						if((0 == i) || (valuePrevious != value))
+						if((flagForceSetKey == true) || (valuePrevious != value))
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6612,6 +6638,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationCurve.AddKey(keyframe);
 						}
 
+						flagForceSetKey = false;
 						valuePrevious = value;
 					}
 
@@ -6629,15 +6656,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		int framePerSecond,
-																		float valueError
+																		float valueInitial
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Vector3 position = gameObject.transform.localPosition;
-						position.z = valueError;
-						gameObject.transform.localPosition = position;
 						return(true);
 					}
 
@@ -6647,11 +6671,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(0 >= attributeFloat.CountGetKey())
 					{
-						value = valueError;
-
-						Vector3 position = gameObject.transform.localPosition;
-						position.z = value;
-						gameObject.transform.localPosition = position;
+						value = valueInitial;
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6664,25 +6684,17 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					float valuePrevious = float.NaN;
 					int frame;
+					bool flagForceSetKey = true;
 					for(int i=0; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
 
 						if(false == attributeFloat.ValueGet(out value, frame))
 						{
-							value = valueError;
+							value = valueInitial;
 						}
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							Vector3 position = gameObject.transform.localPosition;
-							position.z = value;
-							gameObject.transform.localPosition = position;
-						}
-
-						if((0 == i) || (valuePrevious != value))
+						if((flagForceSetKey == true) || (valuePrevious != value))
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6691,6 +6703,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationCurve.AddKey(keyframe);
 						}
 
+						flagForceSetKey = false;
 						valuePrevious = value;
 					}
 
@@ -6709,15 +6722,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		int framePerSecond,
-																		float valueError
+																		float valueInitial
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.x = valueError;
-						gameObject.transform.localEulerAngles = rotation;
 						return(true);
 					}
 
@@ -6727,11 +6737,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(0 >= attributeFloat.CountGetKey())
 					{
-						value = valueError;
-
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.x = value;
-						gameObject.transform.localEulerAngles = rotation;
+						value = valueInitial;
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6744,25 +6750,17 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					float valuePrevious = float.NaN;
 					int frame;
+					bool flagForceSetKey = true;
 					for(int i=0; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
 
 						if(false == attributeFloat.ValueGet(out value, frame))
 						{
-							value = valueError;
+							value = valueInitial;
 						}
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							Vector3 rotation = gameObject.transform.localEulerAngles;
-							rotation.x = value;
-							gameObject.transform.localEulerAngles = rotation;
-						}
-
-						if((0 == i) || (valuePrevious != value))
+						if((flagForceSetKey == true) || (valuePrevious != value))
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6771,6 +6769,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationCurve.AddKey(keyframe);
 						}
 
+						flagForceSetKey = false;
 						valuePrevious = value;
 					}
 
@@ -6788,15 +6787,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		int framePerSecond,
-																		float valueError
+																		float valueInitial
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.y = valueError;
-						gameObject.transform.localEulerAngles = rotation;
 						return(true);
 					}
 
@@ -6806,11 +6802,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(0 >= attributeFloat.CountGetKey())
 					{
-						value = valueError;
-
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.y = value;
-						gameObject.transform.localEulerAngles = rotation;
+						value = valueInitial;
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6823,25 +6815,17 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					float valuePrevious = float.NaN;
 					int frame;
+					bool flagForceSetKey = true;
 					for(int i=0; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
 
 						if(false == attributeFloat.ValueGet(out value, frame))
 						{
-							value = valueError;
+							value = valueInitial;
 						}
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							Vector3 rotation = gameObject.transform.localEulerAngles;
-							rotation.y = value;
-							gameObject.transform.localEulerAngles = rotation;
-						}
-
-						if((0 == i) || (valuePrevious != value))
+						if((flagForceSetKey == true) || (valuePrevious != value))
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6850,6 +6834,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationCurve.AddKey(keyframe);
 						}
 
+						flagForceSetKey = false;
 						valuePrevious = value;
 					}
 
@@ -6867,15 +6852,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		int framePerSecond,
-																		float valueError
+																		float valueInitial
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.z = valueError;
-						gameObject.transform.localEulerAngles = rotation;
 						return(true);
 					}
 
@@ -6885,11 +6867,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(0 >= attributeFloat.CountGetKey())
 					{
-						value = valueError;
-
-						Vector3 rotation = gameObject.transform.localEulerAngles;
-						rotation.z = 0.0f;
-						gameObject.transform.localEulerAngles = rotation;
+						value = valueInitial;
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6902,25 +6880,17 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					float valuePrevious = float.NaN;
 					int frame;
+					bool flagForceSetKey = true;
 					for(int i=0; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
 
 						if(false == attributeFloat.ValueGet(out value, frame))
 						{
-							value = valueError;
+							value = valueInitial;
 						}
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							Vector3 rotation = gameObject.transform.localEulerAngles;
-							rotation.z = value;
-							gameObject.transform.localEulerAngles = rotation;
-						}
-
-						if((0 == i) || (valuePrevious != value))
+						if((flagForceSetKey == true) || (valuePrevious != value))
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6929,6 +6899,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationCurve.AddKey(keyframe);
 						}
 
+						flagForceSetKey = false;
 						valuePrevious = value;
 					}
 
@@ -6947,16 +6918,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		int framePerSecond,
-																		float valueError
+																		float valueInitial
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Vector3 scaling = gameObject.transform.localScale;
-						scaling.x = valueError;
-						scaling.z = 1.0f;
-						gameObject.transform.localScale = scaling;
 						return(true);
 					}
 
@@ -6966,12 +6933,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(0 >= attributeFloat.CountGetKey())
 					{
-						value = valueError;
-
-						Vector3 scaling = gameObject.transform.localScale;
-						scaling.x = value;
-						scaling.z = 1.0f;
-						gameObject.transform.localScale = scaling;
+						value = valueInitial;
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -6984,26 +6946,17 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					float valuePrevious = float.NaN;
 					int frame;
+					bool flagForceSetKey = true;
 					for(int i=0; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
 
 						if(false == attributeFloat.ValueGet(out value, frame))
 						{
-							value = valueError;
+							value = valueInitial;
 						}
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							Vector3 scaling = gameObject.transform.localScale;
-							scaling.x = value;
-							scaling.z = 1.0f;
-							gameObject.transform.localScale = scaling;
-						}
-
-						if((0 == i) || (valuePrevious != value))
+						if((flagForceSetKey == true) || (valuePrevious != value))
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -7012,6 +6965,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationCurve.AddKey(keyframe);
 						}
 
+						flagForceSetKey = false;
 						valuePrevious = value;
 					}
 
@@ -7029,16 +6983,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																		int frameStart,
 																		int frameEnd,
 																		int framePerSecond,
-																		float valueError
+																		float valueInitial
 																	)
 				{
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						Vector3 scaling = gameObject.transform.localScale;
-						scaling.y = valueError;
-						scaling.z = 1.0f;
-						gameObject.transform.localScale = scaling;
 						return(true);
 					}
 
@@ -7048,12 +6998,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					if(0 >= attributeFloat.CountGetKey())
 					{
-						value = valueError;
-
-						Vector3 scaling = gameObject.transform.localScale;
-						scaling.y = value;
-						scaling.z = 1.0f;
-						gameObject.transform.localScale = scaling;
+						value = valueInitial;
 
 						keyframe = new Keyframe();
 						AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -7066,26 +7011,17 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					float valuePrevious = float.NaN;
 					int frame;
+					bool flagForceSetKey = true;
 					for(int i=0; i<countFrameRange; i++)
 					{
 						frame = i + frameStart;
 
 						if(false == attributeFloat.ValueGet(out value, frame))
 						{
-							value = valueError;
+							value = valueInitial;
 						}
 
-						/* MEMO: Must set before adding Curve to AnimationClip.       */
-						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							Vector3 scaling = gameObject.transform.localScale;
-							scaling.y = value;
-							scaling.z = 1.0f;
-							gameObject.transform.localScale = scaling;
-						}
-
-						if((0 == i) || (valuePrevious != value))
+						if((flagForceSetKey == true) || (valuePrevious != value))
 						{
 							keyframe = new Keyframe();
 							AssetCreateDataKeyFrameInitialize(ref keyframe);
@@ -7094,6 +7030,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							animationCurve.AddKey(keyframe);
 						}
 
+						flagForceSetKey = false;
 						valuePrevious = value;
 					}
 
