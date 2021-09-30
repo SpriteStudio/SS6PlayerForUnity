@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) Web Technology Corp. 
@@ -15,7 +15,7 @@ using UnityEditor;
 
 [ExecuteInEditMode]
 [System.Serializable]
-public partial class Script_SpriteStudio6_Root :  Library_SpriteStudio6.Script.Root
+public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Root
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
