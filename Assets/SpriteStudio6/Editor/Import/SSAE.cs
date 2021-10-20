@@ -7,6 +7,7 @@
 // #define STORE_ANIMATIONSETUP_FULL
 // #define BONEINDEX_CONVERT_PARTSID
 #define WARN_MESHVERTEX_COUNT
+#define PATCH_BONELIST_NOT_EXIST
 #define CHANGE_DEFORM_DECODING
 
 using System.Collections;
@@ -5039,40 +5040,47 @@ public static partial class LibraryEditor_SpriteStudio6
 													}
 #endif
 
-													int countBone;
-													string namePartsBone;
-													int idPartsBone;
-													for(int j=0; j<countBindVertex; j++)
+#if PATCH_BONELIST_NOT_EXIST
+													if(0 < informationSSAE.ListBone.Count)
 													{
-														countBone = informationParts.Data.Mesh.TableVertex[j].TableBone.Length;
-														if(0 < countBone)
-														{
-															for(int k=0; k<countBone; k++)
-															{
-																idPartsBone = informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index;
-																namePartsBone = informationSSAE.ListBone[idPartsBone];
-																idPartsBone = informationSSAE.IndexGetParts(namePartsBone);
-#if BONEINDEX_CONVERT_PARTSID
-																if(0 <= idPartsBone)
-																{
-																	informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = idPartsBone;
-																}
-#else
-																/* MEMO: Before SS 6.2 (SSAE 2.00.03) this correcting is not necessary.                           */
-																/*       After SS 6.3 (SSAE 2.00.04) the CatalogParts.ListIDPartsBone and bone-list(ListBone) are */
-																/*        in different order, conversion is required.                                             */
-																if(0 <= idPartsBone)
-																{
-																	int indexCatalogBone = informationSSAE.CatalogParts.ListIDPartsBone.IndexOf(idPartsBone);
-																	if(0 <= indexCatalogBone)
-																	{
-																		informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = indexCatalogBone;
-																	}
-																}
 #endif
+														int countBone;
+														string namePartsBone;
+														int idPartsBone;
+														for(int j=0; j<countBindVertex; j++)
+														{
+															countBone = informationParts.Data.Mesh.TableVertex[j].TableBone.Length;
+															if(0 < countBone)
+															{
+																for(int k=0; k<countBone; k++)
+																{
+																	idPartsBone = informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index;
+																	namePartsBone = informationSSAE.ListBone[idPartsBone];
+																	idPartsBone = informationSSAE.IndexGetParts(namePartsBone);
+#if BONEINDEX_CONVERT_PARTSID
+																	if(0 <= idPartsBone)
+																	{
+																		informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = idPartsBone;
+																	}
+#else
+																	/* MEMO: Before SS 6.2 (SSAE 2.00.03) this correcting is not necessary.                           */
+																	/*       After SS 6.3 (SSAE 2.00.04) the CatalogParts.ListIDPartsBone and bone-list(ListBone) are */
+																	/*        in different order, conversion is required.                                             */
+																	if(0 <= idPartsBone)
+																	{
+																		int indexCatalogBone = informationSSAE.CatalogParts.ListIDPartsBone.IndexOf(idPartsBone);
+																		if(0 <= indexCatalogBone)
+																		{
+																			informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = indexCatalogBone;
+																		}
+																	}
+#endif
+																}
 															}
 														}
+#if PATCH_BONELIST_NOT_EXIST
 													}
+#endif
 												}
 											}
 										}
