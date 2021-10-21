@@ -3321,47 +3321,47 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{	/* Skeletal-Animation */
-							/* Calculate Coordinates */
-							int countBone;
-							Vector3 coordinate;
-							Vector3 coordinateSum;
-							int idPartsBone;
-							float weight;
-							for(int i=0; i<countTableBindMesh; i++)
-							{
-								coordinateSum = Vector3.zero;
-								countBone = tableBindMesh[i].TableBone.Length;
-								if(0 < countBone)
-								{
-									for(int j=0; j<countBone; j++)
-									{
-#if BONEINDEX_CONVERT_PARTSID
-										idPartsBone = tableBindMesh[i].TableBone[j].Index;
-#else
-										idPartsBone = tableBindMesh[i].TableBone[j].Index;
 #if PATCH_BONELIST_NOT_EXIST
-										if(0 < instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length)
-										{	/* Has bone-list */
+							if(0 < instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length)
+							{	/* Has bone-list */
 #endif
+								/* Calculate Coordinates */
+								int countBone;
+								Vector3 coordinate;
+								Vector3 coordinateSum;
+								int idPartsBone;
+								float weight;
+								for(int i=0; i<countTableBindMesh; i++)
+								{
+									coordinateSum = Vector3.zero;
+									countBone = tableBindMesh[i].TableBone.Length;
+									if(0 < countBone)
+									{
+										for(int j=0; j<countBone; j++)
+										{
+#if BONEINDEX_CONVERT_PARTSID
+											idPartsBone = tableBindMesh[i].TableBone[j].Index;
+#else
+											idPartsBone = tableBindMesh[i].TableBone[j].Index;
 											idPartsBone = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone[idPartsBone];
 #endif
-											if(0 <= idPartsBone)
-											{
-												coordinate = instanceRoot.TableControlParts[idPartsBone].MatrixBoneWorld.MultiplyPoint3x4(tableBindMesh[i].TableBone[j].CoordinateOffset);
+												if(0 <= idPartsBone)
+												{
+													coordinate = instanceRoot.TableControlParts[idPartsBone].MatrixBoneWorld.MultiplyPoint3x4(tableBindMesh[i].TableBone[j].CoordinateOffset);
 
-												weight = tableBindMesh[i].TableBone[j].Weight;
-												coordinate *= weight;
-//												coordinate.z = 0.0f;
+													weight = tableBindMesh[i].TableBone[j].Weight;
+													coordinate *= weight;
+//													coordinate.z = 0.0f;
 
-												coordinateSum += coordinate;
-											}
-#if PATCH_BONELIST_NOT_EXIST
+													coordinateSum += coordinate;
+												}
 										}
-#endif
 									}
+									CoordinateTransformDraw[i] = coordinateSum;
 								}
-								CoordinateTransformDraw[i] = coordinateSum;
+#if PATCH_BONELIST_NOT_EXIST
 							}
+#endif
 
 							/* Deform Coordinate */
 							/* MEMO: In the case of Skeletal-Animated "Mesh", "DeformDraw" is a calculated buffer for Deform. */
