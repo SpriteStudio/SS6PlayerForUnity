@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: Sprite_SpriteStudio6_Thru_MUL_NA
   m_Shader: {fileID: 4800000, guid: 22fe2befb7cc0344fba213b8cdddb5b7, type: 3}
-  m_ShaderKeywords: PS_NOT_DISCARD
+  m_ShaderKeywords: PS_NOT_DISCARD PS_OUTPUT_PMA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -75,7 +75,7 @@ Material:
     - _Mode: 0
     - _NotDiscardPixel: 1
     - _OcclusionStrength: 1
-    - _OutputPixelPMA: 0
+    - _OutputPixelPMA: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
