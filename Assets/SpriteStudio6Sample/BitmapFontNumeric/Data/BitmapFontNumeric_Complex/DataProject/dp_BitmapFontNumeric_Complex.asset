@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a1e551922b81ce40b6579726b70c93f, type: 3}
+  m_Name: dp_BitmapFontNumeric_Complex
+  m_EditorClassIdentifier: 
+  Version: 65536
+  Name: BitmapFontNumeric_Complex
+  DataCellMap: {fileID: 11400000, guid: 6ffcbcf9f4eff4b47b87596c9b9e6f15, type: 2}
+  DataAnimation:
+  - {fileID: 11400000, guid: 799382a40630281498aafdab0603153d, type: 2}
+  DataEffect: []
+  DataSequence: []
+  PrefabAnimation:
+  - {fileID: 1725464814334660, guid: aeae2c7026871304a825f0659e304c06, type: 3}
+  PrefabEffect: []
+  TableTexture:
+  - {fileID: 2800000, guid: 03bf2c2f52ed6544eb2b831ebacce6a0, type: 3}

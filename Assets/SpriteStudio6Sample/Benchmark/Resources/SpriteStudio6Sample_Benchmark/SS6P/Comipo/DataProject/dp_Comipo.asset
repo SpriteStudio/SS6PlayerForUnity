@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a1e551922b81ce40b6579726b70c93f, type: 3}
+  m_Name: dp_Comipo
+  m_EditorClassIdentifier: 
+  Version: 65536
+  Name: Comipo
+  DataCellMap: {fileID: 11400000, guid: ad7a75ca5c6840c4f92228da60160261, type: 2}
+  DataAnimation:
+  - {fileID: 11400000, guid: 77cf67a686f18f8418c5d99a27dcec9d, type: 2}
+  DataEffect: []
+  DataSequence: []
+  PrefabAnimation:
+  - {fileID: 1319046336057774, guid: 974d0afbd51c7ed4b8523eea5f94e094, type: 3}
+  PrefabEffect: []
+  TableTexture:
+  - {fileID: 2800000, guid: 5b8e140c2c1409f4cb76bd16f24bf715, type: 3}
+  - {fileID: 2800000, guid: 8a4aa5c786b7c4844a61a105858afcbb, type: 3}
+  - {fileID: 2800000, guid: 4424aace74d86df40a43c9cb1245a702, type: 3}

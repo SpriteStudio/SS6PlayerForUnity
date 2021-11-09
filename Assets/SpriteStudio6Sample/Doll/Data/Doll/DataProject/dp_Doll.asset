@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a1e551922b81ce40b6579726b70c93f, type: 3}
+  m_Name: dp_Doll
+  m_EditorClassIdentifier: 
+  Version: 65536
+  Name: Doll
+  DataCellMap: {fileID: 11400000, guid: 986df7200e0ddb74880e772c71d89e69, type: 2}
+  DataAnimation:
+  - {fileID: 11400000, guid: bd62d5c6a79130342832cce501f9b2cf, type: 2}
+  - {fileID: 11400000, guid: af3e6ffa523a5be45abf57a6aca7063d, type: 2}
+  - {fileID: 11400000, guid: eb265d64b85315e4fba0665dc48edc2f, type: 2}
+  DataEffect:
+  - {fileID: 11400000, guid: 9ec1039652d83314794da317f656df5d, type: 2}
+  - {fileID: 11400000, guid: e22d872165e710740a6cc320ff9d4756, type: 2}
+  DataSequence: []
+  PrefabAnimation:
+  - {fileID: 1138226893158208, guid: 5a3b27caa7a3c804b8bcf16fa02d5cde, type: 3}
+  - {fileID: 1693009241159322, guid: 36b7396b75b6bf34d9850ca208cf0abc, type: 3}
+  - {fileID: 1681829627340110, guid: 5e6fc5d912f1d874aac05867ba9f282d, type: 3}
+  PrefabEffect:
+  - {fileID: 1326102051692326, guid: 9593ef459429a984f94eb0359428508d, type: 3}
+  - {fileID: 1772251459390590, guid: 85e2a595884b90242942ae0ffddb72d6, type: 3}
+  TableTexture:
+  - {fileID: 2800000, guid: e653355c3742e7c4eade9e17831ab4d9, type: 3}
