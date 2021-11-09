@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -108,6 +109,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/effectBaseDirectory", managerNameSpace);
 				informationSSPJ.NameDirectoryBaseSSEE = (true == string.IsNullOrEmpty(valueText)) ? string.Copy(informationSSPJ.NameDirectory) : LibraryEditor_SpriteStudio6.Utility.File.PathGetAbsolute(informationSSPJ.NameDirectory + valueText + "/", informationSSPJ.NameDirectory);
 
+				/* MEMO: SSQE has no Base-Directory specification. */
+//				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/sequenceBaseDirectory", managerNameSpace);
+				informationSSPJ.NameDirectoryBaseSSQE = string.Copy(informationSSPJ.NameDirectory);
+
 				/* Get Texture-Mode-Setting */
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/wrapMode", managerNameSpace);
 				switch(valueText)
@@ -154,19 +159,41 @@ public static partial class LibraryEditor_SpriteStudio6
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/convertImageToPMA", managerNameSpace);
 				if(false == string.IsNullOrEmpty(valueText))
 				{
-				    informationSSPJ.flagConvertImagePremultipliedAlpha = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
+				    informationSSPJ.FlagConvertImagePremultipliedAlpha = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
 				}
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/blendImageAsPMA", managerNameSpace);
 				if(false == string.IsNullOrEmpty(valueText))
 				{
-				    informationSSPJ.flagBlendImagePremultipliedAlpha = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
+				    informationSSPJ.FlagBlendImagePremultipliedAlpha = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
 				}
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/vertexAnimeFloat", managerNameSpace);
 				if(false == string.IsNullOrEmpty(valueText))
 				{
-				    informationSSPJ.flagVertexAnimeFloat = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
+				    informationSSPJ.FlagVertexAnimeFloat = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText);
+				}
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/signal", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					informationSSPJ.Signal = valueText;
+				}
+
+				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/coordUnit", managerNameSpace);
+				if(false == string.IsNullOrEmpty(valueText))
+				{
+					switch(valueText)
+					{
+						case "rate":
+							informationSSPJ.CoordUnit = LibraryEditor_SpriteStudio6.Import.SSPJ.KindCoordUnit.RATE;
+							break;
+						case "pix":
+							informationSSPJ.CoordUnit = LibraryEditor_SpriteStudio6.Import.SSPJ.KindCoordUnit.PIX;
+							break;
+						default:
+							break;
+					}
 				}
 
 				/* Get CellMap FileNames */
@@ -230,6 +257,25 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationSSPJ.TableInformationSSEE = new LibraryEditor_SpriteStudio6.Import.SSEE.Information[informationSSPJ.TableNameSSEE.Length];
 				listNameFile.Clear();
 
+				/* add 6.4 Sequence FileNames */
+				nodeList = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "sequencepackNames/value", managerNameSpace);
+				if(null == nodeList)
+				{
+					informationSSPJ.TableNameSSQE = new string[0];
+				}
+				else
+				{
+					foreach(System.Xml.XmlNode NodeEffect in nodeList)
+					{
+						nameFile = NodeEffect.InnerText;
+						nameFile = informationSSPJ.PathGetAbsolute(nameFile, LibraryEditor_SpriteStudio6.Import.KindFile.SSQE);
+						listNameFile.Add(nameFile);
+					}
+					informationSSPJ.TableNameSSQE = listNameFile.ToArray();
+				}
+				informationSSPJ.TableInformationSSQE = new LibraryEditor_SpriteStudio6.Import.SSQE.Information[informationSSPJ.TableNameSSQE.Length];
+				listNameFile.Clear();
+
 				return(informationSSPJ);
 
 			Parse_ErrorEnd:
@@ -273,6 +319,15 @@ public static partial class LibraryEditor_SpriteStudio6
 				TARGET_LATEST = CODE_020001
 			}
 
+			public enum KindCoordUnit	/* Added 6.4 */
+			{
+				INVALID = -1,
+				RATE,
+				PIX,
+
+				TERMINATOR
+			}
+
 			private const string ExtentionFile = ".sspj";
 			#endregion Enums & Constants
 
@@ -291,9 +346,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public Library_SpriteStudio6.Data.Texture.KindWrap WrapTexture;
 				public Library_SpriteStudio6.Data.Texture.KindFilter FilterTexture;
-				public bool flagConvertImagePremultipliedAlpha;
-				public bool flagBlendImagePremultipliedAlpha;
-				public bool flagVertexAnimeFloat;
+				public bool FlagConvertImagePremultipliedAlpha;
+				public bool FlagBlendImagePremultipliedAlpha;
+				public bool FlagVertexAnimeFloat;
 
 				public string NameDirectoryBaseTexture;
 				public LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture[] TableInformationTexture;
@@ -312,9 +367,19 @@ public static partial class LibraryEditor_SpriteStudio6
 				public LibraryEditor_SpriteStudio6.Import.SSEE.Information[] TableInformationSSEE;
 				public string[] TableNameSSEE;	/* Temporary */
 
-				public Material[] TableMaterialAnimationSS6PU;
-				public Material[] TableMaterialEffectSS6PU;
+				public string NameDirectoryBaseSSQE;
+				public LibraryEditor_SpriteStudio6.Import.SSQE.Information[] TableInformationSSQE;
+				public string[] TableNameSSQE;	/* Temporary */
+
+				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataProject> DataProjectSS6PU;
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataCellMap> DataCellMapSS6PU;
+
+				/* MEMO: Before 6.4 */
+				public string Signal;
+				public KindCoordUnit CoordUnit;
+
+				public LibraryEditor_SpriteStudio6.Import.SignalSettings.Information InformationSignalSetting;	/* Set externally */
+				/* MEMO: (Up to this point) Before 6.4 */
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -329,9 +394,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					WrapTexture = Library_SpriteStudio6.Data.Texture.KindWrap.CLAMP;
 					FilterTexture = Library_SpriteStudio6.Data.Texture.KindFilter.NEAREST;
-					flagConvertImagePremultipliedAlpha = false;
-					flagBlendImagePremultipliedAlpha = false;
-					flagVertexAnimeFloat = false;
+					FlagConvertImagePremultipliedAlpha = false;
+					FlagBlendImagePremultipliedAlpha = false;
+					FlagVertexAnimeFloat = false;
 
 					NameDirectoryBaseTexture = "";
 					ListNameTexture = null;
@@ -345,15 +410,20 @@ public static partial class LibraryEditor_SpriteStudio6
 					TableNameSSAE = null;
 					TableInformationSSAE = null;
 					QueueConvertSSAE = null;
-;
+
 					NameDirectoryBaseSSEE = "";
 					TableNameSSEE = null;
 					TableInformationSSEE = null;
 
-					TableMaterialAnimationSS6PU = null;
-					TableMaterialEffectSS6PU = null;
+					DataProjectSS6PU.CleanUp();
+					DataProjectSS6PU.BootUp(1);
+
 					DataCellMapSS6PU.CleanUp();
 //					DataCellMapSS6PU.BootUp(1);	/* Don't boot-up here. */
+
+					Signal = "";
+					CoordUnit = KindCoordUnit.INVALID;	/* KindCoordUnit.RATE */
+					InformationSignalSetting = null;
 				}
 
 				public bool InformationCreateTexture(ref LibraryEditor_SpriteStudio6.Import.Setting setting)
@@ -361,7 +431,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					const string messageLogPrefix = "Fix Information(Texture)";
 
 					/* Create Texture-Information Table */
-					int countTexture = ListNameTexture.Count;
+					int countTexture = (null != ListNameTexture) ? ListNameTexture.Count : 0;
 					int countSSCE = TableInformationSSCE.Length;
 					TableInformationTexture = new LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture[countTexture];
 					if(null == TableInformationTexture)
@@ -443,6 +513,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							case LibraryEditor_SpriteStudio6.Import.KindFile.SSEE:
 								namePathNew = NameDirectoryBaseSSEE + namePath;
 								break;
+
+							case LibraryEditor_SpriteStudio6.Import.KindFile.SSQE:
+								namePathNew = NameDirectoryBaseSSQE + namePath;
+								break;
 						}
 					}
 
@@ -486,6 +560,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case LibraryEditor_SpriteStudio6.Import.KindFile.SSEE:
 								nameBase = NameDirectoryBaseSSEE;
+								break;
+
+							case LibraryEditor_SpriteStudio6.Import.KindFile.SSQE:
+								nameBase = NameDirectoryBaseSSQE;
 								break;
 						}
 
@@ -592,6 +670,38 @@ public static partial class LibraryEditor_SpriteStudio6
 						if(null != TableInformationSSEE[i])
 						{
 							if(name == TableInformationSSEE[i].NameFileBody)
+							{
+								return(i);
+							}
+						}
+					}
+					return(-1);
+				}
+
+				public int IndexGetSequence(string name)
+				{
+					int count = TableInformationSSQE.Length;
+					for(int i=0; i<count; i++)
+					{
+						if(null != TableInformationSSQE[i])
+						{
+							if(name == TableInformationSSQE[i].NameFileBody)
+							{
+								return(i);
+							}
+						}
+					}
+					return(-1);
+				}
+
+				public int IndexGetTexture(string name)
+				{
+					int count = TableInformationTexture.Length;
+					for(int i=0; i<count; i++)
+					{
+						if(null != TableInformationTexture[i])
+						{
+							if(name == TableInformationTexture[i].NameFileBody)
 							{
 								return(i);
 							}
@@ -755,225 +865,198 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countSSAE = informationSSPJ.TableInformationSSAE.Length;
 					int countSSEE = informationSSPJ.TableInformationSSEE.Length;
 					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
+					int countSSQE = informationSSPJ.TableInformationSSQE.Length;
 					int countTexture = informationSSPJ.TableInformationTexture.Length;
+					int countPrefabAnimation = informationSSPJ.TableInformationSSQE.Length;
 
-					/* MEMO: Prefab created from "ssae" and "ssee" can only be tracked by name. */
-					/* SSAEs (Prefab) */
+					/* Get reference to original datas */
+					/* MEMO: These arrays are old (will be overwritten) data sorted in order for (new) project-data. */
+					Script_SpriteStudio6_DataProject dataProjectOld = null;
+					Script_SpriteStudio6_DataCellMap dataCellMapOld = null;
+					Script_SpriteStudio6_DataAnimation[] dataAnimationOld = new Script_SpriteStudio6_DataAnimation[countSSAE];
+					Script_SpriteStudio6_DataEffect[] dataEffectOld = new Script_SpriteStudio6_DataEffect[countSSEE];
+					Script_SpriteStudio6_DataSequence[] dataSequenceOld = new Script_SpriteStudio6_DataSequence[countSSQE];
+					Texture2D[] textureOld = new Texture2D[countTexture];	/* Texture[] */
+					Script_SpriteStudio6_Root[] prefabAnimationOld = new Script_SpriteStudio6_Root[countSSAE];
+					Script_SpriteStudio6_RootEffect[] prefabEffectOld = new Script_SpriteStudio6_RootEffect[countSSEE];
 					for(int i=0; i<countSSAE; i++)
 					{
-						LibraryEditor_SpriteStudio6.Import.SSAE.ModeSS6PU.AssetNameDecidePrefab(	ref setting,
-																									informationSSPJ,
-																									informationSSPJ.TableInformationSSAE[i],
-																									nameOutputAssetFolderBase,
-																									null
-																								);
+						dataAnimationOld[i] = null;
+						prefabAnimationOld[i] = null;
 					}
-
-					/* SSEEs (Prefab) */
 					for(int i=0; i<countSSEE; i++)
 					{
-						LibraryEditor_SpriteStudio6.Import.SSEE.ModeSS6PU.AssetNameDecidePrefab(	ref setting,
-																									informationSSPJ,
-																									informationSSPJ.TableInformationSSEE[i],
-																									nameOutputAssetFolderBase,
-																									null
-																							);
+						dataEffectOld[i] = null;
+						prefabEffectOld[i] = null;
+					}
+					for(int i=0; i<countSSQE; i++)
+					{
+						dataSequenceOld[i] = null;
+					}
+					for(int i=0; i<countTexture; i++)
+					{
+						textureOld[i] = null;
 					}
 
-					/* Track existing assets */
-					Script_SpriteStudio6_DataCellMap dataCellMapOld = null;	/* Pair with SSPJ (Always 1) */
-//					Script_SpriteStudio6_DataCellMap.KindVersion versionCellMapOld = Script_SpriteStudio6_DataCellMap.KindVersion.SS5PU;	/* disuse now */
-					Material[] tableMaterialAnimationOld = null;
-					Material[,,] tableMaterialAnimationtNew = new Material[countSSCE, (int)Library_SpriteStudio6.KindMasking.TERMINATOR, (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL];
-					Material[] tableMaterialEffectOld = null;
-					Material[,,] tableMaterialEffectNew = new Material[countSSCE, (int)Library_SpriteStudio6.KindMasking.TERMINATOR, (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL];
-					Texture2D[] tableTextureNew = new Texture2D[countTexture];
-					Script_SpriteStudio6_Root[] tableScriptRootOld = new Script_SpriteStudio6_Root[countSSAE];
-					Script_SpriteStudio6_DataAnimation[] tableDataAnimationOld = new Script_SpriteStudio6_DataAnimation[countSSAE];
-					Script_SpriteStudio6_DataAnimation.KindVersion versionAnimationOld = Script_SpriteStudio6_DataAnimation.KindVersion.SS5PU;
-					Script_SpriteStudio6_RootEffect[] tableScriptRootEffectOld = new Script_SpriteStudio6_RootEffect[countSSEE];
-					Script_SpriteStudio6_DataEffect[] tableDataEffectOld = new Script_SpriteStudio6_DataEffect[countSSEE];
-					Script_SpriteStudio6_DataEffect.KindVersion versionEffectOld = Script_SpriteStudio6_DataEffect.KindVersion.SS5PU;
-					if(	(null == tableMaterialAnimationtNew) || (null == tableMaterialEffectNew) || (null == tableTextureNew)
-						|| (null == tableScriptRootOld) || (null == tableDataAnimationOld)
-						|| (null == tableScriptRootEffectOld) || (null == tableDataEffectOld)
+					/* SSPJ (Data) */
+					/* MEMO: First, get it by the name of the project.                 */
+					/*       When Project-Data is not found, may be reverse-identified */
+					/*        from SSCE, SSAE and SSEE that are found later.           */
+					if(false == LibraryEditor_SpriteStudio6.Import.SSPJ.ModeSS6PU.AssetNameDecideProject(	ref setting,
+																											informationSSPJ,
+																											nameOutputAssetFolderBase,
+																											null
+																									)
 						)
 					{
 						goto AssetNameDecide_ErrorEnd;
 					}
-					for(int i=0; i<countSSCE; i++)
-					{
-						for(int j=0; j<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; j++)
-						{
-							for(int k=0; k<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL; k++)
-							{
-								tableMaterialAnimationtNew[i, j, k] = null;
-							}
-							for(int k=0; k<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL; k++)
-							{
-								tableMaterialEffectNew[i, j, k] = null;
-							}
-						}
+
+					dataProjectOld = informationSSPJ.DataProjectSS6PU.TableData[0];
+					if(false == setting.Basic.FlagTrackAssets)
+					{	/* Not Tracking */
+						/* MEMO: Even when project to overwrite is found...                     */
+						/*       If "Tracking Assets" setting is false, assets are not tracked. */
+						/*       Then overwrite is determined from stored asset-file name.      */
+						dataProjectOld = null;
 					}
 
-					if(true == setting.Basic.FlagTrackAssets)
-					{
-						GameObject gameObjectPrefab;
-
-						/* Get DataAnimation */
-						/* MEMO: To get DataAnimation, Get reference directly from Animation-Prefab. */
-						for(int i=0; i<countSSAE; i++)
+					if(null != dataProjectOld)
+					{	/* Asset is found */
+						/* SSAEs */
+						if(null != dataProjectOld.DataAnimation)
 						{
-							tableScriptRootOld[i] = null;
-							tableDataAnimationOld[i] = null;
-							if(null != informationSSPJ.TableInformationSSAE[i].PrefabAnimationSS6PU.TableData[0])
+							int count = dataProjectOld.DataAnimation.Length;
+							for(int i=0; i<count; i++)
 							{
-								gameObjectPrefab = (GameObject)informationSSPJ.TableInformationSSAE[i].PrefabAnimationSS6PU.TableData[0];
-								if(null != gameObjectPrefab)
+								if(null != dataProjectOld.DataAnimation[i])
 								{
-									tableScriptRootOld[i] = gameObjectPrefab.GetComponent<Script_SpriteStudio6_Root>();
-									if(null != tableScriptRootOld[i])
-									{	/* Valid Animation-prefab */
-										tableDataAnimationOld[i] = tableScriptRootOld[i].DataAnimation;
-										if(null != tableDataAnimationOld[i])
-										{
-											if(null == tableMaterialAnimationOld)
-											{
-												/* MEMO: Do not get Root's TableMaterial. (Not imported original data) */
-												tableMaterialAnimationOld = tableDataAnimationOld[i].TableMaterial;
-											}
-
-											if((Script_SpriteStudio6_DataAnimation.KindVersion.SS5PU == versionAnimationOld) || (tableDataAnimationOld[i].Version < versionAnimationOld))
-											{
-												/* MEMO: Extract minimum version */
-												versionAnimationOld = tableDataAnimationOld[i].Version;
-											}
-										}
-
-										if(null == dataCellMapOld)
-										{
-											dataCellMapOld = tableScriptRootOld[i].DataCellMap;
-//											versionCellMapOld = dataCellMapOld.Version;	/* disuse now */
-										}
-									}
-								}
-							}
-						}
-
-						/* Get DataEffect */
-						/* MEMO: To get DataEffect, Get reference directly from Effect-Prefab. */
-						for(int i=0; i<countSSEE; i++)
-						{
-							tableScriptRootEffectOld[i] = null;
-							tableDataEffectOld[i] = null;
-							if(null != informationSSPJ.TableInformationSSEE[i].PrefabEffectSS6PU.TableData[0])
-							{
-								gameObjectPrefab = (GameObject)informationSSPJ.TableInformationSSEE[i].PrefabEffectSS6PU.TableData[0];
-								if(null != gameObjectPrefab)
-								{
-									tableScriptRootEffectOld[i] = gameObjectPrefab.GetComponent<Script_SpriteStudio6_RootEffect>();
-									if(null != tableScriptRootEffectOld[i])
-									{	/* Valid Effect-prefab */
-										tableDataEffectOld[i] = tableScriptRootEffectOld[i].DataEffect;
-										if(null != tableDataEffectOld[i])
-										{
-											if(null == tableMaterialEffectOld)
-											{
-												/* MEMO: Do not get RootEffect's TableMaterial. (Not imported original data) */
-												tableMaterialEffectOld = tableDataEffectOld[i].TableMaterial;
-											}
-
-											if((Script_SpriteStudio6_DataEffect.KindVersion.SS5PU == versionEffectOld) || (tableDataEffectOld[i].Version < versionEffectOld))
-											{
-												/* MEMO: Extract minimum version */
-												versionEffectOld = tableDataEffectOld[i].Version;
-											}
-										}
-
-										if(null == dataCellMapOld)
-										{
-											dataCellMapOld = tableScriptRootEffectOld[i].DataCellMap;
-//											versionCellMapOld = dataCellMapOld.Version;	/* disunse now */
-										}
-									}
-								}
-							}
-						}
-
-						/* Get new SSCE's index */
-						/* MEMO: SSCEs are collated DataCellMap's CellMap-names. */
-						/* MEMO: Materials are set based on indexes of collated CellMaps. */
-						/* MEMO: Textures are gotten from materials. */
-						for(int i=0; i<countTexture; i++)
-						{
-							tableTextureNew[i] = null;
-						}
-						if(null != dataCellMapOld)
-						{
-							int countCellMapOld = dataCellMapOld.CountGetCellMap();
-							string nameCellMapOld;
-							int indexCellMapNew;
-							int indexMaterialOld;
-							int indexTextureNew;
-							Library_SpriteStudio6.KindOperationBlend operationBlend;
-							Library_SpriteStudio6.KindOperationBlendEffect operationBlendEffect;
-							Material material;
-
-							for(int i=0; i<countCellMapOld; i++)
-							{
-								nameCellMapOld = dataCellMapOld.TableCellMap[i].Name;
-								if(false == string.IsNullOrEmpty(nameCellMapOld))
-								{
-									indexCellMapNew = informationSSPJ.IndexGetCellMap(nameCellMapOld);
-									if(0 <= indexCellMapNew)
+									string name = dataProjectOld.DataAnimation[i].Name;
+									if(false == string.IsNullOrEmpty(name))
 									{
-										indexTextureNew = informationSSPJ.TableInformationSSCE[indexCellMapNew].IndexTexture;
-										if(null != tableMaterialAnimationOld)
+										int index = informationSSPJ.IndexGetAnimation(name);
+										if(0 <= index)
 										{
-											for(int j=0; j<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; j++)
+											dataAnimationOld[index] = dataProjectOld.DataAnimation[i];
+										}
+									}
+								}
+							}
+						}
+						/* SSAEs (Prefabs) */
+						/* MEMO: prefab is paired with DataAnimation, so key is DataAnimation that prefab has. */
+						if(null != dataProjectOld.PrefabAnimation)
+						{
+							int count = dataProjectOld.PrefabAnimation.Length;
+							for(int i=0; i<count; i++)
+							{
+								Script_SpriteStudio6_Root scriptRoot = dataProjectOld.PrefabAnimation[i] as Script_SpriteStudio6_Root;
+								if(null != scriptRoot)
+								{
+									Script_SpriteStudio6_DataAnimation dataAnimation = scriptRoot.DataAnimation;
+									if(null != dataAnimation)
+									{
+										string name = dataAnimation.Name;
+										if(false == string.IsNullOrEmpty(name))
+										{
+											int index = informationSSPJ.IndexGetAnimation(name);
+											if(0 <= index)
 											{
-												for(int k=0; k<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL; k++)
-												{
-													operationBlend = (Library_SpriteStudio6.KindOperationBlend)(k + (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR);
-													indexMaterialOld = Script_SpriteStudio6_Root.Material.IndexGetTable(	i,
-																															operationBlend,
-																															(Library_SpriteStudio6.KindMasking)j
-																													);
-													if(0 <= indexMaterialOld)
-													{
-														material = tableMaterialAnimationOld[indexMaterialOld];
-														tableMaterialAnimationtNew[indexCellMapNew, j, k] = material;
-														if((null != material) && (null == tableTextureNew[indexTextureNew]))
-														{
-															tableTextureNew[indexTextureNew] = material.mainTexture as Texture2D;
-														}
-													}
-												}
+												prefabAnimationOld[index] = scriptRoot;
 											}
 										}
+									}
+								}
+							}
+						}
 
-										if(null != tableMaterialEffectOld)
+						/* SSEEs */
+						if(null != dataProjectOld.DataEffect)
+						{
+							int count = dataProjectOld.DataEffect.Length;
+							for(int i=0; i<count; i++)
+							{
+								if(null != dataProjectOld.DataEffect[i])
+								{
+									string name = dataProjectOld.DataEffect[i].Name;
+									if(false == string.IsNullOrEmpty(name))
+									{
+										int index = informationSSPJ.IndexGetEffect(name);
+										if(0 <= index)
 										{
-											for(int j=0; j<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; j++)
+											dataEffectOld[index] = dataProjectOld.DataEffect[i];
+										}
+									}
+								}
+							}
+						}
+						/* SSCEs (Prefabs) */
+						/* MEMO: prefab is paired with DataEffect, so key is DataEffect that prefab has. */
+						if(null != dataProjectOld.PrefabEffect)
+						{
+							int count = dataProjectOld.PrefabEffect.Length;
+							for(int i=0; i<count; i++)
+							{
+								Script_SpriteStudio6_RootEffect scriptRoot = dataProjectOld.PrefabEffect[i] as Script_SpriteStudio6_RootEffect;
+								if(null != scriptRoot)
+								{
+									Script_SpriteStudio6_DataEffect dataEffect = scriptRoot.DataEffect;
+									if(null != dataEffect)
+									{
+										string name = dataEffect.Name;
+										if(false == string.IsNullOrEmpty(name))
+										{
+											int index = informationSSPJ.IndexGetEffect(name);
+											if(0 <= index)
 											{
-												for(int k=0; k<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL; k++)
-												{
-													operationBlendEffect = (Library_SpriteStudio6.KindOperationBlendEffect)(k + (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR);
-													indexMaterialOld = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(	i,
-																																operationBlendEffect,
-																																(Library_SpriteStudio6.KindMasking)j
-																															);
-													if(0 <= indexMaterialOld)
-													{
-														material = tableMaterialEffectOld[indexMaterialOld];
-														tableMaterialEffectNew[indexCellMapNew, j, k] = material;
-														if((null != material) && (null == tableTextureNew[indexTextureNew]))
-														{
-															tableTextureNew[indexTextureNew] = material.mainTexture as Texture2D;
-														}
-													}
-												}
+												prefabEffectOld[index] = scriptRoot;
 											}
+										}
+									}
+								}
+							}
+						}
+
+						/* SSQEs */
+						if(null != dataProjectOld.DataSequence)
+						{
+							int count = dataProjectOld.DataSequence.Length;
+							for(int i=0; i<count; i++)
+							{
+								if(null != dataProjectOld.DataSequence[i])
+								{
+									string name = dataProjectOld.DataSequence[i].Name;
+									if(false == string.IsNullOrEmpty(name))
+									{
+										int index = informationSSPJ.IndexGetSequence(name);
+										if(0 <= index)
+										{
+											dataSequenceOld[index] = dataProjectOld.DataSequence[i];
+										}
+									}
+								}
+							}
+						}
+
+						/* SSCE */
+						/* MEMO: In principle, CellMap-data (SSCE) is paired with project-data. */
+						dataCellMapOld = dataProjectOld.DataCellMap;
+
+						/* Textures */
+						if(null != dataProjectOld.TableTexture)
+						{
+							int count = dataProjectOld.TableTexture.Length;
+							for(int i=0; i<count; i++)
+							{
+								if(null != dataProjectOld.TableTexture[i])
+								{
+									string name = dataProjectOld.TableTexture[i].name;
+									if(false == string.IsNullOrEmpty(name))
+									{
+										int index = informationSSPJ.IndexGetTexture(name);
+										if(0 <= index)
+										{
+											textureOld[index] = dataProjectOld.TableTexture[i] as Texture2D;
 										}
 									}
 								}
@@ -981,126 +1064,154 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
-					/* SSAEs (Data) */
-					for(int i=0; i<countSSAE; i++)
+					/* Determine asset-names */
+					for(int i=0; i<countSSAE; i++)	/* SSAEs (Prefab) */
 					{
-						LibraryEditor_SpriteStudio6.Import.SSAE.ModeSS6PU.AssetNameDecideData(	ref setting,
-																								informationSSPJ,
-																								informationSSPJ.TableInformationSSAE[i],
-																								nameOutputAssetFolderBase,
-																								tableDataAnimationOld[i]
-																							);
+						if(false == LibraryEditor_SpriteStudio6.Import.SSAE.ModeSS6PU.AssetNameDecidePrefab(	ref setting,
+																												informationSSPJ,
+																												informationSSPJ.TableInformationSSAE[i],
+																												nameOutputAssetFolderBase,
+																												prefabAnimationOld[i]
+																											)
+							)
+						{
+							goto AssetNameDecide_ErrorEnd;
+						}
 					}
-
-					/* SSEEs (Data) */
-					for(int i=0; i<countSSEE; i++)
+					for(int i=0; i<countSSEE; i++)	/* SSEEs (Prefab) */
 					{
-						LibraryEditor_SpriteStudio6.Import.SSEE.ModeSS6PU.AssetNameDecideData(	ref setting,
-																								informationSSPJ,
-																								informationSSPJ.TableInformationSSEE[i],
-																								nameOutputAssetFolderBase,
-																								tableDataEffectOld[i]
-																							);
+						if(false == LibraryEditor_SpriteStudio6.Import.SSEE.ModeSS6PU.AssetNameDecidePrefab(	ref setting,
+																												informationSSPJ,
+																												informationSSPJ.TableInformationSSEE[i],
+																												nameOutputAssetFolderBase,
+																												prefabEffectOld[i]
+																										)
+							)
+						{
+							goto AssetNameDecide_ErrorEnd;
+						}
 					}
-
-					/* SSCEs */
-					if(0 < countSSCE)
-					{
+					if(0 < countSSCE)	/* SSCEs (CellMap data) */
+					{	/* Has data */
 						informationSSPJ.DataCellMapSS6PU.BootUp(1);	/* Always 1 */
-						AssetNameDecideCellMap(ref setting, informationSSPJ, nameOutputAssetFolderBase, dataCellMapOld);
+						if(false == AssetNameDecideCellMap(	ref setting,
+															informationSSPJ,
+															nameOutputAssetFolderBase,
+															dataCellMapOld
+														)
+							)
+						{
+							goto AssetNameDecide_ErrorEnd;
+						}
 					}
 					else
-					{
+					{	/* Has no data */
 						informationSSPJ.DataCellMapSS6PU.CleanUp();
 					}
-
-					/* Materials */
-					int indexMaterialBlend;
-					int indexTexture;
-
-					for(int i=0; i<countSSCE; i++)
+					for(int i=0; i<countSSAE; i++)	/* SSAEs (Data) */
 					{
-						indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-
-						/* Materials (Animation) */
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
+						if(false == LibraryEditor_SpriteStudio6.Import.SSAE.ModeSS6PU.AssetNameDecideData(	ref setting,
+																											informationSSPJ,
+																											informationSSPJ.TableInformationSSAE[i],
+																											nameOutputAssetFolderBase,
+																											dataAnimationOld[i]
+																										)
+							)
 						{
-							indexMaterialBlend = j - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR;	/* - (-x) = +(x) */
-
-							LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideMaterialAnimation(	ref setting,
-																												informationSSPJ,
-																												informationSSPJ.TableInformationTexture[indexTexture],
-																												nameOutputAssetFolderBase,
-																												(Library_SpriteStudio6.KindOperationBlend)j,
-																												Library_SpriteStudio6.KindMasking.THROUGH,
-																												tableMaterialAnimationtNew[i, (int)Library_SpriteStudio6.KindMasking.THROUGH, indexMaterialBlend],
-																												versionAnimationOld
-																											);
-
-							LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideMaterialAnimation(	ref setting,
-																												informationSSPJ,
-																												informationSSPJ.TableInformationTexture[indexTexture],
-																												nameOutputAssetFolderBase,
-																												(Library_SpriteStudio6.KindOperationBlend)j,
-																												Library_SpriteStudio6.KindMasking.MASK,
-																												tableMaterialAnimationtNew[i, (int)Library_SpriteStudio6.KindMasking.MASK, indexMaterialBlend],
-																												versionAnimationOld
-																											);
+							goto AssetNameDecide_ErrorEnd;
 						}
-
-						/* Materials (Effect) */
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
+					}
+					for(int i=0; i<countSSEE; i++)	/* SSEEs (Data) */
+					{
+						if(false == LibraryEditor_SpriteStudio6.Import.SSEE.ModeSS6PU.AssetNameDecideData(	ref setting,
+																											informationSSPJ,
+																											informationSSPJ.TableInformationSSEE[i],
+																											nameOutputAssetFolderBase,
+																											dataEffectOld[i]
+																										)
+							)
 						{
-							indexMaterialBlend = j - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR;	/* - (-x) = +(x) */
-
-							LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideMaterialEffect(	ref setting,
-																												informationSSPJ,
-																												informationSSPJ.TableInformationTexture[indexTexture],
-																												nameOutputAssetFolderBase,
-																												(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																												Library_SpriteStudio6.KindMasking.THROUGH,
-																												tableMaterialEffectNew[i, (int)Library_SpriteStudio6.KindMasking.THROUGH, indexMaterialBlend],
-																												versionEffectOld
-																											);
-
-							LibraryEditor_SpriteStudio6.Import.SSCE.ModeSS6PU.AssetNameDecideMaterialEffect(	ref setting,
-																												informationSSPJ,
-																												informationSSPJ.TableInformationTexture[indexTexture],
-																												nameOutputAssetFolderBase,
-																												(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																												Library_SpriteStudio6.KindMasking.MASK,
-																												tableMaterialEffectNew[i, (int)Library_SpriteStudio6.KindMasking.MASK, indexMaterialBlend],
-																												versionEffectOld
-																											);
+							goto AssetNameDecide_ErrorEnd;
+						}
+					}
+					for(int i=0; i<countSSQE; i++)	/* SSQEs (Data) */
+					{
+						if(false == LibraryEditor_SpriteStudio6.Import.SSQE.ModeSS6PU.AssetNameDecideData(	ref setting,
+																											informationSSPJ,
+																											informationSSPJ.TableInformationSSQE[i],
+																											nameOutputAssetFolderBase,
+																											dataSequenceOld[i]
+																										)
+							)
+						{
+							goto AssetNameDecide_ErrorEnd;
+						}
+					}
+					for(int i=0; i<countTexture; i++)	/* Textures */
+					{
+						if(false == LibraryEditor_SpriteStudio6.Import.SSCE.AssetNameDecideTexture(	ref setting,
+																									informationSSPJ,
+																									informationSSPJ.TableInformationTexture[i],
+																									nameOutputAssetFolderBase,
+																									textureOld[i]
+																								)
+							)
+						{
+							goto AssetNameDecide_ErrorEnd;
 						}
 					}
 
-					/* Textures */
-					for(int i=0; i<countTexture; i++)
-					{
-						LibraryEditor_SpriteStudio6.Import.SSCE.AssetNameDecideTexture(	ref setting,
-																						informationSSPJ,
-																						informationSSPJ.TableInformationTexture[i],
-																						nameOutputAssetFolderBase,
-																						tableTextureNew[i]
-																					);
-					}
+					dataProjectOld = null;
+					dataCellMapOld = null;
+					dataAnimationOld = null;
+					dataEffectOld = null;
+					dataSequenceOld = null;
+					textureOld = null;
+					prefabAnimationOld = null;
+					prefabEffectOld = null;
 
 					return(true);
 
 				AssetNameDecide_ErrorEnd:;
+					dataProjectOld = null;
 					dataCellMapOld = null;
-					tableMaterialAnimationOld = null;
-					tableMaterialAnimationtNew = null;
-					tableMaterialEffectOld = null;
-					tableMaterialEffectNew = null;
-					tableTextureNew = null;
-					tableScriptRootOld = null;
-					tableDataAnimationOld = null;
-					tableScriptRootEffectOld = null;
-					tableDataEffectOld = null;
+					dataAnimationOld = null;
+					dataEffectOld = null;
+					dataSequenceOld = null;
+					textureOld = null;
+					prefabAnimationOld = null;
+					prefabEffectOld = null;
+
 					return(false);
 				}
+
+				private static bool AssetNameDecideProject(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+															string nameOutputAssetFolderBase,
+															Script_SpriteStudio6_DataProject dataOverride
+														)
+				{
+					if(null != dataOverride)
+					{	/* Specified */
+						informationSSPJ.DataProjectSS6PU.TableName[0] = AssetDatabase.GetAssetPath(dataOverride);
+					}
+					else
+					{	/* Default */
+						informationSSPJ.DataProjectSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_PROJECT_SS6PU, nameOutputAssetFolderBase)
+																		+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_PROJECT_SS6PU, informationSSPJ.NameFileBody, informationSSPJ.NameFileBody)
+																		+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
+						dataOverride = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataProject>(informationSSPJ.DataProjectSS6PU.TableName[0]);
+					}
+
+					informationSSPJ.DataProjectSS6PU.TableData[0] = dataOverride;
+					informationSSPJ.DataProjectSS6PU.Version[0] = (null != dataOverride) ? (int)(dataOverride.Version) : (int)Script_SpriteStudio6_DataProject.KindVersion.SS5PU;
+
+					return(true);
+
+//				AssetNameDecideProject_ErrorEnd:;
+//					return(false);
+				}
+
 				private static bool AssetNameDecideCellMap(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
 															string nameOutputAssetFolderBase,
@@ -1142,6 +1253,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
 					dataCellMap.Version = Script_SpriteStudio6_DataCellMap.KindVersion.SUPPORT_LATEST;
+					dataCellMap.DataProject = informationSSPJ.DataProjectSS6PU.TableData[0];
+
 					dataCellMap.TableCellMap = new Library_SpriteStudio6.Data.CellMap[countSSCE];
 					for(int i=0; i<countSSCE; i++)
 					{
@@ -1157,202 +1270,129 @@ public static partial class LibraryEditor_SpriteStudio6
 //					return(false);
 				}
 
-				public static bool MaterialPickUp(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+				public static bool ConvertDataProject(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 													)
 				{
-					const string messageLogPrefix = "Pick up Materials";
+//					const string messageLogPrefix = "Convert (Data-Project)";
 
-					int indexTexture;
-					int indexMaterial;
-					int indexMaterialTexture;
-					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
-					int countMaterial = Script_SpriteStudio6_Root.Material.CountGetTable(countSSCE);
-					informationSSPJ.TableMaterialAnimationSS6PU = new Material[countMaterial];
-					if(null == informationSSPJ.TableMaterialAnimationSS6PU)
-					{
-						LogError(messageLogPrefix, "Not Enough Memory (MaterialTable Animation)", informationSSPJ.FileNameGetFullPath());
-						goto MaterialPickUp_ErrorEnd;
-					}
-					for(int i=0; i<countSSCE; i++)
-					{
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
-						{
-							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							indexMaterialTexture = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							if((0 > indexTexture) || (false == informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.FlagInUse[indexMaterialTexture]))
-							{
-								informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = null;
-							}
-							else
-							{
-								informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[indexMaterialTexture];
-							}
-						}
-
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
-						{
-							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
-							indexMaterialTexture = Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
-							if((0 > indexTexture) || (false == informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.FlagInUse[indexMaterialTexture]))
-							{
-								informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = null;
-							}
-							else
-							{
-								informationSSPJ.TableMaterialAnimationSS6PU[indexMaterial] = informationSSPJ.TableInformationTexture[indexTexture].MaterialAnimationSS6PU.TableData[indexMaterialTexture];
-							}
-						}
-					}
-
-					countMaterial = Script_SpriteStudio6_RootEffect.Material.CountGetTable(countSSCE);
-					informationSSPJ.TableMaterialEffectSS6PU = new Material[countMaterial];
-					if(null == informationSSPJ.TableMaterialEffectSS6PU)
-					{
-						LogError(messageLogPrefix, "Not Enough Memory (MaterialTable Effect)", informationSSPJ.FileNameGetFullPath());
-						goto MaterialPickUp_ErrorEnd;
-					}
-					for(int i=0; i<countSSCE; i++)
-					{
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
-						{
-							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							indexMaterialTexture = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							if((0 > indexTexture) || (false == informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.FlagInUse[indexMaterialTexture]))
-							{
-								informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = null;
-							}
-							else
-							{
-								informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[indexMaterialTexture];
-							}
-						}
-
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
-						{
-							indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
-							indexMaterial = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(i, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
-							indexMaterialTexture = Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
-							if((0 > indexTexture) || (false == informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.FlagInUse[indexMaterialTexture]))
-							{
-								informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = null;
-							}
-							else
-							{
-								informationSSPJ.TableMaterialEffectSS6PU[indexMaterial] = informationSSPJ.TableInformationTexture[indexTexture].MaterialEffectSS6PU.TableData[indexMaterialTexture];
-							}
-						}
-					}
+					/* MEMO: Nothing to do, now. */
 
 					return(true);
 
-				MaterialPickUp_ErrorEnd:;
-					return(false);
+//				ConvertData_ErrorEnd:;
+//					return(false);
 				}
 
-				public static bool MaterialDeleteUnreferenced(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
-																LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
-															)
+				public static bool AssetCreateDataProject(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
+														)
 				{
-//					const string messageLogPrefix = "Delete unreferenced Materials";
+//					const string messageLogPrefix = "Create Asset(Data-Project)";
 
-					if(LibraryEditor_SpriteStudio6.Import.Setting.GroupBasic.KindNoCreateMaterialUnreferenced.NONE == setting.Basic.NoCreateMaterialUnreferenced)
-					{	/* Create all materials */
-						return(true);
-					}
-					if(false == setting.Basic.FlagDeleteMaterialUnreferenced)
-					{	/* Delete nothing */
-						return(true);
-					}
-
-					int indexMaterial;
-					int countTexture = informationSSPJ.TableInformationTexture.Length;
-					Material material;
-					string pathAsset;
-					for(int i=0; i<countTexture; i++)
+					Script_SpriteStudio6_DataProject dataProject = informationSSPJ.DataProjectSS6PU.TableData[0];
+					if(null == dataProject)
 					{
-						/* Animation */
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
-						{
-							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							if(false == informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.FlagInUse[indexMaterial])
-							{	/* No Referenced */
-								material = informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.TableData[indexMaterial];
-								if(null != material)
-								{	/* Has Asset */
-									pathAsset = AssetDatabase.GetAssetPath(material);
-									if(false == string.IsNullOrEmpty(pathAsset))
-									{
-										AssetDatabase.DeleteAsset(pathAsset);
-									}
-									informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.TableData[indexMaterial] = null;
-								}
-							}
-						}
-
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlend.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
-						{
-							indexMaterial =  Script_SpriteStudio6_Root.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlend)j, Library_SpriteStudio6.KindMasking.MASK);
-							if(false == informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.FlagInUse[indexMaterial])
-							{	/* No Referenced */
-								material = informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.TableData[indexMaterial];
-								if(null != material)
-								{	/* Has Asset */
-									pathAsset = AssetDatabase.GetAssetPath(material);
-									if(false == string.IsNullOrEmpty(pathAsset))
-									{
-										AssetDatabase.DeleteAsset(pathAsset);
-									}
-									informationSSPJ.TableInformationTexture[i].MaterialAnimationSS6PU.TableData[indexMaterial] = null;
-								}
-							}
-						}
-
-						/* Effect */
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
-						{
-							indexMaterial =  Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.THROUGH);
-							if(false == informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.FlagInUse[indexMaterial])
-							{	/* No Referenced */
-								material = informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.TableData[indexMaterial];
-								if(null != material)
-								{	/* Has Asset */
-									pathAsset = AssetDatabase.GetAssetPath(material);
-									if(false == string.IsNullOrEmpty(pathAsset))
-									{
-										AssetDatabase.DeleteAsset(pathAsset);
-									}
-									informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.TableData[indexMaterial] = null;
-								}
-							}
-						}
-
-						for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
-						{
-							indexMaterial =  Script_SpriteStudio6_RootEffect.Material.IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, Library_SpriteStudio6.KindMasking.MASK);
-							if(false == informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.FlagInUse[indexMaterial])
-							{	/* No Referenced */
-								material = informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.TableData[indexMaterial];
-								if(null != material)
-								{	/* Has Asset */
-									pathAsset = AssetDatabase.GetAssetPath(material);
-									if(false == string.IsNullOrEmpty(pathAsset))
-									{
-										AssetDatabase.DeleteAsset(pathAsset);
-									}
-									informationSSPJ.TableInformationTexture[i].MaterialEffectSS6PU.TableData[indexMaterial] = null;
-								}
-							}
-						}
+						dataProject = ScriptableObject.CreateInstance<Script_SpriteStudio6_DataProject>();
+						AssetDatabase.CreateAsset(dataProject, informationSSPJ.DataProjectSS6PU.TableName[0]);
+						informationSSPJ.DataProjectSS6PU.TableData[0] = dataProject;
 					}
+
+					dataProject.Version = Script_SpriteStudio6_DataProject.KindVersion.SUPPORT_LATEST;
+					dataProject.Name = string.Copy(informationSSPJ.NameFileBody);
+
+					int countSSAE = (null != informationSSPJ.TableInformationSSAE) ? informationSSPJ.TableInformationSSAE.Length : 0;
+					int countSSCE = (null != informationSSPJ.TableInformationSSCE) ? informationSSPJ.TableInformationSSCE.Length : 0;
+					int countSSEE = (null != informationSSPJ.TableInformationSSEE) ? informationSSPJ.TableInformationSSEE.Length : 0;
+					int countSSQE = (null != informationSSPJ.TableInformationSSQE) ? informationSSPJ.TableInformationSSQE.Length : 0;
+
+					/* MEMO: Each-data's reference is not set here (not been finalized).      */
+					/*       Determined references are set in "AssetFixDataProject" function. */
+
+					/* Cell-Map & Texture */
+					dataProject.DataCellMap = null;
+					dataProject.TableTexture = new Texture[countSSCE];
+
+					/* Animation */
+					dataProject.DataAnimation = new Script_SpriteStudio6_DataAnimation[countSSAE];
+					dataProject.PrefabAnimation = new Object[countSSAE];
+
+					/* Effect */
+					dataProject.DataEffect = new Script_SpriteStudio6_DataEffect[countSSEE];
+					dataProject.PrefabEffect = new Object[countSSEE];
+
+					/* Sequence */
+					dataProject.DataSequence = new Script_SpriteStudio6_DataSequence[countSSQE];
+
+					EditorUtility.SetDirty(dataProject);
+					AssetDatabase.SaveAssets();
 
 					return(true);
 
-//				MaterialDeleteUnreferenced_ErrorEnd:;
+//				AssetCreateData_ErrorEnd:;
 //					return(false);
+				}
+
+				public static bool AssetFixDataProject(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
+														)
+				{
+//					const string messageLogPrefix = "Create Asset(Data-Project)";
+
+					Script_SpriteStudio6_DataProject dataProject = informationSSPJ.DataProjectSS6PU.TableData[0];
+					if(null == dataProject)
+					{
+						goto AssetFixDataProject_ErrorEnd;
+					}
+
+					int countSSAE = (null != informationSSPJ.TableInformationSSAE) ? informationSSPJ.TableInformationSSAE.Length : 0;
+					int countSSCE = (null != informationSSPJ.TableInformationSSCE) ? informationSSPJ.TableInformationSSCE.Length : 0;
+					int countSSEE = (null != informationSSPJ.TableInformationSSEE) ? informationSSPJ.TableInformationSSEE.Length : 0;
+					int countSSQE = (null != informationSSPJ.TableInformationSSQE) ? informationSSPJ.TableInformationSSQE.Length : 0;
+
+					/* Cell-Map & Texture */
+					dataProject.DataCellMap = (0 < countSSCE) ? informationSSPJ.DataCellMapSS6PU.TableData[0] : null;
+					dataProject.TableTexture = new Texture[countSSCE];
+					for(int i=0; i<countSSCE; i++)
+					{
+						int indexTexture = informationSSPJ.TableInformationSSCE[i].IndexTexture;
+						if(0 > indexTexture)
+						{
+							dataProject.TableTexture[i] = null;
+						}
+						else
+						{
+							dataProject.TableTexture[i] = informationSSPJ.TableInformationTexture[indexTexture].PrefabTexture.TableData[0];
+						}
+					}
+
+					/* Animation */
+					for(int i=0; i<countSSAE; i++)
+					{
+						dataProject.DataAnimation[i] = informationSSPJ.TableInformationSSAE[i].DataAnimationSS6PU.TableData[0];
+						dataProject.PrefabAnimation[i] = informationSSPJ.TableInformationSSAE[i].PrefabAnimationSS6PU.TableData[0];
+					}
+
+					/* Effect */
+					for(int i=0; i<countSSEE; i++)
+					{
+						dataProject.DataEffect[i] = informationSSPJ.TableInformationSSEE[i].DataEffectSS6PU.TableData[0];
+						dataProject.PrefabEffect[i] = informationSSPJ.TableInformationSSEE[i].PrefabEffectSS6PU.TableData[0];
+					}
+
+					/* Sequence */
+					for(int i=0; i<countSSQE; i++)
+					{
+						dataProject.DataSequence[i] = informationSSPJ.TableInformationSSQE[i].DataSequenceSS6PU.TableData[0];
+					}
+
+					EditorUtility.SetDirty(dataProject);
+					AssetDatabase.SaveAssets();
+
+					return(true);
+
+				AssetFixDataProject_ErrorEnd:;
+					return(false);
 				}
 				#endregion Functions
 			}
@@ -1420,25 +1460,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					/* Track existing assets */
 					Texture2D[] tableTextureNew = new Texture2D[countTexture];
-
-					/* Materials */
-					int indexTexture;
-					for(int i=0; i<countTexture; i++)
-					{
-						indexTexture = i;
-
-						/* Materials (Animation) */
-						for(int j=0; j<(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR; j++)
-						{
-							LibraryEditor_SpriteStudio6.Import.SSCE.ModeUnityNative.AssetNameDecideMaterialAnimation(	ref setting,
-																														informationSSPJ,
-																														informationSSPJ.TableInformationTexture[indexTexture],
-																														nameOutputAssetFolderBase,
-																														(Library_SpriteStudio6.KindOperationBlend)j,
-																														null
-																													);
-						}
-					}
 
 					/* Textures */
 					for(int i=0; i<countTexture; i++)

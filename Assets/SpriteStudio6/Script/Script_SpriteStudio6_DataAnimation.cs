@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 // #define STORE_ANIMATIONSETUP_FULL
@@ -16,6 +17,8 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
 	public KindVersion Version;
+	public string Name;								/* Body-Name of SSAE */
+	public Script_SpriteStudio6_DataProject DataProject;
 
 	public Material[] TableMaterial;
 
@@ -65,7 +68,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	void Start()
 	{
 		/* Awake Base-Class */
-		CountGetPartsSprite();
 		StatusIsBootup = true;
 	}
 	#endregion ScriptableObject-Functions
@@ -110,8 +112,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 						break;
 
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 						count++;
 						break;
@@ -120,8 +120,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 						break;
 
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 						/* MEMO: "Mask"s are drawn twice(Predraw + Draw). */
 						count += 2;
@@ -166,8 +164,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 						break;
 
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 						count++;
 						break;
@@ -177,8 +173,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 						count++;
 						break;
 
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 						count++;
 						break;
@@ -221,8 +215,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 						break;
 
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 						break;
 
@@ -230,8 +222,6 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 						break;
 
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-//					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 						count++;
 						break;
@@ -357,6 +347,8 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInstance(TableAnimation[i].TableParts[j].Instance);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionEffect(TableAnimation[i].TableParts[j].Effect);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionDeform(TableAnimation[i].TableParts[j].Deform);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionShader(TableAnimation[i].TableParts[j].Shader);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionSignal(TableAnimation[i].TableParts[j].Signal);
 			}
 		}
 	}
@@ -372,7 +364,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	public enum KindVersion
 	{
 		SUPPORT_EARLIEST = CODE_010100,
-		SUPPORT_LATEST = CODE_010100,
+		SUPPORT_LATEST = CODE_010101,
 
 		SS5PU = 0,	/* Before SS5PU *//* (Reserved) */
 		CODE_010000 = 0x00010000,	/* SS6PU Ver.0.8.0 */
@@ -395,6 +387,8 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			/*       Always divide "Normal (Sprite)" and "Mask" into 4 triangles according to SpriteStudio6's specifications. */
 			/* MEMO: Support "Mesh Deformation" */
 			/* MEMO: Support "Z-Position" Priority */
+		CODE_010101 = 0x00010100,	/* SS6PU Ver.1.2.0 */
+			/* MEMO: Added "Name (Original SSAE file's Body-Name) */
 	}
 	#endregion Enums & Constants
 

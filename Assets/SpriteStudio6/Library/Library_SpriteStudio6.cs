@@ -1,10 +1,12 @@
 ﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 // #define STATICDATA_DUPLICATE_DEEP
+#define TEST_PERFORMANCE_SPEEDUP
 
 using System.Collections;
 using System.Collections.Generic;
@@ -15,8 +17,8 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "1.1.32";
-	public const string SignatureNameDistributor = "Web Technology Corp.";
+	public const string SignatureVersionAsset = "2.0.0 (Beta)";
+	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
 	/* ----------------------------------------------- Enums & Constants */
@@ -24,7 +26,9 @@ public static partial class Library_SpriteStudio6
 	public enum KindOperationBlend
 	{
 		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR,	/* - (-x) = +(x) */
+		TERMINATOR_BUILTIN = (INV + 1),	/* SpriteStudio6's built-in blending methods. */
 		TERMINATOR_PARTSCOLOR = MUL_NA,
+
 		INITIATOR = MASK_PRE,
 
 		MASK_PRE = -2,
@@ -47,6 +51,8 @@ public static partial class Library_SpriteStudio6
 	public enum KindOperationBlendEffect
 	{
 		TERMINATOR_TABLEMATERIAL = TERMINATOR - INITIATOR,	/* - (-x) = +(x) */
+		TERMINATOR_BUILTIN = (ADD + 1),	/* SpriteStudio6's built-in blending methods. */
+
 		INITIATOR = MIX,
 
 		NON = -1,
@@ -110,22 +116,19 @@ public static partial class Library_SpriteStudio6
 		#region Delegates
 		public delegate bool FunctionPlayEnd(Script_SpriteStudio6_Root scriptRoot, GameObject objectControl);
 		public delegate bool FunctionPlayEndEffect(Script_SpriteStudio6_RootEffect scriptRoot);
+		public delegate bool FunctionPlayEndSequence(Script_SpriteStudio6_Sequence scriptSequence);
 		public delegate void FunctionUserData(Script_SpriteStudio6_Root scriptRoot, string nameParts, int indexParts, int indexAnimation, int frameDecode, int frameKeyData, ref Library_SpriteStudio6.Data.Animation.Attribute.UserData userData, bool flagWayBack);
+		public delegate void FunctionSignal(Script_SpriteStudio6_Root scriptRoot, string nameParts, int indexParts, int indexAnimation, int frameDecode, int frameKeyData, ref Library_SpriteStudio6.Data.Animation.Attribute.Signal signal, bool flagWayBack);
 
-#if false
-		/* MEMO: Before Ver.1.1.9(b) */
-		public delegate void FunctionCallBackCollider(Script_SpriteStudio6_Root instanceRoot, string nameParts, int idParts, Collider collider, Collider pair);
-		public delegate void FunctionCallBackCollision(Script_SpriteStudio6_Root instanceRoot, string nameParts, int idParts, Collider collider, Collision contacts);
-#else
-		/* MEMO: After Ver.1.1.19 */
-		public delegate void FunctionCallBackCollider(Script_SpriteStudio6_Root instanceRoot, GameObject instanceGameObject, string nameParts, int idParts, Collider collider, Collider pair);
-		public delegate void FunctionCallBackCollision(Script_SpriteStudio6_Root instanceRoot, GameObject instanceGameObject, string nameParts, int idParts, Collider collider, Collision contacts);
-#endif
+		public delegate void FunctionCallBackCollider(Script_SpriteStudio6_Root instanceRoot, GameObject instanceGameObject, string nameParts, int idParts, Library_SpriteStudio6.Control.InformationCollision information);
 
 		public delegate float FunctionTimeElapse(Script_SpriteStudio6_Root scriptRoot);
 		public delegate float FunctionTimeElapseEffect(Script_SpriteStudio6_RootEffect scriptRoot);
+		public delegate float FunctionTimeElapseSequence(Script_SpriteStudio6_Sequence scriptSequence);
 
-		public delegate void FunctionControlEndTrackPlay(Script_SpriteStudio6_Root scriptRoot, int indexTrackPlay, int indexTrackSlave, int indexAnimation, int indexAnimationSlave);
+		public delegate void FunctionControlEndTrackPlay(Script_SpriteStudio6_Root scriptRoot, int indexTrackPlay, int indexTrackSecondary, int indexAnimation, int indexAnimationSecondary);
+
+		public delegate int FunctionDecodeStepSequence(ref Library_SpriteStudio6.Data.Sequence.Data.Step dataStep, Script_SpriteStudio6_Sequence scriptSequence, int step);
 		#endregion Delegates
 	}
 
@@ -332,7 +335,7 @@ public static partial class Library_SpriteStudio6
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
 			#region Classes, Structs & Interfaces
 			[System.Serializable]
-			public struct Parts
+			public partial struct Parts
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
@@ -365,6 +368,8 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance Instance;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect Effect;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform Deform;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerShader Shader;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSignal Signal;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -399,6 +404,9 @@ public static partial class Library_SpriteStudio6
 					UserData = null;
 					Instance = null;
 					Effect = null;
+
+					Shader = null;
+					Signal = null;
 				}
 				#endregion Functions
 
@@ -422,6 +430,9 @@ public static partial class Library_SpriteStudio6
 					NO_PARTSCOLOR = 0x00040000,
 					NO_INSTANCE = 0x00020000,
 					NO_EFFECT = 0x00010000,
+
+					NO_SIGNAL = 0x00008000,
+					NO_SHADER = 0x00004000,
 
 					CLEAR = 0x00000000
 				}
@@ -549,6 +560,10 @@ public static partial class Library_SpriteStudio6
 					#region Classes, Structs & Interfaces
 					#endregion Classes, Structs & Interfaces
 				}
+				[System.Serializable]
+				public class ContainerShader : Container<Library_SpriteStudio6.Data.Animation.Attribute.Shader, InterfaceContainerShader> {}
+				[System.Serializable]
+				public class ContainerSignal : Container<Library_SpriteStudio6.Data.Animation.Attribute.Signal, InterfaceContainerSignal> {}
 				#endregion Classes, Structs & Interfaces
 
 				/* Part: SpriteStudio6/Library/Data/Animation/PackAttributeFunction.cs */
@@ -1277,31 +1292,6 @@ public static partial class Library_SpriteStudio6
 				#region Enums & Constants
 				public enum KindFeature
 				{	/* ERROR/NON: -1 */
-#if false
-					/* MEMO: Ver.0.8.0 - 1.0.39 */
-					ROOT = 0,	/* Root-Parts (Subspecies of "NULL"-Parts) */
-					NULL,
-					NORMAL_TRIANGLE2,	/* No use Vertex-Collection Sprite-Parts */
-					NORMAL_TRIANGLE4,	/* Use Vertex-Collection Sprite-Parts */
-
-					INSTANCE,
-					EFFECT,
-
-					MASK_TRIANGLE2,	/* No use Vertex-Collection Mask-Parts */
-					MASK_TRIANGLE4,	/* Use Vertex-Collection Mask-Parts */
-
-					JOINT,
-					BONE,
-					MOVENODE,
-					CONSTRAINT,
-					BONEPOINT,
-					MESH,
-
-					TERMINATOR,
-					NORMAL = TERMINATOR,	/* NORMAL_TRIANGLE2 or NORMAL_TRIANGLE4 *//* only during import */
-					MASK,	/* MASK_TRIANGLE2 or MASK_TRIANGLE4 *//* only during import */
-#else
-					/* MEMO: Ver.1.1.0 - */
 					/* MEMO: Abolished to switch type of triangulating of rectangle.(With or without using "Vertex Deformation(Correction)")            */
 					/*       Always divided into 4 triangles, and center's coordinate is the intersection of lines through midpoints of opposite-sides. */
 					/*       However, "Effect"'s particle is always divided into 2 triangles.                                                           */
@@ -1321,8 +1311,12 @@ public static partial class Library_SpriteStudio6
 					BONEPOINT,
 					MESH,
 
+					/* MEMO: Ver.1.2.0 - */
+					/* MEMO: 2 parts'-type are added. */
+					TRANSFORM_CONSTRAINT,
+					CAMERA,
+
 					TERMINATOR,
-#endif
 				}
 
 				public enum KindCollision
@@ -1592,420 +1586,229 @@ public static partial class Library_SpriteStudio6
 		{
 			/* ----------------------------------------------- Functions */
 			#region Functions
-//			public static UnityEngine.Shader ShaderGetAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking)
-//			{
-//				if((Library_SpriteStudio6.KindOperationBlend.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
-//				{
-//					return(null);
-//				}
-//
-//				switch(masking)
-//				{
-//					case Library_SpriteStudio6.KindMasking.THROUGH:
-//						return(TableSpriteThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR]);
-//
-//					case Library_SpriteStudio6.KindMasking.MASK:
-//						return(TableSpriteMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlend.INITIATOR]);
-//
-//					default:
-//						break;
-//				}
-//				return(null);
-//			}
-
-//			public static UnityEngine.Shader ShaderGetEffect(Library_SpriteStudio6.KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking)
-//			{
-//				if((Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend))
-//				{
-//					return(null);
-//				}
-//
-//				switch(masking)
-//				{
-//					case Library_SpriteStudio6.KindMasking.THROUGH:
-//						return(TableEffectThrough[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR]);
-//
-//					case Library_SpriteStudio6.KindMasking.MASK:
-//						return(TableEffectMask[(int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR]);
-//
-//					default:
-//						break;
-//				}
-//				return(null);
-//			}
-
-//			public static UnityEngine.Shader ShaderGetAnimationUnityNative(Library_SpriteStudio6.KindOperationBlend operationBlend)
-//			{
-//				if((Library_SpriteStudio6.KindOperationBlend.MIX > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
-//				{
-//					return(null);
-//				}
-//
-//				return(TableSpriteUnityNative[(int)operationBlend]);
-//			}
-
-			public static UnityEngine.Material MaterialCreateAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking)
+			public static UnityEngine.Shader ShaderGetAnimation(Library_SpriteStudio6.KindOperationBlend operationBlend)
 			{
-				if((Library_SpriteStudio6.KindOperationBlend.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlend.TERMINATOR <= operationBlend))
-				{
-					return(null);
-				}
-
-				UnityEngine.Material material = null;
 				switch(operationBlend)
 				{
 					case Library_SpriteStudio6.KindOperationBlend.MASK_PRE:
-						material = new Material(StencilSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyStencilOperation)
-							{
-								switch(masking)
-								{
-									case Library_SpriteStudio6.KindMasking.THROUGH:
-										material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.IncrementWrap);
-										break;
-
-									case Library_SpriteStudio6.KindMasking.MASK:
-										material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.Invert);
-										break;
-								}
-							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
-						}
-						break;
-
 					case Library_SpriteStudio6.KindOperationBlend.MASK:
-						material = new Material(StencilSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyStencilOperation)
-							{
-								switch(masking)
-								{
-									case Library_SpriteStudio6.KindMasking.THROUGH:
-										material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.DecrementWrap);
-										break;
-
-									case Library_SpriteStudio6.KindMasking.MASK:
-										material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.Invert);
-										break;
-								}
-							}
-							goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;
-						}
-						break;
+						return(StencilSS6PU);
 
 					case Library_SpriteStudio6.KindOperationBlend.MIX:
-						material = new Material(SpriteSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
-							}
-							goto default;
-						}
-						break;
-
 					case Library_SpriteStudio6.KindOperationBlend.ADD:
-						material = new Material(SpriteSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
-							}
-							goto default;
-						}
-						break;
-
 					case Library_SpriteStudio6.KindOperationBlend.SUB:
-						material = new Material(SpriteSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.ReverseSubtract);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
-							}
-							goto default;
-						}
-						break;
-
 					case Library_SpriteStudio6.KindOperationBlend.MUL:
-						material = new Material(SpriteSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.DstColor);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
-							}
-							goto default;
-						}
-						break;
-
 					case Library_SpriteStudio6.KindOperationBlend.MUL_NA:
-						material = new Material(SpriteSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.Zero);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.SrcColor);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
-							}
-							goto default;
-						}
-						break;
-
 					case Library_SpriteStudio6.KindOperationBlend.SCR:
-						material = new Material(SpriteSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
-							}
-							goto default;
-						}
-						break;
-
 					case Library_SpriteStudio6.KindOperationBlend.EXC:
-						material = new Material(SpriteSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcColor);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
-							}
-							goto default;
-						}
-						break;
-
 					case Library_SpriteStudio6.KindOperationBlend.INV:
-						material = new Material(SpriteSS6PU);
-						if(null != material)
-						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.Zero);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 1.0f);	/* true */
-							}
-							goto default;
-						}
-						break;
-
-					case Library_SpriteStudio6.KindOperationBlend.TERMINATOR:
-						/* MEMO: All "Mask" Common Setting */
-						break;
-
-					default:
-						/* MEMO: All "Sprite" Common Setting */
-						if(0 <= IDPropertyCompareStencil)
-						{
-							switch(masking)
-							{
-								case Library_SpriteStudio6.KindMasking.THROUGH:
-									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Always);
-									break;
-
-								case Library_SpriteStudio6.KindMasking.MASK:
-									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Equal);
-									break;
-							}
-						}
-
-						if(0 <= IDPropertyZWrite)
-						{
-							material.SetFloat(IDPropertyZWrite, 0.0f);	/* false */
-						}
-						if(0 <= IDPropertyOutputPixelPMA)
-						{
-							material.SetFloat(IDPropertyOutputPixelPMA, 0.0f);	/* false */
-						}
-						break;
+						return(SpriteSS6PU);
 				}
 
-				return(material);
+				return(null);
 			}
 
-			public static UnityEngine.Material MaterialCreateEffect(Library_SpriteStudio6.KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking)
+			public static UnityEngine.Shader ShaderGetEffect(Library_SpriteStudio6.KindOperationBlendEffect operationBlend)
 			{
-				if((Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR <= operationBlend))
+#if false
+				switch(operationBlend)
+				{
+					case Library_SpriteStudio6.KindOperationBlendEffect.MIX:
+					case Library_SpriteStudio6.KindOperationBlendEffect.ADD:
+						return(EffectSS6PU);
+				}
+
+				return(null);
+#else
+				return(EffectSS6PU);
+#endif
+			}
+
+			public static UnityEngine.Material MaterialCreateAnimation(	UnityEngine.Shader shader,
+																		Library_SpriteStudio6.KindOperationBlend operationBlend,
+																		Library_SpriteStudio6.KindMasking masking,
+																		bool flagZWrite
+																	)
+			{
+				UnityEngine.Material material = null;
+				if(null == shader)
+				{
+					shader = ShaderGetAnimation(operationBlend);
+				}
+				material = new Material(shader);
+				if(null == material)
 				{
 					return(null);
 				}
 
-				UnityEngine.Material material = null;
 				switch(operationBlend)
 				{
-					case Library_SpriteStudio6.KindOperationBlendEffect.MIX:
-						material = new Material(EffectSS6PU);
-						if(null != material)
+					case Library_SpriteStudio6.KindOperationBlend.MASK_PRE:
+						switch(masking)
 						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
-							}
-							goto default;
-						}
-						break;
+							case Library_SpriteStudio6.KindMasking.THROUGH:
+								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.IncrementWrap);
+								break;
 
-					case Library_SpriteStudio6.KindOperationBlendEffect.ADD:
-						material = new Material(EffectSS6PU);
-						if(null != material)
+							case Library_SpriteStudio6.KindMasking.MASK:
+								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.Invert);
+								break;
+						}
+						goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;	/* Common Setting for Masking-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.MASK:
+						switch(masking)
 						{
-							if(0 <= IDPropertyBlendSource)
-							{
-								material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-							}
-							if(0 <= IDPropertyBlendDestination)
-							{
-								material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
-							}
-							if(0 <= IDPropertyBlendOperation)
-							{
-								material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
-							}
-							if(0 <= IDPropertyNotDiscardPixel)
-							{
-								material.SetFloat(IDPropertyNotDiscardPixel, 0.0f);	/* false */
-							}
-							goto default;
-						}
-						break;
+							case Library_SpriteStudio6.KindMasking.THROUGH:
+								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.DecrementWrap);
+								break;
 
-					case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR:
+							case Library_SpriteStudio6.KindMasking.MASK:
+								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.Invert);
+								break;
+						}
+						goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;	/* Common Setting for Masking-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.MIX:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.One);	/* UnityEngine.Rendering.BlendMode.SrcAlpha */
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+						material.EnableKeyword(NamePropertyOutputPixelPMA);	/* true */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.ADD:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.SUB:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.ReverseSubtract);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.MUL:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.DstColor);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+						material.EnableKeyword(NamePropertyOutputPixelPMA);		/* true */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.MUL_NA:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.Zero);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.SrcColor);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.EnableKeyword(NamePropertyNotDiscardPixel);	/* true */
+						material.EnableKeyword(NamePropertyOutputPixelPMA);		/* true */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.SCR:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.EXC:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcColor);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.INV:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.Zero);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.EnableKeyword(NamePropertyNotDiscardPixel);	/* true */
+						material.EnableKeyword(NamePropertyOutputPixelPMA);		/* true */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.TERMINATOR:
+						/* MEMO: Common Setting for Masking-Shader */
 						break;
 
 					default:
-						/* MEMO: All "Effect" Common Setting */
-						if(0 <= IDPropertyCompareStencil)
+						/* MEMO: Common Setting for Drawing-Shader */
+						switch(masking)
 						{
-							switch(masking)
-							{
-								case Library_SpriteStudio6.KindMasking.THROUGH:
-									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Always);
-									break;
+							case Library_SpriteStudio6.KindMasking.THROUGH:
+								material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Always);
+								break;
 
-								case Library_SpriteStudio6.KindMasking.MASK:
-									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Greater);
-									break;
-							}
+							case Library_SpriteStudio6.KindMasking.MASK:
+								material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Equal);
+								break;
 						}
-						if(0 <= IDPropertyZWrite)
+
+						material.SetFloat(IDPropertyZWrite, ((true == flagZWrite) ? 1.0f : 0.0f));
+						break;
+				}
+				return(material);
+			}
+
+			public static UnityEngine.Material MaterialCreateEffect(	UnityEngine.Shader shader,
+																		Library_SpriteStudio6.KindOperationBlendEffect operationBlend, 
+																		Library_SpriteStudio6.KindMasking masking,
+																		bool flagZWrite
+																)
+			{
+				UnityEngine.Material material = null;
+				if(null == shader)
+				{
+					shader = ShaderGetEffect(operationBlend);
+				}
+				material = new Material(shader);
+				if(null == material)
+				{
+					return(null);
+				}
+
+				switch(operationBlend)
+				{
+					case Library_SpriteStudio6.KindOperationBlendEffect.MIX:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.One);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+						material.EnableKeyword(NamePropertyOutputPixelPMA);	/* true */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlendEffect.ADD:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.One);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR:
+						/* MEMO: Common Setting for Masking-Shader */
+						break;
+
+					default:
+						/* MEMO: Common Setting for Drawing-Shader */
+						switch(masking)
 						{
-							material.SetFloat(IDPropertyZWrite, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+							case Library_SpriteStudio6.KindMasking.THROUGH:
+								material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Always);
+								break;
+
+							case Library_SpriteStudio6.KindMasking.MASK:
+								material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Equal);
+								break;
 						}
-						if(0 <= IDPropertyOutputPixelPMA)
-						{
-							material.SetFloat(IDPropertyOutputPixelPMA, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-						}
+
+						material.SetFloat(IDPropertyZWrite, ((true == flagZWrite) ? 1.0f : 0.0f));
 						break;
 				}
 
@@ -2015,93 +1818,30 @@ public static partial class Library_SpriteStudio6
 
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
-			/* MEMO: Legacy */
-//			public readonly static UnityEngine.Shader[] TableSpriteThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
-//			{
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/Draw"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Mix"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Add"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Subtract"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Multiple"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/MultipleNA"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Screen"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Exclude"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Through/Inverse")
-//			};
+			public const string NameShaderPrefix = "Custom/SpriteStudio6/";
+			public const string NameShaderPrefixSS6P = NameShaderPrefix + "SS6PU/";
+			public const string NameShaderPrefixUnityNative = NameShaderPrefix + "UnityNative/";
 
-			/* MEMO: Legacy */
-//			public readonly static UnityEngine.Shader[] TableSpriteMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL]
-//			{
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/PreDraw"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil/Draw"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Mix"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Add"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Subtract"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Multiple"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/MultipleNA"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Screen"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Exclude"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite/Mask/Inverse")
-//			};
+			public readonly static UnityEngine.Shader SpriteSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Sprite");
+			public readonly static UnityEngine.Shader EffectSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Effect");
+			public readonly static UnityEngine.Shader StencilSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Stencil");
+			public readonly static UnityEngine.Shader SpriteUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite");
+			public readonly static UnityEngine.Shader SpriteUnityNativeNonBatch = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite_NonBatch");
+			public readonly static UnityEngine.Shader SkinnedMeshUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "SkinnedMesh");
 
-			/* MEMO: Legacy */
-//			public readonly static UnityEngine.Shader[] TableEffectThrough = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
-//			{
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Mix"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Through/Add"),
-//			};
+			public const string NamePropertyAlphaTex = "_AlphaTex";							/* (Common) */
+			public const string NamePropertyEnableExternalAlpha = "_EnableExternalAlpha";	/* (Common) */
+			public const string NamePropertyBlendSource = "_BlendSource";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyBlendDestination = "_BlendDestination";			/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyBlendOperation = "_BlendOperation";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyCompareStencil = "_CompareStencil";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyZWrite = "_ZWrite";								/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyArgumentFs00 = "_ArgumentFs00";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyParameterFs00 = "_ParameterFs00";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
 
-//			/* MEMO: Legacy */
-//			public readonly static UnityEngine.Shader[] TableEffectMask = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR]
-//			{
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Mix"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect/Mask/Add"),
-//			};
-
-			/* MEMO: Legacy */
-//			public readonly static UnityEngine.Shader[] TableSpriteUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
-//			{
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Mix"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Add"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Subtract"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Multiple"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/MultipleNA"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Screen"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Exclude"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite/Inverse")
-//			};
-
-//			/* MEMO: Legacy */
-//			public readonly static UnityEngine.Shader[] TableSkinnedMeshUnityNative = new UnityEngine.Shader[(int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR]
-//			{
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Mix"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Add"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Subtract"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Multiple"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/MultipleNA"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Screen"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Exclude"),
-//				UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh/Inverse")
-//			};
-
-			public readonly static UnityEngine.Shader SpriteSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Sprite");
-			public readonly static UnityEngine.Shader EffectSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Effect");
-			public readonly static UnityEngine.Shader StencilSS6PU = UnityEngine.Shader.Find("Custom/SpriteStudio6/SS6PU/Stencil");
-			public readonly static UnityEngine.Shader SpriteUnityNative = UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite");
-			public readonly static UnityEngine.Shader SpriteUnityNativeNonBatch = UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/Sprite_NonBatch");
-			public readonly static UnityEngine.Shader SkinnedMeshUnityNative = UnityEngine.Shader.Find("Custom/SpriteStudio6/UnityNative/SkinnedMesh");
-
-			public const string NamePropertyStencilOperation = "_StencilOperation";
-			public const string NamePropertyBlendSource = "_BlendSource";
-			public const string NamePropertyBlendDestination = "_BlendDestination";
-			public const string NamePropertyBlendOperation = "_BlendOperation";
-			public const string NamePropertyCompareStencil = "_CompareStencil";
-			public const string NamePropertyZWrite = "_ZWrite";
-			public const string NamePropertyNotDiscardPixel = "_NotDiscardPixel";
-			public const string NamePropertyOutputPixelPMA = "_OutputPixelPMA";
-			public const string NamePropertyAlphaTex = "_AlphaTex";
-			public const string NamePropertyEnableExternalAlpha = "_EnableExternalAlpha";
+			public const string NamePropertyNotDiscardPixel = "PS_NOT_DISCARD";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyOutputPixelPMA = "PS_OUTPUT_PMA";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyStencilOperation = "_StencilOperation";			/* Stencil_SpriteStudio6 */
 
 			public readonly static int IDPropertyStencilOperation = UnityEngine.Shader.PropertyToID(NamePropertyStencilOperation);
 			public readonly static int IDPropertyBlendSource = UnityEngine.Shader.PropertyToID(NamePropertyBlendSource);
@@ -2109,13 +1849,105 @@ public static partial class Library_SpriteStudio6
 			public readonly static int IDPropertyBlendOperation = UnityEngine.Shader.PropertyToID(NamePropertyBlendOperation);
 			public readonly static int IDPropertyCompareStencil = UnityEngine.Shader.PropertyToID(NamePropertyCompareStencil);
 			public readonly static int IDPropertyZWrite = UnityEngine.Shader.PropertyToID(NamePropertyZWrite);
-			public readonly static int IDPropertyNotDiscardPixel = UnityEngine.Shader.PropertyToID(NamePropertyNotDiscardPixel);
-			public readonly static int IDPropertyOutputPixelPMA = UnityEngine.Shader.PropertyToID(NamePropertyOutputPixelPMA);
+			public readonly static int IDPropertyArgumentFs00 = UnityEngine.Shader.PropertyToID(NamePropertyArgumentFs00);
+			public readonly static int IDPropertyParameterFs00 = UnityEngine.Shader.PropertyToID(NamePropertyParameterFs00);
 			public readonly static int IDPropertyAlphaTex = UnityEngine.Shader.PropertyToID(NamePropertyAlphaTex);
 			public readonly static int IDPropertyEnableExternalAlpha = UnityEngine.Shader.PropertyToID(NamePropertyEnableExternalAlpha);
-
 			#endregion Enums & Constants
 		}
+
+		public static partial class Sequence
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			public enum Type
+			{
+				INVALID = -1,
+
+				LAST,										/* 0: Last Item, Repeatedly */
+				KEEP,										/* 1: Stop at the Last Frame */
+				TOP,										/* 2: Repeat whole */
+
+				TERMINATOR,
+			}
+			#endregion Enums & Constants
+
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+			[System.Serializable]
+			public struct Data
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				public string Name;
+				public int Index;
+				public Sequence.Type Type;
+				public Step[] TableStep;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				#endregion Enums & Constants
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				[System.Serializable]
+				public struct Step
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public string NamePackAnimation;
+					public string NameAnimation;
+					public int PlayCount;
+
+					public bool IsValid
+					{
+						get
+						{
+							return(	!(	(null == NamePackAnimation)
+//										|| (null == NameAnimation)
+//										|| (0 > PlayCount)
+									)
+								);	/* ? true : false */
+						}
+					}
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						NamePackAnimation = null;
+						NameAnimation = null;
+						PlayCount = -1;
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
+					#endregion Enums & Constants
+
+					/* ----------------------------------------------- Classes, Structs & Interfaces */
+					#region Classes, Structs & Interfaces
+					#endregion Classes, Structs & Interfaces
+				}
+				#endregion Classes, Structs & Interfaces
+			}
+			#endregion Classes, Structs & Interfaces
+		}
+
 		#endregion Classes, Structs & Interfaces
 	}
 
@@ -2277,7 +2109,6 @@ public static partial class Library_SpriteStudio6
 
 				Status |= FlagBitStatus.CHANGE;
 			}
-
 			#endregion Functions
 
 			/* ----------------------------------------------- Enums & Constants */
@@ -2299,6 +2130,518 @@ public static partial class Library_SpriteStudio6
 			};
 			#endregion Enums & Constants
 		}
+
+		internal class CacheMaterial
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			internal List<InformationData> Data;
+			private UnityEngine.Shader ShaderStandardPixel;
+			private UnityEngine.Shader ShaderStandardStencil;
+
+			internal bool StatusIsBootedUp
+			{
+				get
+				{
+					return(null != Data);	/*  ? true : false*/
+				}
+			}
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			internal bool BootUp(int capacity, bool flagIsEffect)
+			{
+				Data = new List<InformationData>(capacity);
+				Data.Clear();
+
+				if(false == flagIsEffect)
+				{	/* Animation */
+					ShaderStandardPixel = Library_SpriteStudio6.Data.Shader.SpriteSS6PU;
+					ShaderStandardStencil = Library_SpriteStudio6.Data.Shader.StencilSS6PU;
+				}
+				else
+				{	/* Effect */
+					ShaderStandardPixel = Library_SpriteStudio6.Data.Shader.EffectSS6PU;
+					ShaderStandardStencil = Library_SpriteStudio6.Data.Shader.StencilSS6PU;	/* null *//* Will never be used. */
+				}
+
+				return(true);
+			}
+
+			internal void ShutDown(bool flagDestroyInstance)
+			{
+				DataPurge(flagDestroyInstance);
+
+				Data = null;
+				ShaderStandardPixel = null;
+				ShaderStandardStencil = null;
+			}
+
+			internal void DataPurge(bool flagDestroyInstance)
+			{
+				int countData = Data.Count;
+				for(int i=(countData-1); i>=0; i--)
+				{
+					DataRelease(i, flagDestroyInstance);
+				}
+				Data.Clear();
+			}
+
+			internal void DataAppend(long codeHash, UnityEngine.Material instanecMaterial)
+			{
+				InformationData informationData = new InformationData(codeHash, instanecMaterial);
+				Data.Add(informationData);
+			}
+
+			internal void DataRelease(int index, bool flagDestroyInstance=false)
+			{
+				if(true == flagDestroyInstance)
+				{
+					UnityEngine.Material material = Data[index].Instance;
+					if(null != material)
+					{
+						UnityEngine.Object.Destroy(material);
+					}
+				}
+
+				Data.RemoveAt(index);
+			}
+
+			internal int IndexGet(long codeHash)
+			{
+				/* MEMO: Normally, Binary-Search is faster.                                      */
+				/*       But since delete invalid-cache at the same time, use Linear-Search now. */
+				int countData = Data.Count;
+				for(int i=0; i<countData; i++)
+				{
+					if(Data[i].CodeHash == codeHash)
+					{
+						if(null != Data[i].Instance)
+						{	/* Valid Instance */
+							return(i);
+						}
+
+						/* Delete Invalid-Cache (Instance is Destroyed) */
+						/* MEMO: Check the validity as materials may be destroyed from external. */
+						/*       Especially, when switching between Play-Modes on Unity-Editor.  */
+						Data.RemoveAt(i);
+						i--;
+						countData--;
+					}
+				}
+
+				return(-1);
+			}
+
+			internal int IndexGet(UnityEngine.Material instanceMaterial)
+			{
+				if(null == instanceMaterial)
+				{
+					return(-1);
+				}
+
+				int countData = Data.Count;
+				for(int i=0; i<countData; i++)
+				{
+					if(Data[i].Instance == instanceMaterial)
+					{
+						return(i);
+					}
+				}
+
+				return(-1);
+			}
+
+			private UnityEngine.Material MaterialGet(long codeHash)
+			{
+				/* MEMO: Normally, Binary-Search is faster.                                      */
+				/*       But since delete invalid-cache at the same time, use Linear-Search now. */
+				int countData = Data.Count;
+				for(int i=0; i<countData; i++)
+				{
+					if(Data[i].CodeHash == codeHash)
+					{
+						UnityEngine.Material instanceMaterial = Data[i].Instance;
+						if(null != instanceMaterial)
+						{	/* Valid Instance */
+							return(instanceMaterial);
+						}
+
+						/* Delete Invalid-Cache (Instance is Destroyed) */
+						/* MEMO: Check the validity as materials may be destroyed from external. */
+						/*       Especially, when switching between Play-Modes on Unity-Editor.  */
+						Data.RemoveAt(i);
+						i--;
+						countData--;
+					}
+				}
+
+				return(null);
+			}
+			internal UnityEngine.Material MaterialGetAnimation(	int indexTexture,
+																Library_SpriteStudio6.KindOperationBlend operationBlend,
+																Library_SpriteStudio6.KindMasking masking,
+																string nameShader,
+																Shader shader,
+																Texture[] tableTexture,
+																bool flagCreateNew
+															)
+			{
+				if(false == StatusIsBootedUp)	{
+					return(null);
+				}
+
+				if(null == shader)
+				{
+					if(Library_SpriteStudio6.KindOperationBlend.MIX > operationBlend)
+					{	/* for Mask */
+						shader = ShaderStandardStencil;
+					}
+					else
+					{	/* for Color */
+						shader = ShaderStandardPixel;
+					}
+				}
+
+
+				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetAnimation(	indexTexture,
+																												operationBlend,
+																												masking,
+																												nameShader
+																										);
+				UnityEngine.Material instanceMaterial = MaterialGet(codeHash);
+				if(null != instanceMaterial)
+				{	/* Exist (Already created) */
+					return(instanceMaterial);
+				}
+
+				/* MEMO: Not-exist */
+				instanceMaterial = null;
+				if(true == flagCreateNew)
+				{
+					/* Create new material */
+					instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateAnimation(shader, operationBlend, masking, false);
+					if(null == instanceMaterial)
+					{	/* Miss-Create */
+							return(null);
+					}
+					instanceMaterial.mainTexture = tableTexture[indexTexture];
+					DataAppend(codeHash, instanceMaterial);
+				}
+
+				return(instanceMaterial);
+			}
+			internal UnityEngine.Material MaterialGetEffect(	int indexTexture,
+																Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
+																Library_SpriteStudio6.KindMasking masking,
+																string nameShader,
+																Shader shader,
+																Texture[] tableTexture,
+																bool flagCreateNew
+															)
+			{
+				if(false == StatusIsBootedUp)	{
+					return(null);
+				}
+
+				if(null == shader)
+				{
+#if false
+					/* MEMO: "Effect" does not have "Masking" function. */
+					if(Library_SpriteStudio6.KindOperationBlendEffect.MIX > operationBlend)
+					{	/* for Mask */
+						shader = ShaderStandardStencil;
+					}
+					else
+					{	/* for Color */
+						shader = ShaderStandardPixel;
+					}
+#else
+					shader = ShaderStandardPixel;
+#endif
+				}
+
+				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetEffect(	indexTexture,
+																											operationBlend,
+																											masking,
+																											nameShader
+																									);
+				UnityEngine.Material instanceMaterial = MaterialGet(codeHash);
+				if(null != instanceMaterial)
+				{	/* Exist (Already created) */
+					return(instanceMaterial);
+				}
+
+				/* MEMO: Not-exist */
+				instanceMaterial = null;
+				if(true == flagCreateNew)
+				{
+					/* Create new material */
+					instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(shader, operationBlend, masking, false);
+					if(null == instanceMaterial)
+					{	/* Miss-Create */
+							return(null);
+					}
+					instanceMaterial.mainTexture = tableTexture[indexTexture];
+					DataAppend(codeHash, instanceMaterial);
+				}
+
+				return(instanceMaterial);
+			}
+
+			internal UnityEngine.Material MaterialReplaceAnimation(	int indexTexture,
+																	Library_SpriteStudio6.KindOperationBlend operationBlend,
+																	Library_SpriteStudio6.KindMasking masking,
+																	string nameShader,
+																	UnityEngine.Material material
+																)
+			{
+				if(false == StatusIsBootedUp)	{
+					return(null);
+				}
+
+				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetAnimation(	indexTexture,
+																												operationBlend,
+																												masking,
+																												nameShader
+																										);
+				int indexMaterial = IndexGet(codeHash);
+				if(0 > indexMaterial)
+				{	/* Not exist */
+					return(null);
+				}
+
+				/* Replace material */
+				UnityEngine.Material instanceMaterialOld = Data[indexMaterial].Instance;
+				if(null == material)
+				{	/* Remove */
+					Data.RemoveAt(indexMaterial);
+				}
+				else
+				{	/* Overwrite */
+					InformationData information = new InformationData(Data[indexMaterial].CodeHash, material);
+					Data[indexMaterial] = information;
+				}
+
+				return(instanceMaterialOld);
+			}
+			internal UnityEngine.Material MaterialReplaceEffect(	int indexTexture,
+																	Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
+																	Library_SpriteStudio6.KindMasking masking,
+																	string nameShader,
+																	UnityEngine.Material material
+																)
+			{
+				if(false == StatusIsBootedUp)	{
+					return(null);
+				}
+
+				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetEffect(	indexTexture,
+																											operationBlend,
+																											masking,
+																											nameShader
+																									);
+				int indexMaterial = IndexGet(codeHash);
+				if(0 > indexMaterial)
+				{	/* Not exist */
+					return(null);
+				}
+
+				/* Replace material */
+				UnityEngine.Material instanceMaterialOld = Data[indexMaterial].Instance;
+				if(null == material)
+				{	/* Remove */
+					Data.RemoveAt(indexMaterial);
+				}
+				else
+				{	/* Overwrite */
+					InformationData information = new InformationData(Data[indexMaterial].CodeHash, material);
+					Data[indexMaterial] = information;
+				}
+
+				return(instanceMaterialOld);
+			}
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			#endregion Enums & Constants
+
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+			internal struct InformationData
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				internal long CodeHash;
+				internal Material Instance;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				internal InformationData(long codeHash, UnityEngine.Material instance)
+				{
+					CodeHash = codeHash;
+					Instance = instance;
+				}
+
+				/* MEMO: Possess all information in raw.                            */
+				/*       Code is redundant, but flexible in many ways is advantage. */
+				internal static long CodeGetAnimation(int indexTexture, KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader)
+				{
+					/* MEMO: Since "Animation" and "Effect" will not be managed in the same cache, doesn't matter if codes is same-value. */
+					long code = (null ==nameShader) ? (long)CodeHashNameShaderDefault : (long)(nameShader.GetHashCode());
+					code &= 0x00000000ffffffffL;
+					code |= (long)((int)operationBlend & 0xff) << 32;
+					code |= (long)((int)masking & 0x0f) << 40;
+					code |= (long)(indexTexture & 0xfff) << 44;
+
+					return(code);
+				}
+
+				internal static long CodeGetEffect(int indexTexture, KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader)
+				{
+					/* MEMO: Since "Animation" and "Effect" will not be managed in the same cache, doesn't matter if codes is same-value. */
+					long code = (null ==nameShader) ? (long)CodeHashNameShaderDefault : (long)(nameShader.GetHashCode());
+					code &= 0x00000000ffffffffL;
+					code |= (long)((int)operationBlend & 0xff) << 32;
+					code |= (long)((int)masking & 0x0f) << 40;
+					code |= (long)(indexTexture & 0xfff) << 44;
+
+					return(code);
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				private const string NameShaderDefault = "__SS6Shader_Default__";
+				private readonly static int CodeHashNameShaderDefault = NameShaderDefault.GetHashCode();
+				#endregion Enums & Constants
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				#endregion Classes, Structs & Interfaces
+			}
+			#endregion Classes, Structs & Interfaces
+		}
+
+		public class InformationCollision
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			public bool IsTrigger
+			{
+				get
+				{
+					if(true == Is2D)
+					{
+						if(null != Collider2D)
+						{
+							return(Collider2D.isTrigger);
+						}
+					}
+					else
+					{
+						if(null != Collider)
+						{
+							return(Collider.isTrigger);
+						}
+					}
+
+					return(false);
+				}
+			}
+
+			public bool Is2D
+			{
+				get
+				{
+					return((null == Collider) && (null != Collider2D));	/* ? true : false */
+				}
+			}
+
+			/* MEMO: "Collider/Pair/Contact" and "Collider2D/Pair2D/Contact2D" are mutually exclusive.
+			/* MEMO: When (Is2D==false), Valid information. */
+			private UnityEngine.Collider InstanceCollider = null;
+			public UnityEngine.Collider Collider
+			{
+				get
+				{
+					return(InstanceCollider);
+				}
+			}
+			public UnityEngine.Collider Pair = null;			/* When (Collider.IsTrigger==false), Valid information */
+			public UnityEngine.Collision Contact = null;		/* When (Collider.IsTrigger==true), Valid information */
+
+			/* MEMO: When (Is2D==true), Valid information. */
+			private UnityEngine.Collider2D InstanceCollider2D = null;
+			public UnityEngine.Collider2D Collider2D
+			{
+				get
+				{
+					return(InstanceCollider2D);
+				}
+			}
+			public UnityEngine.Collider2D Pair2D = null;		/* When (Collider2D.IsTrigger==false), Valid information */
+			public UnityEngine.Collision2D Contact2D = null;	/* When (Collider2D.IsTrigger==true), Valid information */
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public InformationCollision()
+			{
+				CleanUp();
+			}
+			public InformationCollision(InformationCollision original)
+			{
+				InstanceCollider = original.InstanceCollider;
+				Pair = original.Pair;
+				Contact = original.Contact;
+
+				InstanceCollider2D = original.InstanceCollider2D;
+				Pair2D = original.Pair2D;
+				Contact2D = original.Contact2D;
+			}
+
+			private void CleanUp()
+			{
+				InstanceCollider = null;
+				Pair = null;
+				Contact = null;
+
+				InstanceCollider2D = null;
+				Pair2D = null;
+				Contact2D = null;
+			}
+
+			public void BootUp(Collider collider)
+			{	/* MEMO: for 3D */
+				CleanUp();
+
+				InstanceCollider = collider;
+			}
+			public void BootUp(Collider2D collider)
+			{	/* MEMO: for 2D */
+				CleanUp();
+
+				InstanceCollider2D = collider;
+			}
+
+			public void ShutDownBase()
+			{
+				CleanUp();
+			}
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			#endregion Enums & Constants
+
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+			#endregion Classes, Structs & Interfaces
+		}
 		#endregion Classes, Structs & Interfaces
 	}
 
@@ -2307,12 +2650,10 @@ public static partial class Library_SpriteStudio6
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
 		#region Classes, Structs & Interfaces
 		[System.Serializable]
-		public class Root : MonoBehaviour
+		public abstract class Root : MonoBehaviour
 		{
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
-			public UnityEngine.Material[] TableMaterial;
-
 			public Script_SpriteStudio6_DataCellMap DataCellMap;
 			internal Library_SpriteStudio6.Data.CellMap[] TableCellMap = null;
 
@@ -2331,7 +2672,15 @@ public static partial class Library_SpriteStudio6
 			internal MeshRenderer InstanceMeshRenderer = null;
 			internal MeshFilter InstanceMeshFilter = null;
 			protected UnityEngine.Material[] TableMaterialCombined = null;	/* use only Highest-Parent-Root */
+			protected UnityEngine.MaterialPropertyBlock[] TableMaterialPropertyBlockCombined = null;	/* use only Highest-Parent-Root */
 			protected Mesh MeshCombined = null;	/* use only Highest-Parent-Root */
+			internal UnityEngine.MaterialPropertyBlock[] TableMaterialPropertyBlock
+			{
+				get
+				{
+					return(TableMaterialPropertyBlockCombined);
+				}
+			}
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -2554,6 +2903,38 @@ public static partial class Library_SpriteStudio6
 			protected const string NameBatchedMesh = "Batched Mesh";
 			#endregion Enums & Constants
 		}
+
+		[System.Serializable]
+		public abstract class Collider : MonoBehaviour
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			protected GameObject InstanceGamaObject = null;
+
+			public Script_SpriteStudio6_Root InstanceRoot;
+			public int IDParts;
+
+			protected float Radius = 1.0f;
+			protected Vector3 SizeRectangle = Vector3.one;
+			protected Vector3 PivotRectangle = Vector3.zero;
+
+			protected Library_SpriteStudio6.Control.InformationCollision InformationEnter = new Library_SpriteStudio6.Control.InformationCollision();
+			protected Library_SpriteStudio6.Control.InformationCollision InformationStay = new Library_SpriteStudio6.Control.InformationCollision();
+			protected Library_SpriteStudio6.Control.InformationCollision InformationExit = new Library_SpriteStudio6.Control.InformationCollision();
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			protected abstract void BootUp();
+			internal abstract bool ColliderSetEnable(bool flagSwitch);
+			internal abstract bool ColliderSetRectangle(ref Vector3 size, ref Vector3 pivot);
+			internal abstract bool ColliderSetRadius(float radius);
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			#endregion Enums & Constants
+		}
 		#endregion Classes, Structs & Interfaces
 	}
 
@@ -2571,10 +2952,10 @@ public static partial class Library_SpriteStudio6
 
 			internal List<Vector3> ListCoordinate;
 			internal List<Color32> ListColorParts;
-			internal List<Vector2> ListUVTexture;
-			internal List<Vector2> ListParameterBlend;
+			internal List<Vector4> ListUVTexture;	/* .x:U / .y:V / .z:PartsColor-Blend / .w:PartsColor-Power */
+			internal List<Vector4> ListUVMinMax;	/* .x:Min-U / .y:Min-V / .z:Max-U / .w:Max-V */
+			internal List<Vector4> ListUVAverage;	/* .x:Avr-U / .y:Avr-V / .z:(No-Use) / .w:(No-Use) */
 			internal List<int> ListIndexVertex;
-			internal List<int> ListIndexVertexSplit;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -2588,9 +2969,10 @@ public static partial class Library_SpriteStudio6
 				ListCoordinate = null;
 				ListColorParts = null;
 				ListUVTexture = null;
-				ListParameterBlend = null;
+				ListUVTexture = null;
+				ListUVMinMax = null;
+				ListUVAverage = null;
 				ListIndexVertex = null;
-				ListIndexVertexSplit = null;
 			}
 
 			internal bool BootUp(int countSpriteMax, int countMeshMax, int countParticleMax)
@@ -2650,7 +3032,7 @@ public static partial class Library_SpriteStudio6
 				}
 				if(true == flagRenew)
 				{
-					ListUVTexture = new List<Vector2>(countVertex);
+					ListUVTexture = new List<Vector4>(countVertex);
 					if(null == ListUVTexture)
 					{
 						goto BootUp_ErrorEnd;
@@ -2658,23 +3040,41 @@ public static partial class Library_SpriteStudio6
 				}
 				ListUVTexture.Clear();
 
-				if(null == ListParameterBlend)
+				if(null == ListUVMinMax)
 				{
 					flagRenew = true;
 				}
 				else
 				{
-					flagRenew = (ListParameterBlend.Count < countVertex) ? true : false;
+					flagRenew = (ListUVMinMax.Count < countVertex) ? true : false;
 				}
 				if(true == flagRenew)
 				{
-					ListParameterBlend = new List<Vector2>(countVertex);
-					if(null == ListParameterBlend)
+					ListUVMinMax = new List<Vector4>(countVertex);
+					if(null == ListUVMinMax)
 					{
 						goto BootUp_ErrorEnd;
 					}
 				}
-				ListParameterBlend.Clear();
+				ListUVMinMax.Clear();
+
+				if(null == ListUVAverage)
+				{
+					flagRenew = true;
+				}
+				else
+				{
+					flagRenew = (ListUVAverage.Count < countVertex) ? true : false;
+				}
+				if(true == flagRenew)
+				{
+					ListUVAverage = new List<Vector4>(countVertex);
+					if(null == ListUVAverage)
+					{
+						goto BootUp_ErrorEnd;
+					}
+				}
+				ListUVAverage.Clear();
 
 				if(null == ListIndexVertex)
 				{
@@ -2694,24 +3094,6 @@ public static partial class Library_SpriteStudio6
 				}
 				ListIndexVertex.Clear();
 
-				if(null == ListIndexVertexSplit)
-				{
-					flagRenew = true;
-				}
-				else
-				{
-					flagRenew = (ListIndexVertexSplit.Count < countIndexVertex) ? true : false;
-				}
-				if(true == flagRenew)
-				{
-					ListIndexVertexSplit = new List<int>(countIndexVertex);
-					if(null == ListIndexVertexSplit)
-					{
-						goto BootUp_ErrorEnd;
-					}
-				}
-				ListIndexVertexSplit.Clear();
-
 				return(true);
 
 			BootUp_ErrorEnd:;
@@ -2728,9 +3110,9 @@ public static partial class Library_SpriteStudio6
 				ListCoordinate.Clear();
 				ListColorParts.Clear();
 				ListUVTexture.Clear();
-				ListParameterBlend.Clear();
+				ListUVMinMax.Clear();
+				ListUVAverage.Clear();
 				ListIndexVertex.Clear();
-				ListIndexVertexSplit.Clear();
 			}
 
 			private bool ChainAdd(Chain chain)
@@ -2750,12 +3132,15 @@ public static partial class Library_SpriteStudio6
 			}
 
 			internal Chain VertexAdd(	Chain chain,
+										bool flagNotCombine,
+										Material material,
+										Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.BufferUniformShader uniformShader,
 										int countVertex,
 										Vector3[] tableCoordinate,
 										Color32[] tableColorParts,
-										Vector2[] tableUVTexture,
-										Vector2[] tableParameterBlend,
-										Material material
+										Vector4[] tableUVTexture,
+										Vector4[] tableUVMinMax,
+										Vector4[] tableUVAverage
 									)
 			{
 				int countCoordinate = ListCoordinate.Count;
@@ -2771,14 +3156,26 @@ public static partial class Library_SpriteStudio6
 
 				/* Decide Chain */
 				/* MEMO: Do not unite Sub-Cluster calls. */
-				if((null != ChainLast) && (material == ChainLast.MaterialDraw))
+				/* MEMO: UniformShader is additional data to the material, so not included in comparing at "Mesh-Batching". */
+				/*       Assumption, shader-constants will be the same when same material.                                  */
+				/*       Shader-constants also vary with "Shader" attribute's parameters. However, "Mesh-batching" is not   */
+				/*        performed at using of "Shader" attributes.                                                        */
+				if(	(null != ChainLast)
+					&& ((false == ChainLast.FlagNotCombine) && (false == flagNotCombine))
+					&& (material == ChainLast.MaterialDraw)
+				)
 				{	/* Same Material (Use exist Chain) */
 					chain = ChainLast;
 				}
 				else
 				{	/* Use new Chain */
 					chain.DataPurge();
+
 					chain.MaterialDraw = material;
+					chain.FlagNotCombine = flagNotCombine;
+					chain.StatusIsValid = true;
+					chain.UniformShader = uniformShader;
+
 					ChainAdd(chain);
 				}
 
@@ -2788,7 +3185,8 @@ public static partial class Library_SpriteStudio6
 					ListCoordinate.Add(tableCoordinate[i]);
 					ListColorParts.Add(tableColorParts[i]);
 					ListUVTexture.Add(tableUVTexture[i]);
-					ListParameterBlend.Add(tableParameterBlend[i]);
+					ListUVMinMax.Add(tableUVMinMax[i]);
+					ListUVAverage.Add(tableUVAverage[i]);
 				}
 
 				/* Add Vertex-Index data */
@@ -2810,12 +3208,15 @@ public static partial class Library_SpriteStudio6
 			}
 
 			internal Chain VertexAddMesh(	Chain chain,
+											bool flagNotCombine,
+											Material material,
+											Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.BufferUniformShader uniformShader,
+											int[] tableIndexVertex,
 											Vector3[] tableCoordinate,
 											Color32[] tableColorParts,
-											Vector2[] tableUVTexture,
-											Vector2[] tableParameterBlend,
-											int[] tableIndexVertex,
-											Material material
+											Vector4[] tableUVTexture,
+											Vector4[] tableUVMinMax,
+											Vector4[] tableUVAverage
 										)
 			{
 				int countCoordinate = ListCoordinate.Count;
@@ -2832,14 +3233,26 @@ public static partial class Library_SpriteStudio6
 
 				/* Decide Chain */
 				/* MEMO: Do not unite Sub-Cluster calls. */
-				if((null != ChainLast) && (material == ChainLast.MaterialDraw))
+				/* MEMO: UniformShader is additional data to the material, so not included in comparing at "Mesh-Batching". */
+				/*       Assumption, shader-constants will be the same when same material.                                  */
+				/*       Shader-constants also vary with "Shader" attribute's parameters. However, "Mesh-batching" is not   */
+				/*        performed at using of "Shader" attributes.                                                        */
+				if(	(null != ChainLast)
+					&& ((false == ChainLast.FlagNotCombine) && (false == flagNotCombine))
+					&& (material == ChainLast.MaterialDraw)
+				)
 				{	/* Same Material (Use exist Chain) */
 					chain = ChainLast;
 				}
 				else
 				{	/* Use new Chain */
 					chain.DataPurge();
+
 					chain.MaterialDraw = material;
+					chain.FlagNotCombine = flagNotCombine;
+					chain.StatusIsValid = true;
+					chain.UniformShader = uniformShader;
+
 					ChainAdd(chain);
 				}
 
@@ -2849,7 +3262,8 @@ public static partial class Library_SpriteStudio6
 					ListCoordinate.Add(tableCoordinate[i]);
 					ListColorParts.Add(tableColorParts[i]);
 					ListUVTexture.Add(tableUVTexture[i]);
-					ListParameterBlend.Add(tableParameterBlend[i]);
+					ListUVMinMax.Add(tableUVMinMax[i]);
+					ListUVAverage.Add(tableUVAverage[i]);
 				}
 
 				/* Add Vertex-Index data */
@@ -2874,7 +3288,10 @@ public static partial class Library_SpriteStudio6
 				{
 					count += chain.Count;	/* MEMO: Even when integrate chains, ChainPrevious.Count has already been added. */
 
-					if((null != chainPrevious) && (chainPrevious.MaterialDraw == chain.MaterialDraw))
+					if(	(null != chainPrevious)
+						&& ((false == chainPrevious.FlagNotCombine) && (false == chain.FlagNotCombine))
+						&& (chainPrevious.MaterialDraw == chain.MaterialDraw)
+					)
 					{	/* Same Material ... Integrate Chain */
 						chainPrevious.CountVertex += chain.CountVertex;
 						chainPrevious.Count += chain.Count;
@@ -2894,7 +3311,7 @@ public static partial class Library_SpriteStudio6
 				return(count);
 			}
 
-			internal bool MeshCombine(Mesh mesh, ref Material[] tableMaterial)
+			internal bool MeshCombine(Mesh mesh, ref Material[] tableMaterial, ref MaterialPropertyBlock[] tableMaterialPropertyBlock)
 			{	/* MEMO: Combine meshes by own processing in avoiding overhead. (unuse "Mesh.CombineMeshes") */
 				int countMaterial = Count;
 
@@ -2904,16 +3321,22 @@ public static partial class Library_SpriteStudio6
 				{
 					tableMaterial = new Material[countMaterial];
 				}
+				if((null == tableMaterialPropertyBlock) || (countMaterial != tableMaterialPropertyBlock.Length))
+				{
+					tableMaterialPropertyBlock = new MaterialPropertyBlock[countMaterial];
+				}
 
 				/* Create Mesh */
 				if(0 < countMaterial)
 				{
-					/* MEMO: Caution that "SetXXXXX(array, n)" consumes managed-heap. ("SetXXXXX(List<int>, n)" does not) */
+					/* MEMO: Caution that "SetXXXXX(n, array)" consumes managed-heap. ("SetXXXXX(n, List<int>)" does not) */
 					mesh.SetVertices(ListCoordinate);
 					mesh.SetUVs(0, ListUVTexture);
-					mesh.SetUVs(1, ListParameterBlend);
+					mesh.SetUVs(1, ListUVMinMax);
+					mesh.SetUVs(2, ListUVAverage);
 					mesh.SetColors(ListColorParts);
 
+					MaterialPropertyBlock materialPropertyBlock = null;
 					Chain chain = ChainTop;
 					if(1 < countMaterial)
 					{	/* Multi-Materials */
@@ -2925,21 +3348,23 @@ public static partial class Library_SpriteStudio6
 						/* MEMO: Excepting manually copying "List", I don't know ways to split list without consuming managed-heap. */
 						/*       Time to copy is waste, but seem that CPU-load is light.                                            */
 						int indexVertexTop;
-						int indexVertexLast;
 						while(null != chain)
 						{
-							ListIndexVertexSplit.Clear();
+							/* Set Mesh Information */
 
 							indexVertexTop = chain.IndexVertex;
-							indexVertexLast = indexVertexTop + chain.CountVertex;
-							for(int i= indexVertexTop; i<indexVertexLast; i++)
-							{
-								ListIndexVertexSplit.Add(ListIndexVertex[i]);
-							}
-							mesh.SetTriangles(ListIndexVertexSplit, indexMaterial);
+							mesh.SetTriangles(ListIndexVertex, indexVertexTop, chain.CountVertex, indexMaterial);
 
+							/* Set Material */
 							tableMaterial[indexMaterial] = chain.MaterialDraw;
 
+							/* Set Material Property */
+							materialPropertyBlock = chain.MaterialPropertyBlock;
+							materialPropertyBlock.SetVector(Library_SpriteStudio6.Data.Shader.IDPropertyArgumentFs00, chain.UniformShader.ShaderArgumentPixel0);
+							materialPropertyBlock.SetVector(Library_SpriteStudio6.Data.Shader.IDPropertyParameterFs00, chain.UniformShader.ShaderParameterPixel0);
+							tableMaterialPropertyBlock[indexMaterial] = materialPropertyBlock;
+
+							/* Follow Chain */
 							indexMaterial++;
 							chain = chain.ChainNext;
 						}
@@ -2949,6 +3374,12 @@ public static partial class Library_SpriteStudio6
 						/* MEMO: If have single material, mesh is made with no submeshes so that dynamic-batching is easy to apply. */
 						mesh.SetTriangles(ListIndexVertex, 0);
 						tableMaterial[0] = chain.MaterialDraw;
+
+						/* Set Material Property */
+						materialPropertyBlock = chain.MaterialPropertyBlock;
+						materialPropertyBlock.SetVector(Library_SpriteStudio6.Data.Shader.IDPropertyArgumentFs00, chain.UniformShader.ShaderArgumentPixel0);
+						materialPropertyBlock.SetVector(Library_SpriteStudio6.Data.Shader.IDPropertyParameterFs00, chain.UniformShader.ShaderParameterPixel0);
+						tableMaterialPropertyBlock[0] = materialPropertyBlock;
 					}
 				}
 
@@ -2964,7 +3395,47 @@ public static partial class Library_SpriteStudio6
 				#region Variables & Properties
 				internal Chain ChainNext;
 
-				internal Material MaterialDraw;
+				private FlagBitStatus Status;
+				internal bool StatusIsValid
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.VALID));	/* ? true : false */
+					}
+					set
+					{
+						if(true == value)
+						{
+							Status |= FlagBitStatus.VALID;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.VALID;
+						}
+					}
+				}
+				internal bool FlagNotCombine
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.NOT_COMBINE));	/* ? true : false */
+					}
+					set
+					{
+						if(true == value)
+						{
+							Status |= FlagBitStatus.NOT_COMBINE;
+						}
+						else
+						{
+							Status &= ~FlagBitStatus.NOT_COMBINE;
+						}
+					}
+				}
+				internal UnityEngine.Material MaterialDraw;
+				internal UnityEngine.MaterialPropertyBlock MaterialPropertyBlock = new UnityEngine.MaterialPropertyBlock();
+
+				internal Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.BufferUniformShader UniformShader;
 
 				internal int Count;
 				internal int IndexVertex;
@@ -2976,11 +3447,14 @@ public static partial class Library_SpriteStudio6
 				internal void CleanUp()
 				{
 					DataPurge();
+//					MaterialPropertyBlock = null;
 				}
 
 				internal bool BootUp()
 				{
 					DataPurge();
+//					MaterialPropertyBlock = new MaterialPropertyBlock();
+
 					return(true);
 				}
 
@@ -2988,7 +3462,9 @@ public static partial class Library_SpriteStudio6
 				{
 					ChainNext = null;
 
+					Status = FlagBitStatus.CLEAR;
 					MaterialDraw = null;
+					/* MEMO: "MaterialPropertyBlock" is not set null because use repeatedly. */
 
 					Count = 0;
 					IndexVertex = 0;
@@ -3007,6 +3483,19 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				[System.Flags]
+				public enum FlagBitStatus
+				{
+					VALID = 0x40000000,
+
+					NOT_COMBINE = 0x00000001,
+
+					CLEAR = 0x00000000
+				}
+				#endregion Enums & Constants
 			}
 			#endregion Classes, Structs & Interfaces
 		}

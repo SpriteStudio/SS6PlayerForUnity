@@ -1,29 +1,22 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using UnityEngine;
 
 [ExecuteInEditMode]
 [System.Serializable]
-public partial class Script_SpriteStudio6_Collider : MonoBehaviour
+public partial class Script_SpriteStudio6_Collider : Library_SpriteStudio6.Script.Collider
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
-	private GameObject InstanceGamaObject = null;
 	private Collider InstanceCollider = null;
 
-	public Script_SpriteStudio6_Root InstanceRoot;
-	public int IDParts;
-
 	public CapsuleCollider InstanceColliderCapsule;
-	private float Radius = 1.0f;	/* Initial value set by importer */
-
 	public BoxCollider InstanceColliderBox;
-	private Vector3 SizeRectangle = Vector3.one;	/* Initial value set by importer */
-	private Vector3 PivotRectangle = Vector3.zero;	/* Initial value set by importer */
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -58,7 +51,11 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderEnter))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderEnter(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, pair);
+
+			InformationEnter.Pair = pair;
+			InformationEnter.Contact = null;
+
+			InstanceRoot.FunctionColliderEnter(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InformationEnter);
 		}
 	}
 
@@ -67,7 +64,11 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderExit))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderExit(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, pair);
+
+			InformationExit.Pair = pair;
+			InformationExit.Contact = null;
+
+			InstanceRoot.FunctionColliderExit(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InformationExit);
 		}
 	}
 
@@ -76,41 +77,57 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderStay))
 		{
 			BootUp();
-			InstanceRoot.FunctionColliderStay(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, pair);
+
+			InformationStay.Pair = pair;
+			InformationStay.Contact = null;
+
+			InstanceRoot.FunctionColliderStay(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InformationStay);
 		}
 	}
 
 	void OnCollisionEnter(Collision contacts)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionEnter))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderEnter))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionEnter(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, contacts);
+
+			InformationEnter.Pair = null;
+			InformationEnter.Contact = contacts;
+
+			InstanceRoot.FunctionColliderEnter(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InformationEnter);
 		}
 	}
 
 	void OnCollisionExit(Collision contacts)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionExit))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderExit))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionExit(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, contacts);
+
+			InformationExit.Pair = null;
+			InformationExit.Contact = contacts;
+
+			InstanceRoot.FunctionColliderExit(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InformationExit);
 		}
 	}
 
 	void OnCollisionStay(Collision contacts)
 	{
-		if((null != InstanceRoot) && (null != InstanceRoot.FunctionCollisionStay))
+		if((null != InstanceRoot) && (null != InstanceRoot.FunctionColliderStay))
 		{
 			BootUp();
-			InstanceRoot.FunctionCollisionStay(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InstanceCollider, contacts);
+
+			InformationStay.Pair = null;
+			InformationStay.Contact = contacts;
+
+			InstanceRoot.FunctionColliderStay(InstanceRoot, InstanceGamaObject, InstanceRoot.DataAnimation.TableParts[IDParts].Name, IDParts, InformationStay);
 		}
 	}
 	#endregion MonoBehaviour-Functions
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
-	private void BootUp()
+	protected override void BootUp()
 	{
 		if(null == InstanceGamaObject)
 		{
@@ -131,10 +148,17 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 				goto BootUp_ColliderConfirmed;
 			}
 		}
+
+		return;
+
 	BootUp_ColliderConfirmed:;
+		InformationEnter.BootUp(InstanceCollider);
+		InformationExit.BootUp(InstanceCollider);
+		InformationStay.BootUp(InstanceCollider);
+//		return;
 	}
 
-	internal bool ColliderSetEnable(bool flagSwitch)
+	internal override bool ColliderSetEnable(bool flagSwitch)
 	{
 		BootUp();
 		if(null == InstanceCollider)
@@ -142,11 +166,15 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 			return(false);
 		}
 
-		InstanceCollider.enabled = flagSwitch;
+		if(InstanceCollider.enabled != flagSwitch)
+		{
+			InstanceCollider.enabled = flagSwitch;
+		}
+
 		return(true);
 	}
 
-	internal bool ColliderSetRectangle(ref Vector3 size, ref Vector3 pivot)
+	internal override bool ColliderSetRectangle(ref Vector3 size, ref Vector3 pivot)
 	{
 		BootUp();
 		if(null == InstanceColliderBox)
@@ -169,7 +197,7 @@ public partial class Script_SpriteStudio6_Collider : MonoBehaviour
 		return(true);
 	}
 
-	internal bool ColliderSetRadius(float radius)
+	internal override bool ColliderSetRadius(float radius)
 	{
 		BootUp();
 		if(null == InstanceColliderCapsule)

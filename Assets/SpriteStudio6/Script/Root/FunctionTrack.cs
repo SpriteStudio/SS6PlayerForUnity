@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -258,16 +259,16 @@ public partial class Script_SpriteStudio6_Root
 	//! Transition the animation
 	/*!
 	@param	indexTrack
-		Track index of now playing (Master track. 0 origin)
-	@param	indexTrackSlave
-		Track index to manage transition destination animation (Slave track. 0 origin)<br>
+		Track index of now playing (Primary track. 0 origin)
+	@param	indexTrackSecondary
+		Track index to manage transition destination animation (Secondary track. 0 origin)<br>
 		-1 == Cancel transition
 	@param	time
 		Time to transition (1.0f = 1 second)
 	@param	flagCancelPauseAfterTransition
 		Cancel pause state after transition is completed<br>
 		true == Cancel (Playing)<br>
-		false == Leave master track's settings
+		false == Leave primary track's settings
 	@retval	Return-Value
 		true == Success<br>
 		false == Failure (Error)
@@ -276,18 +277,18 @@ public partial class Script_SpriteStudio6_Root
 	However, Transition is targeting only TRS(Position, Rotation and Scaling. Except "Local-Scaling").<br>
 	Not apply to "Instance" animation too.<br>
 	<br>
-	Track 0 should not be used Slave side. (because Track 0 is master track of the entire animation)<br>
+	Track 0 should not be used Secondary side. (because Track 0 is primary track of the entire animation)<br>
 	<br>
-	When transition is complete, destination-animation will be played on indexTrack and indexTrackSlave will be in stopped state.<br>
-	(IndexTrackSlave is only used for managing fade destination animation)<br>
+	When transition is complete, destination-animation will be played on indexTrack and indexTrackSecaondary will be in stopped state.<br>
+	(IndexTrackSecondary is only used for managing fade destination animation)<br>
 	<br>
-	When master track is in transition, this function returns error.<br>
+	When primary track is in transition, this function returns error.<br>
 	<br>
 	If transition is canceled in the middle, state of the transition is also canceled.<br>
 	(Return to the same state as not being transitioned)<br>
 	*/
 	public bool TrackTransition(	int indexTrack,
-									int indexTrackSlave,
+									int indexTrackSecondary,
 									float time,
 									bool flagCancelPauseAfterTransition
 							)
@@ -303,17 +304,17 @@ public partial class Script_SpriteStudio6_Root
 		int countTrack = TableControlTrack.Length;
 		if(0 > indexTrack)
 		{
-			if(0 <= indexTrackSlave)
+			if(0 <= indexTrackSecondary)
 			{
 				return(false);
 			}
 
 			for(int i=0; i<countTrack; i++)
 			{
-				indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
-				if(0 <= indexTrackSlave)
+				indexTrackSecondary = TableControlTrack[i].IndexTrackSecondary;
+				if(0 <= indexTrackSecondary)
 				{
-					TableControlTrack[indexTrackSlave].Stop();
+					TableControlTrack[indexTrackSecondary].Stop();
 					TableControlTrack[i].Transition(-1, 0.0f);
 				}
 			}
@@ -325,26 +326,26 @@ public partial class Script_SpriteStudio6_Root
 		{
 			return(false);
 		}
-		if(0 > indexTrackSlave)
+		if(0 > indexTrackSecondary)
 		{	/* Cancel Transition */
-			indexTrackSlave = TableControlTrack[indexTrack].IndexTrackSlave;
-			TableControlTrack[indexTrackSlave].Stop();
+			indexTrackSecondary = TableControlTrack[indexTrack].IndexTrackSecondary;
+			TableControlTrack[indexTrackSecondary].Stop();
 			TableControlTrack[indexTrack].Transition(-1, 0.0f);
 
 			return(true);
 		}
-		if(countTrack <= indexTrackSlave)
+		if(countTrack <= indexTrackSecondary)
 		{
 			return(false);
 		}
 
-		if(false == TableControlTrack[indexTrackSlave].StatusIsPlaying)
-		{	/* Slave, Playing Stop */
+		if(false == TableControlTrack[indexTrackSecondary].StatusIsPlaying)
+		{	/* Secondary, Playing Stop */
 			return(false);
 		}
 
-		if(0 <= TableControlTrack[indexTrack].IndexTrackSlave)
-		{	/* Master, Transitioning now */
+		if(0 <= TableControlTrack[indexTrack].IndexTrackSecondary)
+		{	/* Primary, Transitioning now */
 			return(false);
 		}
 		if(0.0f >= time)
@@ -352,10 +353,10 @@ public partial class Script_SpriteStudio6_Root
 			return(false);
 		}
 
-		/* Set Master-Track to fade mode */
+		/* Set Primary-Track to fade mode */
 		TableControlTrack[indexTrack].StatusIsTransitionStart = true;
 		TableControlTrack[indexTrack].StatusIsTransitionCancelPause = flagCancelPauseAfterTransition;
-		return(TableControlTrack[indexTrack].Transition(indexTrackSlave, time));
+		return(TableControlTrack[indexTrack].Transition(indexTrackSecondary, time));
 	}
 
 	/* ******************************************************** */
@@ -417,12 +418,12 @@ public partial class Script_SpriteStudio6_Root
 	@param	indexTrack
 		Track index (0 origin)
 	@retval	Return-Value
-		Slave-Track's index<br>
+		Secaondary-Track's index<br>
 		-1 == Error / Not transitioned
 
-	Get Slave-Track's index if the track is transitioning (has Slave-Track).<br>
+	Get Secaondary-Track's index if the track is transitioning (has Secaondary-Track).<br>
 	*/
-	public int IndexGetTrackSlave(int indexTrack)
+	public int IndexGetTrackSecondary(int indexTrack)
 	{
 		if(null == TableControlTrack)
 		{
@@ -434,7 +435,7 @@ public partial class Script_SpriteStudio6_Root
 			return(-1);
 		}
 
-		return(TableControlTrack[indexTrack].IndexTrackSlave);
+		return(TableControlTrack[indexTrack].IndexTrackSecondary);
 	}
 
 	/* ********************************************************* */
@@ -722,7 +723,8 @@ public partial class Script_SpriteStudio6_Root
 		}
 
 		/* MEMO: No decode User-Data as the elapsed section is abnormal. */
-		TableControlTrack[indexTrack].Status |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA;
+		TableControlTrack[indexTrack].Status |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA
+												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL;
 		TableControlTrack[indexTrack].TimeElapsed = cursor;
 
 		return(true);

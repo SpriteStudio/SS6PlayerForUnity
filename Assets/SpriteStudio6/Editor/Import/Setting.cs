@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -420,11 +421,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				PREFAB_CONTROL_ANIMATION_SS6PU,
 				PREFAB_ANIMATION_SS6PU,
 				PREFAB_EFFECT_SS6PU,
+				DATA_PROJECT_SS6PU,
 				DATA_CELLMAP_SS6PU,
 				DATA_ANIMATION_SS6PU,
 				DATA_EFFECT_SS6PU,
-				MATERIAL_ANIMATION_SS6PU,
-				MATERIAL_EFFECT_SS6PU,
+				DATA_SEQUENCE_SS6PU,
+				/* Obsolete */	MATERIAL_ANIMATION_SS6PU,
+				/* Obsolete */	MATERIAL_EFFECT_SS6PU,
 
 				/* (Mode UnityNative) */
 				PREFAB_CONTROL_ANIMATION_UNITYNATIVE,
@@ -462,10 +465,13 @@ public static partial class LibraryEditor_SpriteStudio6
 			private readonly static string[] TextSignatureSettingFile =
 			{
 				"========================================================",
-				" Importer Setting-File                                  ",
+				" Importer Setting-File",
 				"--------------------------------------------------------",
-				" Generated with \"SpriteStudio6 Player for Unity\"        ",
-				" Copyright(C) Web Technology Corp. All rights reserved. ",
+				" Generated with \"SpriteStudio6 Player for Unity\"",
+				"",
+				" Copyright(C) 1997-2021 Web Technology Corp.",
+				" Copyright(C) CRI Middleware Co., Ltd.",
+				" All rights reserved.",
 				"========================================================",
 			};
 
@@ -561,9 +567,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Variables & Properties
 				public bool FlagPrefabAnimation;
 				public bool FlagPrefabEffect;
+				public bool FlagDataProject;
 				public bool FlagDataCellMap;
 				public bool FlagDataAnimation;
 				public bool FlagDataEffect;
+				public bool FlagDataSequence;
 				public bool FlagMaterialAnimation;
 				public bool FlagMaterialEffect;
 				public bool FlagTexture;
@@ -573,9 +581,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Functions
 				public GroupConfirmOverWrite(	bool flagPrefabAnimation,
 												bool flagPrefabEffect,
+												bool flagDataProject,
 												bool flagDataCellMap,
 												bool flagDataAnimation,
 												bool flagDataEffect,
+												bool flagDataSequence,
 												bool flagMaterialAnimation,
 												bool flagMaterialEffect,
 												bool flagTexture
@@ -583,9 +593,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					FlagPrefabAnimation = flagPrefabAnimation;
 					FlagPrefabEffect = flagPrefabEffect;
+					FlagDataProject = flagDataProject;
 					FlagDataCellMap = flagDataCellMap;
 					FlagDataAnimation = flagDataAnimation;
 					FlagDataEffect = flagDataEffect;
+					FlagDataSequence = flagDataSequence;
 					FlagMaterialAnimation = flagMaterialAnimation;
 					FlagMaterialEffect = flagMaterialEffect;
 					FlagTexture = flagTexture;
@@ -600,9 +612,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					FlagPrefabAnimation = EditorPrefs.GetBool(PrefsKeyFlagPrefabAnimation, Default.FlagPrefabAnimation);
 					FlagPrefabEffect = EditorPrefs.GetBool(PrefsKeyFlagPrefabEffect, Default.FlagPrefabEffect);
+					FlagDataProject = EditorPrefs.GetBool(PrefsKeyFlagDataProject, Default.FlagDataProject);
 					FlagDataCellMap = EditorPrefs.GetBool(PrefsKeyFlagDataCellMap, Default.FlagDataCellMap);
 					FlagDataAnimation = EditorPrefs.GetBool(PrefsKeyFlagDataAnimation, Default.FlagDataAnimation);
 					FlagDataEffect = EditorPrefs.GetBool(PrefsKeyFlagDataEffect, Default.FlagDataEffect);
+					FlagDataSequence = EditorPrefs.GetBool(PrefsKeyFlagDataSequence, Default.FlagDataSequence);
 					FlagMaterialAnimation = EditorPrefs.GetBool(PrefsKeyFlagMaterialAnimation, Default.FlagMaterialAnimation);
 					FlagMaterialEffect = EditorPrefs.GetBool(PrefsKeyFlagMaterialEffect, Default.FlagMaterialEffect);
 					FlagTexture = EditorPrefs.GetBool(PrefsKeyFlagTexture, Default.FlagTexture);
@@ -614,9 +628,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					EditorPrefs.SetBool(PrefsKeyFlagPrefabAnimation, FlagPrefabAnimation);
 					EditorPrefs.SetBool(PrefsKeyFlagPrefabEffect, FlagPrefabEffect);
+					EditorPrefs.SetBool(PrefsKeyFlagDataProject, FlagDataProject);
 					EditorPrefs.SetBool(PrefsKeyFlagDataCellMap, FlagDataCellMap);
 					EditorPrefs.SetBool(PrefsKeyFlagDataAnimation, FlagDataAnimation);
 					EditorPrefs.SetBool(PrefsKeyFlagDataEffect, FlagDataEffect);
+					EditorPrefs.SetBool(PrefsKeyFlagDataSequence, FlagDataSequence);
 					EditorPrefs.SetBool(PrefsKeyFlagMaterialAnimation, FlagMaterialAnimation);
 					EditorPrefs.SetBool(PrefsKeyFlagMaterialEffect, FlagMaterialEffect);
 					EditorPrefs.SetBool(PrefsKeyFlagTexture, FlagTexture);
@@ -626,7 +642,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[8];
+					string[] textEncode = new string[10];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagPrefabAnimation);
@@ -635,23 +651,29 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagPrefabEffect);
 					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagPrefabEffect, textValue);
 
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDataProject);
+					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataProject, textValue);
+
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDataCellMap);
-					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataCellMap, textValue);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataCellMap, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDataAnimation);
-					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataAnimation, textValue);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataAnimation, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDataEffect);
-					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataEffect, textValue);
+					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataEffect, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDataSequence);
+					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataSequence, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagMaterialAnimation);
-					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagMaterialAnimation, textValue);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagMaterialAnimation, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagMaterialEffect);
-					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagMaterialEffect, textValue);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagMaterialEffect, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTexture);
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTexture, textValue);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTexture, textValue);
 
 					return(textEncode);
 				}
@@ -668,6 +690,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagPrefabEffect = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
+						case TextKeyFlagDataProject:
+							FlagDataProject = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
 						case TextKeyFlagDataCellMap:
 							FlagDataCellMap = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
@@ -678,6 +704,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyFlagDataEffect:
 							FlagDataEffect = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagDataSequence:
+							FlagDataSequence = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						case TextKeyFlagMaterialAnimation:
@@ -703,9 +733,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				#region Enums & Constants
 				private const string KeyFlagPrefabAnimation = "FlagPrefabAnimation";
 				private const string KeyFlagPrefabEffect = "FlagPrefabEffect";
+				private const string KeyFlagDataProject = "FlagDataProject";
 				private const string KeyFlagDataCellMap = "FlagDataCellMap";
 				private const string KeyFlagDataAnimation = "FlagDataAnimation";
 				private const string KeyFlagDataEffect = "FlagDataEffect";
+				private const string KeyFlagDataSequence = "FlagDataSequence";
 				private const string KeyFlagMaterialAnimation = "FlagMaterialAnimation";
 				private const string KeyFlagMaterialEffect = "FlagMaterialEffect";
 				private const string KeyFlagTexture = "FlagTexture";
@@ -713,9 +745,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyPrefix = "ConfirmOverWrite_";
 				private const string TextKeyFlagPrefabAnimation = TextKeyPrefix + KeyFlagPrefabAnimation;
 				private const string TextKeyFlagPrefabEffect = TextKeyPrefix + KeyFlagPrefabEffect;
+				private const string TextKeyFlagDataProject = TextKeyPrefix + KeyFlagDataProject;
 				private const string TextKeyFlagDataCellMap = TextKeyPrefix + KeyFlagDataCellMap;
 				private const string TextKeyFlagDataAnimation = TextKeyPrefix + KeyFlagDataAnimation;
 				private const string TextKeyFlagDataEffect = TextKeyPrefix + KeyFlagDataEffect;
+				private const string TextKeyFlagDataSequence = TextKeyPrefix + KeyFlagDataSequence;
 				private const string TextKeyFlagMaterialAnimation = TextKeyPrefix + KeyFlagMaterialAnimation;
 				private const string TextKeyFlagMaterialEffect = TextKeyPrefix + KeyFlagMaterialEffect;
 				private const string TextKeyFlagTexture = TextKeyPrefix + KeyFlagTexture;
@@ -723,9 +757,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagPrefabAnimation = PrefsKeyPrefix + KeyFlagPrefabAnimation;
 				private const string PrefsKeyFlagPrefabEffect = PrefsKeyPrefix + KeyFlagPrefabEffect;
+				private const string PrefsKeyFlagDataProject = PrefsKeyPrefix + KeyFlagDataProject;
 				private const string PrefsKeyFlagDataCellMap = PrefsKeyPrefix + KeyFlagDataCellMap;
 				private const string PrefsKeyFlagDataAnimation = PrefsKeyPrefix + KeyFlagDataAnimation;
 				private const string PrefsKeyFlagDataEffect = PrefsKeyPrefix + KeyFlagDataEffect;
+				private const string PrefsKeyFlagDataSequence = PrefsKeyPrefix + KeyFlagDataSequence;
 				private const string PrefsKeyFlagMaterialAnimation = PrefsKeyPrefix + KeyFlagMaterialAnimation;
 				private const string PrefsKeyFlagMaterialEffect = PrefsKeyPrefix + KeyFlagMaterialEffect;
 				private const string PrefsKeyFlagTexture = PrefsKeyPrefix + KeyFlagTexture;
@@ -733,9 +769,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				internal readonly static GroupConfirmOverWrite Default = new GroupConfirmOverWrite(
 					false,	/* FlagPrefabAnimation */
 					false,	/* FlagPrefabEffect */
+					false,	/* FlagDataProject */
 					false,	/* FlagDataCellMap */
 					false,	/* FlagDataAnimation */
 					false,	/* FlagDataEffect */
+					false,	/* FlagDataSequence */
 					false,	/* FlagMaterialAnimation */
 					false,	/* FlagMaterialEffect */
 					false	/* FlagTexture */
@@ -747,21 +785,24 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
-				public bool FlagIsTrigger;
 				public bool FlagAttachCollider;
+				public bool FlagCollider2D;
 				public bool FlagAttachRigidBody;
+				public bool FlagIsTrigger;
 				public float SizeZ;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
 				public GroupCollider(	bool flagAttachColider,
+										bool flagCollider2D,
 										bool flagAttachRigidBody,
 										bool flagIsTrigger,
 										float sizeZ
 									)
 				{
 					FlagAttachCollider = flagAttachColider;
+					FlagCollider2D = flagCollider2D;
 					FlagAttachRigidBody = flagAttachRigidBody;
 					FlagIsTrigger = flagIsTrigger;
 					SizeZ = sizeZ;
@@ -775,6 +816,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool Load()
 				{
 					FlagAttachCollider = EditorPrefs.GetBool(PrefsKeyFlagAttachCollider, Default.FlagAttachCollider);
+					FlagCollider2D = EditorPrefs.GetBool(PrefsKeyFlagCollider2D, Default.FlagCollider2D);
 					FlagAttachRigidBody = EditorPrefs.GetBool(PrefsKeyFlagAttachRigidBody, Default.FlagAttachRigidBody);
 					FlagIsTrigger = EditorPrefs.GetBool(PrefsKeyFlagIsTrigger, Default.FlagIsTrigger);
 					SizeZ = EditorPrefs.GetFloat(PrefsKeySizeZ, Default.SizeZ);
@@ -785,6 +827,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool Save()
 				{
 					EditorPrefs.SetBool(PrefsKeyFlagAttachCollider, FlagAttachCollider);
+					EditorPrefs.SetBool(PrefsKeyFlagCollider2D, FlagCollider2D);
 					EditorPrefs.SetBool(PrefsKeyFlagAttachRigidBody, FlagAttachRigidBody);
 					EditorPrefs.SetBool(PrefsKeyFlagIsTrigger, FlagIsTrigger);
 					EditorPrefs.SetFloat(PrefsKeySizeZ, SizeZ);
@@ -794,20 +837,23 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[4];
+					string[] textEncode = new string[5];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagAttachCollider);
 					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagAttachCollider, textValue);
 
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCollider2D);
+					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagCollider2D, textValue);
+
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagAttachRigidBody);
-					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagAttachRigidBody, textValue);
+					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagAttachRigidBody, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagIsTrigger);
-					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagIsTrigger, textValue);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagIsTrigger, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.FloatEncode(SizeZ);
-					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySizeZ, textValue);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySizeZ, textValue);
 
 					return(textEncode);
 				}
@@ -817,6 +863,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					switch(textArgument[0])
 					{
 						case TextKeyFlagAttachCollider:
+							FlagAttachCollider = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagCollider2D:
 							FlagAttachCollider = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
@@ -842,24 +892,28 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
 				private const string KeyFlagAttachCollider = "FlagAttachCollider";
+				private const string KeyFlagCollider2D = "FlagCollider2D";
 				private const string KeyFlagAttachRigidBody = "FlagAttachRigidBody";
 				private const string KeyFlagIsTrigger = "FlagIsTrigger";
 				private const string KeySizeZ = "SizeZ";
 
 				private const string TextKeyPrefix = "Collider_";
 				private const string TextKeyFlagAttachCollider = TextKeyPrefix + KeyFlagAttachCollider;
+				private const string TextKeyFlagCollider2D = TextKeyPrefix + KeyFlagCollider2D;
 				private const string TextKeyFlagAttachRigidBody = TextKeyPrefix + KeyFlagAttachRigidBody;
 				private const string TextKeyFlagIsTrigger = TextKeyPrefix + KeyFlagIsTrigger;
 				private const string TextKeySizeZ = TextKeyPrefix + KeySizeZ;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagAttachCollider = PrefsKeyPrefix + KeyFlagAttachCollider;
+				private const string PrefsKeyFlagCollider2D = PrefsKeyPrefix + KeyFlagCollider2D;
 				private const string PrefsKeyFlagAttachRigidBody = PrefsKeyPrefix + KeyFlagAttachRigidBody;
 				private const string PrefsKeyFlagIsTrigger = PrefsKeyPrefix + KeyFlagIsTrigger;
 				private const string PrefsKeySizeZ = PrefsKeyPrefix + KeySizeZ;
 
 				private readonly static GroupCollider Default = new GroupCollider(
 					true,	/* FlagAttachCollider */
+					false,	/* FlagCollider2D */
 					false,	/* FlagAttachRigidBody */
 					false,	/* FlagIsTrigger */
 					1.0f	/* SizeZ */
@@ -875,6 +929,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagInvalidSSCE;
 				public bool FlagInvalidSSAE;
 				public bool FlagInvalidSSEE;
+				public bool FlagInvalidSSQE;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -882,13 +937,15 @@ public static partial class LibraryEditor_SpriteStudio6
 				public GroupCheckVersion(	bool flagInvalidSSPJ,
 											bool flagInvalidSSCE,
 											bool flagInvalidSSAE,
-											bool flagInvalidSSEE
+											bool flagInvalidSSEE,
+											bool flagInvalidSSQE
 										)
 				{
 					FlagInvalidSSPJ = flagInvalidSSPJ;
 					FlagInvalidSSCE = flagInvalidSSCE;
 					FlagInvalidSSAE = flagInvalidSSAE;
 					FlagInvalidSSEE = flagInvalidSSEE;
+					FlagInvalidSSQE = flagInvalidSSQE;
 				}
 
 				public void CleanUp()
@@ -902,6 +959,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagInvalidSSCE = EditorPrefs.GetBool(PrefsKeyFlagInvalidSSCE, Default.FlagInvalidSSCE);
 					FlagInvalidSSAE = EditorPrefs.GetBool(PrefsKeyFlagInvalidSSAE, Default.FlagInvalidSSAE);
 					FlagInvalidSSEE = EditorPrefs.GetBool(PrefsKeyFlagInvalidSSEE, Default.FlagInvalidSSEE);
+					FlagInvalidSSQE = EditorPrefs.GetBool(PrefsKeyFlagInvalidSSQE, Default.FlagInvalidSSQE);
 
 					return(true);
 				}
@@ -912,13 +970,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.GetBool(PrefsKeyFlagInvalidSSCE, FlagInvalidSSCE);
 					EditorPrefs.GetBool(PrefsKeyFlagInvalidSSAE, FlagInvalidSSAE);
 					EditorPrefs.GetBool(PrefsKeyFlagInvalidSSEE, FlagInvalidSSEE);
+					EditorPrefs.GetBool(PrefsKeyFlagInvalidSSQE, FlagInvalidSSQE);
 
 					return(true);
 				}
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[4];
+					string[] textEncode = new string[5];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvalidSSPJ);
@@ -932,6 +991,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvalidSSEE);
 					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvalidSSEE, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvalidSSQE);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvalidSSQE, textValue);
 
 					return(textEncode);
 				}
@@ -956,6 +1018,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagInvalidSSEE = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
+						case TextKeyFlagInvalidSSQE:
+							FlagInvalidSSQE = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
 						default:
 							break;
 					}
@@ -969,24 +1035,28 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagInvalidSSCE = "FlagInvalidSSCE";
 				private const string KeyFlagInvalidSSAE = "FlagInvalidSSAE";
 				private const string KeyFlagInvalidSSEE = "FlagInvalidSSEE";
+				private const string KeyFlagInvalidSSQE = "FlagInvalidSSQE";
 
 				private const string TextKeyPrefix = "CheckVersion_";
 				private const string TextKeyFlagInvalidSSPJ = TextKeyPrefix + KeyFlagInvalidSSPJ;
 				private const string TextKeyFlagInvalidSSCE = TextKeyPrefix + KeyFlagInvalidSSCE;
 				private const string TextKeyFlagInvalidSSAE = TextKeyPrefix + KeyFlagInvalidSSAE;
 				private const string TextKeyFlagInvalidSSEE = TextKeyPrefix + KeyFlagInvalidSSEE;
+				private const string TextKeyFlagInvalidSSQE = TextKeyPrefix + KeyFlagInvalidSSQE;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagInvalidSSPJ = PrefsKeyPrefix + KeyFlagInvalidSSPJ;
 				private const string PrefsKeyFlagInvalidSSCE = PrefsKeyPrefix + KeyFlagInvalidSSCE;
 				private const string PrefsKeyFlagInvalidSSAE = PrefsKeyPrefix + KeyFlagInvalidSSAE;
 				private const string PrefsKeyFlagInvalidSSEE = PrefsKeyPrefix + KeyFlagInvalidSSEE;
+				private const string PrefsKeyFlagInvalidSSQE = PrefsKeyPrefix + KeyFlagInvalidSSQE;
 
 				internal readonly static GroupCheckVersion Default = new GroupCheckVersion(
 					false,	/* FlagInvalidSSPJ */
 					false,	/* FlagInvalidSSCE */
 					false,	/* FlagInvalidSSAE */
-					false	/* FlagInvalidSSEE */
+					false,	/* FlagInvalidSSEE */
+					false	/* FlagInvalidSSQE */
 				);
 				#endregion Enums & Constants
 			}
@@ -1001,10 +1071,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagCreateHolderAsset;
 				public bool FlagInvisibleToHideAll;
 				public bool FlagTrackAssets;
-				public KindNoCreateMaterialUnreferenced NoCreateMaterialUnreferenced;
-				public bool FlagDeleteMaterialUnreferenced;
 				public bool FlagDisableInitialLightRenderer;
 				public bool FlagTakeOverLightRenderer;
+				public bool FlagConvertSignal;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -1015,10 +1084,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagCreateHolderAsset,
 									bool flagInvisibleToHideAll,
 									bool flagTrackAssets,
-									KindNoCreateMaterialUnreferenced noCreateMaterialUnreferenced,
-									bool flagDeleteMaterialUnreferenced,
 									bool flagDisableInitialLightRenderer,
-									bool flagTakeOverLightRenderer
+									bool flagTakeOverLightRenderer,
+									bool flagConvertSignal
 								)
 				{
 					FlagCreateControlGameObject = flagCreateControlGameObject;
@@ -1027,10 +1095,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagCreateHolderAsset = flagCreateHolderAsset;
 					FlagInvisibleToHideAll = flagInvisibleToHideAll;
 					FlagTrackAssets = flagTrackAssets;
-					NoCreateMaterialUnreferenced = noCreateMaterialUnreferenced;
-					FlagDeleteMaterialUnreferenced = flagDeleteMaterialUnreferenced;
 					FlagDisableInitialLightRenderer = flagDisableInitialLightRenderer;
 					FlagTakeOverLightRenderer = flagTakeOverLightRenderer;
+					FlagConvertSignal = flagConvertSignal;
 				}
 
 				public void CleanUp()
@@ -1046,12 +1113,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagCreateHolderAsset = EditorPrefs.GetBool(PrefsKeyFlagCreateHolderAsset, Default.FlagCreateHolderAsset);
 					FlagInvisibleToHideAll = EditorPrefs.GetBool(PrefsKeyFlagInvisibleToHideAll, Default.FlagInvisibleToHideAll);
 					FlagTrackAssets = EditorPrefs.GetBool(PrefsKeyFlagTrackAssets, Default.FlagTrackAssets);
-					string textDefault = TextGetNoCreateMaterialUnreferenced(Default.NoCreateMaterialUnreferenced);
-					string text = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNoCreateMaterialUnreferenced, textDefault);
-					NoCreateMaterialUnreferenced = KindGetNoCreateMaterialUnreferenced(text);
-					FlagDeleteMaterialUnreferenced = EditorPrefs.GetBool(PrefsKeyFlagDeleteMaterialUnreferenced, Default.FlagDeleteMaterialUnreferenced);
 					FlagDisableInitialLightRenderer = EditorPrefs.GetBool(PrefsKeyFlagDisableInitialLightRenderer, Default.FlagDisableInitialLightRenderer);
 					FlagTakeOverLightRenderer = EditorPrefs.GetBool(PrefsKeyFlagTakeOverLightRenderer, Default.FlagTakeOverLightRenderer);
+					FlagConvertSignal = EditorPrefs.GetBool(PrefsKeyFlagConvertSignal, Default.FlagConvertSignal);
 
 					return(true);
 				}
@@ -1064,18 +1128,16 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetBool(PrefsKeyFlagCreateHolderAsset, FlagCreateHolderAsset);
 					EditorPrefs.SetBool(PrefsKeyFlagInvisibleToHideAll, FlagInvisibleToHideAll);
 					EditorPrefs.SetBool(PrefsKeyFlagTrackAssets, FlagTrackAssets);
-					string text = TextGetNoCreateMaterialUnreferenced(NoCreateMaterialUnreferenced);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNoCreateMaterialUnreferenced, text);
-					EditorPrefs.SetBool(PrefsKeyFlagDeleteMaterialUnreferenced, FlagDeleteMaterialUnreferenced);
 					EditorPrefs.SetBool(PrefsKeyFlagDisableInitialLightRenderer, FlagDisableInitialLightRenderer);
 					EditorPrefs.SetBool(PrefsKeyFlagTakeOverLightRenderer, FlagTakeOverLightRenderer);
+					EditorPrefs.SetBool(PrefsKeyFlagConvertSignal, FlagConvertSignal);
 
 					return(true);
 				}
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[10];
+					string[] textEncode = new string[9];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateControlGameObject);
@@ -1096,17 +1158,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTrackAssets);
 					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTrackAssets, textValue);
 
-					textValue = TextGetNoCreateMaterialUnreferenced(NoCreateMaterialUnreferenced);
-					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNoCreateMaterialUnreferenced, textValue);
-
-					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDeleteMaterialUnreferenced);
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDeleteMaterialUnreferenced, textValue);
-
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDisableInitialLightRenderer);
-					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDisableInitialLightRenderer, textValue);
+					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDisableInitialLightRenderer, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTakeOverLightRenderer);
-					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTakeOverLightRenderer, textValue);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTakeOverLightRenderer, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagConvertSignal);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagConvertSignal, textValue);
 
 					return(textEncode);
 				}
@@ -1139,12 +1198,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagTrackAssets = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
-						case TextKeyNoCreateMaterialUnreferenced:
-							NoCreateMaterialUnreferenced = KindGetNoCreateMaterialUnreferenced(textArgument[1]);
-							return(true);
-
-						case TextKeyFlagDeleteMaterialUnreferenced:
-							FlagDeleteMaterialUnreferenced = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+						case TextKeyFlagDeleteMaterialUnreferenced:	/* Obsolete command */
 							return(true);
 
 						case TextKeyFlagDisableInitialLightRenderer:
@@ -1153,6 +1207,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyFlagTakeOverLightRenderer:
 							FlagTakeOverLightRenderer = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagConvertSignal:
+							FlagConvertSignal = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						default:
@@ -1199,10 +1257,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagCreateHolderAsset = "FlagCreateHolderAsset";
 				private const string KeyFlagInvisibleToHideAll = "FlagInvisibleToHideAll";
 				private const string KeyFlagTrackAssets = "FlagTrackAssets";
-				private const string KeyNoCreateMaterialUnreferenced = "NoCreateMaterialUnreferenced";
-				private const string KeyFlagDeleteMaterialUnreferenced = "FlagDeleteMaterialUnreferenced";
+				/* Obsolete */		private const string KeyFlagDeleteMaterialUnreferenced = "FlagDeleteMaterialUnreferenced";
 				private const string KeyFlagDisableInitialLightRenderer = "FlagDisableInitialLightRenderer";
 				private const string KeyFlagTakeOverLightRenderer = "FlagTakeOverLightRenderer";
+				private const string KeyFlagConvertSignal = "FlagConvertSignal";
 
 				private const string TextKeyPrefix = "Basic_";
 				private const string TextKeyFlagCreateControlGameObject = TextKeyPrefix + KeyFlagCreateControlGameObject;
@@ -1211,10 +1269,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyFlagCreateHolderAsset = TextKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string TextKeyFlagInvisibleToHideAll = TextKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string TextKeyFlagTrackAssets = TextKeyPrefix + KeyFlagTrackAssets;
-				private const string TextKeyNoCreateMaterialUnreferenced = TextKeyPrefix + KeyNoCreateMaterialUnreferenced;
-				private const string TextKeyFlagDeleteMaterialUnreferenced = TextKeyPrefix + KeyFlagDeleteMaterialUnreferenced;
+				/* Obsolete */	private const string TextKeyFlagDeleteMaterialUnreferenced = TextKeyPrefix + KeyFlagDeleteMaterialUnreferenced;
 				private const string TextKeyFlagDisableInitialLightRenderer = TextKeyPrefix + KeyFlagDisableInitialLightRenderer;
 				private const string TextKeyFlagTakeOverLightRenderer = TextKeyPrefix + KeyFlagTakeOverLightRenderer;
+				private const string TextKeyFlagConvertSignal = TextKeyPrefix + KeyFlagConvertSignal;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagCreateControlGameObject = PrefsKeyPrefix + KeyFlagCreateControlGameObject;
@@ -1223,10 +1281,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagCreateHolderAsset = PrefsKeyPrefix + KeyFlagCreateHolderAsset;
 				private const string PrefsKeyFlagInvisibleToHideAll = PrefsKeyPrefix + KeyFlagInvisibleToHideAll;
 				private const string PrefsKeyFlagTrackAssets = PrefsKeyPrefix + KeyFlagTrackAssets;
-				private const string PrefsKeyNoCreateMaterialUnreferenced = PrefsKeyPrefix + KeyNoCreateMaterialUnreferenced;
-				private const string PrefsKeyFlagDeleteMaterialUnreferenced = PrefsKeyPrefix + KeyFlagDeleteMaterialUnreferenced;
+				/* Obsolete */	private const string PrefsKeyFlagDeleteMaterialUnreferenced = PrefsKeyPrefix + KeyFlagDeleteMaterialUnreferenced;
 				private const string PrefsKeyFlagDisableInitialLightRenderer = PrefsKeyPrefix + KeyFlagDisableInitialLightRenderer;
 				private const string PrefsKeyFlagTakeOverLightRenderer = PrefsKeyPrefix + KeyFlagTakeOverLightRenderer;
+				private const string PrefsKeyFlagConvertSignal = PrefsKeyPrefix + KeyFlagConvertSignal;
 
 				private readonly static GroupBasic Default = new GroupBasic(
 					true,									/* FlagCreateControlGameObject */
@@ -1235,10 +1293,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					true,									/* FlagCreateHolderAsset */
 					false,									/* FlagInvisibleToHideAll */
 					true,									/* FlagTrackAssets */
-					KindNoCreateMaterialUnreferenced.NONE,	/* NoCreateMaterialUnreferenced */
-					false,									/* FlagDeleteMaterialUnreferenced */
 					false,									/* FlagDisableInitialLightRenderer */
-					false									/* FlagTakeOverLightRenderer */
+					false,									/* FlagTakeOverLightRenderer */
+					false									/* FlagConvertSignal */
 				);
 				#endregion Enums & Constants
 			}
@@ -1255,11 +1312,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Prefix for SS6PU */
 				public string NamePrefixPrefabAnimationSS6PU;
 				public string NamePrefixPrefabEffectSS6PU;
+				public string NamePrefixDataProjectSS6PU;
 				public string NamePrefixDataCellMapSS6PU;
 				public string NamePrefixDataAnimationSS6PU;
 				public string NamePrefixDataEffectSS6PU;
-				public string NamePrefixMaterialAnimationSS6PU;
-				public string NamePrefixMaterialEffectSS6PU;
+				public string NamePrefixDataSequenceSS6PU;
 
 				/* Prefix Unity-Native */
 				public string NamePrefixPrefabAnimatorUnityNative;
@@ -1276,11 +1333,11 @@ public static partial class LibraryEditor_SpriteStudio6
 											string namePrefixTexture,
 											string namePrefixPrefabAnimationSS6PU,
 											string namePrefixPrefabEffectSS6PU,
+											string namePrefixDataProjectSS6PU,
 											string namePrefixDataCellMapSS6PU,
 											string namePrefixDataAnimationSS6PU,
 											string namePrefixDataEffectSS6PU,
-											string namePrefixMaterialAnimationSS6PU,
-											string namePrefixMaterialEffectSS6PU,
+											string namePrefixDataSequenceSS6PU,
 											string namePrefixPrefabAnimatorUnityNative,
 											string namePrefixPrefabParticleUnityNative,
 											string namePrefixAnimationClipUnityNative,
@@ -1295,11 +1352,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					NamePrefixPrefabAnimationSS6PU = namePrefixPrefabAnimationSS6PU;
 					NamePrefixPrefabEffectSS6PU =namePrefixPrefabEffectSS6PU ;
+					NamePrefixDataProjectSS6PU = namePrefixDataProjectSS6PU;
 					NamePrefixDataCellMapSS6PU = namePrefixDataCellMapSS6PU;
 					NamePrefixDataAnimationSS6PU = namePrefixDataAnimationSS6PU;
 					NamePrefixDataEffectSS6PU = namePrefixDataEffectSS6PU;
-					NamePrefixMaterialAnimationSS6PU = namePrefixMaterialAnimationSS6PU;
-					NamePrefixMaterialEffectSS6PU = namePrefixMaterialEffectSS6PU;
+					NamePrefixDataSequenceSS6PU = namePrefixDataSequenceSS6PU;
 
 					NamePrefixPrefabAnimatorUnityNative = namePrefixPrefabAnimatorUnityNative;
 					NamePrefixPrefabParticleUnityNative = namePrefixPrefabParticleUnityNative;
@@ -1322,11 +1379,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					NamePrefixPrefabAnimationSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixPrefabAnimationSS6PU, Default.NamePrefixPrefabAnimationSS6PU);
 					NamePrefixPrefabEffectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixPrefabEffectSS6PU, Default.NamePrefixPrefabEffectSS6PU);
+					NamePrefixDataProjectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataProjectSS6PU, Default.NamePrefixDataProjectSS6PU);
 					NamePrefixDataCellMapSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataCellMapSS6PU, Default.NamePrefixDataCellMapSS6PU);
 					NamePrefixDataAnimationSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataAnimationSS6PU, Default.NamePrefixDataAnimationSS6PU);
 					NamePrefixDataEffectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataEffectSS6PU, Default.NamePrefixDataEffectSS6PU);
-					NamePrefixMaterialAnimationSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixMaterialAnimationSS6PU, Default.NamePrefixMaterialAnimationSS6PU);
-					NamePrefixMaterialEffectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixMaterialEffectSS6PU, Default.NamePrefixMaterialEffectSS6PU);
+					NamePrefixDataSequenceSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataSequenceSS6PU, Default.NamePrefixDataSequenceSS6PU);
 
 					NamePrefixPrefabAnimatorUnityNative = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixPrefabAnimatorUnityNative, Default.NamePrefixPrefabAnimatorUnityNative);
 					NamePrefixPrefabParticleUnityNative = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixPrefabParticleUnityNative, Default.NamePrefixPrefabParticleUnityNative);
@@ -1346,11 +1403,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixPrefabAnimationSS6PU, NamePrefixPrefabAnimationSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixPrefabEffectSS6PU, NamePrefixPrefabEffectSS6PU);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataProjectSS6PU, NamePrefixDataProjectSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataCellMapSS6PU, NamePrefixDataCellMapSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataAnimationSS6PU, NamePrefixDataAnimationSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataEffectSS6PU, NamePrefixDataEffectSS6PU);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixMaterialAnimationSS6PU, NamePrefixMaterialAnimationSS6PU);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixMaterialEffectSS6PU, NamePrefixMaterialEffectSS6PU);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataSequenceSS6PU, NamePrefixDataSequenceSS6PU);
 
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixPrefabAnimatorUnityNative, NamePrefixPrefabAnimatorUnityNative);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixPrefabParticleUnityNative, NamePrefixPrefabParticleUnityNative);
@@ -1376,11 +1433,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixPrefabAnimationSS6PU, NamePrefixPrefabAnimationSS6PU);
 					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixPrefabEffectSS6PU, NamePrefixPrefabEffectSS6PU);
-					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataCellMapSS6PU, NamePrefixDataCellMapSS6PU);
-					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataAnimationSS6PU, NamePrefixDataAnimationSS6PU);
-					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataEffectSS6PU, NamePrefixDataEffectSS6PU);
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixMaterialAnimationSS6PU, NamePrefixMaterialAnimationSS6PU);
-					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixMaterialEffectSS6PU, NamePrefixMaterialEffectSS6PU);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataProjectSS6PU, NamePrefixDataProjectSS6PU);
+					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataCellMapSS6PU, NamePrefixDataCellMapSS6PU);
+					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataAnimationSS6PU, NamePrefixDataAnimationSS6PU);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataEffectSS6PU, NamePrefixDataEffectSS6PU);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataSequenceSS6PU, NamePrefixDataSequenceSS6PU);
 
 					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixPrefabAnimatorUnityNative, NamePrefixPrefabAnimatorUnityNative);
 					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixPrefabParticleUnityNative, NamePrefixPrefabParticleUnityNative);
@@ -1410,6 +1467,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyNamePrefixPrefabEffectSS6PU:
 							NamePrefixPrefabEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
 							return(true);
+						case TextKeyNamePrefixDataProjectSS6PU:
+							NamePrefixDataProjectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							return(true);
 						case TextKeyNamePrefixDataCellMapSS6PU:
 							NamePrefixDataCellMapSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
 							return(true);
@@ -1419,11 +1479,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyNamePrefixDataEffectSS6PU:
 							NamePrefixDataEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
 							return(true);
-						case TextKeyNamePrefixMaterialAnimationSS6PU:
-							NamePrefixMaterialAnimationSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+						case TextKeyNamePrefixDataSequenceSS6PU:
+							NamePrefixDataSequenceSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
 							return(true);
-						case TextKeyNamePrefixMaterialEffectSS6PU:
-							NamePrefixMaterialEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+						case TextKeyNamePrefixMaterialAnimationSS6PU:	/* Obsolete command */
+							return(true);
+						case TextKeyNamePrefixMaterialEffectSS6PU:	/* Obsolete command */
 							return(true);
 
 						case TextKeyNamePrefixPrefabAnimatorUnityNative:
@@ -1459,11 +1520,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					NamePrefixPrefabAnimationSS6PU = Adjust(NamePrefixPrefabAnimationSS6PU);
 					NamePrefixPrefabEffectSS6PU = Adjust(NamePrefixPrefabEffectSS6PU);
+					NamePrefixDataProjectSS6PU = Adjust(NamePrefixDataProjectSS6PU);
 					NamePrefixDataCellMapSS6PU = Adjust(NamePrefixDataCellMapSS6PU);
 					NamePrefixDataAnimationSS6PU = Adjust(NamePrefixDataAnimationSS6PU);
 					NamePrefixDataEffectSS6PU = Adjust(NamePrefixDataEffectSS6PU);
-					NamePrefixMaterialAnimationSS6PU = Adjust(NamePrefixMaterialAnimationSS6PU);
-					NamePrefixMaterialEffectSS6PU = Adjust(NamePrefixMaterialEffectSS6PU);
+					NamePrefixDataSequenceSS6PU = Adjust(NamePrefixDataSequenceSS6PU);
 
 					NamePrefixPrefabAnimatorUnityNative = Adjust(NamePrefixPrefabAnimatorUnityNative);
 					NamePrefixPrefabParticleUnityNative = Adjust(NamePrefixPrefabParticleUnityNative);
@@ -1506,6 +1567,11 @@ public static partial class LibraryEditor_SpriteStudio6
 									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
 									+ nameBase;
 							break;
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_PROJECT_SS6PU:
+							name = NamePrefixDataProjectSS6PU
+//									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ nameBase;
+							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU:
 							name = NamePrefixDataCellMapSS6PU
 									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
@@ -1521,16 +1587,15 @@ public static partial class LibraryEditor_SpriteStudio6
 									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
 									+ nameBase;
 							break;
-						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU:
-							name = NamePrefixMaterialAnimationSS6PU
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_SEQUENCE_SS6PU:
+							name = NamePrefixDataSequenceSS6PU
 									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
 									+ nameBase;
 							break;
-						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU:
-							name = NamePrefixMaterialEffectSS6PU
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
-									+ nameBase;
-							break;
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU:	/* Obsolete */
+							goto default;
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU:	/* Obsolete */
+							goto default;
 
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_UNITYNATIVE:
 							/* MEMO: (PrefabAnimation)_Control */
@@ -1583,11 +1648,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyNamePrefixTexture = "NamePrefixTexture";
 				private const string KeyNamePrefixPrefabAnimationSS6PU = "NamePrefixPrefabAnimationSS6PU";
 				private const string KeyNamePrefixPrefabEffectSS6PU = "NamePrefixPrefabEffectSS6PU";
+				private const string KeyNamePrefixDataProjectSS6PU = "NamePrefixDataProjectSS6PU";
 				private const string KeyNamePrefixDataCellMapSS6PU = "NamePrefixDataCellMapSS6PU";
 				private const string KeyNamePrefixDataAnimationSS6PU = "NamePrefixDataAnimationSS6PU";
 				private const string KeyNamePrefixDataEffectSS6PU = "NamePrefixDataEffectSS6PU";
-				private const string KeyNamePrefixMaterialAnimationSS6PU = "NamePrefixMaterialAnimationSS6PU";
-				private const string KeyNamePrefixMaterialEffectSS6PU = "NamePrefixMaterialEffectSS6PU";
+				private const string KeyNamePrefixDataSequenceSS6PU = "NamePrefixDataSequenceSS6PU";
+				/* Obsolete */	private const string KeyNamePrefixMaterialAnimationSS6PU = "NamePrefixMaterialAnimationSS6PU";
+				/* Obsolete */	private const string KeyNamePrefixMaterialEffectSS6PU = "NamePrefixMaterialEffectSS6PU";
 				private const string KeyNamePrefixPrefabAnimatorUnityNative = "NamePrefixPrefabAnimatorUnityNative";
 				private const string KeyNamePrefixPrefabParticleUnityNative = "NamePrefixPrefabParticleUnityNative";
 				private const string KeyNamePrefixAnimationClipUnityNative = "NamePrefixAnimationClipUnityNative";
@@ -1600,11 +1667,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyNamePrefixTexture = TextKeyPrefix + KeyNamePrefixTexture;
 				private const string TextKeyNamePrefixPrefabAnimationSS6PU = TextKeyPrefix + KeyNamePrefixPrefabAnimationSS6PU;
 				private const string TextKeyNamePrefixPrefabEffectSS6PU = TextKeyPrefix + KeyNamePrefixPrefabEffectSS6PU;
+				private const string TextKeyNamePrefixDataProjectSS6PU = TextKeyPrefix + KeyNamePrefixDataProjectSS6PU;
 				private const string TextKeyNamePrefixDataCellMapSS6PU = TextKeyPrefix + KeyNamePrefixDataCellMapSS6PU;
 				private const string TextKeyNamePrefixDataAnimationSS6PU = TextKeyPrefix + KeyNamePrefixDataAnimationSS6PU;
 				private const string TextKeyNamePrefixDataEffectSS6PU = TextKeyPrefix + KeyNamePrefixDataEffectSS6PU;
-				private const string TextKeyNamePrefixMaterialAnimationSS6PU = TextKeyPrefix + KeyNamePrefixMaterialAnimationSS6PU;
-				private const string TextKeyNamePrefixMaterialEffectSS6PU = TextKeyPrefix + KeyNamePrefixMaterialEffectSS6PU;
+				private const string TextKeyNamePrefixDataSequenceSS6PU = TextKeyPrefix + KeyNamePrefixDataSequenceSS6PU;
+				/* Obsolete */	private const string TextKeyNamePrefixMaterialAnimationSS6PU = TextKeyPrefix + KeyNamePrefixMaterialAnimationSS6PU;
+				/* Obsolete */	private const string TextKeyNamePrefixMaterialEffectSS6PU = TextKeyPrefix + KeyNamePrefixMaterialEffectSS6PU;
 				private const string TextKeyNamePrefixPrefabAnimatorUnityNative = TextKeyPrefix + KeyNamePrefixPrefabAnimatorUnityNative;
 				private const string TextKeyNamePrefixPrefabParticleUnityNative = TextKeyPrefix + KeyNamePrefixPrefabParticleUnityNative;
 				private const string TextKeyNamePrefixAnimationClipUnityNative = TextKeyPrefix + KeyNamePrefixAnimationClipUnityNative;
@@ -1617,11 +1686,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyNamePrefixTexture = PrefsKeyPrefix + KeyNamePrefixTexture;
 				private const string PrefsKeyNamePrefixPrefabAnimationSS6PU = PrefsKeyPrefix + KeyNamePrefixPrefabAnimationSS6PU;
 				private const string PrefsKeyNamePrefixPrefabEffectSS6PU = PrefsKeyPrefix + KeyNamePrefixPrefabEffectSS6PU;
+				private const string PrefsKeyNamePrefixDataProjectSS6PU = PrefsKeyPrefix + KeyNamePrefixDataProjectSS6PU;
 				private const string PrefsKeyNamePrefixDataCellMapSS6PU = PrefsKeyPrefix + KeyNamePrefixDataCellMapSS6PU;
 				private const string PrefsKeyNamePrefixDataAnimationSS6PU = PrefsKeyPrefix + KeyNamePrefixDataAnimationSS6PU;
 				private const string PrefsKeyNamePrefixDataEffectSS6PU = PrefsKeyPrefix + KeyNamePrefixDataEffectSS6PU;
-				private const string PrefsKeyNamePrefixMaterialAnimationSS6PU = PrefsKeyPrefix + KeyNamePrefixMaterialAnimationSS6PU;
-				private const string PrefsKeyNamePrefixMaterialEffectSS6PU = PrefsKeyPrefix + KeyNamePrefixMaterialEffectSS6PU;
+				private const string PrefsKeyNamePrefixDataSequenceSS6PU = PrefsKeyPrefix + KeyNamePrefixDataSequenceSS6PU;
+				/* Obsolete */	private const string PrefsKeyNamePrefixMaterialAnimationSS6PU = PrefsKeyPrefix + KeyNamePrefixMaterialAnimationSS6PU;
+				/* Obsolete */	private const string PrefsKeyNamePrefixMaterialEffectSS6PU = PrefsKeyPrefix + KeyNamePrefixMaterialEffectSS6PU;
 				private const string PrefsKeyNamePrefixPrefabAnimatorUnityNative = PrefsKeyPrefix + KeyNamePrefixPrefabAnimatorUnityNative;
 				private const string PrefsKeyNamePrefixPrefabParticleUnityNative = PrefsKeyPrefix + KeyNamePrefixPrefabParticleUnityNative;
 				private const string PrefsKeyNamePrefixAnimationClipUnityNative = PrefsKeyPrefix + KeyNamePrefixAnimationClipUnityNative;
@@ -1634,11 +1705,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					"",		/* NamePrefixTexture */
 					"",		/* NamePrefixPrefabAnimationSS6PU */
 					"pe_",	/* NamePrefixPrefabEffectSS6PU */
+					"dp_",	/* NamePrefixDataProjectSS6PU */
 					"dc_",	/* NamePrefixDataCellMapSS6PU */
 					"da_",	/* NamePrefixDataAnimationSS6PU */
 					"de_",	/* NamePrefixDataEffectSS6PU */
-					"ma_",	/* NamePrefixMaterialAnimationSS6PU */
-					"me_",	/* NamePrefixMaterialEffectSS6PU */
+					"ds_",	/* NamePrefixDataSequenceSS6PU */
 					"ps_",	/* NamePrefixPrefabAnimatorUnityNative */
 					"pp_",	/* NamePrefixPrefabParticleUnityNative */
 					"ac_",	/* NamePrefixAnimationClipUnityNative */
@@ -1659,11 +1730,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Folder Names for SS6PU */
 				public string NameFolderPrefabAnimationSS6PU;
 				public string NameFolderPrefabEffectSS6PU;
+				public string NameFolderDataProjectSS6PU;
 				public string NameFolderDataCellMapSS6PU;
 				public string NameFolderDataAnimationSS6PU;
 				public string NameFolderDataEffectSS6PU;
-				public string NameFolderMaterialAnimationSS6PU;
-				public string NameFolderMaterialEffectSS6PU;
+				public string NameFolderDataSequenceSS6PU;
 
 				/* Folder Names for Unity-Native */
 				public string NameFolderPrefabAnimatorUnityNative;
@@ -1679,11 +1750,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				public GroupRuleNameAssetFolder(	string nameFolderTexture,
 													string nameFolderPrefabAnimationSS6PU,
 													string nameFolderPrefabEffectSS6PU,
+													string nameFolderDataProjectSS6PU,
 													string nameFolderDataCellMapSS6PU,
 													string nameFolderDataAnimationSS6PU,
 													string nameFolderDataEffectSS6PU,
-													string nameFolderMaterialAnimationSS6PU,
-													string nameFolderMaterialEffectSS6PU,
+													string nameFolderDataSequenceSS6PU,
 													string nameFolderPrefabAnimatorUnityNative,
 													string nameFolderPrefabParticleUnityNative,
 													string nameFolderAnimationClipUnityNative,
@@ -1696,11 +1767,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						NameFolderPrefabAnimationSS6PU = nameFolderPrefabAnimationSS6PU;
 						NameFolderPrefabEffectSS6PU = nameFolderPrefabEffectSS6PU;
+						NameFolderDataProjectSS6PU = nameFolderDataProjectSS6PU;
 						NameFolderDataCellMapSS6PU = nameFolderDataCellMapSS6PU;
 						NameFolderDataAnimationSS6PU = nameFolderDataAnimationSS6PU;
 						NameFolderDataEffectSS6PU = nameFolderDataEffectSS6PU;
-						NameFolderMaterialAnimationSS6PU = nameFolderMaterialAnimationSS6PU;
-						NameFolderMaterialEffectSS6PU = nameFolderMaterialEffectSS6PU;
+						NameFolderDataSequenceSS6PU = nameFolderDataSequenceSS6PU;
 
 						NameFolderPrefabAnimatorUnityNative = nameFolderPrefabAnimatorUnityNative;
 						NameFolderPrefabParticleUnityNative = nameFolderPrefabParticleUnityNative;
@@ -1721,11 +1792,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					NameFolderPrefabAnimationSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderPrefabAnimationSS6PU, Default.NameFolderPrefabAnimationSS6PU);
 					NameFolderPrefabEffectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderPrefabEffectSS6PU, Default.NameFolderPrefabEffectSS6PU);
+					NameFolderDataProjectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataProjectSS6PU, Default.NameFolderDataProjectSS6PU);
 					NameFolderDataCellMapSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataCellMapSS6PU, Default.NameFolderDataCellMapSS6PU);
 					NameFolderDataAnimationSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataAnimationSS6PU, Default.NameFolderDataAnimationSS6PU);
 					NameFolderDataEffectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataEffectSS6PU, Default.NameFolderDataEffectSS6PU);
-					NameFolderMaterialAnimationSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderMaterialAnimationSS6PU, Default.NameFolderMaterialAnimationSS6PU);
-					NameFolderMaterialEffectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderMaterialEffectSS6PU, Default.NameFolderMaterialEffectSS6PU);
+					NameFolderDataSequenceSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataSequenceSS6PU, Default.NameFolderDataSequenceSS6PU);
 
 					NameFolderPrefabAnimatorUnityNative = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderPrefabAnimatorUnityNative, Default.NameFolderPrefabAnimatorUnityNative);
 					NameFolderPrefabParticleUnityNative = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderPrefabParticleUnityNative, Default.NameFolderPrefabParticleUnityNative);
@@ -1747,11 +1818,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderPrefabAnimationSS6PU, NameFolderPrefabAnimationSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderPrefabEffectSS6PU, NameFolderPrefabEffectSS6PU);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataProjectSS6PU, NameFolderDataProjectSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataCellMapSS6PU, NameFolderDataCellMapSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataAnimationSS6PU, NameFolderDataAnimationSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataEffectSS6PU, NameFolderDataEffectSS6PU);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderMaterialAnimationSS6PU, NameFolderMaterialAnimationSS6PU);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderMaterialEffectSS6PU, NameFolderMaterialEffectSS6PU);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataSequenceSS6PU, NameFolderDataSequenceSS6PU);
 
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderPrefabAnimatorUnityNative, NameFolderPrefabAnimatorUnityNative);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderPrefabParticleUnityNative, NameFolderPrefabParticleUnityNative);
@@ -1773,11 +1844,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderPrefabAnimationSS6PU, NameFolderPrefabAnimationSS6PU);
 					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderPrefabEffectSS6PU, NameFolderPrefabEffectSS6PU);
-					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataCellMapSS6PU, NameFolderDataCellMapSS6PU);
-					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataAnimationSS6PU, NameFolderDataAnimationSS6PU);
-					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataEffectSS6PU, NameFolderDataEffectSS6PU);
-					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderMaterialAnimationSS6PU, NameFolderMaterialAnimationSS6PU);
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderMaterialEffectSS6PU, NameFolderMaterialEffectSS6PU);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataProjectSS6PU, NameFolderDataProjectSS6PU);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataCellMapSS6PU, NameFolderDataCellMapSS6PU);
+					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataAnimationSS6PU, NameFolderDataAnimationSS6PU);
+					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataEffectSS6PU, NameFolderDataEffectSS6PU);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataSequenceSS6PU, NameFolderDataSequenceSS6PU);
 
 					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderPrefabAnimatorUnityNative, NameFolderPrefabAnimatorUnityNative);
 					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderPrefabParticleUnityNative, NameFolderPrefabParticleUnityNative);
@@ -1803,6 +1874,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyNameFolderPrefabEffectSS6PU:
 							NameFolderPrefabEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
 							return(true);
+						case TextKeyNameFolderDataProjectSS6PU:
+							NameFolderDataProjectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							return(true);
 						case TextKeyNameFolderDataCellMapSS6PU:
 							NameFolderDataCellMapSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
 							return(true);
@@ -1812,11 +1886,12 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyNameFolderDataEffectSS6PU:
 							NameFolderDataEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
 							return(true);
-						case TextKeyNameFolderMaterialAnimationSS6PU:
-							NameFolderMaterialAnimationSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+						case TextKeyNameFolderDataSequenceSS6PU:
+							NameFolderDataSequenceSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
 							return(true);
-						case TextKeyNameFolderMaterialEffectSS6PU:
-							NameFolderMaterialEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+						case TextKeyNameFolderMaterialAnimationSS6PU:	/* Obsolete command */
+							return(true);
+						case TextKeyNameFolderMaterialEffectSS6PU:	/* Obsolete command */
 							return(true);
 
 						case TextKeyNameFolderPrefabAnimatorUnityNative:
@@ -1850,11 +1925,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						NameFolderPrefabAnimationSS6PU = Adjust(NameFolderPrefabAnimationSS6PU);
 						NameFolderPrefabEffectSS6PU = Adjust(NameFolderPrefabEffectSS6PU);
+						NameFolderDataProjectSS6PU = Adjust(NameFolderDataProjectSS6PU);
 						NameFolderDataCellMapSS6PU = Adjust(NameFolderDataCellMapSS6PU);
 						NameFolderDataAnimationSS6PU = Adjust(NameFolderDataAnimationSS6PU);
 						NameFolderDataEffectSS6PU = Adjust(NameFolderDataEffectSS6PU);
-						NameFolderMaterialAnimationSS6PU = Adjust(NameFolderMaterialAnimationSS6PU);
-						NameFolderMaterialEffectSS6PU = Adjust(NameFolderMaterialEffectSS6PU);
+						NameFolderDataSequenceSS6PU = Adjust(NameFolderDataSequenceSS6PU);
 
 						NameFolderPrefabAnimatorUnityNative = Adjust(NameFolderPrefabAnimatorUnityNative);
 						NameFolderPrefabParticleUnityNative = Adjust(NameFolderPrefabParticleUnityNative);
@@ -1886,6 +1961,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_EFFECT_SS6PU:
 							name += NameFolderPrefabEffectSS6PU + "/";
 							break;
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_PROJECT_SS6PU:
+							name += NameFolderDataProjectSS6PU + "/";
+							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU:
 							name += NameFolderDataCellMapSS6PU + "/";
 							break;
@@ -1895,11 +1973,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU:
 							name += NameFolderDataEffectSS6PU + "/";
 							break;
-						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_SS6PU:
-							name += NameFolderMaterialAnimationSS6PU + "/";
-							break;
-						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_SS6PU:
-							name += NameFolderMaterialEffectSS6PU + "/";
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_SEQUENCE_SS6PU:
+							name += NameFolderDataSequenceSS6PU + "/";
 							break;
 
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_UNITYNATIVE:
@@ -1935,11 +2010,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyNameFolderTexture = "NameFolderTexture";
 				private const string KeyNameFolderPrefabAnimationSS6PU = "NameFolderPrefabAnimationSS6PU";
 				private const string KeyNameFolderPrefabEffectSS6PU = "NameFolderPrefabEffectSS6PU";
+				private const string KeyNameFolderDataProjectSS6PU = "NameFolderDataProjectSS6PU";
 				private const string KeyNameFolderDataCellMapSS6PU = "NameFolderDataCellMapSS6PU";
 				private const string KeyNameFolderDataAnimationSS6PU = "NameFolderDataAnimationSS6PU";
 				private const string KeyNameFolderDataEffectSS6PU = "NameFolderDataEffectSS6PU";
-				private const string KeyNameFolderMaterialAnimationSS6PU = "NameFolderMaterialAnimationSS6PU";
-				private const string KeyNameFolderMaterialEffectSS6PU = "NameFolderMaterialEffectSS6PU";
+				private const string KeyNameFolderDataSequenceSS6PU = "NameFolderDataSequenceSS6PU";
+				/* Obsolete */	private const string KeyNameFolderMaterialAnimationSS6PU = "NameFolderMaterialAnimationSS6PU";
+				/* Obsolete */	private const string KeyNameFolderMaterialEffectSS6PU = "NameFolderMaterialEffectSS6PU";
 				private const string KeyNameFolderPrefabAnimatorUnityNative = "NameFolderPrefabAnimatorUnityNative";
 				private const string KeyNameFolderPrefabParticleUnityNative = "NameFolderPrefabParticleUnityNative";
 				private const string KeyNameFolderAnimationClipUnityNative = "NameFolderAnimationClipUnityNative";
@@ -1951,11 +2028,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyNameFolderTexture = TextKeyPrefix + KeyNameFolderTexture;
 				private const string TextKeyNameFolderPrefabAnimationSS6PU = TextKeyPrefix + KeyNameFolderPrefabAnimationSS6PU;
 				private const string TextKeyNameFolderPrefabEffectSS6PU = TextKeyPrefix + KeyNameFolderPrefabEffectSS6PU;
+				private const string TextKeyNameFolderDataProjectSS6PU = TextKeyPrefix + KeyNameFolderDataProjectSS6PU;
 				private const string TextKeyNameFolderDataCellMapSS6PU = TextKeyPrefix + KeyNameFolderDataCellMapSS6PU;
 				private const string TextKeyNameFolderDataAnimationSS6PU = TextKeyPrefix + KeyNameFolderDataAnimationSS6PU;
 				private const string TextKeyNameFolderDataEffectSS6PU = TextKeyPrefix + KeyNameFolderDataEffectSS6PU;
-				private const string TextKeyNameFolderMaterialAnimationSS6PU = TextKeyPrefix + KeyNameFolderMaterialAnimationSS6PU;
-				private const string TextKeyNameFolderMaterialEffectSS6PU = TextKeyPrefix + KeyNameFolderMaterialEffectSS6PU;
+				private const string TextKeyNameFolderDataSequenceSS6PU = TextKeyPrefix + KeyNameFolderDataSequenceSS6PU;
+				/* Obsolete */	private const string TextKeyNameFolderMaterialAnimationSS6PU = TextKeyPrefix + KeyNameFolderMaterialAnimationSS6PU;
+				/* Obsolete */	private const string TextKeyNameFolderMaterialEffectSS6PU = TextKeyPrefix + KeyNameFolderMaterialEffectSS6PU;
 				private const string TextKeyNameFolderPrefabAnimatorUnityNative = TextKeyPrefix + KeyNameFolderPrefabAnimatorUnityNative;
 				private const string TextKeyNameFolderPrefabParticleUnityNative = TextKeyPrefix + KeyNameFolderPrefabParticleUnityNative;
 				private const string TextKeyNameFolderAnimationClipUnityNative = TextKeyPrefix + KeyNameFolderAnimationClipUnityNative;
@@ -1967,11 +2046,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyNameFolderTexture = PrefsKeyPrefix + KeyNameFolderTexture;
 				private const string PrefsKeyNameFolderPrefabAnimationSS6PU = PrefsKeyPrefix + KeyNameFolderPrefabAnimationSS6PU;
 				private const string PrefsKeyNameFolderPrefabEffectSS6PU = PrefsKeyPrefix + KeyNameFolderPrefabEffectSS6PU;
+				private const string PrefsKeyNameFolderDataProjectSS6PU = PrefsKeyPrefix + KeyNameFolderDataProjectSS6PU;
 				private const string PrefsKeyNameFolderDataCellMapSS6PU = PrefsKeyPrefix + KeyNameFolderDataCellMapSS6PU;
 				private const string PrefsKeyNameFolderDataAnimationSS6PU = PrefsKeyPrefix + KeyNameFolderDataAnimationSS6PU;
 				private const string PrefsKeyNameFolderDataEffectSS6PU = PrefsKeyPrefix + KeyNameFolderDataEffectSS6PU;
-				private const string PrefsKeyNameFolderMaterialAnimationSS6PU = PrefsKeyPrefix + KeyNameFolderMaterialAnimationSS6PU;
-				private const string PrefsKeyNameFolderMaterialEffectSS6PU = PrefsKeyPrefix + KeyNameFolderMaterialEffectSS6PU;
+				private const string PrefsKeyNameFolderDataSequenceSS6PU = PrefsKeyPrefix + KeyNameFolderDataSequenceSS6PU;
+				/* Obsolete */	private const string PrefsKeyNameFolderMaterialAnimationSS6PU = PrefsKeyPrefix + KeyNameFolderMaterialAnimationSS6PU;
+				/* Obsolete */	private const string PrefsKeyNameFolderMaterialEffectSS6PU = PrefsKeyPrefix + KeyNameFolderMaterialEffectSS6PU;
 				private const string PrefsKeyNameFolderPrefabAnimatorUnityNative = PrefsKeyPrefix + KeyNameFolderPrefabAnimatorUnityNative;
 				private const string PrefsKeyNameFolderPrefabParticleUnityNative = PrefsKeyPrefix + KeyNameFolderPrefabParticleUnityNative;
 				private const string PrefsKeyNameFolderAnimationClipUnityNative = PrefsKeyPrefix + KeyNameFolderAnimationClipUnityNative;
@@ -1983,11 +2064,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					"Texture",				/* NameFolderTexture */
 					"PrefabAnimation",		/* NameFolderPrefabAnimationSS6PU */
 					"PrefabEffect",			/* NameFolderPrefabEffectSS6PU */
+					"DataProject",			/* NameFolderDataProjectSS6PU */
 					"DataCellMap",			/* NameFolderDataCellMapSS6PU */
 					"DataAnimation",		/* NameFolderDataAnimationSS6PU */
 					"DataEffect",			/* NameFolderDataEffectSS6PU */
-					"Material",				/* NameFolderMaterialAnimationSS6PU */
-					"Material",				/* NameFolderMaterialEffectSS6PU */
+					"DataSequence",			/* NameFolderDataSequenceSS6PU */
 					"PrefabSprite",			/* NameFolderPrefabAnimatorUnityNative */
 					"PrefabParticle",		/* NameFolderPrefabParticleUnityNative */
 					"DataAnimationClip",	/* NameFolderAnimationClipUnityNative */
@@ -2023,6 +2104,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Instance;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Effect;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Deform;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Shader;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Signal;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -2047,7 +2130,9 @@ public static partial class LibraryEditor_SpriteStudio6
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack userData,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack instance,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack effect,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack deform
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack deform,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack shader,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack signal
 												)
 				{
 					Status = status;
@@ -2071,6 +2156,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					Instance = instance;
 					Effect = effect;
 					Deform = deform;
+					Shader = shader;
+					Signal = signal;
 				}
 
 				public void CleanUp()
@@ -2101,6 +2188,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					Instance = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyInstance, (int)Default.Instance));
 					Effect = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyEffect, (int)Default.Effect));
 					Deform = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyDeform, (int)Default.Deform));
+					Shader = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyShader, (int)Default.Shader));
+					Signal = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeySignal, (int)Default.Signal));
 
 					return(true);
 				}
@@ -2121,6 +2210,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetInt(PrefsKeyInstance, (int)Instance);
 					EditorPrefs.SetInt(PrefsKeyEffect, (int)Effect);
 					EditorPrefs.SetInt(PrefsKeyDeform, (int)Deform);
+					EditorPrefs.SetInt(PrefsKeyShader, (int)Shader);
+					EditorPrefs.SetInt(PrefsKeySignal, (int)Signal);
 
 					EditorPrefs.SetInt(PrefsKeyCell, (int)Cell);
 					EditorPrefs.SetInt(PrefsKeySizeForce, (int)SizeForce);
@@ -2135,7 +2226,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[21];
+					string[] textEncode = new string[23];
 					string textValue;
 
 					textValue = NameGetPackKind(Status);
@@ -2200,6 +2291,12 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = NameGetPackKind(Deform);
 					textEncode[20] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyDeform, textValue);
+
+					textValue = NameGetPackKind(Shader);
+					textEncode[21] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyShader, textValue);
+
+					textValue = NameGetPackKind(Signal);
+					textEncode[22] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySignal, textValue);
 
 					return(textEncode);
 				}
@@ -2297,6 +2394,14 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case TextKeyDeform:
 							Deform = KindGetPackName(textArgument[1]);
+							return(true);
+
+						case TextKeyShader:
+							Shader = KindGetPackName(textArgument[1]);
+							return(true);
+
+						case TextKeySignal:
+							Signal = KindGetPackName(textArgument[1]);
 							return(true);
 
 						case TextKeyFixIndexCellMap:	/* Obsolete command */
@@ -2406,6 +2511,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						Deform = PackError;
 					}
+					if(false == capacityPack[(int)Shader].Shader)
+					{
+						Deform = PackError;
+					}
+					if(false == capacityPack[(int)Signal].Signal)
+					{
+						Deform = PackError;
+					}
 				}
 
 				private static void BootUpNamePack()
@@ -2466,6 +2579,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyInstance = "Instance";
 				private const string KeyEffect = "Effect";
 				private const string KeyDeform = "Deform";
+				private const string KeyShader = "Shader";
+				private const string KeySignal = "Signal";
 				/* Obsolete */	private const string KeyPlainCell = "PlainCell";
 				/* Obsolete */	private const string KeyPlainSizeForce = "PlainSizeForce";
 				/* Obsolete */	private const string KeyPlainVertexCorrection = "PlainVertexCorrection";
@@ -2501,6 +2616,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyInstance = TextKeyPrefix + KeyInstance;
 				private const string TextKeyEffect = TextKeyPrefix + KeyEffect;
 				private const string TextKeyDeform = TextKeyPrefix + KeyDeform;
+				private const string TextKeyShader = TextKeyPrefix + KeyShader;
+				private const string TextKeySignal = TextKeyPrefix + KeySignal;
 				/* Obsolete */	private const string TextKeyPlainCell = TextKeyPrefix + KeyPlainCell;
 				/* Obsolete */	private const string TextKeyPlainSizeForce = TextKeyPrefix + KeyPlainSizeForce;
 				/* Obsolete */	private const string TextKeyPlainVertexCorrection = TextKeyPrefix + KeyPlainVertexCorrection;
@@ -2536,6 +2653,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyInstance = PrefsKeyPrefix + KeyInstance;
 				private const string PrefsKeyEffect = PrefsKeyPrefix + KeyEffect;
 				private const string PrefsKeyDeform = PrefsKeyPrefix + KeyDeform;
+				private const string PrefsKeyShader = PrefsKeyPrefix + KeyShader;
+				private const string PrefsKeySignal = PrefsKeyPrefix + KeySignal;
 				/* Obsolete */	private const string PrefsKeyPlainCell = PrefsKeyPrefix + KeyPlainCell;
 				/* Obsolete */	private const string PrefsKeyPlainSizeForce = PrefsKeyPrefix + KeyPlainSizeForce;
 				/* Obsolete */	private const string PrefsKeyPlainVertexCorrection = PrefsKeyPrefix + KeyPlainVertexCorrection;
@@ -2550,27 +2669,29 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Obsolete */	private const string PrefsKeyFixPivotCollision = PrefsKeyPrefix + KeyFixPivotCollision;
 
 				private readonly static GroupPackAttributeAnimation Default = new GroupPackAttributeAnimation(
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Status */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Cell */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Position */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Rotation */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Scaling */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* ScalingLocal */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RateOpacity */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Priority */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PartsColor */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* VertexCorrection */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* OffsetPivot */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PositionAnchor */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* SizeForce */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* PositionTexture */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RotationTexture */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* ScalingTexture */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* RadiusCollision */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* UserData */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Instance */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,	/* Effect */
-					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE	/* Deform */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Status */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Cell */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Position */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Rotation */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Scaling */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* ScalingLocal */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* RateOpacity */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Priority */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* PartsColor */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* VertexCorrection */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* OffsetPivot */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* PositionAnchor */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* SizeForce */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* PositionTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* RotationTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* ScalingTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* RadiusCollision */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* UserData */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Instance */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Effect */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* Deform */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Shader */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE		/* Signal */
 				);
 				#endregion Enums & Constants
 			}
@@ -2579,34 +2700,6 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
-//				/* Obsolete */	public Material AnimationSS6PUStencilPreDraw;
-//				/* Obsolete */	public Material AnimationSS6PUStencilDraw;
-				public Material AnimationSS6PUThroughStencilPreDraw;
-				public Material AnimationSS6PUThroughStencilDraw;
-				public Material AnimationSS6PUThroughMix;
-				public Material AnimationSS6PUThroughAdd;
-				public Material AnimationSS6PUThroughSub;
-				public Material AnimationSS6PUThroughMul;
-				public Material AnimationSS6PUThroughMulNA;
-				public Material AnimationSS6PUThroughScr;
-				public Material AnimationSS6PUThroughExc;
-				public Material AnimationSS6PUThroughInv;
-				public Material AnimationSS6PUMaskStencilPreDraw;
-				public Material AnimationSS6PUMaskStencilDraw;
-				public Material AnimationSS6PUMaskMix;
-				public Material AnimationSS6PUMaskAdd;
-				public Material AnimationSS6PUMaskSub;
-				public Material AnimationSS6PUMaskMul;
-				public Material AnimationSS6PUMaskMulNA;
-				public Material AnimationSS6PUMaskScr;
-				public Material AnimationSS6PUMaskExc;
-				public Material AnimationSS6PUMaskInv;
-
-				public Material EffectSS6PUThroughMix;
-				public Material EffectSS6PUThroughAdd;
-				public Material EffectSS6PUMaskMix;
-				public Material EffectSS6PUMaskAdd;
-
 				public Material AnimationUnityNativeMix;
 				public Material AnimationUnityNativeAdd;
 				public Material AnimationUnityNativeSub;
@@ -2636,31 +2729,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
-				public GroupPresetMaterial(	string animationSS6PUThroughStencilPreDraw,
-											string animationSS6PUThroughStencilDraw,
-											string animationSS6PUThroughMix,
-											string animationSS6PUThroughAdd,
-											string animationSS6PUThroughSub,
-											string animationSS6PUThroughMul,
-											string animationSS6PUThroughMulNA,
-											string animationSS6PUThroughScr,
-											string animationSS6PUThroughExc,
-											string animationSS6PUThroughInv,
-											string animationSS6PUMaskStencilPreDraw,
-											string animationSS6PUMaskStencilDraw,
-											string animationSS6PUMaskMix,
-											string animationSS6PUMaskAdd,
-											string animationSS6PUMaskSub,
-											string animationSS6PUMaskMul,
-											string animationSS6PUMaskMulNA,
-											string animationSS6PUMaskScr,
-											string animationSS6PUMaskExc,
-											string animationSS6PUMaskInv,
-											string effectSS6PUThroughMix,
-											string effectSS6PUThroughAdd,
-											string effectSS6PUMaskMix,
-											string effectSS6PUMaskAdd,
-											string animationUnityNativeMix,
+				public GroupPresetMaterial(	string animationUnityNativeMix,
 											string animationUnityNativeAdd,
 											string animationUnityNativeSub,
 											string animationUnityNativeMul,
@@ -2686,32 +2755,6 @@ public static partial class LibraryEditor_SpriteStudio6
 											string skinnedMeshUnityNativeInv
 										)
 				{
-					AnimationSS6PUThroughStencilPreDraw = MaterialLoadPath(PathGet(animationSS6PUThroughStencilPreDraw));
-					AnimationSS6PUThroughStencilDraw = MaterialLoadPath(PathGet(animationSS6PUThroughStencilDraw));
-					AnimationSS6PUThroughMix = MaterialLoadPath(PathGet(animationSS6PUThroughMix));
-					AnimationSS6PUThroughAdd = MaterialLoadPath(PathGet(animationSS6PUThroughAdd));
-					AnimationSS6PUThroughSub = MaterialLoadPath(PathGet(animationSS6PUThroughSub));
-					AnimationSS6PUThroughMul = MaterialLoadPath(PathGet(animationSS6PUThroughMul));
-					AnimationSS6PUThroughMulNA = MaterialLoadPath(PathGet(animationSS6PUThroughMulNA));
-					AnimationSS6PUThroughScr = MaterialLoadPath(PathGet(animationSS6PUThroughScr));
-					AnimationSS6PUThroughExc = MaterialLoadPath(PathGet(animationSS6PUThroughExc));
-					AnimationSS6PUThroughInv = MaterialLoadPath(PathGet(animationSS6PUThroughInv));
-					AnimationSS6PUMaskStencilPreDraw = MaterialLoadPath(PathGet(animationSS6PUMaskStencilPreDraw));
-					AnimationSS6PUMaskStencilDraw = MaterialLoadPath(PathGet(animationSS6PUMaskStencilDraw));
-					AnimationSS6PUMaskMix = MaterialLoadPath(PathGet(animationSS6PUMaskMix));
-					AnimationSS6PUMaskAdd = MaterialLoadPath(PathGet(animationSS6PUMaskAdd));
-					AnimationSS6PUMaskSub = MaterialLoadPath(PathGet(animationSS6PUMaskSub));
-					AnimationSS6PUMaskMul = MaterialLoadPath(PathGet(animationSS6PUMaskMul));
-					AnimationSS6PUMaskMulNA = MaterialLoadPath(PathGet(animationSS6PUMaskMulNA));
-					AnimationSS6PUMaskScr = MaterialLoadPath(PathGet(animationSS6PUMaskScr));
-					AnimationSS6PUMaskExc = MaterialLoadPath(PathGet(animationSS6PUMaskExc));
-					AnimationSS6PUMaskInv = MaterialLoadPath(PathGet(animationSS6PUMaskInv));
-
-					EffectSS6PUThroughMix = MaterialLoadPath(PathGet(effectSS6PUThroughMix));
-					EffectSS6PUThroughAdd = MaterialLoadPath(PathGet(effectSS6PUThroughAdd));
-					EffectSS6PUMaskMix = MaterialLoadPath(PathGet(effectSS6PUMaskMix));
-					EffectSS6PUMaskAdd = MaterialLoadPath(PathGet(effectSS6PUMaskAdd));
-
 					AnimationUnityNativeMix = MaterialLoadPath(PathGet(animationUnityNativeMix));
 					AnimationUnityNativeAdd = MaterialLoadPath(PathGet(animationUnityNativeAdd));
 					AnimationUnityNativeSub = MaterialLoadPath(PathGet(animationUnityNativeSub));
@@ -2748,78 +2791,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool Load()
 				{
 					string guid = "";
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughStencilPreDraw, GUIDGetMaterial(Default.AnimationSS6PUThroughStencilPreDraw));
-					AnimationSS6PUThroughStencilPreDraw = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughStencilDraw, GUIDGetMaterial(Default.AnimationSS6PUThroughStencilDraw));
-					AnimationSS6PUThroughStencilDraw = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughMix, GUIDGetMaterial(Default.AnimationSS6PUThroughMix));
-					AnimationSS6PUThroughMix = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughAdd, GUIDGetMaterial(Default.AnimationSS6PUThroughAdd));
-					AnimationSS6PUThroughAdd = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughSub, GUIDGetMaterial(Default.AnimationSS6PUThroughSub));
-					AnimationSS6PUThroughSub = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughMul, GUIDGetMaterial(Default.AnimationSS6PUThroughMul));
-					AnimationSS6PUThroughMul = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughMulNA, GUIDGetMaterial(Default.AnimationSS6PUThroughMulNA));
-					AnimationSS6PUThroughMulNA = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughScr, GUIDGetMaterial(Default.AnimationSS6PUThroughScr));
-					AnimationSS6PUThroughScr = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughExc, GUIDGetMaterial(Default.AnimationSS6PUThroughExc));
-					AnimationSS6PUThroughExc = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUThroughInv, GUIDGetMaterial(Default.AnimationSS6PUThroughInv));
-					AnimationSS6PUThroughInv = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskStencilPreDraw, GUIDGetMaterial(Default.AnimationSS6PUMaskStencilPreDraw));
-					AnimationSS6PUMaskStencilPreDraw = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskStencilDraw, GUIDGetMaterial(Default.AnimationSS6PUMaskStencilDraw));
-					AnimationSS6PUMaskStencilDraw = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskMix, GUIDGetMaterial(Default.AnimationSS6PUMaskMix));
-					AnimationSS6PUMaskMix = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskAdd, GUIDGetMaterial(Default.AnimationSS6PUMaskAdd));
-					AnimationSS6PUMaskAdd = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskSub, GUIDGetMaterial(Default.AnimationSS6PUMaskSub));
-					AnimationSS6PUMaskSub = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskMul, GUIDGetMaterial(Default.AnimationSS6PUMaskMul));
-					AnimationSS6PUMaskMul = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskMulNA, GUIDGetMaterial(Default.AnimationSS6PUMaskMulNA));
-					AnimationSS6PUMaskMulNA = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskScr, GUIDGetMaterial(Default.AnimationSS6PUMaskScr));
-					AnimationSS6PUMaskScr = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskExc, GUIDGetMaterial(Default.AnimationSS6PUMaskExc));
-					AnimationSS6PUMaskExc = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationSS6PUMaskInv, GUIDGetMaterial(Default.AnimationSS6PUMaskInv));
-					AnimationSS6PUMaskInv = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyEffectSS6PUThroughMix, GUIDGetMaterial(Default.EffectSS6PUThroughMix));
-					EffectSS6PUThroughMix = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyEffectSS6PUThroughAdd, GUIDGetMaterial(Default.EffectSS6PUThroughAdd));
-					EffectSS6PUThroughAdd = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyEffectSS6PUMaskMix, GUIDGetMaterial(Default.EffectSS6PUMaskMix));
-					EffectSS6PUMaskMix = MaterialGetGUID(guid);
-
-					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyEffectSS6PUMaskAdd, GUIDGetMaterial(Default.EffectSS6PUMaskAdd));
-					EffectSS6PUMaskAdd = MaterialGetGUID(guid);
 
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeMix, GUIDGetMaterial(Default.AnimationUnityNativeMix));
 					AnimationUnityNativeMix = MaterialGetGUID(guid);
@@ -2900,78 +2871,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					string guid = "";
 
-					guid = GUIDGetMaterial(AnimationSS6PUThroughStencilPreDraw);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughStencilPreDraw, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughStencilDraw);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughStencilDraw, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughMix);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughMix, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughAdd);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughAdd, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughSub);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughSub, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughMul);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughMul, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughMulNA);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughMulNA, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughScr);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughScr, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughExc);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughExc, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUThroughInv);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUThroughInv, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskStencilPreDraw);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskStencilPreDraw, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskStencilDraw);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskStencilDraw, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskMix);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskMix, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskAdd);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskAdd, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskSub);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskSub, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskMul);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskMul, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskMulNA);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskMulNA, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskScr);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskScr, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskExc);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskExc, guid);
-
-					guid = GUIDGetMaterial(AnimationSS6PUMaskInv);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationSS6PUMaskInv, guid);
-
-					guid = GUIDGetMaterial(EffectSS6PUThroughMix);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyEffectSS6PUThroughMix, guid);
-
-					guid = GUIDGetMaterial(EffectSS6PUThroughAdd);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyEffectSS6PUThroughAdd, guid);
-
-					guid = GUIDGetMaterial(EffectSS6PUMaskMix);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyEffectSS6PUMaskMix, guid);
-
-					guid = GUIDGetMaterial(EffectSS6PUMaskAdd);
-					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyEffectSS6PUMaskAdd, guid);
-
 					guid = GUIDGetMaterial(AnimationUnityNativeMix);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeMix, guid);
 
@@ -3049,152 +2948,80 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[48];
+					string[] textEncode = new string[24];
 					string textValue;
 
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughStencilPreDraw));
-					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughStencilPreDraw, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughStencilDraw));
-					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughStencilDraw, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughMix));
-					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughMix, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughAdd));
-					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughAdd, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughSub));
-					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughSub, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughMul));
-					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughMul, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughMulNA));
-					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughMulNA, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughScr));
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughScr, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughExc));
-					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughExc, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUThroughInv));
-					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUThroughInv, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskStencilPreDraw));
-					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskStencilPreDraw, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskStencilDraw));
-					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskStencilDraw, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskMix));
-					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskMix, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskAdd));
-					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskAdd, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskSub));
-					textEncode[14] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskSub, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskMul));
-					textEncode[15] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskMul, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskMulNA));
-					textEncode[16] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskMulNA, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskScr));
-					textEncode[17] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskScr, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskExc));
-					textEncode[18] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskExc, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(AnimationSS6PUMaskInv));
-					textEncode[19] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationSS6PUMaskInv, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(EffectSS6PUThroughMix));
-					textEncode[20] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffectSS6PUThroughMix, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(EffectSS6PUThroughAdd));
-					textEncode[21] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffectSS6PUThroughAdd, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(EffectSS6PUMaskMix));
-					textEncode[22] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffectSS6PUMaskMix, textValue);
-
-					textValue = PathGetForExport(PathGetMaterial(EffectSS6PUMaskAdd));
-					textEncode[23] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffectSS6PUMaskAdd, textValue);
-
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeMix));
-					textEncode[24] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMix, textValue);
+					textEncode[0] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMix, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeAdd));
-					textEncode[25] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeAdd, textValue);
+					textEncode[1] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeAdd, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeSub));
-					textEncode[26] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeSub, textValue);
+					textEncode[2] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeSub, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeMul));
-					textEncode[27] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMul, textValue);
+					textEncode[3] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMul, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeMulNA));
-					textEncode[28] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMulNA, textValue);
+					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMulNA, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeScr));
-					textEncode[29] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeScr, textValue);
+					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeScr, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeExc));
-					textEncode[30] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeExc, textValue);
+					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeExc, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeInv));
-					textEncode[31] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeInv, textValue);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeInv, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchMix));
-					textEncode[32] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMix, textValue);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMix, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchAdd));
-					textEncode[33] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchAdd, textValue);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchAdd, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchSub));
-					textEncode[34] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchSub, textValue);
+					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchSub, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchMul));
-					textEncode[35] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMul, textValue);
+					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMul, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchMulNA));
-					textEncode[36] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMulNA, textValue);
+					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMulNA, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchScr));
-					textEncode[37] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchScr, textValue);
+					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchScr, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchExc));
-					textEncode[38] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchExc, textValue);
+					textEncode[14] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchExc, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchInv));
-					textEncode[39] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchInv, textValue);
+					textEncode[15] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchInv, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeMix));
-					textEncode[40] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMix, textValue);
+					textEncode[16] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMix, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeAdd));
-					textEncode[41] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeAdd, textValue);
+					textEncode[17] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeAdd, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeSub));
-					textEncode[42] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeSub, textValue);
+					textEncode[18] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeSub, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeMul));
-					textEncode[43] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMul, textValue);
+					textEncode[19] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMul, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeMulNA));
-					textEncode[44] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMulNA, textValue);
+					textEncode[20] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMulNA, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeScr));
-					textEncode[45] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeScr, textValue);
+					textEncode[21] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeScr, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeExc));
-					textEncode[46] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeExc, textValue);
+					textEncode[22] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeExc, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeInv));
-					textEncode[47] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeInv, textValue);
+					textEncode[23] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeInv, textValue);
 
 					return(textEncode);
 				}
@@ -3204,198 +3031,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					string namePathMaterial = textArgument[1];
 					switch(textArgument[0])
 					{
-						case TextKeyAnimationSS6PUThroughStencilPreDraw:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughStencilPreDraw));
-							}
-							AnimationSS6PUThroughStencilPreDraw = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughStencilDraw:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughStencilDraw));
-							}
-							AnimationSS6PUThroughStencilDraw = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughMix:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMix));
-							}
-							AnimationSS6PUThroughMix = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughAdd:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughAdd));
-							}
-							AnimationSS6PUThroughAdd = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughSub:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughSub));
-							}
-							AnimationSS6PUThroughSub = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughMul:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMul));
-							}
-							AnimationSS6PUThroughMul = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughMulNA:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughMulNA));
-							}
-							AnimationSS6PUThroughMulNA = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughScr:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughScr));
-							}
-							AnimationSS6PUThroughScr = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughExc:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughExc));
-							}
-							AnimationSS6PUThroughExc = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUThroughInv:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUThroughInv));
-							}
-							AnimationSS6PUThroughInv = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskStencilPreDraw:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskStencilPreDraw));
-							}
-							AnimationSS6PUMaskStencilPreDraw = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskStencilDraw:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskStencilDraw));
-							}
-							AnimationSS6PUMaskStencilDraw = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskMix:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMix));
-							}
-							AnimationSS6PUMaskMix = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskAdd:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskAdd));
-							}
-							AnimationSS6PUMaskAdd = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskSub:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskSub));
-							}
-							AnimationSS6PUMaskSub = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskMul:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMul));
-							}
-							AnimationSS6PUMaskMul = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskMulNA:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskMulNA));
-							}
-							AnimationSS6PUMaskMulNA = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskScr:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskScr));
-							}
-							AnimationSS6PUMaskScr = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskExc:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskExc));
-							}
-							AnimationSS6PUMaskExc = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyAnimationSS6PUMaskInv:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationSS6PUMaskInv));
-							}
-							AnimationSS6PUMaskInv = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyEffectSS6PUThroughMix:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.EffectSS6PUThroughMix));
-							}
-							EffectSS6PUThroughMix = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyEffectSS6PUThroughAdd:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.EffectSS6PUThroughAdd));
-							}
-							EffectSS6PUThroughAdd = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyEffectSS6PUMaskMix:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.EffectSS6PUMaskMix));
-							}
-							EffectSS6PUMaskMix = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
-						case TextKeyEffectSS6PUMaskAdd:
-							if(true == string.IsNullOrEmpty(namePathMaterial))
-							{
-								namePathMaterial = PathGetForExport(PathGetMaterial(Default.EffectSS6PUMaskAdd));
-							}
-							EffectSS6PUMaskAdd = MaterialLoadPath(PathGet(namePathMaterial));
-							return(true);
-
 						case TextKeyAnimationUnityNativeMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
@@ -3595,7 +3230,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(false);
 				}
 
-				private static Material MaterialLoadPath(string path)
+				internal static Material MaterialLoadPath(string path)
 				{
 					Material material = AssetDatabase.LoadAssetAtPath(path, typeof(Material)) as Material;
 					return(material);
@@ -3643,12 +3278,16 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						name = "/" + name;
 					}
-					return(namePathRoot + name);
+					return(NamePathRoot + name);
 				}
 
 				private static string PathGetForExport(string namePath)
 				{
-					return(namePath.Remove(0, namePathRoot.Length));
+					if(true == string.IsNullOrEmpty(namePath))
+					{
+						return(string.Empty);
+					}
+					return(namePath.Remove(0, NamePathRoot.Length));
 				}
 				#endregion Functions
 
@@ -3677,33 +3316,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyOperationExc = "Exc";
 				private const string KeyOperationInv = "Inv";
 
-//				/* Obsolete */	private const string KeyAnimationSS6PUStencilPreDraw = KeyKindAnimation + KeyModeSS6PU + KeyOperationStencilPreDraw;
-//				/* Obsolete */	private const string KeyAnimationSS6PUStencilDraw = KeyKindAnimation + KeyModeSS6PU + KeyOperationStencilDraw;
-				private const string KeyAnimationSS6PUThroughStencilPreDraw = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationStencilPreDraw;
-				private const string KeyAnimationSS6PUThroughStencilDraw = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationStencilDraw;
-				private const string KeyAnimationSS6PUThroughMix = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMix;
-				private const string KeyAnimationSS6PUThroughAdd = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationAdd;
-				private const string KeyAnimationSS6PUThroughSub = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationSub;
-				private const string KeyAnimationSS6PUThroughMul = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMul;
-				private const string KeyAnimationSS6PUThroughMulNA = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMulNA;
-				private const string KeyAnimationSS6PUThroughScr = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationScr;
-				private const string KeyAnimationSS6PUThroughExc = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationExc;
-				private const string KeyAnimationSS6PUThroughInv = KeyKindAnimation + KeyModeSS6PU + KeyMaskingThrough + KeyOperationInv;
-				private const string KeyAnimationSS6PUMaskStencilPreDraw = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationStencilPreDraw;
-				private const string KeyAnimationSS6PUMaskStencilDraw = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationStencilDraw;
-				private const string KeyAnimationSS6PUMaskMix = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationMix;
-				private const string KeyAnimationSS6PUMaskAdd = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationAdd;
-				private const string KeyAnimationSS6PUMaskSub = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationSub;
-				private const string KeyAnimationSS6PUMaskMul = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationMul;
-				private const string KeyAnimationSS6PUMaskMulNA = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationMulNA;
-				private const string KeyAnimationSS6PUMaskScr = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationScr;
-				private const string KeyAnimationSS6PUMaskExc = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationExc;
-				private const string KeyAnimationSS6PUMaskInv = KeyKindAnimation + KeyModeSS6PU + KeyMaskingMask + KeyOperationInv;
-				private const string KeyEffectSS6PUThroughMix = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationMix;
-				private const string KeyEffectSS6PUThroughAdd = KeyKindEffect + KeyModeSS6PU + KeyMaskingThrough + KeyOperationAdd;
-				private const string KeyEffectSS6PUMaskMix = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationMix;
-				private const string KeyEffectSS6PUMaskAdd = KeyKindEffect + KeyModeSS6PU + KeyMaskingMask + KeyOperationAdd;
-
 				private const string KeyAnimationUnityNativeMix = KeyKindAnimation + KeyModeUnityNative + KeyOperationMix;
 				private const string KeyAnimationUnityNativeAdd = KeyKindAnimation + KeyModeUnityNative + KeyOperationAdd;
 				private const string KeyAnimationUnityNativeSub = KeyKindAnimation + KeyModeUnityNative + KeyOperationSub;
@@ -3730,34 +3342,6 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeySkinnedMeshUnityNativeInv = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationInv;
 
 				private const string TextKeyPrefix = "PresetMaterial_";
-
-//				/* Obsolete */	private const string TextKeyAnimationSS6PUStencilPreDraw = TextKeyPrefix + KeyAnimationSS6PUStencilPreDraw;
-//				/* Obsolete */	private const string TextKeyAnimationSS6PUStencilDraw = TextKeyPrefix + KeyAnimationSS6PUStencilDraw;
-				private const string TextKeyAnimationSS6PUThroughStencilPreDraw = TextKeyPrefix + KeyAnimationSS6PUThroughStencilPreDraw;
-				private const string TextKeyAnimationSS6PUThroughStencilDraw = TextKeyPrefix + KeyAnimationSS6PUThroughStencilDraw;
-				private const string TextKeyAnimationSS6PUThroughMix = TextKeyPrefix + KeyAnimationSS6PUThroughMix;
-				private const string TextKeyAnimationSS6PUThroughAdd = TextKeyPrefix + KeyAnimationSS6PUThroughAdd;
-				private const string TextKeyAnimationSS6PUThroughSub = TextKeyPrefix + KeyAnimationSS6PUThroughSub;
-				private const string TextKeyAnimationSS6PUThroughMul = TextKeyPrefix + KeyAnimationSS6PUThroughMul;
-				private const string TextKeyAnimationSS6PUThroughMulNA = TextKeyPrefix + KeyAnimationSS6PUThroughMulNA;
-				private const string TextKeyAnimationSS6PUThroughScr = TextKeyPrefix + KeyAnimationSS6PUThroughScr;
-				private const string TextKeyAnimationSS6PUThroughExc = TextKeyPrefix + KeyAnimationSS6PUThroughExc;
-				private const string TextKeyAnimationSS6PUThroughInv = TextKeyPrefix + KeyAnimationSS6PUThroughInv;
-				private const string TextKeyAnimationSS6PUMaskStencilPreDraw = TextKeyPrefix + KeyAnimationSS6PUMaskStencilPreDraw;
-				private const string TextKeyAnimationSS6PUMaskStencilDraw = TextKeyPrefix + KeyAnimationSS6PUMaskStencilDraw;
-				private const string TextKeyAnimationSS6PUMaskMix = TextKeyPrefix + KeyAnimationSS6PUMaskMix;
-				private const string TextKeyAnimationSS6PUMaskAdd = TextKeyPrefix + KeyAnimationSS6PUMaskAdd;
-				private const string TextKeyAnimationSS6PUMaskSub = TextKeyPrefix + KeyAnimationSS6PUMaskSub;
-				private const string TextKeyAnimationSS6PUMaskMul = TextKeyPrefix + KeyAnimationSS6PUMaskMul;
-				private const string TextKeyAnimationSS6PUMaskMulNA = TextKeyPrefix + KeyAnimationSS6PUMaskMulNA;
-				private const string TextKeyAnimationSS6PUMaskScr = TextKeyPrefix + KeyAnimationSS6PUMaskScr;
-				private const string TextKeyAnimationSS6PUMaskExc = TextKeyPrefix + KeyAnimationSS6PUMaskExc;
-				private const string TextKeyAnimationSS6PUMaskInv = TextKeyPrefix + KeyAnimationSS6PUMaskInv;
-
-				private const string TextKeyEffectSS6PUThroughMix = TextKeyPrefix + KeyEffectSS6PUThroughMix;
-				private const string TextKeyEffectSS6PUThroughAdd = TextKeyPrefix + KeyEffectSS6PUThroughAdd;
-				private const string TextKeyEffectSS6PUMaskMix = TextKeyPrefix + KeyEffectSS6PUMaskMix;
-				private const string TextKeyEffectSS6PUMaskAdd = TextKeyPrefix + KeyEffectSS6PUMaskAdd;
 
 				private const string TextKeyAnimationUnityNativeMix = TextKeyPrefix + KeyAnimationUnityNativeMix;
 				private const string TextKeyAnimationUnityNativeAdd = TextKeyPrefix + KeyAnimationUnityNativeAdd;
@@ -3786,34 +3370,6 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 
-//				/* Obsolete */	private const string PrefsKeyAnimationSS6PUStencilPreDraw = PrefsKeyPrefix + KeyAnimationSS6PUStencilPreDraw;
-//				/* Obsolete */	private const string PrefsKeyAnimationSS6PUStencilDraw = PrefsKeyPrefix + KeyAnimationSS6PUStencilDraw;
-				private const string PrefsKeyAnimationSS6PUThroughStencilPreDraw = PrefsKeyPrefix + KeyAnimationSS6PUThroughStencilPreDraw;
-				private const string PrefsKeyAnimationSS6PUThroughStencilDraw = PrefsKeyPrefix + KeyAnimationSS6PUThroughStencilDraw;
-				private const string PrefsKeyAnimationSS6PUThroughMix = PrefsKeyPrefix + KeyAnimationSS6PUThroughMix;
-				private const string PrefsKeyAnimationSS6PUThroughAdd = PrefsKeyPrefix + KeyAnimationSS6PUThroughAdd;
-				private const string PrefsKeyAnimationSS6PUThroughSub = PrefsKeyPrefix + KeyAnimationSS6PUThroughSub;
-				private const string PrefsKeyAnimationSS6PUThroughMul = PrefsKeyPrefix + KeyAnimationSS6PUThroughMul;
-				private const string PrefsKeyAnimationSS6PUThroughMulNA = PrefsKeyPrefix + KeyAnimationSS6PUThroughMulNA;
-				private const string PrefsKeyAnimationSS6PUThroughScr = PrefsKeyPrefix + KeyAnimationSS6PUThroughScr;
-				private const string PrefsKeyAnimationSS6PUThroughExc = PrefsKeyPrefix + KeyAnimationSS6PUThroughExc;
-				private const string PrefsKeyAnimationSS6PUThroughInv = PrefsKeyPrefix + KeyAnimationSS6PUThroughInv;
-				private const string PrefsKeyAnimationSS6PUMaskStencilPreDraw = PrefsKeyPrefix + KeyAnimationSS6PUMaskStencilPreDraw;
-				private const string PrefsKeyAnimationSS6PUMaskStencilDraw = PrefsKeyPrefix + KeyAnimationSS6PUMaskStencilDraw;
-				private const string PrefsKeyAnimationSS6PUMaskMix = PrefsKeyPrefix + KeyAnimationSS6PUMaskMix;
-				private const string PrefsKeyAnimationSS6PUMaskAdd = PrefsKeyPrefix + KeyAnimationSS6PUMaskAdd;
-				private const string PrefsKeyAnimationSS6PUMaskSub = PrefsKeyPrefix + KeyAnimationSS6PUMaskSub;
-				private const string PrefsKeyAnimationSS6PUMaskMul = PrefsKeyPrefix + KeyAnimationSS6PUMaskMul;
-				private const string PrefsKeyAnimationSS6PUMaskMulNA = PrefsKeyPrefix + KeyAnimationSS6PUMaskMulNA;
-				private const string PrefsKeyAnimationSS6PUMaskScr = PrefsKeyPrefix + KeyAnimationSS6PUMaskScr;
-				private const string PrefsKeyAnimationSS6PUMaskExc = PrefsKeyPrefix + KeyAnimationSS6PUMaskExc;
-				private const string PrefsKeyAnimationSS6PUMaskInv = PrefsKeyPrefix + KeyAnimationSS6PUMaskInv;
-
-				private const string PrefsKeyEffectSS6PUThroughMix = PrefsKeyPrefix + KeyEffectSS6PUThroughMix;
-				private const string PrefsKeyEffectSS6PUThroughAdd = PrefsKeyPrefix + KeyEffectSS6PUThroughAdd;
-				private const string PrefsKeyEffectSS6PUMaskMix = PrefsKeyPrefix + KeyEffectSS6PUMaskMix;
-				private const string PrefsKeyEffectSS6PUMaskAdd = PrefsKeyPrefix + KeyEffectSS6PUMaskAdd;
-
 				private const string PrefsKeyAnimationUnityNativeMix = PrefsKeyPrefix + KeyAnimationUnityNativeMix;
 				private const string PrefsKeyAnimationUnityNativeAdd = PrefsKeyPrefix + KeyAnimationUnityNativeAdd;
 				private const string PrefsKeyAnimationUnityNativeSub = PrefsKeyPrefix + KeyAnimationUnityNativeSub;
@@ -3839,60 +3395,60 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeySkinnedMeshUnityNativeExc = PrefsKeyPrefix + KeySkinnedMeshUnityNativeExc;
 				private const string PrefsKeySkinnedMeshUnityNativeInv = PrefsKeyPrefix + KeySkinnedMeshUnityNativeInv;
 
-				private const string namePathRoot = "Assets";
+				private const string NamePathRoot = "Assets";
+
+				private const string NamePathSubPreset = "SpriteStudio6/Material/UnityNative/";
+
+				internal const string NameFileBodyPresetUnityNativeMix = "Sprite_UnityNative_MIX.mat";
+				internal const string NameFileBodyPresetUnityNativeAdd = "Sprite_UnityNative_ADD.mat";
+				internal const string NameFileBodyPresetUnityNativeSub = "Sprite_UnityNative_SUB.mat";
+				internal const string NameFileBodyPresetUnityNativeMul = "Sprite_UnityNative_MUL.mat";
+				internal const string NameFileBodyPresetUnityNativeMulNA = "Sprite_UnityNative_MUL_NA.mat";
+				internal const string NameFileBodyPresetUnityNativeScr = "Sprite_UnityNative_SCR.mat";
+				internal const string NameFileBodyPresetUnityNativeExc = "Sprite_UnityNative_EXC.mat";
+				internal const string NameFileBodyPresetUnityNativeInv = "Sprite_UnityNative_INV.mat";
+				internal const string NameFileBodyPresetUnityNativeNonBatchMix = "Sprite_UnityNative_NonBatch_MIX.mat";
+				internal const string NameFileBodyPresetUnityNativeNonBatchAdd = "Sprite_UnityNative_NonBatch_ADD.mat";
+				internal const string NameFileBodyPresetUnityNativeNonBatchSub = "Sprite_UnityNative_NonBatch_SUB.mat";
+				internal const string NameFileBodyPresetUnityNativeNonBatchMul = "Sprite_UnityNative_NonBatch_MUL.mat";
+				internal const string NameFileBodyPresetUnityNativeNonBatchMulNA = "Sprite_UnityNative_NonBatch_MUL_NA.mat";
+				internal const string NameFileBodyPresetUnityNativeNonBatchScr = "Sprite_UnityNative_NonBatch_SCR.mat";
+				internal const string NameFileBodyPresetUnityNativeNonBatchExc = "Sprite_UnityNative_NonBatch_EXC.mat";
+				internal const string NameFileBodyPresetUnityNativeNonBatchInv = "Sprite_UnityNative_NonBatch_INV.mat";
+				internal const string NameFileBodyPresetUnityNativeSkinnedMeshMix = "SkinnedMesh_UnityNative_MIX.mat";
+				internal const string NameFileBodyPresetUnityNativeSkinnedMeshAdd = "SkinnedMesh_UnityNative_ADD.mat";
+				internal const string NameFileBodyPresetUnityNativeSkinnedMeshSub = "SkinnedMesh_UnityNative_SUB.mat";
+				internal const string NameFileBodyPresetUnityNativeSkinnedMeshMul = "SkinnedMesh_UnityNative_MUL.mat";
+				internal const string NameFileBodyPresetUnityNativeSkinnedMeshMulNA = "SkinnedMesh_UnityNative_MUL_NA.mat";
+				internal const string NameFileBodyPresetUnityNativeSkinnedMeshScr = "SkinnedMesh_UnityNative_SCR.mat";
+				internal const string NameFileBodyPresetUnityNativeSkinnedMeshExc = "SkinnedMesh_UnityNative_EXC.mat";
+				internal const string NameFileBodyPresetUnityNativeSkinnedMeshInv = "SkinnedMesh_UnityNative_INV.mat";
 
 				private readonly static GroupPresetMaterial Default = new GroupPresetMaterial(
-					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Thru_PreDraw.mat",			/* AnimationSS6PUThroughStencilPreDraw */
-					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Thru_Draw.mat",				/* AnimationSS6PUStencilDraw */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MIX.mat",				/* AnimationSS6PUThroughMix */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_ADD.mat",				/* AnimationSS6PUThroughAdd */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_SUB.mat",				/* AnimationSS6PUThroughSub */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MUL.mat",				/* AnimationSS6PUThroughMul */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_MUL_NA.mat",			/* AnimationSS6PUThroughMulNA */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_SCR.mat",				/* AnimationSS6PUThroughScr */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_EXC.mat",				/* AnimationSS6PUThroughExc */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Thru_INV.mat",				/* AnimationSS6PUThroughInv */
-					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Mask_PreDraw.mat",			/* AnimationSS6PUMaskStencilPreDraw */
-					"SpriteStudio6/Material/SS6PU/Stencil_SpriteStudio6_Mask_Draw.mat",				/* AnimationSS6PUMaskStencilDraw */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MIX.mat",				/* AnimationSS6PUMaskMix */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_ADD.mat",				/* AnimationSS6PUMaskAdd */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_SUB.mat",				/* AnimationSS6PUMaskSub */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MUL.mat",				/* AnimationSS6PUMaskMul */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_MUL_NA.mat",			/* AnimationSS6PUMaskMulNA */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_SCR.mat",				/* AnimationSS6PUMaskScr */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_EXC.mat",				/* AnimationSS6PUMaskExc */
-					"SpriteStudio6/Material/SS6PU/Sprite_SpriteStudio6_Mask_INV.mat",				/* AnimationSS6PUMaskInv */
-
-					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Thru_MIX.mat",				/* EffectSS6PUThroughMix */
-					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Thru_ADD.mat",				/* EffectSS6PUThroughAdd */
-					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Mask_MIX.mat",				/* EffectSS6PUMaskMix */
-					"SpriteStudio6/Material/SS6PU/Effect_SpriteStudio6_Mask_ADD.mat",				/* EffectSS6PUMaskAdd */
-
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MIX.mat",				/* AnimationUnityNativeMix */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_ADD.mat",				/* AnimationUnityNativeAdd */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SUB.mat",				/* AnimationUnityNativeSub */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL.mat",				/* AnimationUnityNativeMul */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL_NA.mat",				/* AnimationUnityNativeMulNA */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SCR.mat",				/* AnimationUnityNativeScr */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_EXC.mat",				/* AnimationUnityNativeExc */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_INV.mat",				/* AnimationUnityNativeInv */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MIX.mat",		/* AnimationUnityNativeNonBatchMix */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_ADD.mat",		/* AnimationUnityNativeNonBatchAdd */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_SUB.mat",		/* AnimationUnityNativeNonBatchSub */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MUL.mat",		/* AnimationUnityNativeNonBatchMul */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MUL_NA.mat",	/* AnimationUnityNativeNonBatchMulNA */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_SCR.mat",		/* AnimationUnityNativeNonBatchScr */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_EXC.mat",		/* AnimationUnityNativeNonBatchExc */
-					"SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_INV.mat",		/* AnimationUnityNativeNonBatchInv */
-
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MIX.mat",			/* SkinnedMeshUnityNativeMix */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_ADD.mat",			/* SkinnedMeshUnityNativeAdd */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_SUB.mat",			/* SkinnedMeshUnityNativeSub */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MUL.mat",			/* SkinnedMeshUnityNativeMul */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MUL_NA.mat",		/* SkinnedMeshUnityNativeMulNA */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_SCR.mat",			/* SkinnedMeshUnityNativeScr */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_EXC.mat",			/* SkinnedMeshUnityNativeExc */
-					"SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_INV.mat"			/* SkinnedMeshUnityNativeInv */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeMix,							/* AnimationUnityNativeMix */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeAdd,							/* AnimationUnityNativeAdd */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSub,							/* AnimationUnityNativeSub */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeMul,							/* AnimationUnityNativeMul */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeMulNA,							/* AnimationUnityNativeMulNA */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeScr,							/* AnimationUnityNativeScr */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeExc,							/* AnimationUnityNativeExc */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeInv,							/* AnimationUnityNativeInv */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchMix,					/* AnimationUnityNativeNonBatchMix */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchAdd,					/* AnimationUnityNativeNonBatchAdd */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchSub,					/* AnimationUnityNativeNonBatchSub */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchMul,					/* AnimationUnityNativeNonBatchMul */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchMulNA,					/* AnimationUnityNativeNonBatchMulNA */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchScr,					/* AnimationUnityNativeNonBatchScr */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchExc,					/* AnimationUnityNativeNonBatchExc */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchInv,					/* AnimationUnityNativeNonBatchInv */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshMix,				/* SkinnedMeshUnityNativeMix */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshAdd,				/* SkinnedMeshUnityNativeAdd */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshSub,				/* SkinnedMeshUnityNativeSub */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshMul,				/* SkinnedMeshUnityNativeMul */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshMulNA,				/* SkinnedMeshUnityNativeMulNA */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshScr,				/* SkinnedMeshUnityNativeScr */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshExc,				/* SkinnedMeshUnityNativeExc */
+					NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshInv					/* SkinnedMeshUnityNativeInv */
 				);
 				#endregion Enums & Constants
 			}

@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -413,8 +414,6 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 				return(true);
 
-//			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-//			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 				break;
 
@@ -422,8 +421,6 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 				return(true);
 
-//			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-//			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 				break;
 

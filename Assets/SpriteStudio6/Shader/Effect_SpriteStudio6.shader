@@ -1,7 +1,8 @@
 //
 //	SpriteStudio6 Player for Unity
 //
-//	Copyright(C) Web Technology Corp.
+//	Copyright(C) 1997-2021 Web Technology Corp.
+//	Copyright(C) CRI Middleware Co., Ltd.
 //	All rights reserved.
 //
 Shader "Custom/SpriteStudio6/SS6PU/Effect"
@@ -20,6 +21,9 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect"
 
 		[Toggle(PS_NOT_DISCARD)] _NotDiscardPixel("Not Discard Pixel", Float) = 0
 		[Toggle(PS_OUTPUT_PMA)] _OutputPixelPMA("Output PreMultiplied Alpha", Float) = 0
+
+		[HideInInspector] _ArgumentFs00("Argument Fs00", Vector) = (0,0,0,0)
+		[HideInInspector] _ParameterFs00("Parameter Fs00", Vector) = (0,0,0,0)
 	}
 
 	SubShader
@@ -39,7 +43,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect"
 			Stencil
 			{
 				Ref 0
-				Comp[_CompareStencil]
+				Comp [_CompareStencil]
 				Pass Keep
 			}
 			BlendOp [_BlendOperation]
@@ -52,9 +56,10 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect"
 			#pragma multi_compile _ ETC1_EXTERNAL_ALPHA
 			#include "UnityCG.cginc"
 
-			#define RESTRICT_SHADER_MODEL_3
+//			#define RESTRICT_SHADER_MODEL_3
 			#pragma multi_compile _ PS_NOT_DISCARD
 			#pragma multi_compile _ PS_OUTPUT_PMA
+			#include "Base/Shader_Lib_SpriteStudio6.cginc"
 			#include "Base/Shader_Data_SpriteStudio6.cginc"
 			#include "Base/ShaderVertex_Effect_SpriteStudio6.cginc"
 			#include "Base/ShaderPixel_Effect_SpriteStudio6.cginc"

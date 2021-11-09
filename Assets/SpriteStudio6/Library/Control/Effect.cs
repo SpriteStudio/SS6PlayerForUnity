@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -317,8 +318,9 @@ public static partial class Library_SpriteStudio6
 				internal Vector3[] CoordinateTransformDraw;
 				internal Vector3[] CoordinateDraw;
 				internal Color32[] ColorVertexDraw;
-				internal Vector2[] ParameterBlendDraw;
-				internal Vector2[] UVTextureDraw;
+				internal Vector4[] UVTextureDraw;
+				internal Vector4[] UVMaxMinDraw;
+				internal Vector4[] UVAverageDraw;
 				internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDraw;
 
 				internal int FrameFull
@@ -364,8 +366,9 @@ public static partial class Library_SpriteStudio6
 					CoordinateTransformDraw = null;
 					CoordinateDraw = null;
 					ColorVertexDraw = null;
-					ParameterBlendDraw = null;
 					UVTextureDraw = null;
+					UVMaxMinDraw = null;
+					UVAverageDraw = null;
 					ChainDraw = null;
 				}
 
@@ -592,11 +595,15 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{
+							/* MEMO: "Effect" uses only standard shaders. */
 							DataCellApply.IndexCellMap = indexCellMap;
 							DataCellApply.IndexCell = indexCell;
 							MaterialDraw = instanceRoot.MaterialGet(	indexCellMap,
 																		DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget,
-																		masking
+																		masking,
+																		null,
+																		null,
+																		true
 																	);
 
 							float pivotXCell = dataCellMap.TableCell[indexCell].Pivot.x;
@@ -634,34 +641,42 @@ public static partial class Library_SpriteStudio6
 							coordinateRDy = (sizeYTexture - dataCellMap.TableCell[indexCell].Rectangle.yMax) / sizeYTexture;	/* D */
 							if(null == UVTextureDraw)
 							{
-								UVTextureDraw = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+								UVTextureDraw = new Vector4[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
 								if(null == UVTextureDraw)
 								{
 									goto CellPresetParticle_ErrorEnd;
 								}
 							}
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LU].x = 
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LD].x = coordinateLUx;
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LU].y = 
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RU].y = coordinateLUy;
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RU].x = 
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RD].x = coordinateRDx;
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RD].y = 
-							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LD].y = coordinateRDy;
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LU] = new Vector4(coordinateLUx, coordinateLUy, 0.0f, 0.0f);
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.LD] = new Vector4(coordinateLUx, coordinateRDy, 0.0f, 0.0f);
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RU] = new Vector4(coordinateRDx, coordinateLUy, 0.0f, 0.0f);
+							UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.RD] = new Vector4(coordinateRDx, coordinateRDy, 0.0f, 0.0f);
 
-							if(null == ParameterBlendDraw)
+							if(null == UVMaxMinDraw)
 							{
-								ParameterBlendDraw = new Vector2[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
-								if(null == ParameterBlendDraw)
+								UVMaxMinDraw = new Vector4[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+								if(null == UVMaxMinDraw)
 								{
 									goto CellPresetParticle_ErrorEnd;
 								}
-
-								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.LU] = 
-								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.RU] = 
-								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.RD] = 
-								ParameterBlendDraw[(int)Library_SpriteStudio6.KindVertex.LD] = Vector2.zero;
 							}
+							UVMaxMinDraw[(int)Library_SpriteStudio6.KindVertex.LU] = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+							UVMaxMinDraw[(int)Library_SpriteStudio6.KindVertex.LD] = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+							UVMaxMinDraw[(int)Library_SpriteStudio6.KindVertex.RU] = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+							UVMaxMinDraw[(int)Library_SpriteStudio6.KindVertex.RD] = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+
+							if(null == UVAverageDraw)
+							{
+								UVAverageDraw = new Vector4[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2];
+								if(null == UVAverageDraw)
+								{
+									goto CellPresetParticle_ErrorEnd;
+								}
+							}
+							UVAverageDraw[(int)Library_SpriteStudio6.KindVertex.LU] = new Vector4(0.5f, 0.5f, 0.0f, 0.0f);
+							UVAverageDraw[(int)Library_SpriteStudio6.KindVertex.LD] = new Vector4(0.5f, 0.5f, 0.0f, 0.0f);
+							UVAverageDraw[(int)Library_SpriteStudio6.KindVertex.RU] = new Vector4(0.5f, 0.5f, 0.0f, 0.0f);
+							UVAverageDraw[(int)Library_SpriteStudio6.KindVertex.RD] = new Vector4(0.5f, 0.5f, 0.0f, 0.0f);
 						}
 					}
 
@@ -673,7 +688,7 @@ public static partial class Library_SpriteStudio6
 					return(false);
 				}
 
-				internal bool DrawParticle(Library_SpriteStudio6.Draw.Cluster clusterDraw, ref Matrix4x4 matrixTransform, ref Color colorVertex)
+				internal bool DrawParticle(Script_SpriteStudio6_RootEffect instanceRoot, ref Matrix4x4 matrixTransform, ref Color colorVertex)
 				{
 					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.LU] = 
 					ColorVertexDraw[(int)Library_SpriteStudio6.KindVertex.RU] = 
@@ -684,14 +699,17 @@ public static partial class Library_SpriteStudio6
 					{
 						CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(CoordinateDraw[i]);
 					}
-					clusterDraw.VertexAdd(	ChainDraw,
-											(int)Library_SpriteStudio6.KindVertex.TERMINATOR2,
-											CoordinateTransformDraw,
-											ColorVertexDraw,
-											UVTextureDraw,
-											ParameterBlendDraw,
-											MaterialDraw
-										);
+					instanceRoot.ClusterDraw.VertexAdd(	ChainDraw,
+														false,	/* MEMO: "Effect" is not support "Shader" attribute, so "Mesh-Batching" is always enabled. */
+														MaterialDraw,
+														ConstantShaderDummy,	/* null, */	/* No-Shader Constants */
+														(int)Library_SpriteStudio6.KindVertex.TERMINATOR2,
+														CoordinateTransformDraw,
+														ColorVertexDraw,
+														UVTextureDraw,
+														UVMaxMinDraw,
+														UVAverageDraw
+													);
 
 					return(true);
 				}
@@ -709,6 +727,8 @@ public static partial class Library_SpriteStudio6
 
 					CLEAR = 0x00000000
 				}
+
+				private readonly static Library_SpriteStudio6.Control.Animation.Parts.BufferParameterSprite.BufferUniformShader ConstantShaderDummy = new Animation.Parts.BufferParameterSprite.BufferUniformShader();
 				#endregion Classes, Structs & Interfaces
 			}
 
@@ -809,7 +829,7 @@ public static partial class Library_SpriteStudio6
 																								);
 							Color colorVertex = ColorVertex;
 							colorVertex.a *= instanceRoot.RateOpacity;
-							emitter.DrawParticle(instanceRoot.ClusterDraw, ref matrixTransform, ref colorVertex);
+							emitter.DrawParticle(instanceRoot, ref matrixTransform, ref colorVertex);
 						}
 					}
 
@@ -1024,7 +1044,8 @@ public static partial class Library_SpriteStudio6
 							float eFrame = (vectorPosition.magnitude / gravityPower) * 0.9f;
 							float gFrame = (frameRelative >= (int)eFrame) ? (eFrame * 0.9f) : frameRelative;
 
-							vectorNormal = vectorNormal * gravityPower * gFrame;
+//							vectorNormal = vectorNormal * gravityPower * gFrame;
+							vectorNormal *= gravityPower * gFrame;
 							PositionX += vectorNormal.x;
 							PositionY += vectorNormal.y;
 
@@ -1037,7 +1058,8 @@ public static partial class Library_SpriteStudio6
 						else
 						{
 							/* MEMO: In the case negative power, Simply repulsion. Attenuation due to distance is not taken into account. */
-							vectorNormal = vectorNormal * gravityPower * frameRelative;
+//							vectorNormal = vectorNormal * gravityPower * frameRelative;
+							vectorNormal *= gravityPower * frameRelative;
 							PositionX += vectorNormal.x;
 							PositionY += vectorNormal.y;
 						}
