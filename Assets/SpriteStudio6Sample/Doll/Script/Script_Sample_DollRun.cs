@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -155,9 +156,9 @@ public class Script_Sample_DollRun : MonoBehaviour
 					ScriptRoot.AnimationPlay((int)KindTrack.TRANSITION_LOWER, indexAnimation, 0);
 
 					/* MEMO: Connect transition track to current animation's track after destination animation is successfully played. */
-					/*       Set the transtion track to "indexTrackSlave".                                                             */
+					/*       Set the transtion track to "indexTrackSecondary".                                                         */
 					/* MEMO: Transition ends at set time(TimeAnimationTransition).                                     */
-					/*       At the end of the transition, transition track's playing state will move to master track. */
+					/*       At the end of the transition, transition track's playing state will move to primary track. */
 					/* MEMO: Transition while animating when current animation or destination animation is not in the pause state. */
 					ScriptRoot.TrackTransition(	(int)KindTrack.BODY_LOWER,
 												(int)KindTrack.TRANSITION_LOWER,
@@ -165,7 +166,7 @@ public class Script_Sample_DollRun : MonoBehaviour
 												false	/* Ignored if destination animation is not in pause state. */
 											);
 
-					/* MEMO: If you want timing of transition end, set callback function to "FunctionPlayEndTrack [master track's index]" of ScriptRoot. */
+					/* MEMO: If you want timing of transition end, set callback function to "FunctionPlayEndTrack [primary track's index]" of ScriptRoot. */
 					ScriptRoot.FunctionPlayEndTrack[(int)KindTrack.BODY_LOWER] = FunctionPlayEndTrackBody;
 
 				}
@@ -252,15 +253,15 @@ public class Script_Sample_DollRun : MonoBehaviour
 
 	private void FunctionPlayEndTrackBody(	Script_SpriteStudio6_Root scriptRoot,
 											int indexTrackPlay,
-											int indexTrackSlave,
+											int indexTrackSecondary,
 											int indexAnimation,
-											int indexAnimationSlave
+											int indexAnimationSecondary
 										)
 	{
-		/* MEMO: Same function is called when transition end and track play-end.                                                           */
-		/*       As method to distinguish them, at the end of the transition,                                                              */
-		/*        "indexTrackSlave" is set to "transition track index"  and "indexAnimationSlave" is set to "destination animation index". */
-		/*       (In case of playback end of track, both are set to -1)                                                                    */
+		/* MEMO: Same function is called when transition end and track play-end.                                                                   */
+		/*       As method to distinguish them, at the end of the transition,                                                                      */
+		/*        "indexTrackSecondary" is set to "transition track index"  and "indexAnimationSecondary" is set to "destination animation index". */
+		/*       (In case of playback end of track, both are set to -1)                                                                            */
 		/* MEMO: When "track play end" and "transition end" occur simultaneously, callbacks will be execute in following order. */
 		/*       1. Transition end                                                                                              */
 		/*       2. Track play end                                                                                              */

@@ -4,8 +4,8 @@
 * 
 *	SpriteStudio6 Player for Unity
 * 
-*	Copyright(C) Web Technology Corp. 
-*	All rights reserved.
+*	Copyright(C) 1997-2021 Web Technology Corp.
+*	Copyright(C) CRI Middleware Co., Ltd.
 * 
 * ------------------------------------------
 * MEMO:

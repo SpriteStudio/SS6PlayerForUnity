@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -12,6 +13,8 @@ MonoBehaviour:
   m_Name: da_BitmapFontNumeric_Complex
   m_EditorClassIdentifier: 
   Version: 65792
+  Name: BitmapFontNumeric_Complex
+  DataProject: {fileID: 11400000, guid: 56d54e508e9c9934180f6589cc62f43c, type: 2}
   TableMaterial:
   - {fileID: 2100000, guid: f0be25fe18230594788a326eec5239c1, type: 2}
   - {fileID: 2100000, guid: 8f80675c4e8264b449c628fc8618a111, type: 2}
@@ -257,7 +260,7 @@ MonoBehaviour:
     ModeSort: 0
     TableLabel: []
     TableParts:
-    - StatusParts: 1089732608
+    - StatusParts: 1089781760
       Status:
         TypePack: 1
         TableCodeValue:
@@ -360,7 +363,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -457,7 +468,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -554,7 +573,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -651,7 +678,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -748,7 +783,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -845,7 +888,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -942,7 +993,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1039,7 +1098,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1136,6 +1203,14 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
   - Name: Vibration
     FramePerSecond: 30
     CountFrame: 30
@@ -1148,7 +1223,7 @@ MonoBehaviour:
     ModeSort: 0
     TableLabel: []
     TableParts:
-    - StatusParts: 1089732608
+    - StatusParts: 1089781760
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1251,7 +1326,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1351,7 +1434,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1451,7 +1542,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1551,7 +1650,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1651,7 +1758,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1751,7 +1866,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1851,7 +1974,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -1951,7 +2082,15 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
-    - StatusParts: 1090256896
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+    - StatusParts: 1090306048
       Status:
         TypePack: 1
         TableCodeValue:
@@ -2051,6 +2190,14 @@ MonoBehaviour:
         TableValue: []
         CountVertexMesh: 0
         TableIndexVertex: 
+      Shader:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
+      Signal:
+        TypePack: 1
+        TableCodeValue: []
+        TableValue: []
   TableAnimationPartsSetup:
   - UserData:
       Flags: 0

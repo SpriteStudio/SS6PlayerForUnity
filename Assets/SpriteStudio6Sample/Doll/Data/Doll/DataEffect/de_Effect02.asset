@@ -3,15 +3,18 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 854a5a324e3218743b933d869553c231, type: 3}
   m_Name: de_Effect02
   m_EditorClassIdentifier: 
-  Version: 65537
+  Version: 65538
+  Name: Effect02
+  DataProject: {fileID: 11400000, guid: 555776ec47e51fc4ab5f9a9607fa88d2, type: 2}
   TableMaterial:
   - {fileID: 2100000, guid: 6a5d8f29bfc294845a2702d17e7386de, type: 2}
   - {fileID: 2100000, guid: 6da2d6f6daa0a124599b490445f59788, type: 2}

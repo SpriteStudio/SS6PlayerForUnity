@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 #define ADD_USERDATA_FUNCTION_UNITYNATIVE
@@ -383,7 +384,6 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 	public class ControlSSPlayerBase : MonoBehaviour
 	{
 		// Subpath in "Resources" of animation-prefab
-		[SerializeField]
 		public string[] FileNameList;
 
 		// List of the currently displayed animation object
