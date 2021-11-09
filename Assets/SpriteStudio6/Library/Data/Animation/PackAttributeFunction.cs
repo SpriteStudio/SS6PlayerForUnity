@@ -1,9 +1,12 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+// #define TEST_PERFORMANCE_SPEEDUP
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -375,6 +378,56 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
+				public static void BootUpFunctionShader(ContainerShader container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionShader;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionShader;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionShader;
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionSignal(ContainerSignal container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionSignal;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
+							break;
+
+						default:
+							break;
+					}
+				}
+
 				public static bool DictionaryBootUp(int indexAnimation, int indexParts, Script_SpriteStudio6_DataAnimation dataAnimation)
 				{
 					bool flagSuccess = true;
@@ -398,6 +451,113 @@ public static partial class Library_SpriteStudio6
 
 					return(flagSuccess);
 				}
+
+#if TEST_PERFORMANCE_SPEEDUP
+				/* MEMO: Those functions is used inside the each attributes' decoding function. */
+				private static int IndexSearcLimitRange(	ref int indexMinimum,
+															ref int indexMaximum,
+															int frame,
+															int frameCache,
+															int indexCache,
+															int[] tableStatus,
+															int countTableStatus,
+															int bitMaskFrameKey
+													)
+				{
+					/* MEMO: When previous result is cached, limit scope of the binary search (for reducing */
+					/*         number of searches). And, survey the nearest key-data.                       */
+					int index = indexCache;
+					if(0 <= index)
+					{
+						if(frameCache < frame)
+						{	/* Behind part */
+							indexMinimum = index;
+							if((indexMinimum + 1) < countTableStatus)
+							{
+								indexMinimum++;
+
+								frameCache = tableStatus[indexMinimum] & bitMaskFrameKey;	/* recycle "frameCache" */
+								if(frame == frameCache)
+								{	/* Hit nearest key */
+									/* index = */	indexMaximum = indexMinimum;
+
+									return(indexMinimum);
+								}
+								if(frame < frameCache)
+								{	/* Hit nearest key */
+									indexMinimum = indexMaximum = index;
+
+									return(index);
+								}
+							}
+						}
+						else
+						{	/* later part */
+							if(frame == frameCache)
+							{	/* Hit just key */
+								indexMaximum = indexMinimum = indexCache;
+
+								return(indexMinimum);
+							}
+
+							indexMaximum = index;
+							if(0 <= (indexMaximum - 1))
+							{
+								indexMaximum--;
+								frameCache = tableStatus[indexMaximum] & bitMaskFrameKey;	/* recycle "frameCache" */
+								if(frame >= frameCache)
+								{	/* Hit nearest key */
+									indexMinimum = indexMaximum = index;
+
+									return(index);
+								}
+							}
+						}
+					}
+
+					return(-1);
+				}
+				private static int IndexSearchTraverse(	int frame,
+														int indexMinimum,
+														int indexMaximum,
+														int[] tableStatus,
+														int countTableStatus,
+														int bitMaskFrameKey
+													)
+				{
+					int index;
+					int frameKey;
+					
+//					while(indexMinimum != indexMaximum)
+					while(indexMinimum < indexMaximum)
+					{
+						index = indexMinimum + indexMaximum;
+						index = (index >> 1) + (index & 1);	/* (index / 2) + (index % 2) */
+						frameKey = tableStatus[index] & bitMaskFrameKey;
+						if(frame == frameKey)
+						{
+							indexMinimum = indexMaximum = index;
+
+//							break;	/* while-Loop */
+							return(indexMinimum);
+						}
+						else
+						{
+//							if((frame < frameKey) || (-1 == frameKey))
+							if(frame < frameKey)
+							{
+								indexMaximum = index - 1;
+							}
+							else
+							{
+								indexMinimum = index;
+							}
+						}
+					}
+
+					return(indexMinimum);
+				}
+#endif
 				#endregion Functions
 			}
 		}

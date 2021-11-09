@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 // #define ATTRIBUTE_DUPLICATE_DEEP
@@ -106,6 +107,11 @@ public static partial class Library_SpriteStudio6
 				public readonly static Effect DefaultEffect = new Effect(Effect.FlagBit.CLEAR, 0, 1.0f);
 
 				public readonly static Deform DefaultDeform = new Deform(new Vector2[0]);
+
+				internal readonly static Vector4 TableParameterShaderDefault = Vector4.zero;
+				public readonly static Shader DefaultShader = new Shader(string.Empty, ref TableParameterShaderDefault);
+
+				public readonly static Signal DefaultSignal = new Signal(new Signal.Command[0]);
 				#endregion Enums & Constants
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -950,6 +956,440 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Enums & Constants */
 					#region Enums & Constants
+					#endregion Enums & Constants
+				}
+
+				[System.Serializable]
+				public struct Shader
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public string ID;
+					public Vector4 Parameter;
+
+					public bool IsValid
+					{
+						get
+						{
+							return(!(true == string.IsNullOrEmpty(ID)));	/* ? false : true */
+						}
+					}
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public Shader(string id, ref Vector4 paramater)
+					{
+						ID = id;
+						Parameter = paramater;
+					}
+
+					public void CleanUp()
+					{
+						ID = string.Empty;
+						Parameter = Vector4.zero;
+					}
+
+					public bool BootUp()
+					{
+						CleanUp();
+
+						return(true);
+					}
+
+					public void Duplicate(Shader original)
+					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
+						ID = string.Copy(original.ID);
+						if(null == original.Parameter)
+						{
+							Parameter = null;
+						}
+						else
+						{
+							Parameter = new float[CountParameter];
+							for(int i=0; i<CountParameter; i++)
+							{
+								Parameter[i] = original.Parameter[i];
+							}
+						}
+#else
+						/* MEMO: Shallow copy */
+						ID = original.ID;
+						Parameter = original.Parameter;
+#endif
+					}
+
+					public override bool Equals(System.Object target)
+					{
+						if((null == target) || (GetType() != target.GetType()))
+						{
+							return(false);
+						}
+
+						Shader targetData = (Shader)target;
+						if(ID != targetData.ID)
+						{
+							return(false);
+						}
+
+						if(Parameter != targetData.Parameter)
+						{
+							return(false);
+						}
+
+						return(true);
+					}
+
+					public override int GetHashCode()
+					{
+						return(base.GetHashCode());
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
+					public const int CountParameter = 4;			/* 持ち得るパラメータの最大値 */
+					#endregion Enums & Constants
+				}
+
+				[System.Serializable]
+				public struct Signal
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public Command[] TableCommand;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public Signal(Command[] tableValue)
+					{
+						TableCommand = tableValue;
+					}
+
+					public void CleanUp()
+					{
+						TableCommand = null;
+					}
+
+					public bool BootUp(int countCommand)
+					{
+						CleanUp();
+
+						TableCommand = new Command[countCommand];
+						if(null == TableCommand)
+						{
+							return(false);
+						}
+						for(int i=0; i<countCommand; i++)
+						{
+							TableCommand[i].CleanUp();
+						}
+
+						return(true);
+					}
+
+					public void Duplicate(Signal original)
+					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						/* MEMO: Deep copy */
+						if(null == original.TableValue)
+						{
+							TableCommand = new Command[0];
+						}
+						else
+						{
+							int countCommand = original.TableCommand;
+							TableValue = new Command[countCommand];
+							for(int i=0; i<countCommand; i++)
+							{
+								TableCommand[i].Duplicate(original.TableCommand[i]);
+							}
+						}
+#else
+						/* MEMO: Shallow copy */
+						TableCommand = original.TableCommand;
+#endif
+					}
+
+					public override bool Equals(System.Object target)
+					{
+						return(false);
+					}
+
+					public override int GetHashCode()
+					{
+						return(base.GetHashCode());
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
+					[System.Serializable]
+					public struct Command
+					{
+						/* ----------------------------------------------- Variables & Properties */
+						#region Variables & Properties
+						public FlagBit Flags;
+#if SIGNAL_ID_STRING
+						public string ID;
+#else
+						public int ID;
+#endif
+						public string Note;
+						public Parameter[] TableParameter;
+
+						public bool IsValid
+						{
+							get
+							{
+								return(0 != (Flags & FlagBit.VALID));	/* ? true : false */
+							}
+						}
+						public bool IsActive
+						{
+							get
+							{
+								return(0 != (Flags & FlagBit.ACTIVE));	/* ? true : false */
+							}
+						}
+						#endregion Variables & Properties
+
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public void CleanUp()
+						{
+							Flags = FlagBit.CLEAR;
+#if SIGNAL_ID_STRING
+							ID = string.Empty;
+#else
+							ID = -1;
+#endif
+							Note = string.Empty;
+							TableParameter = null;
+						}
+
+						public void Duplicate(Command original)
+						{
+#if ATTRIBUTE_DUPLICATE_DEEP
+							/* MEMO: Deep copy */
+							Flags = original.Flags;
+							ID = string.Copy(original.ID);
+							Note = string.Copy(original.Note);
+							if(null == original.TableParameter)
+							{
+								TableParameter = null;
+							}
+							else
+							{
+								int count = original.TableParameter.Length;
+								TableParameter = new Parameter[count];
+								for(int i=0; i<count; i++)
+								{
+									TableParameter[i].Duplicate(original.TableParameter[i]);
+								}
+							}
+#else
+							/* MEMO: Shallow copy */
+							Flags = original.Flags;
+							ID = original.ID;
+							Note = original.Note;
+							TableParameter = original.TableParameter;
+#endif
+						}
+
+						public bool BootUp(int countParameter)
+						{
+							CleanUp();
+
+							TableParameter = new Parameter[countParameter];
+							if(null == TableParameter)
+							{
+								return(false);
+							}
+							for(int i=0; i<countParameter; i++)
+							{
+								TableParameter[i].CleanUp();
+							}
+
+							return(true);
+						}
+						#endregion Functions
+
+						/* ----------------------------------------------- Enums & Constants */
+						#region Enums & Constants
+						[System.Flags]
+						public enum FlagBit
+						{
+							VALID = 0x40000000,
+							ACTIVE= 0x20000000,
+
+							CLEAR = 0x00000000,
+						}
+						#endregion Enums & Constants
+
+						/* ----------------------------------------------- Classes, Structs & Interfaces */
+						#region Classes, Structs & Interfaces
+						[System.Serializable]
+						public struct Parameter
+						{
+							/* ----------------------------------------------- Variables & Properties */
+							#region Variables & Properties
+#if SIGNAL_ID_STRING
+							public string ID;
+#else
+							public int ID;
+#endif
+							public KindType Type;
+							public string Data;
+
+							public bool IsValid
+							{
+								get
+								{
+									return(KindType.ERROR != Type);	/* ? true : false */
+								}
+							}
+
+							public bool ValueBool
+							{
+								get
+								{
+									if(KindType.BOOL != Type)
+									{
+										return(false);
+									}
+
+									int valueInt;
+									if(false == int.TryParse(Data, out valueInt))
+									{
+										return(false);
+									}
+									return(0 != valueInt);	/* ? true  : false */
+								}
+							}
+
+							public int ValueIndex
+							{
+								get
+								{
+									if(KindType.INDEX != Type)
+									{
+										return(-1);
+									}
+
+									int valueInt;
+									if(false == int.TryParse(Data, out valueInt))
+									{
+										return(-1);
+									}
+									return(valueInt);
+								}
+							}
+
+							public int ValueInteger
+							{
+								get
+								{
+									if(KindType.INTEGER != Type)
+									{
+										return(-1);
+									}
+
+									int valueInt;
+									if(false == int.TryParse(Data, out valueInt))
+									{
+										return(-1);
+									}
+									return(valueInt);
+								}
+							}
+
+							public float ValueFloating
+							{
+								get
+								{
+									if(KindType.INTEGER != Type)
+									{
+										return(-1);
+									}
+
+									float valueFloat;
+									if(false == float.TryParse(Data, out valueFloat))
+									{
+										return(-1);
+									}
+									return(valueFloat);
+								}
+							}
+
+							public string ValueText
+							{
+								get
+								{
+									if(KindType.TEXT != Type)
+									{
+										return(null);
+									}
+									return(Data);
+								}
+							}
+
+							#endregion Variables & Properties
+
+							/* ----------------------------------------------- Functions */
+							#region Functions
+							public void CleanUp()
+							{
+#if SIGNAL_ID_STRING
+								ID = string.Empty;
+#else
+								ID = -1;
+#endif
+								Type = KindType.ERROR;
+								Data = string.Empty;
+							}
+
+							public void Duplicate(Parameter original)
+							{
+#if ATTRIBUTE_DUPLICATE_DEEP
+								/* MEMO: Deep copy */
+								ID = original.ID;
+								Type = original.Type;
+								Data = string.Copy(original.Data);
+#else
+								/* MEMO: Shallow copy */
+								ID = original.ID;
+								Type = original.Type;
+								Data = original.Data;
+#endif
+							}
+							#endregion Functions
+
+							/* ----------------------------------------------- Enums & Constants */
+							#region Enums & Constants
+							public enum KindType
+							{
+								ERROR = -1,
+
+								BOOL = 0,	/* Reserved. */
+								INDEX,
+								INTEGER,
+								FLOATING,
+								TEXT,	/* Reserved. */
+
+								TERMINATOR
+							}
+							#endregion Enums & Constants
+
+							/* ----------------------------------------------- Classes, Structs & Interfaces */
+							#region Classes, Structs & Interfaces
+							#endregion Classes, Structs & Interfaces
+						}
+						#endregion Classes, Structs & Interfaces
+					}
 					#endregion Enums & Constants
 				}
 				#endregion Classes, Structs & Interfaces

@@ -1,45 +1,45 @@
 //
 //	SpriteStudio6 Player for Unity
 //
-//	Copyright(C) Web Technology Corp.
+//	Copyright(C) 1997-2021 Web Technology Corp.
+//	Copyright(C) CRI Middleware Co., Ltd.
 //	All rights reserved.
 //
-#if defined(RESTRICT_SHADER_MODEL_3)
-/* MEMO: ".x" is not used, now.  */
-static const float4 _OverlayParameter_Mix = { 1.0f, 1.0f, 0.0f, 1.0f };
-static const float4 _OverlayParameter_Add = { 1.0f, 0.0f, 0.0f, 1.0f };
-static const float4 _OverlayParameter_Sub = { 1.0f, 0.0f, 0.0f, -1.0f };
-static const float4 _OverlayParameter_Mul = { 1.0f, 1.0f, 1.0f, 1.0f };
-// #else
-#endif
+
+/* Static-Datas for "Parts-Color" */
+VERTEX_STATICDATA_PARTSCOLOR;
 
 InputPS VS_main(InputVS input)
 {
-	InputPS	output;
-	float4	temp;
-	float indexBlend = floor(input.texcoord1.x);
+	InputPS output;
+	float4 temp;
+	float indexBlend = floor(input.texcoord.z);
 
+	/* Set Texture00-UV */
 	temp.xy = input.texcoord.xy;
 	temp.z = indexBlend;
 	temp.w = 0.0f;
 	output.Texture00UV = temp;
 
+	/* MEMO: "VertexSetCellAuxiliary" is a fixed process to set auxiliary data of "Cell"(UV-coordinate). */
+	VertexSetCellAuxiliary(output, input);
+
+	/* Set "Parts-Color" parameter & Argument for Vetex-Shader */
 	temp = input.color;
 	output.ColorMain = temp;
 	output.ColorOverlay = temp;	/* Unused */
 
-#if defined(RESTRICT_SHADER_MODEL_3)
-	output.ParameterOverlay = (2.0f > indexBlend)
-								? ((1.0f > indexBlend) ? _OverlayParameter_Mix : _OverlayParameter_Add)
-								: ((3.0f > indexBlend) ? _OverlayParameter_Sub : _OverlayParameter_Mul);
-// #else
-#endif
+	/* MEMO: For calculate "Parts-Color" in Pixel-Shader, Need to run "VertexSetPartsColor". */
+	/*       At the same time, set ÅhArgumentVs00"(uniform for Vertex-Shader).               */
+	float4 argumentVs00;
+	VertexSetPartsColor(output, argumentVs00, indexBlend, input.texcoord.w);
 
+	/* Set Draw-Position */
 	temp = input.vertex;
 	temp = UnityObjectToClipPos(temp);
-//	temp = mul(UNITY_MATRIX_VP, temp);
 	output.PositionDraw = temp;
 	output.Position = temp;
 
+	/* Finalize */
 	return(output);
 }

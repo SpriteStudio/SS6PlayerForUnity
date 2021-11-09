@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -154,6 +155,7 @@ public partial class Script_SpriteStudio6_Root
 	//! Get "AdditionalColor" Parameter
 	/*!
 	@param	
+		(none)
 	@retval	Return-Value
 		"AdditionalColor" Setting Buffer<br>
 		null == No-set(Not created)

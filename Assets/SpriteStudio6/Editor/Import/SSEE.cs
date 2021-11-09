@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -1123,6 +1124,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					dataEffect.Version = Script_SpriteStudio6_DataEffect.KindVersion.SUPPORT_LATEST;
+					dataEffect.Name = string.Copy(informationSSEE.NameFileBody);
+					dataEffect.DataProject = informationSSPJ.DataProjectSS6PU.TableData[0];
+
 					dataEffect.TableParts = informationSSEE.TablePartsSS6PU;
 					dataEffect.TableEmitter = informationSSEE.TableEmitterSS6PU;
 					dataEffect.TableIndexEmitterOrderDraw = informationSSEE.TableIndexEmitterOrderDrawSS6PU;
@@ -1134,8 +1138,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					dataEffect.ScaleLayout = informationSSEE.ScaleLayout;
 					dataEffect.VersionRenderer = informationSSEE.VersionRenderer;
 					dataEffect.CountMaxParticle = 0;
-
-					dataEffect.TableMaterial = informationSSPJ.TableMaterialEffectSS6PU;
 
 					EditorUtility.SetDirty(dataEffect);
 					AssetDatabase.SaveAssets();
@@ -1219,7 +1221,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								receiveShadows = meshRenderer.receiveShadows;
 								motionVectorGenerationMode = meshRenderer.motionVectorGenerationMode;
 								allowOcclusionWhenDynamic = meshRenderer.allowOcclusionWhenDynamic;
-								lightmapStatic = (0 != (GameObjectUtility.GetStaticEditorFlags(gameObjectRoot) & StaticEditorFlags.LightmapStatic)) ? true : false;
+								lightmapStatic = (0 != (GameObjectUtility.GetStaticEditorFlags(gameObjectRoot) & StaticEditorFlags.ContributeGI)) ? true : false;
 								lightmapIndex = meshRenderer.lightmapIndex;
 								lightmapScaleOffset = meshRenderer.lightmapScaleOffset;
 								lightProbeProxyVolumeOverride = meshRenderer.lightProbeProxyVolumeOverride;
@@ -1253,8 +1255,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Datas Set */
 					scriptRoot.DataCellMap = informationSSPJ.DataCellMapSS6PU.TableData[0];
 					scriptRoot.DataEffect = informationSSEE.DataEffectSS6PU.TableData[0];
-					scriptRoot.TableMaterial = informationSSPJ.TableMaterialEffectSS6PU;
-
 					scriptRoot.LimitParticleDraw = limitParticleLimit;
 					scriptRoot.FlagHideForce = flagHideForce;
 					scriptRoot.RateTime = rateTime;
@@ -1274,7 +1274,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								meshRenderer.allowOcclusionWhenDynamic = allowOcclusionWhenDynamic;
 								StaticEditorFlags staticFlag = GameObjectUtility.GetStaticEditorFlags(gameObjectRoot);
 								GameObjectUtility.SetStaticEditorFlags(	gameObjectRoot,
-																		(true == lightmapStatic) ? (staticFlag | StaticEditorFlags.LightmapStatic) : (staticFlag & ~StaticEditorFlags.LightmapStatic)
+																		(true == lightmapStatic) ? (staticFlag | StaticEditorFlags.ContributeGI) : (staticFlag & ~StaticEditorFlags.ContributeGI)
 																	);
 								meshRenderer.lightmapIndex = lightmapIndex;
 								meshRenderer.lightmapScaleOffset = lightmapScaleOffset;
@@ -1295,7 +1295,7 @@ public static partial class LibraryEditor_SpriteStudio6
 								meshRenderer.motionVectorGenerationMode = motionVectorGenerationMode;
 								meshRenderer.allowOcclusionWhenDynamic = allowOcclusionWhenDynamic;
 								StaticEditorFlags staticFlag = GameObjectUtility.GetStaticEditorFlags(gameObjectRoot);
-								GameObjectUtility.SetStaticEditorFlags(gameObjectRoot, (staticFlag & ~StaticEditorFlags.LightmapStatic));
+								GameObjectUtility.SetStaticEditorFlags(gameObjectRoot, (staticFlag & ~StaticEditorFlags.ContributeGI));
 							}
 						}
 					}
@@ -1587,7 +1587,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						ConvertDataDrawOrderSortLayerParts(listOutput, tableInput, tableParts, indexPartsChild[i]);
 					}
 				}
-
 				#endregion Functions
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */

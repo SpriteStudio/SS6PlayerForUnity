@@ -4,8 +4,9 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Sprite_UnityNative_NonBatch_MUL
   m_Shader: {fileID: 4800000, guid: d956f09188bcf0d47a9e4991d87d7d9a, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA PS_OUTPUT_PMA

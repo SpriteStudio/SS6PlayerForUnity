@@ -1,7 +1,8 @@
 //
 //	SpriteStudio6 Player for Unity
 //
-//	Copyright(C) Web Technology Corp.
+//	Copyright(C) 1997-2021 Web Technology Corp.
+//	Copyright(C) CRI Middleware Co., Ltd.
 //	All rights reserved.
 //
 sampler2D _MainTex;
@@ -51,7 +52,6 @@ fixed4 PS_main(InputPS input) : COLOR0
 
 	pixel = color[input.Texture00UV.z];
 #endif
-	pixel = saturate(pixel);
 
 #if defined(PS_OUTPUT_PMA)
 	pixel.xyz *= pixelA;

@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 #define MESSAGE_DATAVERSION_INVALID
@@ -134,6 +135,9 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 	}
 	internal Library_SpriteStudio6.CallBack.FunctionPlayEndEffect FunctionPlayEnd = null;
+
+	internal Texture[] TableTexture = null;										/* for Material Overriding */
+	internal Library_SpriteStudio6.Control.CacheMaterial CacheMaterial = null;	/* for Material Overriding */
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -328,9 +332,15 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			if(false == flagHide)
 			{
 				/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
-				if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
+				if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined, ref TableMaterialPropertyBlockCombined))
 				{
+//					InstanceMeshRenderer.sortingOrder = OrderInLayer;
 					InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
+					int countMaterial = TableMaterialPropertyBlockCombined.Length;
+					for(int i=0; i<countMaterial; i++)
+					{
+						InstanceMeshRenderer.SetPropertyBlock(TableMaterialPropertyBlockCombined[i], i);
+					}
 				}
 			}
 			InstanceMeshFilter.sharedMesh = MeshCombined;
@@ -343,6 +353,16 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 						| FlagBitStatus.CHANGE_TABLEMATERIAL
 						| FlagBitStatus.CHANGE_CELLMAP
 					);
+	}
+
+	void OnDestroy()
+	{
+		/* All Material-Cache shut-down */
+		if(null != CacheMaterial)
+		{
+			CacheMaterial.ShutDown(true);
+			CacheMaterial = null;
+		}
 	}
 	#endregion MonoBehaviour-Functions
 
@@ -364,6 +384,43 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 		/* Set Signature-Bootup */
 		DataEffect.StatusIsBootup = true;
+	}
+
+	internal bool CacheBootUpMaterial()
+	{
+		int countTexture = CountGetCellMap(false);
+		if(null != TableTexture)
+		{	/* Already booted up */
+			return(true);
+		}
+
+		TableTexture = new Texture[countTexture];
+		CacheMaterial = new Library_SpriteStudio6.Control.CacheMaterial();
+
+#if false
+		if(false == CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR, false))
+		{
+			return(false);
+		}
+		return(true);
+#else
+		return(CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR, false));
+#endif
+	}
+	private bool TextureCheckOverride(int indexCellMap)
+	{
+		if(null != TableTexture)	/* if(null != CacheMaterial) */
+		{	/* Material Overridable */
+			if(TableTexture.Length > indexCellMap)
+			{	/* in Table */
+				if(null != TableTexture[indexCellMap])
+				{	/* Texture Overrided */
+					return(true);
+				}
+			}
+		}
+
+		return(false);
 	}
 
 	internal bool ClusterBootUpDraw()
@@ -441,15 +498,15 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		return((float)frame * TimePerFrame);
 	}
 
-	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_RootEffect scriptRoot)
-	{
-		return(Time.deltaTime);
-	}
-
 	/* Part: SpriteStudio6/Script/RootEffect/FunctionAnimation.cs */
 	/* Part: SpriteStudio6/Script/RootEffect/FunctionCell.cs */
 	/* Part: SpriteStudio6/Script/RootEffect/FunctionMaterial.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionMisc.cs */
+
+	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_RootEffect scriptRoot)
+	{
+		return(Time.deltaTime);
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */

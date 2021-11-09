@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -16,358 +17,183 @@ public partial class Script_SpriteStudio6_RootEffect
 	//! Get Material
 	/*!
 	@param	indexCellMap
-		Serial-number of using CellMap
+		CellMap's index
 	@param	operationBlend
 		Blend Operation for the target
+	@param	masking
+		masking for the target
+	@param	nameShadcer
+		Shader's name in animation-data
+		null == Default(Standard) shader's name
+	@param	shader
+		Shader applied<br>
+		null == Default(Standard) shader
+	@param	flagCreateNew
+		true == If not exist, create.
+		false == If not exist, return null.
 	@retval	Return-Value
-		Material
+		Instance of Material
+		null == Not exist or Error
 
-	Get specified material in TableMaterial.
+	Search material with the specified content among materials currently held.<br>
+	Materials (held by Animation-Object) are affected by currently playback state
+		since materials are dynamically generated.<br>
+	Materials will not be created until Play-Cursor reachs actually using material,
+		and once it is created, those will be retained until Animation-Object is destroyed.<br>
 	*/
 	public UnityEngine.Material MaterialGet(	int indexCellMap,
 												Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
-												Library_SpriteStudio6.KindMasking masking
+												Library_SpriteStudio6.KindMasking masking,
+												string nameShader,
+												UnityEngine.Shader shader,
+												bool flagCreateNew
 										)
 	{
-		if(TableCellMap.Length <= indexCellMap)
-		{
-			return (null);
-		}
-
-		int indexMaterial = Material.IndexGetTable(indexCellMap, operationBlend, masking);
-		if(0 > indexMaterial)
-		{
-			return (null);
-		}
-
-		return(TableMaterial[indexMaterial]);
-	}
-
-	/* ********************************************************* */
-	//! Get Material-Table
-	/*!
-	@param	flagInUse
-		true == TableMaterial's length of Currently in use<br>
-		false == TableMaterial's length of original animation data
-	@retval	Return-Value
-		Material-Table
-
-	Get TableMaterial.
-	*/
-	public UnityEngine.Material[] TableGetMaterial(bool flagInUse=true)
-	{
-		if(true == flagInUse)
-		{
-			return(TableMaterial);
-		}
-
 		if(null == DataEffect)
 		{
 			return(null);
 		}
-		return(DataEffect.TableMaterial);
+		if(0 > indexCellMap)
+		{
+			return(null);
+		}
+
+		if(true == TextureCheckOverride(indexCellMap))
+		{	/* Texture Overrided */
+			return(	CacheMaterial.MaterialGetEffect(	indexCellMap,
+														operationBlend,
+														masking,
+														nameShader,
+														shader,
+														TableTexture,
+														flagCreateNew
+													)
+				);
+		}
+
+		if(TableCellMap.Length <= indexCellMap)
+		{
+			return(null);
+		}
+
+		Script_SpriteStudio6_DataProject dataProject = DataEffect.DataProject;
+		if(null == dataProject)
+		{
+			return(null);
+		}
+		return(	dataProject.MaterialGetEffect(	indexCellMap,
+												operationBlend,
+												masking,
+												nameShader,
+												shader,
+												flagCreateNew
+										)
+			);
 	}
 
-	/* ******************************************************** */
-	//! Change TableMaterial
+	/* ********************************************************* */
+	//! Replace Material
 	/*!
-	@param	tableMaterial
-		New TableMaterial<br>
-		null == Revert to initial data
+	@param	indexCellMap
+		CellMap's index
+	@param	operationBlend
+		Blend Operation for the target
+	@param	masking
+		masking for the target
+	@param	nameShadcer
+		Shader's name in animation-data
+		null == Default(Standard) shader's name
+	@param	material
+		New material<br>
+		null == Remove material (however can't be removed that Project has)
+	@param	flagGlobal
+		true == Replace material that Project(DataProject) has.<br>
+		false == Replace material that only this Animation-Object has.
 	@retval	Return-Value
-		true == Success<br>
-		false == Failure (Error)
+		Originally set material<br>
+		null == Not exist or Error
 
-	Replace TableMaterial that is used in the Effect.<br>
-	Never overwrite "Script_SpriteStudio6_RootEffect.TableMaterial" directly.<br>
+	Search and replace material with the specified content among materials currently held.<br>
+	Material to be replaced is identified by "indexCellMap", "operationBlend", "masking", and "shader".<br>
+	If the material cannot be found, this function will return error.<br>
 	<br>
-	"tableMaterial"'s length must be more than length of the initial data at least.<br>
-	More than value of "Script_SpriteStudio6_RootEffect.Material.CountGetTable"function is needed. (Set number of using CellMaps to "countCellMap")<br>
-	And, get TableMaterial's index with using "Script_SpriteStudio6_RootEffect.Material.IndexGetTable"function (and etc.)  when create TableMaterial.<br>
+	Note that changes the material to "material" for drawing, which is determined by "indexCellMap", "operationBlend", "masking", and "nameShader".<br>
+	"indexCellMap", "operationBlend", "masking", and "nameShader" are not parameters of the material to be changed, but keys to identify the material used in the original animation.<br>
 	*/
-	public bool TableSetMaterial(UnityEngine.Material[] tableMaterial)
+	public UnityEngine.Material MaterialReplace(	int indexCellMap,
+													Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
+													Library_SpriteStudio6.KindMasking masking,
+													string nameShader,
+													UnityEngine.Material material,
+													bool flagGlobal = false
+											)
 	{
-		if(null == tableMaterial)
-		{	/* Revert */
-			if(null == DataEffect)
-			{
-				return(false);
+		if(null == DataEffect)
+		{
+			return(null);
+		}
+		if(0 > indexCellMap)
+		{
+			return(null);
+		}
+
+		if(false == flagGlobal)
+		{
+			if(true == TextureCheckOverride(indexCellMap))
+			{	/* Texture Overrided */
+				return(	CacheMaterial.MaterialReplaceEffect(	indexCellMap,
+																operationBlend,
+																masking,
+																nameShader,
+																material
+															)
+					);
 			}
 
-			tableMaterial = DataEffect.TableMaterial;
-			if(null == tableMaterial)
-			{
-				return(false);
-			}
+			return(null);
 		}
 
-		TableMaterial = tableMaterial;
-		Status |= FlagBitStatus.CHANGE_TABLEMATERIAL;
-		return(true);
-	}
-
-	/* ********************************************************* */
-	//! Get Material-Table length
-	/*!
-	@param	flagInUse
-		true == TableMaterial's length of Currently in use<br>
-		false == TableMaterial's length of original animation data
-	@retval	Return-Value
-		Material-Table length
-
-	Get TableMaterial's length.
-	*/
-	public int CountGetTableMaterial(bool flagInUse=true)
-	{
-		UnityEngine.Material[]  tableMaterial = TableGetMaterial(flagInUse);
-		if(null == tableMaterial)
+		if(null == material)
 		{
-			return(-1);
+			/* MEMO: Prohibited to remove material that Project has. */
+			return(null);
 		}
-
-		return(tableMaterial.Length);
-	}
-
-	/* ********************************************************* */
-	//! Shallow-Copy Material-Table
-	/*!
-	@param	flagInUse
-		true == TableMaterial's length of Currently in use<br>
-		false == TableMaterial's length of original animation data
-	@retval	Return-Value
-		Material-Table
-
-	Shallow-copy Material-Table.<br>
-	In the newly created table, table(array) is another instance,
-	 but the materials are the same as materials referred to in the original table.<br>
-	*/
-	public UnityEngine.Material[] TableCopyMaterialShallow(bool flagInUse=true)
-	{
-		return(Library_SpriteStudio6.Utility.Material.TableCopyShallow(TableGetMaterial(flagInUse)));
-	}
-
-	/* ********************************************************* */
-	//! Deep-Copy Material-Table
-	/*!
-	@param	flagInUse
-		true == TableMaterial's length of Currently in use<br>
-		false == TableMaterial's length of original animation data
-	@retval	Return-Value
-		Material-Table
-
-	Deep-copy Material-Table.<br>
-	The newly created table, table(array) is another instance and materials are new instance too.<br>
-	*/
-	public UnityEngine.Material[] TableCopyMaterialDeep(bool flagInUse=true)
-	{
-		return(Library_SpriteStudio6.Utility.Material.TableCopyDeep(TableGetMaterial(flagInUse)));
-	}
-
-	/* ********************************************************* */
-	//! Get Texture-count in TableMaterial
-	/*!
-	@param	flagInUse
-		true == Currently in use TableMaterial<br>
-		false == TableMaterial in original animation data
-	@retval	Return-Value
-		Number of textures that can be stored in TableMaterial
-
-	Get number of textures that can be stored in TableMaterial.
-	*/
-	public int CountGetTextureTableMaterial(bool flagInUse=true)
-	{
-		UnityEngine.Material[] tableMaterial = TableGetMaterial(flagInUse);
-		if(null == tableMaterial)
+		if(TableCellMap.Length <= indexCellMap)
 		{
-			return(-1);
+			return(null);
 		}
-		return(Material.CountGetTexture(tableMaterial));
+		Script_SpriteStudio6_DataProject dataProject = DataEffect.DataProject;
+		if(null == dataProject)
+		{
+			return(null);
+		}
+
+		/* MEMO: The texture used in calculating hashcode to identify  material must be it stored in the project. */
+		return(	dataProject.MaterialReplaceEffect(	indexCellMap,
+													operationBlend,
+													masking,
+													nameShader,
+													material
+											)
+			);
 	}
+
+	/* Obsolete *//* public UnityEngine.Material[] TableGetMaterial(bool flagInUse=true) */
+	/* Obsolete *//* public bool TableSetMaterial(UnityEngine.Material[] tableMaterial) */
+	/* Obsolete *//* public int CountGetTableMaterial(bool flagInUse=true) */
+	/* Obsolete *//* public UnityEngine.Material[] TableCopyMaterialShallow(bool flagInUse=true) */
+	/* Obsolete *//* public UnityEngine.Material[] TableCopyMaterialDeep(bool flagInUse=true) */
+	/* Obsolete *//* public int CountGetTextureTableMaterial(bool flagInUse=true) */
 	#endregion Functions
 
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
 	#region Classes, Structs & Interfaces
-	public static partial class Material
-	{
-		/* ----------------------------------------------- Functions */
-		#region Functions
-		/* ********************************************************* */
-		//! Get Material-Table length
-		/*!
-		@param	countCellMap
-			Number of CellMap-s
-		@retval	Return-Value
-			Material-Table length
-
-		If give positive number to "countCellMap", returns length of materials needed to store.
-		*/
-		public static int CountGetTable(int countCellMap)
-		{
-			if(0 > countCellMap)
-			{
-				return (-1);
-			}
-
-			return(countCellMap * ((int)Library_SpriteStudio6.KindMasking.TERMINATOR * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL));
-		}
-
-		/* ********************************************************* */
-		//! Get Material-Table's index
-		/*!
-		@param	indexCellMap
-			index of CellMap
-		@param	operationBlend
-			Kind of Blending
-		@param	masking
-			Kind of Masking
-		@retval	Return-Value
-			index of Material-Table
-
-		Get material's index in Material-Table.<br>
-		Caution that this function does not check upper-limit of "indexCellMap".
-		*/
-		public static int IndexGetTable(	int indexCellMap,
-											Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
-											Library_SpriteStudio6.KindMasking masking
-									)
-		{
-			if((0 > indexCellMap)
-				|| (Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR > operationBlend) || (Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL <= operationBlend)
-				|| (Library_SpriteStudio6.KindMasking.THROUGH > masking) || (Library_SpriteStudio6.KindMasking.TERMINATOR <= masking)
-				)
-			{
-				return (-1);
-			}
-
-#if false
-			return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL) + ((int)operationBlend + (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR));
-#else
-			return((((indexCellMap * (int)Library_SpriteStudio6.KindMasking.TERMINATOR) + (int)masking) * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL) + ((int)operationBlend - (int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR));
-#endif
-		}
-
-		/* ********************************************************* */
-		//! Get Texture-count in Material-table
-		/*!
-		@param	tableMaterial
-			Material-Table
-		@retval	Return-Value
-			Number of textures that can be stored in Material-Table
-
-		Get number of textures that can be stored in Material-Table.
-		*/
-		public static int CountGetTexture(UnityEngine.Material[] tableMaterial)
-		{
-			if(null == tableMaterial)
-			{
-				return(-1);
-			}
-			return(tableMaterial.Length / ((int)Library_SpriteStudio6.KindMasking.TERMINATOR * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL));
-		}
-
-		/* ********************************************************* */
-		//! Change Texture in Material-table
-		/*!
-		@param	tableMaterial
-			Material-Table
-		@param	indexCellMap
-			index of CellMap
-		@param	texture
-			Texture
-		@param	flagMaterialNew
-			Whether make a new material or overwrite<br>
-			true == Create new material<br>
-			false == Overwrite exist material
-		@retval	Return-Value
-			true == Success<br>
-			false == Failure(Error)
-
-		Change materials' texture corresponding to specified CellMap in Material-Table.<br>
-		When "flagMaterialNew" is set true, new materials are created.<br>
-		When false, materials are overwritten.
-		*/
-		public static bool TextureSet(UnityEngine.Material[] tableMaterial, int indexCellMap, Texture2D texture, bool flagMaterialNew)
-		{
-			int indexTop = IndexGetTable(indexCellMap, Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR, Library_SpriteStudio6.KindMasking.THROUGH);
-			if(0 > indexTop)
-			{
-				return(false);
-			}
-
-			UnityEngine.Material material;
-			int index;
-			for(int i=(int)Library_SpriteStudio6.KindMasking.THROUGH; i<(int)Library_SpriteStudio6.KindMasking.TERMINATOR; i++)
-			{
-				for(int j=(int)Library_SpriteStudio6.KindOperationBlendEffect.INITIATOR; j<(int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR; j++)
-				{
-					index = IndexGetTable(0, (Library_SpriteStudio6.KindOperationBlendEffect)j, (Library_SpriteStudio6.KindMasking)i);
-					index += indexTop;
-
-					material = tableMaterial[index];
-					if(true == flagMaterialNew)
-					{	/* Create Material */
-#if false
-						/* MEMO: Before Ver.1.0.26 */
-						if(null == material)
-						{
-							material = new UnityEngine.Material(Library_SpriteStudio6.Data.Shader.ShaderGetEffect(	(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																													(Library_SpriteStudio6.KindMasking)i
-																												)
-															);
-						}
-						else
-						{
-							material = new UnityEngine.Material(material);
-						}
-#else
-						/* MEMO: After Ver.1.0.26 */
-						if(null == material)
-						{
-							material = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(	(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																								(Library_SpriteStudio6.KindMasking)i
-																							);
-						}
-						else
-						{
-							UnityEngine.Material materialNew = new UnityEngine.Material(material);
-							if(null != materialNew)
-							{
-								materialNew.CopyPropertiesFromMaterial(material);
-							}
-							material = materialNew;
-						}
-#endif
-
-					}
-					else
-					{	/* Overwrite Material */
-#if false
-						/* MEMO: Before Ver.1.0.26 */
-						if(null == material)
-						{
-							material = new UnityEngine.Material(Library_SpriteStudio6.Data.Shader.ShaderGetEffect(	(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																													(Library_SpriteStudio6.KindMasking)i
-																												)
-															);
-						}
-#else
-						/* MEMO: After Ver.1.0.26 */
-						if(null == material)
-						{
-							material = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(	(Library_SpriteStudio6.KindOperationBlendEffect)j,
-																								(Library_SpriteStudio6.KindMasking)i
-																							);
-						}
-#endif
-					}
-					material.mainTexture = texture;
-					tableMaterial[index] = material;
-				}
-			}
-
-			return(true);
-		}
-		#endregion Functions
-	}
+	/* Obsolete *//* public static partial class Material */
+	/* Obsolete *//* { */
+		/* Obsolete *//* public static int CountGetTable(int countCellMap) */
+		/* Obsolete *//* public static int IndexGetTable(int indexCellMap, Library_SpriteStudio6.KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking) */
+		/* Obsolete *//* public static int CountGetTexture(UnityEngine.Material[] tableMaterial) */
+		/* Obsolete *//* public static bool TextureSet(UnityEngine.Material[] tableMaterial, int indexCellMap, Texture2D texture, bool flagMaterialNew) */
+	/* Obsolete *//* } */
 	#endregion Classes, Structs & Interfaces
 }

@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 // #define ATTRIBUTE_DUPLICATE_DEEP
@@ -51,6 +52,8 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributeInstance = "Instance";
 					public const string NameAttributeEffect = "Effect";
 					public const string NameAttributeDeform = "Deform";
+					public const string NameAttributeShader = "Shader";
+					public const string NameAttributeSignal = "Signal";
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -863,6 +866,92 @@ public static partial class Library_SpriteStudio6
 						private readonly static DataDeform.Vertex[] DefaultDeformVertex = new DataDeform.Vertex[0];
 						public readonly static DataDeform Default = new DataDeform(0, DefaultDeformVertex);
 						#endregion Enums & Constants
+					}
+
+					public class AttributeShader : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.Shader>
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.Shader valueOutput, int frame)
+						{
+							int indexStart = IndexGetFramePrevious(frame);
+							int indexEnd = IndexGetFrameNext(frame);
+							if(0 > frame)
+							{
+								goto ValueGet_ErrorEnd;
+							}
+							if(0 > indexStart)
+							{	/* Front blank */
+								if(0 > indexEnd)
+								{	/* No Key */
+									goto ValueGet_ErrorEnd;
+								}
+								valueOutput = ListKey[indexEnd].Value;
+								return(true);
+							}
+							else
+							{
+								if(0 > indexEnd)
+								{	/* End Blank */
+									valueOutput = ListKey[indexStart].Value;
+									return(true);
+								}
+							}
+
+							valueOutput.ID = ListKey[indexStart].Value.ID;
+
+							float rate = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
+																									frame,
+																									ListKey[indexStart].Frame,
+																									0.0f,
+																									ListKey[indexEnd].Frame,
+																									1.0f,
+																									ListKey[indexStart].FrameCurveStart,
+																									ListKey[indexStart].ValueCurveStart,
+																									ListKey[indexStart].FrameCurveEnd,
+																									ListKey[indexStart].ValueCurveEnd
+																								);
+							rate = Mathf.Clamp01(rate);
+
+#if false
+							valueOutput.Parameter.x = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.Parameter.x, ListKey[indexEnd].Value.Parameter.x, rate);
+							valueOutput.Parameter.y = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.Parameter.y, ListKey[indexEnd].Value.Parameter.y, rate);
+							valueOutput.Parameter.z = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.Parameter.z, ListKey[indexEnd].Value.Parameter.z, rate);
+							valueOutput.Parameter.w = Library_SpriteStudio6.Utility.Interpolation.Linear(ListKey[indexStart].Value.Parameter.w, ListKey[indexEnd].Value.Parameter.w, rate);
+#else
+							valueOutput.Parameter = Vector4.Lerp(ListKey[indexStart].Value.Parameter, ListKey[indexEnd].Value.Parameter, rate);
+#endif
+
+							return(true);
+
+						ValueGet_ErrorEnd:;
+							valueOutput.ID = string.Empty;
+							valueOutput.Parameter = Vector4.zero;
+							return(false);
+						}
+						#endregion Functions
+					}
+
+					public class AttributeSignal : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.Signal>
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.Signal valueOutput, int frame)
+						{
+							int count = (null != ListKey) ? ListKey.Count : 0;
+							for(int i=0; i<count; i++)
+							{
+								if(ListKey[i].Frame == frame)
+								{
+									valueOutput = ListKey[i].Value;
+									return(true);
+								}
+							}
+
+							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultSignal;
+							return(false);
+						}
+						#endregion Functions
 					}
 
 					public abstract class Attribute<_Type>
