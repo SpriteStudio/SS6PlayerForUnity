@@ -5,6 +5,8 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+#define REDUCE_FREQUENCY_BINARYTREE
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -161,11 +163,103 @@ public static partial class Library_SpriteStudio6
 
 				[System.Serializable]
 				public struct CodeValueContainer
-				{	/* MEMO: Since Jagged-Array can not be serialized...  */
+				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
 					public int[] TableCode;
 					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+#if REDUCE_FREQUENCY_BINARYTREE
+					internal static int IndexGetBinaryTree(	int index,
+															int frame,
+															int bitMaskFrameKey,
+															int[] tableCode
+														)
+					{
+						/* Determine case that binary-tree search is not necessary */
+						/* MEMO: If "TableCode" has no key-data, this function is not called. */
+						int countKey = tableCode.Length;
+						if(2 > countKey)
+						{	/* Has only 1 key-data. */
+							return(0);
+						}
+
+						int indexNext = index + 1;
+						int frameKey;
+						int frameKeyNext;
+						if(0 > index)
+						{	/* Initial State */
+							index = countKey >> 1; /* countKey / 2 */
+						}
+						else
+						{	/* Decoded at least once */
+							frameKey = tableCode[index] & bitMaskFrameKey;
+							if(countKey  <= indexNext)
+							{	/* Has no next key-data */
+								if(frame >= frameKey)
+								{
+									return(index);
+								}
+							}
+							else
+							{
+								/* MEMO: No search when frame is in the cached range. */
+								frameKeyNext = tableCode[indexNext] & bitMaskFrameKey;
+
+								if((frameKey <= frame) && (frameKeyNext > frame))
+								{	/* In range */
+									return(index);
+								}
+							}
+						}
+
+						/* Binary tree search */
+						int indexMinimum;
+						int indexMaximum;
+						frameKey = tableCode[index] & bitMaskFrameKey;
+						if(frameKey > frame)
+						{
+							indexMinimum = 0;
+							indexMaximum = index;
+						}
+						else
+						{
+							indexMinimum = index;
+							indexMaximum = countKey - 1;
+						}
+
+						while(indexMinimum < indexMaximum)
+						{
+							index = indexMinimum + indexMaximum;
+							index = (index >> 1) + (index & 1);	/* (index / 2) + (index % 2) */
+							frameKey = tableCode[index] & bitMaskFrameKey;
+							if(frame == frameKey)
+							{
+								indexMinimum = indexMaximum = index;
+
+								break;	/* while-Loop */
+							}
+							else
+							{
+//								if((frame < frameKey) || (-1 == frameKey))
+								if(frame < frameKey)
+								{
+									indexMaximum = index - 1;
+								}
+								else
+								{
+									indexMinimum = index;
+								}
+							}
+						}
+
+						return(indexMinimum);
+					}
+#else
+#endif
+					#endregion Functions
 				}
 
 				public struct ArgumentContainer
@@ -208,9 +302,6 @@ public static partial class Library_SpriteStudio6
 					internal int IndexKey;
 					internal int FrameKey;
 
-					internal int IndexKeyNext;
-					internal int FrameKeyNext;
-
 					internal _Type Value;
 					#endregion Variables & Properties
 
@@ -220,9 +311,6 @@ public static partial class Library_SpriteStudio6
 					{
 						IndexKey = -1;
 						FrameKey = -1;
-
-						IndexKeyNext = -1;
-						FrameKeyNext = -1;
 					}
 					#endregion Functions
 				}

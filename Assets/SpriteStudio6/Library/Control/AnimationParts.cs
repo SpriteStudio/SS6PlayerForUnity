@@ -12,8 +12,6 @@
 // #define DECODE_IN_INSTANCE_USERDATA
 #define DECODE_IN_INSTANCE_SIGNAL
 
-#define TEST_PERFORMANCE_SPEEDUP
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

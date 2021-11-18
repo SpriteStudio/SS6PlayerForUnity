@@ -5,7 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
-// #define TEST_PERFORMANCE_SPEEDUP
+#define REDUCE_FREQUENCY_BINARYTREE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -1070,36 +1070,9 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 
-#if TEST_PERFORMANCE_SPEEDUP
-						int frameKey = cacheDecode.FrameKey;	// -1;
-						int index = -1;
-
-						/* Get Key-data's index */
-						int countTableStatus = tableStatus.Length;
-						int indexMinimum = 0;
-						int indexMaximum = countTableStatus - 1;
-						if(0 <= frameKey)
-						{	/* Previous result is cached */
-							index = IndexSearcLimitRange(	ref indexMinimum,
-															ref indexMaximum,
-															frame,
-															frameKey,
-															cacheDecode.IndexKey,
-															tableStatus,
-															countTableStatus,
-															(int)FlagBit.FRAMEKEY
-													);
-						}
-						if(0 > index)
-						{
-							index = IndexSearchTraverse(	frame,
-															indexMinimum,
-															indexMaximum,
-															tableStatus,
-															countTableStatus,
-															(int)FlagBit.FRAMEKEY
-													);
-						}
+#if REDUCE_FREQUENCY_BINARYTREE
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
 						cacheDecode.IndexKey = index;
 
 						/* Get Key-data */
@@ -1175,37 +1148,9 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 
-#if TEST_PERFORMANCE_SPEEDUP
-						int frameKey = cacheDecode.FrameKey;
-						int index = -1;
-
-						/* Get Key-data's index */
-						int countTableStatus = tableStatus.Length;
-						int indexMinimum = 0;
-						int indexMaximum = countTableStatus - 1;
-						if(0 <= frameKey)
-						{	/* Previous result is cached */
-							index = IndexSearcLimitRange(	ref indexMinimum,
-															ref indexMaximum,
-															frame,
-															frameKey,
-															cacheDecode.IndexKey,
-															tableStatus,
-															countTableStatus,
-															(int)FlagBit.FRAMEKEY
-													);
-						}
-						if(0 > index)
-						{
-							index = IndexSearchTraverse(	frame,
-															indexMinimum,
-															indexMaximum,
-															tableStatus,
-															countTableStatus,
-															(int)FlagBit.FRAMEKEY
-													);
-						}
-
+#if REDUCE_FREQUENCY_BINARYTREE
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
 						cacheDecode.IndexKey = index;
 
 						/* Get Key-data */

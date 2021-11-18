@@ -5,6 +5,8 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+#define REDUCE_FREQUENCY_BINARYTREE
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -869,6 +871,112 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 #endif
+#if REDUCE_FREQUENCY_BINARYTREE
+						int countTableStatus = tableStatus.Length;
+						if(0 >= countTableStatus)
+						{
+							return(false);
+						}
+
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						int status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+						int indexValue = (status & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+
+						KindFormula formula;
+						if((countTableStatus - 1) <= index)
+						{	/* Not Interpolate */
+							formula = KindFormula.CPE;
+						}
+						else
+						{
+							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
+						}
+
+						/* Get values */
+						int indexValueEnd;
+						int statusEnd;
+						int frameKeyEnd;
+						float valueEnd;
+						float value;
+						float rate;
+						switch(formula)
+						{
+							case KindFormula.LINEAR:
+								value = (float)tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = (float)tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+
+								/* outValue = Library_SpriteStudio6.Utility.Interpolation.Linear(value, valueEnd, rate); */
+								cacheDecode.Value = (int)(((valueEnd - value) * rate) + value);
+
+								return(true);	/* Updated */
+
+							case KindFormula.ACCELERATE:
+								value = (float)tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = (float)tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+
+								/* outValue = Library_SpriteStudio6.Utility.Interpolation.Accelerate(value, valueEnd, rate); */
+								rate *= rate;
+								cacheDecode.Value = (int)(((valueEnd - value) * rate) + value);
+
+								return(true);	/* Updated */
+
+							case KindFormula.DECELERATE:
+								value = (float)tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = (float)tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+
+								/* outValue = Library_SpriteStudio6.Utility.Interpolation.Decelerate(value, valueEnd, rate); */
+								rate = 1.0f - rate;
+								rate *= rate;
+								rate = 1.0f - rate;
+								cacheDecode.Value = (int)(((valueEnd - value) * rate) + value);
+
+								return(true);	/* Updated */
+
+							case KindFormula._RESERVED_04:
+								break;
+							case KindFormula._RESERVED_03:
+								break;
+							case KindFormula._RESERVED_02:
+								break;
+							case KindFormula._RESERVED_01:
+								break;
+
+							case KindFormula.CPE:
+								if(framePrevious == frameKey)
+								{
+									return(false);	/* Not Updated. */
+								}
+
+								cacheDecode.Value = tableValue[indexValue];
+								return(true);	/* Updated */
+						}
+#else
 						if(0 >= tableStatus.Length)
 						{
 							return(false);
@@ -993,6 +1101,7 @@ public static partial class Library_SpriteStudio6
 								cacheDecode.Value = tableValue[index];
 								return(true);	/* Updated */
 						}
+#endif
 
 						return(false);
 					}
@@ -1006,6 +1115,113 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 #endif
+#if REDUCE_FREQUENCY_BINARYTREE
+						int countTableStatus = tableStatus.Length;
+						if(0 >= countTableStatus)
+						{
+							return(false);
+						}
+
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						int status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+						int indexValue = (status & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+
+						KindFormula formula;
+						if((countTableStatus - 1) <= index)
+						{	/* Not Interpolate */
+							formula = KindFormula.CPE;
+						}
+						else
+						{
+							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
+						}
+
+						/* Get values */
+						int indexValueEnd;
+						int statusEnd;
+						int frameKeyEnd;
+						float valueEnd;
+						float value;
+						float rate;
+						switch(formula)
+						{
+							case KindFormula.LINEAR:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+
+								/* outValue = Library_SpriteStudio6.Utility.Interpolation.Linear(value, valueEnd, rate); */
+								cacheDecode.Value = ((valueEnd - value) * rate) + value;
+
+								return(true);	/* Updated */
+
+							case KindFormula.ACCELERATE:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+
+								/* outValue = Library_SpriteStudio6.Utility.Interpolation.Accelerate(value, valueEnd, rate); */
+								rate *= rate;
+								cacheDecode.Value = ((valueEnd - value) * rate) + value;
+
+								return(true);	/* Updated */
+
+							case KindFormula.DECELERATE:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+
+								/* outValue = Library_SpriteStudio6.Utility.Interpolation.Decelerate(value, valueEnd, rate); */
+								rate = 1.0f - rate;
+								rate *= rate;
+								rate = 1.0f - rate;
+								cacheDecode.Value = ((valueEnd - value) * rate) + value;
+
+								return(true);	/* Updated */
+
+							case KindFormula._RESERVED_04:
+								break;
+							case KindFormula._RESERVED_03:
+								break;
+							case KindFormula._RESERVED_02:
+								break;
+							case KindFormula._RESERVED_01:
+								break;
+
+							case KindFormula.CPE:
+								if(framePrevious == frameKey)
+								{
+									return(false);	/* Not Updated. */
+								}
+
+								cacheDecode.Value = tableValue[indexValue];
+
+								return(true);	/* Updated */
+						}
+#else
 						if(0 >= tableStatus.Length)
 						{
 							return(false);
@@ -1130,6 +1346,7 @@ public static partial class Library_SpriteStudio6
 								cacheDecode.Value = tableValue[index];
 								return(true);	/* Updated */
 						}
+#endif
 
 						return(false);
 					}
@@ -1143,7 +1360,12 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 #endif
-						if(0 >= tableStatus.Length)
+						/* MEMO: Cannot optimize Vector2 and Vector3 by the method of reducing key-data searches. */
+						/*       In "CPE + Interpolation" method, Vecto2 and Vector3 are compressed "float x n".  */
+						/*         (have multiple data-reference-index)                                           */
+
+						int countTableStatus = tableStatus.Length;
+						if(0 >= countTableStatus)
 						{
 							return(false);
 						}
@@ -1151,7 +1373,7 @@ public static partial class Library_SpriteStudio6
 						KindFormula formula;
 						int frameKey = -1;
 						int frameKeyEnd;
-						int indexStatusLast = tableStatus.Length - 1;
+						int indexStatusLast = countTableStatus - 1;
 						int status;
 						int statusEnd;
 						int indexMinimum = 0;
@@ -1266,6 +1488,7 @@ public static partial class Library_SpriteStudio6
 								{
 									return(false);	/* Not Updated. */
 								}
+
 								return(true);	/* Updated */
 						}
 
@@ -1281,7 +1504,12 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 #endif
-						if(0 >= tableStatus.Length)
+						/* MEMO: Cannot optimize Vector2 and Vector3 by the method of reducing key-data searches. */
+						/*       In "CPE + Interpolation" method, Vecto2 and Vector3 are compressed "float x n".  */
+						/*         (have multiple data-reference-index)                                           */
+
+						int countTableStatus = tableStatus.Length;
+						if(0 >= countTableStatus)
 						{
 							return(false);
 						}
@@ -1289,7 +1517,7 @@ public static partial class Library_SpriteStudio6
 						KindFormula formula;
 						int frameKey = -1;
 						int frameKeyEnd;
-						int indexStatusLast = tableStatus.Length - 1;
+						int indexStatusLast = countTableStatus - 1;
 						int status;
 						int statusEnd;
 						int indexMinimum = 0;
@@ -1402,6 +1630,7 @@ public static partial class Library_SpriteStudio6
 								}
 
 								outValue = tableValue[(index / 3)][(index % 3)];
+
 								return(true);	/* Updated */
 						}
 
@@ -1422,6 +1651,170 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 #endif
+#if REDUCE_FREQUENCY_BINARYTREE
+						int countTableStatus = tableStatus.Length;
+						if(0 >= countTableStatus)
+						{
+							return(false);
+						}
+
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						int status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+						int indexValue = (status & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+
+						KindFormula formula;
+						if((countTableStatus - 1) <= index)
+						{	/* Not Interpolate */
+							formula = KindFormula.CPE;
+						}
+						else
+						{
+							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
+						}
+
+						/* Get values */
+						/* MEMO: Since this process is called many times, formula-functions are        */
+						/*        inlined without using "Library_SpriteStudio6.Utility.Interpolation". */
+						/*       (Optimizing for speed.)                                               */
+						int indexValueEnd;
+						int statusEnd;
+						int frameKeyEnd;
+						Library_SpriteStudio6.Data.Animation.Attribute.PartsColor valueEnd;
+						Library_SpriteStudio6.Data.Animation.Attribute.PartsColor value;
+						float rate;
+						Color colorVertex;
+						float alhpaVertex;
+						switch(formula)
+						{
+							case KindFormula.LINEAR:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								cacheDecode.Value.Operation = value.Operation;
+								cacheDecode.Value.Bound = value.Bound;
+
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] - colorVertex) * rate) + colorVertex;
+
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] - alhpaVertex) * rate) + alhpaVertex;
+
+								return(true);	/* Updated */
+
+							case KindFormula.ACCELERATE:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate *= rate;
+								cacheDecode.Value.Operation = value.Operation;
+								cacheDecode.Value.Bound = value.Bound;
+
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] - colorVertex) * rate) + colorVertex;
+
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] - alhpaVertex) * rate) + alhpaVertex;
+
+								return(true);	/* Updated */
+
+							case KindFormula.DECELERATE:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate = 1.0f - rate;
+								rate *= rate;
+								rate = 1.0f - rate;
+								cacheDecode.Value.Operation = value.Operation;
+								cacheDecode.Value.Bound = value.Bound;
+
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] - colorVertex) * rate) + colorVertex;
+								colorVertex = value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] - colorVertex) * rate) + colorVertex;
+
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] - alhpaVertex) * rate) + alhpaVertex;
+								alhpaVertex = value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] - alhpaVertex) * rate) + alhpaVertex;
+
+								return(true);	/* Updated */
+
+							case KindFormula._RESERVED_04:
+								break;
+							case KindFormula._RESERVED_03:
+								break;
+							case KindFormula._RESERVED_02:
+								break;
+							case KindFormula._RESERVED_01:
+								break;
+
+							case KindFormula.CPE:
+								if(framePrevious == frameKey)
+								{
+									return(false);	/* Not Updated. */
+								}
+
+								/* MEMO: Even if has reference to array, since caller manages buffer, no problem to shallow copy. */
+								cacheDecode.Value = tableValue[indexValue];
+
+								return(true);	/* Updated */
+						}
+#else
 						if(0 >= tableStatus.Length)
 						{
 							return(false);
@@ -1603,6 +1996,7 @@ public static partial class Library_SpriteStudio6
 								cacheDecode.Value = tableValue[index];
 								return(true);	/* Updated */
 						}
+#endif
 
 						return(false);
 					}
@@ -1621,6 +2015,133 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 #endif
+#if REDUCE_FREQUENCY_BINARYTREE
+						int countTableStatus = tableStatus.Length;
+						if(0 >= countTableStatus)
+						{
+							return(false);
+						}
+
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						int status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+						int indexValue = (status & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+
+						KindFormula formula;
+						if((countTableStatus - 1) <= index)
+						{	/* Not Interpolate */
+							formula = KindFormula.CPE;
+						}
+						else
+						{
+							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
+						}
+
+						/* Get values */
+						/* MEMO: Since this process is called many times, formula-functions are        */
+						/*        inlined without using "Library_SpriteStudio6.Utility.Interpolation". */
+						/*       (Optimizing for speed.)                                               */
+						int indexValueEnd;
+						int statusEnd;
+						int frameKeyEnd;
+						Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection value;
+						Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection valueEnd;
+						float rate;
+						Vector2 coordinate;
+						switch(formula)
+						{
+							case KindFormula.LINEAR:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - coordinate) * rate) + coordinate;
+
+								return(true);	/* Updated */
+
+							case KindFormula.ACCELERATE:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate *= rate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - coordinate) * rate) + coordinate;
+
+								return(true);	/* Updated */
+
+							case KindFormula.DECELERATE:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate = 1.0f - rate;
+								rate *= rate;
+								rate = 1.0f - rate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD] - coordinate) * rate) + coordinate;
+								coordinate = value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD];
+								cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] = ((valueEnd.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD] - coordinate) * rate) + coordinate;
+
+								return(true);	/* Updated */
+
+							case KindFormula._RESERVED_04:
+								break;
+							case KindFormula._RESERVED_03:
+								break;
+							case KindFormula._RESERVED_02:
+								break;
+							case KindFormula._RESERVED_01:
+								break;
+
+							case KindFormula.CPE:
+								if(framePrevious == frameKey)
+								{
+									return(false);	/* Not Updated. */
+								}
+
+								/* MEMO: Even if has reference to array, since caller manages buffer, no problem to shallow copy. */
+								cacheDecode.Value = tableValue[indexValue];
+
+								return(true);	/* Updated */
+						}
+#else
 						if(0 >= tableStatus.Length)
 						{
 							return(false);
@@ -1765,7 +2286,7 @@ public static partial class Library_SpriteStudio6
 								cacheDecode.Value = tableValue[index];
 								return(true);	/* Updated */
 						}
-
+#endif
 						return(false);
 					}
 
@@ -1785,6 +2306,131 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 #endif
+#if REDUCE_FREQUENCY_BINARYTREE
+						int countTableStatus = tableStatus.Length;
+						if(0 >= countTableStatus)
+						{
+							return(false);
+						}
+
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						int status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+						int indexValue = (status & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+
+						KindFormula formula;
+						if((countTableStatus - 1) <= index)
+						{	/* Not Interpolate */
+							formula = KindFormula.CPE;
+						}
+						else
+						{
+							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
+						}
+
+						/* Get values */
+						/* MEMO: Since this process is called many times, formula-functions are        */
+						/*        inlined without using "Library_SpriteStudio6.Utility.Interpolation". */
+						/*       (Optimizing for speed.)                                               */
+						int indexValueEnd;
+						int statusEnd;
+						int frameKeyEnd;
+						float rate;
+						int[] tableIndexVertex = container.TableIndexVertex;
+						int countVertexChange = tableIndexVertex.Length;
+						Vector2[] tableCoordinateOutput = cacheDecode.Value.TableCoordinate;
+						Vector2 coordinate;
+						Vector2[] tableCoordinateStart;
+						Vector2[] tableCoordinateEnd;
+						switch(formula)
+						{
+							case KindFormula.LINEAR:
+								tableCoordinateStart = tableValue[indexValue].TableCoordinate;
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								tableCoordinateEnd = tableValue[indexValueEnd].TableCoordinate;
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								for(int i=0; i<countVertexChange; i++)
+								{
+									coordinate = tableCoordinateStart[i];
+									tableCoordinateOutput[tableIndexVertex[i]] = ((tableCoordinateEnd[i] - coordinate) * rate) + coordinate;
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula.ACCELERATE:
+								tableCoordinateStart = tableValue[indexValue].TableCoordinate;
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								tableCoordinateEnd = tableValue[indexValueEnd].TableCoordinate;
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate *= rate;
+								for(int i=0; i<countVertexChange; i++)
+								{
+									coordinate = tableCoordinateStart[i];
+									tableCoordinateOutput[tableIndexVertex[i]] = ((tableCoordinateEnd[i] - coordinate) * rate) + coordinate;
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula.DECELERATE:
+								tableCoordinateStart = tableValue[indexValue].TableCoordinate;
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								tableCoordinateEnd = tableValue[indexValueEnd].TableCoordinate;
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate = 1.0f - rate;
+								rate *= rate;
+								rate = 1.0f - rate;
+								for(int i=0; i<countVertexChange; i++)
+								{
+									coordinate = tableCoordinateStart[i];
+									tableCoordinateOutput[tableIndexVertex[i]] = ((tableCoordinateEnd[i] - coordinate) * rate) + coordinate;
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula._RESERVED_04:
+								break;
+							case KindFormula._RESERVED_03:
+								break;
+							case KindFormula._RESERVED_02:
+								break;
+							case KindFormula._RESERVED_01:
+								break;
+
+							case KindFormula.CPE:
+								if(framePrevious == frameKey)
+								{
+									return(false);	/* Not Updated. */
+								}
+
+								/* MEMO: Even if has reference to array, since caller manages buffer, no problem to shallow copy. */
+								tableCoordinateStart = tableValue[indexValue].TableCoordinate;
+								for(int i=0; i<countVertexChange; i++)
+								{
+									tableCoordinateOutput[tableIndexVertex[i]] = tableCoordinateStart[i];
+								}
+
+								return(true);	/* Updated */
+						}
+#else
 						if(0 >= tableStatus.Length)
 						{
 							return(false);
@@ -1927,6 +2573,7 @@ public static partial class Library_SpriteStudio6
 								}
 								return(true);	/* Updated */
 						}
+#endif
 
 						return(false);
 					}
@@ -1945,6 +2592,126 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 #endif
+#if REDUCE_FREQUENCY_BINARYTREE
+						int countTableStatus = tableStatus.Length;
+						if(0 >= countTableStatus)
+						{
+							return(false);
+						}
+
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						int status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+						int indexValue = (status & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+
+						KindFormula formula;
+						if((countTableStatus - 1) <= index)
+						{	/* Not Interpolate */
+							formula = KindFormula.CPE;
+						}
+						else
+						{
+							formula = (KindFormula)((status & (int)FlagBit.FORMULA) >> (int)FlagBitShift.FORMULA);
+						}
+
+						/* Get values */
+						/* MEMO: Since this process is called many times, formula-functions are        */
+						/*        inlined without using "Library_SpriteStudio6.Utility.Interpolation". */
+						/*       (Optimizing for speed.)                                               */
+						int indexValueEnd;
+						int statusEnd;
+						int frameKeyEnd;
+						Library_SpriteStudio6.Data.Animation.Attribute.Shader value;
+						Library_SpriteStudio6.Data.Animation.Attribute.Shader valueEnd;
+						float rate;
+						switch(formula)
+						{
+							case KindFormula.LINEAR:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+
+								cacheDecode.Value.ID = value.ID;
+								for(int i=0; i<Library_SpriteStudio6.Data.Animation.Attribute.Shader.CountParameter; i++)
+								{
+									cacheDecode.Value.Parameter[i] = ((valueEnd.Parameter[i] - value.Parameter[i]) * rate) + value.Parameter[i];
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula.ACCELERATE:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate *= rate;
+
+								cacheDecode.Value.ID = value.ID;
+								for(int i=0; i<Library_SpriteStudio6.Data.Animation.Attribute.Shader.CountParameter; i++)
+								{
+									cacheDecode.Value.Parameter[i] = ((valueEnd.Parameter[i] - value.Parameter[i]) * rate) + value.Parameter[i];
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula.DECELERATE:
+								value = tableValue[indexValue];
+
+								index++;
+								statusEnd = tableStatus[index];
+								frameKeyEnd = statusEnd & (int)FlagBit.FRAMEKEY;	/* >> (int)FlagBitShift.FRAMEKEY; */
+								indexValueEnd = (statusEnd & (int)FlagBit.INDEX) >> (int)FlagBitShift.INDEX;
+								valueEnd = tableValue[indexValueEnd];
+
+								rate = (float)(frame - frameKey) / (float)(frameKeyEnd - frameKey);
+								rate = 1.0f - rate;
+								rate *= rate;
+								rate = 1.0f - rate;
+
+								cacheDecode.Value.ID = value.ID;
+								for(int i=0; i<Library_SpriteStudio6.Data.Animation.Attribute.Shader.CountParameter; i++)
+								{
+									cacheDecode.Value.Parameter[i] = ((valueEnd.Parameter[i] - value.Parameter[i]) * rate) + value.Parameter[i];
+								}
+
+								return(true);	/* Updated */
+
+							case KindFormula._RESERVED_04:
+								break;
+							case KindFormula._RESERVED_03:
+								break;
+							case KindFormula._RESERVED_02:
+								break;
+							case KindFormula._RESERVED_01:
+								break;
+
+							case KindFormula.CPE:
+								if(framePrevious == frameKey)
+								{
+									return(false);	/* Not Updated. */
+								}
+
+								/* MEMO: Even if has reference to array, since caller manages buffer, no problem to shallow copy. */
+								cacheDecode.Value = tableValue[indexValue];
+
+								return(true);	/* Updated */
+						}
+#else
 						if(0 >= tableStatus.Length)
 						{
 							return(false);
@@ -2082,6 +2849,7 @@ public static partial class Library_SpriteStudio6
 								cacheDecode.Value = tableValue[index];
 								return(true);	/* Updated */
 						}
+#endif
 
 						return(false);
 					}

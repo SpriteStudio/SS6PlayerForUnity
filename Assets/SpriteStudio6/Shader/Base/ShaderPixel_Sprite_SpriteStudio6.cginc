@@ -29,7 +29,7 @@ half4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSynthesizePartsColor(pixel, input);
 
 	/* Finalize color */
-	PixelSolvePMA(pixel, pixel.a);
+	PixelSolvePMA(pixel, pixelA);
 	pixel.a = pixelA;
 
 	output = pixel;

@@ -148,7 +148,7 @@ Be sure to process the "VertexSetPartsColor" in Vertex-Shader.
 #else
 #define PixelSynthesizePartsColor(_pixel_,_input_)														\
 	{																									\
-		half4 color[4];																				\
+		half4 color[4];																					\
 		float rate = _input_.ColorOverlay.w;															\
 		float rateInverse = 1.0f - rate;																\
 		color[0] = (_pixel_ * rateInverse) + (_input_.ColorOverlay * rate);	/* Mix */					\
@@ -185,7 +185,7 @@ When "ETC1_EXTERNAL_ALPHA" is not defined, process empty.
 #define PixelSynthesizeExternalAlpha(_pixleA_,_textureExternal_,_UV_,_rate_)	\
 	{																			\
 		half4 alpha = tex2D(_textureExternal_, _UV_);							\
-		_pixleA_ = lerp(_pixleA_, _textureExternal_.r, _rate_);					\
+		_pixleA_ = lerp(_pixleA_, alpha.r, _rate_);								\
 	}
 #else
 #define PixelSynthesizeExternalAlpha(_pixleA_,_textureAlpha,_UV_,_rate_)
