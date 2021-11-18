@@ -6,7 +6,6 @@
 	All rights reserved.
 */
 // #define STATICDATA_DUPLICATE_DEEP
-#define TEST_PERFORMANCE_SPEEDUP
 
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.0.0 (Beta)";
+	public const string SignatureVersionAsset = "2.0.0 (Beta-1)";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 

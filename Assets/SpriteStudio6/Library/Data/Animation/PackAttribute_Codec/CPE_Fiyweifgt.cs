@@ -5,6 +5,8 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+#define REDUCE_FREQUENCY_BINARYTREE
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -605,6 +607,25 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;	/* Always 1 */
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+
+						/* Get values */
+						index = (status & (int)FlagBit.INDEX) >> 15;
+						cacheDecode.Value = dictionary.TableValueInt[index];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -642,6 +663,8 @@ public static partial class Library_SpriteStudio6
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
 						cacheDecode.Value = dictionary.TableValueInt[index];
+#endif
+
 						return(true);	/* outValue is overwritten. */
 					}
 
@@ -659,6 +682,25 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;	/* Always 1 */
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+
+						/* Get values */
+						index = (status & (int)FlagBit.INDEX) >> 15;
+						cacheDecode.Value = dictionary.TableValueFloat[index];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -696,6 +738,8 @@ public static partial class Library_SpriteStudio6
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
 						cacheDecode.Value = dictionary.TableValueFloat[index];
+#endif
+
 						return(true);	/* outValue is overwritten. */
 					}
 
@@ -713,6 +757,30 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+
+						/* Get values */
+						int indexValue;
+						indexValue = (status & (int)FlagBit.INDEX) >> 15;
+						cacheDecode.Value.x = dictionary.TableValueFloat[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.y = dictionary.TableValueFloat[indexValue];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -754,6 +822,7 @@ public static partial class Library_SpriteStudio6
 						status = tableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
 						cacheDecode.Value.y = dictionary.TableValueFloat[index];
+#endif
 
 						return(true);	/* outValue is overwritten. */
 					}
@@ -772,6 +841,33 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+
+						/* Get values */
+						int indexValue;
+						indexValue = (status & (int)FlagBit.INDEX) >> 15;
+						cacheDecode.Value.x = dictionary.TableValueFloatVector[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.y = dictionary.TableValueFloatVector[indexValue];
+
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.z = dictionary.TableValueFloatVector[indexValue];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -816,6 +912,7 @@ public static partial class Library_SpriteStudio6
 
 						index = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
 						cacheDecode.Value.z = dictionary.TableValueFloatVector[index];
+#endif
 
 						return(true);	/* outValue is overwritten. */
 					}
@@ -834,6 +931,49 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+
+						/* Get values */
+						int indexValue;
+						cacheDecode.FrameKey = frameKey;
+//						indexValue = (status & (int)FlagBit.INDEX) >> 15;	/* There is nothing here */
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_LU].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x = dictionary.TableValueFloatCoordinate[indexValue];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].y = dictionary.TableValueFloatCoordinate[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_RU].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].x = dictionary.TableValueFloatCoordinate[indexValue];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].y = dictionary.TableValueFloatCoordinate[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_RD].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].x = dictionary.TableValueFloatCoordinate[indexValue];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].y = dictionary.TableValueFloatCoordinate[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_LD].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x = dictionary.TableValueFloatCoordinate[indexValue];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y = dictionary.TableValueFloatCoordinate[indexValue];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -893,6 +1033,7 @@ public static partial class Library_SpriteStudio6
 						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x = dictionary.TableValueFloatCoordinate[index];
 						index = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
 						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y = dictionary.TableValueFloatCoordinate[index];
+#endif
 
 						return(true);	/* outValue is overwritten. */
 					}
@@ -911,6 +1052,49 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+						cacheDecode.Value.Bound = Library_SpriteStudio6.KindBoundBlend.VERTEX;	/* Always handle by "Vertex" at runtime */
+						cacheDecode.Value.Operation = (Library_SpriteStudio6.KindOperationBlend)((status & (int)FlagBit.INDEX) >> 15);
+
+						/* Get values */
+						int indexValue;
+						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_LURU].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] = dictionary.TableValueColor[indexValue];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] = dictionary.TableValueColor[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_RDLD].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueColor[indexValue];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueColor[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_POWER_LURU].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = dictionary.TableValueFloat[indexValue];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = dictionary.TableValueFloat[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_POWER_RDLD].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueFloat[indexValue];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueFloat[indexValue];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -971,6 +1155,7 @@ public static partial class Library_SpriteStudio6
 						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueFloat[index];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
 						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueFloat[index];
+#endif
 
 						return(true);	/* outValue is overwritten. */
 					}

@@ -72,7 +72,7 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 
 	/* Texel Sampling */
 	fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
-	PixelSynthesizeExternalAlpha(pixel.a, _AlphaTex, coord.xy, _EnableExternalAlpha);
+	PixelSynthesizeExternalAlpha(pixel.a, _AlphaTex, input.Texture00UV.xy, _EnableExternalAlpha);
 	PixelSolvePMA(pixel, pixel.a);
 
 	/* Check Discarding-Pixel */
