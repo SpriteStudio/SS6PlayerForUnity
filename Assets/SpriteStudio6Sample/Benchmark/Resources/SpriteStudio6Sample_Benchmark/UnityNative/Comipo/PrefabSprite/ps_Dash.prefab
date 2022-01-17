@@ -1711,7 +1711,6 @@ GameObject:
   - component: {fileID: 4056237796084416}
   - component: {fileID: 114248668239331596}
   - component: {fileID: 114945316157530082}
-  - component: {fileID: 7349023723351655873}
   m_Layer: 0
   m_Name: ps_Dash
   m_TagString: Untagged
@@ -1764,25 +1763,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TableAnimationClip:
   - {fileID: 7400000, guid: f6343de88c7d93f4f8e228dbdc00e5b7, type: 2}
---- !u!95 &7349023723351655873
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1707382966457802}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 0052ba303c4ab234ab16b3b703b6056d, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1707822894416460
 GameObject:
   m_ObjectHideFlags: 0

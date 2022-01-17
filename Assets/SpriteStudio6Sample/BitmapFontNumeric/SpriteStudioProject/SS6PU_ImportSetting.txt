@@ -1,20 +1,21 @@
 ﻿* ========================================================
-*  Importer Setting-File                                  
+*  Importer Setting-File
 * --------------------------------------------------------
-*  Generated with "SpriteStudio6 Player for Unity"        
+*  Generated with "SpriteStudio6 Player for Unity"
+* 
 *  Copyright(C) 1997-2021 Web Technology Corp.
 *  Copyright(C) CRI Middleware Co., Ltd.
-*  All rights reserved. 
+*  All rights reserved.
 * ========================================================
 ? Basic_FlagCreateControlGameObject > true
 ? Basic_FlagCreateProjectFolder > true
 ? Basic_FlagTextureReadable > false
 ? Basic_FlagCreateHolderAsset > true
 ? Basic_FlagInvisibleToHideAll > false
-? Basic_FlagTrackAssets > false
+? Basic_FlagTrackAssets > true
 ? Basic_FlagDisableInitialLightRenderer > false
 ? Basic_FlagTakeOverLightRenderer > false
-? Basic_FlagConvertSignal > true
+? Basic_FlagConvertSignal > false
 ? PreCalculation_FlagTrimTransparentPixelsCell > false
 ? Collider_FlagAttachCollider > false
 ? Collider_FlagCollider2D > false
@@ -73,27 +74,28 @@
 ? PackAttributeAnimation_Deform > CPE_Interpolate
 ? PackAttributeAnimation_Shader > StandardCPE
 ? PackAttributeAnimation_Signal > StandardCPE
-? PresetMaterial_AnimationUnityNativeMix > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_MIX.mat
-? PresetMaterial_AnimationUnityNativeAdd > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_ADD.mat
-? PresetMaterial_AnimationUnityNativeSub > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_SUB.mat
-? PresetMaterial_AnimationUnityNativeMul > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_MUL.mat
-? PresetMaterial_AnimationUnityNativeMulNA > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_MUL_NA.mat
-? PresetMaterial_AnimationUnityNativeScr > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_SCR.mat
-? PresetMaterial_AnimationUnityNativeExc > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_EXC.mat
-? PresetMaterial_AnimationUnityNativeInv > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_INV.mat
-? PresetMaterial_AnimationUnityNativeNonBatchMix > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_NonBatch_MIX.mat
-? PresetMaterial_AnimationUnityNativeNonBatchAdd > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_NonBatch_ADD.mat
-? PresetMaterial_AnimationUnityNativeNonBatchSub > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_NonBatch_SUB.mat
-? PresetMaterial_AnimationUnityNativeNonBatchMul > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_NonBatch_MUL.mat
-? PresetMaterial_AnimationUnityNativeNonBatchMulNA > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_NonBatch_MUL_NA.mat
-? PresetMaterial_AnimationUnityNativeNonBatchScr > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_NonBatch_SCR.mat
-? PresetMaterial_AnimationUnityNativeNonBatchExc > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_NonBatch_EXC.mat
-? PresetMaterial_AnimationUnityNativeNonBatchInv > /SpriteStudio6/Library/Material/UnityNative/Sprite_UnityNative_NonBatch_INV.mat
-? PresetMaterial_SkinnedMeshUnityNativeMix > /SpriteStudio6/Library/Material/UnityNative/SkinnedMesh_UnityNative_MIX.mat
-? PresetMaterial_SkinnedMeshUnityNativeAdd > /SpriteStudio6/Library/Material/UnityNative/SkinnedMesh_UnityNative_ADD.mat
-? PresetMaterial_SkinnedMeshUnityNativeSub > /SpriteStudio6/Library/Material/UnityNative/SkinnedMesh_UnityNative_SUB.mat
-? PresetMaterial_SkinnedMeshUnityNativeMul > /SpriteStudio6/Library/Material/UnityNative/SkinnedMesh_UnityNative_MUL.mat
-? PresetMaterial_SkinnedMeshUnityNativeMulNA > /SpriteStudio6/Library/Material/UnityNative/SkinnedMesh_UnityNative_MUL_NA.mat
-? PresetMaterial_SkinnedMeshUnityNativeScr > /SpriteStudio6/Library/Material/UnityNative/SkinnedMesh_UnityNative_SCR.mat
-? PresetMaterial_SkinnedMeshUnityNativeExc > /SpriteStudio6/Library/Material/UnityNative/SkinnedMesh_UnityNative_EXC.mat
-? PresetMaterial_SkinnedMeshUnityNativeInv > /SpriteStudio6/Library/Material/UnityNative/SkinnedMesh_UnityNative_INV.mat
+? PresetMaterial_AnimationUnityNativeMix > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MIX.mat
+? PresetMaterial_AnimationUnityNativeAdd > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_ADD.mat
+? PresetMaterial_AnimationUnityNativeSub > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SUB.mat
+? PresetMaterial_AnimationUnityNativeMul > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL.mat
+? PresetMaterial_AnimationUnityNativeMulNA > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_MUL_NA.mat
+? PresetMaterial_AnimationUnityNativeScr > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_SCR.mat
+? PresetMaterial_AnimationUnityNativeExc > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_EXC.mat
+? PresetMaterial_AnimationUnityNativeInv > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_INV.mat
+? PresetMaterial_AnimationUnityNativeNonBatchMix > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MIX.mat
+? PresetMaterial_AnimationUnityNativeNonBatchAdd > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_ADD.mat
+? PresetMaterial_AnimationUnityNativeNonBatchSub > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_SUB.mat
+? PresetMaterial_AnimationUnityNativeNonBatchMul > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MUL.mat
+? PresetMaterial_AnimationUnityNativeNonBatchMulNA > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_MUL_NA.mat
+? PresetMaterial_AnimationUnityNativeNonBatchScr > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_SCR.mat
+? PresetMaterial_AnimationUnityNativeNonBatchExc > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_EXC.mat
+? PresetMaterial_AnimationUnityNativeNonBatchInv > /SpriteStudio6/Material/UnityNative/Sprite_UnityNative_NonBatch_INV.mat
+? PresetMaterial_SkinnedMeshUnityNativeMix > /SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MIX.mat
+? PresetMaterial_SkinnedMeshUnityNativeAdd > /SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_ADD.mat
+? PresetMaterial_SkinnedMeshUnityNativeSub > /SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_SUB.mat
+? PresetMaterial_SkinnedMeshUnityNativeMul > /SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MUL.mat
+? PresetMaterial_SkinnedMeshUnityNativeMulNA > /SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_MUL_NA.mat
+? PresetMaterial_SkinnedMeshUnityNativeScr > /SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_SCR.mat
+? PresetMaterial_SkinnedMeshUnityNativeExc > /SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_EXC.mat
+? PresetMaterial_SkinnedMeshUnityNativeInv > /SpriteStudio6/Material/UnityNative/SkinnedMesh_UnityNative_INV.mat
+? HolderAsset_PrefabHolderAssetSS6PU > /SpriteStudio6/Prefab/Holder/HolderAssetSS6PU.prefab

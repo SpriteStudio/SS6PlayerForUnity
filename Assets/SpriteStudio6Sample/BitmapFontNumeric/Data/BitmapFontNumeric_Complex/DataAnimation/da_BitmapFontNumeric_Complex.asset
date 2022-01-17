@@ -15,27 +15,6 @@ MonoBehaviour:
   Version: 65792
   Name: BitmapFontNumeric_Complex
   DataProject: {fileID: 11400000, guid: 56d54e508e9c9934180f6589cc62f43c, type: 2}
-  TableMaterial:
-  - {fileID: 2100000, guid: f0be25fe18230594788a326eec5239c1, type: 2}
-  - {fileID: 2100000, guid: 8f80675c4e8264b449c628fc8618a111, type: 2}
-  - {fileID: 2100000, guid: 9ef76bef09db1df46814d67ddb90c91b, type: 2}
-  - {fileID: 2100000, guid: 9e1cf7595b995c1479c8373fd2e10060, type: 2}
-  - {fileID: 2100000, guid: d0d40c469eb8a8943bd1b79e386b5ae1, type: 2}
-  - {fileID: 2100000, guid: 7ba7f95fc95296f429106b881ca391bc, type: 2}
-  - {fileID: 2100000, guid: 35d11e2f25ec0284b96d2676cce8b8f4, type: 2}
-  - {fileID: 2100000, guid: 313c99ebc374ae44f8697980eb02a47d, type: 2}
-  - {fileID: 2100000, guid: cdfa10a3c24942f4980bab1078d7100e, type: 2}
-  - {fileID: 2100000, guid: 8f671298a66be9941b201358df512091, type: 2}
-  - {fileID: 2100000, guid: 1235f4376a66ecc45b70f7bb7820804a, type: 2}
-  - {fileID: 2100000, guid: 84e49617529ba0243b77242a84a87992, type: 2}
-  - {fileID: 2100000, guid: a7cbefcb6a344cd49a84aa1523972d6f, type: 2}
-  - {fileID: 2100000, guid: 96fb1ade48b3d5440bbf3a1893087447, type: 2}
-  - {fileID: 2100000, guid: 522b6c6e41f97034bbed0f0b29fea9c9, type: 2}
-  - {fileID: 2100000, guid: eed6a822f95a57b489fd061c2444d3dc, type: 2}
-  - {fileID: 2100000, guid: 71d012bd0ee56074686a2f23332291ed, type: 2}
-  - {fileID: 2100000, guid: bccf4c6e5e96e754d80eb7491bc2b5cb, type: 2}
-  - {fileID: 2100000, guid: 267635e51554cee4db870fd00c99fad7, type: 2}
-  - {fileID: 2100000, guid: aaf89f61b44f47c4db3c0ae6c02cfeaa, type: 2}
   TableParts:
   - Name: root
     ID: 0

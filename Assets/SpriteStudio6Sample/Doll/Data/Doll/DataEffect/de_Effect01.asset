@@ -15,11 +15,6 @@ MonoBehaviour:
   Version: 65538
   Name: Effect01
   DataProject: {fileID: 11400000, guid: 555776ec47e51fc4ab5f9a9607fa88d2, type: 2}
-  TableMaterial:
-  - {fileID: 2100000, guid: 6a5d8f29bfc294845a2702d17e7386de, type: 2}
-  - {fileID: 2100000, guid: 6da2d6f6daa0a124599b490445f59788, type: 2}
-  - {fileID: 2100000, guid: a290cbbb2fc55aa438272fbf15f098aa, type: 2}
-  - {fileID: 2100000, guid: 4876c555edc915045a941aa64852bd6d, type: 2}
   FlagData: 0
   SeedRandom: 2
   VersionRenderer: 2

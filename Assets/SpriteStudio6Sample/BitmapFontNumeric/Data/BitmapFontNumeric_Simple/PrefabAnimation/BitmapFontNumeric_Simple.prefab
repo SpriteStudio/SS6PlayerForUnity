@@ -112,6 +112,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DataCellMap: {fileID: 11400000, guid: 0d6c8dda9b189594899a62c45fd893cb, type: 2}
+  HolderAsset: {fileID: 4872707188190086726, guid: 150ec662010d4ef4fba008dc6b51a950,
+    type: 3}
   InstanceRootParent: {fileID: 0}
   InstanceGameObjectControl: {fileID: 0}
   FlagHideForce: 0
