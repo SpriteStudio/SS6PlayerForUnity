@@ -5089,6 +5089,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						scriptRoot.DataAnimation = null;
 					}
+					if(null != setting.HolderAsset.PrefabHolderAssetSS6PU)
+					{
+						scriptRoot.HolderAsset = setting.HolderAsset.PrefabHolderAssetSS6PU.GetComponent<Script_SpriteStudio6_HolderAsset>();
+					}
+					else
+					{
+						scriptRoot.HolderAsset = null;
+					}
 
 					scriptRoot.LimitTrack = limitTrack;
 					scriptRoot.TableControlParts = tableControlParts;
@@ -6348,6 +6356,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+								break;
 						}
 						gameObjectParts.transform.localPosition = position;
 						gameObjectParts.transform.localEulerAngles = rotation;
@@ -6653,6 +6665,10 @@ public static partial class LibraryEditor_SpriteStudio6
 																	informationSSPJ,
 																	informationSSAE
 																);
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 								break;
 						}
 
@@ -9276,6 +9292,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 							goto ConvertPartsAnimationGameObjectCreate_Mesh;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+							goto ConvertPartsAnimationGameObjectCreate_NULLCreate;
 
 						default:
 							break;

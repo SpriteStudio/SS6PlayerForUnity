@@ -396,6 +396,11 @@ public partial class Script_SpriteStudio6_Root
 			default:
 //				flagSettable = false;
 				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+//				flagSettable = false;
+				break;
 		}
 
 		if(true == flagSettable)
@@ -477,6 +482,8 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 			default:
 				goto CoefficientGetScaleParts_ErrorEnd;
 		}

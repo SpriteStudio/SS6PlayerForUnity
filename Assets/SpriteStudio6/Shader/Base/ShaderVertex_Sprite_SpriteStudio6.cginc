@@ -33,7 +33,7 @@ InputPS VS_main(InputVS input)
 	/*       At the same time, set ÅhArgumentVs00"(uniform for Vertex-Shader).               */
 //	float4 argumentVs00;
 //	VertexSetPartsColor(output, argumentVs00, indexBlend, input.texcoord.w);
-	VertexSetPartsColor(output, temp, indexBlend, input.texcoord.w);	/* Now, "argumentVs00" is not used in this Vertex-Shader. */
+	VertexSetPartsColor(output, indexBlend, input.texcoord.w);	/* Now, "argumentVs00" is not used in this Vertex-Shader. */
 
 	/* Set Draw-Position */
 	temp = input.vertex;

@@ -20,7 +20,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	public string Name;								/* Body-Name of SSAE */
 	public Script_SpriteStudio6_DataProject DataProject;
 
-	public Material[] TableMaterial;
+//	public Material[] TableMaterial;
 
 	public Library_SpriteStudio6.Data.Parts.Animation[] TableParts;
 	public Library_SpriteStudio6.Data.Parts.Animation.Catalog CatalogParts;
@@ -77,7 +77,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	public void CleanUp()
 	{
 		Version = (KindVersion)(-1);
-		TableMaterial = null;
+//		TableMaterial = null;
 
 		TableParts = null;
 		CatalogParts.CleanUp();
@@ -135,6 +135,10 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 						/* MEMO: Not count. (not sprite) */
 						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+						break;
 				}
 			}
 		}
@@ -187,6 +191,10 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 						/* MEMO: Not count. (not sprite) */
 						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+						break;
 				}
 			}
 		}
@@ -234,6 +242,10 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 						break;
 				}
 			}
@@ -293,6 +305,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		return(-1);
 	}
 
+#if false
 	internal void BootUpTableMaterial()
 	{
 #if UNITY_EDITOR
@@ -311,6 +324,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 		material = null;
 #endif
 	}
+#endif
 
 	internal void BootUpInterfaceAttribute()
 	{

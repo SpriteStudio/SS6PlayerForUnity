@@ -21,6 +21,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	/* Work-Area */
 	private static string PathFolderMaterialUnityNative = string.Empty;
 	private static UnityEngine.Object ObjectFolderMaterialUnityNative = null;
+
+	private static string PathFolderHolderAssetSS6PU = string.Empty;
+	private static UnityEngine.Object ObjectFolderHolderAssetSS6PU = null;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
@@ -206,8 +209,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			EditorGUILayout.Space();
 			SettingOption.SettingBackUp.FlagExportRuleNameAsset = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Naming Assets\"", SettingOption.SettingBackUp.FlagExportRuleNameAsset);
 			SettingOption.SettingBackUp.FlagExportRuleNameAssetFolder = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Naming Asset-Folders\"", SettingOption.SettingBackUp.FlagExportRuleNameAssetFolder);
-			SettingOption.SettingBackUp.FlagPackAttributeAnimation = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Attribute data Packing\"", SettingOption.SettingBackUp.FlagPackAttributeAnimation);
-			SettingOption.SettingBackUp.FlagPresetMaterial = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Preset Material\"", SettingOption.SettingBackUp.FlagPresetMaterial);
+			SettingOption.SettingBackUp.FlagExportPackAttributeAnimation = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Attribute data Packing\"", SettingOption.SettingBackUp.FlagExportPackAttributeAnimation);
+			SettingOption.SettingBackUp.FlagExportPresetMaterial = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Preset Material\"", SettingOption.SettingBackUp.FlagExportPresetMaterial);
+			SettingOption.SettingBackUp.FlagExportHolderAsset = EditorGUILayout.ToggleLeft("Export \"Advanced Options: Holder Asset\"", SettingOption.SettingBackUp.FlagExportHolderAsset);
 			EditorGUILayout.Space();
 
 			if(true == GUILayout.Button("Save to Text-File"))
@@ -230,8 +234,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 												SettingOption.SettingBackUp.FlagExportCheckVersion,
 												SettingOption.SettingBackUp.FlagExportRuleNameAsset,
 												SettingOption.SettingBackUp.FlagExportRuleNameAssetFolder,
-												SettingOption.SettingBackUp.FlagPackAttributeAnimation,
-												SettingOption.SettingBackUp.FlagPresetMaterial
+												SettingOption.SettingBackUp.FlagExportPackAttributeAnimation,
+												SettingOption.SettingBackUp.FlagExportPresetMaterial,
+												SettingOption.SettingBackUp.FlagExportHolderAsset
 											);
 				}
 			}
@@ -246,6 +251,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				{
 					SettingImport.ImportFile(nameFile);
 					SettingImport.Save();
+
+					/* Refresh Work-Area */
+					PathFolderMaterialUnityNative = string.Empty;
+					ObjectFolderMaterialUnityNative = null;
+					PathFolderHolderAssetSS6PU = string.Empty;
+					ObjectFolderHolderAssetSS6PU = null;
 				}
 			}
 			EditorGUILayout.Space();
@@ -254,6 +265,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			{
 				SettingImport.CleanUp();
 				SettingOption.ModeBatchImporter.Setting.CleanUp();	/* Batch-Importer */
+
+				/* Refresh Work-Area */
+				PathFolderMaterialUnityNative = string.Empty;
+				ObjectFolderMaterialUnityNative = null;
+				PathFolderHolderAssetSS6PU = string.Empty;
+				ObjectFolderHolderAssetSS6PU = null;
 			}
 
 			EditorGUI.indentLevel = levelIndent;
@@ -322,6 +339,13 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			if(true == SettingOption.ModeSS6PU.FlagFoldOutPackAttributeAnimation)
 			{
 				FoldOutExecPackAttributeAnimation(levelIndent + 1);
+				EditorGUI.indentLevel = levelIndent;
+			}
+
+			SettingOption.ModeSS6PU.FlagFoldOutHolderAsset = EditorGUILayout.Foldout(SettingOption.ModeSS6PU.FlagFoldOutHolderAsset, "Advanced Options: Holder Asset");
+			if(true == SettingOption.ModeSS6PU.FlagFoldOutHolderAsset)
+			{
+				FoldOutExecHolderAsset(levelIndent + 1);
 				EditorGUI.indentLevel = levelIndent;
 			}
 		}
@@ -898,6 +922,71 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			pack = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorGUILayout.IntPopup(message, (int)pack, dataPopup.TableName, dataPopup.TableKindTypePack));
 		}
 	}
+	private void FoldOutExecHolderAsset(int levelIndent)
+	{
+		switch(SettingImport.Mode)
+		{
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
+				EditorGUI.indentLevel = levelIndent;
+
+				EditorGUILayout.LabelField("Set prefab of \"Asset-Holder\"");
+				EditorGUILayout.Space();
+
+				{
+					/* Get folder containing preset-materials */
+					if(true == string.IsNullOrEmpty(PathFolderHolderAssetSS6PU))
+					{
+						string path = SettingImport.HolderAsset.PathFolderGetValidMaterial();
+						PathFolderHolderAssetSS6PU = path;
+						if(false == string.IsNullOrEmpty(PathFolderHolderAssetSS6PU))
+						{	/* Succeed & not empty path */
+							/* Get "Folder-Object" */
+							ObjectFolderHolderAssetSS6PU = LibraryEditor_SpriteStudio6.Utility.File.AssetFolderGetPath(path);
+							if(null == ObjectFolderHolderAssetSS6PU)
+							{
+								PathFolderHolderAssetSS6PU = null;
+							}
+						}
+					}
+
+					/* Reset materlals */
+					UnityEngine.Object objectFolderNow = EditorGUILayout.ObjectField("Base Folder", ObjectFolderHolderAssetSS6PU, typeof(UnityEngine.Object), false);
+					if(ObjectFolderHolderAssetSS6PU != objectFolderNow)
+					{	/* Object dropped */
+						string pathFolderNow = AssetDatabase.GetAssetPath(objectFolderNow);
+						if(true == AssetDatabase.IsValidFolder(pathFolderNow))
+						{	/* Object is Folder-assets */
+							PathFolderHolderAssetSS6PU = pathFolderNow;
+							ObjectFolderHolderAssetSS6PU = objectFolderNow;
+
+							if(false == string.IsNullOrEmpty(PathFolderHolderAssetSS6PU))
+							{
+								SettingImport.HolderAsset.AssetRecover(PathFolderHolderAssetSS6PU);
+							}
+						}
+					}
+				}
+
+				{
+					EditorGUILayout.Space();
+
+					UnityEngine.GameObject gameObject = SettingImport.HolderAsset.PrefabHolderAssetSS6PU;
+					Script_SpriteStudio6_HolderAsset objectHolderAsset = (null == gameObject) ? null : gameObject.GetComponent<Script_SpriteStudio6_HolderAsset>();
+
+					Script_SpriteStudio6_HolderAsset objectHolderAssetNew = EditorGUILayout.ObjectField("Prefab", objectHolderAsset, typeof(Script_SpriteStudio6_HolderAsset), false) as Script_SpriteStudio6_HolderAsset;
+					if((null != objectHolderAssetNew) && (objectHolderAsset != objectHolderAssetNew))
+					{
+						SettingImport.HolderAsset.PrefabHolderAssetSS6PU = objectHolderAssetNew.gameObject;
+					}
+				}
+				EditorGUILayout.Space();
+
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+				break;
+		}
+	}
 
 	private void FoldOutExecPresetMaterial(int levelIndent)
 	{
@@ -913,8 +1002,23 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.Space();
 
 				{
-					PathFolderGetPresetMaterialUnityNative();
+					/* Get folder containing preset-materials */
+					if(true == string.IsNullOrEmpty(PathFolderMaterialUnityNative))
+					{
+						string path = SettingImport.PresetMaterial.PathFolderGetValidMaterial();
+						PathFolderMaterialUnityNative = path;
+						if(false == string.IsNullOrEmpty(PathFolderMaterialUnityNative))
+						{	/* Succeed & not empty path */
+							/* Get "Folder-Object" */
+							ObjectFolderMaterialUnityNative = LibraryEditor_SpriteStudio6.Utility.File.AssetFolderGetPath(path);
+							if(null == ObjectFolderMaterialUnityNative)
+							{
+								PathFolderMaterialUnityNative = null;
+							}
+						}
+					}
 
+					/* Reset materlals */
 					UnityEngine.Object objectFolderNow = EditorGUILayout.ObjectField("Base Folder", ObjectFolderMaterialUnityNative, typeof(UnityEngine.Object), false);
 					if(ObjectFolderMaterialUnityNative != objectFolderNow)
 					{	/* Object dropped */
@@ -924,7 +1028,10 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 							PathFolderMaterialUnityNative = pathFolderNow;
 							ObjectFolderMaterialUnityNative = objectFolderNow;
 
-							PathFolderSetPresetMaterialUnityNative();
+							if(false == string.IsNullOrEmpty(PathFolderMaterialUnityNative))
+							{
+								SettingImport.PresetMaterial.AssetRecover(PathFolderMaterialUnityNative);
+							}
 						}
 					}
 				}
@@ -966,192 +1073,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				/* MEMO: Not reach here. */
 				break;
 		}
-	}
-	private void PathFolderGetPresetMaterialUnityNative()
-	{
-		if(false == string.IsNullOrEmpty(PathFolderMaterialUnityNative))
-		{
-			return;
-		}
-
-		UnityEngine.Material material = null;
-
-		/* Find Valid Material */
-		if(null != SettingImport.PresetMaterial.AnimationUnityNativeMix)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeMix;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeAdd)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeAdd;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeSub)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeSub;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeMul)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeMul;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeMulNA)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeMulNA;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeScr)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeScr;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeExc)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeExc;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeInv)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeInv;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMix)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMix;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeNonBatchAdd)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeNonBatchAdd;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeNonBatchSub)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeNonBatchSub;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMul)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMul;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMulNA)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMulNA;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeNonBatchExc)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeNonBatchExc;
-		}
-		else if(null == SettingImport.PresetMaterial.AnimationUnityNativeNonBatchInv)
-		{
-			material = SettingImport.PresetMaterial.AnimationUnityNativeNonBatchInv;
-		}
-		else if(null == SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix)
-		{
-			material = SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix;
-		}
-		else if(null == SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd)
-		{
-			material = SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd;
-		}
-		else if(null == SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub)
-		{
-			material = SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub;
-		}
-		else if(null == SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul)
-		{
-			material = SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul;
-		}
-		else if(null == SettingImport.PresetMaterial.SkinnedMeshUnityNativeMulNA)
-		{
-			material = SettingImport.PresetMaterial.SkinnedMeshUnityNativeMulNA;
-		}
-		else if(null == SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr)
-		{
-			material = SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr;
-		}
-		else if(null == SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc)
-		{
-			material = SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc;
-		}
-		else if(null == SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv)
-		{
-			material = SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv;
-		}
-
-		/* Get and Split Material's path */
-		string path = string.Empty;
-		if(null != material)
-		{
-			string pathMaterial = AssetDatabase.GetAssetPath(material);
-			if(null != pathMaterial)
-			{
-				string nameFileBody;
-				string nameExtention;
-				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out path, out nameFileBody, out nameExtention, pathMaterial);
-			}
-		}
-
-		PathFolderMaterialUnityNative = path;
-		if(false == string.IsNullOrEmpty(PathFolderMaterialUnityNative))
-		{
-			/* MEMO: Cannot get Folder-asset when the path ends with "/". */
-			path = PathFolderMaterialUnityNative.TrimEnd('/');
-			ObjectFolderMaterialUnityNative = AssetDatabase.LoadAssetAtPath(path, typeof(DefaultAsset));
-			if(null == ObjectFolderMaterialUnityNative)
-			{
-				PathFolderMaterialUnityNative = null;
-			}
-		}
-	}
-	private void PathFolderSetPresetMaterialUnityNative()
-	{
-		if(true == string.IsNullOrEmpty(PathFolderMaterialUnityNative))
-		{
-			return;
-		}
-		string pathFolder = PathFolderMaterialUnityNative;
-
-		/* MEMO: Since load and replace materials directly, path should start with "Assets/". */
-//		string pathRoot = LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/";
-//		if(true == pathFolder.StartsWith(pathRoot))
-//		{
-//			pathFolder = pathFolder.Remove(0, pathRoot.Length);
-//		}
-		if(false == pathFolder.EndsWith("/"))
-		{
-			pathFolder += "/";
-		}
-
-		/* Find Valid Material */
-		SettingImport.PresetMaterial.AnimationUnityNativeMix = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeMix, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeAdd = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeAdd, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeSub = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSub, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeMul = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeMul, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeMulNA = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeMulNA, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeScr = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeScr, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeExc = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeExc, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeInv = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeInv, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMix = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeNonBatchMix, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeNonBatchAdd = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeNonBatchAdd, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeNonBatchSub = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeNonBatchSub, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMul = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeNonBatchMul, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMulNA = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeNonBatchMulNA, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeNonBatchScr, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeNonBatchExc = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeNonBatchExc, pathFolder));
-		SettingImport.PresetMaterial.AnimationUnityNativeNonBatchInv = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeNonBatchInv, pathFolder));
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSkinnedMeshMix, pathFolder));
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSkinnedMeshAdd, pathFolder));
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeSub = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSkinnedMeshSub, pathFolder));
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSkinnedMeshMul, pathFolder));
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeMulNA = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSkinnedMeshMulNA, pathFolder));
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSkinnedMeshScr, pathFolder));
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSkinnedMeshExc, pathFolder));
-		SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv = LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.MaterialLoadPath(PathFolderSetPresetMaterialUnityNativeMain(LibraryEditor_SpriteStudio6.Import.Setting.GroupPresetMaterial.NameFileBodyPresetUnityNativeSkinnedMeshInv, pathFolder));
-	}
-	private string PathFolderSetPresetMaterialUnityNativeMain(string pathOriginal, string pathFolderNew)
-	{
-		string nameFolder;
-		string nameFileBody;
-		string nameExtention;
-		LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out nameFolder, out nameFileBody, out nameExtention, pathOriginal);
-
-		return(pathFolderNew + nameFileBody + nameExtention);
 	}
 	#endregion Functions
 
@@ -1259,6 +1180,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public bool FlagFoldOutRuleNameAssetSample;
 			public bool FlagFoldOutRuleNameAssetFolder;
 			public bool FlagFoldOutPackAttributeAnimation;
+			public bool FlagFoldOutHolderAsset;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1272,7 +1194,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 								bool flagFoldOutRuleNameAsset,
 								bool flagFoldOutRuleNameAssetSample,
 								bool flagFoldOutRuleNameAssetFolder,
-								bool flagFoldOutPackAttributeAnimation
+								bool flagFoldOutPackAttributeAnimation,
+								bool flagFoldOutHolderAsset
 							)
 			{
 				FlagFoldOutBasic = flagFoldOutBasic;
@@ -1286,6 +1209,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagFoldOutRuleNameAssetSample = flagFoldOutRuleNameAssetSample;
 				FlagFoldOutRuleNameAssetFolder = flagFoldOutRuleNameAssetFolder;
 				FlagFoldOutPackAttributeAnimation = flagFoldOutPackAttributeAnimation;
+				FlagFoldOutHolderAsset = flagFoldOutHolderAsset;
 			}
 
 			public void CleanUp()
@@ -1306,6 +1230,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagFoldOutRuleNameAssetSample = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, Default.FlagFoldOutRuleNameAssetSample);
 				FlagFoldOutRuleNameAssetFolder = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAssetFolder, Default.FlagFoldOutRuleNameAssetFolder);
 				FlagFoldOutPackAttributeAnimation = EditorPrefs.GetBool(PrefsKeyFlagFoldOutPackAttributeAnimation, Default.FlagFoldOutPackAttributeAnimation);
+				FlagFoldOutHolderAsset = EditorPrefs.GetBool(PrefsKeyFlagFoldOutHolderAsset, Default.FlagFoldOutHolderAsset);
 
 				return(true);
 			}
@@ -1323,6 +1248,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, FlagFoldOutRuleNameAssetSample);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetFolder, FlagFoldOutRuleNameAssetFolder);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutPackAttributeAnimation, FlagFoldOutPackAttributeAnimation);
+				EditorPrefs.SetBool(PrefsKeyFlagFoldOutHolderAsset, FlagFoldOutHolderAsset);
 
 				return(true);
 			}
@@ -1341,6 +1267,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			private const string PrefsKeyFlagFoldOutRuleNameAssetSample = PrefsKeyPrefix + "FlagFoldOutRuleNameAssetSample";
 			private const string PrefsKeyFlagFoldOutRuleNameAssetFolder = PrefsKeyPrefix + "FlagFoldOutRuleNameAssetFolder";
 			private const string PrefsKeyFlagFoldOutPackAttributeAnimation = PrefsKeyPrefix + "FlagFoldOutPackAttributeAnimation";
+			private const string PrefsKeyFlagFoldOutHolderAsset = PrefsKeyPrefix + "FlagFoldOutHolderAsset";
 
 			private readonly static GroupSS6PU Default = new GroupSS6PU(
 				false,	/* FlagFoldOutBasic */
@@ -1352,7 +1279,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				false,	/* FlagFoldOutRuleNameAsset */
 				true,	/* FlagFoldOutRuleNameAssetSample */
 				false,	/* FlagFoldOutRuleNameAssetFolder */
-				false	/* FlagFoldOutPackAttributeAnimation */
+				false,	/* FlagFoldOutPackAttributeAnimation */
+				false	/* PrefsKeyFlagFoldOutHolderAsset */
 			);
 			#endregion Enums & Constants
 		}
@@ -1574,8 +1502,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public bool FlagExportCheckVersion;
 			public bool FlagExportRuleNameAsset;
 			public bool FlagExportRuleNameAssetFolder;
-			public bool FlagPackAttributeAnimation;
-			public bool FlagPresetMaterial;
+			public bool FlagExportPackAttributeAnimation;
+			public bool FlagExportPresetMaterial;
+			public bool FlagExportHolderAsset;
 			#endregion Variables & Properties
 
 			/* ----------------------------------------------- Functions */
@@ -1588,8 +1517,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 										bool flagExportCheckVersion,
 										bool flagExportRuleNameAsset,
 										bool flagExportRuleNameAssetFolder,
-										bool flagPackAttributeAnimation,
-										bool flagPresetMaterial
+										bool flagExportPackAttributeAnimation,
+										bool flagExportPresetMaterial,
+										bool flagExportHolderAsset
 									)
 			{
 				FlagExportCommon = flagExportCommon;
@@ -1601,8 +1531,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				FlagExportRuleNameAsset = flagExportRuleNameAsset;
 				FlagExportRuleNameAssetFolder = flagExportRuleNameAssetFolder;
-				FlagPackAttributeAnimation = flagPackAttributeAnimation;
-				FlagPresetMaterial = flagPresetMaterial;
+				FlagExportPackAttributeAnimation = flagExportPackAttributeAnimation;
+				FlagExportPresetMaterial = flagExportPresetMaterial;
+				FlagExportHolderAsset = flagExportHolderAsset;
 			}
 
 			public void CleanUp()
@@ -1621,8 +1552,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				FlagExportRuleNameAsset = EditorPrefs.GetBool(PrefsKeyFlagExportRuleNameAsset, Default.FlagExportRuleNameAsset);
 				FlagExportRuleNameAssetFolder = EditorPrefs.GetBool(PrefsKeyFlagExportRuleNameAsset, Default.FlagExportRuleNameAssetFolder);
-				FlagPackAttributeAnimation = EditorPrefs.GetBool(PrefsKeyFlagPackAttributeAnimation, Default.FlagPackAttributeAnimation);
-				FlagPresetMaterial = EditorPrefs.GetBool(PrefsKeyFlagPresetMaterial, Default.FlagPresetMaterial);
+				FlagExportPackAttributeAnimation = EditorPrefs.GetBool(PrefsKeyFlagExportPackAttributeAnimation, Default.FlagExportPackAttributeAnimation);
+				FlagExportPresetMaterial = EditorPrefs.GetBool(PrefsKeyFlagExportPresetMaterial, Default.FlagExportPresetMaterial);
+				FlagExportHolderAsset = EditorPrefs.GetBool(PrefsKeyFlagExportHolderAsset, Default.FlagExportHolderAsset);
 
 				return(true);
 			}
@@ -1638,8 +1570,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				EditorPrefs.SetBool(PrefsKeyFlagExportRuleNameAsset, FlagExportRuleNameAsset);
 				EditorPrefs.SetBool(PrefsKeyFlagExportRuleNameAssetFolder, FlagExportRuleNameAssetFolder);
-				EditorPrefs.SetBool(PrefsKeyFlagPackAttributeAnimation, FlagPackAttributeAnimation);
-				EditorPrefs.SetBool(PrefsKeyFlagPresetMaterial, FlagPresetMaterial);
+				EditorPrefs.SetBool(PrefsKeyFlagExportPackAttributeAnimation, FlagExportPackAttributeAnimation);
+				EditorPrefs.SetBool(PrefsKeyFlagExportPresetMaterial, FlagExportPresetMaterial);
+				EditorPrefs.SetBool(PrefsKeyFlagExportHolderAsset, FlagExportHolderAsset);
 
 				return(true);
 			}
@@ -1656,8 +1589,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			private const string PrefsKeyFlagExportCheckVersion = PrefsKeyPrefix + "FlagExportCheckVersion";
 			private const string PrefsKeyFlagExportRuleNameAsset = PrefsKeyPrefix + "FlagExportRuleNameAsset";
 			private const string PrefsKeyFlagExportRuleNameAssetFolder = PrefsKeyPrefix + "FlagExportRuleNameAssetFolder";
-			private const string PrefsKeyFlagPackAttributeAnimation = PrefsKeyPrefix + "FlagPackAttributeAnimation";
-			private const string PrefsKeyFlagPresetMaterial = PrefsKeyPrefix + "FlagPresetMaterial";
+			private const string PrefsKeyFlagExportPackAttributeAnimation = PrefsKeyPrefix + "FlagExportPackAttributeAnimation";
+			private const string PrefsKeyFlagExportPresetMaterial = PrefsKeyPrefix + "FlagExportPresetMaterial";
+			private const string PrefsKeyFlagExportHolderAsset = PrefsKeyPrefix + "FlagExportHolderAsset";
 
 			private readonly static GroupSettingBackUp Default = new GroupSettingBackUp(
 				false,	/* FlagExportCommon */
@@ -1668,8 +1602,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				false,	/* FlagExportCheckVersion */
 				true,	/* FlagExportRuleNameAsset */
 				true,	/* FlagExportRuleNameAssetFolder */
-				true,	/* FlagPackAttributeAnimation */
-				true	/* FlagPresetMaterial */
+				true,	/* FlagExportPackAttributeAnimation */
+				true,	/* FlagExportPresetMaterial */
+				true	/* FlagExportHolderAsset */
 			);
 			#endregion Enums & Constants
 		}

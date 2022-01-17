@@ -18,7 +18,8 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 
 	private SerializedProperty PropertyDataCellMap;
 	private SerializedProperty PropertyDataEffect;
-	private SerializedProperty PropertyTableMaterial;
+	private SerializedProperty PropertyHolderAsset;
+
 	private SerializedProperty PropertyHideForce;
 	private SerializedProperty PropertyLimitParticle;
 	#endregion Variables & Properties
@@ -32,7 +33,8 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 		serializedObject.FindProperty("__DUMMY__");
 		PropertyDataCellMap = serializedObject.FindProperty("DataCellMap");
 		PropertyDataEffect = serializedObject.FindProperty("DataEffect");
-		PropertyTableMaterial = serializedObject.FindProperty("TableMaterial");
+		PropertyHolderAsset = serializedObject.FindProperty("HolderAsset");
+
 		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
 		PropertyLimitParticle = serializedObject.FindProperty("LimitParticleDraw");
 	}
@@ -55,6 +57,7 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 
 			PropertyDataCellMap.objectReferenceValue = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", PropertyDataCellMap.objectReferenceValue, typeof(Script_SpriteStudio6_DataCellMap), true));
 			PropertyDataEffect.objectReferenceValue = (Script_SpriteStudio6_DataEffect)(EditorGUILayout.ObjectField("Data:Effect", PropertyDataEffect.objectReferenceValue, typeof(Script_SpriteStudio6_DataEffect), true));
+			PropertyHolderAsset.objectReferenceValue = (Script_SpriteStudio6_HolderAsset)(EditorGUILayout.ObjectField("Holder:Asset", PropertyHolderAsset.objectReferenceValue, typeof(Script_SpriteStudio6_HolderAsset), true));
 			EditorGUI.indentLevel = levelIndent;
 		}
 

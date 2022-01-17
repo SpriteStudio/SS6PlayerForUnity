@@ -433,6 +433,10 @@ public partial class Script_SpriteStudio6_Root
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 				return(true);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+				return(true);
 		}
 
 		if((0 > indexCellMap) || (0 > indexCell))

@@ -6,6 +6,7 @@
 	All rights reserved.
 */
 #define MESSAGE_DATAVERSION_INVALID
+// #define EXPERIMENT_FOR_CAMERA
 
 using System.Collections;
 using System.Collections.Generic;
@@ -177,6 +178,10 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			return;
 		}
 
+#if EXPERIMENT_FOR_CAMERA
+//		ArgumentShareEntire = null;
+#endif
+
 		/* Awake Base-Class */
 		BaseAwake();
 	}
@@ -273,6 +278,14 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	{
 		if(null == InstanceRootParent)
 		{
+#if EXPERIMENT_FOR_CAMERA
+			if(null == ArgumentShareEntire)
+			{
+				ArgumentShareEntire = new ArgumentContainer();
+			}
+			ArgumentShareEntire.CleanUp();
+#endif
+
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
 			if(true == RendererBootUpDraw(false))
@@ -295,6 +308,20 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 							);
 			}
 		}
+#if EXPERIMENT_FOR_CAMERA
+		else
+		{
+			if(null == ArgumentShareEntire)
+			{
+				/* MEMO: Child animations share highest-parent's ArgumentContainer. */
+				Script_SpriteStudio6_Root instanceRootParentHighest = RootGetHighest();
+				if(null != instanceRootParentHighest)
+				{
+					ArgumentShareEntire = instanceRootParentHighest.ArgumentShareEntire;
+				}
+			}
+		}
+#endif
 	}
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
@@ -378,6 +405,21 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				return;
 			}
 		}
+
+#if EXPERIMENT_FOR_CAMERA
+		/* Fix Camera */
+		if(null == InstanceRootParent)
+		{
+			if(null != ArgumentShareEntire)
+			{
+				if(null != ArgumentShareEntire.TransformPartsCamera)
+				{
+					Matrix4x4 matrixCamera = matrixCorrection * ArgumentShareEntire.TransformPartsCamera.localToWorldMatrix;
+					ArgumentShareEntire.MatrixCamera = matrixCamera.inverse;
+				}
+			}
+		}
+#endif
 
 		/* Exec Drawing */
 		/* MEMO: At "Pre-Draw" ...                                                                                             */
@@ -647,7 +689,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		}
 
 		/* Recover Material */
-		DataAnimation.BootUpTableMaterial();
+//		DataAnimation.BootUpTableMaterial();
 
 		/* Set Attribute-Interface */
 		DataAnimation.BootUpInterfaceAttribute();
@@ -939,6 +981,10 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+					break;
 			}
 		}
 		return(true);
@@ -997,6 +1043,10 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 					countMesh += DataAnimation.TableParts[i].CountMesh;
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 					break;
 			}
 		}

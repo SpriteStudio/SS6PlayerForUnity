@@ -6,6 +6,7 @@
 	All rights reserved.
 */
 // #define STATICDATA_DUPLICATE_DEEP
+// #define EXPERIMENT_FOR_CAMERA
 
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.0.0 (Beta-1)";
+	public const string SignatureVersionAsset = "2.0.0 (Beta-2)";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -2323,7 +2324,7 @@ public static partial class Library_SpriteStudio6
 					instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateAnimation(shader, operationBlend, masking, false);
 					if(null == instanceMaterial)
 					{	/* Miss-Create */
-							return(null);
+						return(null);
 					}
 					instanceMaterial.mainTexture = tableTexture[indexTexture];
 					DataAppend(codeHash, instanceMaterial);
@@ -2380,7 +2381,7 @@ public static partial class Library_SpriteStudio6
 					instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(shader, operationBlend, masking, false);
 					if(null == instanceMaterial)
 					{	/* Miss-Create */
-							return(null);
+						return(null);
 					}
 					instanceMaterial.mainTexture = tableTexture[indexTexture];
 					DataAppend(codeHash, instanceMaterial);
@@ -2655,6 +2656,7 @@ public static partial class Library_SpriteStudio6
 			#region Variables & Properties
 			public Script_SpriteStudio6_DataCellMap DataCellMap;
 			internal Library_SpriteStudio6.Data.CellMap[] TableCellMap = null;
+			public Script_SpriteStudio6_HolderAsset HolderAsset;
 
 			/* MEMO: Do not define "InstanceRootParent" to "internal" in order to remember parent-"Root" even after be instantiated on scene. */
 			public Script_SpriteStudio6_Root InstanceRootParent;
@@ -2666,6 +2668,10 @@ public static partial class Library_SpriteStudio6
 			protected Vector2 RateScaleLocalForce = Vector2.one;
 
 			internal Library_SpriteStudio6.Control.AdditionalColor AdditionalColor = null;
+
+#if EXPERIMENT_FOR_CAMERA
+			internal ArgumentContainer ArgumentShareEntire = null;
+#endif
 
 			internal Library_SpriteStudio6.Draw.Cluster ClusterDraw = null;	/* refer to Highest-Parent-Root's ClusterDraw */
 			internal MeshRenderer InstanceMeshRenderer = null;
@@ -2896,6 +2902,35 @@ public static partial class Library_SpriteStudio6
 				return(false);
 			}
 			#endregion Functions
+
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+#if EXPERIMENT_FOR_CAMERA
+			/* MEMO: This class is for runtime-only, so not serialized. */
+			internal class ArgumentContainer
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				public Transform TransformPartsCamera;			/* Transform for Camera */
+				public Matrix4x4 MatrixCamera;					/* Instance of matrix used for camera */
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public ArgumentContainer()
+				{
+					CleanUp();
+				}
+
+				public void CleanUp()
+				{
+					TransformPartsCamera = null;
+					MatrixCamera = Matrix4x4.identity;
+				}
+				#endregion Functions
+			}
+#endif
+			#endregion Classes, Structs & Interfaces
 
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants

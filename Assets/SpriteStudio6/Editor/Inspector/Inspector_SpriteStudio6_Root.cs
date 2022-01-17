@@ -18,6 +18,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 	private SerializedProperty PropertyDataCellMap;
 	private SerializedProperty PropertyDataAnimation;
+	private SerializedProperty PropertyHolderAsset;
+
 	private SerializedProperty PropertyHideForce;
 	private SerializedProperty PropertyColliderInterlockHideForce;
 	private SerializedProperty PropertyFlagPlanarization;
@@ -35,6 +37,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 		serializedObject.FindProperty("__DUMMY__");
 		PropertyDataCellMap = serializedObject.FindProperty("DataCellMap");
 		PropertyDataAnimation = serializedObject.FindProperty("DataAnimation");
+		PropertyHolderAsset = serializedObject.FindProperty("HolderAsset");
+
 		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
 		PropertyColliderInterlockHideForce = serializedObject.FindProperty("FlagColliderInterlockHideForce");
 		PropertyFlagPlanarization = serializedObject.FindProperty("FlagPlanarization");
@@ -63,6 +67,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 			PropertyDataCellMap.objectReferenceValue = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", PropertyDataCellMap.objectReferenceValue, typeof(Script_SpriteStudio6_DataCellMap), true));
 			PropertyDataAnimation.objectReferenceValue = (Script_SpriteStudio6_DataAnimation)(EditorGUILayout.ObjectField("Data:Animation", PropertyDataAnimation.objectReferenceValue, typeof(Script_SpriteStudio6_DataAnimation), true));
+			PropertyHolderAsset.objectReferenceValue = (Script_SpriteStudio6_HolderAsset)(EditorGUILayout.ObjectField("Holder:Asset", PropertyHolderAsset.objectReferenceValue, typeof(Script_SpriteStudio6_HolderAsset), true));
 			EditorGUI.indentLevel = levelIndent;
 		}
 
