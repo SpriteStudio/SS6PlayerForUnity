@@ -380,7 +380,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 
 		/* Recover Material */
-		DataEffect.BootUpTableMaterial();
+//		DataEffect.BootUpTableMaterial();
 
 		/* Set Signature-Bootup */
 		DataEffect.StatusIsBootup = true;

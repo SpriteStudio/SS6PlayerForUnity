@@ -7,16 +7,12 @@
 //
 
 /* Defines for Vertex-Shader */
-#if defined(RESTRICT_SHADER_MODEL_3)
-#define VERTEX_STATICDATA_PARTSCOLOR	\
+#define VERTEX_STATICDATA_PARTSCOLOR											\
 	/* MEMO: ".x" is not used, now.  */											\
 	static const float4 _OverlayParameter_Mix = { 1.0f, 1.0f, 0.0f, 1.0f };		\
 	static const float4 _OverlayParameter_Add = { 1.0f, 0.0f, 0.0f, 1.0f };		\
 	static const float4 _OverlayParameter_Sub = { 1.0f, 0.0f, 0.0f, -1.0f };	\
 	static const float4 _OverlayParameter_Mul = { 1.0f, 1.0f, 1.0f, 1.0f }
-#else
-#define VERTEX_STATICDATA_PARTSCOLOR
-#endif
 
 /* Defines for Pixel-Shader */
 #if defined(SV_Target)
@@ -75,46 +71,59 @@ When "RESTRICT_SHADER_MODEL_3" is not defined, process empty
 	(When not defined, all calculations will be done in Pixel-Shader).
 */
 #if defined(RESTRICT_SHADER_MODEL_3)
-#define VertexSetPartsColor(_output_,_outputArgumentVs00_,_indexBlend_,_rate_)	\
-	{																			\
-		float tempRate = _rate_;												\
-		_outputArgumentVs00_ = float4((1.0f - tempRate), tempRate, 0.0f, 0.0f);	\
-		if(2.0f > _indexBlend_)	{												\
-			if(1.0f > _indexBlend_)	{											\
-				_output_.ParameterOverlay = _OverlayParameter_Mix;				\
-				_outputArgumentVs00_.x = 1.0f;									\
-			} else {															\
-				_output_.ParameterOverlay = _OverlayParameter_Add;				\
-				_outputArgumentVs00_.z = 1.0f;									\
-			}																	\
-		} else {																\
-			if(3.0f > _indexBlend_)	{											\
-				_output_.ParameterOverlay = _OverlayParameter_Sub;				\
-			} else {															\
-				_output_.ParameterOverlay = _OverlayParameter_Mul;				\
-				_outputArgumentVs00_.y = -tempRate;								\
-			}																	\
-		}																		\
-		_output_.ArgumentVs00 = _outputArgumentVs00_;							\
+#define VertexSetPartsColor(_output_,_indexBlend_,_rate_)							\
+	{																				\
+		float _ratioSrc = 1.0;														\
+		float _ratioDst = _rate_;													\
+		float4 _parameterOverlay;													\
+		if(2.0f > _indexBlend_)	{													\
+			if(1.0f > _indexBlend_)	{												\
+				_parameterOverlay = _OverlayParameter_Mix;							\
+				_ratioSrc -= _ratioDst;												\
+			} else {																\
+				_parameterOverlay = _OverlayParameter_Add;							\
+			}																		\
+		} else {																	\
+			if(3.0f > _indexBlend_)	{												\
+				_parameterOverlay = _OverlayParameter_Sub;							\
+			} else {																\
+				_parameterOverlay = _OverlayParameter_Mul;							\
+				_ratioSrc -= _ratioDst;												\
+			}																		\
+		}																			\
+		_output_.ArgumentVs00 = float4(	_ratioSrc,									\
+										_parameterOverlay.w * _ratioDst,			\
+										_parameterOverlay.y,						\
+										0.0											\
+									);												\
+		_output_.ParameterOverlay = _parameterOverlay;								\
 	}
 #else
-#define VertexSetPartsColor(_output_,_outputArgumentVs00_,_indexBlend_,_rate_)	\
-	{																			\
-		float tempRate = _rate_;												\
-		_outputArgumentVs00_ = float4((1.0f - tempRate), tempRate, 0.0f, 0.0f);	\
-		if(2.0f > _indexBlend_)	{												\
-			if(1.0f > _indexBlend_)	{											\
-				_outputArgumentVs00_.x = 1.0f;									\
-			} else {															\
-				_outputArgumentVs00_.z = 1.0f;									\
-			}																	\
-		} else {																\
-			if(3.0f > _indexBlend_)	{											\
-			} else {															\
-				_outputArgumentVs00_.y = -tempRate;								\
-			}																	\
-		}																		\
-		_output_.ArgumentVs00 = _outputArgumentVs00_;							\
+#define VertexSetPartsColor(_output_,_indexBlend_,_rate_)							\
+	{																				\
+		float _ratioSrc = 1.0;														\
+		float _ratioDst = _rate_;													\
+		float4 _parameterOverlay;													\
+		if(2.0f > _indexBlend_)	{													\
+			if(1.0f > _indexBlend_)	{												\
+				_parameterOverlay = _OverlayParameter_Mix;							\
+				_ratioSrc -= _ratioDst;												\
+			} else {																\
+				_parameterOverlay = _OverlayParameter_Add;							\
+			}																		\
+		} else {																	\
+			if(3.0f > _indexBlend_)	{												\
+				_parameterOverlay = _OverlayParameter_Sub;							\
+			} else {																\
+				_parameterOverlay = _OverlayParameter_Mul;							\
+				_ratioSrc -= _ratioDst;												\
+			}																		\
+		}																			\
+		_output_.ArgumentVs00 = float4(	_ratioSrc,									\
+										_parameterOverlay.w * _ratioDst,			\
+										_parameterOverlay.y,						\
+										0.0											\
+									);												\
 	}
 #endif
 

@@ -1154,6 +1154,68 @@ public static partial class LibraryEditor_SpriteStudio6
 		{
 			/* ----------------------------------------------- Functions */
 			#region Functions
+			public static bool PathSplit(	out string nameDirectory,
+											out string nameFileBody,
+											out string nameFileExtention,
+											string namePath
+										)
+			{
+				if(true == string.IsNullOrEmpty(namePath))
+				{
+					nameDirectory = "";
+					nameFileBody = "";
+					nameFileExtention = "";
+					return(false);
+				}
+
+				string namePathNormalized = PathNormalize(namePath);
+				nameDirectory = PathNormalize(System.IO.Path.GetDirectoryName(namePathNormalized) + "/");
+				nameFileBody = System.IO.Path.GetFileNameWithoutExtension(namePathNormalized);
+				nameFileExtention = System.IO.Path.GetExtension(namePathNormalized);
+
+				return(true);
+			}
+
+			public static string PathNormalize(string namePath)
+			{
+				string namePathNew = namePath.Replace("\\", "/");	/* "\" -> "/" */
+				return(namePathNew);
+			}
+
+			public static string PathGetAbsolute(string namePath, string nameBase)
+			{
+				string nameCurrent = System.Environment.CurrentDirectory;
+				System.Environment.CurrentDirectory = nameBase;
+
+				string rv = System.IO.Path.GetFullPath(namePath);
+				rv = PathNormalize(rv);
+
+				System.Environment.CurrentDirectory = nameCurrent;
+				return(rv);
+			}
+
+			public static string PathGetAssetNative(string namePathAsset)
+			{
+				string namePathNative = string.Copy(NamePathRootNative);
+				if(false == string.IsNullOrEmpty(namePathAsset))
+				{
+					namePathNative += "/" + namePathAsset.Substring(NamePathRootAsset.Length + 1);
+					namePathNative = PathNormalize(namePathNative);
+				}
+				return(namePathNative);
+			}
+
+			public static bool PathCheckRoot(string namePath)
+			{	/* MEMO: Create another function separately, since possibility that can not be checked with IsPathRooted. */
+				return(System.IO.Path.IsPathRooted(namePath));
+			}
+
+			public static bool FileCopyToAsset(string nameAsset, string nameOriginalFileName, bool flagOverCopy)
+			{
+				System.IO.File.Copy(nameOriginalFileName, nameAsset, flagOverCopy);
+				return(true);
+			}
+
 			public static bool NamesGetFileDialogLoad(	out string nameDirectory,
 														out string nameFileBody,
 														out string nameFileExtension,
@@ -1306,9 +1368,17 @@ public static partial class LibraryEditor_SpriteStudio6
 #endif
 			}
 
+			public static UnityEngine.Object AssetFolderGetPath(string path)
+			{
+				/* MEMO: Cannot get Folder-asset when the path ends with "/". */
+				path = path.TrimEnd('/');
+
+				return(AssetDatabase.LoadAssetAtPath(path, typeof(DefaultAsset)));
+			}
+
 			public static string AssetPathGetSelected(string namePath=null)
 			{
-				string namePathAsset = "";
+				string namePathAsset = string.Empty;
 				if(true == string.IsNullOrEmpty(namePath))
 				{	/* Now Selected Path in "Project" */
 					Object objectNow = Selection.activeObject;
@@ -1339,66 +1409,47 @@ public static partial class LibraryEditor_SpriteStudio6
 				return(AssetDatabase.IsValidFolder(namePath));
 			}
 
-			public static bool FileCopyToAsset(string nameAsset, string nameOriginalFileName, bool flagOverCopy)
+			public static string GUIDGetAsset(UnityEngine.Object asset)
 			{
-				System.IO.File.Copy(nameOriginalFileName, nameAsset, flagOverCopy);
-				return(true);
+				string guid = string.Empty;
+				if(null != asset)
+				{
+					string namePath = PathGetAsset(asset);
+					if(true == string.IsNullOrEmpty(namePath))
+					{
+						return(string.Empty);
+					}
+					guid = AssetDatabase.AssetPathToGUID(namePath);
+				}
+				return(guid);
 			}
 
-			public static bool PathSplit(	out string nameDirectory,
-											out string nameFileBody,
-											out string nameFileExtention,
-											string namePath
-										)
+			public static string PathGetAsset(UnityEngine.Object asset)
 			{
-				if(true == string.IsNullOrEmpty(namePath))
+				if(null == asset)
 				{
-					nameDirectory = "";
-					nameFileBody = "";
-					nameFileExtention = "";
-					return(false);
+					return(string.Empty);
+				}
+				return(AssetDatabase.GetAssetPath(asset));
+			}
+
+			public static _Type AssetGetGUID<_Type>(string guid)
+				where _Type: class
+			{
+				if(true == string.IsNullOrEmpty(guid))
+				{
+					return(null);
 				}
 
-				string namePathNormalized = PathNormalize(namePath);
-				nameDirectory = PathNormalize(System.IO.Path.GetDirectoryName(namePathNormalized) + "/");
-				nameFileBody = System.IO.Path.GetFileNameWithoutExtension(namePathNormalized);
-				nameFileExtention = System.IO.Path.GetExtension(namePathNormalized);
-
-				return(true);
+				string namePath = AssetDatabase.GUIDToAssetPath(guid);
+				return(AssetGetPath<_Type>(namePath));
 			}
 
-			public static string PathNormalize(string namePath)
+			public static _Type AssetGetPath<_Type>(string path)
+				where _Type: class
 			{
-				string namePathNew = namePath.Replace("\\", "/");	/* "\" -> "/" */
-				return(namePathNew);
-			}
-
-			public static string PathGetAbsolute(string namePath, string nameBase)
-			{
-				string nameCurrent = System.Environment.CurrentDirectory;
-				System.Environment.CurrentDirectory = nameBase;
-
-				string rv = System.IO.Path.GetFullPath(namePath);
-				rv = PathNormalize(rv);
-
-				System.Environment.CurrentDirectory = nameCurrent;
-				return(rv);
-			}
-
-			public static string PathGetAssetNative(string namePathAsset)
-			{
-				string namePathNative = string.Copy(NamePathRootNative);
-				if(false == string.IsNullOrEmpty(namePathAsset))
-				{
-					namePathNative += "/" + namePathAsset.Substring(NamePathRootAsset.Length + 1);
-					namePathNative = PathNormalize(namePathNative);
-				}
-				return(namePathNative);
-			}
-
-			public static bool PathCheckRoot(string namePath)
-			{	/* MEMO: Create another function separately, since possibility that can not be checked with IsPathRooted. */
-				return(System.IO.Path.IsPathRooted(namePath));
+				_Type asset = AssetDatabase.LoadAssetAtPath(path, typeof(_Type)) as _Type;
+				return(asset);
 			}
 			#endregion Functions
 

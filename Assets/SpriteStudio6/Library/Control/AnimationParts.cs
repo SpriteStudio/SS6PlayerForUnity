@@ -11,6 +11,7 @@
 #define DECODE_SIGNAL
 // #define DECODE_IN_INSTANCE_USERDATA
 #define DECODE_IN_INSTANCE_SIGNAL
+// #define EXPERIMENT_FOR_CAMERA
 
 using System.Collections;
 using System.Collections.Generic;
@@ -273,6 +274,12 @@ public static partial class Library_SpriteStudio6
 								goto BootUp_ErrorEnd;
 							}
 							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+							break;
 					}
 
 					AnimationChange();
@@ -469,6 +476,18 @@ public static partial class Library_SpriteStudio6
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 							UpdateMesh(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
 							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, false, indexTrackRoot);
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+#if EXPERIMENT_FOR_CAMERA
+							if(null != instanceRoot.ArgumentShareEntire)
+							{
+								instanceRoot.ArgumentShareEntire.TransformPartsCamera = InstanceTransform;
+							}
+#endif
 							break;
 					}
 
@@ -1562,15 +1581,17 @@ public static partial class Library_SpriteStudio6
 						|| ((false == flagHideDefault) && (0 == (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE))))
 					)
 					{
+						int priority = Priority.Value;
+
 						/* Set Draw-Chain */
 						int keySort;
 						if(true == flagMask)
 						{
 							/* MEMO: At "PreDraw", "Mask"'s drawing order is reverse. */
-							keySort = (-Priority.Value << CountShiftSortKeyPriority) | idParts;
+							keySort = (-priority << CountShiftSortKeyPriority) | idParts;
 							instanceRoot.ListPartsDraw.Add(keySort);
 						}
-						keySort = (Priority.Value << CountShiftSortKeyPriority) | idParts;
+						keySort = (priority << CountShiftSortKeyPriority) | idParts;
 						instanceRoot.ListPartsDraw.Add(keySort);
 
 						/* Set "Animation Synthesize" */
@@ -1744,6 +1765,12 @@ public static partial class Library_SpriteStudio6
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+								break;
 						}
 					}
 				}
@@ -1855,6 +1882,12 @@ public static partial class Library_SpriteStudio6
 											ref matrixCorrection,
 											flagPlanarization
 										);
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 								break;
 						}
 					}
@@ -3613,6 +3646,8 @@ public static partial class Library_SpriteStudio6
 									nameShader = Shader.Value.ID;
 									shader = UnityEngine.Shader.Find(Library_SpriteStudio6.Data.Shader.NameShaderPrefixSS6P + nameShader);
 								}
+
+								/* Get Material */
 								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
 																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
 																			masking,

@@ -31,8 +31,7 @@ InputPS VS_main(InputVS input)
 
 	/* MEMO: For calculate "Parts-Color" in Pixel-Shader, Need to run "VertexSetPartsColor". */
 	/*       At the same time, set ÅhArgumentVs00"(uniform for Vertex-Shader).               */
-	float4 argumentVs00;
-	VertexSetPartsColor(output, argumentVs00, indexBlend, input.texcoord.w);
+	VertexSetPartsColor(output, indexBlend, input.texcoord.w);
 
 	/* Set Draw-Position */
 	temp = input.vertex;

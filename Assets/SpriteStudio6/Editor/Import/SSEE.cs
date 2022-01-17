@@ -1255,6 +1255,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* Datas Set */
 					scriptRoot.DataCellMap = informationSSPJ.DataCellMapSS6PU.TableData[0];
 					scriptRoot.DataEffect = informationSSEE.DataEffectSS6PU.TableData[0];
+					if(null != setting.HolderAsset.PrefabHolderAssetSS6PU)
+					{
+						scriptRoot.HolderAsset = setting.HolderAsset.PrefabHolderAssetSS6PU.GetComponent<Script_SpriteStudio6_HolderAsset>();
+					}
+					else
+					{
+						scriptRoot.HolderAsset = null;
+					}
+
 					scriptRoot.LimitParticleDraw = limitParticleLimit;
 					scriptRoot.FlagHideForce = flagHideForce;
 					scriptRoot.RateTime = rateTime;

@@ -13,7 +13,7 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public partial class Script_SpriteStudio6_HolderAssetUnityNative :MonoBehaviour
+public partial class Script_SpriteStudio6_HolderAssetUnityNative : MonoBehaviour
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties

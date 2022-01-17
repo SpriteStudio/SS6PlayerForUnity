@@ -18,7 +18,7 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	public string Name;								/* Body-Name of SSEE */
 	public Script_SpriteStudio6_DataProject DataProject;
 
-	public Material[] TableMaterial;
+//	public Material[] TableMaterial;
 
 	public FlagBit FlagData;
 	public bool StatusIsLockSeedRandom
@@ -84,6 +84,7 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 		return((null != TableEmitter) ? TableEmitter.Length : -1);
 	}
 
+#if false
 	internal void BootUpTableMaterial()
 	{
 #if UNITY_EDITOR
@@ -102,6 +103,7 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 		material = null;
 #endif
 	}
+#endif
 
 	private static void FunctionBootUpSignature()
 	{
