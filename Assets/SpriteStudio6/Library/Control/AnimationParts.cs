@@ -1143,32 +1143,31 @@ public static partial class Library_SpriteStudio6
 													bool flagTurnBack
 												)
 				{
-					int countData = dataAnimationParts.UserData.Function.CountGetValue(dataAnimationParts.UserData);
-					string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
-					int frameKey = -1;
-					int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
-					Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.UserData> userData = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.UserData>();
-					for(int i=0; i<countData; i++)
+					if(null != dataAnimationParts.UserData.Function)
 					{
-#if UNITY_EDITOR
-						if(null != dataAnimationParts.UserData.Function)
+						int countData = dataAnimationParts.UserData.Function.CountGetValue(dataAnimationParts.UserData);
+						string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
+						int frameKey = -1;
+						int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.UserData> userData = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.UserData>();
+
+						for(int i=0; i<countData; i++)
 						{
 							dataAnimationParts.UserData.Function.ValueGetIndex(ref userData, i, dataAnimationParts.UserData, ref controlTrack.ArgumentContainer);
-						}
-#else
-						dataAnimationParts.UserData.Function.ValueGetIndex(ref userData, i, dataAnimationParts.UserData, ref controlTrack.ArgumentContainer);
-#endif
-						if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
-						{	/* In range */
-							instanceRoot.FunctionUserData(	instanceRoot,
-															nameParts,
-															idParts,
-															indexAnimation,
-															frameDecode,
-															frameKey,
-															ref userData.Value,
-															flagTurnBack
-														);
+
+							frameKey = userData.FrameKey;
+							if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
+							{	/* In range */
+								instanceRoot.FunctionUserData(	instanceRoot,
+																nameParts,
+																idParts,
+																indexAnimation,
+																frameDecode,
+																frameKey,
+																ref userData.Value,
+																flagTurnBack
+															);
+							}
 						}
 					}
 				}
@@ -1182,32 +1181,31 @@ public static partial class Library_SpriteStudio6
 													bool flagTurnBack
 												)
 				{
-					int countData = dataAnimationParts.UserData.Function.CountGetValue(dataAnimationParts.UserData);
-					string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
-					int frameKey = -1;
-					int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
-					Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.UserData> userData = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.UserData>();
-					for(int i=(countData-1); i>=0; i--)
+					if(null != dataAnimationParts.UserData.Function)
 					{
-#if UNITY_EDITOR
-						if(null != dataAnimationParts.UserData.Function)
+						int countData = dataAnimationParts.UserData.Function.CountGetValue(dataAnimationParts.UserData);
+						string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
+						int frameKey = -1;
+						int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.UserData> userData = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.UserData>();
+
+						for(int i=(countData-1); i>=0; i--)
 						{
 							dataAnimationParts.UserData.Function.ValueGetIndex(ref userData, i, dataAnimationParts.UserData, ref controlTrack.ArgumentContainer);
-						}
-#else
-						dataAnimationParts.UserData.Function.ValueGetIndex(ref userData, i, dataAnimationParts.UserData, ref controlTrack.ArgumentContainer);
-#endif
-						if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
-						{	/* In range */
-							instanceRoot.FunctionUserData(	instanceRoot,
-															nameParts,
-															idParts,
-															indexAnimation,
-															frameDecode,
-															frameKey,
-															ref userData.Value,
-															flagTurnBack
-														);
+
+							frameKey = userData.FrameKey;
+							if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
+							{	/* In range */
+								instanceRoot.FunctionUserData(	instanceRoot,
+																nameParts,
+																idParts,
+																indexAnimation,
+																frameDecode,
+																frameKey,
+																ref userData.Value,
+																flagTurnBack
+															);
+							}
 						}
 					}
 				}
@@ -1446,32 +1444,31 @@ public static partial class Library_SpriteStudio6
 													bool flagTurnBack
 												)
 				{
-					int countData = dataAnimationParts.Signal.Function.CountGetValue(dataAnimationParts.Signal);
-					string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
-					int frameKey = -1;
-					int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
-					Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Signal> signal = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.Signal>();
-					for(int i=0; i<countData; i++)
+					if(null != dataAnimationParts.Signal.Function)
 					{
-#if UNITY_EDITOR
-						if(null != dataAnimationParts.Signal.Function)
+						int countData = dataAnimationParts.Signal.Function.CountGetValue(dataAnimationParts.Signal);
+						string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
+						int frameKey = -1;
+						int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Signal> signal = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.Signal>();
+
+						for(int i=0; i<countData; i++)
 						{
 							dataAnimationParts.Signal.Function.ValueGetIndex(ref signal, i, dataAnimationParts.Signal, ref controlTrack.ArgumentContainer);
-						}
-#else
-						dataAnimationParts.Signal.Function.ValueGetIndex(ref signal, i, dataAnimationParts.Signal, ref controlTrack.ArgumentContainer);
-#endif
-						if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
-						{	/* In range */
-							instanceRoot.FunctionSignal(	instanceRoot,
-															nameParts,
-															idParts,
-															indexAnimation,
-															frameDecode,
-															frameKey,
-															ref signal.Value,
-															flagTurnBack
-														);
+
+							frameKey = signal.FrameKey;
+							if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
+							{	/* In range */
+								instanceRoot.FunctionSignal(	instanceRoot,
+																nameParts,
+																idParts,
+																indexAnimation,
+																frameDecode,
+																frameKey,
+																ref signal.Value,
+																flagTurnBack
+															);
+							}
 						}
 					}
 				}
@@ -1485,32 +1482,31 @@ public static partial class Library_SpriteStudio6
 													bool flagTurnBack
 												)
 				{
-					int countData = dataAnimationParts.Signal.Function.CountGetValue(dataAnimationParts.Signal);
-					string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
-					int frameKey = -1;
-					int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
-					Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Signal> signal = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.Signal>();
-					for(int i=(countData-1); i>=0; i--)
+					if(null != dataAnimationParts.Signal.Function)
 					{
-#if UNITY_EDITOR
-						if(null != dataAnimationParts.Signal.Function)
+						int countData = dataAnimationParts.Signal.Function.CountGetValue(dataAnimationParts.Signal);
+						string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
+						int frameKey = -1;
+						int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Signal> signal = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.Signal>();
+
+						for(int i=(countData-1); i>=0; i--)
 						{
 							dataAnimationParts.Signal.Function.ValueGetIndex(ref signal, i, dataAnimationParts.Signal, ref controlTrack.ArgumentContainer);
-						}
-#else
-						dataAnimationParts.Signal.Function.ValueGetIndex(ref signal, i, dataAnimationParts.Signal, ref controlTrack.ArgumentContainer);
-#endif
-						if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
-						{	/* In range */
-							instanceRoot.FunctionSignal(	instanceRoot,
-															nameParts,
-															idParts,
-															indexAnimation,
-															frameDecode,
-															frameKey,
-															ref signal.Value,
-															flagTurnBack
+
+							frameKey = signal.FrameKey;
+							if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
+							{	/* In range */
+								instanceRoot.FunctionSignal(	instanceRoot,
+																nameParts,
+																idParts,
+																indexAnimation,
+																frameDecode,
+																frameKey,
+																ref signal.Value,
+																flagTurnBack
 														);
+							}
 						}
 					}
 				}
