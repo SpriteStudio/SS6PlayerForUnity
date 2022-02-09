@@ -25,6 +25,10 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 	/*    that can be displayed per frame.                                    */
 	#endregion Notes
 
+	public UnityEngine.UI.Text UITextMode;
+	public UnityEngine.UI.Text UITextCount;
+	public UnityEngine.UI.Text UITextFPS;
+
 	public GameObject GameObjectActiveSS6P;		// for activating run of "SS6Player" mode.
 	public GameObject GameObjectActiveSS6PUN;	// for activating run of "Unity-Natime" mode.
 
@@ -35,9 +39,20 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 		FPS_30,
 	}
 	public FrameRateKind FrameRate;
+    public int StartAnimationCount;   // 開始時に一気に表示する数  
+
+	// Steps to add Animation-Object
+	private enum AddAnimationStep
+	{
+		Start = 0,
+		Update,
+		End
+	}
+	private AddAnimationStep m_AAStep = AddAnimationStep.Start;
 
 	// Setting items (Inspector)
 	public int AnimationLineCount;		// Number of animation objects in a row
+	public int AnimationLineMaximum;	// Maximun number of columns
 	public int AnimationStartX;			// Display Start Position X
 	public int AnimationStartY;			//                        Y
 	public int AnimationAlignmentX;		// Alignment of Position X
@@ -61,8 +76,8 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 
 	// Frame rate measurement
 	private TimeHistory m_TimeHistory;
-	private bool m_SkipAddTime;
-	private float m_FrameTime;
+	private int m_FrameRate;				// Frame-Rate
+	private int m_SkipAddDelCount;			// Counter to add/del the number of Animation-Objects displayed
 
 	// --------------------------------------------------------------------------------------------------------------------------
 	// 
@@ -101,26 +116,27 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 		}
 
 		// Set Application's frame rate
-		int frameRate = 60;
 		switch(FrameRate)
 		{
 			case FrameRateKind.FPS_60:
-				frameRate = 60;
+				m_FrameRate = 60;
 				break;
 
 			case FrameRateKind.FPS_30:
-				frameRate = 30;
+				m_FrameRate = 30;
 				break;
 
 			default:
 				break;
 		}
-		Application.targetFrameRate = frameRate;
-		m_FrameTime = 1.0f / (float)frameRate;
+		Application.targetFrameRate = m_FrameRate;
 
 		// Initialize measurement history
-		m_TimeHistory.Initialize(frameRate / 2);	// 0.5 sec. per measurement
-		m_SkipAddTime = true;
+		m_TimeHistory.FPSInit();
+		m_SkipAddDelCount = 0;
+
+		// Initialize (Animation-Object) Add-Step 
+		m_AAStep = AddAnimationStep.Start;
 
 		// Initialize playing mode
 		m_playerNo = PlayerNoKind.SS6P;
@@ -131,12 +147,6 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 	// 
 	void Update()
 	{
-		// Get elapsed time
-		bool addAnimation = false;
-		if(m_SkipAddTime == false)
-			addAnimation = m_TimeHistory.AddTime(Time.deltaTime);
-		m_SkipAddTime = false;
-
 		// Change playing mode
 		if(Input.GetKeyDown(KeyCode.Space) == true)
 		{
@@ -148,59 +158,73 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 			SwitchSSPlayer();
 
 			// Clear measurement history
-			m_TimeHistory.Clear();
+			m_TimeHistory.FPSInit();
+
+			// Initialize (Animation-Object) Add-Step 
+			m_AAStep = AddAnimationStep.Start;
 		}
 
 		// Measurement per time range
-		if(addAnimation == true)
 		{
-			if(m_TimeHistory.CheckTime(m_FrameTime) == true)
-				m_ControlSSP.AddAnimation();	// in frame time (increase by 1 animation-object)
-			else
-				m_ControlSSP.DelAnimation();	// out of frame time (decreases by 1 animation-object)
+			m_TimeHistory.FrameCount();
 
-			// 計測ワークを再初期化
-			m_TimeHistory.Clear();
+			m_SkipAddDelCount--;
+			if(m_SkipAddDelCount <= 0)
+			{
+				if(true == m_TimeHistory.IsFPSCheck(m_FrameRate))
+				{
+					switch(m_AAStep)
+					{
+						case AddAnimationStep.Start:
+							for(int i = 0; i < StartAnimationCount; i++)
+							{
+								m_ControlSSP.AddAnimation();	// Number of animation objects, displayed first.
+							}
 
-			// Since there is overhead for instantiate and destroy,
-			//  frames with increased or decreased (animation-object) are not included in the measurement.
-			m_SkipAddTime = true;
+							m_SkipAddDelCount = m_FrameRate * 3;	// Keep 3 seconds after initial display.
+							m_AAStep = AddAnimationStep.Update;
+							break;
+
+						case AddAnimationStep.Update:
+							m_ControlSSP.AddAnimation();	// Add 1 Animation-Object
+							m_SkipAddDelCount = m_FrameRate;	// Keep 1 seconds
+							break;
+
+						default:
+							break;
+					}
+				}
+				else
+				{
+					float fps = (float)m_FrameRate - ((float)m_FrameRate / 20);
+
+					// Remove animation-object when frame rate is deteriorating for more than 0.5 seconds.
+					if(m_TimeHistory.GetFPS() < fps)
+					{
+						m_ControlSSP.DelAnimation();	// Remove 1 Animation-Object
+						m_SkipAddDelCount = m_FrameRate;	// Keep 1 seconds
+					}
+				}
+			}
 		}
-	}
 
-	// --------------------------------------------------------------------------------------------------------------------------
-	// 
-	void OnGUI()
-	{
-		const string textSS6P = "SS6Player for Unity";
-		const string textSS6PUN = "SS6Player for Unity (UnityNative)";
-
-		// Now Playing-Mode
-		switch(m_playerNo)
+		// Display Status
 		{
-			case PlayerNoKind.SS6P:
-				GUI.Label(new Rect(20, 20, 300, 50), textSS6P);
-				break;
+			// Frame-Rate
+			float fps = m_TimeHistory.GetFPS();
+			if(UITextFPS != null)
+			{
+				UITextFPS.text = "FPS: " + fps.ToString("F2");
+			}
 
-			case PlayerNoKind.SS6P_UN:
-				GUI.Label(new Rect(20, 20, 300, 50), textSS6PUN);
-				break;
-
-			default:
-				break;
-		}
-
-		// Frame-Rate
-		float time = m_TimeHistory.GetTime();
-		float fps = 0.0f;
-		if(time > 0.0f)
-			fps = 1.0f / time;
-		GUI.Label(new Rect(500, 20, 300, 50), "FPS: " + fps.ToString("F2"));
-
-		// Number of Animation-Object
-		if(m_ControlSSP != null)
-		{
-			GUI.Label(new Rect(300, 20, 300, 50), "Count: " + (m_ControlSSP.GetAnimationCount()).ToString());
+			// Number of Animation-Object
+			if(UITextCount != null)
+			{
+				if(m_ControlSSP != null)
+				{
+					UITextCount.text = "Count: " + (m_ControlSSP.GetAnimationCount()).ToString();
+				}
+			}
 		}
 	}
 
@@ -208,6 +232,9 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 	// Switch Playing-Mode
 	private void SwitchSSPlayer()
 	{
+		const string textSS6P = "SS6Player for Unity";
+		const string textSS6PUN = "SS6Player for Unity (UnityNative)";
+
 		switch(m_playerNo)
 		{
 			// SS6Player - Active
@@ -215,12 +242,22 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 				GameObjectActiveSS6P.SetActive(true);
 				GameObjectActiveSS6PUN.SetActive(false);
 				m_ControlSSP = m_SS6P;
+
+				if(UITextMode != null)
+				{
+					UITextMode.text = textSS6P;
+				}
 				break;
 			// Unity Native - Active
 			case PlayerNoKind.SS6P_UN:
 				GameObjectActiveSS6P.SetActive(false);
 				GameObjectActiveSS6PUN.SetActive(true);
 				m_ControlSSP = m_SS6PUN;
+
+				if(UITextMode != null)
+				{
+					UITextMode.text = textSS6PUN;
+				}
 				break;
 
 			default:
@@ -233,6 +270,7 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 	public enum AnimationSettingDataType
 	{
 		LineCount = 0,	// Number of animation objects in a row
+		MaxLine,		// Maximun number of columns
 		StartX,			// Display Start Position X
 		StartY,			//                        Y
 		AligmentX,		// Alignment of Position X
@@ -302,80 +340,46 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 	// Measurement-History management
 	public struct TimeHistory
 	{
-		private float[] m_Time;
-		private int m_Index;
-		private int m_IndexMax;
-		private const float m_TimeRag = 0.0003f;	// margin of about 0.2ms in 1 frame
+		private float m_updateInterval;
+		private int m_frameCount;
+		private float m_prevTime;
+		private float m_fps;
 
-		public bool Initialize(int indexMax)
+		public void FPSInit()
 		{
-			m_IndexMax = indexMax;
-
-			if((m_Time == null) || (m_Time.Length != m_IndexMax))
-			{
-				m_Time = new float[m_IndexMax];
-				if(m_Time == null)
-				{
-					return false;
-				}
-			}
-			Clear();
-
-			return true;
+			m_updateInterval = 0.5f;	// 0.5 sec. per measurement
+			m_frameCount = 0;
+			m_prevTime = Time.realtimeSinceStartup;
+			m_fps = 60.0f;
 		}
 
-		// Clear History
-		public void Clear()
+		// FPS Count
+		public void FrameCount()
 		{
-			for(int i = 0; i < m_IndexMax; i++)
-			{
-				m_Time[i] = -1.0f;
+			++m_frameCount;
+			float timeNow = Time.realtimeSinceStartup;
+
+			if(timeNow > (m_updateInterval + m_prevTime)) {
+				m_fps = ((float)m_frameCount / (timeNow - m_prevTime));
+				m_frameCount = 0;
+				m_prevTime = timeNow;
 			}
-			m_Index = 0;
 		}
 
-		// Add to History
-		public bool AddTime(float time)
+		// Check Frame-Count
+		public bool IsFPSCheck(int iFrame)
 		{
-			m_Time[m_Index] = time;
-			++m_Index;
-			m_Index %= m_IndexMax;
-
-			// Returns true if the history is full
-			return (m_Index == 0);
+			bool retval = true;
+			int fps = (int)m_fps + 1;
+			if(iFrame > fps)
+				retval = false;
+			return retval;
 		}
 
-		// Get time based on history
-		public float GetTime()
+		// FPS取得  
+		public float GetFPS()
 		{
-			if(m_Index <= 0)
-				return 0.0f;
-
-			float sum = 0.0f;
-
-			for(int i = 0; i < m_Index; i++)
-			{
-				sum += m_Time[i];
-			}
-			return (sum / m_Index);
-		}
-
-		// Scan the history and measure whether display is over within the specified time
-		public bool CheckTime(float time)
-		{
-			int count = 0;
-			float timeLimit = time + m_TimeRag;
-
-			// Count frames within the time
-			for(int i = 0; i < m_IndexMax; i++)
-			{
-				if(m_Time[i] <= timeLimit)
-					++count;
-			}
-
-			// Since the time per frame shakes, do not judge by average.
-			// Judge to pass when frames within the time exceeds the majority.
-			return (count > (m_IndexMax / 2));
+			return m_fps;
 		}
 	}
 
@@ -500,10 +504,34 @@ public class Script_Sample_Benchmark_SwitchSSPlayer : MonoBehaviour
 		{
 			int indexX = index % (int)m_SettingData.GetParam(AnimationSettingDataType.LineCount);
 			int indexY = index / (int)m_SettingData.GetParam(AnimationSettingDataType.LineCount);
+			int maxLine = (int)m_SettingData.GetParam(AnimationSettingDataType.MaxLine);
+			if(0 >= maxLine)
+			{
+				maxLine = 8;
+			}
+			int pages = indexY / maxLine;
 
 			position.x = m_SettingData.GetParam(AnimationSettingDataType.StartX) + (m_SettingData.GetParam(AnimationSettingDataType.AligmentX) * (float)indexX);
-			position.y = m_SettingData.GetParam(AnimationSettingDataType.StartY) - (m_SettingData.GetParam(AnimationSettingDataType.AligmentY) * (float)indexY);
-			position.z = 0.0f;
+			if(pages < 1)
+			{
+				position.y = m_SettingData.GetParam(AnimationSettingDataType.StartY) - (m_SettingData.GetParam(AnimationSettingDataType.AligmentY) * (float)indexY);
+				position.z = (0.1f * 100.0f) - (0.1f * (float)indexY) - 0.001f * indexX;
+			}
+			else
+			{
+				indexY %= maxLine;
+				float alignmentX = m_SettingData.GetParam(AnimationSettingDataType.AligmentX);
+				float rateOffset = (float)(pages % 3) / 3.0f;
+				float rateOffset2 = 0.0f;
+				if(pages >= 3)	{
+					rateOffset2 = alignmentX * 0.5f;
+				}
+				position.y = m_SettingData.GetParam(AnimationSettingDataType.StartY) - (m_SettingData.GetParam(AnimationSettingDataType.AligmentY) * (float)indexY);
+				position.x += (alignmentX * rateOffset);
+				position.x += rateOffset2;
+				position.y -= (m_SettingData.GetParam(AnimationSettingDataType.AligmentY) * rateOffset);
+				position.z = (0.1f * 100.0f) - (0.1f * (float)indexY) - 0.03f - 0.001f * indexX;
+			}
 
 			scale.x = m_SettingData.GetParam(AnimationSettingDataType.ScaleX);
 			scale.y = m_SettingData.GetParam(AnimationSettingDataType.ScaleY);
