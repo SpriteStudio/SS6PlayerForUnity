@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -142,6 +143,95 @@ public partial class Script_SpriteStudio6_Root
 			for(int i=0; i<countPartsChild; i++)
 			{
 				HideSetMain(tableIDPartsChild[i], flagSwitch, true);
+			}
+		}
+	}
+
+	/* ******************************************************** */
+	//! Collider interlocking "Hide" Set
+	/*!
+	@param	idParts
+		Parts-ID<br>
+		0 == Set to entire animation<br>
+		-1 == Set to all parts
+	@param	flagSwitch
+		true == Interlocking (Synchronous with "Hide")<br>
+		false == Not interlocking (Asynchronous with "Hide")
+	@param	flagInvolveChildren
+		true == Children are set same state.<br>
+		false == only oneself.<br>
+		default: false
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	State of "Collision-Interlocking with Hide-Status" is set to parts, ignore with state of animation.<br>
+	This setting is ignored when set to parts that does not have collider.<br>
+	This setting also affects the "Instance"-parts and "Effect"-parts, but not set to each (subordinate) animation objects.<br>
+	<br>
+	If set 0 or -1 to "idParts", interlocking entire animation.<br>
+	However, behaviors differ clearly between 0 and -1.<br>
+	Do not confuse both.<br>
+	<br>
+	idParts == 0:<br>
+	Set interlocking state to whole animation.<br>
+	(It is same behavior as checking or unchecking "Collider Interlock Hide" on inspector)<br>
+	Recommend that use this when normally set interlocking state of the whole animation.<br>
+	This setting is separately from setting to each parts, and has priority.<br>
+	<br>
+	idParts == -1:<br>
+	Set interlocking state to each all parts.<br>
+	*/
+	public bool ColliderSetInterlockHide(int idParts, bool flagSwitch, bool flagInvolveChildren=false)
+	{
+		if((null == DataAnimation) || (null == TableControlParts))
+		{
+			return(false);
+		}
+
+		int countParts = TableControlParts.Length;
+		if(0 > idParts)
+		{	/* All parts */
+			for(int i=1; i<countParts; i++)
+			{
+				InterlockSetColliderMain(i, flagSwitch, false);
+			}
+			return(true);
+		}
+
+		if(0 == idParts)
+		{	/* "Root"-Parts */
+			FlagColliderInterlockHideForce = flagSwitch;
+			return(true);
+		}
+
+		if(countParts <= idParts)
+		{	/* Invalid ID */
+			return(false);
+		}
+
+		InterlockSetColliderMain(idParts, flagSwitch, flagInvolveChildren);
+
+		return(true);
+	}
+	private void InterlockSetColliderMain(int idParts, bool flagSwitch, bool flagInvolveChildren=false)
+	{
+		if(true == flagSwitch)
+		{
+			TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.COLLIDER_INTERLOCK_HIDE;
+		}
+		else
+		{
+			TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.COLLIDER_INTERLOCK_HIDE;
+		}
+
+		if(true == flagInvolveChildren)
+		{
+			int[] tableIDPartsChild = DataAnimation.TableParts[idParts].TableIDChild;
+			int countPartsChild = tableIDPartsChild.Length;
+			for(int i=0; i<countPartsChild; i++)
+			{
+				InterlockSetColliderMain(tableIDPartsChild[i], flagSwitch, true);
 			}
 		}
 	}
@@ -306,6 +396,11 @@ public partial class Script_SpriteStudio6_Root
 			default:
 //				flagSettable = false;
 				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+//				flagSettable = false;
+				break;
 		}
 
 		if(true == flagSettable)
@@ -387,6 +482,8 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 			default:
 				goto CoefficientGetScaleParts_ErrorEnd;
 		}

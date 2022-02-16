@@ -1,9 +1,12 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+#define REDUCE_FREQUENCY_BINARYTREE
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -122,19 +125,25 @@ public static partial class Library_SpriteStudio6
 																				ContainerDeform,
 																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeDeform
 																			> {}
+				public interface InterfaceContainerShader : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Shader,
+																				ContainerShader,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeShader
+																			> {}
+				public interface InterfaceContainerSignal : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Signal,
+																				ContainerSignal,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSignal
+																			> {}
 
 				public interface InterfaceContainer<_TypeValue, _TypeContainer, _TypeSource>
 					where _TypeValue : struct
 				{
 					/* ----------------------------------------------- Functions */
 					#region Functions
-					bool ValueGet(	ref _TypeValue outValue,
-									ref int outFrameKey,
+					bool ValueGet(	ref CacheDecode<_TypeValue> cacheDecode,
 									_TypeContainer container,
 									ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 								);
-					bool ValueGetIndex(	ref _TypeValue outValue,
-										ref int outFrameKey,
+					bool ValueGetIndex(	ref CacheDecode<_TypeValue> cacheDecode,
 										int index,
 										_TypeContainer container,
 										ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
@@ -154,11 +163,103 @@ public static partial class Library_SpriteStudio6
 
 				[System.Serializable]
 				public struct CodeValueContainer
-				{	/* MEMO: Since Jagged-Array can not be serialized...  */
+				{
 					/* ----------------------------------------------- Variables & Properties */
 					#region Variables & Properties
 					public int[] TableCode;
 					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+#if REDUCE_FREQUENCY_BINARYTREE
+					internal static int IndexGetBinaryTree(	int index,
+															int frame,
+															int bitMaskFrameKey,
+															int[] tableCode
+														)
+					{
+						/* Determine case that binary-tree search is not necessary */
+						/* MEMO: If "TableCode" has no key-data, this function is not called. */
+						int countKey = tableCode.Length;
+						if(2 > countKey)
+						{	/* Has only 1 key-data. */
+							return(0);
+						}
+
+						int indexNext = index + 1;
+						int frameKey;
+						int frameKeyNext;
+						if(0 > index)
+						{	/* Initial State */
+							index = countKey >> 1; /* countKey / 2 */
+						}
+						else
+						{	/* Decoded at least once */
+							frameKey = tableCode[index] & bitMaskFrameKey;
+							if(countKey  <= indexNext)
+							{	/* Has no next key-data */
+								if(frame >= frameKey)
+								{
+									return(index);
+								}
+							}
+							else
+							{
+								/* MEMO: No search when frame is in the cached range. */
+								frameKeyNext = tableCode[indexNext] & bitMaskFrameKey;
+
+								if((frameKey <= frame) && (frameKeyNext > frame))
+								{	/* In range */
+									return(index);
+								}
+							}
+						}
+
+						/* Binary tree search */
+						int indexMinimum;
+						int indexMaximum;
+						frameKey = tableCode[index] & bitMaskFrameKey;
+						if(frameKey > frame)
+						{
+							indexMinimum = 0;
+							indexMaximum = index;
+						}
+						else
+						{
+							indexMinimum = index;
+							indexMaximum = countKey - 1;
+						}
+
+						while(indexMinimum < indexMaximum)
+						{
+							index = indexMinimum + indexMaximum;
+							index = (index >> 1) + (index & 1);	/* (index / 2) + (index % 2) */
+							frameKey = tableCode[index] & bitMaskFrameKey;
+							if(frame == frameKey)
+							{
+								indexMinimum = indexMaximum = index;
+
+								break;	/* while-Loop */
+							}
+							else
+							{
+//								if((frame < frameKey) || (-1 == frameKey))
+								if(frame < frameKey)
+								{
+									indexMaximum = index - 1;
+								}
+								else
+								{
+									indexMinimum = index;
+								}
+							}
+						}
+
+						return(indexMinimum);
+					}
+#else
+#endif
+					#endregion Functions
 				}
 
 				public struct ArgumentContainer
@@ -190,6 +291,26 @@ public static partial class Library_SpriteStudio6
 						IDParts = -1;
 						Frame = -1;
 						FramePrevious = -1;
+					}
+					#endregion Functions
+				}
+
+				public struct CacheDecode<_Type>
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					internal int IndexKey;
+					internal int FrameKey;
+
+					internal _Type Value;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					internal void CleanUp()
+					{
+						IndexKey = -1;
+						FrameKey = -1;
 					}
 					#endregion Functions
 				}
@@ -348,6 +469,20 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.DEFORM));
 						}
 					}
+					public bool Shader
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.SHADER));
+						}
+					}
+					public bool Signal
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.SIGNAL));
+						}
+					}
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -372,7 +507,9 @@ public static partial class Library_SpriteStudio6
 												bool userData,
 												bool instance,
 												bool effect,
-												bool deform
+												bool deform,
+												bool shader,
+												bool signal
 											)
 					{
 						Flags = 0;
@@ -403,6 +540,8 @@ public static partial class Library_SpriteStudio6
 						Flags |= (true == instance) ? FlagBit.INSTANCE : (FlagBit)0;
 						Flags |= (true == effect) ? FlagBit.EFFECT : (FlagBit)0;
 						Flags |= (true == deform) ? FlagBit.DEFORM : (FlagBit)0;
+						Flags |= (true == shader) ? FlagBit.SHADER : (FlagBit)0;
+						Flags |= (true == signal) ? FlagBit.SIGNAL : (FlagBit)0;
 					}
 					#endregion Functions
 
@@ -432,6 +571,8 @@ public static partial class Library_SpriteStudio6
 						INSTANCE = 0x00040000,
 						EFFECT = 0x00080000,
 						DEFORM = 0x00100000,
+						SHADER = 0x00200000,
+						SIGNAL = 0x00400000,
 					}
 					#endregion Enums & Constants
 				}

@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp.
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using UnityEngine;
@@ -17,7 +18,8 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 
 	private SerializedProperty PropertyDataCellMap;
 	private SerializedProperty PropertyDataEffect;
-	private SerializedProperty PropertyTableMaterial;
+	private SerializedProperty PropertyHolderAsset;
+
 	private SerializedProperty PropertyHideForce;
 	private SerializedProperty PropertyLimitParticle;
 	#endregion Variables & Properties
@@ -31,7 +33,8 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 		serializedObject.FindProperty("__DUMMY__");
 		PropertyDataCellMap = serializedObject.FindProperty("DataCellMap");
 		PropertyDataEffect = serializedObject.FindProperty("DataEffect");
-		PropertyTableMaterial = serializedObject.FindProperty("TableMaterial");
+		PropertyHolderAsset = serializedObject.FindProperty("HolderAsset");
+
 		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
 		PropertyLimitParticle = serializedObject.FindProperty("LimitParticleDraw");
 	}
@@ -54,16 +57,7 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 
 			PropertyDataCellMap.objectReferenceValue = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", PropertyDataCellMap.objectReferenceValue, typeof(Script_SpriteStudio6_DataCellMap), true));
 			PropertyDataEffect.objectReferenceValue = (Script_SpriteStudio6_DataEffect)(EditorGUILayout.ObjectField("Data:Effect", PropertyDataEffect.objectReferenceValue, typeof(Script_SpriteStudio6_DataEffect), true));
-			EditorGUI.indentLevel = levelIndent;
-		}
-
-		/* Table-Material */
-		EditorGUILayout.Space();
-		PropertyTableMaterial.isExpanded = EditorGUILayout.Foldout(PropertyTableMaterial.isExpanded, "Table-Material");
-		if(true == PropertyTableMaterial.isExpanded)
-		{
-			EditorGUI.indentLevel = levelIndent + 1;
-			LibraryEditor_SpriteStudio6.Utility.Inspector.TableMaterialEffect(InstanceRoot.TableMaterial, PropertyTableMaterial, levelIndent + 1);
+			PropertyHolderAsset.objectReferenceValue = (Script_SpriteStudio6_HolderAsset)(EditorGUILayout.ObjectField("Holder:Asset", PropertyHolderAsset.objectReferenceValue, typeof(Script_SpriteStudio6_HolderAsset), true));
 			EditorGUI.indentLevel = levelIndent;
 		}
 

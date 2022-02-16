@@ -1,10 +1,12 @@
 ﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 #define MESSAGE_DATAVERSION_INVALID
+// #define EXPERIMENT_FOR_CAMERA
 
 using System.Collections;
 using System.Collections.Generic;
@@ -37,6 +39,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	internal List<int> ListPartsPreDraw = null;
 
 	public bool FlagPlanarization;
+	public bool FlagColliderInterlockHideForce;
 	public int OrderInLayer;
 
 	private FlagBitStatus Status = FlagBitStatus.CLEAR;
@@ -139,14 +142,19 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	}
 	internal Library_SpriteStudio6.CallBack.FunctionPlayEnd FunctionPlayEnd = null;
 	internal Library_SpriteStudio6.CallBack.FunctionUserData FunctionUserData = null;
+	internal Library_SpriteStudio6.CallBack.FunctionSignal FunctionSignal = null;
 
 	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderEnter = null;
 	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderExit = null;
 	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderStay = null;
 
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionEnter = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionExit = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionStay = null;
+	/* MEMO: Integrated to "FunctionCollider..." */
+	/* Obsolete */	// internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionEnter = null;
+	/* Obsolete */	// internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionExit = null;
+	/* Obsolete */	// internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionStay = null;
+
+	internal Texture[] TableTexture = null;										/* for Material Overriding */
+	internal Library_SpriteStudio6.Control.CacheMaterial CacheMaterial = null;	/* for Material Overriding */
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -169,6 +177,10 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 #endif
 			return;
 		}
+
+#if EXPERIMENT_FOR_CAMERA
+//		ArgumentShareEntire = null;
+#endif
 
 		/* Awake Base-Class */
 		BaseAwake();
@@ -266,6 +278,14 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	{
 		if(null == InstanceRootParent)
 		{
+#if EXPERIMENT_FOR_CAMERA
+			if(null == ArgumentShareEntire)
+			{
+				ArgumentShareEntire = new ArgumentContainer();
+			}
+			ArgumentShareEntire.CleanUp();
+#endif
+
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
 			/*       "Child"-Root parts' "LateUpdatesMain" are called from Parent's internal processing. */
 			if(true == RendererBootUpDraw(false))
@@ -288,6 +308,20 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 							);
 			}
 		}
+#if EXPERIMENT_FOR_CAMERA
+		else
+		{
+			if(null == ArgumentShareEntire)
+			{
+				/* MEMO: Child animations share highest-parent's ArgumentContainer. */
+				Script_SpriteStudio6_Root instanceRootParentHighest = RootGetHighest();
+				if(null != instanceRootParentHighest)
+				{
+					ArgumentShareEntire = instanceRootParentHighest.ArgumentShareEntire;
+				}
+			}
+		}
+#endif
 	}
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
@@ -371,6 +405,21 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				return;
 			}
 		}
+
+#if EXPERIMENT_FOR_CAMERA
+		/* Fix Camera */
+		if(null == InstanceRootParent)
+		{
+			if(null != ArgumentShareEntire)
+			{
+				if(null != ArgumentShareEntire.TransformPartsCamera)
+				{
+					Matrix4x4 matrixCamera = matrixCorrection * ArgumentShareEntire.TransformPartsCamera.localToWorldMatrix;
+					ArgumentShareEntire.MatrixCamera = matrixCamera.inverse;
+				}
+			}
+		}
+#endif
 
 		/* Exec Drawing */
 		/* MEMO: At "Pre-Draw" ...                                                                                             */
@@ -474,17 +523,22 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			if(false == flagHide)
 			{
 				/* MEMO: Set the material-array to null issue "NullReferenceException". Leave as. */
-				if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined))
+				if(true == ClusterDraw.MeshCombine(MeshCombined, ref TableMaterialCombined, ref TableMaterialPropertyBlockCombined))
 				{
-					InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
 					InstanceMeshRenderer.sortingOrder = OrderInLayer;
+					InstanceMeshRenderer.sharedMaterials = TableMaterialCombined;
+					int countMaterial = TableMaterialPropertyBlockCombined.Length;
+					for(int i=0; i<countMaterial; i++)
+					{
+						InstanceMeshRenderer.SetPropertyBlock(TableMaterialPropertyBlockCombined[i], i);
+					}
 				}
 			}
 			InstanceMeshFilter.sharedMesh = MeshCombined;
 		}
 
 		/* Check Track-End */
-		int indexTrackSlave = -1;
+		int indexTrackSecondary = -1;
 		bool flagDecodeNextForce = false;
 		bool flagStopAllTrack = true;
 		bool flagRequestPlayEndTrack;
@@ -500,19 +554,19 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				flagDecodeNextForce = false;
 				if(true == TableControlTrack[i].StatusIsRequestTransitionEnd)
 				{
-					indexTrackSlave = TableControlTrack[i].IndexTrackSlave;
-					if(0 <= indexTrackSlave)
+					indexTrackSecondary = TableControlTrack[i].IndexTrackSecondary;
+					if(0 <= indexTrackSecondary)
 					{
-						/* Change Track Slave to Master */
-						/* MEMO: Overwrite slave track status. */
-						flagRequestPlayEndTrack = TrackChangeSlaveToMaster(i, indexTrackSlave);
+						/* Change Track Secondary to Primary */
+						/* MEMO: Overwrite secondary track status. */
+						flagRequestPlayEndTrack = TrackChangeSecondaryToPrimary(i, indexTrackSecondary);
 
 						/* CallBack Transition-End */
 						if((null != FunctionPlayEndTrack) && (null != FunctionPlayEndTrack[i]))
 						{
 							FunctionPlayEndTrack[i](	this,
 														i,
-														indexTrackSlave,
+														indexTrackSecondary,
 														indexAnimation,
 														TableControlTrack[i].ArgumentContainer.IndexAnimation
 													);
@@ -528,7 +582,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 					TableControlTrack[i].Stop();
 
 					/* CallBack Play-End */
-					/* MEMO: At Play-End callback, "indexTrackSlave" is always -1. */
+					/* MEMO: At Play-End callback, "indexTrackSecondary" is always -1. */
 					if((null != FunctionPlayEndTrack) && (null != FunctionPlayEndTrack[i]))
 					{
 						FunctionPlayEndTrack[i](this, i, -1, indexAnimation, -1);
@@ -553,6 +607,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.DECODE_ATTRIBUTE
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.TRANSITION_START
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA
+												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL
 											);
 			if(true == flagDecodeNextForce)
 			{
@@ -608,6 +663,16 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			Status |= FlagBitStatus.PLAYING;
 		}
 	}
+
+	void OnDestroy()
+	{
+		/* All Material-Cache shut-down */
+		if(null != CacheMaterial)
+		{
+			CacheMaterial.ShutDown(true);
+			CacheMaterial = null;
+		}
+	}
 	#endregion MonoBehaviour-Functions
 
 	/* ----------------------------------------------- Functions */
@@ -624,7 +689,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		}
 
 		/* Recover Material */
-		DataAnimation.BootUpTableMaterial();
+//		DataAnimation.BootUpTableMaterial();
 
 		/* Set Attribute-Interface */
 		DataAnimation.BootUpInterfaceAttribute();
@@ -794,6 +859,43 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		return(false);
 	}
 
+	internal bool CacheBootUpMaterial()
+	{
+		int countTexture = CountGetCellMap(false);
+		if(null != TableTexture)
+		{	/* Already booted up */
+			return(true);
+		}
+
+		TableTexture = new Texture[countTexture];
+		CacheMaterial = new Library_SpriteStudio6.Control.CacheMaterial();
+
+#if false
+		if(false == CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR, false))
+		{
+			return(false);
+		}
+		return(true);
+#else
+		return(CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR, false));
+#endif
+	}
+	private bool TextureCheckOverride(int indexCellMap)
+	{
+		if(null != TableTexture)	/* if(null != CacheMaterial) */
+		{	/* Material Overridable */
+			if(TableTexture.Length > indexCellMap)
+			{	/* in Table */
+				if(null != TableTexture[indexCellMap])
+				{	/* Texture Overrided */
+					return(true);
+				}
+			}
+		}
+
+		return(false);
+	}
+
 	internal bool ClusterBootUpDraw()
 	{
 		CountSpriteMax = 0;
@@ -843,8 +945,6 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			{
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
-//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 					break;
 
@@ -871,8 +971,6 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 					}
 					break;
 
-//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 					break;
 
@@ -882,6 +980,10 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 					break;
 			}
 		}
@@ -904,8 +1006,6 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			{
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
-//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE2:
-//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL_TRIANGLE4:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 					break;
 
@@ -931,8 +1031,6 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 					}
 					break;
 
-//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE2:
-//				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK_TRIANGLE4:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 					break;
 
@@ -945,6 +1043,10 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 					countMesh += DataAnimation.TableParts[i].CountMesh;
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 					break;
 			}
 		}
@@ -995,42 +1097,42 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		return(true);
 	}
 
-	private bool TrackChangeSlaveToMaster(int indexTrackMaskter, int indexTrackSlave)
+	private bool TrackChangeSecondaryToPrimary(int indexTrackPrimary, int indexTrackSecondary)
 	{
-		bool flagStartAnimation = TableControlTrack[indexTrackMaskter].StatusIsTransitionCancelPause;
-		bool flagRequestPlayEndTrack = TableControlTrack[indexTrackSlave].StatusIsRequestPlayEnd;
+		bool flagStartAnimation = TableControlTrack[indexTrackPrimary].StatusIsTransitionCancelPause;
+		bool flagRequestPlayEndTrack = TableControlTrack[indexTrackSecondary].StatusIsRequestPlayEnd;
 
 		/* Copy Track playing datas */
 		/* MEMO: Since track-control manages only playing-frame, copy all. */
 		/* MEMO: If destination-animation has ended at transition complete, will callback. */
-		TableControlTrack[indexTrackMaskter] = TableControlTrack[indexTrackSlave];
+		TableControlTrack[indexTrackPrimary] = TableControlTrack[indexTrackSecondary];
 
 		/* Copy Parts-TRS */
-		/* MEMO: copy TRSSlave to TRSMaster since decode states at transition end is in TRSSlave. */
+		/* MEMO: copy TRSSecondary to TRSPrimary since decode states at transition end is in TRSSecondary. */
 		int countControlParts = TableControlParts.Length;
 		for(int i=0; i<countControlParts; i++)
 		{
-			if(TableControlParts[i].IndexControlTrack == indexTrackMaskter)
+			if(TableControlParts[i].IndexControlTrack == indexTrackPrimary)
 			{
-				TableControlParts[i].TRSMaster = TableControlParts[i].TRSSlave;
+				TableControlParts[i].TRSPrimary = TableControlParts[i].TRSSecondary;
 				/* MEMO: Re-decode all attribute at next update. */
 				TableControlParts[i].CacheClearAttribute(false);
 			}
 		}
 
 		/* Clear Transition */
-		TableControlTrack[indexTrackMaskter].StatusIsRequestTransitionEnd = false;
-		TableControlTrack[indexTrackMaskter].StatusIsTransitionCancelPause = false;
-		TableControlTrack[indexTrackMaskter].Transition(-1, 0.0f);
+		TableControlTrack[indexTrackPrimary].StatusIsRequestTransitionEnd = false;
+		TableControlTrack[indexTrackPrimary].StatusIsTransitionCancelPause = false;
+		TableControlTrack[indexTrackPrimary].Transition(-1, 0.0f);
 
 		/* Pause Cancel */
 		if(true == flagStartAnimation)
 		{
-			TableControlTrack[indexTrackMaskter].Pause(false);
+			TableControlTrack[indexTrackPrimary].Pause(false);
 		}
 
-		/* Stop Slave */
-		TableControlTrack[indexTrackSlave].Stop();
+		/* Stop Secaondary */
+		TableControlTrack[indexTrackSecondary].Stop();
 
 		return(flagRequestPlayEndTrack);
 	}

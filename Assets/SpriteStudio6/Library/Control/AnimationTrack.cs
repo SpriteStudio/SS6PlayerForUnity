@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -92,13 +93,6 @@ public static partial class Library_SpriteStudio6
 						return(0 != (Status & FlagBitStatus.DECODE_ATTRIBUTE));
 					}
 				}
-				internal bool StatusIsIgnoreUserData
-				{
-					get
-					{
-						return(0 != (Status & FlagBitStatus.IGNORE_USERDATA));
-					}
-				}
 				internal bool StatusIsIgnoreSkipLoop
 				{
 					get
@@ -106,11 +100,32 @@ public static partial class Library_SpriteStudio6
 						return(0 != (Status & FlagBitStatus.IGNORE_SKIPLOOP));
 					}
 				}
+				internal bool StatusIsIgnoreUserData
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.IGNORE_USERDATA));
+					}
+				}
+				internal bool StatusIsIgnoreSignal
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.IGNORE_SIGNAL));
+					}
+				}
 				internal bool StatusIsIgnoreNextUpdateUserData
 				{
 					get
 					{
 						return(0 != (Status & FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA));
+					}
+				}
+				internal bool StatusIsIgnoreNextUpdateSignal
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL));
 					}
 				}
 				internal bool StatusIsTransitionStart
@@ -209,7 +224,7 @@ public static partial class Library_SpriteStudio6
 				internal float TimeElapsedTransition;
 				internal float TimeLimitTransition;
 				internal float RateTransition;
-				internal int IndexTrackSlave;
+				internal int IndexTrackSecondary;
 
 				/* MEMO: This value is applicable even in a stopping.                            */
 				/*       Mainly used for shifting display-frame in cycle that executed "Stop()". */
@@ -246,7 +261,7 @@ public static partial class Library_SpriteStudio6
 					TimeElapsedTransition = 0.0f;
 					TimeLimitTransition = 0.0f;
 					RateTransition = 0.0f;
-					IndexTrackSlave = -1;
+					IndexTrackSecondary = -1;
 
 					TimeElapseReplacement = 0.0f;
 					TimeElapseInRangeReplacement = 0.0f;
@@ -328,9 +343,12 @@ public static partial class Library_SpriteStudio6
 					TimeElapsedNow = 0.0f;
 //					ArgumentContainer.Frame = Mathf.Clamp(ArgumentContainer.Frame, FrameStart, FrameEnd);
 
-					Status |= FlagBitStatus.PLAYING;
-					Status |= FlagBitStatus.PLAYING_START;
-					Status &= ~FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA;
+					Status |= (	FlagBitStatus.PLAYING
+								| FlagBitStatus.PLAYING_START
+							);
+					Status &= ~(	FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA
+									| FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL
+								);
 
 					FrameRange = (FrameEnd - FrameStart) + 1;
 					TimeRange = (float)FrameRange * TimePerFrame;
@@ -342,14 +360,14 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
-				public bool Transition(int indexTrackSlave, float time)
+				public bool Transition(int indexTrackSecondary, float time)
 				{
 					if(0 == (Status & FlagBitStatus.VALID))
 					{
 						return(false);
 					}
 
-					IndexTrackSlave = indexTrackSlave;
+					IndexTrackSecondary = indexTrackSecondary;
 
 					TimeElapsedTransition = 0.0f;
 					TimeLimitTransition = time;
@@ -702,7 +720,7 @@ public static partial class Library_SpriteStudio6
 				Update_UpdateTransition:;
 
 					Status &= ~FlagBitStatus.REQUEST_TRANSITIONEND;
-					if(0 <= IndexTrackSlave)
+					if(0 <= IndexTrackSecondary)
 					{
 						TimeElapsedTransition += timeElapsed;	/* Transition's elapsed time exclude RateTime */
 						if(TimeLimitTransition <= TimeElapsedTransition)
@@ -958,9 +976,11 @@ public static partial class Library_SpriteStudio6
 
 					DECODE_ATTRIBUTE = 0x0008000,
 
+					IGNORE_SKIPLOOP = 0x00001000,
 					IGNORE_USERDATA = 0x00000800,
-					IGNORE_SKIPLOOP = 0x00000400,
+					IGNORE_SIGNAL = 0x00000400,
 					IGNORE_NEXTUPDATE_USERDATA = 0x00000200,
+					IGNORE_NEXTUPDATE_SIGNAL = 0x00000100,
 
 					TRANSITION_START = 0x00000080,
 					TRANSITION_CANCEL_PAUSE = 0x00000040,

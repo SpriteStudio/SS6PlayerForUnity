@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -14,6 +15,8 @@ public class Script_SpriteStudio6_DataCellMap : ScriptableObject
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
 	public KindVersion Version;
+	public Script_SpriteStudio6_DataProject DataProject;
+
 	public Library_SpriteStudio6.Data.CellMap[] TableCellMap;
 	#endregion Variables & Properties
 

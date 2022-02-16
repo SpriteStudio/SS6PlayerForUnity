@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -14,8 +15,10 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
 	public KindVersion Version;
+	public string Name;								/* Body-Name of SSEE */
+	public Script_SpriteStudio6_DataProject DataProject;
 
-	public Material[] TableMaterial;
+//	public Material[] TableMaterial;
 
 	public FlagBit FlagData;
 	public bool StatusIsLockSeedRandom
@@ -81,6 +84,7 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 		return((null != TableEmitter) ? TableEmitter.Length : -1);
 	}
 
+#if false
 	internal void BootUpTableMaterial()
 	{
 #if UNITY_EDITOR
@@ -99,6 +103,7 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 		material = null;
 #endif
 	}
+#endif
 
 	private static void FunctionBootUpSignature()
 	{
@@ -111,7 +116,7 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 	public enum KindVersion
 	{
 		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010001,
+		SUPPORT_LATEST = CODE_010003,
 
 		SS5PU = 0,	/* Before SS5PU *//* (Reserved) */
 		CODE_010000,	/* = 0x00010000 (Miss) */	/* SS6PU Ver.1.0.0 */
@@ -119,6 +124,8 @@ public class Script_SpriteStudio6_DataEffect : ScriptableObject
 			/* MEMO: Shaders changed to integrated type */
 		CODE_010002 = 0x00010002,	/* SS6PU Ver.1.0.27 */
 			/* MEMO: Shader's stencil-test are changed.  */
+		CODE_010003 = 0x00010002,	/* SS6PU Ver.1.2.0 */
+			/* MEMO: Added "Name (Original SSCE file's Body-Name) */
 	}
 
 	[System.Flags]

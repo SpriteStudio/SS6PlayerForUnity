@@ -1,38 +1,32 @@
 //
 //	SpriteStudio6 Player for Unity
 //
-//	Copyright(C) Web Technology Corp.
+//	Copyright(C) 1997-2021 Web Technology Corp.
+//	Copyright(C) CRI Middleware Co., Ltd.
 //	All rights reserved.
 //
 sampler2D _MainTex;
 sampler2D _AlphaTex;
 float _EnableExternalAlpha;
 
-#ifdef SV_Target
-fixed4 PS_main(InputPS Input) : SV_Target
-#else
-fixed4 PS_main(InputPS Input) : COLOR0
-#endif
+half4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 {
-	fixed4 output;
+	half4 output;
 
-	fixed4	pixel = tex2D(_MainTex, Input.Texture00UV.xy);
-#if defined(ETC1_EXTERNAL_ALPHA)
-	fixed4 alpha = tex2D(_AlphaTex, Input.Texture00UV.xy);
-	pixel.a = lerp(pixel.a, alpha.r, _EnableExternalAlpha);
-#endif
-	pixel *= Input.ColorMain;
-#if !defined(PS_NOT_DISCARD)
-	if(0.0f >= pixel.a)
-	{
-		discard;
-	}
-#endif
-	pixel = saturate(pixel);
+	/* Texel Sampling */
+	/* MEMO: Run "PixelSynthesizeExternalAlpha", especially if you want to support ETC1's split-alpha. */
+	half4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
+	PixelSynthesizeExternalAlpha(pixel.a, _AlphaTex, input.Texture00UV.xy, _EnableExternalAlpha);
 
-#if defined(PS_OUTPUT_PMA)
-	pixel.xyz *= pixel.a;
-#endif
+	/* Blending Vertex-Color & Check Discarding-Pixel */
+	/* MEMO: Once pixel's alpha has been determined, Need to run "PixelDiscardAlpha". */
+	pixel *= input.ColorMain;
+
+	/* MEMO: No "Part-Color" is applied to "Effect". */
+
+	/* Finalize color */
+	PixelSolvePMA(pixel, pixel.a);
+	PixelDiscardAlpha(pixel.a, 0.0f);
 
 	output = pixel;
 

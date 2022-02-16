@@ -54,8 +54,8 @@ public static partial class LibraryEditor_SpriteStudio6
 #else
 				/* MEMO: Base directory is ListFile's directory when specify relative path in ListFile. */
 				string nameFile;
-				string nameExternal;
-				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out NameFolderBaseExternal, out nameFile, out nameExternal, nameFileList);
+				string nameExtension;
+				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out NameFolderBaseExternal, out nameFile, out nameExtension, nameFileList);
 #endif
 				NameFolderBaseExternal = PathNormalizeDelimiter(NameFolderBaseExternal, true);
 

@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -322,8 +323,8 @@ public partial class Script_SpriteStudio6_Root
 	Likewise, indexTrack's "Track Play-End" callback and animation's "PlayEnd" callback are not done.<br>
 	<br>
 	When "flagEngageTransition" is set to true, transition is forced to complete.<br>
-	(Master track's play-status is overwritten from Slave track's)<br>
-	However, even when "flagJumpEnd" is set to true at that time, Slave track's frame will not jump.<br>
+	(Primary track's play-status is overwritten from Secondary track's)<br>
+	However, even when "flagJumpEnd" is set to true at that time, Secondary track's frame will not jump.<br>
 	*/
 	public void AnimationStop(int indexTrack, bool flagJumpEnd = false, bool flagEngageTransition = false)
 	{
@@ -360,7 +361,7 @@ public partial class Script_SpriteStudio6_Root
 	}
 	private bool AnimationStopMain(int indexTrack, bool flagJumpEnd, bool flagEngageTransition)
 	{
-		/* Stop Master */
+		/* Stop Primary */
 		if(true == flagJumpEnd)
 		{	/* Jump to End */
 			float timeTotal;
@@ -377,14 +378,14 @@ public partial class Script_SpriteStudio6_Root
 			TableControlTrack[indexTrack].Stop();
 		}
 
-		/* Stop Slave */
+		/* Stop Secondary */
 		if(true == flagEngageTransition)
 		{
-			int indexTrackSlave = TableControlTrack[indexTrack].IndexTrackSlave;
-			if(0 <= indexTrackSlave)
+			int indexTrackSecondary = TableControlTrack[indexTrack].IndexTrackSecondary;
+			if(0 <= indexTrackSecondary)
 			{
-				TrackChangeSlaveToMaster(indexTrack, indexTrackSlave);
-				TableControlTrack[indexTrackSlave].Stop();
+				TrackChangeSecondaryToPrimary(indexTrack, indexTrackSecondary);
+				TableControlTrack[indexTrackSecondary].Stop();
 			}
 		}
 
@@ -462,10 +463,10 @@ public partial class Script_SpriteStudio6_Root
 			flagSuccess &= TableControlTrack[indexTrack].Pause(flagSwitch);
 		}
 
-		int indexTrackSlave = TableControlTrack[indexTrack].IndexTrackSlave;
-		if(0 <= indexTrackSlave)
+		int indexTrackSecondary = TableControlTrack[indexTrack].IndexTrackSecondary;
+		if(0 <= indexTrackSecondary)
 		{
-			flagSuccess &= TableControlTrack[indexTrackSlave].Pause(flagSwitch);
+			flagSuccess &= TableControlTrack[indexTrackSecondary].Pause(flagSwitch);
 		}
 		return(flagSuccess);
 	}

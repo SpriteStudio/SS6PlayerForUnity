@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 #define CHANGE_DEFORM_DECODING
@@ -45,7 +46,9 @@ public static partial class Library_SpriteStudio6
 						false,	/* UserData (Trigger) *//* Not Supported */
 						false,	/* Instance (Trigger) *//* Not Supported */
 						false,	/* Effect (Trigger) *//* Not Supported */
-						true	/* Deform */
+						true,	/* Deform */
+						true,	/* Shader */
+						false	/* Signal *//* Not Supported */
 					);
 
 					public const string ID = "StandardUncompressed";
@@ -62,6 +65,8 @@ public static partial class Library_SpriteStudio6
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
 					internal readonly static InterfaceFunctionDeform FunctionDeform = new InterfaceFunctionDeform();
+					internal readonly static InterfaceFunctionShader FunctionShader = new InterfaceFunctionShader();
+//					internal readonly static InterfaceFunctionSignal FunctionSignal = new InterfaceFunctionSignal();
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Dictionary-Functions */
@@ -85,23 +90,21 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref int outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<int> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref int outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<int> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container)
@@ -148,23 +151,21 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref float outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<float> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref float outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<float> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container)
@@ -244,23 +245,21 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Vector2 outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Vector2> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref Vector2 outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Vector2> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container)
@@ -330,23 +329,21 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Vector3 outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Vector3> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref Vector3 outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Vector3> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container)
@@ -403,23 +400,21 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Status outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Status> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.Status outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Status> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container)
@@ -500,23 +495,21 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Cell outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Cell> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.Cell outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Cell> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container)
@@ -555,23 +548,21 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColor outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColor outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container)
@@ -610,23 +601,21 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, argument.Frame, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 												)
 						{
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref outValue, ref outFrameKey, index, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container)
@@ -672,8 +661,7 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Deform> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
@@ -684,16 +672,15 @@ public static partial class Library_SpriteStudio6
 								return(false);	/* outValue is not overwritten. */
 							}
 							/* MEMO: Must be "outValue.TableCoordinate.Length == container.CountVertexMesh". */
-							if((null == outValue.TableCoordinate) || (countVertexMesh > outValue.TableCoordinate.Length))
+							if((null == cacheDecode.Value.TableCoordinate) || (countVertexMesh > cacheDecode.Value.TableCoordinate.Length))
 							{	/* Error */
 								return(false);	/* outValue is not overwritten. */
 							}
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGetDeform(ref outValue, ref outFrameKey, argument.Frame, container.TableValue, container));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGetDeform(ref cacheDecode, argument.Frame, container.TableValue, container));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Deform> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
@@ -705,12 +692,12 @@ public static partial class Library_SpriteStudio6
 								return(false);	/* outValue is not overwritten. */
 							}
 							/* MEMO: Must be "outValue.TableCoordinate.Length == container.CountVertexMesh". */
-							if((null == outValue.TableCoordinate) || (countVertexMesh > outValue.TableCoordinate.Length))
+							if((null == cacheDecode.Value.TableCoordinate) || (countVertexMesh > cacheDecode.Value.TableCoordinate.Length))
 							{	/* Error */
 								return(false);	/* outValue is not overwritten. */
 							}
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGetDeform(ref outValue, ref outFrameKey, index, container.TableValue, container));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGetDeform(ref cacheDecode, index, container.TableValue, container));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container)
@@ -857,12 +844,67 @@ public static partial class Library_SpriteStudio6
 						}
 						#endregion Functions
 					}
+
+					public class InterfaceFunctionShader : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerShader
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Shader> cacheDecode,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerShader container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
+						}
+
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Shader> cacheDecode,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerShader container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerShader container)
+						{
+							return(container.TableValue.Length);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerShader container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeShader[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
+
+							if(0 >= listKeyData[0].CountGetKey())
+							{
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Shader[0];
+								return(true);
+							}
+
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Shader[countFrame];
+							for(int i=0; i<countFrame; i++)
+							{
+								listKeyData[0].ValueGet(out container.TableValue[i], i);
+							}
+							return(true);
+						}
+						#endregion Functions
+					}
+
+					/* MEMO: Not Support */
+//					public class InterfaceFunctionSignal : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerSignal
 					#endregion Classes, Structs & Interfaces
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
-					public static bool ValueGet<_Type>(	ref _Type outValue,
-														ref int outFrameKey,
+					public static bool ValueGet<_Type>(	ref CacheDecode<_Type> cacheDecode,
 														int frame,
 														_Type[] tableValue
 													)
@@ -879,18 +921,17 @@ public static partial class Library_SpriteStudio6
 						{
 							return(false);
 						}
-						if(outFrameKey == frame)
+						if(cacheDecode.FrameKey == frame)
 						{
 							return(false);
 						}
 
-						outFrameKey = frame;
-						outValue = tableValue[frame];
+						cacheDecode.FrameKey = frame;
+						cacheDecode.Value = tableValue[frame];
 						return(true);
 					}
 
-					public static bool ValueGetDeform(	ref Library_SpriteStudio6.Data.Animation.Attribute.Deform outValue,
-														ref int outFrameKey,
+					public static bool ValueGetDeform(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Deform> cacheDecode,
 														int frame,
 														Library_SpriteStudio6.Data.Animation.Attribute.Deform[] tableValue,
 														Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container
@@ -907,17 +948,17 @@ public static partial class Library_SpriteStudio6
 						{
 							return(false);
 						}
-						if(outFrameKey == frame)
+						if(cacheDecode.FrameKey == frame)
 						{
 							return(false);
 						}
 
-						outFrameKey = frame;
+						cacheDecode.FrameKey = frame;
 
 						int countVertexChange = container.TableIndexVertex.Length;
 						int[] tableIndexVertex = container.TableIndexVertex;
 						Vector2[] tableCoordinate = tableValue[frame].TableCoordinate;
-						Vector2[] tableCoordinateOutput = outValue.TableCoordinate;
+						Vector2[] tableCoordinateOutput = cacheDecode.Value.TableCoordinate;
 						for(int i=0; i<countVertexChange; i++)
 						{
 							tableCoordinateOutput[tableIndexVertex[i]] = tableCoordinate[i];

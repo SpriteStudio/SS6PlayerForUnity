@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -368,6 +369,56 @@ public static partial class Library_SpriteStudio6
 
 						case KindTypePack.CPE_INTERPOLATE:
 							container.Function = CPE_Interpolate.FunctionDeform;
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionShader(ContainerShader container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionShader;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionShader;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionShader;
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionSignal(ContainerSignal container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionSignal;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
 							break;
 
 						default:

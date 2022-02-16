@@ -3,7 +3,7 @@ Copyright (c) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura.
 
 This source-list (C# porting and customizing) is coded by
                                   Web Technology Corp. 2015 November 2, 2015.
-
+                                  CRI Middleware Co., Ltd.  Octoberr 2, 2021.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

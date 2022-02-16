@@ -1,9 +1,12 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+#define REDUCE_FREQUENCY_BINARYTREE
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,7 +46,9 @@ public static partial class Library_SpriteStudio6
 						false,	/* UserData (Trigger) */
 						false,	/* Instance (Trigger) */
 						false,	/* Effect (Trigger) */
-						false	/* Deform */
+						false,	/* Deform */
+						false,	/* Shader */
+						false	/* Signal */
 					);
 
 					public const string ID = "CPE_Flyweight";
@@ -60,6 +65,8 @@ public static partial class Library_SpriteStudio6
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
 //					internal readonly static InterfaceFunctionDeform FunctionDeform = new InterfaceFunctionDeform();
+//					internal readonly static InterfaceFunctionShader FunctionShader = new InterfaceFunctionShader();
+//					internal readonly static InterfaceFunctionSignal FunctionSignal = new InterfaceFunctionSignal();
 
 					[System.Flags]
 					private enum FlagBit
@@ -211,8 +218,7 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref int outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<int> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
@@ -222,15 +228,14 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetInt(ref outValue, ref outFrameKey, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetInt(ref cacheDecode, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
 						}
 
-						public bool ValueGetIndex(	ref int outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<int> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
@@ -275,8 +280,7 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref float outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<float> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
@@ -286,15 +290,14 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetFloat(ref outValue, ref outFrameKey, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetFloat(ref cacheDecode, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
 						}
 
-						public bool ValueGetIndex(	ref float outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<float> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
@@ -339,8 +342,7 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Vector2 outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Vector2> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
@@ -350,15 +352,14 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetVector2(ref outValue, ref outFrameKey, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetVector2(ref cacheDecode, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
 						}
 
-						public bool ValueGetIndex(	ref Vector2 outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Vector2> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
@@ -403,8 +404,7 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Vector3 outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Vector3> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
@@ -414,15 +414,14 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetVector3(ref outValue, ref outFrameKey, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetVector3(ref cacheDecode, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
 						}
 
-						public bool ValueGetIndex(	ref Vector3 outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Vector3> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
@@ -467,8 +466,7 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColor outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
@@ -478,15 +476,14 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetPartsColor(ref outValue, ref outFrameKey, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetPartsColor(ref cacheDecode, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColor outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
@@ -531,8 +528,7 @@ public static partial class Library_SpriteStudio6
 					{
 						/* ----------------------------------------------- Functions */
 						#region Functions
-						public bool ValueGet(	ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue,
-												ref int outFrameKey,
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> cacheDecode,
 												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
 												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
 											)
@@ -542,15 +538,14 @@ public static partial class Library_SpriteStudio6
 								return(false);
 							}
 							int frame = argument.Frame;
-							if((0 <= outFrameKey) && (frame == argument.FramePrevious))
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetVertexCorrection(ref outValue, ref outFrameKey, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.CPE_Flyweight.ValueGetVertexCorrection(ref cacheDecode, container.TableCodeValue, frame, ref argument.DataAnimation.Dictionary_CPE_Flyweight));
 						}
 
-						public bool ValueGetIndex(	ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue,
-													ref int outFrameKey,
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> cacheDecode,
 													int index,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container,
 													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
@@ -598,8 +593,7 @@ public static partial class Library_SpriteStudio6
 
 					/* ----------------------------------------------- Functions */
 					#region Functions
-					public static bool ValueGetInt(	ref int outValue,
-													ref int outFrameKey,
+					public static bool ValueGetInt(	ref CacheDecode<int> cacheDecode,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[] tableCodeValue,
 													int frame,
 													ref Dictionary dictionary
@@ -613,6 +607,25 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;	/* Always 1 */
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+
+						/* Get values */
+						index = (status & (int)FlagBit.INDEX) >> 15;
+						cacheDecode.Value = dictionary.TableValueInt[index];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -642,19 +655,20 @@ public static partial class Library_SpriteStudio6
 
 						status = tableStatus[indexMinimum];
 						frameKey = status & (int)FlagBit.FRAMEKEY;
-						if(outFrameKey == frameKey)
+						if(cacheDecode.FrameKey == frameKey)
 						{
 							return(false);	/* outValue is not overwritten. */
 						}
-						outFrameKey = frameKey;
+						cacheDecode.FrameKey = frameKey;
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
-						outValue = dictionary.TableValueInt[index];
+						cacheDecode.Value = dictionary.TableValueInt[index];
+#endif
+
 						return(true);	/* outValue is overwritten. */
 					}
 
-					public static bool ValueGetFloat(	ref float outValue,
-														ref int outFrameKey,
+					public static bool ValueGetFloat(	ref CacheDecode<float> cacheDecode,
 														Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[] tableCodeValue,
 														int frame,
 														ref Dictionary dictionary
@@ -668,6 +682,25 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;	/* Always 1 */
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+
+						/* Get values */
+						index = (status & (int)FlagBit.INDEX) >> 15;
+						cacheDecode.Value = dictionary.TableValueFloat[index];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -697,19 +730,20 @@ public static partial class Library_SpriteStudio6
 
 						status = tableStatus[indexMinimum];
 						frameKey = status & (int)FlagBit.FRAMEKEY;
-						if(outFrameKey == frameKey)
+						if(cacheDecode.FrameKey == frameKey)
 						{
 							return(false);	/* outValue is not overwritten. */
 						}
-						outFrameKey = frameKey;
+						cacheDecode.FrameKey = frameKey;
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
-						outValue = dictionary.TableValueFloat[index];
+						cacheDecode.Value = dictionary.TableValueFloat[index];
+#endif
+
 						return(true);	/* outValue is overwritten. */
 					}
 
-					public static bool ValueGetVector2(	ref Vector2 outValue,
-														ref int outFrameKey,
+					public static bool ValueGetVector2(	ref CacheDecode<Vector2> cacheDecode,
 														Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[] tableCodeValue,
 														int frame,
 														ref Dictionary dictionary
@@ -723,6 +757,30 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+
+						/* Get values */
+						int indexValue;
+						indexValue = (status & (int)FlagBit.INDEX) >> 15;
+						cacheDecode.Value.x = dictionary.TableValueFloat[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.y = dictionary.TableValueFloat[indexValue];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -752,24 +810,24 @@ public static partial class Library_SpriteStudio6
 
 						status = tableStatus[indexMinimum];
 						frameKey = status & (int)FlagBit.FRAMEKEY;
-						if(outFrameKey == frameKey)
+						if(cacheDecode.FrameKey == frameKey)
 						{
 							return(false);	/* outValue is not overwritten. */
 						}
-						outFrameKey = frameKey;
+						cacheDecode.FrameKey = frameKey;
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
-						outValue.x = dictionary.TableValueFloat[index];
+						cacheDecode.Value.x = dictionary.TableValueFloat[index];
 
 						status = tableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
-						outValue.y = dictionary.TableValueFloat[index];
+						cacheDecode.Value.y = dictionary.TableValueFloat[index];
+#endif
 
 						return(true);	/* outValue is overwritten. */
 					}
 
-					public static bool ValueGetVector3(	ref Vector3 outValue,
-														ref int outFrameKey,
+					public static bool ValueGetVector3(	ref CacheDecode<Vector3> cacheDecode,
 														Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[] tableCodeValue,
 														int frame,
 														ref Dictionary dictionary
@@ -783,6 +841,33 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+
+						/* Get values */
+						int indexValue;
+						indexValue = (status & (int)FlagBit.INDEX) >> 15;
+						cacheDecode.Value.x = dictionary.TableValueFloatVector[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.y = dictionary.TableValueFloatVector[indexValue];
+
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.z = dictionary.TableValueFloatVector[indexValue];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -812,27 +897,27 @@ public static partial class Library_SpriteStudio6
 
 						status = tableStatus[indexMinimum];
 						frameKey = status & (int)FlagBit.FRAMEKEY;
-						if(outFrameKey == frameKey)
+						if(cacheDecode.FrameKey == frameKey)
 						{
 							return(false);	/* outValue is not overwritten. */
 						}
-						outFrameKey = frameKey;
+						cacheDecode.FrameKey = frameKey;
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
-						outValue.x = dictionary.TableValueFloatVector[index];
+						cacheDecode.Value.x = dictionary.TableValueFloatVector[index];
 
 						status = tableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
-						outValue.y = dictionary.TableValueFloatVector[index];
+						cacheDecode.Value.y = dictionary.TableValueFloatVector[index];
 
 						index = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
-						outValue.z = dictionary.TableValueFloatVector[index];
+						cacheDecode.Value.z = dictionary.TableValueFloatVector[index];
+#endif
 
 						return(true);	/* outValue is overwritten. */
 					}
 
-					public static bool ValueGetVertexCorrection(	ref Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection outValue,
-																	ref int outFrameKey,
+					public static bool ValueGetVertexCorrection(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> cacheDecode,
 																	Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[] tableCodeValue,
 																	int frame,
 																	ref Dictionary dictionary
@@ -846,6 +931,49 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+
+						/* Get values */
+						int indexValue;
+						cacheDecode.FrameKey = frameKey;
+//						indexValue = (status & (int)FlagBit.INDEX) >> 15;	/* There is nothing here */
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_LU].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x = dictionary.TableValueFloatCoordinate[indexValue];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].y = dictionary.TableValueFloatCoordinate[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_RU].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].x = dictionary.TableValueFloatCoordinate[indexValue];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].y = dictionary.TableValueFloatCoordinate[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_RD].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].x = dictionary.TableValueFloatCoordinate[indexValue];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].y = dictionary.TableValueFloatCoordinate[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_LD].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x = dictionary.TableValueFloatCoordinate[indexValue];
+						indexValue = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y = dictionary.TableValueFloatCoordinate[indexValue];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -875,42 +1003,42 @@ public static partial class Library_SpriteStudio6
 
 						status = tableStatus[indexMinimum];
 						frameKey = status & (int)FlagBit.FRAMEKEY;
-						if(outFrameKey == frameKey)
+						if(cacheDecode.FrameKey == frameKey)
 						{
 							return(false);	/* outValue is not overwritten. */
 						}
-						outFrameKey = frameKey;
+						cacheDecode.FrameKey = frameKey;
 //						index = (status & (int)FlagBit.INDEX) >> 15;	/* There is nothing here */
 
 						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_LU].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
-						outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x = dictionary.TableValueFloatCoordinate[index];
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].x = dictionary.TableValueFloatCoordinate[index];
 						index = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
-						outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].y = dictionary.TableValueFloatCoordinate[index];
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LU].y = dictionary.TableValueFloatCoordinate[index];
 
 						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_RU].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
-						outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].x = dictionary.TableValueFloatCoordinate[index];
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].x = dictionary.TableValueFloatCoordinate[index];
 						index = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
-						outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].y = dictionary.TableValueFloatCoordinate[index];
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RU].y = dictionary.TableValueFloatCoordinate[index];
 
 						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_RD].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
-						outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].x = dictionary.TableValueFloatCoordinate[index];
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].x = dictionary.TableValueFloatCoordinate[index];
 						index = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
-						outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].y = dictionary.TableValueFloatCoordinate[index];
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.RD].y = dictionary.TableValueFloatCoordinate[index];
 
 						status = tableCodeValue[(int)IndexTableCodeValue.VERTEX_LD].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendVector.INDEX00);	/* >> 0 */
-						outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x = dictionary.TableValueFloatCoordinate[index];
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].x = dictionary.TableValueFloatCoordinate[index];
 						index = (status & (int)FlagBitAppendVector.INDEX01) >> 15;
-						outValue.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y = dictionary.TableValueFloatCoordinate[index];
+						cacheDecode.Value.Coordinate[(int)Library_SpriteStudio6.KindVertex.LD].y = dictionary.TableValueFloatCoordinate[index];
+#endif
 
 						return(true);	/* outValue is overwritten. */
 					}
 
-					public static bool ValueGetPartsColor(	ref Library_SpriteStudio6.Data.Animation.Attribute.PartsColor outValue,
-															ref int outFrameKey,
+					public static bool ValueGetPartsColor(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> cacheDecode,
 															Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[] tableCodeValue,
 															int frame,
 															ref Dictionary dictionary
@@ -924,6 +1052,49 @@ public static partial class Library_SpriteStudio6
 						}
 #endif
 						int[] tableStatus = tableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
+#if REDUCE_FREQUENCY_BINARYTREE
+						int status;
+						int frameKey;
+						int index = CodeValueContainer.IndexGetBinaryTree(cacheDecode.IndexKey, frame, (int)FlagBit.FRAMEKEY, tableStatus);
+						cacheDecode.IndexKey = index;
+
+						/* Get Key-data */
+						status = tableStatus[index];
+						frameKey = status & (int)FlagBit.FRAMEKEY;
+						if(cacheDecode.FrameKey == frameKey)
+						{
+							return(false);	/* outValue is not overwritten. */
+						}
+						cacheDecode.FrameKey = frameKey;
+						cacheDecode.Value.Bound = Library_SpriteStudio6.KindBoundBlend.VERTEX;	/* Always handle by "Vertex" at runtime */
+						cacheDecode.Value.Operation = (Library_SpriteStudio6.KindOperationBlend)((status & (int)FlagBit.INDEX) >> 15);
+
+						/* Get values */
+						int indexValue;
+						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_LURU].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] = dictionary.TableValueColor[indexValue];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] = dictionary.TableValueColor[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_RDLD].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueColor[indexValue];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueColor[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_POWER_LURU].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = dictionary.TableValueFloat[indexValue];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = dictionary.TableValueFloat[indexValue];
+
+						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_POWER_RDLD].TableCode[index];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueFloat[indexValue];
+						indexValue = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueFloat[indexValue];
+#else
 						int frameKey = -1;
 						int status;
 						int indexMinimum = 0;
@@ -953,37 +1124,38 @@ public static partial class Library_SpriteStudio6
 
 						status = tableStatus[indexMinimum];
 						frameKey = status & (int)FlagBit.FRAMEKEY;
-						if(outFrameKey == frameKey)
+						if(cacheDecode.FrameKey == frameKey)
 						{
 							return(false);	/* outValue is not overwritten. */
 						}
-						outFrameKey = frameKey;
-						outValue.Bound = Library_SpriteStudio6.KindBoundBlend.VERTEX;	/* Always handle by "Vertex" at runtime */
-						outValue.Operation = (Library_SpriteStudio6.KindOperationBlend)((status & (int)FlagBit.INDEX) >> 15);
+						cacheDecode.FrameKey = frameKey;
+						cacheDecode.Value.Bound = Library_SpriteStudio6.KindBoundBlend.VERTEX;	/* Always handle by "Vertex" at runtime */
+						cacheDecode.Value.Operation = (Library_SpriteStudio6.KindOperationBlend)((status & (int)FlagBit.INDEX) >> 15);
 
 						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_LURU].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
-						outValue.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] = dictionary.TableValueColor[index];
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] = dictionary.TableValueColor[index];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
-						outValue.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] = dictionary.TableValueColor[index];
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] = dictionary.TableValueColor[index];
 
 						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_RDLD].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
-						outValue.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueColor[index];
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueColor[index];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
-						outValue.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueColor[index];
+						cacheDecode.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueColor[index];
 
 						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_POWER_LURU].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
-						outValue.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = dictionary.TableValueFloat[index];
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = dictionary.TableValueFloat[index];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
-						outValue.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = dictionary.TableValueFloat[index];
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = dictionary.TableValueFloat[index];
 
 						status = tableCodeValue[(int)IndexTableCodeValue.COLOR_POWER_RDLD].TableCode[indexMinimum];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX00);	/* >> 0 */
-						outValue.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueFloat[index];
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = dictionary.TableValueFloat[index];
 						index = (status & (int)FlagBitAppendPartsColor1.INDEX01) >> 15;
-						outValue.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueFloat[index];
+						cacheDecode.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = dictionary.TableValueFloat[index];
+#endif
 
 						return(true);	/* outValue is overwritten. */
 					}

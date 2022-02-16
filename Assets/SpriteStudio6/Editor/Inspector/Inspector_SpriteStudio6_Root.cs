@@ -1,7 +1,8 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using UnityEngine;
@@ -17,8 +18,10 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 	private SerializedProperty PropertyDataCellMap;
 	private SerializedProperty PropertyDataAnimation;
-	private SerializedProperty PropertyTableMaterial;
+	private SerializedProperty PropertyHolderAsset;
+
 	private SerializedProperty PropertyHideForce;
+	private SerializedProperty PropertyColliderInterlockHideForce;
 	private SerializedProperty PropertyFlagPlanarization;
 	private SerializedProperty PropertyOrderInLayer;
 	private SerializedProperty PropertyCountTrack;
@@ -34,8 +37,10 @@ public class Inspector_SpriteStudio6_Root : Editor
 		serializedObject.FindProperty("__DUMMY__");
 		PropertyDataCellMap = serializedObject.FindProperty("DataCellMap");
 		PropertyDataAnimation = serializedObject.FindProperty("DataAnimation");
-		PropertyTableMaterial = serializedObject.FindProperty("TableMaterial");
+		PropertyHolderAsset = serializedObject.FindProperty("HolderAsset");
+
 		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
+		PropertyColliderInterlockHideForce = serializedObject.FindProperty("FlagColliderInterlockHideForce");
 		PropertyFlagPlanarization = serializedObject.FindProperty("FlagPlanarization");
 		PropertyOrderInLayer = serializedObject.FindProperty("OrderInLayer");
 		PropertyCountTrack = serializedObject.FindProperty("LimitTrack");
@@ -62,16 +67,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 			PropertyDataCellMap.objectReferenceValue = (Script_SpriteStudio6_DataCellMap)(EditorGUILayout.ObjectField("Data:CellMap", PropertyDataCellMap.objectReferenceValue, typeof(Script_SpriteStudio6_DataCellMap), true));
 			PropertyDataAnimation.objectReferenceValue = (Script_SpriteStudio6_DataAnimation)(EditorGUILayout.ObjectField("Data:Animation", PropertyDataAnimation.objectReferenceValue, typeof(Script_SpriteStudio6_DataAnimation), true));
-			EditorGUI.indentLevel = levelIndent;
-		}
-
-		/* Table-Material */
-		EditorGUILayout.Space();
-		PropertyTableMaterial.isExpanded = EditorGUILayout.Foldout(PropertyTableMaterial.isExpanded, "Table-Material");
-		if(true == PropertyTableMaterial.isExpanded)
-		{
-			EditorGUI.indentLevel = levelIndent + 1;
-			LibraryEditor_SpriteStudio6.Utility.Inspector.TableMaterialAnimation(InstanceRoot.TableMaterial, PropertyTableMaterial, levelIndent + 1);
+			PropertyHolderAsset.objectReferenceValue = (Script_SpriteStudio6_HolderAsset)(EditorGUILayout.ObjectField("Holder:Asset", PropertyHolderAsset.objectReferenceValue, typeof(Script_SpriteStudio6_HolderAsset), true));
 			EditorGUI.indentLevel = levelIndent;
 		}
 
@@ -90,6 +86,10 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 			/* Hide */
 			PropertyHideForce.boolValue = EditorGUILayout.Toggle("Hide Force", PropertyHideForce.boolValue);
+//			EditorGUILayout.Space();
+
+			/* Collider Interlock Hide */
+			PropertyColliderInterlockHideForce.boolValue = EditorGUILayout.Toggle("Collider Interlock Hide", PropertyColliderInterlockHideForce.boolValue);
 //			EditorGUILayout.Space();
 
 			/* Planarization (Cancellation Rotate Sprite) */
@@ -130,7 +130,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 				}
 
 				SerializedProperty propertyInformationPlay = PropertyInformationPlay.GetArrayElementAtIndex(0);
-				InfromationPlay(ref flagUpdate, propertyInformationPlay, InstanceRoot, tableNameAnimation);
+				InformationPlay(ref flagUpdate, propertyInformationPlay, InstanceRoot, tableNameAnimation);
 			}
 		}
 
@@ -150,7 +150,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 		}
 	}
 
-	private void InfromationPlay(	ref bool flagUpdate,
+	private void InformationPlay(	ref bool flagUpdate,
 									SerializedProperty propertyInformationPlay,
 									Script_SpriteStudio6_Root instanceRoot,
 									string[] tableNameAnimation

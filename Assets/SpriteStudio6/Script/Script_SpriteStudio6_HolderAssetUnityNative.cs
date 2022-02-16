@@ -1,7 +1,8 @@
 /**
 	SpriteStudio6 Player for Unity
 
-	Copyright(C) Web Technology Corp. 
+	Copyright(C) 1997-2021 Web Technology Corp.
+	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
 using System.Collections;
@@ -12,7 +13,7 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public partial class Script_SpriteStudio6_HolderAssetUnityNative :MonoBehaviour
+public partial class Script_SpriteStudio6_HolderAssetUnityNative : MonoBehaviour
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
