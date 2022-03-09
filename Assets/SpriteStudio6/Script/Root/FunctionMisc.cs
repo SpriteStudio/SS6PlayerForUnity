@@ -38,7 +38,7 @@ public partial class Script_SpriteStudio6_Root
 	@param	flagInvolveChildren
 		true == Children are set same buffer.<br>
 		false == only oneself.<br>
-		default: true
+		Default: true
 	@retval	Return-Value
 		"AdditionalColor" Setting Buffer
 
@@ -129,7 +129,7 @@ public partial class Script_SpriteStudio6_Root
 	@param	flagInvolveChildren
 		true == Children are set same buffer.<br>
 		false == only oneself.<br>
-		default: true
+		Default: true
 	@retval	Return-Value
 		(None)
 

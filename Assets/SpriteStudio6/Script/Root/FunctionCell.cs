@@ -104,8 +104,8 @@ public partial class Script_SpriteStudio6_Root
 	*/
 	public int CountGetCellMap(bool flagInUse=true)
 	{
-		Library_SpriteStudio6.Data.CellMap[]  tableCellMap = TableGetCellMap(flagInUse);
-		if(null != tableCellMap)
+		Library_SpriteStudio6.Data.CellMap[] tableCellMap = TableGetCellMap(flagInUse);
+		if(null == tableCellMap)
 		{
 			return(-1);
 		}
@@ -233,10 +233,10 @@ public partial class Script_SpriteStudio6_Root
 	/*!
 	@param	indexStart
 		Index of the first CellMap to copy<br>
-		default: 0
+		Default: 0
 	@param	indexEnd
 		Index of the last CellMap to copy<br>
-		default: -1 (end of TableCellMap)
+		Default: -1 (end of TableCellMap)
 	@param	flagInUse
 		true == Currently in use TableMaterial<br>
 		false == TableMaterial in original animation data
@@ -304,10 +304,10 @@ public partial class Script_SpriteStudio6_Root
 	/*!
 	@param	indexStart
 		Index of the first CellMap to copy<br>
-		default: 0
+		Default: 0
 	@param	indexEnd
 		Index of the last CellMap to copy<br>
-		default: -1 (end of TableCellMap)
+		Default: -1 (end of TableCellMap)
 	@param	flagInUse
 		true == Currently in use TableMaterial<br>
 		false == TableMaterial in original animation data

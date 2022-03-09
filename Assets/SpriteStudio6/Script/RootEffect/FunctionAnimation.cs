@@ -20,12 +20,12 @@ public partial class Script_SpriteStudio6_RootEffect
 		-1 == Apply previous setting.<br>
 		0 == Infinite-looping<br>
 		1 == Not looping<br>
-		default: -1
+		Default: -1
 	@param	RateTime
 		Coefficient of time-passage of animation.<br>
 		Minus Value is given, Animation is played backwards.<br>
 		float.NaN is given, the now-setting is not changed) <br>
-		default: float.NaN (Setting is not changed)
+		Default: float.NaN (Setting is not changed)
 	@retval	Return-Value
 		true == Success <br>
 		false == Failure (Error)
@@ -80,7 +80,7 @@ public partial class Script_SpriteStudio6_RootEffect
 	@param	flagReachEnd
 		false == Animation is stopped with maintaining the current state.<br>
 		true == Animation is stop and jump to last frame.<br>
-		default: false
+		Default: false
 	@retval	Return-Value
 		(None)
 

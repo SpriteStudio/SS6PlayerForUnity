@@ -70,7 +70,7 @@ public partial class Script_SpriteStudio6_Root
 	@param	flagInvolveChildren
 		true == Children are set same state.<br>
 		false == only oneself.<br>
-		default: false
+		Default: false
 	@retval	Return-Value
 		true == Success<br>
 		false == Failure (Error)
@@ -160,7 +160,7 @@ public partial class Script_SpriteStudio6_Root
 	@param	flagInvolveChildren
 		true == Children are set same state.<br>
 		false == only oneself.<br>
-		default: false
+		Default: false
 	@retval	Return-Value
 		true == Success<br>
 		false == Failure (Error)
@@ -393,12 +393,9 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
-			default:
-//				flagSettable = false;
-				break;
-
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+			default:
 //				flagSettable = false;
 				break;
 		}
@@ -504,6 +501,182 @@ public partial class Script_SpriteStudio6_Root
 
 		return(false);
 	}
+
+	/* ******************************************************** */
+	//! Set single color to Part's "Parts Color" (Bounding: Overall)
+	/*!
+	@param	idParts
+		Parts-ID
+	@param	operationBlend
+		kind of Blending Operation (NON/MIX/ADD/SUB/MUL)<br>
+		Library_SpriteStudio6.KindOperationBlend.NON: Follow animation data
+	@param	color
+		Blending Color<br>
+		AdditionalColor.ColorClear[operationBlend]: Color as blending nothing
+	@param	ignoreAttribute
+		NON == Changed "Parts Color" is overwritten when new "Parts Color" attribute deecoded<br>
+		NOW_ANIMATION == Ignore "Parts Color" attribute until new animation starts playing<br>
+		PERMANENT == Continue Ignoring "Parts Color" attribute even if new animation starts playing
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Override the "Parts Color" state of the animation. (Same color will be set to all vertices.)<br>
+	Priority is higher than animation data and lower than "Additional Color".<br>
+	<br>
+	Do not set values other than NON, MIX, ADD, SUB or MUL to "operationBlend".<br>
+	<br>
+	When specify a "Library_SpriteStudio6.KindOperationBlend.NON" to "operationBlend", result will follow the setting of the original animation data.
+	*/
+	public bool PartsColorChange(	int idParts,
+									Library_SpriteStudio6.KindOperationBlend operationBlend,
+									Color32 color,
+									Library_SpriteStudio6.KindIgnoreAttribute ignoreAttribute
+								)
+	{
+		return(PartsColorChange(idParts, operationBlend, color, color, color, color, ignoreAttribute));
+	}
+
+	/* ******************************************************** */
+	//! Set separately color to Part's "Parts Color" (Bounding: Vertex)
+	/*!
+	@param	idParts
+		Parts-ID
+	@param	operationBlend
+		kind of Blending Operation (NON/MIX/ADD/SUB/MUL)<br>
+		Library_SpriteStudio6.KindOperationBlend.NON: Follow animation data
+	@param	colorLU
+		Blending Color for Left-Top
+	@param	colorRU
+		Blending Color for Right-Top
+	@param	colorRD
+		Blending Color for Right-Bottom
+	@param	colorLD
+		Blending Color for LeftBotom
+	@param	ignoreAttribute
+		NON == Changed "Parts Color" is overwritten when new "Parts Color" attribute deecoded<br>
+		NOW_ANIMATION == Ignore "Parts Color" attribute until new animation starts playing<br>
+		PERMANENT == Continue Ignoring "Parts Color" attribute even if new animation starts playing
+	@retval	Return-Value
+		true == Success<br>
+		false == Failure (Error)
+
+	Override the "Parts Color" state of the animation. (Each color will be set to Each vertices.)<br>
+	The rest of the functions are the same as "PartsColorChange (Bounding: Overall)".
+	*/
+	public bool PartsColorChange(	int idParts,
+									Library_SpriteStudio6.KindOperationBlend operationBlend,
+									Color32 colorLU,
+									Color32 colorRU,
+									Color32 colorRD,
+									Color32 colorLD,
+									Library_SpriteStudio6.KindIgnoreAttribute ignoreAttribute
+								)
+	{
+		if((null == DataAnimation) || (null == TableControlParts) || (null == TableControlTrack))
+		{
+			return(false);
+		}
+
+		if((0 > idParts) || (CountGetParts() <= idParts))
+		{
+			return(false);
+		}
+
+		switch(DataAnimation.TableParts[idParts].Feature)
+		{
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+				return(false);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+				return(false);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+				return(false);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+			default:
+				return(false);
+		}
+
+		if(Library_SpriteStudio6.KindOperationBlend.NON == operationBlend)
+		{	/* Turn Off */
+			TableControlParts[idParts].ParameterSprite.PartsColor.FrameKey = -1;
+			TableControlParts[idParts].ParameterSprite.PartsColor.IndexKey = -1;
+
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.Bound = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor.Bound;
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.Operation = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor.Operation;
+			int count;
+			count = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor.VertexColor.Length;
+			for(int i=0; i<count; i++)
+			{
+				TableControlParts[idParts].ParameterSprite.PartsColor.Value.VertexColor[i] = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor.VertexColor[i];
+			}
+			count = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor.RateAlpha.Length;
+			for(int i=0; i<count; i++)
+			{
+				TableControlParts[idParts].ParameterSprite.PartsColor.Value.RateAlpha[i] = Library_SpriteStudio6.Data.Animation.Attribute.DefaultPartsColor.RateAlpha[i];
+			}
+
+			TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_ATTRIBUTE;
+			TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_NEWANIMATION;
+			TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_UNREFLECTED;
+
+			return(true);
+		}
+		else
+		{
+			if(Library_SpriteStudio6.KindOperationBlend.TERMINATOR_PARTSCOLOR <= operationBlend)
+			{	/* Invalid blend-method */
+				return(false);
+			}
+
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.Operation = operationBlend;
+
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LU] = colorLU;
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RU] = colorRU;
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.RD] = colorRD;
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.VertexColor[(int)Library_SpriteStudio6.KindVertex.LD] = colorLD;
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LU] = 
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RU] = 
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.RD] = 
+			TableControlParts[idParts].ParameterSprite.PartsColor.Value.RateAlpha[(int)Library_SpriteStudio6.KindVertex.LD] = 1.0f;
+
+			TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_UNREFLECTED;
+		}
+
+		switch(ignoreAttribute)
+		{
+			case Library_SpriteStudio6.KindIgnoreAttribute.NON:
+				TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_ATTRIBUTE;
+				TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_NEWANIMATION;
+				break;
+
+			case Library_SpriteStudio6.KindIgnoreAttribute.NOW_ANIMATION:
+				TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_ATTRIBUTE;
+				TableControlParts[idParts].Status &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_NEWANIMATION;
+				break;
+
+			case Library_SpriteStudio6.KindIgnoreAttribute.PERMANENT:
+				TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_ATTRIBUTE;
+				TableControlParts[idParts].Status |= Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_NEWANIMATION;
+				break;
+		}
+
+		return(true);
+	}
 	#endregion Functions
 
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -520,7 +693,7 @@ public partial class Script_SpriteStudio6_Root
 		@param	flagApplySelf
 			true == Include "gameObject" as check target<br>
 			false == exclude "gameObject"<br>
-			default: true
+			Default: true
 		@retval	Return-Value
 			Instance of "Script_SpriteStudio6_Root"<br>
 			null == Not-Found / Failure	

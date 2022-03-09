@@ -59,57 +59,57 @@ public partial class Script_SpriteStudio6_Root
 	@param	indexAnimation
 		Animation index (0 origin)<br>
 		-1 == Apply previous setting.<br>
-		default: -1
+		Default: -1
 	@param	timesPlay
 		-1 == Apply previous setting.<br>
 		0 == Infinite-looping<br>
 		1 == Not looping<br>
 		2 <= Number of Plays<br>
-		default: -1
+		Default: -1
 	@param	frameOffset
 		Offset frame to start playing animation (0 origins). <br>
 		At the time of the first play-loop, animation is started "labelRangeStart + frameOffsetStart + frameOffset".<br>
 		However, can not possible to specify outside of playing-range. (In such cases, this value is adjust to 0)<br>
 		int.MinValue == Apply previous setting.<br>
-		default: int.MinValue
+		Default: int.MinValue
 	@param	rateTime
 		Coefficient of time-passage of animation.<br>
 		Minus Value is given, Animation is played backwards.<br>
 		"float.NaN" is given, Apply previous setting.<br>
-		default: float.NaN
+		Default: float.NaN
 	@param	style
 		Library_SpriteStudio6.KindStylePlay.NOMAL == Animation is played One-Way.<br>
 		Library_SpriteStudio6.KindStylePlay.PINGPONG == Animation is played round-trip.<br>
 		Library_SpriteStudio6.KindStylePlay.NO_CHANGE == Apply previous setting.<br>
-		default: Library_SpriteStudio6.KindStylePlay.NO_CHANGE
+		Default: Library_SpriteStudio6.KindStylePlay.NO_CHANGE
 	@param	labelRangeStart
 		Label name to start playing animation.<br>
 		"" or "_start" == Top frame of Animation ("_start" is reserved label-name)<br>
 		null == Apply previous setting.<br>
-		default: null
+		Default: null
 	@param	frameRangeOffsetStart
 		Offset frame from labelRangeStart<br>
 		Start frame of animation play range is "labelRangeStart + frameRangeOffsetStart".<br>
 		int.MinValue == Apply previous setting.<br>
-		default: int.MinValue
+		Default: int.MinValue
 	@param	labelRangeEnd
 		Label-name of the terminal in animation.<br>
 		"" or "_end" == Last frame of Animation ("_end" is reserved label-name)<br>
 		null == Apply previous setting.<br>
-		default: null
+		Default: null
 	@param	frameRangeOffsetEnd
 		Offset frame from labelRangeStart<br>
 		End frame of animation play range is "labelRangeEnd + frameRangeOffsetEnd".<br>
 		int.MaxValue == Apply previous setting.<br>
-		default: int.MaxValue
+		Default: int.MaxValue
 	@param	framePerSecond
 		Frame Per Second (In principle, omit specifying this value)<br>
 		0 == Conforms to animation<br>
-		default: 0
+		Default: 0
 	@param	dataAnimation
 		External reference Animation-Data (Scriptable Object)<br>
 		null == Apply previous setting.<br>
-		default: null
+		Default: null
 	@retval	Return-Value
 		true == Success<br>
 		false == Failure (Error)
@@ -308,12 +308,12 @@ public partial class Script_SpriteStudio6_Root
 	@param	flagJumpEnd
 		false == Animation is stopped with maintaining the current state.<br>
 		true == Animation is stop and jump to last frame.<br>
-		default: false
+		Default: false
 	@param	flagEngageTransition
 		If running transition, will transition also end?<br>
 		false == Current state (Continue transition)<br>
 		true == Complete transition<br>
-		default: false
+		Default: false
 	@retval	Return-Value
 		(None)
 

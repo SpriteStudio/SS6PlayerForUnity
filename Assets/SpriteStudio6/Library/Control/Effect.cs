@@ -229,8 +229,16 @@ public static partial class Library_SpriteStudio6
 				{
 					indexEmitter = tableIndexEmitter[i];
 
+					/* Check Redecode Materials */
+					if(true == instanceRoot.StatusIsChangeCacheMaterial)
+					{
+						TableEmitter[indexEmitter].Status |= Emitter.FlagBitStatus.REDECODE_MATERIAL;
+					}
+
 					/* Update Material & Cell */
-					if((true == flagUpdateCell) || (0 != (TableEmitter[indexEmitter].Status & Emitter.FlagBitStatus.CHANGE_CELL_UNREFLECTED)))
+					if(	(true == flagUpdateCell)
+						|| (0 != (TableEmitter[indexEmitter].Status & Emitter.FlagBitStatus.CHANGE_CELL_UNREFLECTED | Emitter.FlagBitStatus.REDECODE_MATERIAL))
+					)
 					{
 						TableEmitter[indexEmitter].CellPresetParticle(instanceRoot, Masking);
 					}
@@ -580,7 +588,9 @@ public static partial class Library_SpriteStudio6
 						indexCell = DataEffect.TableEmitter[IndexEmitter].IndexCell;
 					}
 
-					Status &= ~FlagBitStatus.CHANGE_CELL_UNREFLECTED;
+					Status &= ~(	FlagBitStatus.CHANGE_CELL_UNREFLECTED
+									| FlagBitStatus.REDECODE_MATERIAL
+							);
 
 					Library_SpriteStudio6.Data.CellMap dataCellMap = instanceRoot.DataGetCellMap(indexCellMap);
 					if(null == dataCellMap)
@@ -602,8 +612,9 @@ public static partial class Library_SpriteStudio6
 																		DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget,
 																		masking,
 																		null,
+																		true,
 																		null,
-																		true
+																		null
 																	);
 
 							float pivotXCell = dataCellMap.TableCell[indexCell].Pivot.x;
@@ -722,6 +733,7 @@ public static partial class Library_SpriteStudio6
 				{
 					VALID = 0x40000000,
 					RUNNING = 0x20000000,
+					REDECODE_MATERIAL = 0x10000000,
 
 					CHANGE_CELL_UNREFLECTED = 0x08000000,
 
