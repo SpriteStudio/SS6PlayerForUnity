@@ -70,7 +70,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 	}
 	internal bool StatusIsChangeTableMaterial
-	{
+	{	/* Obsolete */
 		get
 		{
 			return(0 != (Status & FlagBitStatus.CHANGE_TABLEMATERIAL));
@@ -81,6 +81,24 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		get
 		{
 			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+		}
+	}
+	internal bool StatusIsChangeCacheMaterial
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CHANGE_CACHEMATERIAL));
+		}
+		set
+		{	/* MEMO: Change status from the parent Animation-Object. */
+			if(true == value)
+			{
+				Status |= FlagBitStatus.CHANGE_CACHEMATERIAL;
+			}
+			else
+			{
+				Status &= ~FlagBitStatus.CHANGE_CACHEMATERIAL;
+			}
 		}
 	}
 
@@ -135,9 +153,6 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 	}
 	internal Library_SpriteStudio6.CallBack.FunctionPlayEndEffect FunctionPlayEnd = null;
-
-	internal Texture[] TableTexture = null;										/* for Material Overriding */
-	internal Library_SpriteStudio6.Control.CacheMaterial CacheMaterial = null;	/* for Material Overriding */
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -352,17 +367,14 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 						| FlagBitStatus.UPDATE_RATE_OPACITY
 						| FlagBitStatus.CHANGE_TABLEMATERIAL
 						| FlagBitStatus.CHANGE_CELLMAP
+						| FlagBitStatus.CHANGE_CACHEMATERIAL
 					);
 	}
 
 	void OnDestroy()
 	{
-		/* All Material-Cache shut-down */
-		if(null != CacheMaterial)
-		{
-			CacheMaterial.ShutDown(true);
-			CacheMaterial = null;
-		}
+		/* Material-Cache shut-down */
+		CacheShutDownMaterial();
 	}
 	#endregion MonoBehaviour-Functions
 
@@ -386,27 +398,6 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		DataEffect.StatusIsBootup = true;
 	}
 
-	internal bool CacheBootUpMaterial()
-	{
-		int countTexture = CountGetCellMap(false);
-		if(null != TableTexture)
-		{	/* Already booted up */
-			return(true);
-		}
-
-		TableTexture = new Texture[countTexture];
-		CacheMaterial = new Library_SpriteStudio6.Control.CacheMaterial();
-
-#if false
-		if(false == CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR, false))
-		{
-			return(false);
-		}
-		return(true);
-#else
-		return(CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR, false));
-#endif
-	}
 	private bool TextureCheckOverride(int indexCellMap)
 	{
 		if(null != TableTexture)	/* if(null != CacheMaterial) */
@@ -533,6 +524,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 		CHANGE_TABLEMATERIAL = 0x00800000,
 		CHANGE_CELLMAP = 0x00400000,
+		CHANGE_CACHEMATERIAL = 0x00200000,
 
 		CLEAR = 0x00000000,
 	}

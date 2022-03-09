@@ -3,7 +3,7 @@
 	<item>
 		<available>1</available>
 		<id>SS6PlayerForUnity</id>
-		<caption>SS6PlayerForUnity v1.1.0</caption>
+		<caption>SS6PlayerForUnity v1.1</caption>
 		<platform>any</platform>
 		<inputProjectFormat>sspj</inputProjectFormat>
 		<inputAnimeFormat>ssae</inputAnimeFormat>
@@ -51,13 +51,13 @@
 		</attributes>
 		<alphaBlendTypes>
 			<item>mix</item>
-			<item>mul</item>
+			<item incompatible="different">mul</item>
 			<item>add</item>
 			<item>sub</item>
-			<item>mulalpha</item>
+			<item incompatible="different">mulalpha</item>
 			<item>screen</item>
 			<item>exclusion</item>
-			<item>invert</item>
+			<item incompatible="different">invert</item>
 		</alphaBlendTypes>
 		<partsColorTypes>
 			<item>mix</item>

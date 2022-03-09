@@ -328,8 +328,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent;
 			}
 
-			SettingOption.ModeUnityNative.FlagFoldOutRuleNameAssetFolder = EditorGUILayout.Foldout(SettingOption.ModeUnityNative.FlagFoldOutRuleNameAssetFolder, "Advanced Options: Naming Asset-Foldes");
-			if(true == SettingOption.ModeUnityNative.FlagFoldOutRuleNameAssetFolder)
+			SettingOption.ModeSS6PU.FlagFoldOutRuleNameAssetFolder = EditorGUILayout.Foldout(SettingOption.ModeSS6PU.FlagFoldOutRuleNameAssetFolder, "Advanced Options: Naming Asset-Foldes");
+			if(true == SettingOption.ModeSS6PU.FlagFoldOutRuleNameAssetFolder)
 			{
 				FoldOutExecRuleNameAssetFolder(levelIndent + 1);
 				EditorGUI.indentLevel = levelIndent;
@@ -710,11 +710,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
-				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAsset.NamePrefixPrefabAnimatorUnityNative);
+				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityNative);
 				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAsset.NamePrefixPrefabParticleUnityNative);
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityNative);
 				EditorGUILayout.LabelField("Skinned-Mesh", SettingImport.RuleNameAsset.NamePrefixSkinnedMeshUnityNative);
-				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAsset.NamePrefixMaterialAnimatorUnityNative);
+				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityNative);
 				EditorGUILayout.LabelField("Material-Particle", SettingImport.RuleNameAsset.NamePrefixMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
@@ -742,6 +742,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 					EditorGUI.indentLevel = levelIndent;
 				}
 				break;
+
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"SS6Player for Unity\")");
 				EditorGUI.indentLevel = levelIndent + 1;
@@ -757,11 +758,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
-				SettingImport.RuleNameAsset.NamePrefixPrefabAnimatorUnityNative = EditorGUILayout.TextField("Prefab-Sprite2D", SettingImport.RuleNameAsset.NamePrefixPrefabAnimatorUnityNative);
+				SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityNative = EditorGUILayout.TextField("Prefab-Sprite2D", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityNative);
 				SettingImport.RuleNameAsset.NamePrefixPrefabParticleUnityNative = EditorGUILayout.TextField("Prefab-Particle", SettingImport.RuleNameAsset.NamePrefixPrefabParticleUnityNative);
 				SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityNative = EditorGUILayout.TextField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityNative);
 				SettingImport.RuleNameAsset.NamePrefixSkinnedMeshUnityNative = EditorGUILayout.TextField("Skinned-Mesh", SettingImport.RuleNameAsset.NamePrefixSkinnedMeshUnityNative);
-				SettingImport.RuleNameAsset.NamePrefixMaterialAnimatorUnityNative = EditorGUILayout.TextField("Material-Sprite2D", SettingImport.RuleNameAsset.NamePrefixMaterialAnimatorUnityNative);
+				SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityNative = EditorGUILayout.TextField("Material-Sprite2D", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityNative);
 				SettingImport.RuleNameAsset.NamePrefixMaterialParticleUnityNative = EditorGUILayout.TextField("Material-Particle", SettingImport.RuleNameAsset.NamePrefixMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
@@ -828,11 +829,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
-				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimatorUnityNative);
+				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationUnityNative);
 				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative);
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityNative);
 				EditorGUILayout.LabelField("Skinned-Mesh", SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative);
-				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimatorUnityNative);
+				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative);
 				EditorGUILayout.LabelField("Material-Particle", SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
@@ -855,11 +856,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
-				SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimatorUnityNative = EditorGUILayout.TextField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimatorUnityNative);
+				SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationUnityNative = EditorGUILayout.TextField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationUnityNative);
 				SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative = EditorGUILayout.TextField("Prefab-Particle", SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative);
 				SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityNative = EditorGUILayout.TextField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityNative);
 				SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative = EditorGUILayout.TextField("Skinned-Mesh", SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative);
-				SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimatorUnityNative = EditorGUILayout.TextField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimatorUnityNative);
+				SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative = EditorGUILayout.TextField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative);
 				SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative = EditorGUILayout.TextField("Material-Particle", SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();

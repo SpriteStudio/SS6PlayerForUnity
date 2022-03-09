@@ -72,7 +72,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		}
 	}
 	internal bool StatusIsChangeTableMaterial
-	{
+	{	/* Obsolete */
 		get
 		{
 			return(0 != (Status & FlagBitStatus.CHANGE_TABLEMATERIAL));
@@ -83,6 +83,24 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		get
 		{
 			return(0 != (Status & FlagBitStatus.CHANGE_CELLMAP));
+		}
+	}
+	internal bool StatusIsChangeCacheMaterial
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CHANGE_CACHEMATERIAL));
+		}
+		set
+		{	/* MEMO: Change status from the parent Animation-Object. */
+			if(true == value)
+			{
+				Status |= FlagBitStatus.CHANGE_CACHEMATERIAL;
+			}
+			else
+			{
+				Status &= ~FlagBitStatus.CHANGE_CACHEMATERIAL;
+			}
 		}
 	}
 
@@ -152,9 +170,6 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	/* Obsolete */	// internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionEnter = null;
 	/* Obsolete */	// internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionExit = null;
 	/* Obsolete */	// internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionStay = null;
-
-	internal Texture[] TableTexture = null;										/* for Material Overriding */
-	internal Library_SpriteStudio6.Control.CacheMaterial CacheMaterial = null;	/* for Material Overriding */
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -623,6 +638,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 						| FlagBitStatus.UPDATE_RATE_OPACITY
 						| FlagBitStatus.CHANGE_TABLEMATERIAL
 						| FlagBitStatus.CHANGE_CELLMAP
+						| FlagBitStatus.CHANGE_CACHEMATERIAL
 					);
 		if(null != AdditionalColor)
 		{
@@ -666,12 +682,8 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 
 	void OnDestroy()
 	{
-		/* All Material-Cache shut-down */
-		if(null != CacheMaterial)
-		{
-			CacheMaterial.ShutDown(true);
-			CacheMaterial = null;
-		}
+		/* Material-Cache shut-down */
+		CacheShutDownMaterial();
 	}
 	#endregion MonoBehaviour-Functions
 
@@ -856,43 +868,6 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	ChainDrawBootUp_ErrorEnd:;
 		ListPartsPreDraw = null;
 		ListPartsDraw = null;
-		return(false);
-	}
-
-	internal bool CacheBootUpMaterial()
-	{
-		int countTexture = CountGetCellMap(false);
-		if(null != TableTexture)
-		{	/* Already booted up */
-			return(true);
-		}
-
-		TableTexture = new Texture[countTexture];
-		CacheMaterial = new Library_SpriteStudio6.Control.CacheMaterial();
-
-#if false
-		if(false == CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR, false))
-		{
-			return(false);
-		}
-		return(true);
-#else
-		return(CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR, false));
-#endif
-	}
-	private bool TextureCheckOverride(int indexCellMap)
-	{
-		if(null != TableTexture)	/* if(null != CacheMaterial) */
-		{	/* Material Overridable */
-			if(TableTexture.Length > indexCellMap)
-			{	/* in Table */
-				if(null != TableTexture[indexCellMap])
-				{	/* Texture Overrided */
-					return(true);
-				}
-			}
-		}
-
 		return(false);
 	}
 
@@ -1116,7 +1091,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			{
 				TableControlParts[i].TRSPrimary = TableControlParts[i].TRSSecondary;
 				/* MEMO: Re-decode all attribute at next update. */
-				TableControlParts[i].CacheClearAttribute(false);
+				TableControlParts[i].CacheClearAttribute(false, false);
 			}
 		}
 
@@ -1165,8 +1140,9 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		UPDATE_RATE_SCALELOCAL = 0x08000000,
 		UPDATE_RATE_OPACITY = 0x04000000,
 
-		CHANGE_TABLEMATERIAL = 0x00800000,
+		CHANGE_TABLEMATERIAL = 0x00800000,	/* Obsolete */
 		CHANGE_CELLMAP = 0x00400000,
+		CHANGE_CACHEMATERIAL = 0x00200000,
 
 		ANIMATION_SYNTHESIZE = 0x00080000,
 
