@@ -615,7 +615,7 @@ public static partial class Library_SpriteStudio6
 																		true,
 																		null,
 																		null
-																	);
+																);
 
 							float pivotXCell = dataCellMap.TableCell[indexCell].Pivot.x;
 							float pivotYCell = dataCellMap.TableCell[indexCell].Pivot.y;

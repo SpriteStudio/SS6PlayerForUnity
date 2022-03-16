@@ -1585,7 +1585,7 @@ public static partial class Library_SpriteStudio6
 						{
 							/* MEMO: At "PreDraw", "Mask"'s drawing order is reverse. */
 							keySort = (-priority << CountShiftSortKeyPriority) | idParts;
-							instanceRoot.ListPartsDraw.Add(keySort);
+							instanceRoot.ListPartsPreDraw.Add(keySort);
 						}
 						keySort = (priority << CountShiftSortKeyPriority) | idParts;
 						instanceRoot.ListPartsDraw.Add(keySort);
@@ -3718,7 +3718,7 @@ public static partial class Library_SpriteStudio6
 																			true,
 																			shader,
 																			null
-																		);
+																	);
 							}
 						}
 
