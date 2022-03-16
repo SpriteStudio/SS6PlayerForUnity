@@ -487,7 +487,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 															masking,
 															ref matrixCorrection,
 															flagPlanarization
-														);
+													);
 			}
 		}
 		else
@@ -523,7 +523,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 															masking,
 															ref matrixCorrection,
 															flagPlanarization
-														);
+													);
 				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
 			}
 		}

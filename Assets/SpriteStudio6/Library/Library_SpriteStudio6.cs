@@ -17,7 +17,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.0.3";
+	public const string SignatureVersionAsset = "2.0.4";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -1857,19 +1857,19 @@ public static partial class Library_SpriteStudio6
 			public readonly static UnityEngine.Shader SpriteUnityNativeNonBatch = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite_NonBatch");
 			public readonly static UnityEngine.Shader SkinnedMeshUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "SkinnedMesh");
 
-			public const string NamePropertyAlphaTex = "_AlphaTex";							/* (Common) */
-			public const string NamePropertyEnableExternalAlpha = "_EnableExternalAlpha";	/* (Common) */
-			public const string NamePropertyBlendSource = "_BlendSource";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyBlendDestination = "_BlendDestination";			/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyBlendOperation = "_BlendOperation";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyCompareStencil = "_CompareStencil";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyZWrite = "_ZWrite";								/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyArgumentFs00 = "_ArgumentFs00";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyParameterFs00 = "_ParameterFs00";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyAlphaTex = "_AlphaTex";								/* (Common) */
+			public const string NamePropertyEnableExternalAlpha = "_EnableExternalAlpha";		/* (Common) */
+			public const string NamePropertyBlendSource = "_BlendSource";						/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyBlendDestination = "_BlendDestination";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyBlendOperation = "_BlendOperation";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyCompareStencil = "_CompareStencil";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyZWrite = "_ZWrite";									/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyArgumentFs00 = "_ArgumentFs00";						/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyParameterFs00 = "_ParameterFs00";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
 
-			public const string NamePropertyNotDiscardPixel = "PS_NOT_DISCARD";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyOutputPixelPMA = "PS_OUTPUT_PMA";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyStencilOperation = "_StencilOperation";			/* Stencil_SpriteStudio6 */
+			public const string NamePropertyNotDiscardPixel = "PS_NOT_DISCARD";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyOutputPixelPMA = "PS_OUTPUT_PMA";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyStencilOperation = "_StencilOperation";				/* Stencil_SpriteStudio6 */
 
 			public readonly static int IDPropertyStencilOperation = UnityEngine.Shader.PropertyToID(NamePropertyStencilOperation);
 			public readonly static int IDPropertyBlendSource = UnityEngine.Shader.PropertyToID(NamePropertyBlendSource);
