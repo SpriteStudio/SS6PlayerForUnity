@@ -2386,10 +2386,10 @@ public static partial class Library_SpriteStudio6
 
 					FramePreviousUpdateUnderControl = -1;
 
-					RadiusCollision.FrameKey = -1;
+					RadiusCollision.CleanUp();
 					RadiusCollision.Value = 0.0f;
 
-					StatusAnimationFrame.FrameKey = -1;
+					StatusAnimationFrame.CleanUp();
 					StatusAnimationFrame.Value.Flags = Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.INITIAL;
 
 					ParameterSprite.AnimationChange(flagClearCellApply, flagClearPartsColorApply);
