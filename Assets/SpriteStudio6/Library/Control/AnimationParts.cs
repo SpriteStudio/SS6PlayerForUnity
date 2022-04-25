@@ -5,13 +5,13 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
-// #define BONEINDEX_CONVERT_PARTSID
-#define PATCH_BONELIST_NOT_EXIST
 #define DECODE_USERDATA
 #define DECODE_SIGNAL
 // #define DECODE_IN_INSTANCE_USERDATA
 #define DECODE_IN_INSTANCE_SIGNAL
 // #define EXPERIMENT_FOR_CAMERA
+
+#define DEFORM_CALCULATE_STRICT
 
 using System.Collections;
 using System.Collections.Generic;
@@ -2787,6 +2787,9 @@ public static partial class Library_SpriteStudio6
 						int countTableBind = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableVertex.Length;
 						int countTableUV = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableRateUV.Length;
 						int countVertexDeform = instanceRoot.DataAnimation.TableParts[idParts].Mesh.CountVertexDeform;
+#if DEFORM_CALCULATE_STRICT
+						bool flagUseSkeletalAnimation = ((0 < countTableBind) && (0 < instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length));	/* ? true : false */
+#endif
 						CountVertex = countVertex;
 
 						MaterialDraw = null;
@@ -2802,19 +2805,37 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{	/* use Deform */
+#if DEFORM_CALCULATE_STRICT
+							/* MEMO: When using skeletal-animations, "DeformDraw" cache is not required.  */
+							/*       (No point to cache. Because vertex coordinates are affected by bones */
+							/*         and must be recalculated transformed-coordinate every loop.)       */
+							if(true == flagUseSkeletalAnimation)
+							{	/* Skeletal-Animation */
+								DeformDraw = null;	/* unused */
+							}
+							else
+							{	/* Fixed-Animation */
+								DeformDraw = new Vector3[countVertex];
+								if(null == DeformDraw)
+								{
+									goto BootUpMesh_ErrorEnd;
+								}
+							}
+#else
 							DeformDraw = new Vector3[countVertex];
 							if(null == DeformDraw)
 							{
 								goto BootUpMesh_ErrorEnd;
 							}
+#endif
 						}
 
-#if PATCH_BONELIST_NOT_EXIST
+#if DEFORM_CALCULATE_STRICT
+						if(true == flagUseSkeletalAnimation)
+#else
 						if(	(0 < countTableBind)
 							&& (0 < instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length)
 						)
-#else
-						if(0 < countTableBind)
 #endif
 						{	/* Skeletal-Animation */
 							CoordinateDraw = null;	/* unused */
@@ -3960,16 +3981,11 @@ public static partial class Library_SpriteStudio6
 							matrixTransform[2, 3] = 0.0f;
 						}
 
-#if PATCH_BONELIST_NOT_EXIST
 						int countBoneList = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length;
 						if(	(0 >= countTableBindMesh)
 							|| (0 >= countBoneList)
 						)
 						{	/* not Skeletal-Animation / Skeletal-Animation, but has no bones */
-#else
-						if(0 >= countTableBindMesh)
-						{	/* not Skeletal-Animation */
-#endif
 							if(true == Deform.Value.IsValid)
 							{	/* Use Deform */
 								/* Transform including "Deform" */
@@ -4000,11 +4016,9 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{	/* Skeletal-Animation */
-#if PATCH_BONELIST_NOT_EXIST
+#if DEFORM_CALCULATE_STRICT
 							if(0 < countBoneList)
 							{	/* Has bone-list */
-#endif
-
 								/* Calculate Coordinates */
 								int countBone;
 								Vector3 coordinate;
@@ -4019,12 +4033,8 @@ public static partial class Library_SpriteStudio6
 									{
 										for(int j=0; j<countBone; j++)
 										{
-#if BONEINDEX_CONVERT_PARTSID
-											idPartsBone = tableBindMesh[i].TableBone[j].Index;
-#else
 											idPartsBone = tableBindMesh[i].TableBone[j].Index;
 											idPartsBone = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone[idPartsBone];
-#endif
 											if(0 <= idPartsBone)
 											{
 												coordinate = instanceRoot.TableControlParts[idPartsBone].MatrixBoneWorld.MultiplyPoint3x4(tableBindMesh[i].TableBone[j].CoordinateOffset);
@@ -4039,9 +4049,65 @@ public static partial class Library_SpriteStudio6
 									}
 									CoordinateTransformDraw[i] = coordinateSum;
 								}
-#if PATCH_BONELIST_NOT_EXIST
 							}
+
+							/* Deform Coordinate */
+							/* MEMO: In this case, "DeformDraw" is not used. */
+							/* MEMO: To reduce calculation amount, only changed vertices  are calculated. */
+							if(0 < countVertexDeform)
+							{
+								Vector2[] tableVectorCoordinate = Deform.Value.TableCoordinate;
+								int[] tableVertexChange = dataAnimationParts.Deform.TableIndexVertex;
+#if UNITY_EDITOR
+								if(null != tableVertexChange)
+								{
 #endif
+									int countVertexChange = tableVertexChange.Length;
+									int indexVertex;
+									for(int i=0; i<countVertexChange; i++)
+									{
+										/* MEMO: Calculate only relative-value, so using "MultiplyVector". (Ignore translation) */
+										indexVertex = tableVertexChange[i];
+										CoordinateTransformDraw[indexVertex] += matrixTransform.MultiplyVector((Vector3)tableVectorCoordinate[indexVertex]);	/* .z = 0 */
+									}
+#if UNITY_EDITOR
+								}
+#endif
+							}
+#else
+							if(0 < countBoneList)
+							{	/* Has bone-list */
+								/* Calculate Coordinates */
+								int countBone;
+								Vector3 coordinate;
+								Vector3 coordinateSum;
+								int idPartsBone;
+								float weight;
+								for(int i=0; i<countTableBindMesh; i++)
+								{
+									coordinateSum = Vector3.zero;
+									countBone = tableBindMesh[i].TableBone.Length;
+									if(0 < countBone)
+									{
+										for(int j=0; j<countBone; j++)
+										{
+											idPartsBone = tableBindMesh[i].TableBone[j].Index;
+											idPartsBone = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone[idPartsBone];
+											if(0 <= idPartsBone)
+											{
+												coordinate = instanceRoot.TableControlParts[idPartsBone].MatrixBoneWorld.MultiplyPoint3x4(tableBindMesh[i].TableBone[j].CoordinateOffset);
+
+												weight = tableBindMesh[i].TableBone[j].Weight;
+												coordinate *= weight;
+//												coordinate.z = 0.0f;
+
+												coordinateSum += coordinate;
+											}
+										}
+									}
+									CoordinateTransformDraw[i] = coordinateSum;
+								}
+							}
 
 							/* Deform Coordinate */
 							/* MEMO: In the case of Skeletal-Animated "Mesh", "DeformDraw" is a calculated buffer for Deform. */
@@ -4072,6 +4138,7 @@ public static partial class Library_SpriteStudio6
 									CoordinateTransformDraw[i] += DeformDraw[i];
 								}
 							}
+#endif
 						}
 
 						/* Update Material */
