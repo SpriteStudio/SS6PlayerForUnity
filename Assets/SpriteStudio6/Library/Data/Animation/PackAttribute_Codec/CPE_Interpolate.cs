@@ -7,6 +7,8 @@
 */
 #define REDUCE_FREQUENCY_BINARYTREE
 
+#define DEFORM_CALCULATE_STRICT
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -2421,6 +2423,12 @@ public static partial class Library_SpriteStudio6
 									return(false);	/* Not Updated. */
 								}
 
+#if DEFORM_CALCULATE_STRICT
+								/* Clean up Coordinate-Cache */
+								cacheDecode.Value.CoordinateReset();
+#endif
+
+								/* Get values */
 								/* MEMO: Even if has reference to array, since caller manages buffer, no problem to shallow copy. */
 								tableCoordinateStart = tableValue[indexValue].TableCoordinate;
 								for(int i=0; i<countVertexChange; i++)

@@ -6,7 +6,6 @@
 	All rights reserved.
 */
 // #define ATTRIBUTE_DUPLICATE_DEEP
-#define CHANGE_DEFORM_DECODING
 
 using System.Collections;
 using System.Collections.Generic;
@@ -640,15 +639,8 @@ public static partial class Library_SpriteStudio6
 							valueOutput.TableVertex = new DataDeform.Vertex[countVertexMesh];
 							Vector2 coordinateStart;
 							Vector2 coordinateEnd;
-#if CHANGE_DEFORM_DECODING
-#else
-							int indexVertexStart;
-							int indexVertexEnd;
-							bool flagNotShift;
-#endif
 							for(int i=0; i<countVertexMesh; i++)
 							{
-#if CHANGE_DEFORM_DECODING
 								valueOutput.TableVertex[i].Index = ListKey[indexStart].Value.TableVertex[i].Index;
 								coordinateStart = ListKey[indexStart].Value.TableVertex[i].Coordinate;
 								coordinateEnd = ListKey[indexEnd].Value.TableVertex[i].Coordinate;
@@ -675,54 +667,6 @@ public static partial class Library_SpriteStudio6
 																																		ListKey[indexStart].FrameCurveEnd,
 																																		ListKey[indexStart].ValueCurveEnd
 																																	);
-#else
-								coordinateStart = Vector2.zero;
-								coordinateEnd = Vector2.zero;
-								flagNotShift = false;
-
-								valueOutput.TableVertex[i].Index = i;
-								indexVertexStart = IndexGetTableVertex(ListKey[indexStart].Value.TableVertex, i);
-								indexVertexEnd = IndexGetTableVertex(ListKey[indexEnd].Value.TableVertex, i);
-								if(0 <= indexVertexStart)
-								{
-									coordinateStart = ListKey[indexStart].Value.TableVertex[indexVertexStart].Coordinate;
-									flagNotShift |= true;
-								}
-								if(0 <= indexVertexEnd)
-								{
-									coordinateEnd = ListKey[indexEnd].Value.TableVertex[indexVertexEnd].Coordinate;
-									flagNotShift |= true;
-								}
-								if(false == flagNotShift)
-								{
-									valueOutput.TableVertex[i].Coordinate = Vector2.zero;
-								}
-								else
-								{
-									valueOutput.TableVertex[i].Coordinate.x = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
-																																			frame,
-																																			ListKey[indexStart].Frame,
-																																			coordinateStart.x,
-																																			ListKey[indexEnd].Frame,
-																																			coordinateEnd.x,
-																																			ListKey[indexStart].FrameCurveStart,
-																																			ListKey[indexStart].ValueCurveStart,
-																																			ListKey[indexStart].FrameCurveEnd,
-																																			ListKey[indexStart].ValueCurveEnd
-																																		);
-									valueOutput.TableVertex[i].Coordinate.y = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
-																																			frame,
-																																			ListKey[indexStart].Frame,
-																																			coordinateStart.y,
-																																			ListKey[indexEnd].Frame,
-																																			coordinateEnd.y,
-																																			ListKey[indexStart].FrameCurveStart,
-																																			ListKey[indexStart].ValueCurveStart,
-																																			ListKey[indexStart].FrameCurveEnd,
-																																			ListKey[indexStart].ValueCurveEnd
-																																		);
-								}
-#endif
 							}
 							return(true);
 
@@ -730,23 +674,7 @@ public static partial class Library_SpriteStudio6
 							valueOutput = Default;
 							return(false);
 						}
-#if CHANGE_DEFORM_DECODING
-#else
-						private static int IndexGetTableVertex(DataDeform.Vertex[] tableVertex, int indexVertex)
-						{
-							int count = tableVertex.Length;
-							for(int i=0; i<count; i++)
-							{
-								if(indexVertex == tableVertex[i].Index)
-								{
-									return(i);
-								}
-							}
-							return(-1);
-						}
-#endif
 
-#if CHANGE_DEFORM_DECODING
 						public void Normalize(int countVertexValid)
 						{
 							/* MEMO: Attribute "Deform" requires special correcting processing.                                                           */
@@ -857,8 +785,6 @@ public static partial class Library_SpriteStudio6
 							listIndexVertex.Clear();
 							listIndexVertex = null;
 						}
-#else
-#endif
 						#endregion Functions
 
 						/* ----------------------------------------------- Enums & Constants */

@@ -5,7 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
-#define CHANGE_DEFORM_DECODING
+#define DEFORM_CALCULATE_STRICT
 
 using System.Collections;
 using System.Collections.Generic;
@@ -722,7 +722,6 @@ public static partial class Library_SpriteStudio6
 								return(true);
 							}
 
-#if CHANGE_DEFORM_DECODING
 							/* MEMO: All deformed vertices are listed since key-datas have been normalized. */
 							/*       However, no-change coordinates are not checked.                        */
 							int countVertexChangeKeyData = listKeyData[0].ListKey[0].Value.CountVertexMesh;	/* Same at all key-data */
@@ -787,55 +786,6 @@ public static partial class Library_SpriteStudio6
 									container.TableValue[i].TableCoordinate[j] = tableValueFull[indexTable, i];
 								}
 							}
-#else
-							Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform valueDeform = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform();
-							int countVertexChangeKeyData = listKeyData[0].ListKey[0].Value.CountVertexMesh;	/* Same at all key-data */
-							Vector2[,] tableValueFull = new Vector2[countVertexChangeKeyData, countFrame];
-							for(int i=0; i<countFrame; i++)
-							{
-								listKeyData[0].ValueGet(out valueDeform, i);
-								for(int j=0; j<countVertexChangeKeyData; j++)
-								{
-									tableValueFull[j, i] = valueDeform.TableVertex[j].Coordinate;
-								}
-							}
-							/* MEMO: Extract only vertexes having coordinate changed. */
-							List<int> listIndexVertexChange = new List<int>(countVertexChangeKeyData);
-							listIndexVertexChange.Clear();
-							bool flagShiftCoordinate;
-							for(int i=0; i<countVertexChangeKeyData; i++)
-							{
-								flagShiftCoordinate = false;
-								for(int j=0; j<countFrame; j++)
-								{
-									if(Vector2.zero != tableValueFull[i, j])
-									{
-										flagShiftCoordinate = true;
-										break;	/* j-Loop */
-									}
-								}
-
-								if(true == flagShiftCoordinate)
-								{
-									listIndexVertexChange.Add(i);
-								}
-							}
-
-							int countVertexChange = listIndexVertexChange.Count;
-							container.CountVertexMesh = countVertexChange;
-							container.TableIndexVertex = listIndexVertexChange.ToArray();
-							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Deform[countFrame];
-							int indexVertex;
-							for(int i=0; i<countFrame; i++)
-							{
-								container.TableValue[i].BootUp(countVertexChange);
-								for(int j=0; j<countVertexChange; j++)
-								{
-									indexVertex = listIndexVertexChange[j];
-									container.TableValue[i].TableCoordinate[j] = tableValueFull[indexVertex, i];
-								}
-							}
-#endif
 
 							listIndexVertexChange.Clear();
 							listIndexVertexChange = null;
@@ -955,6 +905,12 @@ public static partial class Library_SpriteStudio6
 
 						cacheDecode.FrameKey = frame;
 
+#if DEFORM_CALCULATE_STRICT
+						/* Clean up Coordinate-Cache */
+						cacheDecode.Value.CoordinateReset();
+#endif
+
+						/* Get values */
 						int countVertexChange = container.TableIndexVertex.Length;
 						int[] tableIndexVertex = container.TableIndexVertex;
 						Vector2[] tableCoordinate = tableValue[frame].TableCoordinate;
