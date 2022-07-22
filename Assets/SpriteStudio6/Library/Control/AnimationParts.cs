@@ -5,13 +5,13 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
-// #define BONEINDEX_CONVERT_PARTSID
-#define PATCH_BONELIST_NOT_EXIST
 #define DECODE_USERDATA
 #define DECODE_SIGNAL
 // #define DECODE_IN_INSTANCE_USERDATA
 #define DECODE_IN_INSTANCE_SIGNAL
 // #define EXPERIMENT_FOR_CAMERA
+
+#define DEFORM_CALCULATE_STRICT
 
 using System.Collections;
 using System.Collections.Generic;
@@ -1585,7 +1585,7 @@ public static partial class Library_SpriteStudio6
 						{
 							/* MEMO: At "PreDraw", "Mask"'s drawing order is reverse. */
 							keySort = (-priority << CountShiftSortKeyPriority) | idParts;
-							instanceRoot.ListPartsDraw.Add(keySort);
+							instanceRoot.ListPartsPreDraw.Add(keySort);
 						}
 						keySort = (priority << CountShiftSortKeyPriority) | idParts;
 						instanceRoot.ListPartsDraw.Add(keySort);
@@ -2112,6 +2112,14 @@ public static partial class Library_SpriteStudio6
 					{
 						InstanceRootUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
 					}
+					if(true == instanceRoot.StatusIsChangeCacheMaterial)
+					{
+						/* MEMO: Status is only changed when the cache is shared. */
+						if(InstanceRootUnderControl.CacheMaterial == instanceRoot.CacheMaterial)
+						{
+							InstanceRootUnderControl.StatusIsChangeCacheMaterial = true;
+						}
+					}
 
 					InstanceRootUnderControl.LateUpdateMain(	timeElapsed,
 																flagHide,
@@ -2273,6 +2281,15 @@ public static partial class Library_SpriteStudio6
 					InstanceRootEffectUnderControl.RateScaleLocal = scaleLocal;
 
 					InstanceRootEffectUnderControl.RateOpacity = controlParts.RateOpacity.Value * instanceRoot.RateOpacity;
+
+					if(true == instanceRoot.StatusIsChangeCacheMaterial)
+					{
+						/* MEMO: Status is only changed when the cache is shared. */
+						if(InstanceRootEffectUnderControl.CacheMaterial == instanceRoot.CacheMaterial)
+						{
+							InstanceRootEffectUnderControl.StatusIsChangeCacheMaterial = true;
+						}
+					}
 					if(false == flagHide)
 					{
 						InstanceRootEffectUnderControl.LateUpdateMain(	timeElapsed,
@@ -2339,6 +2356,12 @@ public static partial class Library_SpriteStudio6
 						Status &= ~(FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE | FlagBitStatus.CHANGE_CELL_UNREFLECTED);
 						flagClearCellApply = true;
 					}
+					bool flagClearPartsColorApply = false;
+					if(0 == (Status & FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_NEWANIMATION))
+					{
+						Status &= ~(FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_ATTRIBUTE | FlagBitStatus.CHANGE_PARTSCOLOR_UNREFLECTED);
+						flagClearPartsColorApply = true;
+					}
 
 					if(0 == (Status & FlagBitStatus.INSTANCE_IGNORE_NEWANIMATION))
 					{
@@ -2353,9 +2376,9 @@ public static partial class Library_SpriteStudio6
 					TRSPrimary.CleanUp();
 					TRSSecondary.CleanUp();
 
-					CacheClearAttribute(flagClearCellApply);
+					CacheClearAttribute(flagClearCellApply, flagClearPartsColorApply);
 				}
-				internal void CacheClearAttribute(bool flagClearCellApply)
+				internal void CacheClearAttribute(bool flagClearCellApply, bool flagClearPartsColorApply)
 				{
 					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
 					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
@@ -2363,13 +2386,13 @@ public static partial class Library_SpriteStudio6
 
 					FramePreviousUpdateUnderControl = -1;
 
-					RadiusCollision.FrameKey = -1;
+					RadiusCollision.CleanUp();
 					RadiusCollision.Value = 0.0f;
 
-					StatusAnimationFrame.FrameKey = -1;
+					StatusAnimationFrame.CleanUp();
 					StatusAnimationFrame.Value.Flags = Library_SpriteStudio6.Data.Animation.Attribute.Status.FlagBit.INITIAL;
 
-					ParameterSprite.AnimationChange(flagClearCellApply);
+					ParameterSprite.AnimationChange(flagClearCellApply, flagClearPartsColorApply);
 				}
 				private void DrawMesh(	Script_SpriteStudio6_Root instanceRoot,
 										int idParts,
@@ -2430,10 +2453,18 @@ public static partial class Library_SpriteStudio6
 
 					UPDATE_SCALELOCAL = 0x00008000,
 					UPDATE_RATEOPACITY = 0x00004000,
-
+#if false
 					CHANGE_CELL_UNREFLECTED = 0x00000800,
 					CHANGE_CELL_IGNORE_ATTRIBUTE = 0x00000200,
 					CHANGE_CELL_IGNORE_NEWANIMATION = 0x00000100,
+#else
+					CHANGE_CELL_UNREFLECTED = 0x00002000,
+					CHANGE_CELL_IGNORE_ATTRIBUTE = 0x00001000,
+					CHANGE_CELL_IGNORE_NEWANIMATION = 0x00000800,
+					CHANGE_PARTSCOLOR_UNREFLECTED = 0x00000400,
+					CHANGE_PARTSCOLOR_IGNORE_ATTRIBUTE = 0x00000200,
+					CHANGE_PARTSCOLOR_IGNORE_NEWANIMATION = 0x00000100,
+#endif
 
 					INSTANCE_PLAY_INDEPENDENT = 0x00000080,
 					INSTANCE_IGNORE_EXCEPT_NEXTDATA = 0x00000040,
@@ -2555,10 +2586,10 @@ public static partial class Library_SpriteStudio6
 						TableRateAlphaPartsColor = null;
 						TableCoordinateVertexCorrection = null;
 
-						AnimationChange(true);
+						AnimationChange(true, true);
 					}
 
-					internal void AnimationChange(bool flagClearDataCellApply)
+					internal void AnimationChange(bool flagClearDataCellApply, bool flagClearPartsColorApply)
 					{
 						/* MEMO: Do not clear dynamic flipping. */
 //						Status = FlagBitStatus.CLEAR;
@@ -2594,7 +2625,10 @@ public static partial class Library_SpriteStudio6
 						ScalingTexture.CleanUp();	ScalingTexture.Value = Vector2.one;
 						PositionTexture.CleanUp();	PositionTexture.Value = Vector2.zero;
 						RotationTexture.CleanUp();	RotationTexture.Value = 0.0f;
-						PartsColor.CleanUp();	/* PartsColor.Value.CleanUp(); */
+						if(true == flagClearPartsColorApply)
+						{
+							PartsColor.CleanUp();	/* PartsColor.Value.CleanUp(); */
+						}
 						VertexCorrection.CleanUp();	/* VertexCorrection.Value.CleanUp(); */
 						Deform.CleanUp();	Deform.Value.CoordinateReset();
 						Shader.CleanUp();	Shader.Value.CleanUp();
@@ -2723,7 +2757,8 @@ public static partial class Library_SpriteStudio6
 
 						Shader.CleanUp();	Shader.Value.BootUp();
 
-						Status |= (	FlagBitStatus.UPDATE_COORDINATE
+						Status |= (	FlagBitStatus.REDECODE_MATERIAL
+									| FlagBitStatus.UPDATE_COORDINATE
 									| FlagBitStatus.UPDATE_UVTEXTURE
 									| FlagBitStatus.UPDATE_PARAMETERBLEND
 									| FlagBitStatus.UPDATE_COLORPARTS
@@ -2752,6 +2787,9 @@ public static partial class Library_SpriteStudio6
 						int countTableBind = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableVertex.Length;
 						int countTableUV = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableRateUV.Length;
 						int countVertexDeform = instanceRoot.DataAnimation.TableParts[idParts].Mesh.CountVertexDeform;
+#if DEFORM_CALCULATE_STRICT
+						bool flagUseSkeletalAnimation = ((0 < countTableBind) && (0 < instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length));	/* ? true : false */
+#endif
 						CountVertex = countVertex;
 
 						MaterialDraw = null;
@@ -2767,19 +2805,37 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{	/* use Deform */
+#if DEFORM_CALCULATE_STRICT
+							/* MEMO: When using skeletal-animations, "DeformDraw" cache is not required.  */
+							/*       (No point to cache. Because vertex coordinates are affected by bones */
+							/*         and must be recalculated transformed-coordinate every loop.)       */
+							if(true == flagUseSkeletalAnimation)
+							{	/* Skeletal-Animation */
+								DeformDraw = null;	/* unused */
+							}
+							else
+							{	/* Fixed-Animation */
+								DeformDraw = new Vector3[countVertex];
+								if(null == DeformDraw)
+								{
+									goto BootUpMesh_ErrorEnd;
+								}
+							}
+#else
 							DeformDraw = new Vector3[countVertex];
 							if(null == DeformDraw)
 							{
 								goto BootUpMesh_ErrorEnd;
 							}
+#endif
 						}
 
-#if PATCH_BONELIST_NOT_EXIST
+#if DEFORM_CALCULATE_STRICT
+						if(true == flagUseSkeletalAnimation)
+#else
 						if(	(0 < countTableBind)
 							&& (0 < instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length)
 						)
-#else
-						if(0 < countTableBind)
 #endif
 						{	/* Skeletal-Animation */
 							CoordinateDraw = null;	/* unused */
@@ -2953,6 +3009,12 @@ public static partial class Library_SpriteStudio6
 						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
 						bool flagUpdateValueAttribute;
 
+						/* Check Re-Decode Material */
+						if(true == instanceRoot.StatusIsChangeCacheMaterial)
+						{
+							Status |= FlagBitStatus.REDECODE_MATERIAL;
+						}
+
 						/* Check Part-Control's update */
 						if((0 != (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL)) || (true == instanceRoot.StatusIsUpdateRateScaleLocal))
 						{
@@ -3007,7 +3069,11 @@ public static partial class Library_SpriteStudio6
 							Status |= FlagBitStatus.UPDATE_UVTEXTURE;
 							Status |= FlagBitStatus.UPDATE_COORDINATE_NOWFRAME;
 						}
-						statusControlParts &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED;
+						/* MEMO: Don't clear "CHANGE_PARTSCOLOR_UNREFLECTED", hear. */
+						/*       Because "PartsColor" has not been decoded yet.     */
+						statusControlParts &= ~(	Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED
+//													| Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_UNREFLECTED
+											);
 
 						int indexCellMap = DataCellApply.IndexCellMap;
 						int indexCell = DataCellApply.IndexCell;
@@ -3175,15 +3241,37 @@ public static partial class Library_SpriteStudio6
 #if UNITY_EDITOR
 						if(null != dataAnimationParts.PartsColor.Function)
 						{
-							flagUpdateValueAttribute = dataAnimationParts.PartsColor.Function.ValueGet(ref PartsColor, dataAnimationParts.PartsColor, ref argumentContainer);
+							if(0 != (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_UNREFLECTED))
+							{	/* Update from extenal */
+								flagUpdateValueAttribute = true;
+							}
+							else
+							{
+								if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_ATTRIBUTE))
+								{
+									flagUpdateValueAttribute = dataAnimationParts.PartsColor.Function.ValueGet(ref PartsColor, dataAnimationParts.PartsColor, ref argumentContainer);
+								}
+							}
 						}
 						else
 						{
 							flagUpdateValueAttribute = false;
 						}
 #else
-						flagUpdateValueAttribute = dataAnimationParts.PartsColor.Function.ValueGet(ref PartsColor, dataAnimationParts.PartsColor, ref argumentContainer);
+						if(0 != (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_UNREFLECTED))
+						{	/* Update from extenal */
+							flagUpdateValueAttribute = true;
+						}
+						else
+						{
+							if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_IGNORE_ATTRIBUTE))
+							{
+								flagUpdateValueAttribute = dataAnimationParts.PartsColor.Function.ValueGet(ref PartsColor, dataAnimationParts.PartsColor, ref argumentContainer);
+							}
+						}
 #endif
+						statusControlParts &= ~Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_UNREFLECTED;
+
 						Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
 						if(null != additionalColor)
 						{	/* Has AdditionalColor */
@@ -3624,14 +3712,14 @@ public static partial class Library_SpriteStudio6
 						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.C] = matrixTransform.MultiplyPoint3x4(coordinate);
 
 						/* Update Material */
-						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
+						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.REDECODE_MATERIAL)))
 						{
 							if(true == flagPreDraw)
 							{
 								/* MEMO: "Mask" use only standard shaders. */
 								int indexCellMap = DataCellApply.IndexCellMap;
-								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, null, null, true);
-								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, null, null, true);
+								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, null, true, null, null);
+								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, null, true, null, null);
 							}
 							else
 							{
@@ -3648,9 +3736,10 @@ public static partial class Library_SpriteStudio6
 																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
 																			masking,
 																			nameShader,
+																			true,
 																			shader,
-																			true
-																		);
+																			null
+																	);
 							}
 						}
 
@@ -3669,7 +3758,8 @@ public static partial class Library_SpriteStudio6
 
 						/* MEMO: "UPDATE" flags need to be cleared after add to Draw-Cluster.       */
 						/*       (Because "Draw" may not be executed even if "Update" is executed.) */
-						Status &= ~(	FlagBitStatus.UPDATE_COORDINATE
+						Status &= ~(	FlagBitStatus.REDECODE_MATERIAL
+										| FlagBitStatus.UPDATE_COORDINATE
 										| FlagBitStatus.UPDATE_UVTEXTURE
 										| FlagBitStatus.UPDATE_PARAMETERBLEND
 										| FlagBitStatus.UPDATE_COLORPARTS
@@ -3891,16 +3981,11 @@ public static partial class Library_SpriteStudio6
 							matrixTransform[2, 3] = 0.0f;
 						}
 
-#if PATCH_BONELIST_NOT_EXIST
 						int countBoneList = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length;
 						if(	(0 >= countTableBindMesh)
 							|| (0 >= countBoneList)
 						)
 						{	/* not Skeletal-Animation / Skeletal-Animation, but has no bones */
-#else
-						if(0 >= countTableBindMesh)
-						{	/* not Skeletal-Animation */
-#endif
 							if(true == Deform.Value.IsValid)
 							{	/* Use Deform */
 								/* Transform including "Deform" */
@@ -3931,11 +4016,9 @@ public static partial class Library_SpriteStudio6
 						}
 						else
 						{	/* Skeletal-Animation */
-#if PATCH_BONELIST_NOT_EXIST
+#if DEFORM_CALCULATE_STRICT
 							if(0 < countBoneList)
 							{	/* Has bone-list */
-#endif
-
 								/* Calculate Coordinates */
 								int countBone;
 								Vector3 coordinate;
@@ -3950,12 +4033,8 @@ public static partial class Library_SpriteStudio6
 									{
 										for(int j=0; j<countBone; j++)
 										{
-#if BONEINDEX_CONVERT_PARTSID
-											idPartsBone = tableBindMesh[i].TableBone[j].Index;
-#else
 											idPartsBone = tableBindMesh[i].TableBone[j].Index;
 											idPartsBone = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone[idPartsBone];
-#endif
 											if(0 <= idPartsBone)
 											{
 												coordinate = instanceRoot.TableControlParts[idPartsBone].MatrixBoneWorld.MultiplyPoint3x4(tableBindMesh[i].TableBone[j].CoordinateOffset);
@@ -3970,9 +4049,65 @@ public static partial class Library_SpriteStudio6
 									}
 									CoordinateTransformDraw[i] = coordinateSum;
 								}
-#if PATCH_BONELIST_NOT_EXIST
 							}
+
+							/* Deform Coordinate */
+							/* MEMO: In this case, "DeformDraw" is not used. */
+							/* MEMO: To reduce calculation amount, only changed vertices  are calculated. */
+							if(0 < countVertexDeform)
+							{
+								Vector2[] tableVectorCoordinate = Deform.Value.TableCoordinate;
+								int[] tableVertexChange = dataAnimationParts.Deform.TableIndexVertex;
+#if UNITY_EDITOR
+								if(null != tableVertexChange)
+								{
 #endif
+									int countVertexChange = tableVertexChange.Length;
+									int indexVertex;
+									for(int i=0; i<countVertexChange; i++)
+									{
+										/* MEMO: Calculate only relative-value, so using "MultiplyVector". (Ignore translation) */
+										indexVertex = tableVertexChange[i];
+										CoordinateTransformDraw[indexVertex] += matrixTransform.MultiplyVector((Vector3)tableVectorCoordinate[indexVertex]);	/* .z = 0 */
+									}
+#if UNITY_EDITOR
+								}
+#endif
+							}
+#else
+							if(0 < countBoneList)
+							{	/* Has bone-list */
+								/* Calculate Coordinates */
+								int countBone;
+								Vector3 coordinate;
+								Vector3 coordinateSum;
+								int idPartsBone;
+								float weight;
+								for(int i=0; i<countTableBindMesh; i++)
+								{
+									coordinateSum = Vector3.zero;
+									countBone = tableBindMesh[i].TableBone.Length;
+									if(0 < countBone)
+									{
+										for(int j=0; j<countBone; j++)
+										{
+											idPartsBone = tableBindMesh[i].TableBone[j].Index;
+											idPartsBone = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone[idPartsBone];
+											if(0 <= idPartsBone)
+											{
+												coordinate = instanceRoot.TableControlParts[idPartsBone].MatrixBoneWorld.MultiplyPoint3x4(tableBindMesh[i].TableBone[j].CoordinateOffset);
+
+												weight = tableBindMesh[i].TableBone[j].Weight;
+												coordinate *= weight;
+//												coordinate.z = 0.0f;
+
+												coordinateSum += coordinate;
+											}
+										}
+									}
+									CoordinateTransformDraw[i] = coordinateSum;
+								}
+							}
 
 							/* Deform Coordinate */
 							/* MEMO: In the case of Skeletal-Animated "Mesh", "DeformDraw" is a calculated buffer for Deform. */
@@ -4003,10 +4138,11 @@ public static partial class Library_SpriteStudio6
 									CoordinateTransformDraw[i] += DeformDraw[i];
 								}
 							}
+#endif
 						}
 
 						/* Update Material */
-						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING)))
+						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.REDECODE_MATERIAL)))
 						{
 							if(true == flagPreDraw)
 							{
@@ -4015,8 +4151,8 @@ public static partial class Library_SpriteStudio6
 								/* MEMO: Update material for "Draw" as well. */
 								/* MEMO: "Mask" use only standard shaders. */
 								indexCellMap = DataCellApply.IndexCellMap;
-								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, null, null, true);
-								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, null, null, true);
+								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, null, true, null, null);
+								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, null, true, null, null);
 							}
 							else
 							{
@@ -4027,12 +4163,14 @@ public static partial class Library_SpriteStudio6
 									nameShader = Shader.Value.ID;
 									shader = UnityEngine.Shader.Find(Library_SpriteStudio6.Data.Shader.NameShaderPrefixSS6P + nameShader);
 								}
+
 								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
 																			instanceParts.OperationBlendTarget,
 																			masking,
 																			nameShader,
+																			true,
 																			shader,
-																			true
+																			null
 																		);
 							}
 						}
@@ -4052,7 +4190,8 @@ public static partial class Library_SpriteStudio6
 
 						/* MEMO: "UPDATE" flags need to be cleared after add to Draw-Cluster.       */
 						/*       (Because "Draw" may not be executed even if "Update" is executed.) */
-						Status &= ~(	FlagBitStatus.UPDATE_COORDINATE
+						Status &= ~(	FlagBitStatus.REDECODE_MATERIAL
+										| FlagBitStatus.UPDATE_COORDINATE
 										| FlagBitStatus.UPDATE_UVTEXTURE
 										| FlagBitStatus.UPDATE_PARAMETERBLEND
 										| FlagBitStatus.UPDATE_COLORPARTS
@@ -4080,6 +4219,7 @@ public static partial class Library_SpriteStudio6
 					{
 						/* Common (Accumulated until drawed) */
 						NO_DRAW = 0x40000000,	/* Not "Hide" ... for when no cell designation */
+						REDECODE_MATERIAL = 0x10000000,
 
 						UPDATE_COORDINATE = 0x08000000,
 						UPDATE_UVTEXTURE = 0x04000000,

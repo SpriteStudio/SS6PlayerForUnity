@@ -597,7 +597,7 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 		Coefficient of time-passage of animation.<br>
 		Must not be negative or 0.0f.
 		"float.NaN" is given, Apply previous setting.<br>
-		default: float.NaN
+		Default: float.NaN
 
 	@retval	Return-Value
 		true == Success<br>
@@ -656,11 +656,11 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 		* Not working, now (Reserved) 
 		false == Sequence is stopped with maintaining the current state.<br>
 		true == Sequence is stop and jump to last step.<br>
-		default: false
+		Default: false
 	@param	flagJumpEndFrame
 		false == Sequence is stopped with maintaining the current state.<br>
 		true == Sequence is stop and jump to animation's last frame.<br>
-		default: false
+		Default: false
 	@retval	Return-Value
 		(None)
 

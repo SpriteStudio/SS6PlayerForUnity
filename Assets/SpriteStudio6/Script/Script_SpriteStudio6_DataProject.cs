@@ -26,8 +26,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	public Object[] PrefabEffect;
 
 	public Texture[] TableTexture;					/* Index is the same as for "DataCellMap.TableCellMap". */
-	internal Library_SpriteStudio6.Control.CacheMaterial CacheMaterialAnimation = null;
-	internal Library_SpriteStudio6.Control.CacheMaterial CacheMaterialEffect = null;
+	internal Library_SpriteStudio6.Control.CacheMaterial CacheMaterial = null;
 
 	/* MEMO: Use "delegate" instead of bool because value is cleared each compiling. */
 	private FunctionSignatureBootUpFunction SignatureBootUpFunction = null;
@@ -72,15 +71,10 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	void OnDestroy()
 	{
 		/* All Material-Cache shut-down */
-		if(null != CacheMaterialAnimation)
+		if(null != CacheMaterial)
 		{
-			CacheMaterialAnimation.ShutDown(true);
-			CacheMaterialAnimation = null;
-		}
-		if(null != CacheMaterialEffect)
-		{
-			CacheMaterialEffect.ShutDown(true);
-			CacheMaterialEffect = null;
+			CacheMaterial.ShutDown(true);
+			CacheMaterial = null;
 		}
 	}
 	#endregion ScriptableObject-Functions
@@ -100,8 +94,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		PrefabEffect = null;
 
 		TableTexture = null;
-		CacheMaterialAnimation = null;
-		CacheMaterialEffect = null;
+		CacheMaterial = null;
 	}
 
 	public bool VersionCheckRuntime()
@@ -207,7 +200,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 
 	private bool BootUp()
 	{
-		/* Material-Cache Set up */
+		/* Texture Table Set up */
 		/* MEMO: Take into account possibility of generating materials without textures. */
 		int countTexture = (null != TableTexture) ? TableTexture.Length : 0;
 		if(0 >= countTexture)
@@ -215,17 +208,18 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 			countTexture++;
 		}
 
-		CacheMaterialAnimation = new Library_SpriteStudio6.Control.CacheMaterial();
-		if(false == CacheMaterialAnimation.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL, false))
+		/* Material-Cache (for Animation) Set up */
+		CacheMaterial = new Library_SpriteStudio6.Control.CacheMaterial();
+		if(false == CacheMaterial.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlend.TERMINATOR_TABLEMATERIAL))
 		{
 			goto Start_ErrorEnd;
 		}
+		CacheMaterial.ShaderStandardAnimation = Library_SpriteStudio6.Data.Shader.SpriteSS6PU;	/* Standard-Shader(Animation) */
+		CacheMaterial.ShaderStandardEffect = Library_SpriteStudio6.Data.Shader.EffectSS6PU;	/* Standard-Shader(Effect) */
+		CacheMaterial.ShaderStandardStencil = Library_SpriteStudio6.Data.Shader.StencilSS6PU;	/* Standard-Shader(Stencil) */
 
-		CacheMaterialEffect = new Library_SpriteStudio6.Control.CacheMaterial();
-		if(false == CacheMaterialEffect.BootUp(countTexture * (int)Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR_TABLEMATERIAL, true))
-		{
-			goto Start_ErrorEnd;
-		}
+		CacheMaterial.FunctionMaterialSetUpAnimation = Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpAnimation;
+		CacheMaterial.FunctionMaterialSetUpEffect = Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpEffect;
 
 		/* Status Set */
 		StatusIsBootup = true;
@@ -244,15 +238,21 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	@param	operationBlend
 		Blending Operation
 	@param	nameShader
-		Shader's name in animation-data
-		null == Default(Standard) shader's name
-	@param	shader
-		Shader
+		Name identifies shader. (Specified in SSAE:Animation-Data)<br>
+		null == Standard-Shader's name
 	@param	masking
 		Masking type
 	@param	flagCreateNew
 		true == If not exist, create.
 		false == If not exist, return null.
+	@param	shader
+		Shader used to set parameters when creating new material<br>
+		null == Standard-Shader<br>
+		Default: null
+	@param	functionMaterialSetUp
+		Function called to set parameters when creating new material<br>
+		null == Default Function<br>
+		Default: null
 	@retval	Return-Value
 		Instance of Material
 		null == Not exist or Error
@@ -262,28 +262,48 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	If existing, return that has already created (Will not create
 		multiple of same material).<br>
 	If not existing, material will be created and returned.<br>
+	<br>
+	When "flagCreateNew" is false, "shader" and "functionMaterialSetUp" can be null. (be ignored.)<br>
+	<br>
+	Specify to "functionMaterialSetUp" must must be following type function.<br>
+	UnityEngine.Material FunctionMaterialSetUpAnimation(<br>
+		UnityEngine.Material material,<br>
+		int(Library_SpriteStudio6.KindOperationBlend) operationBlend,<br>
+		Library_SpriteStudio6.KindMasking masking,<br>
+		bool flagZWrite<br>
+	);<br>
+	[Arguments]<br>
+		material: Material to set parameters (blending method, etc.)<br>
+		operationBlend: Blend type given to this function. (Casted to int) <br>
+		masking: Masking type given to this function.<br>
+		flagZWrite: true==Write to Z-Buffer. / false==No-touching Z-Buffer.<br>
+	[Return]<br>
+		On success, instance of the material (same as argument "material")<br>
+		On failure, null.
 	*/
 	internal UnityEngine.Material MaterialGetAnimation(	int indexCellMap,
 														Library_SpriteStudio6.KindOperationBlend operationBlend,
 														Library_SpriteStudio6.KindMasking masking,
 														string nameShader,
-														Shader shader,
-														bool flagCreateNew
+														bool flagCreateNew,
+														Shader shader=null,
+														Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp=null
 													)
 	{
-		if(null == CacheMaterialAnimation)
+		if(null == CacheMaterial)
 		{
 			return(null);
 		}
 
-		return(CacheMaterialAnimation.MaterialGetAnimation(	indexCellMap,
-															operationBlend,
-															masking,
-															nameShader,
-															shader,
-															TableTexture,
-															flagCreateNew
-														)
+		return(CacheMaterial.MaterialGetAnimation(	indexCellMap,
+													operationBlend,
+													masking,
+													nameShader,
+													shader,
+													functionMaterialSetUp,
+													TableTexture,
+													flagCreateNew
+												)
 			);
 	}
 
@@ -297,13 +317,19 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	@param	masking
 		Masking type
 	@param	nameShader
-		Shader's name in animation-data
-		null == Default(Standard) shader's name
-	@param	shader
-		Shader
+		Shader's name in animation-data<br>
+		null == Standard-Shader's name
 	@param	flagCreateNew
 		true == If not exist, create.
 		false == If not exist, return null.
+	@param	shader
+		Shader used to set parameters when creating new material<br>
+		null == Standard-Shader<br>
+		Default: null
+	@param	functionMaterialSetUp
+		Function called to set parameters when creating new material<br>
+		null == Default Function<br>
+		Default: null
 	@retval	Return-Value
 		Instance of Material
 		null == Error
@@ -313,28 +339,48 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	If existing, return that has already created (Will not create
 		multiple of same material).<br>
 	If not existing, material will be created and returned.<br>
+	<br>
+	When "flagCreateNew" is false, "shader" and "functionMaterialSetUp" can be null. (be ignored.)<br>
+	<br>
+	Specify to "functionMaterialSetUp" must must be following type function.<br>
+	UnityEngine.Material FunctionMaterialSetUpEffect(<br>
+		UnityEngine.Material material,<br>
+		int(Library_SpriteStudio6.KindOperationBlendEffect) operationBlend,<br>
+		Library_SpriteStudio6.KindMasking masking,<br>
+		bool flagZWrite<br>
+	);<br>
+	[Arguments]<br>
+		material: Material to set parameters (blending method, etc.)<br>
+		operationBlend: Blend type given to this function. (Casted to int)<br>
+		masking: Masking type given to this function.<br>
+		flagZWrite: true==Write to Z-Buffer. / false==No-touching Z-Buffer.<br>
+	[Return]<br>
+		On success, instance of the material (same as argument "material")<br>
+		On failure, null.
 	*/
 	internal UnityEngine.Material MaterialGetEffect(	int indexCellMap,
 														Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 														Library_SpriteStudio6.KindMasking masking,
 														string nameShader,
-														Shader shader,
-														bool flagCreateNew
+														bool flagCreateNew,
+														Shader shader=null,
+														Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp=null
 												)
 	{
-		if(null == CacheMaterialEffect)
+		if(null == CacheMaterial)
 		{
 			return(null);
 		}
 
-		return(CacheMaterialEffect.MaterialGetEffect(	indexCellMap,
-														operationBlend,
-														masking,
-														nameShader,
-														shader,
-														TableTexture,
-														flagCreateNew
-												)
+		return(CacheMaterial.MaterialGetEffect(	indexCellMap,
+												operationBlend,
+												masking,
+												nameShader,
+												shader,
+												functionMaterialSetUp,
+												TableTexture,
+												flagCreateNew
+										)
 			);
 	}
 
@@ -348,7 +394,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	@param	masking
 		Masking type
 	@param	nameShadcer
-		Shader's name in animation-data
+		Shader's name in animation-data<br>
 		null == Default(Standard) shader's name
 	@param	material
 		New material
@@ -369,17 +415,17 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 															UnityEngine.Material material
 														)
 	{
-		if(null == CacheMaterialAnimation)
+		if(null == CacheMaterial)
 		{
 			return(null);
 		}
 
-		return(CacheMaterialAnimation.MaterialReplaceAnimation(	indexCellMap,
-																operationBlend,
-																masking,
-																nameShader,
-																material
-															)
+		return(CacheMaterial.MaterialReplaceAnimation(	indexCellMap,
+														operationBlend,
+														masking,
+														nameShader,
+														material
+													)
 			);
 	}
 
@@ -414,17 +460,17 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 															UnityEngine.Material material
 														)
 	{
-		if(null == CacheMaterialEffect)
+		if(null == CacheMaterial)
 		{
 			return(null);
 		}
 
-		return(CacheMaterialEffect.MaterialReplaceEffect(	indexCellMap,
-															operationBlend,
-															masking,
-															nameShader,
-															material
-													)
+		return(CacheMaterial.MaterialReplaceEffect(	indexCellMap,
+													operationBlend,
+													masking,
+													nameShader,
+													material
+											)
 			);
 	}
 
@@ -440,15 +486,139 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	*/
 	private void MaterialPurge(bool flagPurgeAnimation=true, bool flagPurgeEffect=true)
 	{
-		if((null != CacheMaterialAnimation) && (true == flagPurgeAnimation))
+		if((null != CacheMaterial) && (true == flagPurgeAnimation))
 		{
-			CacheMaterialAnimation.DataPurge(false);
+			CacheMaterial.DataPurge(false);
 		}
+	}
 
-		if((null != CacheMaterialEffect) && (true == flagPurgeEffect))
-		{
-			CacheMaterialEffect.DataPurge(false);
-		}
+	/* ********************************************************* */
+	//! Replace Standard-(Pixel)Shader for Animation
+	/*!
+	@param	shader
+		Shader to be set<br>
+		null == Reset to initial
+	@param	functionMaterialSetUp
+		Function called to set parameters when replacing material<br>
+		null == Default Function<br>
+	@param	flagReplaceMaterialCache
+		true == Cached materials (that using  standard-shaders) are replaced new shader.
+		false == Cached materials are not changing.
+	@retval	Return-Value
+		Previous shader
+
+	Changes the "Standard-Shader" (for Animation) used in animations.<br>
+	Always "Standard-Shader" is used when attribute "Shader" is not used in animations(SSAEs).<br>
+	<br>
+	Affects Animation-Objects that use Project-data (SSPJ) controlled by this class.<br>
+	However, Animation-Objects' setting (Script_SpriteStudio6_Root) will take priority.<br>
+	<br>
+	"functionMaterialSetUp" is a material initialization function that is called when create material using "shader".
+		(Also used when replace material in cache in this function)<br>
+	<br>
+	specification of "functionMaterialSetUp" is the same as argument of the same name in "MaterialGetAnimation".<br>
+	<br>
+	This process may affect performance adversely as materials will be rebuilt.<br>
+	Therefore, not recommended to call this function even if not necessary.
+		(e.g., Calling this function in every loop process.)<br>
+	<br>
+	*/
+	internal UnityEngine.Shader ShaderSetStandardAnimation(	UnityEngine.Shader shader,
+															Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
+															bool flagReplaceMaterialCache
+														)
+	{
+		return(CacheMaterial.ShaderReplaceStandardPixelAnimation(	shader,
+																	Library_SpriteStudio6.Data.Shader.SpriteSS6PU,
+																	functionMaterialSetUp,
+																	Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpAnimation,
+																	flagReplaceMaterialCache
+															)
+			);
+	}
+
+	/* ********************************************************* */
+	//! Replace Standard-(Pixel)Shader for Effect
+	/*!
+	@param	shader
+		Shader to be set<br>
+		null == Reset to initial
+	@param	functionMaterialSetUp
+		Function called to set parameters when replacing material<br>
+		null == Default Function<br>
+	@param	flagReplaceMaterialCache
+		true == Cached materials (that using  standard-shaders) are replaced new shader.
+		false == Cached materials are not changing.
+	@retval	Return-Value
+		Previous shader
+
+	Changes the "Standard-Shader" used in effects.<br>
+	Always "Standard-Shader" (for Effect) is used when Play "Effect"-animation(SSEEs).<br>
+	<br>
+	Affects Animation-Objects that use Project-data (SSPJ) controlled by this class.<br>
+	However, Animation-Objects' setting (Script_SpriteStudio6_RootEffect) will take priority.<br>
+	<br>
+	This process may affect performance adversely as materials will be rebuilt.<br>
+	Therefore, not recommended to call this function even if not necessary.
+		(e.g., Calling this function in every loop process.)<br>
+	<br>
+	Normally, should not have a chance to use this function.<br>
+	<br>
+	"functionMaterialSetUp" is a material initialization function that is called when create material using "shader".
+		(Also used when replace material in cache in this function)<br>
+	<br>
+	specification of "functionMaterialSetUp" is the same as argument of the same name in "MaterialGetEffect".<br>
+	*/
+	internal UnityEngine.Shader ShaderSetStandardEffect(	UnityEngine.Shader shader,
+															Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
+															bool flagReplaceMaterialCache
+													)
+	{
+		return(CacheMaterial.ShaderReplaceStandardPixelEffect(	shader,
+																Library_SpriteStudio6.Data.Shader.EffectSS6PU,
+																functionMaterialSetUp,
+																Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpEffect,
+																flagReplaceMaterialCache
+															)
+			);
+	}
+
+	/* ********************************************************* */
+	//! Replace Standard-(Stencil)Shader for Animation
+	/*!
+	@param	shader
+		Shader to be set<br>
+		null == Reset to initial
+	@param	flagReplaceMaterialCache
+		true == Cached materials (that using  standard-shaders) are replaced new shader.
+		false == Cached materials are not changing.
+	@retval	Return-Value
+		Previous shader
+
+	Changes the "Stencil-Shader" (for Animation) used in animations.<br>
+	Always "Stencil-Shader" is used for drawing "Mask" parts.<br>
+	<br>
+	Affects Animation-Objects that use Project-data (SSPJ) controlled by this class.<br>
+	However, Animation-Objects' setting (Script_SpriteStudio6_Root) will take priority.	<br>
+	<br>
+	This process may affect performance adversely as materials will be rebuilt.<br>
+	Therefore, not recommended to call this function even if not necessary.
+		(e.g., Calling this function in every loop process.)<br>
+	<br>
+	Normally, do not use this function.<br>
+	(Unless change implementation of "Masking", should not have a chance to use this function.)<br>
+	<br>
+	When create material using "shader", called material initialize function will be shared
+		with for animation (specified with "ShaderSetStandardAnimation").<br>
+	*/
+	internal UnityEngine.Shader ShaderSetStandardStencil(UnityEngine.Shader shader, bool flagReplaceMaterialCache)
+	{
+		return(CacheMaterial.ShaderReplaceStandardStencil(	shader,
+															Library_SpriteStudio6.Data.Shader.StencilSS6PU,
+															Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpAnimation,
+															flagReplaceMaterialCache
+														)
+			);
 	}
 
 	private static void FunctionBootUpSignature()

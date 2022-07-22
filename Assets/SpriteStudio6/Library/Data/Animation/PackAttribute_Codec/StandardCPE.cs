@@ -7,6 +7,8 @@
 */
 #define REDUCE_FREQUENCY_BINARYTREE
 
+#define DEFORM_CALCULATE_STRICT
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -1164,6 +1166,11 @@ public static partial class Library_SpriteStudio6
 
 						index = (status & (int)FlagBit.INDEX) >> 15;
 
+#if DEFORM_CALCULATE_STRICT
+						/* Clean up Coordinate-Cache */
+						cacheDecode.Value.CoordinateReset();
+#endif
+
 						/* Get values */
 						int countVertexChange = container.TableIndexVertex.Length;
 						int[] tableIndexVertex = container.TableIndexVertex;
@@ -1253,6 +1260,12 @@ public static partial class Library_SpriteStudio6
 						cacheDecode.FrameKey = status & (int)FlagBit.FRAMEKEY;
 						index = (status & (int)FlagBit.INDEX) >> 15;
 
+#if DEFORM_CALCULATE_STRICT
+						/* Clean up Coordinate-Cache */
+						cacheDecode.Value.CoordinateReset();
+#endif
+
+						/* Get values */
 						int countVertexChange = container.TableIndexVertex.Length;
 						int[] tableIndexVertex = container.TableIndexVertex;
 						Vector2[] tableCoordinate = tableValue[index].TableCoordinate;

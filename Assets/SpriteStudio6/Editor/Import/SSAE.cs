@@ -6,10 +6,7 @@
 	All rights reserved.
 */
 // #define STORE_ANIMATIONSETUP_FULL
-// #define BONEINDEX_CONVERT_PARTSID
 #define WARN_MESHVERTEX_COUNT
-#define PATCH_BONELIST_NOT_EXIST
-#define CHANGE_DEFORM_DECODING
 
 using System.Collections;
 using System.Collections.Generic;
@@ -1983,33 +1980,10 @@ public static partial class LibraryEditor_SpriteStudio6
 									/* Set Body-Data */
 									data.Frame = frame;
 
-#if CHANGE_DEFORM_DECODING
 									/* MEMO: "value/vsize" depends on the state when key-data was created on SpritStudio6.                                        */
 									/*       (Even when value is zero, No necessarily the "number of Cell-Mesh's vertices" to be used.                            */
 									/*        Especially when keys are repeatedly "copy-and-paste"-ed between parts, the value conflicts with the specification.) */
 									/*       ... So ignore this value.                                                                                            */
-#else
-									valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeKey, "value/vsize", managerNameSpace);
-									int countVertexMesh = (null == valueText) ? 0 : LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
-									data.Value.CountVertexMesh = countVertexMesh;
-									bool flagValidVertexSize = true;
-									if(0 >= parts.CountVertexDeform)
-									{
-										/* Set initial Vertex-Size to part */
-										parts.CountVertexDeform = countVertexMesh;
-									}
-									else
-									{
-										/* Check part's Vertex-Size already set */
-										if(parts.CountVertexDeform != countVertexMesh)
-										{
-											LogWarning(messageLogPrefix, "Invalid Deform's Verex-Size. Frame[" + frame.ToString() + "] Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
-											flagValidVertexSize = false;
-										}
-									}
-
-									if(true == flagValidVertexSize)
-#endif
 									{
 										bool flagDataValid = false;
 										valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeKey, "value/vchg", managerNameSpace);
@@ -2569,11 +2543,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					public bool FlagMasking;
 					public bool FlagVerbose;
 
-#if CHANGE_DEFORM_DECODING
 					public bool FlagDeform;
-#else
-					public int CountVertexDeform;		/* MEMO: Dis-Use, Hindrance */
-#endif
 
 					/* MEMO: UnderControl == Instance, Effect */
 					public string NameUnderControl;
@@ -2621,11 +2591,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						FlagMasking = false;
 						FlagVerbose = false;
 
-#if CHANGE_DEFORM_DECODING
 						FlagDeform = false;
-#else
-						CountVertexDeform = 0;
-#endif
 
 						NameUnderControl = "";
 						NameAnimationUnderControl = "";
@@ -2964,11 +2930,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Instance.CleanUpKey();
 									animationParts.Effect.CleanUpKey();
 									animationParts.Deform.CleanUpKey();
-#if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
-#else
-									parts.CountVertexDeform = 0;
-#endif
 									animationParts.Shader.CleanUpKey();
 									break;
 
@@ -2979,11 +2941,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Instance.CleanUpKey();
 									animationParts.Effect.CleanUpKey();
 									animationParts.Deform.CleanUpKey();
-#if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
-#else
-									parts.CountVertexDeform = 0;
-#endif
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
@@ -3020,11 +2978,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 									animationParts.Effect.CleanUpKey();
 									animationParts.Deform.CleanUpKey();
-#if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
-#else
-									parts.CountVertexDeform = 0;
-#endif
 									animationParts.Shader.CleanUpKey();
 									break;
 
@@ -3062,11 +3016,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 									animationParts.Instance.CleanUpKey();
 									animationParts.Deform.CleanUpKey();
-#if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
-#else
-									parts.CountVertexDeform = 0;
-#endif
 									animationParts.Shader.CleanUpKey();
 									break;
 
@@ -3075,11 +3025,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Instance.CleanUpKey();
 									animationParts.Effect.CleanUpKey();
 									animationParts.Deform.CleanUpKey();
-#if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
-#else
-									parts.CountVertexDeform = 0;
-#endif
 									animationParts.Shader.CleanUpKey();
 									break;
 
@@ -3114,11 +3060,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Instance.CleanUpKey();
 									animationParts.Effect.CleanUpKey();
 									animationParts.Deform.CleanUpKey();
-#if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
-#else
-									parts.CountVertexDeform = 0;
-#endif
 									animationParts.Shader.CleanUpKey();
 									break;
 
@@ -3161,11 +3103,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Instance.CleanUpKey();
 									animationParts.Effect.CleanUpKey();
 									animationParts.Deform.CleanUpKey();
-#if CHANGE_DEFORM_DECODING
 									parts.FlagDeform = false;
-#else
-									parts.CountVertexDeform = 0;
-#endif
 									animationParts.Shader.CleanUpKey();
 									break;
 
@@ -3193,25 +3131,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									animationParts.Instance.CleanUpKey();
 									animationParts.Effect.CleanUpKey();
 
-#if CHANGE_DEFORM_DECODING
 									int countVertexCell = 0;
-#else
-									/* MEMO: Reconfigure since there are cases where "number of Cell-Mesh's vertices" and "number of Deform-attribute's vertices" are different. */
-									{
-										int countVertexMesh = parts.CountVertexDeform;
-										if(0 < countVertexMesh)
-										{	/* use "Deform" */
-											int count = animationParts.Deform.CountGetKey();
-											Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform dataDeform = new Library_SpriteStudio6.Data.Animation.Attribute.Importer.DataDeform();
-											for(int j=0; j<count; j++)
-											{
-												dataDeform = animationParts.Deform.ListKey[j].Value;
-												dataDeform.CountVertexMesh = countVertexMesh;
-												animationParts.Deform.ListKey[j].Value = dataDeform;
-											}
-										}
-									}
-#endif
 
 									/* MEMO: Since Mesh's cell is set in "Setup" animation, can not be changed for each animation. */
 									/*       But just in case, get mesh count each animation.                                      */
@@ -3236,7 +3156,6 @@ public static partial class LibraryEditor_SpriteStudio6
 										}
 									}
 
-#if CHANGE_DEFORM_DECODING
 									/* MEMO: Attribute"Deform" has dedicated normalizer. Because has unstable-data. */
 									if(0 < countVertexCell)
 									{
@@ -3247,8 +3166,6 @@ public static partial class LibraryEditor_SpriteStudio6
 											parts.FlagDeform |= true;
 										}
 									}
-#else
-#endif
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
@@ -5422,10 +5339,8 @@ public static partial class LibraryEditor_SpriteStudio6
 													}
 #endif
 
-#if PATCH_BONELIST_NOT_EXIST
 													if(0 < informationSSAE.ListBone.Count)
 													{
-#endif
 														int countBone;
 														string namePartsBone;
 														int idPartsBone;
@@ -5440,12 +5355,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																	idPartsBone = informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index;
 																	namePartsBone = informationSSAE.ListBone[idPartsBone];
 																	idPartsBone = informationSSAE.IndexGetParts(namePartsBone);
-#if BONEINDEX_CONVERT_PARTSID
-																	if(0 <= idPartsBone)
-																	{
-																		informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = idPartsBone;
-																	}
-#else
+
 																	/* MEMO: Before SS 6.2 (SSAE 2.00.03) this correcting is not necessary.                           */
 																	/*       After SS 6.3 (SSAE 2.00.04) the CatalogParts.ListIDPartsBone and bone-list(ListBone) are */
 																	/*        in different order, conversion is required.                                             */
@@ -5457,18 +5367,14 @@ public static partial class LibraryEditor_SpriteStudio6
 																			informationParts.Data.Mesh.TableVertex[j].TableBone[k].Index = indexCatalogBone;
 																		}
 																	}
-#endif
 																}
 															}
 														}
-#if PATCH_BONELIST_NOT_EXIST
 													}
-#endif
 												}
 											}
 										}
 
-#if CHANGE_DEFORM_DECODING
 										/* Set Vertex Count for Deform */
 										if(false == informationParts.FlagDeform)
 										{	/* not use "Deform" */
@@ -5478,24 +5384,6 @@ public static partial class LibraryEditor_SpriteStudio6
 										{
 											informationParts.Data.Mesh.CountVertexDeform = countVertexMesh;
 										}
-#else
-										/* Set Vertex Count for Deform */
-										int countVertexAttribute = informationParts.CountVertexDeform;
-										if(0 >= countVertexAttribute)
-										{	/* not use "Deform" */
-											informationParts.Data.Mesh.CountVertexDeform = 0;
-										}
-										else
-										{
-#if WARN_MESHVERTEX_COUNT
-											if(countVertexMesh != countVertexAttribute)
-											{
-												LogWarning(messageLogPrefix, "Mesh-Bind's vertices count is different from Cell's vertices count. Parts[" + informationSSAE.TableParts[i].Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
-											}
-#endif
-											informationParts.Data.Mesh.CountVertexDeform = countVertexMesh;
-										}
-#endif
 									}
 								}
 								break;
