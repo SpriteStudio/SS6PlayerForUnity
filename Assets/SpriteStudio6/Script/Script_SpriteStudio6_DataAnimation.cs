@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 // #define STORE_ANIMATIONSETUP_FULL
 
 using System.Collections;

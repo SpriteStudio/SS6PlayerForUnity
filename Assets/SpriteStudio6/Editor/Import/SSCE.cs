@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -345,14 +346,20 @@ public static partial class LibraryEditor_SpriteStudio6
 													Information.Texture informationTexture
 												)
 			{	/* MEMO: In each import mode, texture is shared. */
-//				const string messageLogPrefix = "Create Asset(Texture)";
+				const string messageLogPrefix = "Create Asset(Texture)";
 
 				/* Copy into Asset */
 				string namePathAssetNative = LibraryEditor_SpriteStudio6.Utility.File.PathGetAssetNative(informationTexture.PrefabTexture.TableName[0]);
-				LibraryEditor_SpriteStudio6.Utility.File.FileCopyToAsset(	namePathAssetNative,
-																			informationTexture.FileNameGetFullPath(),
-																			true
-																		);
+				string namePathTexture = informationTexture.FileNameGetFullPath();
+				if(false == LibraryEditor_SpriteStudio6.Utility.File.FileCopyToAsset(	namePathAssetNative,
+																						namePathTexture,
+																						true
+																				)
+				)
+				{
+					LogError(messageLogPrefix, "File Not Found", namePathTexture, informationSSPJ);
+					goto AssetCreateTexture_ErrorEnd;
+				}
 
 				/* Set Texture-Importer */
 				if(null == informationTexture.PrefabTexture.TableData[0])
@@ -1077,6 +1084,31 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				CellMapSetTexture_ErrorEnd:;
 					return(false);
+				}
+				#endregion Functions
+			}
+
+			public static partial class ModeUnityUI
+			{
+				/* MEMO: Currently, specifications are same as "ModeUnityNative", but functions are */
+				/*         kept separate because the detailed rules are likely to change.           */
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public static bool ConvertCellMap(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													LibraryEditor_SpriteStudio6.Import.SSCE.Information informationSSCE
+												)
+				{
+					return(ModeUnityNative.ConvertCellMap(ref setting, informationSSPJ, informationSSCE));
+				}
+
+				public static bool CellMapSetTexture(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+														int indexTexture
+													)
+				{
+					return(ModeUnityNative.CellMapSetTexture(ref setting, informationSSPJ, indexTexture));
 				}
 				#endregion Functions
 			}

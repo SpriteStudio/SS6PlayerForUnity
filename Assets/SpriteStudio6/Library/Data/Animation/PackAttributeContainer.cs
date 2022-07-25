@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 #define REDUCE_FREQUENCY_BINARYTREE
 
 using System.Collections;

@@ -18,11 +18,11 @@ half4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	half4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
 	PixelSynthesizeExternalAlpha(pixel.a, _AlphaTex, input.Texture00UV.xy, _EnableExternalAlpha);
 
+	/* MEMO: No "Part-Color" is applied to "Effect". */
+
 	/* Blending Vertex-Color & Check Discarding-Pixel */
 	/* MEMO: Once pixel's alpha has been determined, Need to run "PixelDiscardAlpha". */
 	pixel *= input.ColorMain;
-
-	/* MEMO: No "Part-Color" is applied to "Effect". */
 
 	/* Finalize color */
 	PixelSolvePMA(pixel, pixel.a);

@@ -5,7 +5,12 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 #define MESSAGE_DATAVERSION_INVALID
+#define SUPPORT_TIMELINE
+#if UNITY_EDITOR
+#define SUPPORT_PREVIEW
+#endif
 
 using System.Collections;
 using System.Collections.Generic;
@@ -18,32 +23,65 @@ using RandomGenerator = Library_SpriteStudio6.Utility.Random.XorShift32;
 
 [ExecuteInEditMode]
 [System.Serializable]
+#if SUPPORT_TIMELINE
+public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Script.Root, UnityEngine.Timeline.ITimeControl
+#else
 public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Script.Root
+#endif
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
 	public Script_SpriteStudio6_DataEffect DataEffect;
 
-	public Library_SpriteStudio6.Control.Effect ControlEffect;
+	[System.NonSerialized] public Library_SpriteStudio6.Control.Effect ControlEffect;
 
 	public int LimitParticleDraw;
 	internal int CountParticleMax = 0;	/* use only Highest-Parent-Root */
 
 	private FlagBitStatus Status = FlagBitStatus.CLEAR;
-	internal bool StatusIsValid
+	public bool StatusIsValid
 	{
 		get
 		{
 			return(0 != (Status & FlagBitStatus.VALID));
 		}
 	}
-	internal bool StatusIsPlaying
+	public bool StatusIsPlaying
 	{
 		get
 		{
 			return(0 != (Status & FlagBitStatus.PLAYING));
 		}
 	}
+#if SUPPORT_PREVIEW
+	public bool StatusIsControlledPreview
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CONTROLLED_PREVIEW));
+		}
+		set
+		{
+			if(true == value)
+			{
+				Status |= FlagBitStatus.CONTROLLED_PREVIEW;
+			}
+			else
+			{
+				Status &= ~FlagBitStatus.CONTROLLED_PREVIEW;
+			}
+		}
+	}
+#endif
+#if SUPPORT_TIMELINE
+	public bool StatusIsControlledTimeline
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CONTROLLED_TIMELINE));
+		}
+	}
+#endif
 	internal bool StatusIsPlayingInfinity
 	{
 		get
@@ -131,17 +169,23 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 	/* MEMO: Status of animation's play-track are diverted. (Since wasteful of redefine same content) */
 	/* MEMO: "Effect" have no multi-track playing capcity. */
+	/* MEMO: "public" for Editor(Inspector) */
 	internal Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus StatusPlaying;
-	internal float TimePerFrame;
+	[System.NonSerialized] public float TimePerFrame;
 	internal float TimeElapsed;
 	public float RateTime;
 
-	internal float Frame;
-	internal float FrameRange;
+	[System.NonSerialized] public float Frame;
+	[System.NonSerialized] public float FrameRange;
 	internal float FramePerSecond;
 
-	private Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionExecTimeElapse = FunctionTimeElapseDefault;
-	internal Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionTimeElapse
+#if SUPPORT_TIMELINE
+	protected double TimePreviousTimeline = double.NaN;
+	protected float TimeElapsedTimeline = float.NaN;
+#endif
+
+	private Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionExecTimeElapse = null;
+	public Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionTimeElapse
 	{
 		get
 		{
@@ -152,7 +196,12 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			FunctionExecTimeElapse = (null != value) ? value : FunctionTimeElapseDefault;
 		}
 	}
+
 	internal Library_SpriteStudio6.CallBack.FunctionPlayEndEffect FunctionPlayEnd = null;
+
+#if SUPPORT_TIMELINE
+	internal Library_SpriteStudio6.CallBack.FunctionTimelineEffect FunctionTimeline = null;
+#endif
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -202,6 +251,13 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 		FunctionBootUpDataEffect();
 
+		/* Initialize "Elapsed-Time" CallBaks */
+		/* MEMO: "null" is "Set Default-Function". */
+		if(null == FunctionTimeElapse)
+		{
+			FunctionTimeElapse = null;
+		}
+
 		/* Start Base-Class */
 		BaseStart();
 
@@ -240,6 +296,40 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 	void LateUpdate()
 	{
+#if SUPPORT_PREVIEW
+		if(0 != (Status & FlagBitStatus.CONTROLLED_PREVIEW))
+		{	/* not in Preview */
+			return;
+		}
+#endif
+
+#if UNITY_EDITOR
+		/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
+		if(false == EditorApplication.isPlaying)
+		{
+			LateUpdateEnter(0.0f);
+		}
+		else
+		{
+			LateUpdateEnter(1.0f);
+		}
+#else
+		LateUpdateEnter(1.0f);
+#endif
+	}
+#if SUPPORT_PREVIEW
+	public void LateUpdatePreview()
+	{
+		if(0 == (Status & FlagBitStatus.CONTROLLED_PREVIEW))
+		{	/* not in Preview */
+			return;
+		}
+
+		LateUpdateEnter(1.0f);
+	}
+#endif
+	void LateUpdateEnter(float rateTimeElapsedForce)
+	{	/* MEMO: "rateTimeElapsedForce" is used to switch between advancing/stopping time on the editor. */
 		if(null == InstanceRootParent)
 		{
 			/* MEMO: Execute only at the "Highest Parent(not under anyone's control)"-Root part.         */
@@ -247,14 +337,17 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			if(true == RendererBootUpDraw(false))
 			{
 				Matrix4x4 matrixInverseMeshRenderer = InstanceMeshRenderer.localToWorldMatrix.inverse;
-				float timeElapsed = FunctionExecTimeElapse(this);
 #if UNITY_EDITOR
-				/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
-				if(false == EditorApplication.isPlaying)
+				float timeElapsed = 0.0f;
+				if(null != FunctionExecTimeElapse)
 				{
-					timeElapsed = 0.0f;
+					timeElapsed = FunctionExecTimeElapse(this);
 				}
+#else
+				float timeElapsed = FunctionExecTimeElapse(this);
 #endif
+				timeElapsed *= rateTimeElapsedForce;
+
 				LateUpdateMain(	timeElapsed,
 								false,
 								Library_SpriteStudio6.KindMasking.THROUGH,	/* FOLLOW_DATA */
@@ -307,7 +400,19 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 		else
 		{	/* Dependent */
-			Frame = Mathf.Clamp(Frame, 0.0f, FrameRange);
+			if(0 != (Status & FlagBitStatus.CONTROLLED_PREVIEW))
+			{	/* in Preview */
+				/* MEMO: Repeat infinitely only in preview. */
+				if(FrameRange <= Frame)
+				{	/* over range */
+					TimeElapsed %= (TimePerFrame * (float)FrameRange);
+					Frame = TimeElapsed * FramePerSecond;
+				}
+			}
+			else
+			{	/* in Normal-Play */
+				Frame = Mathf.Clamp(Frame, 0.0f, FrameRange);
+			}
 		}
 
 		/* Recover Draw-Cluster & Component for Rendering */
@@ -343,6 +448,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			/* Clear Mesh */
 			MeshCombined.Clear();
 			MeshCombined.name = NameBatchedMesh;
+			MeshCombined.hideFlags = HideFlags.DontSave;
 
 			if(false == flagHide)
 			{
@@ -373,10 +479,72 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 	void OnDestroy()
 	{
-		/* Material-Cache shut-down */
+		/* Shut-down Material-Cache */
+		/* MEMO: Since child-animation's materials is also shut down comprehensively, */
+		/*         need to be executed before BaseShutDown.                           */
 		CacheShutDownMaterial();
+
+		/* Shut-down base */
+		base.BaseShutDown();
 	}
 	#endregion MonoBehaviour-Functions
+
+	/* ----------------------------------------------- ITimeControl-Functions */
+	#region ITimeControl-Functions
+#if SUPPORT_TIMELINE
+	public void OnControlTimeStart()
+	{
+		/* MEMO: Just in case, Call initialization. */
+		Start();
+
+		TimePreviousTimeline = 0.0;	/* Busy */
+		TimeElapsedTimeline = 0.0f;
+		Status |= FlagBitStatus.CONTROLLED_TIMELINE;
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			/* MEMO: In this case, return value is ignored. */
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.START, float.NaN , double.NaN);
+		}
+	}
+
+	public void OnControlTimeStop()
+	{
+		TimePreviousTimeline = double.NaN;	/* Not busy */
+		TimeElapsedTimeline = float.NaN;
+		Status &= ~FlagBitStatus.CONTROLLED_TIMELINE;
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			if(false == FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.END, float.NaN, double.NaN))
+			{
+				/* MEMO: When "FunctionTimeline" (call at the end) returns false, destroy self. */
+				/*       If have "Control-Object", will destroy as well.                        */
+				/*       However, can not destroy when "Instance".                              */
+				SelfDestroy();
+			}
+		}
+	}
+
+	public void SetTime(double time)
+	{
+		/* Calculate delta-Time */
+		TimeElapsedTimeline = (float)(time - TimePreviousTimeline);
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			/* MEMO: In this case, return value is ignored. */
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.START, TimeElapsedTimeline, time);
+		}
+
+		/* Update Time */
+		TimePreviousTimeline = time;
+	}
+#endif
+	#endregion ITimeControl-Functions
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
@@ -479,7 +647,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		return(RandomKeyMakeID + (uint)SecNow.TotalSeconds);
 	}
 
-	internal void TimeSkip(float time, bool flagReverseParent)
+	public void TimeSkip(float time, bool flagReverseParent)
 	{	/* MEMO: In principle, This Function is for calling from "Library_SpriteStudio6.Control.Animation.Parts.DrawEffect". */
 		TimeElapsed = time;
 	}
@@ -494,8 +662,12 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 	/* Part: SpriteStudio6/Script/RootEffect/FunctionMaterial.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionMisc.cs */
 
-	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_RootEffect scriptRoot)
+	private float FunctionTimeElapseDefault(Script_SpriteStudio6_RootEffect scriptRoot)
 	{
+		if(true == StatusIsControlledTimeline)
+		{
+			return(TimeElapsedTimeline);
+		}
 		return(Time.deltaTime);
 	}
 	#endregion Functions
@@ -525,6 +697,9 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		CHANGE_TABLEMATERIAL = 0x00800000,
 		CHANGE_CELLMAP = 0x00400000,
 		CHANGE_CACHEMATERIAL = 0x00200000,
+
+		CONTROLLED_PREVIEW = 0x00020000,
+		CONTROLLED_TIMELINE = 0x00010000,
 
 		CLEAR = 0x00000000,
 	}

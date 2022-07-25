@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 #define DEFORM_CALCULATE_STRICT
 
 using System.Collections;

@@ -5,6 +5,9 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
+#define SUPPORT_PREVIEW
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -22,12 +25,47 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 
 	private SerializedProperty PropertyHideForce;
 	private SerializedProperty PropertyLimitParticle;
+
+#if SUPPORT_PREVIEW
+	/* WorkArea (for Preview) */
+	private LibraryEditor_SpriteStudio6.Utility.Inspector.Preview InstancePreview;
+	private Script_SpriteStudio6_RootEffect InstanceRootPreview = null;
+	private float TimeElapsedPreview = float.NaN;
+//	private float ScaleAnimationPreview = 1.0f;
+
+	private bool FlagFoldOutInterfaces = false;
+	private bool FlagPlayAnimationPreview = false;
+#endif
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
+	private void CleanUp()
+	{
+		InstanceRoot = null;
+
+//		PropertyDataCellMap
+//		PropertyDataEffect
+//		PropertyHolderAsset
+//
+//		PropertyHideForce
+//		PropertyLimitParticle
+
+#if SUPPORT_PREVIEW
+		InstancePreview = null;
+		InstanceRootPreview = null;
+		TimeElapsedPreview = float.NaN;
+//		ScaleAnimationPreview = 1.0f;
+
+		FlagFoldOutInterfaces = false;
+		FlagPlayAnimationPreview = false;
+#endif
+	}
+
 	private void OnEnable()
 	{
+		CleanUp();
+
 		InstanceRoot = (Script_SpriteStudio6_RootEffect)target;
 
 		serializedObject.FindProperty("__DUMMY__");
@@ -92,5 +130,186 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 
 		serializedObject.ApplyModifiedProperties();
 	}
+
+#if SUPPORT_PREVIEW
+	private void OnDisable()
+	{
+		if(null != InstancePreview)
+		{
+			InstancePreview.Dispose();
+		}
+
+		CleanUp();
+	}
+#endif
 	#endregion Functions
+
+#if SUPPORT_PREVIEW
+	/* ----------------------------------------------- Functions-forPreview */
+	#region Functions-forPreview
+	public override bool HasPreviewGUI()
+	{
+		return(true);
+	}
+
+	public override GUIContent GetPreviewTitle()
+	{
+		return(TitlePreview);
+	}
+
+	public override bool RequiresConstantRepaint()
+	{
+		/* MEMO: Update frequently only during playing preview animation. */
+		return(FlagPlayAnimationPreview);
+	}
+
+	public override void OnPreviewSettings()
+	{
+		if(null == InstanceRootPreview)
+		{
+			return;
+		}
+		if(false == InstanceRootPreview.StatusIsValid)
+		{
+			return;
+		}
+
+		/* "Fold-out" Buttoons */
+		FlagFoldOutInterfaces = UnityEngine.GUILayout.Toggle(	FlagFoldOutInterfaces,
+																(true == FlagFoldOutInterfaces) ? EditorGUIUtility.IconContent("ArrowNavigationLeft") : EditorGUIUtility.IconContent("ArrowNavigationRight"),
+																(UnityEngine.GUIStyle)"preButton"
+														);
+		if(false == FlagFoldOutInterfaces)
+		{	/* Show Interfaces */
+			if(null != InstanceRootPreview)
+			{
+				/* "Play" Button */
+				FlagPlayAnimationPreview = UnityEngine.GUILayout.Toggle(	FlagPlayAnimationPreview,
+																			(true == FlagPlayAnimationPreview) ? EditorGUIUtility.IconContent("preAudioPlayOn") : EditorGUIUtility.IconContent("preAudioPlayOff"),
+																			(UnityEngine.GUIStyle)"preButton"
+																	);
+
+				Script_SpriteStudio6_DataEffect dataEffect = InstanceRootPreview.DataEffect;
+				if(null == dataEffect)
+				{
+					return;
+				}
+
+				/* "Frame" Textbox */
+				{
+					const int widthBox = 60;
+					int frameAnimation = (int)InstanceRootPreview.Frame;
+
+					if(false == FlagPlayAnimationPreview)
+					{	/* Stopping */
+						/* MEMO: Can specify Frame-No. */
+						int frameAnimationNew = EditorGUILayout.DelayedIntField(frameAnimation, GUILayout.Width(widthBox));
+						if(frameAnimation != frameAnimationNew)
+						{
+							int frameLimit = 0;
+							if(frameLimit > frameAnimationNew)
+							{
+								frameAnimationNew = frameLimit;
+							}
+							frameLimit = (int)InstanceRootPreview.FrameRange - 1;
+							if(frameLimit < frameAnimationNew)
+							{
+								frameAnimationNew = frameLimit;
+							}
+
+							const float adjustTimeMargin = 0.0001f;	/* 1/1000[sec] */
+							float timeElapsed =	(	frameAnimationNew
+													* InstanceRootPreview.TimePerFrame
+												) + adjustTimeMargin;
+							InstanceRootPreview.TimeSkip(timeElapsed, false);
+						}
+					}
+					else
+					{	/* Playing */
+						/* MEMO: Just display Frame-No. */
+						EditorGUILayout.LabelField(frameAnimation.ToString(), GUILayout.Width(widthBox));
+					}
+				}
+
+				/* "Scale" Slide-bar */
+//				ScaleAnimationPreview = GUILayout.HorizontalSlider(ScaleAnimationPreview, 0.5f, 2.0f, (GUIStyle)"preSlider", (GUIStyle)"preSliderThumb");
+			}
+		}
+	}
+
+	public override void OnPreviewGUI(Rect rect, GUIStyle background)
+	{
+		if(null == InstanceRoot)
+		{
+			return;
+		}
+
+		/* Check booted-up */
+		if(null == InstancePreview)
+		{	/* Preview-Scene */
+			InstancePreview = new LibraryEditor_SpriteStudio6.Utility.Inspector.Preview();
+		}
+		if(null == InstanceRootPreview)
+		{	/* Animation */
+			if(null == InstancePreview.GameObjectAnimation)
+			{
+				InstancePreview.Create(InstanceRoot.gameObject);
+			}
+
+			InstanceRootPreview = InstancePreview.GameObjectAnimation.GetComponent<Script_SpriteStudio6_RootEffect>();
+			if(null == InstanceRootPreview)
+			{
+				return;
+			}
+
+			/* Set Initial Animation */
+			InstanceRootPreview.AnimationPlay();
+
+			/* Set CallBack-s */
+			InstanceRootPreview.FunctionTimeElapse = FunctionTimeElapseEffect;
+
+			/* Set CallBack-s & Status */
+			/* MEMO: Keep animation from running automatically. (2 updates run: scene lifecycle and manual) */
+			InstanceRootPreview.StatusIsControlledPreview = true;
+			InstanceRootPreview.enabled = false;
+		}
+
+		/* Update Scene & Objects */
+		InstancePreview.Update();
+		TimeElapsedPreview = InstancePreview.TimeElapsed;
+
+		InstanceRootPreview.LateUpdatePreview();
+
+		/* Render Preview-Scene */
+		InstancePreview.Render();
+
+		/* Update Preview-Window */
+		{
+			base.OnPreviewGUI(rect, background);
+
+			UnityEngine.Texture textureTarget = InstancePreview.TextureTarget;
+			if(null != textureTarget)
+			{
+				GUI.DrawTexture(rect, textureTarget, ScaleMode.ScaleToFit);
+			}
+		}
+	}
+
+	private float FunctionTimeElapseEffect(Script_SpriteStudio6_RootEffect scriptRoot)
+	{
+		if(false == FlagPlayAnimationPreview)
+		{
+			return(0.0f);
+		}
+		return(TimeElapsedPreview);
+	}
+	#endregion Functions-forPreview
+#endif
+
+	/* ----------------------------------------------- Enums & Constants */
+	#region Enums & Constants
+#if SUPPORT_PREVIEW
+	private readonly static GUIContent TitlePreview = new GUIContent("Preview [Script_SpriteStudio6_RootEffect]");
+#endif
+	#endregion Enums & Constants
 }
