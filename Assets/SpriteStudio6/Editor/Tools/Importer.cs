@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,11 +20,14 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	private static PullDownPackAttribute PullDownPackAttributeAnimation;	/* = new PullDownPackAttribute(); */
 
 	/* Work-Area */
+	private static string PathFolderHolderAssetSS6PU = string.Empty;
+	private static UnityEngine.Object ObjectFolderHolderAssetSS6PU = null;
+
 	private static string PathFolderMaterialUnityNative = string.Empty;
 	private static UnityEngine.Object ObjectFolderMaterialUnityNative = null;
 
-	private static string PathFolderHolderAssetSS6PU = string.Empty;
-	private static UnityEngine.Object ObjectFolderHolderAssetSS6PU = null;
+	private static string PathFolderMaterialUnityUI = string.Empty;
+	private static UnityEngine.Object ObjectFolderMaterialUnityUI = null;
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
@@ -54,6 +58,10 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
 				ModeUnityNative(levelIndent);
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				ModeUnityUI(levelIndent);
 				break;
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.BATCH_IMPORTER:
@@ -428,6 +436,60 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.Space();
 	}
 
+	void ModeUnityUI(int levelIndent)
+	{
+		SettingOption.ModeUnityUI.FlagFoldOutCaution = EditorGUILayout.Foldout(SettingOption.ModeUnityUI.FlagFoldOutCaution, "Cautions");
+		if(true == SettingOption.ModeUnityUI.FlagFoldOutCaution)
+		{
+			FoldOutExecCaution(levelIndent + 1);
+			EditorGUI.indentLevel = levelIndent;
+		}
+		EditorGUILayout.Space();
+
+		SettingOption.ModeUnityUI.FlagFoldOutBasic = EditorGUILayout.Foldout(SettingOption.ModeUnityUI.FlagFoldOutBasic, "Options: Basic");
+		if(true == SettingOption.ModeUnityUI.FlagFoldOutBasic)
+		{
+			FoldOutExecBasic(levelIndent + 1);
+			EditorGUI.indentLevel = levelIndent;
+		}
+
+
+		EditorGUILayout.Space();
+		SettingOption.ModeUnityUI.FlagOpenAdvancedOprions = EditorGUILayout.Foldout(SettingOption.ModeUnityUI.FlagOpenAdvancedOprions, "Advanced Options");
+		if(true == SettingOption.ModeUnityUI.FlagOpenAdvancedOprions)
+		{
+			levelIndent++;
+			EditorGUI.indentLevel = levelIndent;
+
+			SettingOption.ModeUnityUI.FlagFoldOutRuleNameAsset = EditorGUILayout.Foldout(SettingOption.ModeUnityUI.FlagFoldOutRuleNameAsset, "Advanced Options: Naming Assets");
+			if(true == SettingOption.ModeUnityUI.FlagFoldOutRuleNameAsset)
+			{
+				FoldOutExecRuleNameAsset(levelIndent + 1);
+				EditorGUI.indentLevel = levelIndent;
+			}
+
+			SettingOption.ModeUnityUI.FlagFoldOutRuleNameAssetFolder = EditorGUILayout.Foldout(SettingOption.ModeUnityUI.FlagFoldOutRuleNameAssetFolder, "Advanced Options: Naming Asset-Foldes");
+			if(true == SettingOption.ModeUnityUI.FlagFoldOutRuleNameAssetFolder)
+			{
+				FoldOutExecRuleNameAssetFolder(levelIndent + 1);
+				EditorGUI.indentLevel = levelIndent;
+			}
+
+			SettingOption.ModeUnityUI.FlagFoldOutPresetMaterial = EditorGUILayout.Foldout(SettingOption.ModeUnityUI.FlagFoldOutPresetMaterial, "Advanced Options: Preset Material");
+			if(true == SettingOption.ModeUnityUI.FlagFoldOutPresetMaterial)
+			{
+				FoldOutExecPresetMaterial(levelIndent + 1);
+				EditorGUI.indentLevel = levelIndent;
+			}
+
+			levelIndent--;
+			EditorGUI.indentLevel = levelIndent;
+		}
+
+		EditorGUILayout.Space();
+		EditorGUILayout.Space();
+	}
+
 	private void ModeBatchImporter(int levelIndent)
 	{
 		EditorGUI.indentLevel = levelIndent;
@@ -476,10 +538,32 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 		SettingImport.Basic.FlagCreateControlGameObject = EditorGUILayout.ToggleLeft("Create Control-Prefab", SettingImport.Basic.FlagCreateControlGameObject);
 		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("\"Control-Prefab\" is GameObject attached the script for Auto-Instantiate Body-Prefab.");
-		EditorGUILayout.LabelField(" (\"Script_SpriteStudio_ControlPrefab.cs\")");
+		EditorGUILayout.LabelField("\"Control-Prefab\" is that empty-GameObject with");
+		EditorGUILayout.LabelField("  animation-object prefab placed on child. (Nested-Prefab)");
 		EditorGUI.indentLevel = levelIndent;
 		EditorGUILayout.Space();
+
+#if UNITY_2019_1_OR_NEWER
+		EditorGUI.BeginDisabledGroup(!(SettingImport.Basic.FlagCreateControlGameObject));
+		{
+			levelIndent += 1;
+			EditorGUI.indentLevel = levelIndent;
+
+			SettingImport.Basic.FlagNestedPrefabUseScript = EditorGUILayout.ToggleLeft("Use Script for \"Control-Prefab\"", SettingImport.Basic.FlagNestedPrefabUseScript);
+			EditorGUI.indentLevel = levelIndent + 1;
+			EditorGUILayout.LabelField("If checked, \"Script_SpriteStudio6_ControlPrefab\" component is used to");
+			EditorGUILayout.LabelField("  expand nested-prefabs in \"Control-Prefab\".");
+			EditorGUILayout.LabelField("This option is to output the same as Ver.2.0.x or earlier. (Default: Unchecked)");
+			EditorGUI.indentLevel = levelIndent;
+			EditorGUILayout.Space();
+
+			levelIndent -= 1;
+			EditorGUI.indentLevel = levelIndent;
+		}
+		EditorGUI.EndDisabledGroup();
+#else
+		SettingImport.Basic.FlagNestedPrefabUseScript = true;	/* Force */
+#endif
 
 		SettingImport.Basic.FlagCreateProjectFolder = EditorGUILayout.ToggleLeft("Create Project Folder", SettingImport.Basic.FlagCreateProjectFolder);
 		EditorGUI.indentLevel = levelIndent + 1;
@@ -533,6 +617,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.Space();
 				break;
 
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				SettingImport.Basic.FlagIgnoreSetup = EditorGUILayout.ToggleLeft("Ignore \"Setup\" Animation", SettingImport.Basic.FlagIgnoreSetup);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+				break;
+
 			default:
 				break;
 		}
@@ -551,45 +641,59 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	}
 
 	private void FoldOutExecCaution(int levelIndent)
-	{	/* MEMO: only "Unity-Native" Mode */
-		EditorGUI.indentLevel = levelIndent;
-		EditorGUILayout.LabelField("In this mode, only the following Animation-Part-Types can be used.");
-		EditorGUILayout.LabelField("(Other Part-Types are ignored)");
+	{
+		switch(SettingImport.Mode)
+		{
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
+				break;
 
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("- root");
-		EditorGUILayout.LabelField("- NULL");
-		EditorGUILayout.LabelField("- Normal");
-		EditorGUILayout.LabelField("- Mask");
-		EditorGUILayout.LabelField("- Mesh");
-		EditorGUI.indentLevel = levelIndent;
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.LabelField("In this mode, only the following Animation-Part-Types can be used.");
+				EditorGUILayout.LabelField("(Other Part-Types are ignored)");
 
-		EditorGUILayout.Space();
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("- root");
+				EditorGUILayout.LabelField("- NULL");
+				EditorGUILayout.LabelField("- Normal");
+				EditorGUILayout.LabelField("- Mask");
+				EditorGUILayout.LabelField("- Mesh");
+				EditorGUI.indentLevel = levelIndent;
 
-		EditorGUILayout.LabelField("In this mode, only the following Animation-Attributes can be used.");
-		EditorGUILayout.LabelField("(Other Attributes are ignored)");
+				EditorGUILayout.Space();
 
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("- Reference Cell");
-		EditorGUILayout.LabelField("- X Position");
-		EditorGUILayout.LabelField("- Y Position");
-		EditorGUILayout.LabelField("- Z Axis Rotation");
-		EditorGUILayout.LabelField("- X Scale");
-		EditorGUILayout.LabelField("- Y Scale");
-		EditorGUILayout.LabelField("- X Local Scale (Ignored for \"Mask\" parts)");
-		EditorGUILayout.LabelField("- Y Local Scale (Ignored for \"Mask\" parts)");
-		EditorGUILayout.LabelField("- Opacity");
-		EditorGUILayout.LabelField("- Local Opacity");
-		EditorGUILayout.LabelField("- Priority");
-		EditorGUILayout.LabelField("- Hide");
-		EditorGUILayout.LabelField("- Parts Color");
-		EditorGUILayout.LabelField("- Vertex Deformation (Ignored for \"Mask\" parts)");
-		EditorGUILayout.LabelField("- Mask Power");
-		EditorGUILayout.LabelField("- User Data (Only \"Numeric\" and \"String\" are valid)");
-		EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.LabelField("In this mode, only the following Animation-Attributes can be used.");
+				EditorGUILayout.LabelField("(Other Attributes are ignored)");
 
-		EditorGUILayout.Space();
-		EditorGUILayout.Space();
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("- Reference Cell");
+				EditorGUILayout.LabelField("- X Position");
+				EditorGUILayout.LabelField("- Y Position");
+				EditorGUILayout.LabelField("- Z Axis Rotation");
+				EditorGUILayout.LabelField("- X Scale");
+				EditorGUILayout.LabelField("- Y Scale");
+				EditorGUILayout.LabelField("- X Local Scale (Ignored for \"Mask\" parts)");
+				EditorGUILayout.LabelField("- Y Local Scale (Ignored for \"Mask\" parts)");
+				EditorGUILayout.LabelField("- Opacity");
+				EditorGUILayout.LabelField("- Local Opacity");
+				EditorGUILayout.LabelField("- Priority");
+				EditorGUILayout.LabelField("- Hide");
+				EditorGUILayout.LabelField("- Parts Color");
+				EditorGUILayout.LabelField("- Vertex Deformation (Ignored for \"Mask\" parts)");
+				EditorGUILayout.LabelField("- Mask Power");
+				EditorGUILayout.LabelField("- User Data (Only \"Numeric\" and \"String\" are valid)");
+				EditorGUI.indentLevel = levelIndent;
+
+				EditorGUILayout.Space();
+				EditorGUILayout.Space();
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.BATCH_IMPORTER:
+				break;
+		}
 	}
 
 	private void FoldOutExecCollision(int levelIndent)
@@ -719,6 +823,14 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
+				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-UI\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Prefab", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityUI);
+				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityUI);
+				EditorGUILayout.LabelField("Material", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityUI);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
 				SettingImport.RuleNameAsset.Adjust();
 
 				SettingOption.ModeSS6PU.FlagFoldOutRuleNameAssetSample = EditorGUILayout.Foldout(SettingOption.ModeSS6PU.FlagFoldOutRuleNameAssetSample, "State of Assets-Naming");
@@ -767,6 +879,14 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
+				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-UI\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Prefab", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityUI);
+				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityUI);
+				EditorGUILayout.LabelField("Material", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityUI);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
 				SettingImport.RuleNameAsset.Adjust();
 
 				SettingOption.ModeUnityNative.FlagFoldOutRuleNameAssetSample = EditorGUILayout.Foldout(SettingOption.ModeUnityNative.FlagFoldOutRuleNameAssetSample, "State of Assets-Naming");
@@ -784,6 +904,60 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 					EditorGUILayout.LabelField("Material-Sprite2D: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_UNITYNATIVE, NameAssetBody, NameAssetSSPJ));
 					EditorGUILayout.LabelField("Material-Particle: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_UNITYNATIVE, NameAssetBody, NameAssetSSPJ));
+					EditorGUILayout.Space();
+
+					EditorGUILayout.LabelField("Texture: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, NameAssetBody, NameAssetSSPJ));
+
+					EditorGUI.indentLevel = levelIndent;
+				}
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"SS6Player for Unity\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Prefab-Animation", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationSS6PU);
+				EditorGUILayout.LabelField("Prefab-Effect", SettingImport.RuleNameAsset.NamePrefixPrefabEffectSS6PU);
+				EditorGUILayout.LabelField("Data-Project", SettingImport.RuleNameAsset.NamePrefixDataProjectSS6PU);
+				EditorGUILayout.LabelField("Data-CellMap", SettingImport.RuleNameAsset.NamePrefixDataCellMapSS6PU);
+				EditorGUILayout.LabelField("Data-Animation", SettingImport.RuleNameAsset.NamePrefixDataAnimationSS6PU);
+				EditorGUILayout.LabelField("Data-Effect", SettingImport.RuleNameAsset.NamePrefixDataEffectSS6PU);
+				EditorGUILayout.LabelField("Data-Sequence", SettingImport.RuleNameAsset.NamePrefixDataSequenceSS6PU);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
+				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityNative);
+				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAsset.NamePrefixPrefabParticleUnityNative);
+				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityNative);
+				EditorGUILayout.LabelField("Skinned-Mesh", SettingImport.RuleNameAsset.NamePrefixSkinnedMeshUnityNative);
+				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityNative);
+				EditorGUILayout.LabelField("Material-Particle", SettingImport.RuleNameAsset.NamePrefixMaterialParticleUnityNative);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
+				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-UI\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityUI = EditorGUILayout.TextField("Prefab", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityUI);
+				SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityUI = EditorGUILayout.TextField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityUI);
+				SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityUI = EditorGUILayout.TextField("Material", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityUI);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
+				SettingImport.RuleNameAsset.Adjust();
+
+				SettingOption.ModeUnityUI.FlagFoldOutRuleNameAssetSample = EditorGUILayout.Foldout(SettingOption.ModeUnityUI.FlagFoldOutRuleNameAssetSample, "State of Assets-Naming");
+				if(true == SettingOption.ModeUnityUI.FlagFoldOutRuleNameAssetSample)
+				{
+					EditorGUI.indentLevel = levelIndent + 1;
+
+					EditorGUILayout.LabelField("Prefab: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_UNITYUI, NameAssetBody, NameAssetSSPJ));
+					EditorGUILayout.Space();
+
+					EditorGUILayout.LabelField("Animation-Clip: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_UNITYUI, NameAssetBodyUnityUI, NameAssetSSPJ));
+					EditorGUILayout.Space();
+
+					EditorGUILayout.LabelField("Material: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_UNITYUI, NameAssetBody, NameAssetSSPJ));
 					EditorGUILayout.Space();
 
 					EditorGUILayout.LabelField("Texture: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, NameAssetBody, NameAssetSSPJ));
@@ -838,6 +1012,13 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
+				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-UI\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityUI);
+				EditorGUILayout.LabelField("Material", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityUI);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
 				SettingImport.RuleNameAsset.Adjust();
 				break;
 
@@ -862,6 +1043,45 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative = EditorGUILayout.TextField("Skinned-Mesh", SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative);
 				SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative = EditorGUILayout.TextField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative);
 				SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative = EditorGUILayout.TextField("Material-Particle", SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
+				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-UI\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityUI);
+				EditorGUILayout.LabelField("Material", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityUI);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"SS6Player for Unity\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Prefab-Animation", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationSS6PU);
+				EditorGUILayout.LabelField("Prefab-Effect", SettingImport.RuleNameAssetFolder.NameFolderPrefabEffectSS6PU);
+				EditorGUILayout.LabelField("Data-Project", SettingImport.RuleNameAssetFolder.NameFolderDataProjectSS6PU);
+				EditorGUILayout.LabelField("Data-CellMap", SettingImport.RuleNameAssetFolder.NameFolderDataCellMapSS6PU);
+				EditorGUILayout.LabelField("Data-Animation", SettingImport.RuleNameAssetFolder.NameFolderDataAnimationSS6PU);
+				EditorGUILayout.LabelField("Data-Effect", SettingImport.RuleNameAssetFolder.NameFolderDataEffectSS6PU);
+				EditorGUILayout.LabelField("Data-Sequence", SettingImport.RuleNameAssetFolder.NameFolderDataSequenceSS6PU);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
+				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-Native\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationUnityNative);
+				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative);
+				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityNative);
+				EditorGUILayout.LabelField("Skinned-Mesh", SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative);
+				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative);
+				EditorGUILayout.LabelField("Material-Particle", SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative);
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
+
+				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-UI\")");
+				EditorGUI.indentLevel = levelIndent + 1;
+				SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityUI = EditorGUILayout.TextField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityUI);
+				SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityUI = EditorGUILayout.TextField("Material", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityUI);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 				break;
@@ -986,6 +1206,9 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
 				break;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				break;
 		}
 	}
 
@@ -999,9 +1222,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
 				EditorGUI.indentLevel = levelIndent;
 
+				/* Message */
 				EditorGUILayout.LabelField("Set each blend-operation's materials.");
 				EditorGUILayout.Space();
 
+				/* Folder for recovery (when "Missing") */
 				{
 					/* Get folder containing preset-materials */
 					if(true == string.IsNullOrEmpty(PathFolderMaterialUnityNative))
@@ -1039,6 +1264,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				EditorGUILayout.Space();
 
+				/* Materials */
 				SettingImport.PresetMaterial.AnimationUnityNativeMix = EditorGUILayout.ObjectField("[Sprite]Mix", SettingImport.PresetMaterial.AnimationUnityNativeMix, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.AnimationUnityNativeAdd = EditorGUILayout.ObjectField("[Sprite]Add", SettingImport.PresetMaterial.AnimationUnityNativeAdd, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.AnimationUnityNativeSub = EditorGUILayout.ObjectField("[Sprite]Sub", SettingImport.PresetMaterial.AnimationUnityNativeSub, typeof(Material), false) as Material;
@@ -1069,7 +1295,59 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 				break;
 
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				EditorGUI.indentLevel = levelIndent;
+
+				/* Message */
+				EditorGUILayout.LabelField("Set each blend-operation's materials.");
+				EditorGUILayout.Space();
+
+				/* Folder for recovery (when "Missing") */
+				{
+					/* Get folder containing preset-materials */
+					if(true == string.IsNullOrEmpty(PathFolderMaterialUnityUI))
+					{
+						string path = SettingImport.PresetMaterial.PathFolderGetValidMaterialUI();
+						PathFolderMaterialUnityUI = path;
+						if(false == string.IsNullOrEmpty(PathFolderMaterialUnityUI))
+						{	/* Succeed & not empty path */
+							/* Get "Folder-Object" */
+							ObjectFolderMaterialUnityUI = LibraryEditor_SpriteStudio6.Utility.File.AssetFolderGetPath(path);
+							if(null == ObjectFolderMaterialUnityUI)
+							{
+								PathFolderMaterialUnityUI = null;
+							}
+						}
+					}
+
+					/* Reset materlals */
+					UnityEngine.Object objectFolderNow = EditorGUILayout.ObjectField("Base Folder", ObjectFolderMaterialUnityUI, typeof(UnityEngine.Object), false);
+					if(ObjectFolderMaterialUnityUI != objectFolderNow)
+					{	/* Object dropped */
+						string pathFolderNow = AssetDatabase.GetAssetPath(objectFolderNow);
+						if(true == AssetDatabase.IsValidFolder(pathFolderNow))
+						{	/* Object is Folder-assets */
+							PathFolderMaterialUnityUI = pathFolderNow;
+							ObjectFolderMaterialUnityUI = objectFolderNow;
+
+							if(false == string.IsNullOrEmpty(PathFolderMaterialUnityUI))
+							{
+								SettingImport.PresetMaterial.AssetRecover(PathFolderMaterialUnityUI);
+							}
+						}
+					}
+				}
+
+				EditorGUILayout.Space();
+
+				/* Materials */
+				SettingImport.PresetMaterial.AnimationUnityUI = EditorGUILayout.ObjectField("[Sprite]", SettingImport.PresetMaterial.AnimationUnityUI, typeof(Material), false) as Material;
+				EditorGUILayout.Space();
+				break;
+
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.BATCH_IMPORTER:
+				break;
+
 			default:
 				/* MEMO: Not reach here. */
 				break;
@@ -1083,6 +1361,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	{
 		"SpriteStudio6 Player",
 		"Convert To Unity-Native",
+		"Convert To Unity-UI",
 
 		"Batch Import",
 	};
@@ -1095,6 +1374,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	private const string NameAssetBody = "(FileName-Body)";
 	private const string NameAssetBodyUnityNative = "(FileName-Body)_(Animation-Name)";
 	private const string NameAssetPartsUnityNative = "(Part-Name)";
+	private const string NameAssetBodyUnityUI = "(FileName-Body)_(Animation-Name)";
 	private const string NameAssetSSPJ = "(SSPJ-Name)";
 	#endregion Enums & Constants
 
@@ -1106,6 +1386,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		#region Variables & Properties
 		public GroupSS6PU ModeSS6PU;
 		public GroupUnityNative ModeUnityNative;
+		public GroupUnityUI ModeUnityUI;
 		public GroupBatchImporter ModeBatchImporter;
 
 		public string NameFolderImportPrevious;
@@ -1392,6 +1673,98 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				false,	/* FlagFoldOutConfirmOverWrite */
 				false,	/* FlagFoldOutCollider */
 				false,	/* FlagFoldOutCheckVersion */
+				false,	/* FlagOpenAdvancedOprions */
+				false,	/* FlagFoldOutRuleNameAsset */
+				true,	/* FlagFoldOutRuleNameAssetSample */
+				false,	/* FlagFoldOutRuleNameAssetFolder */
+				false	/* FlagFoldOutPresetMaterial */
+			);
+			#endregion Enums & Constants
+		}
+
+		public struct GroupUnityUI
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			public bool FlagFoldOutCaution;
+			public bool FlagFoldOutBasic;
+
+			public bool FlagOpenAdvancedOprions;
+			public bool FlagFoldOutRuleNameAsset;
+			public bool FlagFoldOutRuleNameAssetSample;
+			public bool FlagFoldOutRuleNameAssetFolder;
+			public bool FlagFoldOutPresetMaterial;
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public GroupUnityUI(	bool flagFoldOutCaution,
+									bool flagFoldOutBasic,
+									bool flagOpenAdvancedOprions,
+									bool flagFoldOutRuleNameAsset,
+									bool flagFoldOutRuleNameAssetSample,
+									bool flagFoldOutRuleNameAssetFolder,
+									bool flagFoldOutPresetMaterial
+							)
+			{
+				FlagFoldOutCaution = flagFoldOutCaution;
+				FlagFoldOutBasic = flagFoldOutBasic;
+
+				FlagOpenAdvancedOprions = flagOpenAdvancedOprions;
+				FlagFoldOutRuleNameAsset = flagFoldOutRuleNameAsset;
+				FlagFoldOutRuleNameAssetSample = flagFoldOutRuleNameAssetSample;
+				FlagFoldOutRuleNameAssetFolder = flagFoldOutRuleNameAssetFolder;
+				FlagFoldOutPresetMaterial = flagFoldOutPresetMaterial;
+			}
+
+			public void CleanUp()
+			{
+				this = Default;
+			}
+
+			public bool Load()
+			{
+				FlagFoldOutCaution = EditorPrefs.GetBool(PrefsKeyFlagFoldOutCaution, Default.FlagFoldOutCaution);
+				FlagFoldOutBasic = EditorPrefs.GetBool(PrefsKeyFlagFoldOutBasic, Default.FlagFoldOutBasic);
+
+				FlagOpenAdvancedOprions = EditorPrefs.GetBool(PrefsKeyFlagOpenAdvancedOprions, Default.FlagOpenAdvancedOprions);
+				FlagFoldOutRuleNameAsset = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAsset, Default.FlagFoldOutRuleNameAsset);
+				FlagFoldOutRuleNameAssetSample = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, Default.FlagFoldOutRuleNameAssetSample);
+				FlagFoldOutRuleNameAssetFolder = EditorPrefs.GetBool(PrefsKeyFlagFoldOutRuleNameAssetFolder, Default.FlagFoldOutRuleNameAssetFolder);
+				FlagFoldOutPresetMaterial = EditorPrefs.GetBool(PrefsKeyFlagFoldOutPresetMaterial, Default.FlagFoldOutPresetMaterial);
+
+				return(true);
+			}
+
+			public bool Save()
+			{
+				EditorPrefs.SetBool(PrefsKeyFlagFoldOutCaution, FlagFoldOutCaution);
+				EditorPrefs.SetBool(PrefsKeyFlagFoldOutBasic, FlagFoldOutBasic);
+
+				EditorPrefs.SetBool(PrefsKeyFlagOpenAdvancedOprions, FlagOpenAdvancedOprions);
+				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAsset, FlagFoldOutRuleNameAsset);
+				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, FlagFoldOutRuleNameAssetSample);
+				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetFolder, FlagFoldOutRuleNameAssetFolder);
+				EditorPrefs.SetBool(PrefsKeyFlagFoldOutPresetMaterial, FlagFoldOutPresetMaterial);
+
+				return(true);
+			}
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			private const string PrefsKeyPrefix = "SS6PU_ToolImporter_UnityUI_";
+			private const string PrefsKeyFlagFoldOutCaution = PrefsKeyPrefix + "FlagFoldOutCaution";
+			private const string PrefsKeyFlagFoldOutBasic = PrefsKeyPrefix + "FlagFoldOutBasic";
+			private const string PrefsKeyFlagOpenAdvancedOprions = PrefsKeyPrefix + "FlagOpenAdvancedOprions";
+			private const string PrefsKeyFlagFoldOutRuleNameAsset = PrefsKeyPrefix + "FlagFoldOutRuleNameAsset";
+			private const string PrefsKeyFlagFoldOutRuleNameAssetSample = PrefsKeyPrefix + "FlagFoldOutRuleNameAssetSample";
+			private const string PrefsKeyFlagFoldOutRuleNameAssetFolder = PrefsKeyPrefix + "FlagFoldOutRuleNameAssetFolder";
+			private const string PrefsKeyFlagFoldOutPresetMaterial = PrefsKeyPrefix + "FlagFoldOutPresetMaterial";
+
+			private readonly static GroupUnityUI Default = new GroupUnityUI(
+				true,	/* FlagFoldOutCaution */
+				false,	/* FlagFoldOutBasic */
 				false,	/* FlagOpenAdvancedOprions */
 				false,	/* FlagFoldOutRuleNameAsset */
 				true,	/* FlagFoldOutRuleNameAssetSample */

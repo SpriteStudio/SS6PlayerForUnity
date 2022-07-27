@@ -5,8 +5,8 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
-#define REDUCE_FREQUENCY_BINARYTREE
 
+#define REDUCE_FREQUENCY_BINARYTREE
 #define DEFORM_CALCULATE_STRICT
 
 using System.Collections;

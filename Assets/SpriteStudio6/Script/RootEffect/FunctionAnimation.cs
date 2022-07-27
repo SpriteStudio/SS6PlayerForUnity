@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,7 @@ public partial class Script_SpriteStudio6_RootEffect
 	/* ******************************************************** */
 	//! Start playing the animation
 	/*!
-	@param	timesPlay
+	@param	timesPlay (Now, not supportd)
 		-1 == Apply previous setting.<br>
 		0 == Infinite-looping<br>
 		1 == Not looping<br>

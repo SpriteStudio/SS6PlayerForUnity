@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 // #define STATICDATA_DUPLICATE_DEEP
 // #define EXPERIMENT_FOR_CAMERA
 
@@ -17,7 +18,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.0.6";
+	public const string SignatureVersionAsset = "2.1 Beta-1";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -106,6 +107,13 @@ public static partial class Library_SpriteStudio6
 		TERMINATOR,
 		FOLLOW_DATA = TERMINATOR,
 	}
+
+	public enum KindSituationTimeline
+	{
+		START = 0,
+		END,
+		UPDATE,
+	}
 	#endregion Enums & Constants
 
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -131,6 +139,11 @@ public static partial class Library_SpriteStudio6
 		public delegate int FunctionDecodeStepSequence(ref Library_SpriteStudio6.Data.Sequence.Data.Step dataStep, Script_SpriteStudio6_Sequence scriptSequence, int step);
 
 		public delegate UnityEngine.Material FunctionMaterialSetUp(UnityEngine.Material material, int operationBlend, Library_SpriteStudio6.KindMasking masking, bool flagZWrite);
+
+		public delegate bool FunctionTimeline(Script_SpriteStudio6_Root scriptRoot, KindSituationTimeline situation, float timeElapsed, double timeLocal);
+		public delegate bool FunctionTimelineEffect(Script_SpriteStudio6_RootEffect scriptRoot, KindSituationTimeline situation, float timeElapsed, double timeLocal);
+		public delegate bool FunctionTimelineSequence(Script_SpriteStudio6_Sequence scriptSequence, KindSituationTimeline situation, float timeElapsed, double timeLocal);
+		public delegate bool FunctionTimelineReplicate(Script_SpriteStudio6_Replicate scriptReplicate, KindSituationTimeline situation, float timeElapsed, double timeLocal);
 		#endregion Delegates
 	}
 
@@ -422,6 +435,7 @@ public static partial class Library_SpriteStudio6
 					HIDE_FULL = 0x10000000,
 
 					NOT_MASKING = 0x08000000,
+					/* 0x01000000, */	/* Reserved */
 
 					NO_POSITION = 0x00800000,
 					NO_ROTATION = 0x00400000,
@@ -436,6 +450,7 @@ public static partial class Library_SpriteStudio6
 					NO_SIGNAL = 0x00008000,
 					NO_SHADER = 0x00004000,
 
+					/* 0x00000001, */	/* Reserved */
 					CLEAR = 0x00000000
 				}
 				#endregion Enums & Constants
@@ -1647,6 +1662,7 @@ public static partial class Library_SpriteStudio6
 				{
 					return(null);
 				}
+				material.hideFlags = HideFlags.DontSave;
 
 				return(functionMaterialSetUp(material, (int)operationBlend, masking, flagZWrite));
 			}
@@ -1662,6 +1678,12 @@ public static partial class Library_SpriteStudio6
 				{
 					shader = ShaderGetEffect(operationBlend);
 				}
+#if UNITY_EDITOR
+				if(null == shader)
+				{
+					return(null);
+				}
+#endif
 				material = new Material(shader);
 				if(null == material)
 				{
@@ -1671,6 +1693,7 @@ public static partial class Library_SpriteStudio6
 				{
 					return(null);
 				}
+				material.hideFlags = HideFlags.DontSave;
 
 				return(functionMaterialSetUp(material, (int)operationBlend, KindMasking.MASK, flagZWrite));
 			}
@@ -1849,6 +1872,7 @@ public static partial class Library_SpriteStudio6
 			public const string NameShaderPrefix = "Custom/SpriteStudio6/";
 			public const string NameShaderPrefixSS6P = NameShaderPrefix + "SS6PU/";
 			public const string NameShaderPrefixUnityNative = NameShaderPrefix + "UnityNative/";
+			public const string NameShaderPrefixUnityUI = NameShaderPrefix + "UnityUI/";
 
 			public readonly static UnityEngine.Shader SpriteSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Sprite");
 			public readonly static UnityEngine.Shader EffectSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Effect");
@@ -1856,20 +1880,29 @@ public static partial class Library_SpriteStudio6
 			public readonly static UnityEngine.Shader SpriteUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite");
 			public readonly static UnityEngine.Shader SpriteUnityNativeNonBatch = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite_NonBatch");
 			public readonly static UnityEngine.Shader SkinnedMeshUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "SkinnedMesh");
+			public readonly static UnityEngine.Shader SpriteUnityUI = UnityEngine.Shader.Find(NameShaderPrefixUnityUI + "Sprite");
 
-			public const string NamePropertyAlphaTex = "_AlphaTex";								/* (Common) */
-			public const string NamePropertyEnableExternalAlpha = "_EnableExternalAlpha";		/* (Common) */
-			public const string NamePropertyBlendSource = "_BlendSource";						/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyBlendDestination = "_BlendDestination";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyBlendOperation = "_BlendOperation";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyCompareStencil = "_CompareStencil";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyZWrite = "_ZWrite";									/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyArgumentFs00 = "_ArgumentFs00";						/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyParameterFs00 = "_ParameterFs00";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyAlphaTex = "_AlphaTex";							/* (Common) */
+			public const string NamePropertyEnableExternalAlpha = "_EnableExternalAlpha";	/* (Common) */
+			public const string NamePropertyBlendSource = "_BlendSource";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyBlendDestination = "_BlendDestination";			/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyBlendOperation = "_BlendOperation";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyCompareStencil = "_CompareStencil";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyZWrite = "_ZWrite";								/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyArgumentFs00 = "_ArgumentFs00";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyParameterFs00 = "_ParameterFs00";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
 
-			public const string NamePropertyNotDiscardPixel = "PS_NOT_DISCARD";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyOutputPixelPMA = "PS_OUTPUT_PMA";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyStencilOperation = "_StencilOperation";				/* Stencil_SpriteStudio6 */
+			public const string NamePropertyNotDiscardPixel = "PS_NOT_DISCARD";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyOutputPixelPMA = "PS_OUTPUT_PMA";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyStencilOperation = "_StencilOperation";			/* Stencil_SpriteStudio6 */
+
+			public const string NamePropertyUIColor = "_Color";								/* Sprite_UnityUI */
+			public const string NamePropertyUIStencilComp = "_StencilComp";					/* Sprite_UnityUI */
+			public const string NamePropertyUIStencil = "_Stencil";							/* Sprite_UnityUI */
+			public const string NamePropertyUIStencilOp = "_StencilOp";						/* Sprite_UnityUI */
+			public const string NamePropertyUIStencilWriteMask = "_StencilWriteMask";		/* Sprite_UnityUI */
+			public const string NamePropertyUIStencilReadMask = "_StencilReadMask";			/* Sprite_UnityUI */
+			public const string NamePropertyUIColorMask = "_ColorMask";						/* Sprite_UnityUI */
 
 			public readonly static int IDPropertyStencilOperation = UnityEngine.Shader.PropertyToID(NamePropertyStencilOperation);
 			public readonly static int IDPropertyBlendSource = UnityEngine.Shader.PropertyToID(NamePropertyBlendSource);
@@ -1881,6 +1914,14 @@ public static partial class Library_SpriteStudio6
 			public readonly static int IDPropertyParameterFs00 = UnityEngine.Shader.PropertyToID(NamePropertyParameterFs00);
 			public readonly static int IDPropertyAlphaTex = UnityEngine.Shader.PropertyToID(NamePropertyAlphaTex);
 			public readonly static int IDPropertyEnableExternalAlpha = UnityEngine.Shader.PropertyToID(NamePropertyEnableExternalAlpha);
+
+			public readonly static int IDPropertyUIColor = UnityEngine.Shader.PropertyToID(NamePropertyUIColor);
+			public readonly static int IDPropertyUIStencilComp = UnityEngine.Shader.PropertyToID(NamePropertyUIStencilComp);
+			public readonly static int IDPropertyUIStencil = UnityEngine.Shader.PropertyToID(NamePropertyUIStencil);
+			public readonly static int IDPropertyUIStencilOp = UnityEngine.Shader.PropertyToID(NamePropertyUIStencilOp);
+			public readonly static int IDPropertyUIStencilWriteMask = UnityEngine.Shader.PropertyToID(NamePropertyUIStencilWriteMask);
+			public readonly static int IDPropertyUIStencilReadMask = UnityEngine.Shader.PropertyToID(NamePropertyUIStencilReadMask);
+			public readonly static int IDPropertyUIColorMask = UnityEngine.Shader.PropertyToID(NamePropertyUIColorMask);
 			#endregion Enums & Constants
 		}
 
@@ -2239,7 +2280,7 @@ public static partial class Library_SpriteStudio6
 					UnityEngine.Material material = Data[index].Instance;
 					if(null != material)
 					{
-						UnityEngine.Object.Destroy(material);
+						Utility.Asset.ObjectDestroy(material);
 					}
 				}
 
@@ -2802,6 +2843,309 @@ public static partial class Library_SpriteStudio6
 			#endregion Classes, Structs & Interfaces
 		}
 
+		/* MEMO: This class is specialized for static allocation of "CacheMaterial". */
+		/*       Currently dedicated to mode "UnityUI".                              */
+		/*       Instance cannot be purged, so reference-count management is added.  */
+		internal class CacheMaterialStatic
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			public List<InformationData> Data;
+
+			public bool StatusIsBootedUp
+			{
+				get
+				{
+					return(null != Data);	/*  ? true : false*/
+				}
+			}
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			public bool BootUp(int capacity)
+			{
+				Data = new List<InformationData>(capacity);
+				Data.Clear();
+
+				return(true);
+			}
+
+			public void ShutDown(bool flagDestroyInstance)
+			{
+				DataPurge(flagDestroyInstance);
+
+				Data = null;
+			}
+
+			public void DataPurge(bool flagDestroyInstance)
+			{
+				if(false == StatusIsBootedUp)
+				{
+					return;
+				}
+
+				int countData = Data.Count;
+				for(int i=(countData-1); i>=0; i--)
+				{
+					DataRelease(i, flagDestroyInstance);
+				}
+				Data.Clear();
+			}
+
+			public void DataAppend(long codeHash, UnityEngine.Material instanecMaterial)
+			{
+				InformationData informationData = new InformationData(codeHash, instanecMaterial);
+				informationData.Count++;
+				Data.Add(informationData);
+			}
+
+			public void DataRelease(int index, bool flagDestroyInstance=false)
+			{
+				if(true == flagDestroyInstance)
+				{
+					UnityEngine.Material material = Data[index].Instance;
+					if(null != material)
+					{
+						Utility.Asset.ObjectDestroy(material);
+					}
+				}
+
+				Data.RemoveAt(index);
+			}
+
+			public int IndexGet(long codeHash)
+			{
+				/* MEMO: Normally, Binary-Search is faster.                                      */
+				/*       But since delete invalid-cache at the same time, use Linear-Search now. */
+				int countData = Data.Count;
+				for(int i=0; i<countData; i++)
+				{
+					if(Data[i].CodeHash == codeHash)
+					{
+						if(null != Data[i].Instance)
+						{	/* Valid Instance */
+							return(i);
+						}
+
+						/* Delete Invalid-Cache (Instance is Destroyed) */
+						/* MEMO: Check the validity as materials may be destroyed from external. */
+						/*       Especially, when switching between Play-Modes on Unity-Editor.  */
+						Data.RemoveAt(i);
+						i--;
+						countData--;
+					}
+				}
+
+				return(-1);
+			}
+
+			public int IndexGet(UnityEngine.Material instanceMaterial)
+			{
+				if(null == instanceMaterial)
+				{
+					return(-1);
+				}
+
+				int countData = Data.Count;
+				for(int i=0; i<countData; i++)
+				{
+					if(Data[i].Instance == instanceMaterial)
+					{
+						return(i);
+					}
+				}
+
+				return(-1);
+			}
+
+			public UnityEngine.Material MaterialGet(long codeHash)
+			{
+				/* MEMO: Normally, Binary-Search is faster.                                      */
+				/*       But since delete invalid-cache at the same time, use Linear-Search now. */
+				int countData = Data.Count;
+				for(int i=0; i<countData; i++)
+				{
+					if(Data[i].CodeHash == codeHash)
+					{
+						UnityEngine.Material instanceMaterial = Data[i].Instance;
+						if(null != instanceMaterial)
+						{	/* Valid Instance */
+							return(instanceMaterial);
+						}
+
+						/* Delete Invalid-Cache (Instance is Destroyed) */
+						/* MEMO: Check the validity as materials may be destroyed from external. */
+						/*       Especially, when switching between Play-Modes on Unity-Editor.  */
+						Data.RemoveAt(i);
+						i--;
+						countData--;
+					}
+				}
+
+				return(null);
+			}
+			public UnityEngine.Material MaterialGetSpriteUI(	UnityEngine.Texture texture,
+																UnityEngine.Rendering.CompareFunction functionCompareStenctil,
+																int idStencil,
+																UnityEngine.Material materialMaster,
+																bool flagCreateNew
+															)
+			{
+				/* Get shader's hash-code */
+				UnityEngine.Shader shader = null;
+				int hashShader = 0;
+				if(null == materialMaster)
+				{
+					shader = Library_SpriteStudio6.Data.Shader.SpriteUnityUI;
+				}
+				else
+				{
+					shader = materialMaster.shader;
+				}
+				hashShader = shader.GetHashCode();
+
+				/* Get texture's hash-code */
+				int hashTexture = 0;
+				if(null != texture)
+				{
+					hashTexture = texture.GetHashCode();
+				}
+
+				/* Get material's hash-code */
+				long codeHash = Library_SpriteStudio6.Control.CacheMaterialStatic.InformationData.CodeGetSpriteUI(	functionCompareStenctil,
+																													idStencil,
+																													hashShader,
+																													hashTexture
+																											);
+				UnityEngine.Material instanceMaterial = null;
+				int indexCacheMaterial = IndexGet(codeHash);
+				if(0 > indexCacheMaterial)
+				{	/* Not exist */
+					if(true == flagCreateNew)
+					{
+						/* Create new material */
+						if(null == materialMaster)
+						{
+							instanceMaterial = new UnityEngine.Material(shader);
+						}
+						else
+						{
+							instanceMaterial = new UnityEngine.Material(materialMaster);
+						}
+
+						/* Set parameters */
+						instanceMaterial.mainTexture = texture;
+
+						int propertyID = Library_SpriteStudio6.Data.Shader.IDPropertyUIStencilComp;
+						if((0 <= propertyID) && (true == instanceMaterial.HasProperty(propertyID)))
+						{
+							instanceMaterial.SetFloat(propertyID, (float)functionCompareStenctil);
+						}
+						propertyID = Library_SpriteStudio6.Data.Shader.IDPropertyUIStencil;
+						if((0 <= propertyID) && (true == instanceMaterial.HasProperty(propertyID)))
+						{
+							instanceMaterial.SetFloat(propertyID, (float)(idStencil & 0xff));
+						}
+
+						DataAppend(codeHash, instanceMaterial);
+					}
+				}
+				else
+				{	/* Exist */
+					/* Increment reference-count. */
+					InformationData dataCache = Data[indexCacheMaterial];
+					dataCache.Count++;
+					Data[indexCacheMaterial] = dataCache;
+
+					instanceMaterial = dataCache.Instance;
+				}
+
+				return(instanceMaterial);
+			}
+
+			public void MaterialReleaseSpriteUI(UnityEngine.Material instanceMaterial)
+			{
+				int indexCacheMaterial = IndexGet(instanceMaterial);
+				if(0 > indexCacheMaterial)
+				{	/* Not exist */
+					return;
+				}
+
+				/* Decrement reference-count. */
+				InformationData dataCache = Data[indexCacheMaterial];
+				dataCache.Count--;
+				if(0 < dataCache.Count)
+				{	/* Still referenced */
+					Data[indexCacheMaterial] = dataCache;
+				}
+				else
+				{	/* No referenced */
+					DataRelease(indexCacheMaterial, true);
+				}
+			}
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			#endregion Enums & Constants
+
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+			internal struct InformationData
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				internal long CodeHash;
+				internal int Count;
+				internal Material Instance;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				internal InformationData(long codeHash, UnityEngine.Material instance)
+				{
+					CodeHash = codeHash;
+					Count = 0;
+					Instance = instance;
+				}
+
+				internal static long CodeGetSpriteUI(UnityEngine.Rendering.CompareFunction functionCompare, int idStencil, int hashShader, int hashTexture)
+				{
+					long hashShaderLong = (long)hashShader & MaskCodeName;
+					long hashCombined = hashShaderLong;
+					hashCombined <<= 5;
+					hashCombined |= (hashCombined >> 32);
+					hashCombined += hashShaderLong;
+					hashCombined ^= (long)hashTexture;
+					hashCombined &= MaskCodeName;
+
+					long code = (long)hashCombined & MaskCodeName;
+					code |= ((long)idStencil & MaskCodeFunctionStencil) << CountShiftCodeFunctionStencil;
+					code |= ((long)functionCompare & MaskCodeIDStencil) << CountShiftCodeIDStencil;
+
+					return(code);
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				internal const long MaskCodeName = 0x00000000ffffffffL;
+				internal const long MaskCodeFunctionStencil = 0x00000000000000ffL;
+				internal const long MaskCodeIDStencil = 0x000000000000000fL;
+
+//				internal const int CountShiftCodeName = 0;
+				internal const int CountShiftCodeFunctionStencil = 32;
+				internal const int CountShiftCodeIDStencil = 40;
+				#endregion Enums & Constants
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				#endregion Classes, Structs & Interfaces
+			}
+			#endregion Classes, Structs & Interfaces
+		}
+
 		public class InformationCollision
 		{
 			/* ----------------------------------------------- Variables & Properties */
@@ -3012,6 +3356,35 @@ public static partial class Library_SpriteStudio6
 				return(true);
 			}
 
+			protected void BaseShutDown()
+			{
+				if(null != MeshCombined)
+				{
+					Library_SpriteStudio6.Utility.Asset.ObjectDestroy(MeshCombined);
+				}
+
+				/* MEMO: Since CacheMaterial's ShutDown is done on the inherited class side, */
+				/*         it is not necessary to do it here. (But it is done just in case.) */
+				if(null != CacheMaterial)
+				{
+					CacheMaterial.ShutDown(true);
+				}
+			}
+			protected void SelfDestroy()
+			{
+				if(null == InstanceRootParent)
+				{
+					if(null != InstanceGameObjectControl)
+					{
+						Library_SpriteStudio6.Utility.Asset.ObjectDestroy(InstanceGameObjectControl);
+					}
+					else
+					{
+						Library_SpriteStudio6.Utility.Asset.ObjectDestroy(gameObject);
+					}
+				}
+			}
+
 			public Script_SpriteStudio6_Root RootGetHighest()
 			{
 				Script_SpriteStudio6_Root root = null;
@@ -3049,6 +3422,12 @@ public static partial class Library_SpriteStudio6
 
 			public Library_SpriteStudio6.Data.CellMap DataGetCellMap(int index)
 			{
+#if UNITY_EDITOR
+				if(null == TableCellMap)
+				{
+					return(null);
+				}
+#endif
 				return(((0 > index) || (TableCellMap.Length <= index)) ? null : TableCellMap[index]);
 			}
 
@@ -3171,6 +3550,7 @@ public static partial class Library_SpriteStudio6
 					{
 						goto RendererBootUpDraw_ErrorEnd;
 					}
+					MeshCombined.hideFlags = HideFlags.DontSave;
 					MeshCombined.Clear();
 				}
 				return(true);
@@ -3927,6 +4307,25 @@ public static partial class Library_SpriteStudio6
 				return(gameObject);
 			}
 
+			public static void ObjectDestroy(UnityEngine.Object instanceObject)
+			{
+				if(null != instanceObject)
+				{
+#if UNITY_EDITOR
+					if(false == UnityEditor.EditorApplication.isPlaying)
+					{
+						UnityEngine.Object.DestroyImmediate(instanceObject);
+					}
+					else
+					{
+						UnityEngine.Object.Destroy(instanceObject);
+					}
+#else
+					UnityEngine.Object.Destroy(instanceObject);
+#endif
+				}
+			}
+
 			public static Transform TransformSearchNameChild(string name, Transform transformParent)
 			{
 				if(null == transformParent)
@@ -3992,7 +4391,8 @@ public static partial class Library_SpriteStudio6
 				{	/* Renew Force */
 					if(null != gameObject)
 					{	/* Exist */
-						UnityEngine.Object.DestroyImmediate(gameObject);
+//						UnityEngine.Object.DestroyImmediate(gameObject);
+						Utility.Asset.ObjectDestroy(gameObject);
 					}
 					gameObject = null;
 				}

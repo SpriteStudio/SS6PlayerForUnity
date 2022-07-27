@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -691,5 +692,43 @@ public partial class Script_SpriteStudio6_Root
 	}
 
 //	EffectChange
+
+	/* ******************************************************** */
+	//! Unify Callback Function for child animations.
+	/*!
+	@param	
+		(none)
+	@retval	Return-Value
+		(none)
+
+	Set the set "FunctionTimeElapse" and "FunctionTimeElapseEffect"
+		to all child-Animations.
+
+	Until Version 1.x, "FunctionTimeElapse" and "FunctionTimeElapseEffect"
+		were only applied to the set animation object.
+	This function is created to complement that behavior.
+	*/
+	public void FunctionUnifyChildTimeElapse()
+	{
+		if(null != TableControlParts)
+		{
+			return;
+		}
+
+		int countParts = TableControlParts.Length;
+
+		for(int i=0; i<countParts; i++)
+		{
+			if(null != TableControlParts[i].InstanceRootUnderControl)
+			{
+				TableControlParts[i].InstanceRootUnderControl.FunctionTimeElapse = FunctionTimeElapse;
+				TableControlParts[i].InstanceRootUnderControl.FunctionUnifyChildTimeElapse();
+			}
+			if(null != TableControlParts[i].InstanceRootEffectUnderControl)
+			{
+				TableControlParts[i].InstanceRootEffectUnderControl.FunctionTimeElapse = FunctionTimeElapseEffect;
+			}
+		}
+	}
 	#endregion Functions
 }
