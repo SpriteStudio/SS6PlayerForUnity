@@ -323,6 +323,7 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		if((0 > indexSequecePack) || (tableNameSequencePack.Length <= indexSequecePack))
 		{
 			indexSequecePack = 0;
+			nameSequencePack = (null != tableNameSequencePack) ? tableNameSequencePack[indexSequecePack] : dataProject.DataSequence[indexSequecePack].Name;
 			flagUpdate |= true;
 		}
 
@@ -353,7 +354,8 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		if(indexNow != indexSequecePack)
 		{
 			indexSequecePack = indexNow;
-			nameSequencePack = dataProject.DataSequence[indexSequecePack].Name;
+//			nameSequencePack = dataProject.DataSequence[indexSequecePack].Name;
+			nameSequencePack = (null != tableNameSequencePack) ? tableNameSequencePack[indexSequecePack] : dataProject.DataSequence[indexSequecePack].Name;
 			flagUpdate |= true;
 		}
 
@@ -372,6 +374,7 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		if((0 > indexSequece) || (tableNameSequence.Length <= indexSequece))
 		{
 			indexSequece = 0;
+			nameSequence = (null != tableNameSequence) ? tableNameSequence[indexSequece] : dataSequence.TableSequence[indexSequece].Name;
 			flagUpdate |= true;
 		}
 
@@ -402,7 +405,8 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		if(indexNow != indexSequece)
 		{
 			indexSequece = indexNow;
-			nameSequence = dataSequence.TableSequence[indexSequece].Name;
+//			nameSequence = dataSequence.TableSequence[indexSequece].Name;
+			nameSequence = (null != tableNameSequence) ? tableNameSequence[indexSequece] : dataSequence.TableSequence[indexSequece].Name;
 			flagUpdate |= true;
 		}
 
@@ -668,7 +672,6 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 	/* ----------------------------------------------- Enums & Constants */
 	#region Enums & Constants
 	private const string NameMissing = "(Data Missing)";
-
 
 #if SUPPORT_PREVIEW
 	private readonly static GUIContent TitlePreview = new GUIContent("Preview [Script_SpriteStudio6_Sequence]");
