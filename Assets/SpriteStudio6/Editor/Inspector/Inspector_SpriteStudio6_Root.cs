@@ -36,7 +36,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 	private LibraryEditor_SpriteStudio6.Utility.Inspector.Preview InstancePreview;
 	private Script_SpriteStudio6_Root InstanceRootPreview = null;
 	private float TimeElapsedPreview = float.NaN;
-//	private float ScaleAnimationPreview = 1.0f;
+	private float RateScalePreview = 1.0f;
 
 	private bool FlagFoldOutInterfaces = false;
 	private bool FlagPlayAnimationPreview = false;
@@ -64,7 +64,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 		InstancePreview = null;
 		InstanceRootPreview = null;
 		TimeElapsedPreview = float.NaN;
-//		ScaleAnimationPreview = 1.0f;
+		RateScalePreview = 1.0f;
 
 		FlagFoldOutInterfaces = false;
 		FlagPlayAnimationPreview = false;
@@ -600,8 +600,18 @@ public class Inspector_SpriteStudio6_Root : Editor
 					}
 				}
 
-				/* "Scale" Slide-bar */
-//				ScaleAnimationPreview = GUILayout.HorizontalSlider(ScaleAnimationPreview, 0.5f, 2.0f, (GUIStyle)"preSlider", (GUIStyle)"preSliderThumb");
+				/* Rate Select */
+				if(null != InstanceRootPreview)
+				{
+					const int widthList = 60;
+
+					float rateScalePreview = RateScalePreview;
+					RateScalePreview = InstancePreview.RateSelectScale(rateScalePreview, widthList);
+					if((0.0f < RateScalePreview) && (RateScalePreview != rateScalePreview))
+					{
+						InstanceRootPreview.transform.localScale = new Vector3(RateScalePreview, RateScalePreview, RateScalePreview);
+					}
+				}
 			}
 		}
 	}
@@ -630,6 +640,9 @@ public class Inspector_SpriteStudio6_Root : Editor
 			{
 				return;
 			}
+
+			/* Initialize Animation object */
+			InstancePreview.ObjectBootUpAnimation(InstanceRootPreview.gameObject);
 
 			/* Set Initial Animation */
 			InstanceRootPreview.AnimationPlay(-1, 0);	/* force */
