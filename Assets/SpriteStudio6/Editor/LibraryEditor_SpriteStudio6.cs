@@ -2319,6 +2319,67 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					CleanUp();
 				}
+
+				public bool ObjectBootUpAnimation(UnityEngine.GameObject gameObjectAnimation)
+				{
+					if(null == gameObjectAnimation)
+					{
+						return(false);
+					}
+
+					gameObjectAnimation.transform.localPosition = Vector3.zero;
+					gameObjectAnimation.transform.localScale = Vector3.one;
+					gameObjectAnimation.transform.localRotation = Quaternion.identity;
+
+					gameObjectAnimation.SetActive(true);	/* Allow preview even if selected object is disactive */
+
+					return(true);
+				}
+
+				public int FrameSelectFPS(int frameOld, int widthList)
+				{
+					int framePerSecond = frameOld;
+					int indexFPS = System.Array.IndexOf(TableFramePreSecondPreview, framePerSecond);
+					if(0 > indexFPS)
+					{
+						indexFPS = 0;
+						framePerSecond = TableFramePreSecondPreview[indexFPS];
+					}
+
+					int indexFPSNew = -1;
+					if(0 > widthList)
+					{
+						indexFPSNew = EditorGUILayout.Popup(indexFPS, TableItemFramePerSecondPreview);
+					}
+					else
+					{
+						indexFPSNew = EditorGUILayout.Popup(indexFPS, TableItemFramePerSecondPreview, GUILayout.Width(widthList));
+					}
+
+					return(TableFramePreSecondPreview[indexFPSNew]);
+				}
+				public float RateSelectScale(float rateOld, int widthList)
+				{
+					float rate = rateOld;
+					int indexRate = System.Array.IndexOf(TableRateScalePreview, rate);
+					if(0 > indexRate)
+					{
+						indexRate = 0;
+						rate = TableRateScalePreview[indexRate];
+					}
+
+					int indexRateNew = -1;
+					if(0 > widthList)
+					{
+						indexRateNew = EditorGUILayout.Popup(indexRate, TableItemRateScalePreview);
+					}
+					else
+					{
+						indexRateNew = EditorGUILayout.Popup(indexRate, TableItemRateScalePreview, GUILayout.Width(widthList));
+					}
+
+					return(TableRateScalePreview[indexRateNew]);
+				}
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
@@ -2336,6 +2397,44 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const int SizeYTextureTarget = 1024;
 				
 				private readonly static double TickTimer = 1.0f / (double)System.Diagnostics.Stopwatch.Frequency;
+
+				private readonly static int[] TableFramePreSecondPreview = new int[]	{
+					30,
+					45,
+					60,
+					90,
+					120,
+				};
+				private readonly static string[] TableItemFramePerSecondPreview = new string[]	{
+					"30 fps",
+					"45 fps",
+					"60 fps",
+					"90 fps",
+					"120 fps",
+				};
+
+				private readonly static float[] TableRateScalePreview = new float[]	{
+					1.0f / 4.0f,
+					1.0f / 3.0f,
+					1.0f / 2.0f,
+					1.0f / 1.5f,
+					1.0f,
+					1.5f,
+					2.0f,
+					3.0f,
+					4.0f,
+				};
+				private readonly static string[] TableItemRateScalePreview = new string[]	{
+					"x 0.25",
+					"x 0.33",
+					"x 0.5",
+					"x 0.66",
+					"x 1.0",
+					"x 1.5",
+					"x 2.0",
+					"x 3.0",
+					"x 4.0",
+				};
 				#endregion Enums & Constants
 			}
 			#endregion Classes, Structs & Interfaces

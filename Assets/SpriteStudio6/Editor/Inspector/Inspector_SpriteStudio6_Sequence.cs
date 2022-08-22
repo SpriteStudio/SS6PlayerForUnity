@@ -37,7 +37,7 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 	private LibraryEditor_SpriteStudio6.Utility.Inspector.Preview InstancePreview;
 	private Script_SpriteStudio6_Sequence InstanceSequencePreview = null;
 	private float TimeElapsedPreview = float.NaN;
-//	private float ScaleAnimationPreview = 1.0f;
+	private float RateScalePreview = 1.0f;
 
 	private bool FlagFoldOutInterfaces = false;
 	private bool FlagPlayAnimationPreview = false;
@@ -67,7 +67,7 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		InstancePreview = null;
 		InstanceSequencePreview = null;
 		TimeElapsedPreview = float.NaN;
-//		ScaleAnimationPreview = 1.0f;
+		RateScalePreview = 1.0f;
 
 		FlagFoldOutInterfaces = false;
 		FlagPlayAnimationPreview = false;
@@ -578,16 +578,20 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 				{
 					const int widthList = 60;
 
-					int framePerSecond = FramePerSecondPreview;
-					int indexFPS = System.Array.IndexOf(TableFramePreSecondPreview, framePerSecond);
-					if(0 > indexFPS)
-					{
-						indexFPS = 0;
-						framePerSecond = TableFramePreSecondPreview[indexFPS];
-					}
+					FramePerSecondPreview = InstancePreview.FrameSelectFPS(FramePerSecondPreview, widthList);
+				}
 
-					int indexFPSNew = EditorGUILayout.Popup(indexFPS, TableItemFramePerSecondPreview, GUILayout.Width(widthList));
-					FramePerSecondPreview = TableFramePreSecondPreview[indexFPSNew];
+				/* Rate Select */
+				if(null != InstanceSequencePreview)
+				{
+					const int widthList = 60;
+
+					float rateScalePreview = RateScalePreview;
+					RateScalePreview = InstancePreview.RateSelectScale(rateScalePreview, widthList);
+					if((0.0f < RateScalePreview) && (RateScalePreview != rateScalePreview))
+					{
+						InstanceSequencePreview.transform.localScale = new Vector3(RateScalePreview, RateScalePreview, RateScalePreview);
+					}
 				}
 			}
 		}
@@ -617,6 +621,9 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 			{
 				return;
 			}
+
+			/* Initialize Animation object */
+			InstancePreview.ObjectBootUpAnimation(InstanceSequencePreview.gameObject);
 
 			/* Set Initial Animation */
 			InstanceSequencePreview.Play(0, 1.0f);
@@ -675,19 +682,6 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 
 #if SUPPORT_PREVIEW
 	private readonly static GUIContent TitlePreview = new GUIContent("Preview [Script_SpriteStudio6_Sequence]");
-
-	private readonly static int[] TableFramePreSecondPreview = new int[]	{
-		30,
-		60,
-		90,
-		120
-	};
-	private readonly static string[] TableItemFramePerSecondPreview = new string[]	{
-		"30 fps",
-		"60 fps",
-		"90 fps",
-		"120 fps",
-	};
 #endif
 	#endregion Enums & Constants
 }
