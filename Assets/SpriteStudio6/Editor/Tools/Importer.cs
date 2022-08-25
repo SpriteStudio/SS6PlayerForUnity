@@ -379,13 +379,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			EditorGUI.indentLevel = levelIndent;
 		}
 
-		SettingOption.ModeUnityNative.FlagFoldOutCollider = EditorGUILayout.Foldout(SettingOption.ModeUnityNative.FlagFoldOutCollider, "Options: Collider");
-		if(true == SettingOption.ModeUnityNative.FlagFoldOutCollider)
-		{
-			FoldOutExecCollision(levelIndent + 1);
-			EditorGUI.indentLevel = levelIndent;
-		}
-
 		SettingOption.ModeUnityNative.FlagFoldOutConfirmOverWrite = EditorGUILayout.Foldout(SettingOption.ModeUnityNative.FlagFoldOutConfirmOverWrite, "Options: Overwrite Confirm");
 		if(true == SettingOption.ModeUnityNative.FlagFoldOutConfirmOverWrite)
 		{
@@ -452,7 +445,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			FoldOutExecBasic(levelIndent + 1);
 			EditorGUI.indentLevel = levelIndent;
 		}
-
 
 		EditorGUILayout.Space();
 		SettingOption.ModeUnityUI.FlagOpenAdvancedOprions = EditorGUILayout.Foldout(SettingOption.ModeUnityUI.FlagOpenAdvancedOprions, "Advanced Options");
@@ -536,34 +528,46 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	{
 		EditorGUI.indentLevel = levelIndent;
 
-		SettingImport.Basic.FlagCreateControlGameObject = EditorGUILayout.ToggleLeft("Create Control-Prefab", SettingImport.Basic.FlagCreateControlGameObject);
-		EditorGUI.indentLevel = levelIndent + 1;
-		EditorGUILayout.LabelField("\"Control-Prefab\" is that empty-GameObject with");
-		EditorGUILayout.LabelField("  animation-object prefab placed on child. (Nested-Prefab)");
-		EditorGUI.indentLevel = levelIndent;
-		EditorGUILayout.Space();
+		switch(SettingImport.Mode)
+		{
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU:
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+				goto default;
+
+			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				break;
+
+			default:
+				SettingImport.Basic.FlagCreateControlGameObject = EditorGUILayout.ToggleLeft("Create Control-Prefab", SettingImport.Basic.FlagCreateControlGameObject);
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("\"Control-Prefab\" is that empty-GameObject with");
+				EditorGUILayout.LabelField("  animation-object prefab placed on child. (Nested-Prefab)");
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.Space();
 
 #if UNITY_2019_1_OR_NEWER
-		EditorGUI.BeginDisabledGroup(!(SettingImport.Basic.FlagCreateControlGameObject));
-		{
-			levelIndent += 1;
-			EditorGUI.indentLevel = levelIndent;
+				EditorGUI.BeginDisabledGroup(!(SettingImport.Basic.FlagCreateControlGameObject));
+				{
+					levelIndent += 1;
+					EditorGUI.indentLevel = levelIndent;
 
-			SettingImport.Basic.FlagNestedPrefabUseScript = EditorGUILayout.ToggleLeft("Use Script for \"Control-Prefab\"", SettingImport.Basic.FlagNestedPrefabUseScript);
-			EditorGUI.indentLevel = levelIndent + 1;
-			EditorGUILayout.LabelField("If checked, \"Script_SpriteStudio6_ControlPrefab\" component is used to");
-			EditorGUILayout.LabelField("  expand nested-prefabs in \"Control-Prefab\".");
-			EditorGUILayout.LabelField("This option is to output the same as Ver.2.0.x or earlier. (Default: Unchecked)");
-			EditorGUI.indentLevel = levelIndent;
-			EditorGUILayout.Space();
+					SettingImport.Basic.FlagNestedPrefabUseScript = EditorGUILayout.ToggleLeft("Use Script for \"Control-Prefab\"", SettingImport.Basic.FlagNestedPrefabUseScript);
+					EditorGUI.indentLevel = levelIndent + 1;
+					EditorGUILayout.LabelField("If checked, \"Script_SpriteStudio6_ControlPrefab\" component is used to");
+					EditorGUILayout.LabelField("  expand nested-prefabs in \"Control-Prefab\".");
+					EditorGUILayout.LabelField("This option is to output the same as Ver.2.0.x or earlier. (Default: Unchecked)");
+					EditorGUI.indentLevel = levelIndent;
+					EditorGUILayout.Space();
 
-			levelIndent -= 1;
-			EditorGUI.indentLevel = levelIndent;
-		}
-		EditorGUI.EndDisabledGroup();
+					levelIndent -= 1;
+					EditorGUI.indentLevel = levelIndent;
+				}
+				EditorGUI.EndDisabledGroup();
 #else
-		SettingImport.Basic.FlagNestedPrefabUseScript = true;	/* Force */
+				SettingImport.Basic.FlagNestedPrefabUseScript = true;	/* Force */
 #endif
+				break;
+		}
 
 		SettingImport.Basic.FlagCreateProjectFolder = EditorGUILayout.ToggleLeft("Create Project Folder", SettingImport.Basic.FlagCreateProjectFolder);
 		EditorGUI.indentLevel = levelIndent + 1;
@@ -689,6 +693,62 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				break;
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
+				EditorGUI.indentLevel = levelIndent;
+				EditorGUILayout.LabelField("In this mode, only the following Animation-Part-Types can be used.");
+				EditorGUILayout.LabelField("(Other Part-Types are ignored)");
+
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("- root");
+				EditorGUILayout.LabelField("- NULL");
+				EditorGUILayout.LabelField("- Normal");
+				EditorGUI.indentLevel = levelIndent;
+
+				EditorGUILayout.Space();
+
+				EditorGUILayout.LabelField("In this mode, only the following (parts') alpha-blending can be used.");
+				EditorGUILayout.LabelField("(Other blending kind are errored)");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("- Mix");
+				EditorGUILayout.LabelField("- Add");
+				EditorGUI.indentLevel = levelIndent;
+
+				EditorGUILayout.Space();
+
+				EditorGUILayout.LabelField("In this mode, only the following Animation-Attributes can be used.");
+				EditorGUILayout.LabelField("(Other Attributes are ignored)");
+				EditorGUI.indentLevel = levelIndent + 1;
+				EditorGUILayout.LabelField("- Reference Cell");
+				EditorGUILayout.LabelField("- X Position");
+				EditorGUILayout.LabelField("- Y Position");
+				EditorGUILayout.LabelField("- Z Position");
+				EditorGUILayout.LabelField("- X Axis Rotation");
+				EditorGUILayout.LabelField("- Y Axis Rotation");
+				EditorGUILayout.LabelField("- Z Axis Rotation");
+				EditorGUILayout.LabelField("- X Scale");
+				EditorGUILayout.LabelField("- Y Scale");
+				EditorGUILayout.LabelField("- X Local Scale");
+				EditorGUILayout.LabelField("- Y Local Scale");
+				EditorGUILayout.LabelField("- Opacity");
+				EditorGUILayout.LabelField("- Local Opacity");
+				EditorGUILayout.LabelField("- Priority");
+				EditorGUILayout.LabelField("- Image H Flip");
+				EditorGUILayout.LabelField("- Image V Flip");
+				EditorGUILayout.LabelField("- Hide");
+				EditorGUILayout.LabelField("- Parts Color");
+				EditorGUILayout.LabelField("- Vertex Deformation");
+				EditorGUILayout.LabelField("- X Pivot Offset");
+				EditorGUILayout.LabelField("- Y Pivot Offset");
+				EditorGUILayout.LabelField("- X Size");
+				EditorGUILayout.LabelField("- Y Size");
+				EditorGUILayout.LabelField("- UV X Translation");
+				EditorGUILayout.LabelField("- UV Y Translation");
+				EditorGUILayout.LabelField("- UV Rotation");
+				EditorGUILayout.LabelField("- UV X Scale");
+				EditorGUILayout.LabelField("- UV Y Scale");
+				EditorGUI.indentLevel = levelIndent;
+
+				EditorGUILayout.Space();
+				EditorGUILayout.Space();
 				break;
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.BATCH_IMPORTER:
@@ -747,10 +807,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		SettingImport.ConfirmOverWrite.FlagDataAnimation = EditorGUILayout.ToggleLeft("Data-Animation", SettingImport.ConfirmOverWrite.FlagDataAnimation);
 		SettingImport.ConfirmOverWrite.FlagDataEffect = EditorGUILayout.ToggleLeft("Data-Effect", SettingImport.ConfirmOverWrite.FlagDataEffect);
 		SettingImport.ConfirmOverWrite.FlagDataSequence = EditorGUILayout.ToggleLeft("Data-Sequence", SettingImport.ConfirmOverWrite.FlagDataSequence);
-		EditorGUILayout.Space();
-
-		SettingImport.ConfirmOverWrite.FlagMaterialAnimation = EditorGUILayout.ToggleLeft("Materials for Animation", SettingImport.ConfirmOverWrite.FlagMaterialAnimation);
-		SettingImport.ConfirmOverWrite.FlagMaterialEffect = EditorGUILayout.ToggleLeft("Materials for Effect", SettingImport.ConfirmOverWrite.FlagMaterialEffect);
 		EditorGUILayout.Space();
 
 		SettingImport.ConfirmOverWrite.FlagTexture = EditorGUILayout.ToggleLeft("Textures", SettingImport.ConfirmOverWrite.FlagTexture);
@@ -815,11 +871,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityNative);
-				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAsset.NamePrefixPrefabParticleUnityNative);
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityNative);
 				EditorGUILayout.LabelField("Skinned-Mesh", SettingImport.RuleNameAsset.NamePrefixSkinnedMeshUnityNative);
-				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityNative);
-				EditorGUILayout.LabelField("Material-Particle", SettingImport.RuleNameAsset.NamePrefixMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -827,7 +880,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Prefab", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityUI);
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityUI);
-				EditorGUILayout.LabelField("Material", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityUI);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -871,11 +923,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityNative = EditorGUILayout.TextField("Prefab-Sprite2D", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityNative);
-				SettingImport.RuleNameAsset.NamePrefixPrefabParticleUnityNative = EditorGUILayout.TextField("Prefab-Particle", SettingImport.RuleNameAsset.NamePrefixPrefabParticleUnityNative);
 				SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityNative = EditorGUILayout.TextField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityNative);
 				SettingImport.RuleNameAsset.NamePrefixSkinnedMeshUnityNative = EditorGUILayout.TextField("Skinned-Mesh", SettingImport.RuleNameAsset.NamePrefixSkinnedMeshUnityNative);
-				SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityNative = EditorGUILayout.TextField("Material-Sprite2D", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityNative);
-				SettingImport.RuleNameAsset.NamePrefixMaterialParticleUnityNative = EditorGUILayout.TextField("Material-Particle", SettingImport.RuleNameAsset.NamePrefixMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -883,7 +932,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Prefab", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityUI);
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityUI);
-				EditorGUILayout.LabelField("Material", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityUI);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -895,15 +943,10 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 					EditorGUI.indentLevel = levelIndent + 1;
 
 					EditorGUILayout.LabelField("Prefab-Sprite2D: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_UNITYNATIVE, NameAssetBody, NameAssetSSPJ));
-					EditorGUILayout.LabelField("Prefab-Particle: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_EFFECT_UNITYNATIVE, NameAssetBody, NameAssetSSPJ));
 					EditorGUILayout.Space();
 
 					EditorGUILayout.LabelField("Animation-Clip: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_UNITYNATIVE, NameAssetBodyUnityNative, NameAssetSSPJ));
 					EditorGUILayout.LabelField("Skinned-Mesh: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_MESH_UNITYNATIVE, NameAssetBody, NameAssetSSPJ) + "_" + NameAssetPartsUnityNative);
-					EditorGUILayout.Space();
-
-					EditorGUILayout.LabelField("Material-Sprite2D: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_UNITYNATIVE, NameAssetBody, NameAssetSSPJ));
-					EditorGUILayout.LabelField("Material-Particle: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_EFFECT_UNITYNATIVE, NameAssetBody, NameAssetSSPJ));
 					EditorGUILayout.Space();
 
 					EditorGUILayout.LabelField("Texture: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, NameAssetBody, NameAssetSSPJ));
@@ -928,11 +971,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityNative);
-				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAsset.NamePrefixPrefabParticleUnityNative);
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityNative);
 				EditorGUILayout.LabelField("Skinned-Mesh", SettingImport.RuleNameAsset.NamePrefixSkinnedMeshUnityNative);
-				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityNative);
-				EditorGUILayout.LabelField("Material-Particle", SettingImport.RuleNameAsset.NamePrefixMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -940,7 +980,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUI.indentLevel = levelIndent + 1;
 				SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityUI = EditorGUILayout.TextField("Prefab", SettingImport.RuleNameAsset.NamePrefixPrefabAnimationUnityUI);
 				SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityUI = EditorGUILayout.TextField("Animation-Clip", SettingImport.RuleNameAsset.NamePrefixAnimationClipUnityUI);
-				SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityUI = EditorGUILayout.TextField("Material", SettingImport.RuleNameAsset.NamePrefixMaterialAnimationUnityUI);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -955,9 +994,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 					EditorGUILayout.Space();
 
 					EditorGUILayout.LabelField("Animation-Clip: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_UNITYUI, NameAssetBodyUnityUI, NameAssetSSPJ));
-					EditorGUILayout.Space();
-
-					EditorGUILayout.LabelField("Material: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.MATERIAL_ANIMATION_UNITYUI, NameAssetBody, NameAssetSSPJ));
 					EditorGUILayout.Space();
 
 					EditorGUILayout.LabelField("Texture: " + SettingImport.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE, NameAssetBody, NameAssetSSPJ));
@@ -1004,18 +1040,14 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationUnityNative);
-				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative);
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityNative);
 				EditorGUILayout.LabelField("Skinned-Mesh", SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative);
-				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative);
-				EditorGUILayout.LabelField("Material-Particle", SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
 				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-UI\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityUI);
-				EditorGUILayout.LabelField("Material", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityUI);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -1038,18 +1070,14 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationUnityNative = EditorGUILayout.TextField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationUnityNative);
-				SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative = EditorGUILayout.TextField("Prefab-Particle", SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative);
 				SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityNative = EditorGUILayout.TextField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityNative);
 				SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative = EditorGUILayout.TextField("Skinned-Mesh", SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative);
-				SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative = EditorGUILayout.TextField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative);
-				SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative = EditorGUILayout.TextField("Material-Particle", SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
 				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-UI\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityUI);
-				EditorGUILayout.LabelField("Material", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityUI);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 				break;
@@ -1070,18 +1098,14 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("- Asset Folder Name (Mode \"Unity-Native\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Prefab-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderPrefabAnimationUnityNative);
-				EditorGUILayout.LabelField("Prefab-Particle", SettingImport.RuleNameAssetFolder.NameFolderPrefabParticleUnityNative);
 				EditorGUILayout.LabelField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityNative);
 				EditorGUILayout.LabelField("Skinned-Mesh", SettingImport.RuleNameAssetFolder.NameFolderSkinnedMeshUnityNative);
-				EditorGUILayout.LabelField("Material-Sprite2D", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityNative);
-				EditorGUILayout.LabelField("Material-Particle", SettingImport.RuleNameAssetFolder.NameFolderMaterialParticleUnityNative);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
 				EditorGUILayout.LabelField("- Asset-Name Prifix (Mode \"Unity-UI\")");
 				EditorGUI.indentLevel = levelIndent + 1;
 				SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityUI = EditorGUILayout.TextField("Animation-Clip", SettingImport.RuleNameAssetFolder.NameFolderAnimationClipUnityUI);
-				SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityUI = EditorGUILayout.TextField("Material", SettingImport.RuleNameAssetFolder.NameFolderMaterialAnimationUnityUI);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 				break;
@@ -1574,7 +1598,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public bool FlagFoldOutCaution;
 			public bool FlagFoldOutBasic;
 			public bool FlagFoldOutConfirmOverWrite;
-			public bool FlagFoldOutCollider;
 			public bool FlagFoldOutCheckVersion;
 
 			public bool FlagOpenAdvancedOprions;
@@ -1589,7 +1612,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			public GroupUnityNative(	bool flagFoldOutCaution,
 										bool flagFoldOutBasic,
 										bool flagFoldOutConfirmOverWrite,
-										bool flagFoldOutCollider,
 										bool flagFoldOutCheckVersion,
 										bool flagOpenAdvancedOprions,
 										bool flagFoldOutRuleNameAsset,
@@ -1601,7 +1623,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagFoldOutCaution = flagFoldOutCaution;
 				FlagFoldOutBasic = flagFoldOutBasic;
 				FlagFoldOutConfirmOverWrite = flagFoldOutConfirmOverWrite;
-				FlagFoldOutCollider = flagFoldOutCollider;
 				FlagFoldOutCheckVersion = flagFoldOutCheckVersion;
 
 				FlagOpenAdvancedOprions = flagOpenAdvancedOprions;
@@ -1621,7 +1642,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				FlagFoldOutCaution = EditorPrefs.GetBool(PrefsKeyFlagFoldOutCaution, Default.FlagFoldOutCaution);
 				FlagFoldOutBasic = EditorPrefs.GetBool(PrefsKeyFlagFoldOutBasic, Default.FlagFoldOutBasic);
 				FlagFoldOutConfirmOverWrite = EditorPrefs.GetBool(PrefsKeyFlagFoldOutConfirmOverWrite, Default.FlagFoldOutConfirmOverWrite);
-				FlagFoldOutCollider = EditorPrefs.GetBool(PrefsKeyFlagFoldOutCollider, Default.FlagFoldOutCollider);
 				FlagFoldOutCheckVersion = EditorPrefs.GetBool(PrefsKeyFlagFoldOutCheckVersion, Default.FlagFoldOutCheckVersion);
 
 				FlagOpenAdvancedOprions = EditorPrefs.GetBool(PrefsKeyFlagOpenAdvancedOprions, Default.FlagOpenAdvancedOprions);
@@ -1640,7 +1660,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAsset, FlagFoldOutRuleNameAsset);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutRuleNameAssetSample, FlagFoldOutRuleNameAssetSample);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutConfirmOverWrite, FlagFoldOutConfirmOverWrite);
-				EditorPrefs.SetBool(PrefsKeyFlagFoldOutCollider, FlagFoldOutCollider);
 				EditorPrefs.SetBool(PrefsKeyFlagFoldOutCheckVersion, FlagFoldOutCheckVersion);
 
 				EditorPrefs.SetBool(PrefsKeyFlagOpenAdvancedOprions, FlagOpenAdvancedOprions);
@@ -1659,7 +1678,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			private const string PrefsKeyFlagFoldOutCaution = PrefsKeyPrefix + "FlagFoldOutCaution";
 			private const string PrefsKeyFlagFoldOutBasic = PrefsKeyPrefix + "FlagFoldOutBasic";
 			private const string PrefsKeyFlagFoldOutConfirmOverWrite = PrefsKeyPrefix + "FlagFoldOutConfirmOverWrite";
-			private const string PrefsKeyFlagFoldOutCollider = PrefsKeyPrefix + "FlagFoldOutCollider";
 			private const string PrefsKeyFlagFoldOutCheckVersion = PrefsKeyPrefix + "FlagFoldOutCheckVersion";
 			private const string PrefsKeyFlagOpenAdvancedOprions = PrefsKeyPrefix + "FlagOpenAdvancedOprions";
 			private const string PrefsKeyFlagFoldOutRuleNameAsset = PrefsKeyPrefix + "FlagFoldOutRuleNameAsset";
@@ -1671,7 +1689,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				true,	/* FlagFoldOutCaution */
 				false,	/* FlagFoldOutBasic */
 				false,	/* FlagFoldOutConfirmOverWrite */
-				false,	/* FlagFoldOutCollider */
 				false,	/* FlagFoldOutCheckVersion */
 				false,	/* FlagOpenAdvancedOprions */
 				false,	/* FlagFoldOutRuleNameAsset */

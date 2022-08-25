@@ -10061,9 +10061,24 @@ public static partial class LibraryEditor_SpriteStudio6
 							goto AssetCreatePrefab_ErrorEnd;
 						}
 
+#if UNITY_2019_1_OR_NEWER
+						if(true == setting.Basic.FlagNestedPrefabUseScript)
+						{	/* Use Script (Backword Compatibllity) */
+							/* Attach Script & Link Prefab */
+							Script_SpriteStudio6_ControlPrefab scriptControlPrefab = gameObjectControl.AddComponent<Script_SpriteStudio6_ControlPrefab>();
+							scriptControlPrefab.PrefabAnimation = informationSSAE.PrefabAnimationUnityNative.TableData[0];
+						}
+						else
+						{	/* Nested Prefab */
+							/* Instantiate Prefab */
+							GameObject gameObjectPrefab = PrefabUtility.InstantiatePrefab(informationSSAE.PrefabAnimationUnityNative.TableData[0]) as GameObject;
+							gameObjectPrefab.transform.parent = gameObjectControl.transform;
+						}
+#else
 						/* Attach Script & Link Prefab */
 						Script_SpriteStudio6_ControlPrefab scriptControlPrefab = gameObjectControl.AddComponent<Script_SpriteStudio6_ControlPrefab>();
 						scriptControlPrefab.PrefabAnimation = informationSSAE.PrefabAnimationUnityNative.TableData[0];
+#endif
 
 						/* Create Prefab */
 						gameObjectControl.SetActive(true);
@@ -10090,6 +10105,7 @@ public static partial class LibraryEditor_SpriteStudio6
 														LibraryEditor_SpriteStudio6.Import.OptionPrefabReplace
 													);
 #endif
+
 						AssetDatabase.SaveAssets();
 
 						/* Destroy Temporary */
