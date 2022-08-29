@@ -32,6 +32,9 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 
 	private SerializedProperty PropertyStopInitial;
 
+	private string[] TableNameSequencePack = null;
+	private string[] TableNameSequenceData = null;
+
 #if SUPPORT_PREVIEW
 	/* WorkArea (for Preview) */
 	private LibraryEditor_SpriteStudio6.Utility.Inspector.Preview InstancePreview;
@@ -42,6 +45,9 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 	private bool FlagFoldOutInterfaces = false;
 	private bool FlagPlayAnimationPreview = false;
 	private int FramePerSecondPreview = 30;
+
+	private string[] TableNameSequencePackPreview = null;
+	private string[] TableNameSequenceDataPreview = null;
 #endif
 	#endregion Variables & Properties
 
@@ -63,6 +69,9 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 
 //		PropertyStopInitial
 
+		TableNameSequencePack = null;
+		TableNameSequenceData = null;
+
 #if SUPPORT_PREVIEW
 		InstancePreview = null;
 		InstanceSequencePreview = null;
@@ -72,6 +81,9 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		FlagFoldOutInterfaces = false;
 		FlagPlayAnimationPreview = false;
 		FramePerSecondPreview = 30;
+
+		TableNameSequencePackPreview = null;
+		TableNameSequenceDataPreview = null;
 #endif
 	}
 
@@ -177,21 +189,37 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 								)
 	{
 		/* "Sequence-Pack" Select */
+		Script_SpriteStudio6_DataSequence dataSequencePack = null;
 		string nameSequencePack = PropertyNameSequencePack.stringValue;
 		int indexSequencePack;
-		string[] tableNameSequencePack;
-		ListGetSequencePack(out tableNameSequencePack, out indexSequencePack, dataProject, nameSequencePack);
-		indexSequencePack = ListSelectNameSequencePack(ref flagUpdate, ref nameSequencePack, dataProject, tableNameSequencePack, "Sequence-Pack Name");
-		Script_SpriteStudio6_DataSequence dataSequencePack = dataProject.DataSequence[indexSequencePack];
-		PropertyNameSequencePack.stringValue = nameSequencePack;
+		TableGetSequencePack(ref TableNameSequencePack, out indexSequencePack, dataProject, nameSequencePack);
+		indexSequencePack = TableSelectNameSequencePack(ref flagUpdate, ref nameSequencePack, dataProject, TableNameSequencePack, "Sequence-Pack Name");
+		if(0 > indexSequencePack)
+		{
+			dataSequencePack = null;
+//			PropertyNameSequencePack.stringValue = 
+			flagUpdate = false;
+		}
+		else
+		{
+			dataSequencePack = dataProject.DataSequence[indexSequencePack];
+			PropertyNameSequencePack.stringValue = nameSequencePack;
+		}
 
 		/* "Sequence" Select */
 		string nameSequenceData = PropertyNameDataSequence.stringValue;
 		int indexSequenceData;
-		string[] tableNameSequenceData;
-		ListGetSequenceData(out tableNameSequenceData, out indexSequenceData, dataSequencePack, nameSequenceData);
-		indexSequenceData = ListSelectNameSequence(ref flagUpdate, ref nameSequenceData, dataSequencePack, tableNameSequenceData, "Sequence-Data Name");
-		PropertyNameDataSequence.stringValue = nameSequenceData;
+		TableGetSequenceData(ref TableNameSequenceData, out indexSequenceData, dataSequencePack, nameSequenceData);
+		indexSequenceData = TableSelectNameSequence(ref flagUpdate, ref nameSequenceData, dataSequencePack, TableNameSequenceData, "Sequence-Data Name");
+		if(0 > indexSequenceData)
+		{
+//			PropertyNameDataSequence.stringValue = 
+			flagUpdate = false;
+		}
+		else
+		{
+			PropertyNameDataSequence.stringValue = nameSequenceData;
+		}
 
 		/* Initial Step */
 		int indexStepInitial = EditorGUILayout.IntField("Start Step", PropertyIndexStepInitial.intValue);
@@ -259,7 +287,8 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		}
 		flagUpdate |= flagUpdateInitialStop;
 	}
-	private bool ListGetSequencePack(	out string[] tableNameSequence,
+
+	private bool TableGetSequencePack(	ref string[] tableNameSequence,
 										out int indexSequencePack,
 										Script_SpriteStudio6_DataProject dataProject,
 										string nameSequencePack
@@ -267,7 +296,12 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 	{
 		int countSequence = dataProject.DataSequence.Length;	/* InstanceSequence.CountGetPack(); */
 		bool flagNameIsValid = (false == string.IsNullOrEmpty(nameSequencePack));	/* ? true : false */
-		tableNameSequence = new string[countSequence];
+
+		if((null == tableNameSequence) || (countSequence != tableNameSequence.Length))
+		{
+			tableNameSequence = new string[countSequence];
+		}
+
 		indexSequencePack = 0;
 		for(int i=0; i<countSequence; i++)
 		{
@@ -284,7 +318,7 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 
 		return(true);
 	}
-	private bool ListGetSequenceData(	out string[] tableNameSequenceData,
+	private bool TableGetSequenceData(	ref string[] tableNameSequenceData,
 										out int indexSequenceData,
 										Script_SpriteStudio6_DataSequence dataSequencePack,
 										string nameSequenceData
@@ -292,7 +326,12 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 	{
 		int countSequenceData = (null == dataSequencePack) ? 0 : dataSequencePack.TableSequence.Length;
 		bool flagNameIsValid = (false == string.IsNullOrEmpty(nameSequenceData));	/* ? true : false */
-		tableNameSequenceData = new string[countSequenceData];
+
+		if((null == tableNameSequenceData) || (countSequenceData != tableNameSequenceData.Length))
+		{
+			tableNameSequenceData = new string[countSequenceData];
+		}
+
 		indexSequenceData = 0;
 		for(int i=0; i<countSequenceData; i++)
 		{
@@ -310,33 +349,38 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		return(true);
 	}
 
-	private int ListSelectNameSequencePack(	ref bool flagUpdate,
-											ref string nameSequencePack,
-											Script_SpriteStudio6_DataProject dataProject,
-											string[] tableNameSequencePack,
-											string labelList,
-											int width=0
-										)
+	private int TableSelectNameSequencePack(	ref bool flagUpdate,
+												ref string nameSequencePack,
+												Script_SpriteStudio6_DataProject dataProject,
+												string[] tableNameSequencePack,
+												string labelUI,
+												int width=0
+											)
 	{
 		/* "Sequence-Pack" Select */
-		int indexSequecePack = dataProject.IndexGetPackSequence(nameSequencePack);
+		if((null == tableNameSequencePack) || (0 >= tableNameSequencePack.Length))
+		{
+			goto TableSelectNameSequencePack_ErrorEnd;
+		}
+
+		int indexSequecePack = System.Array.IndexOf(tableNameSequencePack, nameSequencePack);
 		if((0 > indexSequecePack) || (tableNameSequencePack.Length <= indexSequecePack))
 		{
 			indexSequecePack = 0;
-			nameSequencePack = (null != tableNameSequencePack) ? tableNameSequencePack[indexSequecePack] : dataProject.DataSequence[indexSequecePack].Name;
+			nameSequencePack = tableNameSequencePack[indexSequecePack];
 			flagUpdate |= true;
 		}
 
 		int indexNow = -1;
-		if(false == string.IsNullOrEmpty(labelList))
+		if(false == string.IsNullOrEmpty(labelUI))
 		{
 			if(0 >= width)
 			{
-				indexNow = EditorGUILayout.Popup(labelList, indexSequecePack, tableNameSequencePack);
+				indexNow = EditorGUILayout.Popup(labelUI, indexSequecePack, tableNameSequencePack);
 			}
 			else
 			{
-				indexNow = EditorGUILayout.Popup(labelList, indexSequecePack, tableNameSequencePack, GUILayout.Width(width));
+				indexNow = EditorGUILayout.Popup(labelUI, indexSequecePack, tableNameSequencePack, GUILayout.Width(width));
 			}
 		}
 		else
@@ -354,40 +398,70 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		if(indexNow != indexSequecePack)
 		{
 			indexSequecePack = indexNow;
-//			nameSequencePack = dataProject.DataSequence[indexSequecePack].Name;
-			nameSequencePack = (null != tableNameSequencePack) ? tableNameSequencePack[indexSequecePack] : dataProject.DataSequence[indexSequecePack].Name;
+			nameSequencePack = tableNameSequencePack[indexSequecePack];
 			flagUpdate |= true;
 		}
 
 		return(indexSequecePack);
+
+	TableSelectNameSequencePack_ErrorEnd:;
+		if(false == string.IsNullOrEmpty(labelUI))
+		{
+			if(0 >= width)
+			{
+				EditorGUILayout.LabelField(labelUI, NameNoData);
+			}
+			else
+			{
+				EditorGUILayout.LabelField(labelUI, NameNoData, GUILayout.Width(width));
+			}
+		}
+		else
+		{
+			if(0 >= width)
+			{
+				EditorGUILayout.LabelField(NameNoData);
+			}
+			else
+			{
+				EditorGUILayout.LabelField(NameNoData, GUILayout.Width(width));
+			}
+		}
+
+		return(-1);
 	}
-	private int ListSelectNameSequence(	ref bool flagUpdate,
-										ref string nameSequence,
-										Script_SpriteStudio6_DataSequence dataSequence,
-										string[] tableNameSequence,
-										string labelList,
-										int width=0
-									)
+	private int TableSelectNameSequence(	ref bool flagUpdate,
+											ref string nameSequence,
+											Script_SpriteStudio6_DataSequence dataSequence,
+											string[] tableNameSequence,
+											string labelUI,
+											int width=0
+										)
 	{
 		/* "Sequence" Select */
+		if((null == dataSequence) || ((null == tableNameSequence) || (0 >= tableNameSequence.Length)))
+		{
+			goto TableSelectNameSequence_ErrorEnd;
+		}
+
 		int indexSequece = dataSequence.IndexGetSequence(nameSequence);
 		if((0 > indexSequece) || (tableNameSequence.Length <= indexSequece))
 		{
 			indexSequece = 0;
-			nameSequence = (null != tableNameSequence) ? tableNameSequence[indexSequece] : dataSequence.TableSequence[indexSequece].Name;
+			nameSequence = tableNameSequence[indexSequece];
 			flagUpdate |= true;
 		}
 
 		int indexNow = -1;
-		if(false == string.IsNullOrEmpty(labelList))
+		if(false == string.IsNullOrEmpty(labelUI))
 		{
 			if(0 >= width)
 			{
-				indexNow = EditorGUILayout.Popup(labelList, indexSequece, tableNameSequence);
+				indexNow = EditorGUILayout.Popup(labelUI, indexSequece, tableNameSequence);
 			}
 			else
 			{
-				indexNow = EditorGUILayout.Popup(labelList, indexSequece, tableNameSequence, GUILayout.Width(width));
+				indexNow = EditorGUILayout.Popup(labelUI, indexSequece, tableNameSequence, GUILayout.Width(width));
 			}
 		}
 		else
@@ -406,11 +480,37 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 		{
 			indexSequece = indexNow;
 //			nameSequence = dataSequence.TableSequence[indexSequece].Name;
-			nameSequence = (null != tableNameSequence) ? tableNameSequence[indexSequece] : dataSequence.TableSequence[indexSequece].Name;
+			nameSequence = tableNameSequence[indexSequece];
 			flagUpdate |= true;
 		}
 
 		return(indexSequece);
+
+	TableSelectNameSequence_ErrorEnd:;
+		if(false == string.IsNullOrEmpty(labelUI))
+		{
+			if(0 >= width)
+			{
+				EditorGUILayout.LabelField(labelUI, NameNoData);
+			}
+			else
+			{
+				EditorGUILayout.LabelField(labelUI, NameNoData, GUILayout.Width(width));
+			}
+		}
+		else
+		{
+			if(0 >= width)
+			{
+				EditorGUILayout.LabelField(NameNoData);
+			}
+			else
+			{
+				EditorGUILayout.LabelField(NameNoData, GUILayout.Width(width));
+			}
+		}
+
+		return(-1);
 	}
 	#endregion Functions
 
@@ -474,24 +574,27 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 
 					bool flagUpdate = false;
 					string nameSequencePack = InstanceSequencePreview.NameSequencePack;
-					string[] tableNameSequencePack;
-					ListGetSequencePack(out tableNameSequencePack, out indexSequencePack, dataProject, nameSequencePack);
-					indexSequencePack = ListSelectNameSequencePack(ref flagUpdate, ref nameSequencePack, dataProject, tableNameSequencePack, null, widthList);
-					InstanceSequencePreview.NameSequencePack = nameSequencePack;
-
-					if(true == flagUpdate)
+					TableGetSequencePack(ref TableNameSequencePackPreview, out indexSequencePack, dataProject, nameSequencePack);
+					indexSequencePack = TableSelectNameSequencePack(ref flagUpdate, ref nameSequencePack, dataProject, TableNameSequencePackPreview, null, widthList);
+					if(0 > indexSequencePack)
 					{
-						InstanceSequencePreview.Stop(false, false);
-						InstanceSequencePreview.PackSet(indexSequencePack);
-
-						indexSequenceData = 0;
-						flagRestartAnimation = true;
+//						InstanceSequencePreview.NameSequencePack = ;
+						dataSequencePack = null;
 					}
-				}
+					else
+					{
+						InstanceSequencePreview.NameSequencePack = nameSequencePack;
+						dataSequencePack = dataProject.DataSequence[indexSequencePack];
 
-				if(0 <= indexSequencePack)
-				{
-					dataSequencePack = dataProject.DataSequence[indexSequencePack];
+						if(true == flagUpdate)
+						{
+							InstanceSequencePreview.Stop(false, false);
+							InstanceSequencePreview.PackSet(indexSequencePack);
+
+							indexSequenceData = 0;
+							flagRestartAnimation = true;
+						}
+					}
 				}
 
 				/* "Sequence" Select */
@@ -506,17 +609,24 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 					}
 
 					bool flagUpdate = false;
-					string[] tableNameSequenceData;
-					ListGetSequenceData(out tableNameSequenceData, out indexSequenceData, dataSequencePack, nameSequenceData);
-					indexSequenceData = ListSelectNameSequence(ref flagUpdate, ref nameSequenceData, dataSequencePack, tableNameSequenceData, null, widthList);
-					InstanceSequencePreview.NameDataSequence = nameSequenceData;
-
-					if(true == flagUpdate)
+					TableGetSequenceData(ref TableNameSequenceDataPreview, out indexSequenceData, dataSequencePack, nameSequenceData);
+					indexSequenceData = TableSelectNameSequence(ref flagUpdate, ref nameSequenceData, dataSequencePack, TableNameSequenceDataPreview, null, widthList);
+					if(0 > indexSequenceData)
 					{
-						InstanceSequencePreview.Stop(false, false);
+//						InstanceSequencePreview.NameDataSequence = 
+						flagRestartAnimation = false;
+					}
+					else
+					{
+						InstanceSequencePreview.NameDataSequence = nameSequenceData;
 
-						InstanceSequencePreview.SequenceSet(indexSequenceData);
-						flagRestartAnimation = true;
+						if(true == flagUpdate)
+						{
+							InstanceSequencePreview.Stop(false, false);
+
+							InstanceSequencePreview.SequenceSet(indexSequenceData);
+							flagRestartAnimation = true;
+						}
 					}
 				}
 
@@ -555,16 +665,19 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 								frameSequenceNew = frameLimit;
 							}
 
-							float timeDuration = InstanceSequencePreview.TimeGetDurationSequence(null, true);
-							frameLimit = (int)(timeDuration / timePerFrame);
-							if(frameLimit < frameSequenceNew)
+							if(true == InstanceSequencePreview.IsPlayable)
 							{
-								frameSequenceNew = frameLimit;
-							}
+								float timeDuration = InstanceSequencePreview.TimeGetDurationSequence(null, true);
+								frameLimit = (int)(timeDuration / timePerFrame);
+								if(frameLimit < frameSequenceNew)
+								{
+									frameSequenceNew = frameLimit;
+								}
 
-							const float adjustTimeMargin = 0.0f;
-							float timeElapsed =	(frameSequenceNew * timePerFrame) + adjustTimeMargin;
-							InstanceSequencePreview.CursorSet(timeElapsed, true);
+								const float adjustTimeMargin = 0.0f;
+								float timeElapsed =	(frameSequenceNew * timePerFrame) + adjustTimeMargin;
+								InstanceSequencePreview.CursorSet(timeElapsed, true);
+							}
 						}
 					}
 					else
@@ -678,7 +791,8 @@ public class Inspector_SpriteStudio6_Sequence : Editor
 
 	/* ----------------------------------------------- Enums & Constants */
 	#region Enums & Constants
-	private const string NameMissing = "(Data Missing)";
+	private readonly static string NameMissing = "(Data Missing)";
+	private readonly static string NameNoData = "(No Data)";
 
 #if SUPPORT_PREVIEW
 	private readonly static GUIContent TitlePreview = new GUIContent("Preview [Script_SpriteStudio6_Sequence]");
