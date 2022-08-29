@@ -71,7 +71,7 @@ public class Inspector_SpriteStudio6_Replicate : Editor
 		EditorGUILayout.LabelField("GameObject that has following components");
 		EditorGUILayout.LabelField("  can be set to \"Original Animation\".");
 		EditorGUILayout.LabelField("- Script_SpriteStudio6_Root");
-//		EditorGUILayout.LabelField("- Script_SpriteStudio6_RootEffect");
+		EditorGUILayout.LabelField("- Script_SpriteStudio6_RootEffect");
 		EditorGUILayout.LabelField("- Script_SpriteStudio6_Sequence");
 		EditorGUILayout.Space();
 

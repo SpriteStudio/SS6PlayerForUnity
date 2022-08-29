@@ -31,6 +31,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 	private SerializedProperty PropertyCountTrack;
 	private SerializedProperty PropertyInformationPlay;
 
+	private string[] TableNameAnimation = null;
+
 #if SUPPORT_PREVIEW
 	/* WorkArea (for Preview) */
 	private LibraryEditor_SpriteStudio6.Utility.Inspector.Preview InstancePreview;
@@ -40,6 +42,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 	private bool FlagFoldOutInterfaces = false;
 	private bool FlagPlayAnimationPreview = false;
+
+	private string[] TableNameAnimationPreview = null;
 #endif
 	#endregion Variables & Properties
 
@@ -60,6 +64,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 //		PropertyCountTrack
 //		PropertyInformationPlay
 
+		TableNameAnimation = null;
+
 #if SUPPORT_PREVIEW
 		InstancePreview = null;
 		InstanceRootPreview = null;
@@ -68,6 +74,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 		FlagFoldOutInterfaces = false;
 		FlagPlayAnimationPreview = false;
+
+		TableNameAnimationPreview = null;
 #endif
 	}
 
@@ -158,7 +166,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 			{
 				/* Creation animation name table */
 				SerializedProperty propertyInformationPlay = PropertyInformationPlay.GetArrayElementAtIndex(0);
-				InformationPlay(ref flagUpdate, propertyInformationPlay, InstanceRoot, TableGetNameAnimation(dataAnimation));
+				TableGetNameAnimation(ref TableNameAnimation, dataAnimation);
+				InformationPlay(ref flagUpdate, propertyInformationPlay, InstanceRoot, TableNameAnimation);
 			}
 		}
 
@@ -213,7 +222,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 		/* "Animation" Select */
 		string nameAnimation = propertyNameAnition.stringValue;
-		int indexAnimation = ListSelectNameAnimation(ref flagUpdate, ref nameAnimation, instanceRoot, tableNameAnimation, "Animation Name");
+		int indexAnimation = TableSelectNameAnimation(ref flagUpdate, ref nameAnimation, instanceRoot, tableNameAnimation, "Animation Name");
 		propertyNameAnition.stringValue = nameAnimation;
 
 		Library_SpriteStudio6.Data.Animation dataAnimation = instanceRoot.DataAnimation.TableAnimation[indexAnimation];
@@ -426,10 +435,14 @@ public class Inspector_SpriteStudio6_Root : Editor
 		}
 	}
 
-	private string[] TableGetNameAnimation(Script_SpriteStudio6_DataAnimation dataAnimation)
+	private bool TableGetNameAnimation(ref string[] tableNameAnimation, Script_SpriteStudio6_DataAnimation dataAnimation)
 	{
 		int countAnimation = dataAnimation.CountGetAnimation();
-		string[] tableNameAnimation = new string[countAnimation];
+		if((null == tableNameAnimation) || (countAnimation != tableNameAnimation.Length))
+		{
+			tableNameAnimation = new string[countAnimation];
+		}
+
 		for(int i=0; i<countAnimation; i++)
 		{
 			tableNameAnimation[i] = dataAnimation.TableAnimation[i].Name;
@@ -439,13 +452,13 @@ public class Inspector_SpriteStudio6_Root : Editor
 			}
 		}
 
-		return(tableNameAnimation);
+		return(true);
 	}
-	private int ListSelectNameAnimation(	ref bool flagUpdate,
+	private int TableSelectNameAnimation(	ref bool flagUpdate,
 											ref string nameAnimation,
 											Script_SpriteStudio6_Root instanceRoot,
 											string[] tableNameAnimation,
-											string labelList,
+											string labelUI,
 											int width=0
 									)
 	{
@@ -458,15 +471,15 @@ public class Inspector_SpriteStudio6_Root : Editor
 		}
 
 		int indexNow = -1;
-		if(false == string.IsNullOrEmpty(labelList))
+		if(false == string.IsNullOrEmpty(labelUI))
 		{
 			if(0 >= width)
 			{
-				indexNow = EditorGUILayout.Popup(labelList, indexAnimation, tableNameAnimation);
+				indexNow = EditorGUILayout.Popup(labelUI, indexAnimation, tableNameAnimation);
 			}
 			else
 			{
-				indexNow = EditorGUILayout.Popup(labelList, indexAnimation, tableNameAnimation, GUILayout.Width(width));
+				indexNow = EditorGUILayout.Popup(labelUI, indexAnimation, tableNameAnimation, GUILayout.Width(width));
 			}
 		}
 		else
@@ -547,7 +560,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 					bool flagUpdate = false;
 					Script_SpriteStudio6_DataAnimation dataAnimation = InstanceRootPreview.DataAnimation;
 					string nameAnimation = InstanceRootPreview.TableInformationPlay[0].NameAnimation;
-					indexAnimation = ListSelectNameAnimation(ref flagUpdate, ref nameAnimation, InstanceRootPreview, TableGetNameAnimation(dataAnimation), null, widthList);
+					TableGetNameAnimation(ref TableNameAnimationPreview, dataAnimation);
+					indexAnimation = TableSelectNameAnimation(ref flagUpdate, ref nameAnimation, InstanceRootPreview, TableNameAnimationPreview, null, widthList);
 					if(true == flagUpdate)
 					{
 						/* Set Animation */
