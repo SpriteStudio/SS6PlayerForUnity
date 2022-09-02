@@ -169,7 +169,7 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 
 	/* MEMO: Bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
 	/*       In principle, do not change the value. Correctly operation is not guaranteed.               */
-	internal float RateOpacity
+	public float RateOpacity
 	{
 		get
 		{
@@ -181,7 +181,7 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 			Status |= FlagBitStatus.UPDATE_RATE_OPACITY;
 		}
 	}
-	internal Vector2 RateScaleLocal
+	public Vector2 RateScaleLocal
 	{
 		get
 		{
@@ -205,8 +205,8 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 
 	private int IndexStep = -1;
 
-	internal Library_SpriteStudio6.CallBack.FunctionPlayEndSequence FunctionPlayEnd = null;
-	internal Library_SpriteStudio6.CallBack.FunctionDecodeStepSequence FunctionDecodeStep = null;
+	public Library_SpriteStudio6.CallBack.FunctionPlayEndSequence FunctionPlayEnd = null;
+	public Library_SpriteStudio6.CallBack.FunctionDecodeStepSequence FunctionDecodeStep = null;
 	protected Library_SpriteStudio6.CallBack.FunctionTimeElapseSequence FunctionExecTimeElapse = null;
 	public Library_SpriteStudio6.CallBack.FunctionTimeElapseSequence FunctionTimeElapse
 	{
@@ -221,7 +221,7 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 	}
 
 #if SUPPORT_TIMELINE
-	internal Library_SpriteStudio6.CallBack.FunctionTimelineSequence FunctionTimeline = null;
+	public Library_SpriteStudio6.CallBack.FunctionTimelineSequence FunctionTimeline = null;
 #endif
 	#endregion Variables & Properties
 
@@ -234,7 +234,7 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 			StartMain();
 		}
 	}
-	internal void StartMain()
+	public void StartMain()
 	{
 		/* Boot up master datas */
 		/* MEMO: Reason why initial setting of ScriptableObject is done here     */
@@ -343,7 +343,7 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 			UpdateEnter(1.0f);
 		}
 #else
-		LateUpdateEnter(1.0f);
+		UpdateEnter(1.0f);
 #endif
 	}
 #if SUPPORT_PREVIEW
@@ -492,7 +492,7 @@ public class Script_SpriteStudio6_Sequence : MonoBehaviour
 		if(null != FunctionTimeline)
 		{
 			/* MEMO: In this case, return value is ignored. */
-			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.START, TimeElapsedTimeline, time);
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.UPDATE, TimeElapsedTimeline, time);
 		}
 
 		/* Update Time */

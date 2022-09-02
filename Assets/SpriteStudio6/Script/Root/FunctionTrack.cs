@@ -24,7 +24,7 @@ public partial class Script_SpriteStudio6_Root
 		true == Now-playing<br>
 		false == Error / Not playing
 
-	Gets status as to whether animation is playing on track.<br>
+	Get status as to whether animation is playing on track.<br>
 	<br>
 	Do not use property "StatusIsPlaying" directly. (For internal processing, Specification will be changed without notice)<br>
 	*/
@@ -58,7 +58,7 @@ public partial class Script_SpriteStudio6_Root
 		true == Pausing (Now-Suspended)<br>
 		false == Error / Not playing / 
 
-	Gets "Pause(suspended)" status as to whether animation is playing on track.<br>
+	Get "Pause(suspended)" status as to whether animation is playing on track.<br>
 	<br>
 	When indexTrack is set "-1", return "true" if all playing tracks are paused.<br>
 	<br>
@@ -562,7 +562,7 @@ public partial class Script_SpriteStudio6_Root
 		Track-Cursor range<br>
 		float.Nan == Error / Not playing
 
-	Gets Track-Cursor's maximum value in now-playing animation.<br>
+	Get Track-Cursor's maximum value in now-playing animation.<br>
 	"Track-Cursor" is position of now-playing animation's timeline.<br>
 	As a matter of fact, "Track-Cursor" is the value from "0.0" to
 		"animation timeline length (seconds)".(The Absolute time of

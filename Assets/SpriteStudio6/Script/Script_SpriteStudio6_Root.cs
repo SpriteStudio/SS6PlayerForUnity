@@ -149,7 +149,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 
 	/* MEMO: Bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
 	/*       In principle, do not change the value. Correctly operation is not guaranteed.               */
-	internal float RateOpacity
+	public float RateOpacity
 	{
 		get
 		{
@@ -161,7 +161,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			Status |= FlagBitStatus.UPDATE_RATE_OPACITY;
 		}
 	}
-	internal Vector2 RateScaleLocal
+	public Vector2 RateScaleLocal
 	{
 		get
 		{
@@ -216,16 +216,16 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		}
 	}
 
-	internal Library_SpriteStudio6.CallBack.FunctionPlayEnd FunctionPlayEnd = null;
-	internal Library_SpriteStudio6.CallBack.FunctionUserData FunctionUserData = null;
-	internal Library_SpriteStudio6.CallBack.FunctionSignal FunctionSignal = null;
+	public Library_SpriteStudio6.CallBack.FunctionPlayEnd FunctionPlayEnd = null;
+	public Library_SpriteStudio6.CallBack.FunctionUserData FunctionUserData = null;
+	public Library_SpriteStudio6.CallBack.FunctionSignal FunctionSignal = null;
 
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderEnter = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderExit = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderStay = null;
+	public Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderEnter = null;
+	public Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderExit = null;
+	public Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderStay = null;
 
 #if SUPPORT_TIMELINE
-	internal Library_SpriteStudio6.CallBack.FunctionTimeline FunctionTimeline = null;
+	public Library_SpriteStudio6.CallBack.FunctionTimeline FunctionTimeline = null;
 #endif
 
 	/* MEMO: Integrated to "FunctionCollider..." */
@@ -841,7 +841,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		if(null != FunctionTimeline)
 		{
 			/* MEMO: In this case, return value is ignored. */
-			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.START, TimeElapsedTimeline, time);
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.UPDATE, TimeElapsedTimeline, time);
 		}
 
 		/* Update Time */

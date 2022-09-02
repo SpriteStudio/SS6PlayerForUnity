@@ -80,7 +80,7 @@ public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
 		}
 	}
 #if SUPPORT_TIMELINE
-	internal bool StatusIsControlledTimeline
+	public bool StatusIsControlledTimeline
 	{
 		get
 		{
@@ -97,7 +97,7 @@ public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
 	private MeshFilter InstanceMeshFilter = null;
 
 #if SUPPORT_TIMELINE
-	internal Library_SpriteStudio6.CallBack.FunctionTimelineReplicate FunctionTimeline = null;
+	public Library_SpriteStudio6.CallBack.FunctionTimelineReplicate FunctionTimeline = null;
 #endif
 	#endregion Variables & Properties
 
@@ -180,7 +180,7 @@ public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
 		if(null != FunctionTimeline)
 		{
 			/* MEMO: In this case, return value is ignored. */
-			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.START, TimeElapsedTimeline, time);
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.UPDATE, TimeElapsedTimeline, time);
 		}
 
 		/* Update Time */
