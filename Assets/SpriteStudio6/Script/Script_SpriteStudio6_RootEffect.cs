@@ -82,7 +82,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 	}
 #endif
-	internal bool StatusIsPlayingInfinity
+	public bool StatusIsPlayingInfinity
 	{
 		get
 		{
@@ -142,7 +142,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 
 	/* MEMO: bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
 	/*       In principle, do not change the value. Correctly operation is not guaranteed.               */
-	internal float RateOpacity
+	public float RateOpacity
 	{
 		get
 		{
@@ -154,7 +154,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 			Status |= FlagBitStatus.UPDATE_RATE_OPACITY;
 		}
 	}
-	internal Vector2 RateScaleLocal
+	public Vector2 RateScaleLocal
 	{
 		get
 		{
@@ -197,10 +197,10 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		}
 	}
 
-	internal Library_SpriteStudio6.CallBack.FunctionPlayEndEffect FunctionPlayEnd = null;
+	public Library_SpriteStudio6.CallBack.FunctionPlayEndEffect FunctionPlayEnd = null;
 
 #if SUPPORT_TIMELINE
-	internal Library_SpriteStudio6.CallBack.FunctionTimelineEffect FunctionTimeline = null;
+	public Library_SpriteStudio6.CallBack.FunctionTimelineEffect FunctionTimeline = null;
 #endif
 	#endregion Variables & Properties
 
@@ -537,7 +537,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		if(null != FunctionTimeline)
 		{
 			/* MEMO: In this case, return value is ignored. */
-			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.START, TimeElapsedTimeline, time);
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.UPDATE, TimeElapsedTimeline, time);
 		}
 
 		/* Update Time */
