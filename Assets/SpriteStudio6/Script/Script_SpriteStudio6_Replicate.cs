@@ -5,7 +5,9 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 #define MESSAGE_DATAVERSION_INVALID
+#define SUPPORT_TIMELINE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +19,11 @@ using UnityEditor;
 // [DefaultExecutionOrder(20)]
 [ExecuteInEditMode]
 [System.Serializable]
+#if SUPPORT_TIMELINE
+public partial class Script_SpriteStudio6_Replicate : MonoBehaviour, UnityEngine.Timeline.ITimeControl
+#else
 public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
+#endif
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
@@ -29,6 +35,11 @@ public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
 	public Script_SpriteStudio6_Sequence InstanceSequenceOriginal;
 
 	public bool FlagHideForce;
+
+#if SUPPORT_TIMELINE
+	protected double TimePreviousTimeline = double.NaN;
+	protected float TimeElapsedTimeline = float.NaN;
+#endif
 
 	public bool StatusIsValidOriginal
 	{
@@ -68,12 +79,26 @@ public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
 				);	/* ? true : false */
 		}
 	}
+#if SUPPORT_TIMELINE
+	public bool StatusIsControlledTimeline
+	{
+		get
+		{
+			/* MEMO:  */
+			return(true == double.IsNaN(TimePreviousTimeline));	/* ? true : false */
+		}
+	}
+#endif
 
 	private FunctionDrawUpdate DrawUpdate = null;
 	private MeshRenderer InstanceMeshRendererOriginal = null;
 	private MeshFilter InstanceMeshFilterOriginal = null;
 	private MeshRenderer InstanceMeshRenderer = null;
 	private MeshFilter InstanceMeshFilter = null;
+
+#if SUPPORT_TIMELINE
+	public Library_SpriteStudio6.CallBack.FunctionTimelineReplicate FunctionTimeline = null;
+#endif
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -112,6 +137,57 @@ public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
 //	{
 //	}
 	#endregion MonoBehaviour-Functions
+
+	/* ----------------------------------------------- ITimeControl-Functions */
+	#region ITimeControl-Functions
+#if SUPPORT_TIMELINE
+	public void OnControlTimeStart()
+	{
+		/* MEMO: Just in case, Call initialization. */
+		TimePreviousTimeline = 0.0;	/* Busy */
+		TimeElapsedTimeline = 0.0f;
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			/* MEMO: In this case, return value is ignored. */
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.START, float.NaN , double.NaN);
+		}
+	}
+
+	public void OnControlTimeStop()
+	{
+		TimePreviousTimeline = double.NaN;	/* Not busy */
+		TimeElapsedTimeline = float.NaN;
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			if(false == FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.END, float.NaN, double.NaN))
+			{
+				/* MEMO: When "FunctionTimeline" (call at the end) returns false, destroy self. */
+				SelfDestroy();
+			}
+		}
+	}
+
+	public void SetTime(double time)
+	{
+		/* Calculate delta-Time */
+		TimeElapsedTimeline = (float)(time - TimePreviousTimeline);
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			/* MEMO: In this case, return value is ignored. */
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.UPDATE, TimeElapsedTimeline, time);
+		}
+
+		/* Update Time */
+		TimePreviousTimeline = time;
+	}
+#endif
+	#endregion ITimeControl-Functions
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
@@ -278,6 +354,85 @@ public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
 		InstanceRootEffectOriginal = null;
 		InstanceSequenceOriginal = null;
 	}
+
+	/* ******************************************************** */
+	//! Get Replicate-Component
+	/*!
+	@param	gameObject
+		GameObject of starting search
+	@param	flagApplySelf
+		true == Include "gameObject" as check target<br>
+		false == exclude "gameObject"<br>
+		Default: true
+	@retval	Return-Value
+		Instance of "Script_SpriteStudio6_Replicate"<br>
+		null == Not-Found / Failure	
+
+	Get component "Script_SpriteStudio6_Replicate" by examining "gameObject" and direct-children.<br>
+	<br>
+	This function returns "Script_SpriteStudio6_Sequence" first found.<br>
+	However, it is not necessarily in shallowest GameObject-hierarchy.<br>
+	(Although guarantee up to direct-children, can not guarantee if farther than direct-children)<br>
+	*/
+	public static Script_SpriteStudio6_Replicate ReplicateGet(GameObject gameObject, bool flagApplySelf=true)
+	{
+		Script_SpriteStudio6_Replicate scriptReplicate = null;
+
+		/* Check Origin */
+		if(true == flagApplySelf)
+		{
+			scriptReplicate = ReplicateGetMain(gameObject);
+			if(null != scriptReplicate)
+			{
+				return(scriptReplicate);
+			}
+		}
+
+		/* Check Direct-Children */
+		/* MEMO: Processing is wastefull, but check direct-children first so that make to find in closely-relation as much as possible. */
+		int countChild = gameObject.transform.childCount;
+		Transform transformChild = null;
+
+		for(int i=0; i<countChild; i++)
+		{
+			transformChild = gameObject.transform.GetChild(i);
+			scriptReplicate = ReplicateGetMain(transformChild.gameObject);
+			if(null != scriptReplicate)
+			{
+				return(scriptReplicate);
+			}
+		}
+
+		/* Check Children */
+		for(int i=0; i<countChild; i++)
+		{
+			transformChild = gameObject.transform.GetChild(i);
+			scriptReplicate = ReplicateGet(transformChild.gameObject, false);
+			if(null != scriptReplicate)
+			{	/* Has Root-Parts */
+				return(scriptReplicate);
+			}
+		}
+
+		return(null);
+	}
+	private static Script_SpriteStudio6_Replicate ReplicateGetMain(GameObject gameObject)
+	{
+		Script_SpriteStudio6_Replicate scriptReplicate = null;
+		scriptReplicate = gameObject.GetComponent<Script_SpriteStudio6_Replicate>();
+		if(null != scriptReplicate)
+		{	/* Has Root-Parts */
+			return(scriptReplicate);
+		}
+
+		return(null);
+	}
+
+	private void SelfDestroy()
+	{
+		Library_SpriteStudio6.Utility.Asset.ObjectDestroy(gameObject);
+	}
+
 	private bool ComponentSetMesh(GameObject instanceGameObject)
 	{
 		if(null == instanceGameObject)

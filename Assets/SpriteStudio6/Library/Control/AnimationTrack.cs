@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,61 +18,61 @@ public static partial class Library_SpriteStudio6
 		{
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
 			#region Classes, Structs & Interfaces
-			internal partial struct Track
+			public partial struct Track
 			{
 				/* ----------------------------------------------- Variables & Properties */
 				#region Variables & Properties
 				internal FlagBitStatus Status;
-				internal bool StatusIsValid
+				public bool StatusIsValid
 				{
 					get
 					{
 						return(0 != (Status & FlagBitStatus.VALID));
 					}
 				}
-				internal bool StatusIsPlaying
+				public bool StatusIsPlaying
 				{
 					get
 					{
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING)));
 					}
 				}
-				internal bool StatusIsPausing
+				public bool StatusIsPausing
 				{
 					get
 					{
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PAUSING)));
 					}
 				}
-				internal bool StatusIsPlayStylePingpong
+				public bool StatusIsPlayStylePingpong
 				{
 					get
 					{
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.STYLE_PINGPONG) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.STYLE_PINGPONG)));
 					}
 				}
-				internal bool StatusIsPlayStyleReverse
+				public bool StatusIsPlayStyleReverse
 				{
 					get
 					{
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.STYLE_REVERSE) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.STYLE_REVERSE)));
 					}
 				}
-				internal bool StatusIsPlayingStart
+				public bool StatusIsPlayingStart
 				{
 					get
 					{
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_START) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_START)));
 					}
 				}
-				internal bool StatusIsPlayingReverse
+				public bool StatusIsPlayingReverse
 				{
 					get
 					{
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_REVERSE) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_REVERSE)));
 					}
 				}
-				internal bool StatusIsPlayingReversePrevious
+				public bool StatusIsPlayingReversePrevious
 				{
 					get
 					{
@@ -79,56 +80,56 @@ public static partial class Library_SpriteStudio6
 						return(0 != (Status & FlagBitStatus.PLAYING_REVERSEPREVIOUS));
 					}
 				}
-				internal bool StatusIsPlayingTurn
+				public bool StatusIsPlayingTurn
 				{
 					get
 					{
 						return((FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_TURN) == (Status & (FlagBitStatus.VALID | FlagBitStatus.PLAYING | FlagBitStatus.PLAYING_TURN)));
 					}
 				}
-				internal bool StatusIsDecodeAttribute
+				public bool StatusIsDecodeAttribute
 				{
 					get
 					{
 						return(0 != (Status & FlagBitStatus.DECODE_ATTRIBUTE));
 					}
 				}
-				internal bool StatusIsIgnoreSkipLoop
+				public bool StatusIsIgnoreSkipLoop
 				{
 					get
 					{
 						return(0 != (Status & FlagBitStatus.IGNORE_SKIPLOOP));
 					}
 				}
-				internal bool StatusIsIgnoreUserData
+				public bool StatusIsIgnoreUserData
 				{
 					get
 					{
 						return(0 != (Status & FlagBitStatus.IGNORE_USERDATA));
 					}
 				}
-				internal bool StatusIsIgnoreSignal
+				public bool StatusIsIgnoreSignal
 				{
 					get
 					{
 						return(0 != (Status & FlagBitStatus.IGNORE_SIGNAL));
 					}
 				}
-				internal bool StatusIsIgnoreNextUpdateUserData
+				public bool StatusIsIgnoreNextUpdateUserData
 				{
 					get
 					{
 						return(0 != (Status & FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA));
 					}
 				}
-				internal bool StatusIsIgnoreNextUpdateSignal
+				public bool StatusIsIgnoreNextUpdateSignal
 				{
 					get
 					{
 						return(0 != (Status & FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL));
 					}
 				}
-				internal bool StatusIsTransitionStart
+				public bool StatusIsTransitionStart
 				{
 					get
 					{
@@ -146,7 +147,7 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 				}
-				internal bool StatusIsTransitionCancelPause
+				public bool StatusIsTransitionCancelPause
 				{
 					get
 					{
@@ -164,7 +165,7 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 				}
-				internal bool StatusIsRequestPlayEnd
+				public bool StatusIsRequestPlayEnd
 				{
 					get
 					{
@@ -182,7 +183,7 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 				}
-				internal bool StatusIsRequestTransitionEnd
+				public bool StatusIsRequestTransitionEnd
 				{
 					get
 					{
@@ -201,25 +202,25 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
-				internal Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer ArgumentContainer;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer ArgumentContainer;
 
-				internal float TimeDelay;
-				internal float TimeElapsed;
-				internal float TimeElapsedNow;
-				internal float RateTime;
+				public float TimeDelay;
+				public float TimeElapsed;
+				public float TimeElapsedNow;
+				public float RateTime;
 
-				internal int TimesPlay;
-				internal int CountLoop;
-				internal int CountLoopNow;
+				public int TimesPlay;
+				public int CountLoop;
+				public int CountLoopNow;
 
-				internal int FramePerSecond;
-				internal float TimePerFrame;
-				internal float TimePerFrameConsideredRateTime;
+				public int FramePerSecond;
+				public float TimePerFrame;
+				public float TimePerFrameConsideredRateTime;
 
-				internal int FrameStart;
-				internal int FrameEnd;
-				internal int FrameRange;
-				internal float TimeRange;
+				public int FrameStart;
+				public int FrameEnd;
+				public int FrameRange;
+				public float TimeRange;
 
 				internal float TimeElapsedTransition;
 				internal float TimeLimitTransition;
@@ -230,6 +231,10 @@ public static partial class Library_SpriteStudio6
 				/*       Mainly used for shifting display-frame in cycle that executed "Stop()". */
 				internal float TimeElapseReplacement;
 				internal float TimeElapseInRangeReplacement;
+
+				/* MEMO: This value is used for "Sequence".                        */
+				/*       The overrun is added to the start time of next animation. */
+				internal float TimeOverrun;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -265,6 +270,8 @@ public static partial class Library_SpriteStudio6
 
 					TimeElapseReplacement = 0.0f;
 					TimeElapseInRangeReplacement = 0.0f;
+
+					TimeOverrun = 0.0f;
 				}
 
 				public bool BootUp()
@@ -356,6 +363,8 @@ public static partial class Library_SpriteStudio6
 
 					TimeElapseReplacement = 0.0f;
 					TimeElapseInRangeReplacement = 0.0f;
+
+					TimeOverrun = 0.0f;
 
 					return(true);
 				}
@@ -561,6 +570,7 @@ public static partial class Library_SpriteStudio6
 												TimesPlay--;
 												if(0 >= TimesPlay)
 												{	/* End */
+													TimeOverrun = TimeElapsed;
 													goto Update_PlayEnd_Foward;
 												}
 											}
@@ -598,6 +608,7 @@ public static partial class Library_SpriteStudio6
 												TimesPlay--;
 												if(0 >= TimesPlay)
 												{	/* End */
+													TimeOverrun = -TimeElapsed;
 													goto AnimationUpdate_PlayEnd_Reverse;
 												}
 											}
@@ -655,6 +666,7 @@ public static partial class Library_SpriteStudio6
 										TimesPlay--;
 										if(0 >= TimesPlay)
 										{	/* End */
+											TimeOverrun = -TimeElapsed;
 											goto AnimationUpdate_PlayEnd_Reverse;
 										}
 									}
@@ -690,6 +702,7 @@ public static partial class Library_SpriteStudio6
 										TimesPlay--;
 										if(0 >= TimesPlay)
 										{	/* End */
+											TimeOverrun = TimeElapsed;
 											goto Update_PlayEnd_Foward;
 										}
 									}

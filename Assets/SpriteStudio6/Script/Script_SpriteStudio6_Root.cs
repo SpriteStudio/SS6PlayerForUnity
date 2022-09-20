@@ -5,7 +5,12 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 #define MESSAGE_DATAVERSION_INVALID
+#define SUPPORT_TIMELINE
+#if UNITY_EDITOR
+#define SUPPORT_PREVIEW
+#endif
 // #define EXPERIMENT_FOR_CAMERA
 
 using System.Collections;
@@ -17,7 +22,11 @@ using UnityEditor;
 
 [ExecuteInEditMode]
 [System.Serializable]
+#if SUPPORT_TIMELINE
+public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Root, UnityEngine.Timeline.ITimeControl
+#else
 public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Root
+#endif
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
@@ -29,7 +38,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	internal int CountParticleMax = 0;	/* use only Highest-Parent-Root */
 
 	public int LimitTrack;
-	internal Library_SpriteStudio6.Control.Animation.Track[] TableControlTrack = null;
+	[System.NonSerialized] public Library_SpriteStudio6.Control.Animation.Track[] TableControlTrack = null;
 	internal Library_SpriteStudio6.CallBack.FunctionControlEndTrackPlay[] FunctionPlayEndTrack = null;
 
 	public InformationPlay[] TableInformationPlay;
@@ -42,21 +51,55 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	public bool FlagColliderInterlockHideForce;
 	public int OrderInLayer;
 
+#if SUPPORT_TIMELINE
+	protected double TimePreviousTimeline = double.NaN;
+	protected float TimeElapsedTimeline = float.NaN;
+#endif
+
 	private FlagBitStatus Status = FlagBitStatus.CLEAR;
-	internal bool StatusIsValid
+	public bool StatusIsValid
 	{
 		get
 		{
 			return(0 != (Status & FlagBitStatus.VALID));
 		}
 	}
-	internal bool StatusIsPlaying
+	public bool StatusIsPlaying
 	{
 		get
 		{
 			return(0 != (Status & FlagBitStatus.PLAYING));
 		}
 	}
+#if SUPPORT_PREVIEW
+	public bool StatusIsControlledPreview
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CONTROLLED_PREVIEW));
+		}
+		set
+		{
+			if(true == value)
+			{
+				Status |= FlagBitStatus.CONTROLLED_PREVIEW;
+			}
+			else
+			{
+				Status &= ~FlagBitStatus.CONTROLLED_PREVIEW;
+			}
+		}
+	}
+#endif
+#if SUPPORT_TIMELINE
+	public bool StatusIsControlledTimeline
+	{
+		get
+		{
+			return(0 != (Status & FlagBitStatus.CONTROLLED_TIMELINE));
+		}
+	}
+#endif
 	internal bool StatusIsUpdateRateScaleLocal
 	{
 		get
@@ -106,7 +149,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 
 	/* MEMO: Bellow 2 properties (RateOpacity/RateScaleLocal) are used to control from parent animation. */
 	/*       In principle, do not change the value. Correctly operation is not guaranteed.               */
-	internal float RateOpacity
+	public float RateOpacity
 	{
 		get
 		{
@@ -118,7 +161,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			Status |= FlagBitStatus.UPDATE_RATE_OPACITY;
 		}
 	}
-	internal Vector2 RateScaleLocal
+	public Vector2 RateScaleLocal
 	{
 		get
 		{
@@ -146,8 +189,9 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		}
 	}
 
-	private Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionExecTimeElapse = FunctionTimeElapseDefault;
-	internal Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionTimeElapse
+	/* MEMO: "FunctionTimeElapse" and "FunctionTimeElapseEffect" also apply to child-Animations. */
+	private Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionExecTimeElapse = null;
+	public Library_SpriteStudio6.CallBack.FunctionTimeElapse FunctionTimeElapse
 	{
 		get
 		{
@@ -158,13 +202,31 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			FunctionExecTimeElapse = (null != value) ? value : FunctionTimeElapseDefault;
 		}
 	}
-	internal Library_SpriteStudio6.CallBack.FunctionPlayEnd FunctionPlayEnd = null;
-	internal Library_SpriteStudio6.CallBack.FunctionUserData FunctionUserData = null;
-	internal Library_SpriteStudio6.CallBack.FunctionSignal FunctionSignal = null;
 
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderEnter = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderExit = null;
-	internal Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderStay = null;
+	private Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionExecTimeElapseEffect = null;
+	public Library_SpriteStudio6.CallBack.FunctionTimeElapseEffect FunctionTimeElapseEffect
+	{
+		get
+		{
+			return(FunctionExecTimeElapseEffect);
+		}
+		set
+		{
+			FunctionExecTimeElapseEffect = (null != value) ? value : FunctionTimeElapseEffectDefault;
+		}
+	}
+
+	public Library_SpriteStudio6.CallBack.FunctionPlayEnd FunctionPlayEnd = null;
+	public Library_SpriteStudio6.CallBack.FunctionUserData FunctionUserData = null;
+	public Library_SpriteStudio6.CallBack.FunctionSignal FunctionSignal = null;
+
+	public Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderEnter = null;
+	public Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderExit = null;
+	public Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderStay = null;
+
+#if SUPPORT_TIMELINE
+	public Library_SpriteStudio6.CallBack.FunctionTimeline FunctionTimeline = null;
+#endif
 
 	/* MEMO: Integrated to "FunctionCollider..." */
 	/* Obsolete */	// internal Library_SpriteStudio6.CallBack.FunctionCallBackCollision FunctionCollisionEnter = null;
@@ -223,6 +285,17 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			goto StartMain_ErrorEnd;
 		}
 		FunctionBootUpDataAnimation();
+
+		/* Initialize "Elapsed-Time" CallBaks */
+		/* MEMO: "null" is "Set Default-Function". */
+		if(null == FunctionTimeElapse)
+		{
+			FunctionTimeElapse = null;
+		}
+		if(null == FunctionTimeElapseEffect)
+		{
+			FunctionTimeElapseEffect = null;
+		}
 
 		/* Get Counts */
 		CountPartsSprite  = DataAnimation.CountGetPartsSprite();
@@ -291,6 +364,40 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 
 	void LateUpdate()
 	{
+#if SUPPORT_PREVIEW
+		if(0 != (Status & FlagBitStatus.CONTROLLED_PREVIEW))
+		{	/* in Preview */
+			return;
+		}
+#endif
+
+#if UNITY_EDITOR
+		/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
+		if(false == EditorApplication.isPlaying)
+		{
+			LateUpdateEnter(0.0f);
+		}
+		else
+		{
+			LateUpdateEnter(1.0f);
+		}
+#else
+		LateUpdateEnter(1.0f);
+#endif
+	}
+#if SUPPORT_PREVIEW
+	public void LateUpdatePreview()
+	{
+		if(0 == (Status & FlagBitStatus.CONTROLLED_PREVIEW))
+		{	/* not in Preview */
+			return;
+		}
+
+		LateUpdateEnter(1.0f);
+	}
+#endif
+	void LateUpdateEnter(float rateTimeElapsedForce)
+	{	/* MEMO: "rateTimeElapsedForce" is used to switch between advancing/stopping time on the editor. */
 		if(null == InstanceRootParent)
 		{
 #if EXPERIMENT_FOR_CAMERA
@@ -306,14 +413,17 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			if(true == RendererBootUpDraw(false))
 			{
 				Matrix4x4 matrixInverseMeshRenderer = Matrix4x4.identity;
-				float timeElapsed = FunctionExecTimeElapse(this);
 #if UNITY_EDITOR
-				/* MEMO: Since time may pass even when not "Play Mode", prevents it. */
-				if(false == EditorApplication.isPlaying)
+				float timeElapsed = 0.0f;
+				if(null != FunctionExecTimeElapse)
 				{
-					timeElapsed = 0.0f;
+					timeElapsed = FunctionExecTimeElapse(this);
 				}
+#else
+				float timeElapsed = FunctionExecTimeElapse(this);
 #endif
+				timeElapsed *= rateTimeElapsedForce;
+
 				LateUpdateMain(	timeElapsed,
 								false,
 								Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
@@ -534,6 +644,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			/* Clear Mesh */
 			MeshCombined.Clear();
 			MeshCombined.name = NameBatchedMesh;
+			MeshCombined.hideFlags = HideFlags.DontSave;
 
 			if(false == flagHide)
 			{
@@ -654,20 +765,10 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				{
 					if(false == FunctionPlayEnd(this, InstanceGameObjectControl))
 					{
-						if(null == InstanceRootParent)
-						{
-							/* MEMO: When "FunctionPlayEnd" returns false, destroy self. */
-							/*       If have "Control-Object", will destroy as well.     */
-							/*       However, can not destroy when "Instance".           */
-							if(null != InstanceGameObjectControl)
-							{
-								UnityEngine.Object.Destroy(InstanceGameObjectControl);
-							}
-							else
-							{
-								UnityEngine.Object.Destroy(gameObject);
-							}
-						}
+						/* MEMO: When "FunctionPlayEnd" returns false, destroy self. */
+						/*       If have "Control-Object", will destroy as well.     */
+						/*       However, can not destroy when "Instance".           */
+						SelfDestroy();
 					}
 				}
 			}
@@ -682,10 +783,72 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 
 	void OnDestroy()
 	{
-		/* Material-Cache shut-down */
+		/* Shut-down Material-Cache */
+		/* MEMO: Since child-animation's materials is also shut down comprehensively, */
+		/*         need to be executed before BaseShutDown.                           */
 		CacheShutDownMaterial();
+
+		/* Shut-down base */
+		base.BaseShutDown();
 	}
 	#endregion MonoBehaviour-Functions
+
+	/* ----------------------------------------------- ITimeControl-Functions */
+	#region ITimeControl-Functions
+#if SUPPORT_TIMELINE
+	public void OnControlTimeStart()
+	{
+		/* MEMO: Just in case, Call initialization. */
+		Start();
+
+		TimePreviousTimeline = 0.0;	/* Busy */
+		TimeElapsedTimeline = 0.0f;
+		Status |= FlagBitStatus.CONTROLLED_TIMELINE;
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			/* MEMO: In this case, return value is ignored. */
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.START, float.NaN , double.NaN);
+		}
+	}
+
+	public void OnControlTimeStop()
+	{
+		TimePreviousTimeline = double.NaN;	/* Not busy */
+		TimeElapsedTimeline = float.NaN;
+		Status &= ~FlagBitStatus.CONTROLLED_TIMELINE;
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			if(false == FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.END, float.NaN, double.NaN))
+			{
+				/* MEMO: When "FunctionTimeline" (call at the end) returns false, destroy self. */
+				/*       If have "Control-Object", will destroy as well.                        */
+				/*       However, can not destroy when "Instance".                              */
+				SelfDestroy();
+			}
+		}
+	}
+
+	public void SetTime(double time)
+	{
+		/* Calculate delta-Time */
+		TimeElapsedTimeline = (float)(time - TimePreviousTimeline);
+
+		/* Execute CallBack */
+		if(null != FunctionTimeline)
+		{
+			/* MEMO: In this case, return value is ignored. */
+			FunctionTimeline(this, Library_SpriteStudio6.KindSituationTimeline.UPDATE, TimeElapsedTimeline, time);
+		}
+
+		/* Update Time */
+		TimePreviousTimeline = time;
+	}
+#endif
+	#endregion ITimeControl-Functions
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
@@ -709,7 +872,6 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		/* Set Signature-Bootup */
 		DataAnimation.StatusIsBootup = true;
 	}
-
 	/* MEMO: Do not use this function. (only for internal processing, importer and inspectors) */
 	public int LimitGetTrack()
 	{
@@ -1118,8 +1280,20 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	/* Part: SpriteStudio6/Script/Root/FunctionMaterial.cs */
 	/* Part: SpriteStudio6/Script/Root/FunctionMisc.cs */
 
-	private static float FunctionTimeElapseDefault(Script_SpriteStudio6_Root scriptRoot)
+	private float FunctionTimeElapseDefault(Script_SpriteStudio6_Root scriptRoot)
 	{
+		if(true == StatusIsControlledTimeline)
+		{
+			return(TimeElapsedTimeline);
+		}
+		return(Time.deltaTime);
+	}
+	private float FunctionTimeElapseEffectDefault(Script_SpriteStudio6_RootEffect scriptRoot)
+	{
+		if(true == StatusIsControlledTimeline)
+		{
+			return(TimeElapsedTimeline);
+		}
 		return(Time.deltaTime);
 	}
 	#endregion Functions
@@ -1145,6 +1319,8 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		CHANGE_CACHEMATERIAL = 0x00200000,
 
 		ANIMATION_SYNTHESIZE = 0x00080000,
+		CONTROLLED_PREVIEW = 0x00020000,
+		CONTROLLED_TIMELINE = 0x00010000,
 
 		CLEAR = 0x00000000,
 	}

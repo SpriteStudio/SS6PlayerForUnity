@@ -5,12 +5,12 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 #define DECODE_USERDATA
 #define DECODE_SIGNAL
 // #define DECODE_IN_INSTANCE_USERDATA
 #define DECODE_IN_INSTANCE_SIGNAL
 // #define EXPERIMENT_FOR_CAMERA
-
 #define DEFORM_CALCULATE_STRICT
 
 using System.Collections;
@@ -327,6 +327,7 @@ public static partial class Library_SpriteStudio6
 						{
 							InstanceRootUnderControl = InstanceGameObjectUnderControl.GetComponent<Script_SpriteStudio6_Root>();
 							InstanceRootUnderControl.InstanceRootParent = instanceRoot;
+							InstanceRootUnderControl.FunctionTimeElapse = instanceRoot.FunctionTimeElapse;
 
 							int indexAnimation = 0;
 							if(true == flagRevert)
@@ -361,6 +362,7 @@ public static partial class Library_SpriteStudio6
 							InstanceRootEffectUnderControl = InstanceGameObjectUnderControl.GetComponent<Script_SpriteStudio6_RootEffect>();
 							InstanceRootEffectUnderControl.InstanceRootParent = instanceRoot;
 							IndexAnimationUnderControl = -1;
+							InstanceRootEffectUnderControl.FunctionTimeElapse = instanceRoot.FunctionTimeElapseEffect;
 //							InstanceRootEffectUnderControl.AnimationPlay(-1, IndexAnimationUnderControl);
 //							InstanceRootEffectUnderControl.AnimationStop();
 						}
@@ -2447,6 +2449,7 @@ public static partial class Library_SpriteStudio6
 					CHANGE_TRANSFORM_ROTATION = 0x00200000,
 					CHANGE_TRANSFORM_POSITION = 0x00100000,
 
+					/* 0x00080000 */						/* Reserved */
 					REFRESH_TRANSFORM_SCALING = 0x00040000,
 					REFRESH_TRANSFORM_ROTATION = 0x00020000,
 					REFRESH_TRANSFORM_POSITION = 0x00010000,
@@ -3774,18 +3777,18 @@ public static partial class Library_SpriteStudio6
 					}
 
 					internal void DrawMesh(	Script_SpriteStudio6_Root instanceRoot,
-													int idParts,
-													ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
-													GameObject instanceGameObject,
-													Transform instanceTransform,
-													Library_SpriteStudio6.KindMasking masking,
-													bool flagPreDraw,
-													ref Matrix4x4 matrixCorrection,
-													bool flagPlanarization,
-													ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
-													ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
-													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
-												)
+											int idParts,
+											ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
+											GameObject instanceGameObject,
+											Transform instanceTransform,
+											Library_SpriteStudio6.KindMasking masking,
+											bool flagPreDraw,
+											ref Matrix4x4 matrixCorrection,
+											bool flagPlanarization,
+											ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
+											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+											ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
+										)
 					{
 						if(0 != (Status & FlagBitStatus.NO_DRAW))
 						{

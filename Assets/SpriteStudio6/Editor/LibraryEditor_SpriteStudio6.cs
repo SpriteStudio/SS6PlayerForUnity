@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -99,6 +100,19 @@ public static partial class LibraryEditor_SpriteStudio6
 					break;
 
 				case Setting.KindMode.UNITY_NATIVE:
+					{
+						countProgressMax += countSSCE;	/* Convert (CellMap) */
+						countProgressMax += countTexture;	/* Create-Asset (Texture) */
+						countProgressMax += countSSAE;	/* Convert & Create-Asset (Animation) */
+
+						if(true == setting.PreCalcualation.FlagTrimTransparentPixelsCell)
+						{
+							countProgressMax += countSSCE;	/* Convert-CellMap Pass 2 (PreCalculate Trim-TransparentPixels) */
+						}
+					}
+					break;
+
+				case Setting.KindMode.UNITY_UI:
 					{
 						countProgressMax += countSSCE;	/* Convert (CellMap) */
 						countProgressMax += countTexture;	/* Create-Asset (Texture) */
@@ -238,6 +252,20 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					break;
 
+				case Setting.KindMode.UNITY_UI:
+					if(false == ExecUnityUI(	ref setting,
+												ref countProgressNow,
+												countProgressMax,
+												flagDisplayProgressBar,
+												informationSSPJ,
+												nameOutputAssetFolderBase
+										)
+							)
+					{
+						goto Exec_ErrorEnd;
+					}
+					break;
+
 				default:
 					LogError(messageLogPrefix, "Invalid Convert-Mode at [" + nameInputFullPathSSPJ + "]");
 					goto Exec_ErrorEnd;
@@ -357,47 +385,15 @@ public static partial class LibraryEditor_SpriteStudio6
 			if(0 < countTexture)
 			{
 				/* Copy Texture files */
-				SSCE.Information.Texture informationTexture = null;
 				for(int i=0; i<countTexture; i++)
 				{
 					ProgressBarUpdate(	"Copy Textures (" + (i + 1).ToString() + "/" + countTexture.ToString() + ")",
 										flagDisplayProgressBar, ref countProgressNow, countProgressMax
 									);
 
-					flagCreateAssetData = true;
-					informationTexture = informationSSPJ.TableInformationTexture[i];
-
-					/* Create-Asset */
-					if(null == informationTexture.PrefabTexture.TableData[0])
-					{	/* New */
-						/* Create Output Asset-Folder */
-						LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
-																			informationTexture.PrefabTexture.TableName[0]
-																		);
-						if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
-						{
-							LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-							goto ExecSS6PU_ErrorEnd;
-						}
-					}
-					else
-					{	/* Exist */
-						if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagTexture,
-																													informationTexture.PrefabTexture.TableName[0],
-																													"Texture"
-																												)
-							)
-						{	/* Not overwrite */
-							flagCreateAssetData = false;
-							informationTexture.PrefabTexture.FlagUpdate[0] = false;
-						}
-					}
-					if(true == flagCreateAssetData)
+					if(false == AssetCreateTextureUnity(ref setting, informationSSPJ, informationSSPJ.TableInformationTexture[i], messageLogPrefix))
 					{
-						if(false == SSCE.AssetCreateTexture(ref setting, informationSSPJ, informationTexture))
-						{
-							goto ExecSS6PU_ErrorEnd;
-						}
+						goto ExecSS6PU_ErrorEnd;
 					}
 				}
 			}
@@ -797,46 +793,15 @@ public static partial class LibraryEditor_SpriteStudio6
 			if(0 < countTexture)
 			{
 				/* Copy Texture files */
-				SSCE.Information.Texture informationTexture = null;
 				for(int i=0; i<countTexture; i++)
 				{
 					ProgressBarUpdate(	"Copy Textures (" + (i + 1).ToString() + "/" + countTexture.ToString() + ")",
 										flagDisplayProgressBar, ref countProgressNow, countProgressMax
 									);
 
-					flagCreateAssetData = true;
-					informationTexture = informationSSPJ.TableInformationTexture[i];
-
-					/* Create-Asset */
-					if(null == informationTexture.PrefabTexture.TableData[0])
-					{	/* New */
-						/* Create Output Asset-Folder */
-						LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
-																			informationTexture.PrefabTexture.TableName[0]
-																		);
-						if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
-						{
-							LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
-							goto ExecUnityNative_ErrorEnd;
-						}
-					}
-					else
-					{	/* Exist */
-						if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagTexture,
-																													informationTexture.PrefabTexture.TableName[0],
-																													"Texture"
-																												)
-							)
-						{	/* Not overwrite */
-							flagCreateAssetData = false;
-						}
-					}
-					if(true == flagCreateAssetData)
+					if(false == AssetCreateTextureUnity(ref setting, informationSSPJ, informationSSPJ.TableInformationTexture[i], messageLogPrefix))
 					{
-						if(false == SSCE.AssetCreateTexture(ref setting, informationSSPJ, informationTexture))
-						{
-							goto ExecUnityNative_ErrorEnd;
-						}
+						goto ExecUnityNative_ErrorEnd;
 					}
 				}
 			}
@@ -1024,6 +989,230 @@ public static partial class LibraryEditor_SpriteStudio6
 		ExecUnityNative_ErrorEnd:;
 			return(false);
 		}
+		private static bool ExecUnityUI(	ref Setting setting,
+												ref int countProgressNow,
+												int countProgressMax,
+												bool flagDisplayProgressBar,
+												SSPJ.Information informationSSPJ,
+												string nameOutputAssetFolderBase
+											)
+		{
+			const string messageLogPrefix = "Convert-Main (UnityUI)";
+			string nameOutputAssetFolder = "";
+			string nameOutputAssetBody = "";
+			string nameOutputAssetExtention = "";
+			bool flagCreateAssetData = true;
+
+			/* Decide Asset Names & Check Assets existing */
+			if(false == SSPJ.ModeUnityUI.AssetNameDecide(ref setting, informationSSPJ, nameOutputAssetFolderBase))
+			{
+				goto ExecUnityUI_ErrorEnd;
+			}
+
+			/* Get Datas' count */
+			int countTexture = informationSSPJ.TableInformationTexture.Length;
+			int countSSCE = informationSSPJ.TableInformationSSCE.Length;
+			int countSSAE = informationSSPJ.TableInformationSSAE.Length;
+			int countSSEE = informationSSPJ.TableInformationSSEE.Length;
+
+			/* Create Asset: Texture */
+			/* MEMO: Create Texture-Assets before CellMap for "Trim Transparent-Pixel". */
+			/* MEMO: Enable read till sprite-datas set complete. */
+			if(0 < countTexture)
+			{
+				/* Copy Texture files */
+				for(int i=0; i<countTexture; i++)
+				{
+					ProgressBarUpdate(	"Copy Textures (" + (i + 1).ToString() + "/" + countTexture.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+
+					if(false == AssetCreateTextureUnity(ref setting, informationSSPJ, informationSSPJ.TableInformationTexture[i], messageLogPrefix))
+					{
+						goto ExecUnityUI_ErrorEnd;
+					}
+				}
+			}
+
+			/* Convert SSCEs */
+			/* MEMO: Currently, "informationSSCE.ListSpriteMetaDataUnityNative" and "informationSSCE.ListSpriteUnityNative" */
+			/*         are also shared in "UnityUI" mode.                                                                   */
+			if(0 < countSSCE)
+			{
+				SSCE.Information informationSSCE = null;
+				for(int i=0; i<countSSCE; i++)
+				{
+					/* MEMO: Be sure to "Convert" even when not create CellMap data-assets. Datas may be used at converting SSAE. */
+					informationSSCE = informationSSPJ.TableInformationSSCE[i];
+
+					/* MEMO: "Trim Transparent-Pixel" processing is unnecessary since Unity's sprite trims transparent pixels automatically by mesh shape. */
+
+					/* Convert (Create Textures' Atlas) */
+					ProgressBarUpdate(	"Convert SSCEs (" + (i + 1).ToString() + "/" + countSSCE.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+					if(false == SSCE.ModeUnityUI.ConvertCellMap(ref setting, informationSSPJ, informationSSCE))
+					{
+						goto ExecUnityUI_ErrorEnd;
+					}
+				}
+
+				/* Fix Texture */
+				for(int i=0; i<countTexture; i++)
+				{
+					/* Add Atlases to Textures */
+					if(false == SSCE.ModeUnityUI.CellMapSetTexture(ref setting, informationSSPJ, i))
+					{
+						goto ExecUnityUI_ErrorEnd;
+					}
+				}
+			}
+
+			/* Create Assrts SSAEs (GameObjeccts & AnimationClips) */
+			if(0 < countSSAE)
+			{
+				SSAE.Information informationSSAE = null;
+				for(int i=0; i<countSSAE; i++)
+				{
+					informationSSAE = informationSSPJ.TableInformationSSAE[i];
+
+					/* Convert Parts (Create Temporary GameObjects) */
+					ProgressBarUpdate(	"Convert & Create Asset SSAEs (" + (i + 1).ToString() + "/" + countSSAE.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+
+					GameObject gameObjectRoot = SSAE.ModeUnityUI.ConvertPartsAnimation(ref setting, informationSSPJ, informationSSAE);
+					if(null == gameObjectRoot)
+					{
+						goto ExecUnityUI_ErrorEnd;
+					}
+
+					/* Create Asset: Animation (AnimationClip) */
+					int countAnimation = informationSSAE.TableAnimation.Length;
+					for(int j=0; j<countAnimation; j++)
+					{
+						flagCreateAssetData = true;
+						if(null == informationSSAE.DataAnimationUnityUI.TableData[j])
+						{	/* New */
+							/* Create Output Asset-Folder */
+							LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																				informationSSAE.DataAnimationUnityUI.TableName[j]
+																			);
+							if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+							{
+								LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+								goto ExecUnityUI_ErrorEnd;
+							}
+						}
+						else
+						{	/* Exist */
+							if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagDataAnimation,
+																														informationSSAE.DataAnimationUnityUI.TableName[j],
+																														"Data Animation"
+																													)
+								)
+							{	/* Not overwrite */
+								flagCreateAssetData = false;
+								informationSSAE.DataAnimationUnityUI.FlagUpdate[j] = false;
+							}
+						}
+						if(true == flagCreateAssetData)
+						{
+							if(false == SSAE.ModeUnityUI.AssetCreateData(ref setting, informationSSPJ, informationSSAE, j))
+							{
+								goto ExecUnityUI_ErrorEnd;
+							}
+						}
+					}
+
+					/* Create Asset: Animation (Prefab) */
+					flagCreateAssetData = true;
+					if(null == informationSSAE.PrefabAnimationUnityUI.TableData[0])
+					{	/* New */
+						/* Create Output Asset-Folder */
+						LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																			informationSSAE.PrefabAnimationUnityUI.TableName[0]
+																		);
+						if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+						{
+							LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+							goto ExecUnityUI_ErrorEnd;
+						}
+					}
+					else
+					{	/* Exist */
+						if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagDataAnimation,
+																													informationSSAE.PrefabAnimationUnityUI.TableName[0],
+																													"Prefab Animation"
+																												)
+							)
+						{	/* Not overwrite */
+							flagCreateAssetData = false;
+							informationSSAE.PrefabAnimationUnityUI.FlagUpdate[0] = false;
+						}
+					}
+					if(true == flagCreateAssetData)
+					{
+						if(false == SSAE.ModeUnityUI.AssetCreatePrefab(ref setting, informationSSPJ, informationSSAE, gameObjectRoot))
+						{
+							goto ExecUnityUI_ErrorEnd;
+						}
+						gameObjectRoot = null;
+					}
+				}
+			}
+
+			return(true);
+
+		ExecUnityUI_ErrorEnd:;
+			return(false);
+		}
+		private static bool AssetCreateTextureUnity(	ref Setting setting,
+														SSPJ.Information informationSSPJ,
+														SSCE.Information.Texture informationTexture,
+														string messageLogPrefix
+											)
+		{
+			string nameOutputAssetFolder = "";
+			string nameOutputAssetBody = "";
+			string nameOutputAssetExtention = "";
+			bool flagCreateAssetData = true;
+
+			/* Create-Asset */
+			if(null == informationTexture.PrefabTexture.TableData[0])
+			{	/* New */
+				/* Create Output Asset-Folder */
+				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																	informationTexture.PrefabTexture.TableName[0]
+																);
+				if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+				{
+					LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+					return(false);
+				}
+			}
+			else
+			{	/* Exist */
+				if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagTexture,
+																											informationTexture.PrefabTexture.TableName[0],
+																											"Texture"
+																										)
+					)
+				{	/* Not overwrite */
+					flagCreateAssetData = false;
+					informationTexture.PrefabTexture.FlagUpdate[0] = false;
+				}
+			}
+			if(true == flagCreateAssetData)
+			{
+				if(false == SSCE.AssetCreateTexture(ref setting, informationSSPJ, informationTexture))
+				{
+					return(false);
+				}
+			}
+
+			return(true);
+		}
 
 		private static void LogError(string messagePrefix, string message)
 		{
@@ -1070,7 +1259,6 @@ public static partial class LibraryEditor_SpriteStudio6
 #else
 		public const ReplacePrefabOptions OptionPrefabReplace = ReplacePrefabOptions.ReplaceNameBased;
 #endif
-
 		#endregion Enums & Constants
 
 		/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -1212,6 +1400,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			public static bool FileCopyToAsset(string nameAsset, string nameOriginalFileName, bool flagOverCopy)
 			{
+				if(false == System.IO.File.Exists(nameOriginalFileName))
+				{
+					return(false);
+				}
+
 				System.IO.File.Copy(nameOriginalFileName, nameAsset, flagOverCopy);
 				return(true);
 			}
@@ -1932,6 +2125,319 @@ public static partial class LibraryEditor_SpriteStudio6
 			/* ----------------------------------------------- Enums & Constants */
 			#region Enums & Constants
 			#endregion Enums & Constants
+
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+			public partial class Preview : System.IDisposable
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				private bool FlagIsBusy;
+				public bool StatusIsBusy
+				{
+					get
+					{
+						return(FlagIsBusy);
+					}
+				}
+
+				private UnityEngine.RenderTexture InstanceTextureTarget;
+				internal UnityEngine.RenderTexture TextureTarget
+				{
+					get
+					{
+						return(InstanceTextureTarget);
+					}
+				}
+
+				private UnityEngine.SceneManagement.Scene Scene;
+				private UnityEngine.GameObject GameObjectScene;
+				private UnityEngine.Camera Camera;
+				public UnityEngine.GameObject GameObjectAnimation;
+
+				private System.Diagnostics.Stopwatch Timer = null;
+				private float TimeDelta = float.NaN;
+				internal float TimeElapsed
+				{
+					get
+					{
+						if((null == Timer) || (true == float.IsNaN(TimeDelta)))
+						{
+							return(0.0f);
+						}
+
+						return(TimeDelta);
+					}
+				}
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public Preview()
+				{
+					CleanUp();
+				}
+				private void CleanUp()
+				{
+					FlagIsBusy = false;
+
+//					Scene = 
+
+					InstanceTextureTarget = null;
+
+					GameObjectScene = null;
+					GameObjectAnimation = null;
+
+					Timer = null;
+					TimeDelta = float.NaN;
+				}
+
+				public bool Create(GameObject gameObjectAnimationSource)
+				{
+					if(true == FlagIsBusy)
+					{
+						return(true);
+					}
+
+					/* Create Render(Target)-Texture */
+					{
+						UnityEngine.Experimental.Rendering.GraphicsFormat formateTexture = UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_UNorm;
+						if(true == FlagAllowHDRCamera)
+						{
+							formateTexture = UnityEngine.Experimental.Rendering.GraphicsFormat.R16G16B16A16_SFloat;	/* Half */
+						}
+						InstanceTextureTarget = new RenderTexture(SizeXTextureTarget, SizeYTextureTarget, 32, formateTexture);
+					}
+
+					/* Create Preview-Scene */
+					Scene = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
+
+					/* Create Terminal-GameObject */
+					GameObjectScene = new GameObject("Scene");
+					UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(GameObjectScene, Scene);
+					{
+						/* Set Camera */
+						GameObject gameObjectCamera = new GameObject("Camera");
+						gameObjectCamera.transform.parent = GameObjectScene.transform;
+
+						Camera = gameObjectCamera.AddComponent<UnityEngine.Camera>();
+						Camera.transform.position = PositionCamera;
+						Camera.transform.rotation = RotationCamera;
+						Camera.nearClipPlane = 0.0f;
+						Camera.farClipPlane = 10000.0f;
+//						Camera.transform.lossyScale =
+						Camera.orthographic = true;
+						Camera.orthographicSize = SizeCamera;
+						Camera.clearFlags = UnityEngine.CameraClearFlags.Color;
+						Camera.backgroundColor = ColorCamera;
+						Camera.renderingPath = UnityEngine.RenderingPath.UsePlayerSettings;
+						Camera.depth = 0.0f;
+						Camera.allowHDR = FlagAllowHDRCamera;
+						Camera.useOcclusionCulling = false;
+						Camera.allowMSAA = false;
+						Camera.allowDynamicResolution = false;
+						Camera.scene = Scene;
+						Camera.forceIntoRenderTexture = true;
+						Camera.targetTexture = InstanceTextureTarget;
+
+						/* MEMO: Keep camera from running automatically. (2 updates run: scene lifecycle and manual) */
+						Camera.enabled = false;
+
+						/* Animation-Object Set (Copy from Select-Object) */
+						GameObjectAnimation = UnityEngine.Object.Instantiate(gameObjectAnimationSource.gameObject, PositionAnimation, RotationAnimation, GameObjectScene.transform);
+					}
+
+					/* Create stopwatch */
+					Timer = System.Diagnostics.Stopwatch.StartNew();
+					TimeDelta = float.NaN;
+
+					/* Set status */
+					FlagIsBusy = true;
+
+					return(true);
+				}
+
+				public void Update()
+				{
+					if(false == FlagIsBusy)
+					{
+						return;
+					}
+
+					/* Elapsed time Get */
+					Timer.Stop();
+
+					/* Caculate delta-time */
+					TimeDelta = 0.0f;
+					if(false == float.IsNaN(TimeDelta))
+					{
+						TimeDelta = (float)((double)Timer.ElapsedTicks * TickTimer);
+					}
+
+					/* Elapsed time Resett */
+					Timer.Restart();
+				}
+
+				public void Render()
+				{
+					if((null != Camera) && (null != TextureTarget))
+					{
+						Camera.Render();
+					}
+				}
+
+				public void Dispose()
+				{
+					if(true == FlagIsBusy)
+					{
+						if(null != Camera)
+						{
+							Camera.forceIntoRenderTexture = false;
+							Camera.targetTexture = null;
+						}
+
+						/* Destroy Terminal-GameObject */
+						if(null != GameObjectScene)
+						{
+							UnityEngine.Object.DestroyImmediate(GameObjectScene);
+						}
+
+						/* Destroy Preview-Scene */
+						UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(Scene);
+
+						/* Destroy Render-Texture */
+						if(null != InstanceTextureTarget)
+						{
+							InstanceTextureTarget.Release();
+							UnityEngine.Object.DestroyImmediate(InstanceTextureTarget);
+						}
+
+						/* Destroy Timer */
+						Timer.Stop();
+						Timer = null;
+					}
+
+					CleanUp();
+				}
+
+				public bool ObjectBootUpAnimation(UnityEngine.GameObject gameObjectAnimation)
+				{
+					if(null == gameObjectAnimation)
+					{
+						return(false);
+					}
+
+					gameObjectAnimation.transform.localPosition = Vector3.zero;
+					gameObjectAnimation.transform.localScale = Vector3.one;
+					gameObjectAnimation.transform.localRotation = Quaternion.identity;
+
+					gameObjectAnimation.SetActive(true);	/* Allow preview even if selected object is disactive */
+
+					return(true);
+				}
+
+				public int FrameSelectFPS(int frameOld, int widthList)
+				{
+					int framePerSecond = frameOld;
+					int indexFPS = System.Array.IndexOf(TableFramePreSecondPreview, framePerSecond);
+					if(0 > indexFPS)
+					{
+						indexFPS = 0;
+						framePerSecond = TableFramePreSecondPreview[indexFPS];
+					}
+
+					int indexFPSNew = -1;
+					if(0 > widthList)
+					{
+						indexFPSNew = EditorGUILayout.Popup(indexFPS, TableItemFramePerSecondPreview);
+					}
+					else
+					{
+						indexFPSNew = EditorGUILayout.Popup(indexFPS, TableItemFramePerSecondPreview, GUILayout.Width(widthList));
+					}
+
+					return(TableFramePreSecondPreview[indexFPSNew]);
+				}
+				public float RateSelectScale(float rateOld, int widthList)
+				{
+					float rate = rateOld;
+					int indexRate = System.Array.IndexOf(TableRateScalePreview, rate);
+					if(0 > indexRate)
+					{
+						indexRate = 0;
+						rate = TableRateScalePreview[indexRate];
+					}
+
+					int indexRateNew = -1;
+					if(0 > widthList)
+					{
+						indexRateNew = EditorGUILayout.Popup(indexRate, TableItemRateScalePreview);
+					}
+					else
+					{
+						indexRateNew = EditorGUILayout.Popup(indexRate, TableItemRateScalePreview, GUILayout.Width(widthList));
+					}
+
+					return(TableRateScalePreview[indexRateNew]);
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				private readonly static Vector3 PositionCamera = new Vector3(0.0f, 0.0f, -50.0f);
+				private readonly static Quaternion RotationCamera = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+				private const float SizeCamera = 540.0f;
+				private readonly static bool FlagAllowHDRCamera = false;
+				private readonly static UnityEngine.Color ColorCamera = new UnityEngine.Color((49.0f / 255.0f), (77.0f / 255.0f), (121.0f / 2550f), (0.0f / 255.0f));
+
+				private readonly static Vector3 PositionAnimation = Vector3.zero;
+				private readonly static Quaternion RotationAnimation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+
+				private const int SizeXTextureTarget = 1024;
+				private const int SizeYTextureTarget = 1024;
+				
+				private readonly static double TickTimer = 1.0f / (double)System.Diagnostics.Stopwatch.Frequency;
+
+				private readonly static int[] TableFramePreSecondPreview = new int[]	{
+					30,
+					45,
+					60,
+					90,
+					120,
+				};
+				private readonly static string[] TableItemFramePerSecondPreview = new string[]	{
+					"30 fps",
+					"45 fps",
+					"60 fps",
+					"90 fps",
+					"120 fps",
+				};
+
+				private readonly static float[] TableRateScalePreview = new float[]	{
+					1.0f / 4.0f,
+					1.0f / 3.0f,
+					1.0f / 2.0f,
+					1.0f / 1.5f,
+					1.0f,
+					1.5f,
+					2.0f,
+					3.0f,
+					4.0f,
+				};
+				private readonly static string[] TableItemRateScalePreview = new string[]	{
+					"x 0.25",
+					"x 0.33",
+					"x 0.5",
+					"x 0.66",
+					"x 1.0",
+					"x 1.5",
+					"x 2.0",
+					"x 3.0",
+					"x 4.0",
+				};
+				#endregion Enums & Constants
+			}
+			#endregion Classes, Structs & Interfaces
 		}
 
 		public static partial class Miscellaneous

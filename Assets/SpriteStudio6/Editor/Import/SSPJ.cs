@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -1458,8 +1459,68 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 					}
 
-					/* Track existing assets */
-					Texture2D[] tableTextureNew = new Texture2D[countTexture];
+					/* Textures */
+					for(int i=0; i<countTexture; i++)
+					{
+						LibraryEditor_SpriteStudio6.Import.SSCE.AssetNameDecideTexture(	ref setting,
+																						informationSSPJ,
+																						informationSSPJ.TableInformationTexture[i],
+																						nameOutputAssetFolderBase,
+																						null
+																					);
+					}
+
+					return(true);
+
+//				AssetNameDecide_ErrorEnd:;
+//					return(false);
+				}
+				#endregion Functions
+			}
+
+			public static partial class ModeUnityUI
+			{
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public static bool AssetNameDecide(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+													LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+													string nameOutputAssetFolderBase
+												)
+				{
+					int countSSAE = informationSSPJ.TableInformationSSAE.Length;
+					int countSSEE = informationSSPJ.TableInformationSSEE.Length;
+					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
+					int countTexture = informationSSPJ.TableInformationTexture.Length;
+
+					/* SSAEs (Prefab) */
+					for(int i=0; i<countSSAE; i++)
+					{
+						LibraryEditor_SpriteStudio6.Import.SSAE.ModeUnityUI.AssetNameDecidePrefab(	ref setting,
+																									informationSSPJ,
+																									informationSSPJ.TableInformationSSAE[i],
+																									nameOutputAssetFolderBase,
+																									null
+																								);
+					}
+
+					/* SSAEs (AnimationClip) */
+					int countAnimation;
+					for(int i=0; i<countSSAE; i++)
+					{
+						countAnimation = informationSSPJ.TableInformationSSAE[i].TableAnimation.Length;
+						/* MEMO: Create asset's informations since number of animations in SSAE is finalized. */
+						informationSSPJ.TableInformationSSAE[i].DataAnimationUnityUI.BootUp(countAnimation);
+						for(int j=0; j<countAnimation; j++)
+						{
+							LibraryEditor_SpriteStudio6.Import.SSAE.ModeUnityUI.AssetNameDecideData(	ref setting,
+																										informationSSPJ,
+																										informationSSPJ.TableInformationSSAE[i],
+																										j,
+																										nameOutputAssetFolderBase,
+																										null
+																									);
+						}
+					}
 
 					/* Textures */
 					for(int i=0; i<countTexture; i++)
@@ -1468,7 +1529,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																						informationSSPJ,
 																						informationSSPJ.TableInformationTexture[i],
 																						nameOutputAssetFolderBase,
-																						tableTextureNew[i]
+																						null
 																					);
 					}
 

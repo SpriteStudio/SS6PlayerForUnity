@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 // #define ATTRIBUTE_DUPLICATE_DEEP
 
 using System.Collections;

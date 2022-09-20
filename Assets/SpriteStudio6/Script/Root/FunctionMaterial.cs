@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -492,7 +493,7 @@ public partial class Script_SpriteStudio6_Root
 	Therefore, not recommended to call this function even if not necessary.
 		(e.g., Calling this function in every loop process.)<br>
 	*/
-	internal UnityEngine.Shader ShaderSetStandardAnimation(	UnityEngine.Shader shader,
+	public UnityEngine.Shader ShaderSetStandardAnimation(	UnityEngine.Shader shader,
 															Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
 															bool flagReplaceMaterialCache,
 															bool flagGlobal=false
@@ -577,10 +578,10 @@ public partial class Script_SpriteStudio6_Root
 		On success, instance of the material (same as argument "material")<br>
 		On failure, null.
 	*/
-	internal UnityEngine.Shader ShaderSetStandardEffect(	UnityEngine.Shader shader,
-															Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
-															bool flagReplaceMaterialCache,
-															bool flagGlobal = false
+	public UnityEngine.Shader ShaderSetStandardEffect(	UnityEngine.Shader shader,
+														Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
+														bool flagReplaceMaterialCache,
+														bool flagGlobal=false
 													)
 	{
 		if(false == flagGlobal)
@@ -646,7 +647,7 @@ public partial class Script_SpriteStudio6_Root
 	When create material using "shader", called material initialize function will be shared
 		with for animation (specified with "ShaderSetStandardAnimation").<br>
 	*/
-	internal UnityEngine.Shader ShaderSetStandardStencil(UnityEngine.Shader shader, bool flagReplaceMaterialCache, bool flagGlobal = false)
+	public UnityEngine.Shader ShaderSetStandardStencil(UnityEngine.Shader shader, bool flagReplaceMaterialCache, bool flagGlobal=false)
 	{
 		if(false == flagGlobal)
 		{	/* Local (Animation-Object) */
@@ -700,7 +701,7 @@ public partial class Script_SpriteStudio6_Root
 	Therefore, not recommended to call this function even if not necessary.
 		(e.g., Calling this function in every loop process.)<br>
 	*/
-	internal UnityEngine.Texture TextureSetCellMap(int indexCellMap, UnityEngine.Texture texture, bool flagReplaceMaterialCache)
+	public UnityEngine.Texture TextureSetCellMap(int indexCellMap, UnityEngine.Texture texture, bool flagReplaceMaterialCache)
 	{
 		if((null == CacheMaterial) || (null == TableTexture))
 		{

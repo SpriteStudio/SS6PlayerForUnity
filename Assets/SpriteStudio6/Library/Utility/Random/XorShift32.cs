@@ -5,6 +5,7 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
 using UnityEngine;
 
 public static partial class Library_SpriteStudio6

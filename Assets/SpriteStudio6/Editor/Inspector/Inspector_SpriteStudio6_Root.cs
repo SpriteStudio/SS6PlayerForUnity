@@ -5,6 +5,9 @@
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
+#define SUPPORT_PREVIEW
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -14,6 +17,7 @@ public class Inspector_SpriteStudio6_Root : Editor
 {
 	/* ----------------------------------------------- Variables & Properties */
 	#region Variables & Properties
+	/* WorkArea (for Inspector) */
 	private Script_SpriteStudio6_Root InstanceRoot;
 
 	private SerializedProperty PropertyDataCellMap;
@@ -26,10 +30,55 @@ public class Inspector_SpriteStudio6_Root : Editor
 	private SerializedProperty PropertyOrderInLayer;
 	private SerializedProperty PropertyCountTrack;
 	private SerializedProperty PropertyInformationPlay;
+
+	private string[] TableNameAnimation = null;
+
+#if SUPPORT_PREVIEW
+	/* WorkArea (for Preview) */
+	private LibraryEditor_SpriteStudio6.Utility.Inspector.Preview InstancePreview;
+	private Script_SpriteStudio6_Root InstanceRootPreview = null;
+	private float TimeElapsedPreview = float.NaN;
+	private float RateScalePreview = 1.0f;
+
+	private bool FlagFoldOutInterfaces = false;
+	private bool FlagPlayAnimationPreview = false;
+
+	private string[] TableNameAnimationPreview = null;
+#endif
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- Functions */
 	#region Functions
+	private void CleanUp()
+	{
+		InstanceRoot = null;
+
+//		PropertyDataCellMap
+//		PropertyDataAnimation
+//		PropertyHolderAsset
+
+//		PropertyHideForce
+//		PropertyColliderInterlockHideForce
+//		PropertyFlagPlanarization
+//		PropertyOrderInLayer
+//		PropertyCountTrack
+//		PropertyInformationPlay
+
+		TableNameAnimation = null;
+
+#if SUPPORT_PREVIEW
+		InstancePreview = null;
+		InstanceRootPreview = null;
+		TimeElapsedPreview = float.NaN;
+		RateScalePreview = 1.0f;
+
+		FlagFoldOutInterfaces = false;
+		FlagPlayAnimationPreview = false;
+
+		TableNameAnimationPreview = null;
+#endif
+	}
+
 	private void OnEnable()
 	{
 		InstanceRoot = (Script_SpriteStudio6_Root)target;
@@ -49,8 +98,6 @@ public class Inspector_SpriteStudio6_Root : Editor
 
 	public override void OnInspectorGUI()
 	{
-		const string NameMissing = "(Data Missing)";
-
 		serializedObject.Update();
 
 		EditorGUILayout.LabelField("[SpriteStudio6 Animation]");
@@ -118,19 +165,9 @@ public class Inspector_SpriteStudio6_Root : Editor
 			else
 			{
 				/* Creation animation name table */
-				int countAnimation = dataAnimation.CountGetAnimation();
-				string[] tableNameAnimation = new string[countAnimation];
-				for(int i=0; i<countAnimation; i++)
-				{
-					tableNameAnimation[i] = dataAnimation.TableAnimation[i].Name;
-					if(true == string.IsNullOrEmpty(tableNameAnimation[i]))
-					{
-						tableNameAnimation[i] = NameMissing;
-					}
-				}
-
 				SerializedProperty propertyInformationPlay = PropertyInformationPlay.GetArrayElementAtIndex(0);
-				InformationPlay(ref flagUpdate, propertyInformationPlay, InstanceRoot, tableNameAnimation);
+				TableGetNameAnimation(ref TableNameAnimation, dataAnimation);
+				InformationPlay(ref flagUpdate, propertyInformationPlay, InstanceRoot, TableNameAnimation);
 			}
 		}
 
@@ -149,6 +186,18 @@ public class Inspector_SpriteStudio6_Root : Editor
 			InstanceRoot.AnimationPlayInitial();
 		}
 	}
+
+#if SUPPORT_PREVIEW
+	private void OnDisable()
+	{
+		if(null != InstancePreview)
+		{
+			InstancePreview.Dispose();
+		}
+
+		CleanUp();
+	}
+#endif
 
 	private void InformationPlay(	ref bool flagUpdate,
 									SerializedProperty propertyInformationPlay,
@@ -172,19 +221,9 @@ public class Inspector_SpriteStudio6_Root : Editor
 		EditorGUILayout.Space();
 
 		/* "Animation" Select */
-		int indexAnimation = instanceRoot.IndexGetAnimation(propertyNameAnition.stringValue);
-		if((0 > indexAnimation) || (tableNameAnimation.Length <= indexAnimation))
-		{
-			indexAnimation = 0;
-			flagUpdate |= true;
-		}
-		int indexNow = EditorGUILayout.Popup("Animation Name", indexAnimation, tableNameAnimation);
-		if(indexNow != indexAnimation)
-		{
-			indexAnimation = indexNow;
-			propertyNameAnition.stringValue = instanceRoot.DataAnimation.TableAnimation[indexAnimation].Name;
-			flagUpdate |= true;
-		}
+		string nameAnimation = propertyNameAnition.stringValue;
+		int indexAnimation = TableSelectNameAnimation(ref flagUpdate, ref nameAnimation, instanceRoot, tableNameAnimation, "Animation Name");
+		propertyNameAnition.stringValue = nameAnimation;
 
 		Library_SpriteStudio6.Data.Animation dataAnimation = instanceRoot.DataAnimation.TableAnimation[indexAnimation];
 //		int frameAnimationEnd = dataAnimation.CountFrame - 1;
@@ -395,5 +434,291 @@ public class Inspector_SpriteStudio6_Root : Editor
 			flagUpdate = true;	/* Force */
 		}
 	}
+
+	private bool TableGetNameAnimation(ref string[] tableNameAnimation, Script_SpriteStudio6_DataAnimation dataAnimation)
+	{
+		int countAnimation = dataAnimation.CountGetAnimation();
+		if((null == tableNameAnimation) || (countAnimation != tableNameAnimation.Length))
+		{
+			tableNameAnimation = new string[countAnimation];
+		}
+
+		for(int i=0; i<countAnimation; i++)
+		{
+			tableNameAnimation[i] = dataAnimation.TableAnimation[i].Name;
+			if(true == string.IsNullOrEmpty(tableNameAnimation[i]))
+			{
+				tableNameAnimation[i] = NameMissing;
+			}
+		}
+
+		return(true);
+	}
+	private int TableSelectNameAnimation(	ref bool flagUpdate,
+											ref string nameAnimation,
+											Script_SpriteStudio6_Root instanceRoot,
+											string[] tableNameAnimation,
+											string labelUI,
+											int width=0
+									)
+	{
+		/* "Animation" Select */
+		int indexAnimation = instanceRoot.IndexGetAnimation(nameAnimation);
+		if((0 > indexAnimation) || (tableNameAnimation.Length <= indexAnimation))
+		{
+			indexAnimation = 0;
+			flagUpdate |= true;
+		}
+
+		int indexNow = -1;
+		if(false == string.IsNullOrEmpty(labelUI))
+		{
+			if(0 >= width)
+			{
+				indexNow = EditorGUILayout.Popup(labelUI, indexAnimation, tableNameAnimation);
+			}
+			else
+			{
+				indexNow = EditorGUILayout.Popup(labelUI, indexAnimation, tableNameAnimation, GUILayout.Width(width));
+			}
+		}
+		else
+		{
+			if(0 >= width)
+			{
+				indexNow = EditorGUILayout.Popup(indexAnimation, tableNameAnimation);
+			}
+			else
+			{
+				indexNow = EditorGUILayout.Popup(indexAnimation, tableNameAnimation, GUILayout.Width(width));
+			}
+		}
+
+		if(indexNow != indexAnimation)
+		{
+			indexAnimation = indexNow;
+			nameAnimation = instanceRoot.DataAnimation.TableAnimation[indexAnimation].Name;
+			flagUpdate |= true;
+		}
+
+		return(indexAnimation);
+	}
 	#endregion Functions
+
+#if SUPPORT_PREVIEW
+	/* ----------------------------------------------- Functions-forPreview */
+	#region Functions-forPreview
+	public override bool HasPreviewGUI()
+	{
+		return(true);
+	}
+
+	public override GUIContent GetPreviewTitle()
+	{
+		return(TitlePreview);
+	}
+
+	public override bool RequiresConstantRepaint()
+	{
+		/* MEMO: Update frequently only during playing preview animation. */
+		return(FlagPlayAnimationPreview);
+	}
+
+	public override void OnPreviewSettings()
+	{
+		if(null == InstanceRootPreview)
+		{
+			return;
+		}
+		if(false == InstanceRootPreview.StatusIsValid)
+		{
+			return;
+		}
+
+		/* "Fold-out" Buttoons */
+		FlagFoldOutInterfaces = UnityEngine.GUILayout.Toggle(	FlagFoldOutInterfaces,
+																(true == FlagFoldOutInterfaces) ? EditorGUIUtility.IconContent("ArrowNavigationLeft") : EditorGUIUtility.IconContent("ArrowNavigationRight"),
+																(UnityEngine.GUIStyle)"preButton"
+														);
+		if(false == FlagFoldOutInterfaces)
+		{	/* Show Interfaces */
+			if(null != InstanceRootPreview)
+			{
+				const int indexTrackAnimation = 0;	/* force */
+
+				/* "Play" Button */
+				FlagPlayAnimationPreview = UnityEngine.GUILayout.Toggle(	FlagPlayAnimationPreview,
+																			(true == FlagPlayAnimationPreview) ? EditorGUIUtility.IconContent("preAudioPlayOn") : EditorGUIUtility.IconContent("preAudioPlayOff"),
+																			(UnityEngine.GUIStyle)"preButton"
+																	);
+
+				/* "Animation" Select */
+				int indexAnimation = -1;
+				{
+					const int widthList = 100;
+
+					bool flagUpdate = false;
+					Script_SpriteStudio6_DataAnimation dataAnimation = InstanceRootPreview.DataAnimation;
+					string nameAnimation = InstanceRootPreview.TableInformationPlay[0].NameAnimation;
+					TableGetNameAnimation(ref TableNameAnimationPreview, dataAnimation);
+					indexAnimation = TableSelectNameAnimation(ref flagUpdate, ref nameAnimation, InstanceRootPreview, TableNameAnimationPreview, null, widthList);
+					if(true == flagUpdate)
+					{
+						/* Set Animation */
+						InstanceRootPreview.AnimationPlay(-1, indexAnimation, 0);
+					}
+
+					InstanceRootPreview.AnimationPause(-1, !FlagPlayAnimationPreview);
+				}
+
+				/* "Frame" Textbox */
+				{
+					const int widthBox = 60;
+					int frameAnimation = InstanceRootPreview.TableControlTrack[indexTrackAnimation].ArgumentContainer.Frame;
+
+					if(false == FlagPlayAnimationPreview)
+					{	/* Stopping */
+						/* MEMO: Can specify Frame-No. */
+						int frameAnimationNew = EditorGUILayout.DelayedIntField(frameAnimation, GUILayout.Width(widthBox));
+						if(frameAnimation != frameAnimationNew)
+						{
+							int frameLimit = InstanceRootPreview.TableControlTrack[indexTrackAnimation].FrameStart;
+							if(frameLimit > frameAnimationNew)
+							{
+								frameAnimationNew = frameLimit;
+							}
+							frameLimit = InstanceRootPreview.TableControlTrack[indexTrackAnimation].FrameEnd;
+							if(frameLimit < frameAnimationNew)
+							{
+								frameAnimationNew = frameLimit;
+							}
+
+#if false
+							/* MEMO: When animation is started by specifying frame directly, start frame may be set to -1 */
+							/*         , e.g., for 1/60 second data.                                                      */
+							/*       (Due to "rounding-off" error).                                                       */
+							InstanceRootPreview.AnimationPlay(-1, indexAnimation, -1, frameAnimationNew);
+#else
+							const float adjustTimeMargin = 0.0001f;	/* 1/1000[sec] */
+							float timeElapsed =	(	frameAnimationNew
+													* InstanceRootPreview.TableControlTrack[indexTrackAnimation].TimePerFrame
+												) + adjustTimeMargin;
+							InstanceRootPreview.TableControlTrack[indexTrackAnimation].TimeSkip(timeElapsed, false, false);
+#endif
+						}
+					}
+					else
+					{	/* Playing */
+						/* MEMO: Just display Frame-No. */
+						EditorGUILayout.LabelField(frameAnimation.ToString(), GUILayout.Width(widthBox));
+					}
+				}
+
+				/* Rate Select */
+				if(null != InstanceRootPreview)
+				{
+					const int widthList = 60;
+
+					float rateScalePreview = RateScalePreview;
+					RateScalePreview = InstancePreview.RateSelectScale(rateScalePreview, widthList);
+					if((0.0f < RateScalePreview) && (RateScalePreview != rateScalePreview))
+					{
+						InstanceRootPreview.transform.localScale = new Vector3(RateScalePreview, RateScalePreview, RateScalePreview);
+					}
+				}
+			}
+		}
+	}
+
+	public override void OnPreviewGUI(Rect rect, GUIStyle background)
+	{
+		if(null == InstanceRoot)
+		{
+			return;
+		}
+
+		/* Check booted-up */
+		if(null == InstancePreview)
+		{	/* Preview-Scene */
+			InstancePreview = new LibraryEditor_SpriteStudio6.Utility.Inspector.Preview();
+		}
+		if(null == InstanceRootPreview)
+		{	/* Animation */
+			if(null == InstancePreview.GameObjectAnimation)
+			{
+				InstancePreview.Create(InstanceRoot.gameObject);
+			}
+
+			InstanceRootPreview = InstancePreview.GameObjectAnimation.GetComponent<Script_SpriteStudio6_Root>();
+			if(null == InstanceRootPreview)
+			{
+				return;
+			}
+
+			/* Initialize Animation object */
+			InstancePreview.ObjectBootUpAnimation(InstanceRootPreview.gameObject);
+
+			/* Set Initial Animation */
+			InstanceRootPreview.AnimationPlay(-1, 0);	/* force */
+
+			/* Set CallBack-s */
+			InstanceRootPreview.FunctionTimeElapse = FunctionTimeElapseAnimation;
+			InstanceRootPreview.FunctionTimeElapseEffect = FunctionTimeElapseEffect;
+			InstanceRootPreview.FunctionUnifyChildTimeElapse();
+
+			/* Set Status */
+			/* MEMO: Keep animation from running automatically. (2 updates run: scene lifecycle and manual) */
+			InstanceRootPreview.FlagPlanarization = true;
+			InstanceRootPreview.StatusIsControlledPreview = true;
+			InstanceRootPreview.enabled = false;
+		}
+
+		/* Update Scene & Objects */
+		InstancePreview.Update();
+		TimeElapsedPreview = InstancePreview.TimeElapsed;
+
+		InstanceRootPreview.LateUpdatePreview();
+
+		/* Render Preview-Scene */
+		InstancePreview.Render();
+
+		/* Update Preview-Window */
+		{
+			base.OnPreviewGUI(rect, background);
+
+			UnityEngine.Texture textureTarget = InstancePreview.TextureTarget;
+			if(null != textureTarget)
+			{
+				GUI.DrawTexture(rect, textureTarget, ScaleMode.ScaleToFit);
+			}
+		}
+	}
+
+	private float FunctionTimeElapseAnimation(Script_SpriteStudio6_Root scriptRoot)
+	{
+		if(false == FlagPlayAnimationPreview)
+		{
+			return(0.0f);
+		}
+		return(TimeElapsedPreview);
+	}
+	private float FunctionTimeElapseEffect(Script_SpriteStudio6_RootEffect scriptRoot)
+	{
+		if(false == FlagPlayAnimationPreview)
+		{
+			return(0.0f);
+		}
+		return(TimeElapsedPreview);
+	}
+	#endregion Functions-forPreview
+#endif
+
+	/* ----------------------------------------------- Enums & Constants */
+	#region Enums & Constants
+	private readonly static string NameMissing = "(Data Missing)";
+
+#if SUPPORT_PREVIEW
+	private readonly static GUIContent TitlePreview = new GUIContent("Preview [Script_SpriteStudio6_Root]");
+#endif
+	#endregion Enums & Constants
 }
