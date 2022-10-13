@@ -326,16 +326,20 @@ public partial class Script_SpriteStudio6_Root
 
 		/* Get now status. */
 		Script_SpriteStudio6_Root scriptInstance = InstanceGet(idParts);
-		if(null == scriptInstance)
-		{
-			return(false);
-		}
 
-		bool flagHideForceOld = scriptInstance.FlagHideForce;
-		bool flagPlanarizationOld = scriptInstance.FlagPlanarization;
-		int orderInLayerOld = scriptInstance.OrderInLayer;
-		float rateOpacityOld = scriptInstance.RateOpacity;
-		Vector2 rateScaleOld = scriptInstance.RateScaleLocal;
+		bool flagHideForceOld = FlagHideForce;
+		bool flagPlanarizationOld = FlagPlanarization;
+		int orderInLayerOld = 0;
+		float rateOpacityOld = 1.0f;
+		Vector2 rateScaleOld = Vector2.one;
+		if(null != scriptInstance)
+		{
+			flagHideForceOld = scriptInstance.FlagHideForce;
+			flagPlanarizationOld = scriptInstance.FlagPlanarization;
+			orderInLayerOld = scriptInstance.OrderInLayer;
+			rateOpacityOld = scriptInstance.RateOpacity;
+			rateScaleOld = scriptInstance.RateScaleLocal;
+		}
 
 		/* Renew "Instance" */
 		Script_SpriteStudio6_Root scriptRootHighest = RootGetHighest();
