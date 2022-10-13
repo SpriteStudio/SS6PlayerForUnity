@@ -77,8 +77,6 @@ Shader "Custom/SpriteStudio6/UnityNative/Sprite"
 			Blend [_BlendSource] [_BlendDestination]
 
 			CGPROGRAM
-			#pragma enable_d3d11_debug_symbols
-
 			#pragma vertex VS_main
 			#pragma fragment PS_main
 
