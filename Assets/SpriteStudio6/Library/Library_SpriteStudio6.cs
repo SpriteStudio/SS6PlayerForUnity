@@ -18,7 +18,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.1.8";
+	public const string SignatureVersionAsset = "2.1.10";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -3370,6 +3370,7 @@ public static partial class Library_SpriteStudio6
 					CacheMaterial.ShutDown(true);
 				}
 			}
+
 			protected void SelfDestroy()
 			{
 				if(null == InstanceRootParent)
@@ -4414,7 +4415,6 @@ public static partial class Library_SpriteStudio6
 
 					if (null != gameObjectParent)
 					{
-						transform = gameObject.transform;
 						transform.parent = transformParent;
 					}
 					if(null != gameObject)

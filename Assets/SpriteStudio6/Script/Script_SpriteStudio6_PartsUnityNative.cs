@@ -67,67 +67,14 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 
 	void Start()
 	{
-//		InstanceSpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-		if(null != InstanceSpriteRenderer)
+		CleanUp();
+
+		if(false == BootUp())
 		{
-			goto Start_End;
+			return;
 		}
 
-#if UNITY_2017_1_OR_NEWER
-//		InstanceSpriteMask = gameObject.GetComponent<SpriteMask>();
-		if(null != InstanceSpriteMask)
-		{
-			goto Start_End;
-		}
-#else
-		/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
-		/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
-#endif
-
-//		InstanceSkinnedMeshRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
-		if(null != InstanceSkinnedMeshRenderer)
-		{
-			/* Create Bind-Pose */
-			PoseCreateBind();
-			InstanceSkinnedMeshRenderer.bones = TableTransformBone;
-
- 			goto Start_End;
-		}
-
-		if(null != InstanceMeshRenderer)
-		{
- 			goto Start_End;
-		}
-
-//	Start_ErrorEnd:;
-		return;
-
-	Start_End:;
-		return;
-	}
-	bool PoseCreateBind()
-	{
-		if(null != TableMatrixBindPose)
-		{
-			return(false);
-		}
-
-		/* Create Bind-Pose */
-		Matrix4x4 matrixLocalToWorld = transform.localToWorldMatrix;
-		if(null != TableTransformBone)
-		{
-			int countTransformBone = TableTransformBone.Length;
-			TableMatrixBindPose = new Matrix4x4[countTransformBone];
-			if(null != TableMatrixBindPose)
-			{
-				for(int i=0; i<countTransformBone; i++)
-				{
-					TableMatrixBindPose[i] = TableTransformBone[i].worldToLocalMatrix * matrixLocalToWorld;
-				}
-			}
-		}
-
-		return(true);
+		BootUpPropertyMaterial();
 	}
 
 //	void Update()
@@ -136,15 +83,6 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 
 	void LateUpdate()
 	{
-		if(null == PropertyMaterial)
-		{
-			PropertyMaterial = new MaterialPropertyBlock();
-
-			IDMaterialMainTexture = Shader.PropertyToID("_MainTex");
-			IDMaterialRectangleCell = Shader.PropertyToID("_CellRectangle");
-			IDMaterialPivotCell = Shader.PropertyToID("_CellPivot_LocalScale");
-		}
-
 		/* MEMO: "SpriteRenderer", "SpriteMask" and "SkinnedMeshRenderer" do not coexist. */
 		int sortingOrder = 0;
 		int sortingOffsetParts = 1;
@@ -175,14 +113,14 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 
 			if(null != PropertyMaterial)
 			{
-				InstanceSpriteRenderer.GetPropertyBlock(PropertyMaterial);
-
 				/* Cell Set */
-				if(CellPrevious != Cell)
+//				if(CellPrevious != Cell)
 				{
+					InstanceSpriteRenderer.GetPropertyBlock(PropertyMaterial);
+
 					/* MEMO: Not enough to just set cell to "SpriteRenderer". (Need to set texture to shader) */
 					InstanceSpriteRenderer.sprite = Cell;
-					PropertyMaterial.SetTexture(IDMaterialMainTexture, Cell.texture);
+//					PropertyMaterial.SetTexture(IDMaterialMainTexture, Cell.texture);
 
 					Vector4 temp;
 					Rect rectangleCell = Cell.rect;
@@ -193,16 +131,33 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 					PropertyMaterial.SetVector(IDMaterialRectangleCell, temp);
 
 					/* MEMO: Since "LocalScale" is stored together in "_CellPivot_LocalScale", overwrite value set by animation. */
+#if false
 					temp = PropertyMaterial.GetVector(IDMaterialPivotCell);
+#else
+					/* MEMO: Get result of AnimationClip, direct. */
+					Material materialDraw = InstanceSpriteRenderer.sharedMaterial;
+					if(	(null == materialDraw)
+						|| (0 > IDMaterialPivotCell)
+						|| (false == materialDraw.HasProperty(IDMaterialPivotCell))
+					)
+					{
+						temp = Vector4.one;
+					}
+					else
+					{
+						temp = InstanceSpriteRenderer.sharedMaterial.GetVector(IDMaterialPivotCell);
+					}
+#endif
+
 					Vector2 pivot = Cell.pivot;
 					temp.x = pivot.x;
 					temp.y = rectangleCell.height - pivot.y;
 					PropertyMaterial.SetVector(IDMaterialPivotCell, temp);
 
 					CellPrevious = Cell;
-				}
 
-				InstanceSpriteRenderer.SetPropertyBlock(PropertyMaterial);
+					InstanceSpriteRenderer.SetPropertyBlock(PropertyMaterial);
+				}
 			}
 
 			return;
@@ -329,6 +284,100 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		}
 	}
 	#endregion MonoBehaviour-Functions
+
+	/* ----------------------------------------------- MonoBehaviour */
+	#region Functions
+	private void CleanUp()
+	{
+		OrderInLayerPrevious = float.NaN;
+		CellPrevious = null;
+		CellMeshPrevious = null;
+		TextureMeshPrevious = null;
+
+		InstanceCellMesh = null;
+		TableMatrixBindPose = null;
+	}
+	private bool BootUp()
+	{
+//		InstanceSpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+		if(null != InstanceSpriteRenderer)
+		{
+			return(true);
+		}
+
+#if UNITY_2017_1_OR_NEWER
+//		InstanceSpriteMask = gameObject.GetComponent<SpriteMask>();
+		if(null != InstanceSpriteMask)
+		{
+			return(true);
+		}
+#else
+		/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
+		/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
+#endif
+
+//		InstanceSkinnedMeshRenderer = gameObject.GetComponent<SkinnedMeshRenderer>();
+		if(null != InstanceSkinnedMeshRenderer)
+		{
+			/* Create Bind-Pose */
+			PoseCreateBind();
+			InstanceSkinnedMeshRenderer.bones = TableTransformBone;
+
+			return(true);
+		}
+
+		if(null != InstanceMeshRenderer)
+		{
+			return(true);
+		}
+
+		return(false);
+	}
+	private bool PoseCreateBind()
+	{
+		if(null != TableMatrixBindPose)
+		{
+			return(false);
+		}
+
+		/* Create Bind-Pose */
+		Matrix4x4 matrixLocalToWorld = transform.localToWorldMatrix;
+		if(null != TableTransformBone)
+		{
+			int countTransformBone = TableTransformBone.Length;
+			TableMatrixBindPose = new Matrix4x4[countTransformBone];
+			if(null != TableMatrixBindPose)
+			{
+				for(int i=0; i<countTransformBone; i++)
+				{
+					TableMatrixBindPose[i] = TableTransformBone[i].worldToLocalMatrix * matrixLocalToWorld;
+				}
+			}
+		}
+
+		return(true);
+	}
+	private void BootUpPropertyMaterial()
+	{
+		if(null == PropertyMaterial)
+		{
+			PropertyMaterial = new MaterialPropertyBlock();
+		}
+
+		if(0 > IDMaterialMainTexture)
+		{
+			IDMaterialMainTexture = Shader.PropertyToID("_MainTex");
+		}
+		if(0 > IDMaterialRectangleCell)
+		{
+			IDMaterialRectangleCell = Shader.PropertyToID("_CellRectangle");
+		}
+		if(0 > IDMaterialPivotCell)
+		{
+			IDMaterialPivotCell = Shader.PropertyToID("_CellPivot_LocalScale");
+		}
+	}
+	#endregion Functions
 
 	/* ----------------------------------------------- Enums & Constants */
 	#region Enums & Constants
