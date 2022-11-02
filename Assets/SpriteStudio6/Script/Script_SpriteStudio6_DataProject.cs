@@ -633,11 +633,12 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	public enum KindVersion
 	{
 		SUPPORT_EARLIEST = CODE_010000,
-		SUPPORT_LATEST = CODE_010000,
+		SUPPORT_LATEST = CODE_010000,	/* CODE_020200 */
 
 		SS5PU = 0x00000000,	/* Before SS5PU *//* (Reserved) */
 			/* MEMO: There is no data equivalent to "Project(SSPJ)" by version 1.1.x. */
-		CODE_010000 = 0x00010000,	/* SS6PU Ver.1.2.0 */
+		CODE_010000 = 0x00010000,	/* SS6PU Ver.1.2.0 *//* *) Formal Version */
+		CODE_020200 = 0x00010200,	/* SS6PU Ver.2.2.0 */
 	}
 	#endregion Enums & Constants
 

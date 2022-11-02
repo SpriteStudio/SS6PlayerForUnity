@@ -6176,6 +6176,13 @@ public static partial class LibraryEditor_SpriteStudio6
 						settingAnimationClip = AnimationUtility.GetAnimationClipSettings(dataAnimation);
 					}
 
+					/* Resolve applying initial-data */
+					bool flagSetInitialData = false;
+					if(0 == indexAnimation)
+					{
+						flagSetInitialData = true;
+					}
+
 					/* Create AnimationClip */
 					dataAnimation.ClearCurves();
 					int framePerSecond = informationAnimation.Data.FramePerSecond;
@@ -6225,42 +6232,52 @@ public static partial class LibraryEditor_SpriteStudio6
 						meshRendererParts = informationSSAE.TableParts[i].MeshRendererUnityNative;
 						scriptParts = informationSSAE.TableParts[i].ScriptPartsUnityNative;
 
+						bool flagSetInitialDataParts = flagSetInitialData;
+						if(null == scriptParts)
+						{
+							flagSetInitialDataParts = false;
+						}
+
 						/* Set "Setup"Animation to gameObject */
-						Vector3 position = new Vector3(0.0f, 0.0f, 0.0f);
-						Vector3 rotation = new Vector3(0.0f, 0.0f, 0.0f);
-						Vector3 scaling = new Vector3(1.0f, 1.0f, 1.0f);
+						/* MEMO: [Caution] "rotationSetup" is in incorrect rotation order. */
+						/*                   (This rotation order is in SpriteStudio6.)    */
+						Vector3 positionSetup = new Vector3(0.0f, 0.0f, 0.0f);
+						Vector3 rotationSetup = new Vector3(0.0f, 0.0f, 0.0f);
+						Vector3 scalingSetup = new Vector3(1.0f, 1.0f, 1.0f);
+
 						if(0 < informationSSAE.AnimationSetup.TableParts[i].PositionX.CountGetKey())
 						{
-							position.x = informationSSAE.AnimationSetup.TableParts[i].PositionX.ListKey[0].Value;
+							positionSetup.x = informationSSAE.AnimationSetup.TableParts[i].PositionX.ListKey[0].Value;
 						}
 						if(0 < informationSSAE.AnimationSetup.TableParts[i].PositionY.CountGetKey())
 						{
-							position.y = informationSSAE.AnimationSetup.TableParts[i].PositionY.ListKey[0].Value;
+							positionSetup.y = informationSSAE.AnimationSetup.TableParts[i].PositionY.ListKey[0].Value;
 						}
 						if(0 < informationSSAE.AnimationSetup.TableParts[i].PositionZ.CountGetKey())
 						{
-							position.z = informationSSAE.AnimationSetup.TableParts[i].PositionZ.ListKey[0].Value;
+							positionSetup.z = informationSSAE.AnimationSetup.TableParts[i].PositionZ.ListKey[0].Value;
 						}
 						if(0 < informationSSAE.AnimationSetup.TableParts[i].RotationX.CountGetKey())
 						{
-							rotation.x = informationSSAE.AnimationSetup.TableParts[i].RotationX.ListKey[0].Value;
+							rotationSetup.x = informationSSAE.AnimationSetup.TableParts[i].RotationX.ListKey[0].Value;
 						}
 						if(0 < informationSSAE.AnimationSetup.TableParts[i].RotationY.CountGetKey())
 						{
-							rotation.y = informationSSAE.AnimationSetup.TableParts[i].RotationY.ListKey[0].Value;
+							rotationSetup.y = informationSSAE.AnimationSetup.TableParts[i].RotationY.ListKey[0].Value;
 						}
 						if(0 < informationSSAE.AnimationSetup.TableParts[i].RotationZ.CountGetKey())
 						{
-							rotation.z = informationSSAE.AnimationSetup.TableParts[i].RotationZ.ListKey[0].Value;
+							rotationSetup.z = informationSSAE.AnimationSetup.TableParts[i].RotationZ.ListKey[0].Value;
 						}
 						if(0 < informationSSAE.AnimationSetup.TableParts[i].ScalingX.CountGetKey())
 						{
-							scaling.x = informationSSAE.AnimationSetup.TableParts[i].ScalingX.ListKey[0].Value;
+							scalingSetup.x = informationSSAE.AnimationSetup.TableParts[i].ScalingX.ListKey[0].Value;
 						}
 						if(0 < informationSSAE.AnimationSetup.TableParts[i].ScalingY.CountGetKey())
 						{
-							scaling.y = informationSSAE.AnimationSetup.TableParts[i].ScalingY.ListKey[0].Value;
+							scalingSetup.y = informationSSAE.AnimationSetup.TableParts[i].ScalingY.ListKey[0].Value;
 						}
+
 						/* MEMO: In case of "Bone"-parts, necessary to correct the "set-up" value. */
 						switch(informationSSAE.TableParts[i].Data.Feature)
 						{
@@ -6274,9 +6291,9 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
-								position.x += informationSSAE.TableParts[i].PositionXBone;
-								position.y += informationSSAE.TableParts[i].PositionYBone;
-								rotation.z += informationSSAE.TableParts[i].RotateZBone;
+								positionSetup.x += informationSSAE.TableParts[i].PositionXBone;
+								positionSetup.y += informationSSAE.TableParts[i].PositionYBone;
+								rotationSetup.z += informationSSAE.TableParts[i].RotateZBone;
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
@@ -6289,76 +6306,106 @@ public static partial class LibraryEditor_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 								break;
 						}
-						gameObjectParts.transform.localPosition = position;
-						gameObjectParts.transform.localEulerAngles = rotation;
-						gameObjectParts.transform.localScale = scaling;
 
-						/* Set Curves */
-						AssetCreateDataCurveSetPositionX(	dataAnimation,
-															nameGameObject, gameObjectParts,
-															informationAnimationParts.PositionX,
-															indexAnimation,
-															frameStart, frameEnd, framePerSecond,
-															position.x			// 0.0f;
-														);
-						AssetCreateDataCurveSetPositionY(	dataAnimation,
-															nameGameObject, gameObjectParts,
-															informationAnimationParts.PositionY,
-															indexAnimation,
-															frameStart, frameEnd, framePerSecond,
-															position.y			// 0.0f
-														);
-						AssetCreateDataCurveSetPositionZ(	dataAnimation,
-															nameGameObject, gameObjectParts,
-															informationAnimationParts.PositionZ,
-															indexAnimation,
-															frameStart, frameEnd, framePerSecond,
-															position.z			// 0.0f
-														);
+						Vector3 positionInitial = positionSetup;
+						Vector3 rotationInitial = Vector3.zero;
+						{
+							/* MEMO: [Caution] "rotationInitial" is in correct rotation order. */
+							/*                   (This rotation order is in UnityEditor.)      */
+							Quaternion rotationInitialQuaternion = Quaternion.identity;
+							Library_SpriteStudio6.Utility.Math.QuaternionGetEulerAngels(out rotationInitialQuaternion, ref rotationSetup);
+							rotationInitial = rotationInitialQuaternion.eulerAngles;
+						}
+						Vector3 scalingInitial = scalingSetup;
 
-						AssetCreateDataCurveSetRotationX(	dataAnimation,
-															nameGameObject, gameObjectParts,
-															informationAnimationParts.RotationX,
-															indexAnimation,
-															frameStart, frameEnd, framePerSecond,
-															rotation.x			// 0.0f
-														);
-						AssetCreateDataCurveSetRotationY(	dataAnimation,
-															nameGameObject, gameObjectParts,
-															informationAnimationParts.RotationY,
-															indexAnimation,
-															frameStart, frameEnd, framePerSecond,
-															rotation.y			// 0.0f
-														);
-						AssetCreateDataCurveSetRotationZ(	dataAnimation,
-															nameGameObject, gameObjectParts,
-															informationAnimationParts.RotationZ,
-															indexAnimation,
-															frameStart, frameEnd, framePerSecond,
-															rotation.z			// 0.0f
-														);
+						/* Set Curves (TRS) */
+						float initialValue;
+						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
+																				dataAnimation,
+																				"localPosition.x", typeof(Transform),
+																				nameGameObject, gameObjectParts,
+																				informationAnimationParts.PositionX,
+																				indexAnimation, frameStart, frameEnd, framePerSecond,
+																				positionSetup.x,	/* 0.0f */
+																				true		/* Guaranteed End frame */
+																		);
+						positionInitial.x = initialValue;
 
-						AssetCreateDataCurveSetScalingX(	dataAnimation,
-															nameGameObject, gameObjectParts,
-															informationAnimationParts.ScalingX,
-															indexAnimation,
-															frameStart, frameEnd, framePerSecond,
-															scaling.x			// 1.0f
-														);
-						AssetCreateDataCurveSetScalingY(	dataAnimation,
-															nameGameObject, gameObjectParts,
-															informationAnimationParts.ScalingY,
-															indexAnimation,
-															frameStart, frameEnd, framePerSecond,
-															scaling.y			// 1.0f
-														);
+						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
+																				dataAnimation,
+																				"localPosition.y", typeof(Transform),
+																				nameGameObject, gameObjectParts,
+																				informationAnimationParts.PositionY,
+																				indexAnimation, frameStart, frameEnd, framePerSecond,
+																				positionSetup.y	/* 0.0f */
+																		);
+						positionInitial.y = initialValue;
 
-						AssetCreateDataCurveSetUserData(	dataAnimation,
+						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
+																				dataAnimation,
+																				"localPosition.z", typeof(Transform),
+																				nameGameObject, gameObjectParts,
+																				informationAnimationParts.PositionZ,
+																				indexAnimation, frameStart, frameEnd, framePerSecond,
+																				positionSetup.z	/* 0.0f */
+																		);
+						positionInitial.z = initialValue;
+
+						/* MEMO: Even if store x, y and z separately in Euler angles, they are treated as single Vector3-value */
+						/*         in Transform.localEularAngles.                                                              */
+						/*       So I convert Euler angles to quaternions and store them afterwards.                           */
+						{
+							/* MEMO:  */
+							Vector3 initialValueRotateUnity = Vector3.zero;
+							UtilityModeUnity.AttributeConvertAnimationClipRotateCorrectOrder(	out initialValueRotateUnity,
+																								dataAnimation,
+																								"localEulerAngles", typeof(Transform),
+																								nameGameObject, gameObjectParts,
+																								informationAnimationParts.RotationX,
+																								informationAnimationParts.RotationY,
+																								informationAnimationParts.RotationZ,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								rotationSetup
+																							);
+							rotationInitial = initialValueRotateUnity;
+						}
+
+						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
+																				dataAnimation,
+																				"localScale.x", typeof(Transform),
+																				nameGameObject, gameObjectParts,
+																				informationAnimationParts.ScalingX,
+																				indexAnimation, frameStart, frameEnd, framePerSecond,
+																				scalingSetup.x	/* 1.0f */
+																		);
+						scalingInitial.x = initialValue;
+
+						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
+																				dataAnimation,
+																				"localScale.y", typeof(Transform),
+																				nameGameObject, gameObjectParts,
+																				informationAnimationParts.ScalingY,
+																				indexAnimation, frameStart, frameEnd, framePerSecond,
+																				scalingSetup.y	/* 1.0f */
+																		);
+						scalingInitial.y = initialValue;
+
+						AssetCreateDataCurveSetUserData(	ref setting,
+															dataAnimation,
 															listAnimationEvent,
 															informationAnimationParts.UserData,
 															frameStart, frameEnd, framePerSecond
 														);
 
+						/* MEMO: TRS is set up after both "setup" and "animation's initial data" has been collected. */
+						if(true == flagSetInitialDataParts)
+						{
+							gameObjectParts.transform.localPosition = positionInitial;
+							gameObjectParts.transform.localEulerAngles = rotationInitial;
+							gameObjectParts.transform.localScale = scalingInitial;
+						}
+
+						/* Set Attributes for each (Parts') Feature */
 						switch(informationParts.Data.Feature)
 						{
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
@@ -6368,21 +6415,38 @@ public static partial class LibraryEditor_SpriteStudio6
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
 								if(null != spriteRendererParts)
 								{
-									AssetCreateDataCurveSetCellSprite(	dataAnimation,
-																		nameGameObject, spriteRendererParts, gameObjectParts,
-																		informationAnimationParts.Cell,
+									{	/* Cell */
+										Sprite initialValueSprite;
+										AssetCreateDataCurveSetCellSprite(	out initialValueSprite,
+																			dataAnimation,
+																			nameGameObject, spriteRendererParts, gameObjectParts,
+																			informationAnimationParts.Cell,
+																			indexAnimation,
+																			frameStart, frameEnd, framePerSecond,
+																			informationSSPJ
+																		);
+										if(true == flagSetInitialDataParts)
+										{
+											spriteRendererParts.sprite = initialValueSprite;
+											scriptParts.Cell = initialValueSprite;
+										}
+									}
+
+									{	/* Hide */
+										bool initialValueHide;
+										AssetCreateDataCurveSetHide(	out initialValueHide,
+																		dataAnimation,
+																		nameGameObject, typeof(SpriteRenderer), spriteRendererParts,
+																		informationAnimationParts.Hide,
 																		indexAnimation,
 																		frameStart, frameEnd, framePerSecond,
-																		informationSSPJ
+																		true
 																	);
-
-									AssetCreateDataCurveSetHide(	dataAnimation,
-																	nameGameObject, typeof(SpriteRenderer), spriteRendererParts,
-																	informationAnimationParts.Hide,
-																	indexAnimation,
-																	frameStart, frameEnd, framePerSecond,
-																	true
-																);
+										if(true == flagSetInitialDataParts)
+										{
+											spriteRendererParts.enabled = !initialValueHide;	/* (true == initialValueHide) ? false : true */
+										}
+									}
 
 									if(0 < informationAnimationParts.RateOpacityLocal.CountGetKey())
 									{	/* Local Opacity */
@@ -6421,15 +6485,23 @@ public static partial class LibraryEditor_SpriteStudio6
 																			);
 								}
 
-								AssetCreateDataCurveSetOrderDraw(	dataAnimation,
-																	nameGameObject, scriptParts,
-																	informationAnimation,
-																	i,
-																	indexAnimation,
-																	frameStart, frameEnd, framePerSecond,
-																	informationSSPJ,
-																	informationSSAE
-																);
+								{	/* Draw-Order */
+									float initialValueOrder;
+									AssetCreateDataCurveSetOrderDraw(	out initialValueOrder,
+																		dataAnimation,
+																		nameGameObject, scriptParts,
+																		informationAnimation,
+																		i,
+																		indexAnimation,
+																		frameStart, frameEnd, framePerSecond,
+																		informationSSPJ,
+																		informationSSAE
+																	);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.OrderInLayer = initialValueOrder;
+									}
+								}
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
@@ -6442,30 +6514,52 @@ public static partial class LibraryEditor_SpriteStudio6
 								{
 									/* MEMO: Sprite can not set to SpriteMask ? */
 									/* MEMO: In the case of Sprite, variable name is fixed ? */
-									AssetCreateDataCurveSetCellMask(	dataAnimation,
-																		nameGameObject, spriteMaskParts, gameObjectParts,
-																		informationAnimationParts.Cell,
-																		indexAnimation,
-																		frameStart, frameEnd, framePerSecond,
-																		informationSSPJ
+									{	/* Cell */
+										Sprite initialValueSprite;
+										AssetCreateDataCurveSetCellMask(	out initialValueSprite,
+																			dataAnimation,
+																			nameGameObject, spriteMaskParts, gameObjectParts,
+																			informationAnimationParts.Cell,
+																			indexAnimation,
+																			frameStart, frameEnd, framePerSecond,
+																			informationSSPJ
 																	);
-
-									AssetCreateDataCurveSetHideMask(	dataAnimation,
-																		nameGameObject, typeof(SpriteMask), spriteMaskParts,
-																		informationAnimationParts.Hide,
-																		informationAnimationParts.PowerMask,
-																		indexAnimation,
-																		frameStart, frameEnd, framePerSecond,
-																		true
-																	);
-
-									AssetCreateDataCurveSetPowerMask(	dataAnimation,
-																		nameGameObject,  spriteMaskParts,
-																		informationAnimationParts.PowerMask,
-																		indexAnimation,
-																		frameStart, frameEnd, framePerSecond,
-																		0.0f
-																	);
+										if(true == flagSetInitialDataParts)
+										{
+											spriteMaskParts.sprite = initialValueSprite;
+										}
+									}
+									{	/* Hide */
+										bool initialValueHide;
+										AssetCreateDataCurveSetHideMask(	out initialValueHide,
+																			dataAnimation,
+																			nameGameObject, typeof(SpriteMask), spriteMaskParts,
+																			informationAnimationParts.Hide,
+																			informationAnimationParts.PowerMask,
+																			indexAnimation,
+																			frameStart, frameEnd, framePerSecond,
+																			true
+																		);
+										if(true == flagSetInitialDataParts)
+										{
+											spriteMaskParts.enabled = !initialValueHide;	/* (true == initialValueHide) ? false : true */
+										}
+									}
+									{	/* Mask-Power */
+										float initialValuePowerMask;
+										AssetCreateDataCurveSetPowerMask(	out initialValuePowerMask,
+																			dataAnimation,
+																			nameGameObject,  spriteMaskParts,
+																			informationAnimationParts.PowerMask,
+																			indexAnimation,
+																			frameStart, frameEnd, framePerSecond,
+																			0.0f
+																		);
+										if(true == flagSetInitialDataParts)
+										{
+											spriteMaskParts.alphaCutoff = initialValue;
+										}
+									}
 
 									/* Not Support Attributes */
 									{
@@ -6476,15 +6570,23 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 								}
 
-								AssetCreateDataCurveSetOrderDraw(	dataAnimation,
-																	nameGameObject, scriptParts,
-																	informationAnimation,
-																	i,
-																	indexAnimation,
-																	frameStart, frameEnd, framePerSecond,
-																	informationSSPJ,
-																	informationSSAE
-																);
+								{	/* Draw-Order */
+									float initialValueOrder;
+									AssetCreateDataCurveSetOrderDraw(	out initialValueOrder,
+																		dataAnimation,
+																		nameGameObject, scriptParts,
+																		informationAnimation,
+																		i,
+																		indexAnimation,
+																		frameStart, frameEnd, framePerSecond,
+																		informationSSPJ,
+																		informationSSAE
+																	);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.OrderInLayer = initialValueOrder;
+									}
+								}
 #else
 								/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
 								/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
@@ -6516,23 +6618,40 @@ public static partial class LibraryEditor_SpriteStudio6
 
 									if(true == flagValidRenderer)
 									{
-										/* Cell (Texture) */
-										AssetCreateDataCurveSetCellSkinnedMesh(	dataAnimation,
-																				nameGameObject, typeRenderer, rendererParts, gameObjectParts,
-																				informationParts.DataMeshSkinnedUnityNative.TableData[0],
-																				informationAnimationParts.Cell,
-																				indexAnimation,
-																				frameStart, frameEnd, framePerSecond,
-																				informationSSPJ
-																			);
-
-										AssetCreateDataCurveSetHide(	dataAnimation,
-																		nameGameObject, typeRenderer, rendererParts,
-																		informationAnimationParts.Hide,
-																		indexAnimation,
-																		frameStart, frameEnd, framePerSecond,
-																		true
-																	);
+										{	/* Cell (Texture) */
+											Mesh initialValueMesh;
+											Texture2D initialValueTexture;
+											AssetCreateDataCurveSetCellSkinnedMesh(	out initialValueMesh,
+																					out initialValueTexture,
+																					dataAnimation,
+																					nameGameObject, typeRenderer, rendererParts, gameObjectParts,
+																					informationParts.DataMeshSkinnedUnityNative.TableData[0],
+																					informationAnimationParts.Cell,
+																					indexAnimation,
+																					frameStart, frameEnd, framePerSecond,
+																					informationSSPJ
+																				);
+											if(true == flagSetInitialDataParts)
+											{
+												scriptParts.CellMesh = initialValueMesh;
+												scriptParts.TextureMesh = initialValueTexture;
+											}
+										}
+										{	/* Hide */
+											bool initialValueHide;
+											AssetCreateDataCurveSetHide(	out initialValueHide,
+																			dataAnimation,
+																			nameGameObject, typeRenderer, rendererParts,
+																			informationAnimationParts.Hide,
+																			indexAnimation,
+																			frameStart, frameEnd, framePerSecond,
+																			true
+																		);
+											if(true == flagSetInitialDataParts)
+											{
+												rendererParts.enabled = !initialValueHide;	/* (true == initialValueHide) ? false : true */
+											}
+										}
 
 										bool flagBoundVertex = false;
 										if(0 < informationAnimationParts.RateOpacityLocal.CountGetKey())
@@ -6571,16 +6690,23 @@ public static partial class LibraryEditor_SpriteStudio6
 										}
 									}
 								}
-
-								AssetCreateDataCurveSetOrderDraw(	dataAnimation,
-																	nameGameObject, scriptParts,
-																	informationAnimation,
-																	i,
-																	indexAnimation,
-																	frameStart, frameEnd, framePerSecond,
-																	informationSSPJ,
-																	informationSSAE
-																);
+								{	/* Draw-Order */
+									float initialValueOrder;
+									AssetCreateDataCurveSetOrderDraw(	out initialValueOrder,
+																		dataAnimation,
+																		nameGameObject, scriptParts,
+																		informationAnimation,
+																		i,
+																		indexAnimation,
+																		frameStart, frameEnd, framePerSecond,
+																		informationSSPJ,
+																		informationSSAE
+																	);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.OrderInLayer = initialValueOrder;
+									}
+								}
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
@@ -6619,7 +6745,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					if(null != settingAnimationClip)
 					{
-						AnimationUtility.SetAnimationClipSettings(dataAnimation, settingAnimationClip);
+//						AnimationUtility.SetAnimationClipSettings(dataAnimation, settingAnimationClip);
+						AnimationClipSettings settingAnimationClipNew = AnimationUtility.GetAnimationClipSettings(dataAnimation);
+						settingAnimationClipNew.loopTime = settingAnimationClip.loopTime;
+						settingAnimationClipNew.cycleOffset = settingAnimationClip.cycleOffset;
+						AnimationUtility.SetAnimationClipSettings(dataAnimation, settingAnimationClipNew);
 					}
 					dataAnimation.EnsureQuaternionContinuity();
 					EditorUtility.SetDirty(dataAnimation);
@@ -6655,7 +6785,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 				}
 
-				private static bool AssetCreateDataCurveSetHide(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetHide(	out bool valueInitial,
+																	AnimationClip animationClip,
 																	string namePathGameObject,
 																	System.Type type,
 																	Renderer renderer,
@@ -6665,14 +6796,17 @@ public static partial class LibraryEditor_SpriteStudio6
 																	int frameEnd,
 																	int framePerSecond,
 																	bool valueError
-																	)
+																)
 				{
+					valueInitial = true;
+
 					/* MEMO: Even if no attribute's key-data, key-frame is always generated.           */
 					/*       (Since "Opacity" has changed even without key-data by parents' "Opacity") */
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(0 > countFrameRange)
 					{
-						renderer.enabled = false;
+//						renderer.enabled = false;
+
 						return(true);
 					}
 
@@ -6689,10 +6823,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					AssetCreateDataKeyFrameInitialize(ref keyframe);
 					keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 					keyframe.value = (true == value) ? 0.0f : 1.0f;
-					if(0 == indexAnimation)
-					{
-						renderer.enabled = (true == value) ? false : true;
-					}
+//					if(0 == indexAnimation)
+//					{
+//						renderer.enabled = (true == value) ? false : true;
+//					}
+					valueInitial = value;
 
 					animationCurve.AddKey(keyframe);
 					valuePrevious = value;
@@ -6726,7 +6861,8 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(true);
 				}
-				private static bool AssetCreateDataCurveSetHideMask(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetHideMask(	out bool valueInitial,
+																		AnimationClip animationClip,
 																		string namePathGameObject,
 																		System.Type type,
 																		Renderer renderer,
@@ -6739,12 +6875,14 @@ public static partial class LibraryEditor_SpriteStudio6
 																		bool valueError
 																	)
 				{
+					valueInitial = true;
+
 					/* MEMO: Even if no attribute's key-data, key-frame is always generated.           */
 					/*       (Since "Opacity" has changed even without key-data by parents' "Opacity") */
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(0 > countFrameRange)
 					{
-						renderer.enabled = false;
+//						renderer.enabled = false;
 						return(true);
 					}
 
@@ -6770,10 +6908,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					AssetCreateDataKeyFrameInitialize(ref keyframe);
 					keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 					keyframe.value = (true == value) ? 0.0f : 1.0f;
-					if(0 == indexAnimation)
-					{
-						renderer.enabled = (true == value) ? false : true;
-					}
+//					if(0 == indexAnimation)
+//					{
+//						renderer.enabled = (true == value) ? false : true;
+//					}
+					valueInitial = value;
 
 					animationCurve.AddKey(keyframe);
 					valuePrevious = value;
@@ -6816,537 +6955,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(true);
 				}
 
-				private static bool AssetCreateDataCurveSetPositionX(	AnimationClip animationClip,
-																		string namePathGameObject,
-																		GameObject gameObject,
-																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
-																		int indexAnimation,
-																		int frameStart,
-																		int frameEnd,
-																		int framePerSecond,
-																		float valueInitial
-																	)
-				{
-					int countFrameRange = (frameEnd - frameStart) + 1;
-					if(1 > countFrameRange)
-					{
-						return(true);
-					}
-
-					AnimationCurve animationCurve = new AnimationCurve();
-					Keyframe keyframe;
-					float value;
-
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						value = valueInitial;
-
-						keyframe = new Keyframe();
-						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
-						keyframe.value = value;
-						animationCurve.AddKey(keyframe);
-
-						goto AssetCreateDataCurveSetPositionX_End;
-					}
-
-					float valuePrevious = float.NaN;
-					int frame;
-					bool flagForceSetKey = true;
-					for(int i=0; i<countFrameRange; i++)
-					{
-						frame = i + frameStart;
-
-						if(false == attributeFloat.ValueGet(out value, frame))
-						{
-							value = valueInitial;
-						}
-
-						if((flagForceSetKey == true) || (valuePrevious != value))
-						{
-							keyframe = new Keyframe();
-							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
-							keyframe.value = value;
-							animationCurve.AddKey(keyframe);
-						}
-
-						flagForceSetKey = false;
-						valuePrevious = value;
-					}
-					/* MEMO: Forcibly create key-data.                  */
-					/*       - end frame: for ensuring animation length */
-					keyframe = new Keyframe();
-					AssetCreateDataKeyFrameInitialize(ref keyframe);
-					keyframe.time = AssetCreateDataTimeGetFrame(countFrameRange, framePerSecond);
-					keyframe.value = valuePrevious;	/* Last value */
-					animationCurve.AddKey(keyframe);
-
-				AssetCreateDataCurveSetPositionX_End:;
-					AssetCreateCurveSetTangent(animationCurve);
-					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.x", animationCurve);
-
-					return(true);
-				}
-				private static bool AssetCreateDataCurveSetPositionY(	AnimationClip animationClip,
-																		string namePathGameObject,
-																		GameObject gameObject,
-																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
-																		int indexAnimation,
-																		int frameStart,
-																		int frameEnd,
-																		int framePerSecond,
-																		float valueInitial
-																	)
-				{
-					int countFrameRange = (frameEnd - frameStart) + 1;
-					if(1 > countFrameRange)
-					{
-						return(true);
-					}
-
-					AnimationCurve animationCurve = new AnimationCurve();
-					Keyframe keyframe;
-					float value;
-
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						value = valueInitial;
-
-						keyframe = new Keyframe();
-						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
-						keyframe.value = value;
-						animationCurve.AddKey(keyframe);
-
-						goto AssetCreateDataCurveSetPositionY_End;
-					}
-
-					float valuePrevious = float.NaN;
-					int frame;
-					bool flagForceSetKey = true;
-					for(int i=0; i<countFrameRange; i++)
-					{
-						frame = i + frameStart;
-
-						if(false == attributeFloat.ValueGet(out value, frame))
-						{
-							value = valueInitial;
-						}
-
-						if((flagForceSetKey == true) || (valuePrevious != value))
-						{
-							keyframe = new Keyframe();
-							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
-							keyframe.value = value;
-							animationCurve.AddKey(keyframe);
-						}
-
-						flagForceSetKey = false;
-						valuePrevious = value;
-					}
-
-				AssetCreateDataCurveSetPositionY_End:;
-					AssetCreateCurveSetTangent(animationCurve);
-					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.y", animationCurve);
-
-					return(true);
-				}
-				private static bool AssetCreateDataCurveSetPositionZ(	AnimationClip animationClip,
-																		string namePathGameObject,
-																		GameObject gameObject,
-																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
-																		int indexAnimation,
-																		int frameStart,
-																		int frameEnd,
-																		int framePerSecond,
-																		float valueInitial
-																	)
-				{
-					int countFrameRange = (frameEnd - frameStart) + 1;
-					if(1 > countFrameRange)
-					{
-						return(true);
-					}
-
-					AnimationCurve animationCurve = new AnimationCurve();
-					Keyframe keyframe;
-					float value;
-
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						value = valueInitial;
-
-						keyframe = new Keyframe();
-						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
-						keyframe.value = value;
-						animationCurve.AddKey(keyframe);
-
-						goto AssetCreateDataCurveSetPositionZ_End;
-					}
-
-					float valuePrevious = float.NaN;
-					int frame;
-					bool flagForceSetKey = true;
-					for(int i=0; i<countFrameRange; i++)
-					{
-						frame = i + frameStart;
-
-						if(false == attributeFloat.ValueGet(out value, frame))
-						{
-							value = valueInitial;
-						}
-
-						if((flagForceSetKey == true) || (valuePrevious != value))
-						{
-							keyframe = new Keyframe();
-							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
-							keyframe.value = value;
-							animationCurve.AddKey(keyframe);
-						}
-
-						flagForceSetKey = false;
-						valuePrevious = value;
-					}
-
-				AssetCreateDataCurveSetPositionZ_End:;
-					AssetCreateCurveSetTangent(animationCurve);
-					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localPosition.z", animationCurve);
-
-					return(true);
-				}
-
-				private static bool AssetCreateDataCurveSetRotationX(	AnimationClip animationClip,
-																		string namePathGameObject,
-																		GameObject gameObject,
-																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
-																		int indexAnimation,
-																		int frameStart,
-																		int frameEnd,
-																		int framePerSecond,
-																		float valueInitial
-																	)
-				{
-					int countFrameRange = (frameEnd - frameStart) + 1;
-					if(1 > countFrameRange)
-					{
-						return(true);
-					}
-
-					AnimationCurve animationCurve = new AnimationCurve();
-					Keyframe keyframe;
-					float value;
-
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						value = valueInitial;
-
-						keyframe = new Keyframe();
-						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
-						keyframe.value = value;
-						animationCurve.AddKey(keyframe);
-
-						goto AssetCreateDataCurveSetRotationX_End;
-					}
-
-					float valuePrevious = float.NaN;
-					int frame;
-					bool flagForceSetKey = true;
-					for(int i=0; i<countFrameRange; i++)
-					{
-						frame = i + frameStart;
-
-						if(false == attributeFloat.ValueGet(out value, frame))
-						{
-							value = valueInitial;
-						}
-
-						if((flagForceSetKey == true) || (valuePrevious != value))
-						{
-							keyframe = new Keyframe();
-							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
-							keyframe.value = value;
-							animationCurve.AddKey(keyframe);
-						}
-
-						flagForceSetKey = false;
-						valuePrevious = value;
-					}
-
-				AssetCreateDataCurveSetRotationX_End:;
-					AssetCreateCurveSetTangent(animationCurve);
-					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.x", animationCurve);
-
-					return(true);
-				}
-				private static bool AssetCreateDataCurveSetRotationY(	AnimationClip animationClip,
-																		string namePathGameObject,
-																		GameObject gameObject,
-																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
-																		int indexAnimation,
-																		int frameStart,
-																		int frameEnd,
-																		int framePerSecond,
-																		float valueInitial
-																	)
-				{
-					int countFrameRange = (frameEnd - frameStart) + 1;
-					if(1 > countFrameRange)
-					{
-						return(true);
-					}
-
-					AnimationCurve animationCurve = new AnimationCurve();
-					Keyframe keyframe;
-					float value;
-
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						value = valueInitial;
-
-						keyframe = new Keyframe();
-						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
-						keyframe.value = value;
-						animationCurve.AddKey(keyframe);
-
-						goto AssetCreateDataCurveSetRotationY_End;
-					}
-
-					float valuePrevious = float.NaN;
-					int frame;
-					bool flagForceSetKey = true;
-					for(int i=0; i<countFrameRange; i++)
-					{
-						frame = i + frameStart;
-
-						if(false == attributeFloat.ValueGet(out value, frame))
-						{
-							value = valueInitial;
-						}
-
-						if((flagForceSetKey == true) || (valuePrevious != value))
-						{
-							keyframe = new Keyframe();
-							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
-							keyframe.value = value;
-							animationCurve.AddKey(keyframe);
-						}
-
-						flagForceSetKey = false;
-						valuePrevious = value;
-					}
-
-				AssetCreateDataCurveSetRotationY_End:;
-					AssetCreateCurveSetTangent(animationCurve);
-					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.y", animationCurve);
-
-					return(true);
-				}
-				private static bool AssetCreateDataCurveSetRotationZ(	AnimationClip animationClip,
-																		string namePathGameObject,
-																		GameObject gameObject,
-																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
-																		int indexAnimation,
-																		int frameStart,
-																		int frameEnd,
-																		int framePerSecond,
-																		float valueInitial
-																	)
-				{
-					int countFrameRange = (frameEnd - frameStart) + 1;
-					if(1 > countFrameRange)
-					{
-						return(true);
-					}
-
-					AnimationCurve animationCurve = new AnimationCurve();
-					Keyframe keyframe;
-					float value;
-
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						value = valueInitial;
-
-						keyframe = new Keyframe();
-						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
-						keyframe.value = value;
-						animationCurve.AddKey(keyframe);
-
-						goto AssetCreateDataCurveSetRotationZ_End;
-					}
-
-					float valuePrevious = float.NaN;
-					int frame;
-					bool flagForceSetKey = true;
-					for(int i=0; i<countFrameRange; i++)
-					{
-						frame = i + frameStart;
-
-						if(false == attributeFloat.ValueGet(out value, frame))
-						{
-							value = valueInitial;
-						}
-
-						if((flagForceSetKey == true) || (valuePrevious != value))
-						{
-							keyframe = new Keyframe();
-							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
-							keyframe.value = value;
-							animationCurve.AddKey(keyframe);
-						}
-
-						flagForceSetKey = false;
-						valuePrevious = value;
-					}
-
-				AssetCreateDataCurveSetRotationZ_End:;
-					AssetCreateCurveSetTangent(animationCurve);
-					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localEulerAngles.z", animationCurve);
-
-					return(true);
-				}
-
-				private static bool AssetCreateDataCurveSetScalingX(	AnimationClip animationClip,
-																		string namePathGameObject,
-																		GameObject gameObject,
-																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
-																		int indexAnimation,
-																		int frameStart,
-																		int frameEnd,
-																		int framePerSecond,
-																		float valueInitial
-																	)
-				{
-					int countFrameRange = (frameEnd - frameStart) + 1;
-					if(1 > countFrameRange)
-					{
-						return(true);
-					}
-
-					AnimationCurve animationCurve = new AnimationCurve();
-					Keyframe keyframe;
-					float value;
-
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						value = valueInitial;
-
-						keyframe = new Keyframe();
-						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
-						keyframe.value = value;
-						animationCurve.AddKey(keyframe);
-
-						goto AssetCreateDataCurveSetScalingX_End;
-					}
-
-					float valuePrevious = float.NaN;
-					int frame;
-					bool flagForceSetKey = true;
-					for(int i=0; i<countFrameRange; i++)
-					{
-						frame = i + frameStart;
-
-						if(false == attributeFloat.ValueGet(out value, frame))
-						{
-							value = valueInitial;
-						}
-
-						if((flagForceSetKey == true) || (valuePrevious != value))
-						{
-							keyframe = new Keyframe();
-							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
-							keyframe.value = value;
-							animationCurve.AddKey(keyframe);
-						}
-
-						flagForceSetKey = false;
-						valuePrevious = value;
-					}
-
-				AssetCreateDataCurveSetScalingX_End:;
-					AssetCreateCurveSetTangent(animationCurve);
-					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localScale.x", animationCurve);
-
-					return(true);
-				}
-				private static bool AssetCreateDataCurveSetScalingY(	AnimationClip animationClip,
-																		string namePathGameObject,
-																		GameObject gameObject,
-																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
-																		int indexAnimation,
-																		int frameStart,
-																		int frameEnd,
-																		int framePerSecond,
-																		float valueInitial
-																	)
-				{
-					int countFrameRange = (frameEnd - frameStart) + 1;
-					if(1 > countFrameRange)
-					{
-						return(true);
-					}
-
-					AnimationCurve animationCurve = new AnimationCurve();
-					Keyframe keyframe;
-					float value;
-
-					if(0 >= attributeFloat.CountGetKey())
-					{
-						value = valueInitial;
-
-						keyframe = new Keyframe();
-						AssetCreateDataKeyFrameInitialize(ref keyframe);
-						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
-						keyframe.value = value;
-						animationCurve.AddKey(keyframe);
-
-						goto AssetCreateDataCurveSetScalingY;
-					}
-
-					float valuePrevious = float.NaN;
-					int frame;
-					bool flagForceSetKey = true;
-					for(int i=0; i<countFrameRange; i++)
-					{
-						frame = i + frameStart;
-
-						if(false == attributeFloat.ValueGet(out value, frame))
-						{
-							value = valueInitial;
-						}
-
-						if((flagForceSetKey == true) || (valuePrevious != value))
-						{
-							keyframe = new Keyframe();
-							AssetCreateDataKeyFrameInitialize(ref keyframe);
-							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
-							keyframe.value = value;
-							animationCurve.AddKey(keyframe);
-						}
-
-						flagForceSetKey = false;
-						valuePrevious = value;
-					}
-
-				AssetCreateDataCurveSetScalingY:;
-					AssetCreateCurveSetTangent(animationCurve);
-					animationClip.SetCurve(namePathGameObject, typeof(Transform), "localScale.y", animationCurve);
-
-					return(true);
-				}
-
-				private static bool AssetCreateDataCurveSetCellSprite(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetCellSprite(	out Sprite valueInitial,
+																		AnimationClip animationClip,
 																		string namePathGameObject,
 																		SpriteRenderer spriteRenderer,
 																		GameObject gameObjectParts,
@@ -7358,14 +6968,17 @@ public static partial class LibraryEditor_SpriteStudio6
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 																	)
 				{
+					valueInitial = null;
+
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						spriteRenderer.sprite = null;
+//						spriteRenderer.sprite = null;
+
 						return(true);
 					}
 
-					spriteRenderer.sprite = null;
+//					spriteRenderer.sprite = null;
 
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell value = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell valuePrevious = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
@@ -7374,7 +6987,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* MEMO: First frame's data is forcibly get. */
 					if(false == attributeCell.ValueGet(out value, frameStart))
 					{
-						spriteRenderer.sprite = null;
+//						spriteRenderer.sprite = null;
 						return(true);
 					}
 
@@ -7396,17 +7009,18 @@ public static partial class LibraryEditor_SpriteStudio6
 						listKeyFrame.Add(keyFrame);
 						valuePrevious = value;
 
-						if(0 == indexAnimation)
-						{
-							if(null != gameObjectParts)
-							{
-								Script_SpriteStudio6_PartsUnityNative scriptParts = gameObjectParts.GetComponent<Script_SpriteStudio6_PartsUnityNative>();
-								if(null != scriptParts)
-								{
-									scriptParts.Cell = (Sprite)keyFrame.value;
-								}
-							}
-						}
+//						if(0 == indexAnimation)
+//						{
+//							if(null != gameObjectParts)
+//							{
+//								Script_SpriteStudio6_PartsUnityNative scriptParts = gameObjectParts.GetComponent<Script_SpriteStudio6_PartsUnityNative>();
+//								if(null != scriptParts)
+//								{
+//									scriptParts.Cell = (Sprite)keyFrame.value;
+//								}
+//							}
+//						}
+						valueInitial = (Sprite)keyFrame.value;
 					}
 
 					int countAttribute = attributeCell.CountGetKey();
@@ -7440,7 +7054,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(true);
 				}
 #if UNITY_2017_1_OR_NEWER
-				private static bool AssetCreateDataCurveSetCellMask(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetCellMask(	out Sprite valueInitial,
+																		AnimationClip animationClip,
 																		string namePathGameObject,
 																		SpriteMask spriteMask,
 																		GameObject gameObjectParts,
@@ -7452,14 +7067,15 @@ public static partial class LibraryEditor_SpriteStudio6
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 																	)
 				{
+					valueInitial = null;
+
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						spriteMask.sprite = null;
+//						spriteMask.sprite = null;
 						return(true);
 					}
-
-					spriteMask.sprite = null;
+//					spriteMask.sprite = null;
 
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell value = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell valuePrevious = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
@@ -7468,7 +7084,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* MEMO: First frame's data is forcibly get. */
 					if(false == attributeCell.ValueGet(out value, frameStart))
 					{
-						spriteMask.sprite = null;
+//						spriteMask.sprite = null;
 						return(true);
 					}
 
@@ -7489,17 +7105,18 @@ public static partial class LibraryEditor_SpriteStudio6
 						listKeyFrame.Add(keyFrame);
 						valuePrevious = value;
 
-						if(0 == indexAnimation)
-						{
-							if(null != gameObjectParts)
-							{
-								Script_SpriteStudio6_PartsUnityNative scriptParts = gameObjectParts.GetComponent<Script_SpriteStudio6_PartsUnityNative>();
-								if(null != scriptParts)
-								{
-									scriptParts.Cell = (Sprite)keyFrame.value;
-								}
-							}
-						}
+//						if(0 == indexAnimation)
+//						{
+//							if(null != gameObjectParts)
+//							{
+//								Script_SpriteStudio6_PartsUnityNative scriptParts = gameObjectParts.GetComponent<Script_SpriteStudio6_PartsUnityNative>();
+//								if(null != scriptParts)
+//								{
+//									scriptParts.Cell = (Sprite)keyFrame.value;
+//								}
+//							}
+//						}
+						valueInitial = (Sprite)keyFrame.value;
 					}
 
 					int countAttribute = attributeCell.CountGetKey();
@@ -7535,7 +7152,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
 				/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
 #endif
-				private static bool AssetCreateDataCurveSetCellSkinnedMesh(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetCellSkinnedMesh(	out Mesh valueInitialMesh,
+																			out Texture2D valueInitialTexture,
+																			AnimationClip animationClip,
 																			string namePathGameObject,
 																			System.Type type,
 																			Renderer renderer,
@@ -7549,6 +7168,9 @@ public static partial class LibraryEditor_SpriteStudio6
 																			LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 																		)
 				{
+					valueInitialMesh = null;
+					valueInitialTexture = null;
+
 					/* MEMO: Mesh can not change cells on the way (Can only be set with "SetUp" animation) */
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell value = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
 
@@ -7574,6 +7196,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						goto AssetCreateDataCurveSetCellSkinnedMesh_NoCreateEnd;
 					}
+					valueInitialMesh = meshSetUp;
+					valueInitialTexture = textureMesh;
 
 					EditorCurveBinding curveBindingMesh = new EditorCurveBinding();
 					curveBindingMesh.type = typeof(Script_SpriteStudio6_PartsUnityNative);
@@ -7655,7 +7279,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(true);
 				}
 
-				private static bool AssetCreateDataCurveSetOrderDraw(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetOrderDraw(	out float valueInitial,
+																		AnimationClip animationClip,
 																		string namePathGameObject,
 																		Script_SpriteStudio6_PartsUnityNative scriptPats,
 																		LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation informationAnimation,
@@ -7668,13 +7293,15 @@ public static partial class LibraryEditor_SpriteStudio6
 																		LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
 																	)
 				{
+					valueInitial = 0.0f;
+
 					LibraryEditor_SpriteStudio6.Import.SSAE.Information.Animation.Parts informationAnimationParts = null;
 					int idPartsNext;
 
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-						scriptPats.OrderInLayer = 0;
+//						scriptPats.OrderInLayer = 0;
 						return(true);
 					}
 
@@ -7708,10 +7335,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						/* MEMO: Must set before adding Curve to AnimationClip.       */
 						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							scriptPats.OrderInLayer = value * 10;
-						}
+//						if((0 == i) && (0 == indexAnimation))
+//						{
+//							scriptPats.OrderInLayer = value * 10;
+//						}
+						valueInitial = (float)(value * 10);
 
 						if(true == flagDraw)
 						{
@@ -8699,7 +8327,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(true);
 				}
 
-				private static bool AssetCreateDataCurveSetUserData(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetUserData(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																		AnimationClip animationClip,
 																		List<AnimationEvent> listAnimationEvent,
 																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData attributeUserData,
 																		int frameStart,
@@ -8717,8 +8346,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						return(true);
 					}
 
-					AnimationEvent animationEvent = new AnimationEvent();
-
 					int countAttribute = attributeUserData.CountGetKey();
 					int frame;
 					for(int i=0; i<countAttribute; i++)
@@ -8728,21 +8355,100 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							frame -= frameStart;
 
-							if(true == attributeUserData.ListKey[i].Value.IsNumber)
+							if(true == setting.Basic.FlagIntegrateUserDataFunctionAnimationClip)
 							{
+								/* MEMO: After SS6PU Ver.2.1.11 */
+								string textSerialized = string.Empty;
+								{
+									Script_SpriteStudio6_RootUnityNative.UserData dataUserData = new Script_SpriteStudio6_RootUnityNative.UserData(
+																										(Script_SpriteStudio6_RootUnityNative.UserData.FlagBit)attributeUserData.ListKey[i].Value.Flags,
+																										attributeUserData.ListKey[i].Value.NumberInt,
+																										attributeUserData.ListKey[i].Value.Rectangle,
+																										attributeUserData.ListKey[i].Value.Coordinate,
+																										attributeUserData.ListKey[i].Value.Text
+																									);
+									textSerialized = dataUserData.SerializeJSON();
+								}
+
+								AnimationEvent animationEvent = new AnimationEvent();
+
 								animationEvent.time = AssetCreateDataTimeGetFrame(frame, framePerSecond);
-								animationEvent.intParameter = attributeUserData.ListKey[i].Value.NumberInt;
-								animationEvent.functionName = "FunctionEventInt";
+								animationEvent.stringParameter = string.Copy(textSerialized);
+								animationEvent.functionName = "FunctionEventUserData";
 
 								listAnimationEvent.Add(animationEvent);
 							}
-							if(true == attributeUserData.ListKey[i].Value.IsText)
+							else
 							{
-								animationEvent.time = AssetCreateDataTimeGetFrame(frame, framePerSecond);
-								animationEvent.stringParameter = string.Copy(attributeUserData.ListKey[i].Value.Text);
-								animationEvent.functionName = "FunctionEventText";
+								if(true == attributeUserData.ListKey[i].Value.IsNumber)
+								{
+									AnimationEvent animationEvent = new AnimationEvent();
 
-								listAnimationEvent.Add(animationEvent);
+									animationEvent.time = AssetCreateDataTimeGetFrame(frame, framePerSecond);
+									animationEvent.intParameter = attributeUserData.ListKey[i].Value.NumberInt;
+									animationEvent.functionName = "FunctionEventInt";
+
+									listAnimationEvent.Add(animationEvent);
+								}
+								if(true == attributeUserData.ListKey[i].Value.IsText)
+								{
+									AnimationEvent animationEvent = new AnimationEvent();
+
+									animationEvent.time = AssetCreateDataTimeGetFrame(frame, framePerSecond);
+									animationEvent.stringParameter = string.Copy(attributeUserData.ListKey[i].Value.Text);
+									animationEvent.functionName = "FunctionEventText";
+
+									listAnimationEvent.Add(animationEvent);
+								}
+
+								if(true == setting.Basic.FlagConvertUserDataRectangleAnimationClip)
+								{
+									/* MEMO: After SS6PU Ver.2.1.11 */
+									if(true == attributeUserData.ListKey[i].Value.IsRectangle)
+									{
+										string textSerialized = string.Empty;
+										{
+											Script_SpriteStudio6_RootUnityNative.UserDataRectangle dataRectangle = new Script_SpriteStudio6_RootUnityNative.UserDataRectangle(
+																															(int)attributeUserData.ListKey[i].Value.Rectangle.x,
+																															(int)(attributeUserData.ListKey[i].Value.Rectangle.x + attributeUserData.ListKey[i].Value.Rectangle.width),
+																															(int)attributeUserData.ListKey[i].Value.Rectangle.y,
+																															(int)(attributeUserData.ListKey[i].Value.Rectangle.y + attributeUserData.ListKey[i].Value.Rectangle.height)
+																														);
+											textSerialized = dataRectangle.SerializeJSON();
+										}
+
+										AnimationEvent animationEvent = new AnimationEvent();
+
+										animationEvent.time = AssetCreateDataTimeGetFrame(frame, framePerSecond);
+										animationEvent.stringParameter = string.Copy(textSerialized);
+										animationEvent.functionName = "FunctionEventRectangle";
+
+										listAnimationEvent.Add(animationEvent);
+									}
+								}
+								if(true == setting.Basic.FlagConvertUserDataCoordinateAnimationClip)
+								{
+									/* MEMO: After SS6PU Ver.2.1.11 */
+									if(true == attributeUserData.ListKey[i].Value.IsCoordinate)
+									{
+										string textSerialized = string.Empty;
+										{
+											Script_SpriteStudio6_RootUnityNative.UserDataCoordinate dataCoordinate = new Script_SpriteStudio6_RootUnityNative.UserDataCoordinate(
+																															(int)attributeUserData.ListKey[i].Value.Coordinate.x,
+																															(int)attributeUserData.ListKey[i].Value.Coordinate.y
+																														);
+											textSerialized = dataCoordinate.SerializeJSON();
+										}
+
+										AnimationEvent animationEvent = new AnimationEvent();
+
+										animationEvent.time = AssetCreateDataTimeGetFrame(frame, framePerSecond);
+										animationEvent.stringParameter = string.Copy(textSerialized);
+										animationEvent.functionName = "FunctionEventCoordinate";
+
+										listAnimationEvent.Add(animationEvent);
+									}
+								}
 							}
 						}
 					}
@@ -8750,7 +8456,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					return(true);
 				}
 #if UNITY_2017_1_OR_NEWER
-				private static bool AssetCreateDataCurveSetPowerMask(	AnimationClip animationClip,
+				private static bool AssetCreateDataCurveSetPowerMask(	out float valueInitial,
+																		AnimationClip animationClip,
 																		string namePathGameObject,
 																		SpriteMask spriteMask,
 																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributePowerMask,
@@ -8761,6 +8468,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																		float valueError
 																	)
 				{
+					valueInitial = valueError;
+
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
@@ -8799,10 +8508,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						/* MEMO: Must set before adding Curve to AnimationClip.       */
 						/*       (If set later, animation is not reflected correctly) */
-						if((0 == i) && (0 == indexAnimation))
-						{
-							spriteMask.alphaCutoff = value;
-						}
+//						if((0 == i) && (0 == indexAnimation))
+//						{
+//							spriteMask.alphaCutoff = value;
+//						}
+						valueInitial = value;
 
 						if((0 == i) || (valuePrevious != value))
 						{
@@ -10566,12 +10276,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					/* Resolve applying initial-data */
-					bool flagUseSetup = true;
 					bool flagSetInitialData = false;
-					if(true == setting.Basic.FlagIgnoreSetup)
-					{
-						flagUseSetup = false;
-					}
 					if(0 == indexAnimation)
 					{
 						flagSetInitialData = true;
@@ -10704,10 +10409,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																				positionSetup.x,	/* 0.0f */
 																				true		/* Guaranteed End frame */
 																		);
-						if(false == flagUseSetup)
-						{
-							positionInitial.x = initialValue;
-						}
+						positionInitial.x = initialValue;
+
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
 																				"localPosition.y", typeof(Transform),
@@ -10716,10 +10419,8 @@ public static partial class LibraryEditor_SpriteStudio6
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
 																				positionSetup.y	/* 0.0f */
 																		);
-						if(false == flagUseSetup)
-						{
-							positionInitial.y = initialValue;
-						}
+						positionInitial.y = initialValue;
+
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
 																				"localPosition.z", typeof(Transform),
@@ -10728,10 +10429,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
 																				positionSetup.z	/* 0.0f */
 																		);
-						if(false == flagUseSetup)
-						{
-							positionInitial.z = initialValue;
-						}
+						positionInitial.z = initialValue;
 
 						/* MEMO: Even if store x, y and z separately in Euler angles, they are treated as single Vector3-value */
 						/*         in Transform.localEularAngles.                                                              */
@@ -10749,10 +10447,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																								indexAnimation, frameStart, frameEnd, framePerSecond,
 																								rotationSetup
 																							);
-							if(false == flagUseSetup)
-							{
-								rotationInitial = initialValueRotateUnity;
-							}
+							rotationInitial = initialValueRotateUnity;
 						}
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
@@ -10763,10 +10458,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
 																				scalingSetup.x	/* 1.0f */
 																		);
-						if(false == flagUseSetup)
-						{
-							scalingInitial.x = initialValue;
-						}
+						scalingInitial.x = initialValue;
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
@@ -10776,10 +10468,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
 																				scalingSetup.y	/* 1.0f */
 																		);
-						if(false == flagUseSetup)
-						{
-							scalingInitial.y = initialValue;
-						}
+						scalingInitial.y = initialValue;
 
 						/* MEMO: TRS is set up after both "setup" and "animation's initial data" has been collected. */
 						if(true == flagSetInitialDataParts)
@@ -11168,7 +10857,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					if(null != settingAnimationClip)
 					{
-						AnimationUtility.SetAnimationClipSettings(dataAnimation, settingAnimationClip);
+//						AnimationUtility.SetAnimationClipSettings(dataAnimation, settingAnimationClip);
+						AnimationClipSettings settingAnimationClipNew = AnimationUtility.GetAnimationClipSettings(dataAnimation);
+						settingAnimationClipNew.loopTime = settingAnimationClip.loopTime;
+						settingAnimationClipNew.cycleOffset = settingAnimationClip.cycleOffset;
+						AnimationUtility.SetAnimationClipSettings(dataAnimation, settingAnimationClipNew);
 					}
 					dataAnimation.EnsureQuaternionContinuity();
 					EditorUtility.SetDirty(dataAnimation);

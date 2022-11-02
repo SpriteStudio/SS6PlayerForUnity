@@ -1076,7 +1076,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagDisableInitialLightRenderer;
 				public bool FlagTakeOverLightRenderer;
 				public bool FlagConvertSignal;
-				public bool FlagIgnoreSetup;
+				public bool FlagIntegrateUserDataFunctionAnimationClip;
+				public bool FlagConvertUserDataRectangleAnimationClip;
+				public bool FlagConvertUserDataCoordinateAnimationClip;
 				public bool FlagNestedPrefabUseScript;
 				#endregion Variables & Properties
 
@@ -1091,7 +1093,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool flagDisableInitialLightRenderer,
 									bool flagTakeOverLightRenderer,
 									bool flagConvertSignal,
-									bool flagIgnoreSetup,
+									bool flagIntegrateUserDataFunctionAnimationClip,
+									bool flagConvertUserDataRectangleAnimationClip,
+									bool flagConvertUserDataCoordinateAnimationClip,
 									bool flagNestedPrefabUseScript
 								)
 				{
@@ -1104,7 +1108,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagDisableInitialLightRenderer = flagDisableInitialLightRenderer;
 					FlagTakeOverLightRenderer = flagTakeOverLightRenderer;
 					FlagConvertSignal = flagConvertSignal;
-					FlagIgnoreSetup = flagIgnoreSetup;
+					FlagIntegrateUserDataFunctionAnimationClip = flagIntegrateUserDataFunctionAnimationClip;
+					FlagConvertUserDataRectangleAnimationClip = flagConvertUserDataRectangleAnimationClip;
+					FlagConvertUserDataCoordinateAnimationClip = flagConvertUserDataCoordinateAnimationClip;
 					FlagNestedPrefabUseScript = flagNestedPrefabUseScript;
 				}
 
@@ -1124,7 +1130,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagDisableInitialLightRenderer = EditorPrefs.GetBool(PrefsKeyFlagDisableInitialLightRenderer, Default.FlagDisableInitialLightRenderer);
 					FlagTakeOverLightRenderer = EditorPrefs.GetBool(PrefsKeyFlagTakeOverLightRenderer, Default.FlagTakeOverLightRenderer);
 					FlagConvertSignal = EditorPrefs.GetBool(PrefsKeyFlagConvertSignal, Default.FlagConvertSignal);
-					FlagIgnoreSetup = EditorPrefs.GetBool(PrefsKeyFlagIgnoreSetup, Default.FlagIgnoreSetup);
+					FlagIntegrateUserDataFunctionAnimationClip = EditorPrefs.GetBool(PrefsKeyFlagIntegrateUserDataFunctionAnimationClip, Default.FlagIntegrateUserDataFunctionAnimationClip);
+					FlagConvertUserDataRectangleAnimationClip = EditorPrefs.GetBool(PrefsKeyFlagConvertUserDataRectangleAnimationClip, Default.FlagConvertUserDataRectangleAnimationClip);
+					FlagConvertUserDataCoordinateAnimationClip = EditorPrefs.GetBool(PrefsKeyFlagConvertUserDataCoordinateAnimationClip, Default.FlagConvertUserDataCoordinateAnimationClip);
 					FlagNestedPrefabUseScript = EditorPrefs.GetBool(PrefsKeyFlagNestedPrefabUseScript, Default.FlagNestedPrefabUseScript);
 
 					return(true);
@@ -1141,7 +1149,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetBool(PrefsKeyFlagDisableInitialLightRenderer, FlagDisableInitialLightRenderer);
 					EditorPrefs.SetBool(PrefsKeyFlagTakeOverLightRenderer, FlagTakeOverLightRenderer);
 					EditorPrefs.SetBool(PrefsKeyFlagConvertSignal, FlagConvertSignal);
-					EditorPrefs.SetBool(PrefsKeyFlagIgnoreSetup, FlagIgnoreSetup);
+					EditorPrefs.SetBool(PrefsKeyFlagIntegrateUserDataFunctionAnimationClip, FlagIntegrateUserDataFunctionAnimationClip);
+					EditorPrefs.SetBool(PrefsKeyFlagConvertUserDataRectangleAnimationClip, FlagConvertUserDataRectangleAnimationClip);
+					EditorPrefs.SetBool(PrefsKeyFlagConvertUserDataCoordinateAnimationClip, FlagConvertUserDataCoordinateAnimationClip);
 					EditorPrefs.SetBool(PrefsKeyFlagNestedPrefabUseScript, FlagNestedPrefabUseScript);
 
 					return(true);
@@ -1149,7 +1159,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[11];
+					string[] textEncode = new string[13];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagCreateControlGameObject);
@@ -1179,11 +1189,17 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagConvertSignal);
 					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagConvertSignal, textValue);
 
-					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagIgnoreSetup);
-					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagIgnoreSetup, textValue);
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagIntegrateUserDataFunctionAnimationClip);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagIntegrateUserDataFunctionAnimationClip, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagConvertUserDataRectangleAnimationClip);
+					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagConvertUserDataRectangleAnimationClip, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagConvertUserDataCoordinateAnimationClip);
+					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagConvertUserDataCoordinateAnimationClip, textValue);
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagNestedPrefabUseScript);
-					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagNestedPrefabUseScript, textValue);
+					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagNestedPrefabUseScript, textValue);
 
 					return(textEncode);
 				}
@@ -1231,8 +1247,16 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagConvertSignal = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
-						case TextKeyFlagIgnoreSetup:
-							FlagIgnoreSetup = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+						case TextKeyFlagIntegrateUserDataFunctionAnimationClip:
+							FlagIntegrateUserDataFunctionAnimationClip = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagConvertUserDataRectangleAnimationClip:
+							FlagConvertUserDataRectangleAnimationClip = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
+						case TextKeyFlagConvertUserDataCoordinateAnimationClip:
+							FlagConvertUserDataCoordinateAnimationClip = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
 						case TextKeyFlagNestedPrefabUseScript:
@@ -1287,7 +1311,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagDisableInitialLightRenderer = "FlagDisableInitialLightRenderer";
 				private const string KeyFlagTakeOverLightRenderer = "FlagTakeOverLightRenderer";
 				private const string KeyFlagConvertSignal = "FlagConvertSignal";
-				private const string KeyFlagIgnoreSetup = "FlagIgnoreSetup";
+				private const string KeyFlagIntegrateUserDataFunctionAnimationClip = "FlagIntegrateUserDataFunctionAnimationClip";
+				private const string KeyFlagConvertUserDataRectangleAnimationClip = "FlagConvertUserDataRectangleAnimationClip";
+				private const string KeyFlagConvertUserDataCoordinateAnimationClip = "FlagConvertUserDataCoordinateAnimationClip";
 				private const string KeyFlagNestedPrefabUseScript = "FlagNestedPrefabUseScript";
 
 				private const string TextKeyPrefix = "Basic_";
@@ -1301,7 +1327,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyFlagDisableInitialLightRenderer = TextKeyPrefix + KeyFlagDisableInitialLightRenderer;
 				private const string TextKeyFlagTakeOverLightRenderer = TextKeyPrefix + KeyFlagTakeOverLightRenderer;
 				private const string TextKeyFlagConvertSignal = TextKeyPrefix + KeyFlagConvertSignal;
-				private const string TextKeyFlagIgnoreSetup = TextKeyPrefix + KeyFlagIgnoreSetup;
+				private const string TextKeyFlagIntegrateUserDataFunctionAnimationClip = TextKeyPrefix + KeyFlagIntegrateUserDataFunctionAnimationClip;
+				private const string TextKeyFlagConvertUserDataRectangleAnimationClip = TextKeyPrefix + KeyFlagConvertUserDataRectangleAnimationClip;
+				private const string TextKeyFlagConvertUserDataCoordinateAnimationClip = TextKeyPrefix + KeyFlagConvertUserDataCoordinateAnimationClip;
 				private const string TextKeyFlagNestedPrefabUseScript = TextKeyPrefix + KeyFlagNestedPrefabUseScript;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
@@ -1315,7 +1343,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagDisableInitialLightRenderer = PrefsKeyPrefix + KeyFlagDisableInitialLightRenderer;
 				private const string PrefsKeyFlagTakeOverLightRenderer = PrefsKeyPrefix + KeyFlagTakeOverLightRenderer;
 				private const string PrefsKeyFlagConvertSignal = PrefsKeyPrefix + KeyFlagConvertSignal;
-				private const string PrefsKeyFlagIgnoreSetup = PrefsKeyPrefix + KeyFlagIgnoreSetup;
+				private const string PrefsKeyFlagIntegrateUserDataFunctionAnimationClip = PrefsKeyPrefix + KeyFlagIntegrateUserDataFunctionAnimationClip;
+				private const string PrefsKeyFlagConvertUserDataRectangleAnimationClip = PrefsKeyPrefix + KeyFlagConvertUserDataRectangleAnimationClip;
+				private const string PrefsKeyFlagConvertUserDataCoordinateAnimationClip = PrefsKeyPrefix + KeyFlagConvertUserDataCoordinateAnimationClip;
 				private const string PrefsKeyFlagNestedPrefabUseScript = PrefsKeyPrefix + KeyFlagNestedPrefabUseScript;
 
 				private readonly static GroupBasic Default = new GroupBasic(
@@ -1328,7 +1358,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					false,									/* FlagDisableInitialLightRenderer */
 					false,									/* FlagTakeOverLightRenderer */
 					false,									/* FlagConvertSignal */
-					false,									/* FlagIgnoreSetup */
+					false,									/* FlagIntegrateUserDataFunctionAnimationClip */
+					false,									/* FlagConvertUserDataRectangleAnimationClip */
+					false,									/* FlagConvertUserDataCoordinateAnimationClip */
 					false									/* FlagNestedPrefabUseScript */
 				);
 				#endregion Enums & Constants

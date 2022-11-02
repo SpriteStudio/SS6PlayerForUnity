@@ -614,6 +614,20 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				break;
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_NATIVE:
+				SettingImport.Basic.FlagIntegrateUserDataFunctionAnimationClip = EditorGUILayout.ToggleLeft("Integrate \"UserData\" event Callback-Function", SettingImport.Basic.FlagIntegrateUserDataFunctionAnimationClip);
+				EditorGUI.indentLevel = levelIndent;
+				{
+					EditorGUI.BeginDisabledGroup(SettingImport.Basic.FlagIntegrateUserDataFunctionAnimationClip);
+					EditorGUI.indentLevel = levelIndent + 1;
+
+					SettingImport.Basic.FlagConvertUserDataRectangleAnimationClip = EditorGUILayout.ToggleLeft("Convert parameter\"Rectangle\" in \"UserData\"", SettingImport.Basic.FlagConvertUserDataRectangleAnimationClip);
+					SettingImport.Basic.FlagConvertUserDataCoordinateAnimationClip = EditorGUILayout.ToggleLeft("Convert parameter\"Coordinate\" in \"UserData\"", SettingImport.Basic.FlagConvertUserDataCoordinateAnimationClip);
+
+					EditorGUI.indentLevel = levelIndent;
+					EditorGUI.EndDisabledGroup();
+				}
+				EditorGUILayout.Space();
+
 				SettingImport.Basic.FlagCreateHolderAsset = EditorGUILayout.ToggleLeft("Create Asset-Holder", SettingImport.Basic.FlagCreateHolderAsset);
 				EditorGUI.indentLevel = levelIndent + 1;
 				EditorGUILayout.LabelField("Add \"Asset-Holder\" script of used asset (AnimationClip etc).");
@@ -622,9 +636,6 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				break;
 
 			case LibraryEditor_SpriteStudio6.Import.Setting.KindMode.UNITY_UI:
-				SettingImport.Basic.FlagIgnoreSetup = EditorGUILayout.ToggleLeft("Ignore \"Setup\" Animation", SettingImport.Basic.FlagIgnoreSetup);
-				EditorGUI.indentLevel = levelIndent;
-				EditorGUILayout.Space();
 				break;
 
 			default:
