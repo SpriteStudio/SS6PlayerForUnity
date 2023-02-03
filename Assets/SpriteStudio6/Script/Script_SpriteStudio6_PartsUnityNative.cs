@@ -83,6 +83,10 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 
 	void LateUpdate()
 	{
+#if UNITY_EDITOR
+		BootUpPropertyMaterial();
+#endif
+
 		/* MEMO: "SpriteRenderer", "SpriteMask" and "SkinnedMeshRenderer" do not coexist. */
 		int sortingOrder = 0;
 		int sortingOffsetParts = 1;
@@ -205,6 +209,7 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 					{	/* Error */
 						return;
 					}
+					InstanceCellMesh.hideFlags = HideFlags.DontSave;
 				}
 
 				/* Re-Set Mesh */
@@ -223,13 +228,18 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 
 			if(TextureMeshPrevious != TextureMesh)
 			{
-				InstanceSkinnedMeshRenderer.GetPropertyBlock(PropertyMaterial);
+#if UNITY_EDITOR
+				if(null != PropertyMaterial)
+#endif
+				{
+					InstanceSkinnedMeshRenderer.GetPropertyBlock(PropertyMaterial);
 
-				PropertyMaterial.SetTexture(IDMaterialMainTexture, TextureMesh);
+					PropertyMaterial.SetTexture(IDMaterialMainTexture, TextureMesh);
 
-				InstanceSkinnedMeshRenderer.SetPropertyBlock(PropertyMaterial);
+					InstanceSkinnedMeshRenderer.SetPropertyBlock(PropertyMaterial);
 
-				TextureMeshPrevious = TextureMesh;
+					TextureMeshPrevious = TextureMesh;
+				}
 			}
 
 			return;
@@ -253,6 +263,7 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 					{	/* Error */
 						return;
 					}
+					InstanceCellMesh.hideFlags = HideFlags.DontSave;
 				}
 
 				/* Re-Set Mesh */
@@ -271,18 +282,41 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 
 			if(TextureMeshPrevious != TextureMesh)
 			{
-				InstanceMeshRenderer.GetPropertyBlock(PropertyMaterial);
+#if UNITY_EDITOR
+				if(null != PropertyMaterial)
+#endif
+				{
+					InstanceMeshRenderer.GetPropertyBlock(PropertyMaterial);
 
-				PropertyMaterial.SetTexture(IDMaterialMainTexture, TextureMesh);
+					PropertyMaterial.SetTexture(IDMaterialMainTexture, TextureMesh);
 
-				InstanceMeshRenderer.SetPropertyBlock(PropertyMaterial);
+					InstanceMeshRenderer.SetPropertyBlock(PropertyMaterial);
 
-				TextureMeshPrevious = TextureMesh;
+					TextureMeshPrevious = TextureMesh;
+				}
 			}
 
 			return;
 		}
 	}
+
+	void OnDestroy()
+	{
+		if(null != InstanceCellMesh)
+		{
+			/* MEMO: "InstanceCellMesh.hideFlags" is set to "HideFlags.DontSave" so destroy manually. */
+			InstanceCellMesh.Clear();
+			Library_SpriteStudio6.Utility.Asset.ObjectDestroy(InstanceCellMesh);
+			InstanceCellMesh = null;
+		}
+	}
+
+#if UNITY_EDITOR
+	void OnValidate()
+	{
+		TextureMeshPrevious = null;
+	}
+#endif
 	#endregion MonoBehaviour-Functions
 
 	/* ----------------------------------------------- MonoBehaviour */
@@ -362,6 +396,7 @@ public partial class Script_SpriteStudio6_PartsUnityNative : MonoBehaviour
 		if(null == PropertyMaterial)
 		{
 			PropertyMaterial = new MaterialPropertyBlock();
+			TextureMeshPrevious = null;
 		}
 
 		if(0 > IDMaterialMainTexture)
