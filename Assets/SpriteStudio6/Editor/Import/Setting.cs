@@ -1311,6 +1311,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagDisableInitialLightRenderer = "FlagDisableInitialLightRenderer";
 				private const string KeyFlagTakeOverLightRenderer = "FlagTakeOverLightRenderer";
 				private const string KeyFlagConvertSignal = "FlagConvertSignal";
+				/* Obsolete */	// private const string KeyFlagIgnoreSetup = "FlagIgnoreSetup";
 				private const string KeyFlagIntegrateUserDataFunctionAnimationClip = "FlagIntegrateUserDataFunctionAnimationClip";
 				private const string KeyFlagConvertUserDataRectangleAnimationClip = "FlagConvertUserDataRectangleAnimationClip";
 				private const string KeyFlagConvertUserDataCoordinateAnimationClip = "FlagConvertUserDataCoordinateAnimationClip";
@@ -1327,6 +1328,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyFlagDisableInitialLightRenderer = TextKeyPrefix + KeyFlagDisableInitialLightRenderer;
 				private const string TextKeyFlagTakeOverLightRenderer = TextKeyPrefix + KeyFlagTakeOverLightRenderer;
 				private const string TextKeyFlagConvertSignal = TextKeyPrefix + KeyFlagConvertSignal;
+				/* Obsolete */	// private const string TextKeyFlagIgnoreSetup = TextKeyPrefix + KeyFlagIgnoreSetup;
 				private const string TextKeyFlagIntegrateUserDataFunctionAnimationClip = TextKeyPrefix + KeyFlagIntegrateUserDataFunctionAnimationClip;
 				private const string TextKeyFlagConvertUserDataRectangleAnimationClip = TextKeyPrefix + KeyFlagConvertUserDataRectangleAnimationClip;
 				private const string TextKeyFlagConvertUserDataCoordinateAnimationClip = TextKeyPrefix + KeyFlagConvertUserDataCoordinateAnimationClip;
@@ -1343,6 +1345,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagDisableInitialLightRenderer = PrefsKeyPrefix + KeyFlagDisableInitialLightRenderer;
 				private const string PrefsKeyFlagTakeOverLightRenderer = PrefsKeyPrefix + KeyFlagTakeOverLightRenderer;
 				private const string PrefsKeyFlagConvertSignal = PrefsKeyPrefix + KeyFlagConvertSignal;
+				/* Obsolete */	// private const string PrefsKeyFlagIgnoreSetup = PrefsKeyPrefix + KeyFlagIgnoreSetup;
 				private const string PrefsKeyFlagIntegrateUserDataFunctionAnimationClip = PrefsKeyPrefix + KeyFlagIntegrateUserDataFunctionAnimationClip;
 				private const string PrefsKeyFlagConvertUserDataRectangleAnimationClip = PrefsKeyPrefix + KeyFlagConvertUserDataRectangleAnimationClip;
 				private const string PrefsKeyFlagConvertUserDataCoordinateAnimationClip = PrefsKeyPrefix + KeyFlagConvertUserDataCoordinateAnimationClip;

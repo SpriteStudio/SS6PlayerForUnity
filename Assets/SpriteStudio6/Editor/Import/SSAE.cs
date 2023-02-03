@@ -7,6 +7,7 @@
 */
 // #define STORE_ANIMATIONSETUP_FULL
 #define WARN_MESHVERTEX_COUNT
+#define COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -2087,6 +2088,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 									listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeKey, "value/commands/value", managerNameSpace);
 									int countCommand = listNode.Count;
+									bool[] tableActive = new bool[countCommand];
 									string[] tableIDCommand = new string[countCommand];
 									string[] tableTextNoteValue = new string[countCommand];
 									System.Xml.XmlNodeList[] tableNodeValueParams = new System.Xml.XmlNodeList[countCommand];
@@ -2097,6 +2099,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 									for(int i=0; i<countCommand; i++)
 									{
+										valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(listNode[i], "active", managerNameSpace);
+										tableActive[i] = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText.Trim());
+
 										valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(listNode[i], "commandId", managerNameSpace);
 										tableIDCommand[i] = valueText.Trim();
 
@@ -2106,7 +2111,7 @@ public static partial class LibraryEditor_SpriteStudio6
 										tableNodeValueParams[i] = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(listNode[i], "params/value", managerNameSpace);
 									}
 
-									if(false == ParseAnimationAttributeBootUpSignal(ref data, informationSSPJ, tableIDCommand, tableTextNoteValue, tableNodeValueParams, managerNameSpace))
+									if(false == ParseAnimationAttributeBootUpSignal(ref data, informationSSPJ, tableActive, tableIDCommand, tableTextNoteValue, tableNodeValueParams, managerNameSpace))
 									{
 										LogError(messageLogPrefix, "Invalid Signal command ID Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 										goto ParseAnimationAttribute_ErrorEnd;
@@ -2193,7 +2198,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						switch(bound)
 						{
 							case Library_SpriteStudio6.KindBoundBlend.OVERALL:
-								/* MEMO:  */
 								colorA = dataRate;
 								colorR = dataR;
 								colorG = dataG;
@@ -2229,6 +2233,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 			private static bool ParseAnimationAttributeBootUpSignal(	ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSignal.KeyData data,
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																		bool[] tableActive,
 																		string[] tableIDCommand,
 																		string[] tableTextNote,
 																		System.Xml.XmlNodeList[] tableNodeValueParams,
@@ -2247,6 +2252,21 @@ public static partial class LibraryEditor_SpriteStudio6
 				for(int i=0; i<countValue; i++)
 				{
 					valueText = tableIDCommand[i];
+#if true
+					countParameter = tableNodeValueParams[i].Count;
+					data.Value.TableCommand[i].BootUp(countParameter);
+
+					if(true == string.IsNullOrEmpty(valueText))
+					{	/* Unlikely */
+						data.Value.TableCommand[i].ID = -1;
+						data.Value.TableCommand[i].Flags &= ~Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.VALID;
+					}
+					else
+					{
+						data.Value.TableCommand[i].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+						data.Value.TableCommand[i].Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.VALID;
+					}
+#else
 					if(true == string.IsNullOrEmpty(valueText))
 					{	/* Unlikely */
 						return(false);
@@ -2254,8 +2274,22 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					countParameter = tableNodeValueParams[i].Count;
 					data.Value.TableCommand[i].BootUp(countParameter);
-
 					data.Value.TableCommand[i].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+#endif
+
+					countParameter = tableNodeValueParams[i].Count;
+					data.Value.TableCommand[i].BootUp(countParameter);
+					data.Value.TableCommand[i].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+
+					if(true == tableActive[i])
+					{
+						data.Value.TableCommand[i].Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.ACTIVE;
+					}
+					else
+					{
+						data.Value.TableCommand[i].Flags &= ~Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.ACTIVE;
+					}
+
 					if(true == string.IsNullOrEmpty(tableTextNote[i]))
 					{
 						data.Value.TableCommand[i].Note = string.Empty;
@@ -2270,10 +2304,23 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParameter, "paramId", managerNameSpace);
 						valueText = valueText.Trim();
+#if true
+						/* MEMO: ID Invalid */
+						if(true == string.IsNullOrEmpty(valueText))
+						{
+							data.Value.TableCommand[i].TableParameter[indexParameter].ID = -1;
+						}
+						else
+						{
+							data.Value.TableCommand[i].TableParameter[indexParameter].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+						}
+#else
+						/* MEMO: Fatal Error */
 						if(true == string.IsNullOrEmpty(valueText))
 						{
 							return(false);
 						}
+#endif
 
 						valueTextParameter = string.Empty;
 						typeParameter = Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.Parameter.KindType.ERROR;
@@ -2406,6 +2453,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				public string NameGameObjectAnimationControlUnityNative;
 				public Transform[] TableTransformBoneUnityNative;
 				public int[] TableIDPartsBoneUnityNative;
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+				public Matrix4x4[] TableMatrixTRSUnityNative;
+#else
+#endif
 				public int CountDrawPartsMaxUnityNative;
 
 				public LibraryEditor_SpriteStudio6.Import.Assets<AnimationClip> DataAnimationUnityUI;
@@ -2457,6 +2508,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					NameGameObjectAnimationControlUnityNative = "";
 					TableTransformBoneUnityNative = null;
 					TableIDPartsBoneUnityNative = null;
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+//					TableMatrixTRSUnityNative = 
+#else
+#endif
 					CountDrawPartsMaxUnityNative = 0;
 
 					DataAnimationUnityUI.CleanUp();
@@ -2576,6 +2631,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
 					/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
 #endif
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+					public Matrix4x4 MatrixTRSUnityNative;
+#else
+#endif
+
 					public SkinnedMeshRenderer SkinnedMeshRendererUnityNative;	/* Temporary */
 					public MeshRenderer MeshRendererUnityNative;	/* Temporary */
 					public MeshFilter MeshFilterUnityNative;	/* Temporary */
@@ -2629,6 +2689,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
 						/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
 #endif
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+						MatrixTRSUnityNative = Matrix4x4.identity;
+#else
+#endif
+
 						SkinnedMeshRendererUnityNative = null;
 						MeshRendererUnityNative = null;
 						MeshFilterUnityNative = null;
@@ -3506,7 +3571,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 									/* Create Draw-Order table */
-									/* MEMO:  Since "Mask" draws twice on "Draw" and "PreDraw", both tables are necessary. */
+									/* MEMO: Since "Mask" draws twice on "Draw" and "PreDraw", both tables are necessary. */
 									animationParts.TableOrderDraw = new int[countFrame];
 									animationParts.TableOrderPreDraw = new int[countFrame];
 									for(int j=0; j<countFrame; j++)
@@ -6233,6 +6298,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						scriptParts = informationSSAE.TableParts[i].ScriptPartsUnityNative;
 
 						bool flagSetInitialDataParts = flagSetInitialData;
+						bool flagSetInitialGameObject = flagSetInitialData;
 						if(null == scriptParts)
 						{
 							flagSetInitialDataParts = false;
@@ -6307,6 +6373,17 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 						}
 
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+						{
+							/* MEMO: When part's animation is fully buffered, the part's "Transform" is value of frame-0. */
+							/*       So mesh bind-pose to be incorrect, "Set-Up" value should be kept separately.         */
+							Quaternion rotateQuaternion;
+							Library_SpriteStudio6.Utility.Math.QuaternionGetEulerAngels(out rotateQuaternion, ref rotationSetup);
+							informationParts.MatrixTRSUnityNative = Matrix4x4.TRS(positionSetup, rotateQuaternion, scalingSetup);
+						}
+#else
+#endif
+
 						Vector3 positionInitial = positionSetup;
 						Vector3 rotationInitial = Vector3.zero;
 						{
@@ -6322,7 +6399,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						float initialValue;
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localPosition.x", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalPosition + ".x", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.PositionX,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -6333,7 +6410,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localPosition.y", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalPosition + ".y", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.PositionY,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -6343,7 +6420,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localPosition.z", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalPosition + ".z", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.PositionZ,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -6355,11 +6432,10 @@ public static partial class LibraryEditor_SpriteStudio6
 						/*         in Transform.localEularAngles.                                                              */
 						/*       So I convert Euler angles to quaternions and store them afterwards.                           */
 						{
-							/* MEMO:  */
 							Vector3 initialValueRotateUnity = Vector3.zero;
 							UtilityModeUnity.AttributeConvertAnimationClipRotateCorrectOrder(	out initialValueRotateUnity,
 																								dataAnimation,
-																								"localEulerAngles", typeof(Transform),
+																								UtilityModeUnity.NameTransformPropertyLocalEulerAngles, typeof(Transform),
 																								nameGameObject, gameObjectParts,
 																								informationAnimationParts.RotationX,
 																								informationAnimationParts.RotationY,
@@ -6372,7 +6448,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localScale.x", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalScale + ".x", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.ScalingX,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -6382,7 +6458,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localScale.y", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalScale + ".y", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.ScalingY,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -6390,6 +6466,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																		);
 						scalingInitial.y = initialValue;
 
+						/* Set UserData (Event) */
 						AssetCreateDataCurveSetUserData(	ref setting,
 															dataAnimation,
 															listAnimationEvent,
@@ -6398,7 +6475,7 @@ public static partial class LibraryEditor_SpriteStudio6
 														);
 
 						/* MEMO: TRS is set up after both "setup" and "animation's initial data" has been collected. */
-						if(true == flagSetInitialDataParts)
+						if(true == flagSetInitialGameObject)
 						{
 							gameObjectParts.transform.localPosition = positionInitial;
 							gameObjectParts.transform.localEulerAngles = rotationInitial;
@@ -6413,13 +6490,193 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+								{	/* Cell */
+									Sprite initialValueSprite;
+									AssetCreateDataCurveSetCellSprite(	out initialValueSprite,
+																		dataAnimation,
+																		NameScriptPropertyCell, typeof(Script_SpriteStudio6_PartsUnityNative),
+																		nameGameObject, gameObjectParts,
+																		informationAnimationParts.Cell,
+																		indexAnimation,
+																		frameStart, frameEnd, framePerSecond,
+																		informationSSPJ
+																	);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.Cell = initialValueSprite;
+									}
+								}
+								{	/* Hide */
+									bool initialHide;
+									UtilityModeUnity.AttributeConvertAnimationClipBool(	out initialHide,
+																						dataAnimation,
+																						NameScriptPropertyFlagHide, typeof(Script_SpriteStudio6_PartsUnityNative),
+																						nameGameObject, gameObjectParts,
+																						informationAnimationParts.Hide,
+																						indexAnimation,
+																						frameStart, frameEnd, framePerSecond,
+																						true
+																				);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.FlagHide = (true == initialHide) ? 1.0f : 0.0f;
+									}
+								}
+								{	/* Opacity / Local-Opacity */
+									/* MEMO: RateOpacity can only be effected either "Local Opacity" or "Opacity". */
+									float initialOpacity;
+									if(0 < informationAnimationParts.RateOpacityLocal.CountGetKey())
+									{	/* Local Opacity */
+										UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOpacity,
+																								dataAnimation,
+																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
+																								nameGameObject, gameObjectParts,
+																								informationAnimationParts.RateOpacityLocal,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								1.0f
+																							);
+									}
+									else
+									{	/* Opacity */
+										UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOpacity,
+																								dataAnimation,
+																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
+																								nameGameObject, gameObjectParts,
+																								informationAnimationParts.RateOpacity,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								1.0f
+																							);
+									}
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.RateOpacity = initialOpacity;
+									}
+								}
+								{	/* Local-Scale */
+									float initialScaleX;
+									float initialScaleY;
+									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialScaleX,
+																							dataAnimation,
+																							NameScriptPropertyScaleLocal + ".x", typeof(Script_SpriteStudio6_PartsUnityNative),
+																							nameGameObject, gameObjectParts,
+																							informationAnimationParts.ScalingXLocal,
+																							indexAnimation, frameStart, frameEnd, framePerSecond,
+																							1.0f
+																					);
+									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialScaleY,
+																							dataAnimation,
+																							NameScriptPropertyScaleLocal + ".y", typeof(Script_SpriteStudio6_PartsUnityNative),
+																							nameGameObject, gameObjectParts,
+																							informationAnimationParts.ScalingYLocal,
+																							indexAnimation, frameStart, frameEnd, framePerSecond,
+																							1.0f
+																					);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.ScaleLocal.x = initialScaleX;
+										scriptParts.ScaleLocal.y = initialScaleY;
+									}
+								}
+								{	/* PartsColor */
+									float initialOperation;
+									Color initialColorLU;
+									float initialPowerLU;
+									Color initialColorRU;
+									float initialPowerRU;
+									Color initialColorRD;
+									float initialPowerRD;
+									Color initialColorLD;
+									float initialPowerLD;
+									bool flagUseModeVertex;
+									UtilityModeUnity.AttributeConvertAnimationClipPartsColorCoord4(	out initialOperation,
+																										out initialColorLU, out initialPowerLU,
+																										out initialColorRU, out initialPowerRU,
+																										out initialColorRD, out initialPowerRD,
+																										out initialColorLD, out initialPowerLD,
+																									out flagUseModeVertex,
+																									dataAnimation,
+																									NameScriptPropertyPartsColorOperation,
+																										NameScriptPropertyPartsColorLU, NameScriptPropertyPartsColorPowerLU,
+																										NameScriptPropertyPartsColorRU, NameScriptPropertyPartsColorPowerRU,
+																										NameScriptPropertyPartsColorRD, NameScriptPropertyPartsColorPowerRD,
+																										NameScriptPropertyPartsColorLD, NameScriptPropertyPartsColorPowerLD,
+																									typeof(Script_SpriteStudio6_PartsUnityNative),
+																									nameGameObject, gameObjectParts,
+																									informationAnimationParts.PartsColor,
+																									indexAnimation, frameStart, frameEnd, framePerSecond
+																								);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.PartsColorOperation = initialOperation;
+
+										scriptParts.PartsColorLU = initialColorLU;
+										scriptParts.PartsColorPowerLU = initialPowerLU;
+
+										scriptParts.PartsColorRU = initialColorRU;
+										scriptParts.PartsColorPowerRU = initialPowerRU;
+
+										scriptParts.PartsColorRD = initialColorRD;
+										scriptParts.PartsColorPowerRD = initialPowerRD;
+
+										scriptParts.PartsColorLD = initialColorLD;
+										scriptParts.PartsColorPowerLD = initialPowerLD;
+									}
+								}
+								{	/* Vertex-Correction */
+									Vector2 initialCorrectLU;
+									Vector2 initialCorrectRU;
+									Vector2 initialCorrectRD;
+									Vector2 initialCorrectLD;
+									UtilityModeUnity.AttributeConvertAnimationClipVertexCorrection(	out initialCorrectLU,
+																										out initialCorrectRU,
+																										out initialCorrectRD,
+																										out initialCorrectLD,
+																									dataAnimation,
+																									NameScriptPropertyVertexCorrectionLU,
+																										NameScriptPropertyVertexCorrectionRU,
+																										NameScriptPropertyVertexCorrectionRD,
+																										NameScriptPropertyVertexCorrectionLD,
+																									typeof(Script_SpriteStudio6_PartsUnityNative),
+																									nameGameObject, gameObjectParts,
+																									informationAnimationParts.VertexCorrection,
+																									indexAnimation, frameStart, frameEnd, framePerSecond
+																								);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.VertexCorrectionLU = initialCorrectLU;
+										scriptParts.VertexCorrectionRU = initialCorrectRU;
+										scriptParts.VertexCorrectionRD = initialCorrectRD;
+										scriptParts.VertexCorrectionLD = initialCorrectLD;
+									}
+								}
+
+								{	/* Draw order */
+									float initialOrderDraw;
+									int countPartsDrawMax;
+									UtilityModeUnity.AttributeConvertAnimationClipOrderDraw(	out initialOrderDraw,
+																								out countPartsDrawMax,
+																								dataAnimation,
+																								NameScriptPropertyOrderDraw, typeof(Script_SpriteStudio6_PartsUnityNative),
+																								nameGameObject, gameObjectParts,
+																								informationAnimation, i,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								informationSSPJ
+																							);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.OrderInLayer = initialOrderDraw;
+									}
+								}
+#else
 								if(null != spriteRendererParts)
 								{
 									{	/* Cell */
 										Sprite initialValueSprite;
 										AssetCreateDataCurveSetCellSprite(	out initialValueSprite,
 																			dataAnimation,
-																			nameGameObject, spriteRendererParts, gameObjectParts,
+																			NameScriptPropertyCell, typeof(Script_SpriteStudio6_PartsUnityNative),
+																			nameGameObject, gameObjectParts,
 																			informationAnimationParts.Cell,
 																			indexAnimation,
 																			frameStart, frameEnd, framePerSecond,
@@ -6502,6 +6759,7 @@ public static partial class LibraryEditor_SpriteStudio6
 										scriptParts.OrderInLayer = initialValueOrder;
 									}
 								}
+#endif
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
@@ -6510,6 +6768,85 @@ public static partial class LibraryEditor_SpriteStudio6
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 #if UNITY_2017_1_OR_NEWER
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+								{	/* Cell */
+									Sprite initialValueSprite;
+									AssetCreateDataCurveSetCellSprite(	out initialValueSprite,
+																		dataAnimation,
+																		NameScriptPropertyCell, typeof(Script_SpriteStudio6_PartsUnityNative),
+																		nameGameObject, gameObjectParts,
+																		informationAnimationParts.Cell,
+																		indexAnimation,
+																		frameStart, frameEnd, framePerSecond,
+																		informationSSPJ
+																	);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.Cell = initialValueSprite;
+									}
+								}
+								{	/* Hide */
+									bool initialHide;
+									UtilityModeUnity.AttributeConvertAnimationClipHideMask(	out initialHide,
+																							dataAnimation,
+																							NameScriptPropertyFlagHide, typeof(Script_SpriteStudio6_PartsUnityNative),
+																							nameGameObject, gameObjectParts,
+																							informationAnimationParts.Hide,
+																							informationAnimationParts.PowerMask,
+																							indexAnimation,
+																							frameStart, frameEnd, framePerSecond,
+																							true
+																					);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.FlagHide = (true == initialHide) ? 1.0f : 0.0f;
+									}
+								}
+								{	/* Mask-Power */
+									/* MEMO: Rate-Opacity" and "Mask-Power" share storage-variable.               */
+									/*       "Rate-Opacity," "Local Rate-Opacity," and "Mask-Power" are exclusive */
+									/*         and cannot be in effect at the same time.                          */
+									float initialValuePowerMask;
+									UtilityModeUnity.AttributeConvertAnimationClipPowerMask(	out initialValuePowerMask,
+																								dataAnimation,
+																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
+																								nameGameObject, gameObjectParts,
+																								informationAnimationParts.PowerMask,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								-1.0f	/* Default Minimum */
+																							);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.RateOpacity = initialValuePowerMask;
+									}
+								}
+
+								/* Not Support Attributes */
+								{
+									string namePartsFeature = "Mask";
+									UtilityModeUnity.AttributeCheckUnsupprted("Local Scaling X",	informationAnimationParts.ScalingXLocal.CountGetKey(),		namePartsFeature, i, informationSSPJ, informationSSAE, messageLogPrefix);
+									UtilityModeUnity.AttributeCheckUnsupprted("Local Scaling Y",	informationAnimationParts.ScalingYLocal.CountGetKey(),		namePartsFeature, i, informationSSPJ, informationSSAE, messageLogPrefix);
+									UtilityModeUnity.AttributeCheckUnsupprted("Vertex Deformation",	informationAnimationParts.VertexCorrection.CountGetKey(),	namePartsFeature, i, informationSSPJ, informationSSAE, messageLogPrefix);
+								}
+
+								{	/* Draw order */
+									float initialOrderDraw;
+									int countPartsDrawMax;
+									UtilityModeUnity.AttributeConvertAnimationClipOrderDraw(	out initialOrderDraw,
+																								out countPartsDrawMax,
+																								dataAnimation,
+																								NameScriptPropertyOrderDraw, typeof(Script_SpriteStudio6_PartsUnityNative),
+																								nameGameObject, gameObjectParts,
+																								informationAnimation, i,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								informationSSPJ
+																							);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.OrderInLayer = initialOrderDraw;
+									}
+								}
+#else
 								if(null != spriteMaskParts)
 								{
 									/* MEMO: Sprite can not set to SpriteMask ? */
@@ -6587,6 +6924,7 @@ public static partial class LibraryEditor_SpriteStudio6
 										scriptParts.OrderInLayer = initialValueOrder;
 									}
 								}
+#endif
 #else
 								/* MEMO: Can not use "SpriteMask" in Unity5.6 or earlier.                               */
 								/*       (For "Nintendo Switch" for the time being, corresponds to Unity5.6 or earlier) */
@@ -6601,6 +6939,152 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+								{	/* Cell (Texture) */
+									Mesh initialValueMesh;
+									Texture2D initialValueTexture;
+									AssetCreateDataCurveSetCellSkinnedMesh(	out initialValueMesh,
+																			out initialValueTexture,
+																			dataAnimation,
+																			NameScriptPropertyCellMesh, NameScriptPropertyTextureMesh, typeof(Script_SpriteStudio6_PartsUnityNative),
+																			nameGameObject, gameObjectParts,
+																			informationParts.DataMeshSkinnedUnityNative.TableData[0],
+																			informationAnimationParts.Cell,
+																			indexAnimation,
+																			frameStart, frameEnd, framePerSecond,
+																			informationSSPJ
+																		);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.CellMesh = initialValueMesh;
+										scriptParts.TextureMesh = initialValueTexture;
+									}
+								}
+								{	/* Hide */
+									bool initialHide;
+									UtilityModeUnity.AttributeConvertAnimationClipBool(	out initialHide,
+																						dataAnimation,
+																						NameScriptPropertyFlagHide, typeof(Script_SpriteStudio6_PartsUnityNative),
+																						nameGameObject, gameObjectParts,
+																						informationAnimationParts.Hide,
+																						indexAnimation,
+																						frameStart, frameEnd, framePerSecond,
+																						true
+																				);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.FlagHide = (true == initialHide) ? 1.0f : 0.0f;
+									}
+								}
+								{	/* Opacity / Local-Opacity */
+									/* MEMO: RateOpacity can only be effected either "Local Opacity" or "Opacity". */
+									float initialOpacity;
+									if(0 < informationAnimationParts.RateOpacityLocal.CountGetKey())
+									{	/* Local Opacity */
+										UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOpacity,
+																								dataAnimation,
+																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
+																								nameGameObject, gameObjectParts,
+																								informationAnimationParts.RateOpacityLocal,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								1.0f
+																							);
+									}
+									else
+									{	/* Opacity */
+										UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOpacity,
+																								dataAnimation,
+																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
+																								nameGameObject, gameObjectParts,
+																								informationAnimationParts.RateOpacity,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								1.0f
+																							);
+									}
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.RateOpacity = initialOpacity;
+									}
+								}
+								{	/* PartsColor */
+									/* MEMO: When "Mesh" parts, fixed in "Overall" mode. (Left-Up color is used) */
+									float initialOperation;
+									Color initialColorLU;
+									float initialPowerLU;
+									Color initialColorRU;
+									float initialPowerRU;
+									Color initialColorRD;
+									float initialPowerRD;
+									Color initialColorLD;
+									float initialPowerLD;
+									bool flagUseModeVertex;
+									UtilityModeUnity.AttributeConvertAnimationClipPartsColorCoord4(	out initialOperation,
+																										out initialColorLU, out initialPowerLU,
+																										out initialColorRU, out initialPowerRU,
+																										out initialColorRD, out initialPowerRD,
+																										out initialColorLD, out initialPowerLD,
+																									out flagUseModeVertex,
+																									dataAnimation,
+																									NameScriptPropertyPartsColorOperation,
+																										NameScriptPropertyPartsColorLU, NameScriptPropertyPartsColorPowerLU,
+																										NameScriptPropertyPartsColorRU, NameScriptPropertyPartsColorPowerRU,
+																										NameScriptPropertyPartsColorRD, NameScriptPropertyPartsColorPowerRD,
+																										NameScriptPropertyPartsColorLD, NameScriptPropertyPartsColorPowerLD,
+																									typeof(Script_SpriteStudio6_PartsUnityNative),
+																									nameGameObject, gameObjectParts,
+																									informationAnimationParts.PartsColor,
+																									indexAnimation, frameStart, frameEnd, framePerSecond,
+																									true	/* Force Overall-Mode */
+																								);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.PartsColorOperation = initialOperation;
+
+										scriptParts.PartsColorLU = initialColorLU;
+										scriptParts.PartsColorPowerLU = initialPowerLU;
+
+										scriptParts.PartsColorRU = initialColorRU;
+										scriptParts.PartsColorPowerRU = initialPowerRU;
+
+										scriptParts.PartsColorRD = initialColorRD;
+										scriptParts.PartsColorPowerRD = initialPowerRD;
+
+										scriptParts.PartsColorLD = initialColorLD;
+										scriptParts.PartsColorPowerLD = initialPowerLD;
+									}
+
+									if(true == flagUseModeVertex)
+									{
+										LogWarning(messageLogPrefix, "Unsupported Data-Type \"Bound=Vertex\" Attribute \"Part Color\" with \"Mesh\" parts. Parts[" + i.ToString() + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+									}
+								}
+
+								/* Not Support Attributes */
+								{
+									string namePartsFeature = "Mesh";
+									UtilityModeUnity.AttributeCheckUnsupprted("Local Scaling X",	informationAnimationParts.ScalingXLocal.CountGetKey(),		namePartsFeature, i, informationSSPJ, informationSSAE, messageLogPrefix);
+									UtilityModeUnity.AttributeCheckUnsupprted("Local Scaling Y",	informationAnimationParts.ScalingYLocal.CountGetKey(),		namePartsFeature, i, informationSSPJ, informationSSAE, messageLogPrefix);
+									UtilityModeUnity.AttributeCheckUnsupprted("Vertex Deformation",	informationAnimationParts.VertexCorrection.CountGetKey(),	namePartsFeature, i, informationSSPJ, informationSSAE, messageLogPrefix);
+								}
+
+								{	/* Draw order */
+									float initialOrderDraw;
+									int countPartsDrawMax;
+									UtilityModeUnity.AttributeConvertAnimationClipOrderDraw(	out initialOrderDraw,
+																								out countPartsDrawMax,
+																								dataAnimation,
+																								NameScriptPropertyOrderDraw, typeof(Script_SpriteStudio6_PartsUnityNative),
+																								nameGameObject, gameObjectParts,
+																								informationAnimation, i,
+																								indexAnimation, frameStart, frameEnd, framePerSecond,
+																								informationSSPJ
+																							);
+									if(true == flagSetInitialDataParts)
+									{
+										scriptParts.OrderInLayer = initialOrderDraw;
+									}
+								}
+#else
 								{
 									Renderer rendererParts = null;
 									System.Type typeRenderer;
@@ -6621,10 +7105,21 @@ public static partial class LibraryEditor_SpriteStudio6
 										{	/* Cell (Texture) */
 											Mesh initialValueMesh;
 											Texture2D initialValueTexture;
+//											AssetCreateDataCurveSetCellSkinnedMesh(	out initialValueMesh,
+//																					out initialValueTexture,
+//																					dataAnimation,
+//																					nameGameObject, typeRenderer, rendererParts, gameObjectParts,
+//																					informationParts.DataMeshSkinnedUnityNative.TableData[0],
+//																					informationAnimationParts.Cell,
+//																					indexAnimation,
+//																					frameStart, frameEnd, framePerSecond,
+//																					informationSSPJ
+//																				);
 											AssetCreateDataCurveSetCellSkinnedMesh(	out initialValueMesh,
 																					out initialValueTexture,
 																					dataAnimation,
-																					nameGameObject, typeRenderer, rendererParts, gameObjectParts,
+																					NameScriptPropertyCellMesh, NameScriptPropertyTextureMesh, typeof(Script_SpriteStudio6_PartsUnityNative),
+																					nameGameObject, gameObjectParts,
 																					informationParts.DataMeshSkinnedUnityNative.TableData[0],
 																					informationAnimationParts.Cell,
 																					indexAnimation,
@@ -6707,6 +7202,7 @@ public static partial class LibraryEditor_SpriteStudio6
 										scriptParts.OrderInLayer = initialValueOrder;
 									}
 								}
+#endif
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
@@ -6957,8 +7453,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				private static bool AssetCreateDataCurveSetCellSprite(	out Sprite valueInitial,
 																		AnimationClip animationClip,
+																		string nameProperty,
+																		System.Type typeProperty,
 																		string namePathGameObject,
-																		SpriteRenderer spriteRenderer,
 																		GameObject gameObjectParts,
 																		Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell attributeCell,
 																		int indexAnimation,
@@ -6973,12 +7470,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countFrameRange = (frameEnd - frameStart) + 1;
 					if(1 > countFrameRange)
 					{
-//						spriteRenderer.sprite = null;
+//						valueInitial = null;
 
 						return(true);
 					}
-
-//					spriteRenderer.sprite = null;
 
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell value = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
 					Library_SpriteStudio6.Data.Animation.Attribute.Cell valuePrevious = new Library_SpriteStudio6.Data.Animation.Attribute.Cell();
@@ -6987,14 +7482,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* MEMO: First frame's data is forcibly get. */
 					if(false == attributeCell.ValueGet(out value, frameStart))
 					{
-//						spriteRenderer.sprite = null;
+//						valueInitial = null;
+
 						return(true);
 					}
 
 					EditorCurveBinding curveBinding = new EditorCurveBinding();
-					curveBinding.type = typeof(Script_SpriteStudio6_PartsUnityNative);
+					curveBinding.type = typeProperty;
 					curveBinding.path = namePathGameObject;
-					curveBinding.propertyName = NameScriptPropertyCell;
+					curveBinding.propertyName = nameProperty;
 
 					List<ObjectReferenceKeyframe> listKeyFrame = new List<ObjectReferenceKeyframe>();
 					ObjectReferenceKeyframe keyFrame = new ObjectReferenceKeyframe();
@@ -7009,17 +7505,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						listKeyFrame.Add(keyFrame);
 						valuePrevious = value;
 
-//						if(0 == indexAnimation)
-//						{
-//							if(null != gameObjectParts)
-//							{
-//								Script_SpriteStudio6_PartsUnityNative scriptParts = gameObjectParts.GetComponent<Script_SpriteStudio6_PartsUnityNative>();
-//								if(null != scriptParts)
-//								{
-//									scriptParts.Cell = (Sprite)keyFrame.value;
-//								}
-//							}
-//						}
 						valueInitial = (Sprite)keyFrame.value;
 					}
 
@@ -7155,9 +7640,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				private static bool AssetCreateDataCurveSetCellSkinnedMesh(	out Mesh valueInitialMesh,
 																			out Texture2D valueInitialTexture,
 																			AnimationClip animationClip,
+																			string namePropertyMesh,
+																			string namePropertyTexture,
+																			System.Type typeProperty,
 																			string namePathGameObject,
-																			System.Type type,
-																			Renderer renderer,
 																			GameObject gameObjectParts,
 																			Mesh meshSetUp,
 																			Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeCell attributeCell,
@@ -7200,14 +7686,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					valueInitialTexture = textureMesh;
 
 					EditorCurveBinding curveBindingMesh = new EditorCurveBinding();
-					curveBindingMesh.type = typeof(Script_SpriteStudio6_PartsUnityNative);
+					curveBindingMesh.type = typeProperty;
 					curveBindingMesh.path = namePathGameObject;
-					curveBindingMesh.propertyName = NameScriptPropertyCellMesh;
+					curveBindingMesh.propertyName = namePropertyMesh;
 
 					EditorCurveBinding curveBindingTexture = new EditorCurveBinding();
-					curveBindingTexture.type = typeof(Script_SpriteStudio6_PartsUnityNative);
+					curveBindingTexture.type = typeProperty;
 					curveBindingTexture.path = namePathGameObject;
-					curveBindingTexture.propertyName = NameScriptPropertyTextureMesh;
+					curveBindingTexture.propertyName = namePropertyTexture;
 
 					float time = AssetCreateDataTimeGetFrame(0, framePerSecond);
 
@@ -8908,7 +9394,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					idPartsParent = informationParts.Data.IDParent;
 					informationPartsParent = informationParts;
 					while(0 <= idPartsParent)
-					{	/* MEMO:  */
+					{
 						if(true == string.IsNullOrEmpty(nameGameObject))
 						{
 							nameGameObject = informationPartsParent.GameObjectUnityNative.name;
@@ -9313,6 +9799,24 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						material = null;
 					}
+
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+					tableTransformBoneMinimize = new Transform[countTableIDPartsBone];
+					if(null == tableTransformBoneMinimize)
+					{
+						LogError(messageLogPrefix, "Not Enough Memory (Bone Minimize table) Parts[" + informationParts.Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+						goto AssetCreateDataMesh_ErrorEnd;
+					}
+					for(int i=0; i<countTableIDPartsBone; i++)
+					{
+						tableTransformBoneMinimize[i] = informationSSAE.TableTransformBoneUnityNative[tableIndexBone[i]];
+					}
+					informationParts.ScriptPartsUnityNative.TableTransformBone = tableTransformBoneMinimize;
+					informationParts.ScriptPartsUnityNative.TableIDPartsBone = tableIndexBone;
+					/* MEMO: In function "CalculateMatrixBone", "MatrixTRSSetup" is set. */
+//					informationParts.ScriptPartsUnityNative.MatrixTRSSetup = informationParts.MatrixTRSUnityNative;
+					tableTransformBoneMinimize = null;
+#else
 					tableTransformBoneMinimize = new Transform[countTableIDPartsBone];
 					if(null == tableTransformBoneMinimize)
 					{
@@ -9325,6 +9829,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					informationParts.ScriptPartsUnityNative.TableTransformBone = tableTransformBoneMinimize;
 					tableTransformBoneMinimize = null;
+#endif
 
 					/* Create Mesh */
 					Mesh dataMesh = informationParts.DataMeshSkinnedUnityNative.TableData[0];
@@ -9703,6 +10208,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						scriptRoot.CountDrawPartsMax = informationSSAE.CountDrawPartsMaxUnityNative;
 						scriptRoot.SortingOffsetPartsDraw = 1;
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+						scriptRoot.TableMatrixBoneSetup = informationSSAE.TableMatrixTRSUnityNative;
+#else
+#endif
 					}
 
 					/* Attach Animation Holder */
@@ -9840,6 +10349,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					const string messageLogPrefix = "Create Asset(Bone-Information)";
 
+					/* Create Bone-Catalog */
 					int countBone = informationSSAE.ListBone.Count;
 					Transform[] tableTransform = null;
 					int[] tableIDParts = null;
@@ -9888,6 +10398,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					informationSSAE.TableTransformBoneUnityNative = tableTransform;
 					informationSSAE.TableIDPartsBoneUnityNative = tableIDParts;
+					/* MEMO: Here, parts' TRS in Setup-animation has not been determined, so the matrix for the bind pose cannot be calculated. */
+					/*       Matrixs for the bind-pose are determined posteriorly in function"CalculateMatrixBone".                             */
+//					informationSSAE.TableMatrixTRSUnityNative =
 
 					return(true);
 
@@ -9897,6 +10410,93 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					return(false);
 				}
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+				public static bool CalculateMatrixBone(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+															LibraryEditor_SpriteStudio6.Import.SSAE.Information informationSSAE
+														)
+				{
+					/* Calculate all part's matrixes */
+					int countParts = informationSSAE.TableParts.Length;
+					Matrix4x4[] tableMatrixParts = new Matrix4x4[countParts];
+					for(int i=0; i<countParts; i++)
+					{
+						Matrix4x4 matrixJoint = Matrix4x4.identity;
+						int idPartsParent = informationSSAE.TableParts[i].Data.IDParent;
+						if(0 > idPartsParent)
+						{
+							tableMatrixParts[i] = informationSSAE.TableParts[i].MatrixTRSUnityNative;
+//							matrixJoint = Matrix4x4.identity;
+						}
+						else
+						{
+							tableMatrixParts[i] = tableMatrixParts[idPartsParent] * informationSSAE.TableParts[i].MatrixTRSUnityNative;
+#if false
+//							scriptParts.MatrixTRSSetup = tableMatrixParts[i];
+							switch(informationSSAE.TableParts[i].Data.Feature)
+							{
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+									goto default;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+									/* MEMO: Only "Mesh" parts have "Joint". */
+									matrixJoint = tableMatrixParts[idPartsParent];
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+									goto default;
+
+								default:
+//									matrixJoint = Matrix4x4.identity;
+									break;
+							}
+#else
+								matrixJoint = tableMatrixParts[i];
+#endif
+						}
+
+						Script_SpriteStudio6_PartsUnityNative scriptParts = informationSSAE.TableParts[i].ScriptPartsUnityNative;
+						if(null != scriptParts)
+						{
+							scriptParts.MatrixBase = matrixJoint;
+						}
+					}
+
+					/* Extract bone matrixes */
+					int countBone = informationSSAE.TableIDPartsBoneUnityNative.Length;
+					Matrix4x4[] tableMatrixBone = new Matrix4x4[countBone];
+					for(int i=0; i<countBone; i++)
+					{
+						int indexParts = informationSSAE.TableIDPartsBoneUnityNative[i];
+						if(0 > indexParts)
+						{
+							tableMatrixBone[i] = Matrix4x4.identity;
+						}
+						else
+						{
+							tableMatrixBone[i] = tableMatrixParts[indexParts];
+						}
+					}
+
+					informationSSAE.TableMatrixTRSUnityNative = tableMatrixBone;
+					tableMatrixParts = null;
+					tableMatrixBone = null;
+
+					return(true);
+				}
+#else
+#endif
 				#endregion Functions
 
 				/* ----------------------------------------------- Enums & Constants */
@@ -9910,13 +10510,35 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string NameShaderPropertyVertexOffsetLURU = "_VertexOffset_LURU";
 				private const string NameShaderPropertyVertexOffsetRDLD = "_VertexOffset_RDLD";
 				private const string NameShaderPropertyCellPivotLocalScale = "_CellPivot_LocalScale";
-				private const string NameShaderPropertyCellRectangle = "_CellRectangle";
+				private const string NameShaderPropertyCellRectangle = "_CellRectangle";	/* Not set from Importer (Set in runtime) */
 				private const string NameShaderPropertyPartsColorSkinnedMesh = "_PartsColor";
 
 				private const string NameScriptPropertyOrderInLayer = "OrderInLayer";
 				private const string NameScriptPropertyCell = "Cell";
 				private const string NameScriptPropertyCellMesh = "CellMesh";
 				private const string NameScriptPropertyTextureMesh = "TextureMesh";
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+				private const string NameScriptPropertyOrderDraw = NameScriptPropertyOrderInLayer;	/* Alias */
+
+				private const string NameScriptPropertyScaleLocal = "ScaleLocal";
+				private const string NameScriptPropertyFlagHide = "FlagHide";
+				private const string NameScriptPropertyRateOpacity = "RateOpacity";
+
+				private const string NameScriptPropertyPartsColorOperation = "PartsColorOperation";
+				private const string NameScriptPropertyPartsColorLU = "PartsColorLU";
+				private const string NameScriptPropertyPartsColorPowerLU = "PartsColorPowerLU";
+				private const string NameScriptPropertyPartsColorRU = "PartsColorRU";
+				private const string NameScriptPropertyPartsColorPowerRU = "PartsColorPowerRU";
+				private const string NameScriptPropertyPartsColorRD = "PartsColorRD";
+				private const string NameScriptPropertyPartsColorPowerRD = "PartsColorPowerRD";
+				private const string NameScriptPropertyPartsColorLD = "PartsColorLD";
+				private const string NameScriptPropertyPartsColorPowerLD = "PartsColorPowerLD";
+
+				private const string NameScriptPropertyVertexCorrectionLU = "VertexCorrectionLU";
+				private const string NameScriptPropertyVertexCorrectionRU = "VertexCorrectionRU";
+				private const string NameScriptPropertyVertexCorrectionRD = "VertexCorrectionRD";
+				private const string NameScriptPropertyVertexCorrectionLD = "VertexCorrectionLD";
+#endif
 
 				private readonly static Color ColorDefault = new Color(1.0f, 1.0f, 1.0f, 0.0f);
 				#endregion Enums & Constants
@@ -10402,7 +11024,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						float initialValue;
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localPosition.x", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalPosition + ".x", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.PositionX,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10413,7 +11035,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localPosition.y", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalPosition + ".y", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.PositionY,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10423,7 +11045,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localPosition.z", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalPosition + ".z", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.PositionZ,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10435,11 +11057,10 @@ public static partial class LibraryEditor_SpriteStudio6
 						/*         in Transform.localEularAngles.                                                              */
 						/*       So I convert Euler angles to quaternions and store them afterwards.                           */
 						{
-							/* MEMO:  */
 							Vector3 initialValueRotateUnity = Vector3.zero;
 							UtilityModeUnity.AttributeConvertAnimationClipRotateCorrectOrder(	out initialValueRotateUnity,
 																								dataAnimation,
-																								"localEulerAngles", typeof(Transform),
+																								UtilityModeUnity.NameTransformPropertyLocalEulerAngles, typeof(Transform),
 																								nameGameObject, gameObjectParts,
 																								informationAnimationParts.RotationX,
 																								informationAnimationParts.RotationY,
@@ -10452,7 +11073,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localScale.x", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalScale + ".x", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.ScalingX,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10462,7 +11083,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
 																				dataAnimation,
-																				"localScale.y", typeof(Transform),
+																				UtilityModeUnity.NameTransformPropertyLocalScale + ".y", typeof(Transform),
 																				nameGameObject, gameObjectParts,
 																				informationAnimationParts.ScalingY,
 																				indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10481,7 +11102,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* MEMO: Currently, mode "UnityUI" does not support user-event. */
 
 						/* Set Attributes for each (Parts') Feature */
-						/* MEMO:  */
 						switch(informationParts.Data.Feature)
 						{
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
@@ -10495,7 +11115,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									Vector2 initialPivot;
 									AttributeConvertAnimationClipCellUV(	out initialUV, out initialSize, out initialPivot,
 																			dataAnimation,
-																			"CellUV", "CellSize", "CellPivot", typeof(Script_SpriteStudio6_PartsUnityUI),
+																			NameScriptPropertyCellUV, NameScriptPropertyCellSize, NameScriptPropertyCellPivot, typeof(Script_SpriteStudio6_PartsUnityUI),
 																			nameGameObject, gameObjectParts,
 																			informationAnimationParts.Cell,
 																			indexAnimation,
@@ -10514,7 +11134,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool initialHide;
 									UtilityModeUnity.AttributeConvertAnimationClipBool(	out initialHide,
 																						dataAnimation,
-																						"FlagHide", typeof(Script_SpriteStudio6_PartsUnityUI),
+																						NameScriptPropertyFlagHide, typeof(Script_SpriteStudio6_PartsUnityUI),
 																						nameGameObject, gameObjectParts,
 																						informationAnimationParts.Hide,
 																						indexAnimation,
@@ -10533,7 +11153,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									{	/* Local Opacity */
 										UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOpacity,
 																								dataAnimation,
-																								"RateOpacity", typeof(Script_SpriteStudio6_PartsUnityUI),
+																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityUI),
 																								nameGameObject, gameObjectParts,
 																								informationAnimationParts.RateOpacityLocal,
 																								indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10544,7 +11164,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									{	/* Opacity */
 										UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOpacity,
 																								dataAnimation,
-																								"RateOpacity", typeof(Script_SpriteStudio6_PartsUnityUI),
+																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityUI),
 																								nameGameObject, gameObjectParts,
 																								informationAnimationParts.RateOpacity,
 																								indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10561,7 +11181,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									float initialScaleY;
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialScaleX,
 																							dataAnimation,
-																							"ScaleLocal.x", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyScaleLocal + ".x", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.ScalingXLocal,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10569,7 +11189,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					);
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialScaleY,
 																							dataAnimation,
-																							"ScaleLocal.y", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyScaleLocal + ".y", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.ScalingYLocal,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10591,17 +11211,19 @@ public static partial class LibraryEditor_SpriteStudio6
 									float initialPowerRD;
 									Color initialColorLD;
 									float initialPowerLD;
+									bool flagUseModeVertex;
 									UtilityModeUnity.AttributeConvertAnimationClipPartsColorCoord4(	out initialOperation,
 																										out initialColorLU, out initialPowerLU,
 																										out initialColorRU, out initialPowerRU,
 																										out initialColorRD, out initialPowerRD,
 																										out initialColorLD, out initialPowerLD,
+																									out flagUseModeVertex,
 																									dataAnimation,
-																									"PartsColorOperation",
-																										"PartsColorLU", "PartsColorPowerLU",
-																										"PartsColorRU", "PartsColorPowerRU",
-																										"PartsColorRD", "PartsColorPowerRD",
-																										"PartsColorLD", "PartsColorPowerLD",
+																									NameScriptPropertyPartsColorOperation,
+																										NameScriptPropertyPartsColorLU, NameScriptPropertyPartsColorPowerLU,
+																										NameScriptPropertyPartsColorRU, NameScriptPropertyPartsColorPowerRU,
+																										NameScriptPropertyPartsColorRD, NameScriptPropertyPartsColorPowerRD,
+																										NameScriptPropertyPartsColorLD, NameScriptPropertyPartsColorPowerLD,
 																									typeof(Script_SpriteStudio6_PartsUnityUI),
 																									nameGameObject, gameObjectParts,
 																									informationAnimationParts.PartsColor,
@@ -10634,10 +11256,10 @@ public static partial class LibraryEditor_SpriteStudio6
 																										out initialCorrectRD,
 																										out initialCorrectLD,
 																									dataAnimation,
-																									"VertexCorrectionLU",
-																										"VertexCorrectionRU",
-																										"VertexCorrectionRD",
-																										"VertexCorrectionLD",
+																									NameScriptPropertyVertexCorrectionLU,
+																										NameScriptPropertyVertexCorrectionRU,
+																										NameScriptPropertyVertexCorrectionRD,
+																										NameScriptPropertyVertexCorrectionLD,
 																										typeof(Script_SpriteStudio6_PartsUnityUI),
 																									nameGameObject, gameObjectParts,
 																									informationAnimationParts.VertexCorrection,
@@ -10656,7 +11278,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									float initialOffsetPivotY;
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOffsetPivotX,
 																							dataAnimation,
-																							"OffsetPivot.x", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyOffsetPivot + ".x", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.PivotOffsetX,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10664,7 +11286,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					);
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOffsetPivotY,
 																							dataAnimation,
-																							"OffsetPivot.y", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyOffsetPivot + ".y", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.PivotOffsetY,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10681,7 +11303,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									float initialSizeY;
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialSizeX,
 																							dataAnimation,
-																							"SizeForce.x", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertySizeForce + ".x", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.SizeForceX,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10689,7 +11311,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					);
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialSizeY,
 																							dataAnimation,
-																							"SizeForce.y", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertySizeForce + ".y", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.SizeForceY,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10706,7 +11328,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									float initialTexturePositionY;
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialTexturePositionX,
 																							dataAnimation,
-																							"PositionTexture.x", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyPositionTexture + ".x", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.TexturePositionX,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10714,7 +11336,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					);
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialTexturePositionY,
 																							dataAnimation,
-																							"PositionTexture.y", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyPositionTexture + ".y", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.TexturePositionY,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10730,7 +11352,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									float initialTextureRotation;
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialTextureRotation,
 																							dataAnimation,
-																							"RotationTexture", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyRotationTexture, typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.TextureRotation,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10746,7 +11368,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									float initialTextureScalingY;
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialTextureScalingX,
 																							dataAnimation,
-																							"ScalingTexture.x", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyScalingTexture + ".x", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.TextureScalingX,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10754,7 +11376,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					);
 									UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialTextureScalingY,
 																							dataAnimation,
-																							"ScalingTexture.y", typeof(Script_SpriteStudio6_PartsUnityUI),
+																							NameScriptPropertyScalingTexture + ".y", typeof(Script_SpriteStudio6_PartsUnityUI),
 																							nameGameObject, gameObjectParts,
 																							informationAnimationParts.TextureScalingY,
 																							indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -10771,7 +11393,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									bool initialTextureFlipY;
 									UtilityModeUnity.AttributeConvertAnimationClipBool(	out initialTextureFlipX,
 																						dataAnimation,
-																						"FlagFlipTextureX", typeof(Script_SpriteStudio6_PartsUnityUI),
+																						NameScriptPropertyFlagFlipTextureX, typeof(Script_SpriteStudio6_PartsUnityUI),
 																						nameGameObject, gameObjectParts,
 																						informationAnimationParts.TextureFlipX,
 																						indexAnimation,
@@ -10780,7 +11402,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																				);
 									UtilityModeUnity.AttributeConvertAnimationClipBool(	out initialTextureFlipY,
 																						dataAnimation,
-																						"FlagFlipTextureY", typeof(Script_SpriteStudio6_PartsUnityUI),
+																						NameScriptPropertyFlagFlipTextureY, typeof(Script_SpriteStudio6_PartsUnityUI),
 																						nameGameObject, gameObjectParts,
 																						informationAnimationParts.TextureFlipY,
 																						indexAnimation,
@@ -10799,7 +11421,7 @@ public static partial class LibraryEditor_SpriteStudio6
 									UtilityModeUnity.AttributeConvertAnimationClipOrderDraw(	out initialOrderDraw,
 																								out countPartsDrawMax,
 																								dataAnimation,
-																								"OrderDraw", typeof(Script_SpriteStudio6_PartsUnityUI),
+																								NameScriptPropertyOrderDraw, typeof(Script_SpriteStudio6_PartsUnityUI),
 																								nameGameObject, gameObjectParts,
 																								informationAnimation, i,
 																								indexAnimation, frameStart, frameEnd, framePerSecond,
@@ -11242,6 +11864,38 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
+				private const string NameScriptPropertyOrderDraw = "OrderDraw";
+
+				private const string NameScriptPropertyCellUV = "CellUV";
+				private const string NameScriptPropertyCellSize = "CellSize";
+				private const string NameScriptPropertyCellPivot = "CellPivot";
+
+				private const string NameScriptPropertyScaleLocal = "ScaleLocal";
+				private const string NameScriptPropertyFlagHide = "FlagHide";
+				private const string NameScriptPropertyRateOpacity = "RateOpacity";
+
+				private const string NameScriptPropertyPartsColorOperation = "PartsColorOperation";
+				private const string NameScriptPropertyPartsColorLU = "PartsColorLU";
+				private const string NameScriptPropertyPartsColorPowerLU = "PartsColorPowerLU";
+				private const string NameScriptPropertyPartsColorRU = "PartsColorRU";
+				private const string NameScriptPropertyPartsColorPowerRU = "PartsColorPowerRU";
+				private const string NameScriptPropertyPartsColorRD = "PartsColorRD";
+				private const string NameScriptPropertyPartsColorPowerRD = "PartsColorPowerRD";
+				private const string NameScriptPropertyPartsColorLD = "PartsColorLD";
+				private const string NameScriptPropertyPartsColorPowerLD = "PartsColorPowerLD";
+
+				private const string NameScriptPropertyVertexCorrectionLU = "VertexCorrectionLU";
+				private const string NameScriptPropertyVertexCorrectionRU = "VertexCorrectionRU";
+				private const string NameScriptPropertyVertexCorrectionRD = "VertexCorrectionRD";
+				private const string NameScriptPropertyVertexCorrectionLD = "VertexCorrectionLD";
+
+				private const string NameScriptPropertyOffsetPivot = "OffsetPivot";
+				private const string NameScriptPropertySizeForce = "SizeForce";
+				private const string NameScriptPropertyPositionTexture = "PositionTexture";
+				private const string NameScriptPropertyScalingTexture = "ScalingTexture";
+				private const string NameScriptPropertyRotationTexture = "RotationTexture";
+				private const string NameScriptPropertyFlagFlipTextureX = "FlagFlipTextureX";
+				private const string NameScriptPropertyFlagFlipTextureY = "FlagFlipTextureY";
 				#endregion Enums & Constants
 			}
 
@@ -11921,6 +12575,7 @@ public static partial class LibraryEditor_SpriteStudio6
 																					out float initialPowerRD,
 																					out Color initialColorLD,
 																					out float initialPowerLD,
+																					out bool flagUseModeVertex,
 																					AnimationClip animationClip,
 																					string namePropertyOperation,
 																					string namePropertyColorLU,
@@ -11938,9 +12593,12 @@ public static partial class LibraryEditor_SpriteStudio6
 																					int indexAnimation,
 																					int frameStart,
 																					int frameEnd,
-																					int framePerSecond
+																					int framePerSecond,
+																					bool flagForceModeOverAll=false
 																			)
 				{
+					flagUseModeVertex = false;
+
 					initialOperation = (float)((int)Library_SpriteStudio6.KindOperationBlend.MIX) + 0.01f;
 					initialColorLU =
 					initialColorRU =
@@ -12022,11 +12680,18 @@ public static partial class LibraryEditor_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.KindBoundBlend.VERTEX:
+								if(true == flagForceModeOverAll)
+								{
+									goto case Library_SpriteStudio6.KindBoundBlend.OVERALL;
+								}
+
 								valueBlend = value.Operation;
 								for(int j=0; j<countVertex; j++)	{
 									valueColor[j] = value.VertexColor[j];
 									valuePower[j] = value.RateAlpha[j];
 								}
+
+								flagUseModeVertex |= true;
 								break;
 
 							default:
@@ -12256,6 +12921,204 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 				}
 
+				/* MEMO: Unlike normal (bool) "Hide", mask's "Hide" has dedicated-function. (Because "Masking-Power" must be taken into account) */
+				public static bool AttributeConvertAnimationClipHideMask(	out bool initialValue,
+																			AnimationClip animationClip,
+																			string nameProperty,
+																			System.Type typeProperty,
+																			string namePathGameObject,
+																			GameObject gameObject,
+																			Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeBool attributeHide,
+																			Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeMaskPower,
+																			int indexAnimation,
+																			int frameStart,
+																			int frameEnd,
+																			int framePerSecond,
+																			bool valueInitial
+																	)
+				{
+					initialValue = valueInitial;
+
+					/* MEMO: Even if no attribute's key-data, key-frame is always generated.           */
+					/*       (Since "Opacity" has changed even without key-data by parents' "Opacity") */
+					int countFrameRange = (frameEnd - frameStart) + 1;
+					if(0 > countFrameRange)
+					{
+						return(true);
+					}
+
+					AnimationCurve animationCurve = new AnimationCurve();
+
+					/* MEMO: First frame's data is forcibly get. */
+					bool value;
+					bool valuePrevious = true;
+					if(false == Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolOR(out value, attributeHide, frameStart, valueInitial))
+					{
+						value = valueInitial;
+					}
+
+					float valuePowerMask;
+					const float valuePowerMaskNoEffect = 0.0f;
+					const float valuePowerMaskFull = 255.0f;
+					if(false == attributeMaskPower.ValueGet(out valuePowerMask, frameStart))
+					{
+						valuePowerMask = valuePowerMaskFull;
+					}
+					if(valuePowerMaskNoEffect >= valuePowerMask)
+					{
+						value = true;
+					}
+
+					Keyframe keyframe = new Keyframe();
+					FrameInitializeAnimationClip(ref keyframe);
+					keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
+					keyframe.value = (true == value) ? 1.0f : 0.0f;
+					initialValue = value;
+
+					animationCurve.AddKey(keyframe);
+					valuePrevious = value;
+
+					/* Create Frame 1 to end */
+					int frame;
+					for(int i=1; i<countFrameRange; i++)
+					{
+						frame = i + frameStart;
+
+						if(false == Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetBoolOR(out value, attributeHide, frame, valueInitial))
+						{
+							value = valueInitial;
+						}
+						if(false == attributeMaskPower.ValueGet(out valuePowerMask, frame))
+						{
+							valuePowerMask = valuePowerMaskFull;
+						}
+						if(valuePowerMaskNoEffect >= valuePowerMask)
+						{
+							value = true;
+						}
+
+						if(valuePrevious != value)
+						{
+							keyframe = new Keyframe();
+							FrameInitializeAnimationClip(ref keyframe);
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
+							keyframe.value = (true == value) ? 1.0f : 0.0f;
+
+							animationCurve.AddKey(keyframe);
+						}
+
+						valuePrevious = value;
+					}
+
+					AssetCreateCurveSetTangent(animationCurve);
+					animationClip.SetCurve(namePathGameObject, typeProperty, nameProperty, animationCurve);
+
+					return(true);
+				}
+
+				/* MEMO: "Masking-Power" has dedicated-function. (Because need to modify value-range) */
+				public static bool AttributeConvertAnimationClipPowerMask(	out float initialValue,
+																			AnimationClip animationClip,
+																			string nameProperty,
+																			System.Type typeProperty,
+																			string namePathGameObject,
+																			GameObject gameObject,
+																			Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributePowerMask,
+																			int indexAnimation,
+																			int frameStart,
+																			int frameEnd,
+																			int framePerSecond,
+																			float valueInitial,
+																			bool flagGuaranteedFrameEnd=false
+																	)
+				{
+					const float valueMinimumPowerMask = 0.0001f;
+					if(0.0f > valueInitial)
+					{
+						valueInitial = valueMinimumPowerMask;
+					}
+
+					initialValue = valueInitial;
+
+					int countFrameRange = (frameEnd - frameStart) + 1;
+					if(1 > countFrameRange)
+					{
+						return(true);
+					}
+
+					AnimationCurve animationCurve = new AnimationCurve();
+					Keyframe keyframe;
+					float value;
+
+					if(0 >= attributePowerMask.CountGetKey())
+					{
+						value = valueInitial;
+
+						keyframe = new Keyframe();
+						FrameInitializeAnimationClip(ref keyframe);
+						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
+						keyframe.value = value;
+						animationCurve.AddKey(keyframe);
+
+						goto AssetCreateDataCurveSetPowerMask_End;
+					}
+
+					initialValue = float.NaN;	/* Reset */
+					float valuePrevious = float.NaN;
+					int frame;
+					bool flagForceSetKey = true;
+					for(int i=0; i<countFrameRange; i++)
+					{
+						frame = i + frameStart;
+
+						if(false == attributePowerMask.ValueGet(out value, frame))
+						{
+							value = valueInitial;
+						}
+
+						if((flagForceSetKey == true) || (valuePrevious != value))
+						{
+							keyframe = new Keyframe();
+							FrameInitializeAnimationClip(ref keyframe);
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
+
+							float valueMask = (255.0f - Mathf.Floor(value)) * (1.0f / 255.0f);
+//							if(0.0f == valueMask)
+							if(0.0f >= valueMask)
+							{
+								valueMask = valueMinimumPowerMask;
+							}
+							keyframe.value = valueMask;
+							animationCurve.AddKey(keyframe);
+						}
+
+						if(true == float.IsNaN(initialValue))
+						{
+							initialValue = value;
+						}
+
+						flagForceSetKey = false;
+						valuePrevious = value;
+					}
+
+					if(true == flagGuaranteedFrameEnd)
+					{
+						/* MEMO: Forcibly create key-data.                  */
+						/*       - end frame: for ensuring animation length */
+						keyframe = new Keyframe();
+						FrameInitializeAnimationClip(ref keyframe);
+						keyframe.time = AssetCreateDataTimeGetFrame(countFrameRange, framePerSecond);
+						keyframe.value = valuePrevious;	/* Last value */
+						animationCurve.AddKey(keyframe);
+					}
+
+				AssetCreateDataCurveSetPowerMask_End:;
+					AssetCreateCurveSetTangent(animationCurve);
+					animationClip.SetCurve(namePathGameObject, typeProperty, nameProperty, animationCurve);
+
+					return(true);
+				}
+
 				public static void FrameInitializeAnimationClip(ref Keyframe keyframe)
 				{
 					/* MEMO: Before Ver.1.0.28, (keyframes') curve were initialized in this function. */
@@ -12284,6 +13147,10 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
+				internal const string NameTransformPropertyLocalPosition = "localPosition";
+				internal const string NameTransformPropertyLocalScale = "localScale";
+				internal const string NameTransformPropertyLocalEulerAngles = "localEulerAngles";
+
 				private readonly static Color ColorPartsColorDefault = new Color(1.0f, 1.0f, 1.0f, 0.0f);
 				#endregion Enums & Constants
 			}
