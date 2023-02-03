@@ -7,6 +7,7 @@
 */
 // #define STORE_ANIMATIONSETUP_FULL
 #define WARN_MESHVERTEX_COUNT
+#define TRANSFORM_SET_SETUP_UNITYNATIVE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -2087,6 +2088,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 									listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeKey, "value/commands/value", managerNameSpace);
 									int countCommand = listNode.Count;
+									bool[] tableActive = new bool[countCommand];
 									string[] tableIDCommand = new string[countCommand];
 									string[] tableTextNoteValue = new string[countCommand];
 									System.Xml.XmlNodeList[] tableNodeValueParams = new System.Xml.XmlNodeList[countCommand];
@@ -2097,6 +2099,9 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 									for(int i=0; i<countCommand; i++)
 									{
+										valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(listNode[i], "active", managerNameSpace);
+										tableActive[i] = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetBool(valueText.Trim());
+
 										valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(listNode[i], "commandId", managerNameSpace);
 										tableIDCommand[i] = valueText.Trim();
 
@@ -2106,7 +2111,7 @@ public static partial class LibraryEditor_SpriteStudio6
 										tableNodeValueParams[i] = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(listNode[i], "params/value", managerNameSpace);
 									}
 
-									if(false == ParseAnimationAttributeBootUpSignal(ref data, informationSSPJ, tableIDCommand, tableTextNoteValue, tableNodeValueParams, managerNameSpace))
+									if(false == ParseAnimationAttributeBootUpSignal(ref data, informationSSPJ, tableActive, tableIDCommand, tableTextNoteValue, tableNodeValueParams, managerNameSpace))
 									{
 										LogError(messageLogPrefix, "Invalid Signal command ID Animation-Name[" + informationAnimation.Data.Name + "]", nameFileSSAE, informationSSPJ);
 										goto ParseAnimationAttribute_ErrorEnd;
@@ -2193,7 +2198,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						switch(bound)
 						{
 							case Library_SpriteStudio6.KindBoundBlend.OVERALL:
-								/* MEMO:  */
 								colorA = dataRate;
 								colorR = dataR;
 								colorG = dataG;
@@ -2229,6 +2233,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 			private static bool ParseAnimationAttributeBootUpSignal(	ref Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSignal.KeyData data,
 																		LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																		bool[] tableActive,
 																		string[] tableIDCommand,
 																		string[] tableTextNote,
 																		System.Xml.XmlNodeList[] tableNodeValueParams,
@@ -2247,6 +2252,21 @@ public static partial class LibraryEditor_SpriteStudio6
 				for(int i=0; i<countValue; i++)
 				{
 					valueText = tableIDCommand[i];
+#if true
+					countParameter = tableNodeValueParams[i].Count;
+					data.Value.TableCommand[i].BootUp(countParameter);
+
+					if(true == string.IsNullOrEmpty(valueText))
+					{	/* Unlikely */
+						data.Value.TableCommand[i].ID = -1;
+						data.Value.TableCommand[i].Flags &= ~Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.VALID;
+					}
+					else
+					{
+						data.Value.TableCommand[i].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+						data.Value.TableCommand[i].Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.VALID;
+					}
+#else
 					if(true == string.IsNullOrEmpty(valueText))
 					{	/* Unlikely */
 						return(false);
@@ -2254,8 +2274,22 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					countParameter = tableNodeValueParams[i].Count;
 					data.Value.TableCommand[i].BootUp(countParameter);
-
 					data.Value.TableCommand[i].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+#endif
+
+					countParameter = tableNodeValueParams[i].Count;
+					data.Value.TableCommand[i].BootUp(countParameter);
+					data.Value.TableCommand[i].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+
+					if(true == tableActive[i])
+					{
+						data.Value.TableCommand[i].Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.ACTIVE;
+					}
+					else
+					{
+						data.Value.TableCommand[i].Flags &= ~Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.ACTIVE;
+					}
+
 					if(true == string.IsNullOrEmpty(tableTextNote[i]))
 					{
 						data.Value.TableCommand[i].Note = string.Empty;
@@ -2270,10 +2304,23 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParameter, "paramId", managerNameSpace);
 						valueText = valueText.Trim();
+#if true
+						/* MEMO: ID Invalid */
+						if(true == string.IsNullOrEmpty(valueText))
+						{
+							data.Value.TableCommand[i].TableParameter[indexParameter].ID = -1;
+						}
+						else
+						{
+							data.Value.TableCommand[i].TableParameter[indexParameter].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+						}
+#else
+						/* MEMO: Fatal Error */
 						if(true == string.IsNullOrEmpty(valueText))
 						{
 							return(false);
 						}
+#endif
 
 						valueTextParameter = string.Empty;
 						typeParameter = Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.Parameter.KindType.ERROR;
@@ -3506,7 +3553,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
 									/* Create Draw-Order table */
-									/* MEMO:  Since "Mask" draws twice on "Draw" and "PreDraw", both tables are necessary. */
+									/* MEMO: Since "Mask" draws twice on "Draw" and "PreDraw", both tables are necessary. */
 									animationParts.TableOrderDraw = new int[countFrame];
 									animationParts.TableOrderPreDraw = new int[countFrame];
 									for(int j=0; j<countFrame; j++)
@@ -6233,6 +6280,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						scriptParts = informationSSAE.TableParts[i].ScriptPartsUnityNative;
 
 						bool flagSetInitialDataParts = flagSetInitialData;
+						bool flagSetInitialGameObject = flagSetInitialData;
 						if(null == scriptParts)
 						{
 							flagSetInitialDataParts = false;
@@ -6318,6 +6366,17 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 						Vector3 scalingInitial = scalingSetup;
 
+#if TRANSFORM_SET_SETUP_UNITYNATIVE
+						/* MEMO: TRS is set up after "setup" has been collected. */
+						if(true == flagSetInitialGameObject)
+						{
+							gameObjectParts.transform.localPosition = positionInitial;
+							gameObjectParts.transform.localEulerAngles = rotationInitial;
+							gameObjectParts.transform.localScale = scalingInitial;
+						}
+#else
+#endif
+
 						/* Set Curves (TRS) */
 						float initialValue;
 						UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialValue,
@@ -6355,7 +6414,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						/*         in Transform.localEularAngles.                                                              */
 						/*       So I convert Euler angles to quaternions and store them afterwards.                           */
 						{
-							/* MEMO:  */
 							Vector3 initialValueRotateUnity = Vector3.zero;
 							UtilityModeUnity.AttributeConvertAnimationClipRotateCorrectOrder(	out initialValueRotateUnity,
 																								dataAnimation,
@@ -6397,13 +6455,16 @@ public static partial class LibraryEditor_SpriteStudio6
 															frameStart, frameEnd, framePerSecond
 														);
 
+#if TRANSFORM_SET_SETUP_UNITYNATIVE
+#else
 						/* MEMO: TRS is set up after both "setup" and "animation's initial data" has been collected. */
-						if(true == flagSetInitialDataParts)
+						if(true == flagSetInitialGameObject)
 						{
 							gameObjectParts.transform.localPosition = positionInitial;
 							gameObjectParts.transform.localEulerAngles = rotationInitial;
 							gameObjectParts.transform.localScale = scalingInitial;
 						}
+#endif
 
 						/* Set Attributes for each (Parts') Feature */
 						switch(informationParts.Data.Feature)
@@ -8908,7 +8969,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					idPartsParent = informationParts.Data.IDParent;
 					informationPartsParent = informationParts;
 					while(0 <= idPartsParent)
-					{	/* MEMO:  */
+					{
 						if(true == string.IsNullOrEmpty(nameGameObject))
 						{
 							nameGameObject = informationPartsParent.GameObjectUnityNative.name;
@@ -10435,7 +10496,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						/*         in Transform.localEularAngles.                                                              */
 						/*       So I convert Euler angles to quaternions and store them afterwards.                           */
 						{
-							/* MEMO:  */
 							Vector3 initialValueRotateUnity = Vector3.zero;
 							UtilityModeUnity.AttributeConvertAnimationClipRotateCorrectOrder(	out initialValueRotateUnity,
 																								dataAnimation,
@@ -10481,7 +10541,6 @@ public static partial class LibraryEditor_SpriteStudio6
 						/* MEMO: Currently, mode "UnityUI" does not support user-event. */
 
 						/* Set Attributes for each (Parts') Feature */
-						/* MEMO:  */
 						switch(informationParts.Data.Feature)
 						{
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:

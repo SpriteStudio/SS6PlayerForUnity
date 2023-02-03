@@ -1221,7 +1221,7 @@ public static partial class Library_SpriteStudio6
 					if(	(true == controlTrack.StatusIsIgnoreSignal)
 						|| (true == controlTrack.StatusIsIgnoreNextUpdateSignal)
 						|| (false == controlTrack.StatusIsDecodeAttribute)
-						|| (null == instanceRoot.FunctionUserData))
+						|| (null == instanceRoot.FunctionSignal))
 					{	/* No Need to decode UserData-s */
 						return;
 					}
@@ -2767,6 +2767,7 @@ public static partial class Library_SpriteStudio6
 									| FlagBitStatus.UPDATE_COLORPARTS
 									| FlagBitStatus.UPDATE_MASKING
 									| FlagBitStatus.UPDATE_DEFORM
+									| FlagBitStatus.UPDATE_SHADER
 									| FlagBitStatus.UPDATE_COORDINATE_NOWFRAME
 								);
 
@@ -3358,10 +3359,16 @@ public static partial class Library_SpriteStudio6
 #if UNITY_EDITOR
 							if(null != dataAnimationParts.Shader.Function)
 							{
-								dataAnimationParts.Shader.Function.ValueGet(ref Shader, dataAnimationParts.Shader, ref argumentContainer);
+								if(true == dataAnimationParts.Shader.Function.ValueGet(ref Shader, dataAnimationParts.Shader, ref argumentContainer))
+								{
+									Status |= FlagBitStatus.UPDATE_SHADER;
+								}
 							}
 #else
-							dataAnimationParts.Shader.Function.ValueGet(ref Shader, dataAnimationParts.Shader, ref argumentContainer);
+							if(true == dataAnimationParts.Shader.Function.ValueGet(ref Shader, dataAnimationParts.Shader, ref argumentContainer))
+							{
+								Status |= FlagBitStatus.UPDATE_SHADER;
+							}
 #endif
 
 							/* Shader-Uniform Set (for Vertex-Shader) */
@@ -3715,7 +3722,7 @@ public static partial class Library_SpriteStudio6
 						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.C] = matrixTransform.MultiplyPoint3x4(coordinate);
 
 						/* Update Material */
-						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.REDECODE_MATERIAL)))
+						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.UPDATE_SHADER | FlagBitStatus.REDECODE_MATERIAL)))
 						{
 							if(true == flagPreDraw)
 							{
@@ -3768,6 +3775,7 @@ public static partial class Library_SpriteStudio6
 										| FlagBitStatus.UPDATE_COLORPARTS
 										| FlagBitStatus.UPDATE_MASKING
 										| FlagBitStatus.UPDATE_DEFORM
+										| FlagBitStatus.UPDATE_SHADER
 										| FlagBitStatus.UPDATE_TRANSFORM_TEXTURE
 //										| FlagBitStatus.USE_ADDITIONALCOLOR		/* update in "UpdatePlain", so not erase here */
 								);
@@ -4145,7 +4153,7 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Update Material */
-						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.REDECODE_MATERIAL)))
+						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.UPDATE_SHADER | FlagBitStatus.REDECODE_MATERIAL)))
 						{
 							if(true == flagPreDraw)
 							{
@@ -4200,6 +4208,7 @@ public static partial class Library_SpriteStudio6
 										| FlagBitStatus.UPDATE_COLORPARTS
 										| FlagBitStatus.UPDATE_MASKING
 										| FlagBitStatus.UPDATE_DEFORM
+										| FlagBitStatus.UPDATE_SHADER
 										| FlagBitStatus.UPDATE_TRANSFORM_TEXTURE
 //										| FlagBitStatus.UPDATE_FLIP_COEFFICIENT
 //										| FlagBitStatus.USE_ADDITIONALCOLOR		/* update in "UpdatePlain", so not erase here */
@@ -4231,6 +4240,7 @@ public static partial class Library_SpriteStudio6
 
 						UPDATE_MASKING = 0x00800000,
 						UPDATE_DEFORM = 0x00400000,	/* Mesh only */
+						UPDATE_SHADER = 0x00200000,
 
 						/* Common (One-time) */
 						UPDATE_COORDINATE_NOWFRAME = 0x00080000,

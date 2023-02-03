@@ -1146,6 +1146,7 @@ public static partial class Library_SpriteStudio6
 						{
 							get
 							{
+//								return((0 <= ID) && (0 != (Flags & FlagBit.VALID)));	/* ? true : false */
 								return(0 != (Flags & FlagBit.VALID));	/* ? true : false */
 							}
 						}
@@ -1250,7 +1251,11 @@ public static partial class Library_SpriteStudio6
 							{
 								get
 								{
+#if SIGNAL_ID_STRING
 									return(KindType.ERROR != Type);	/* ? true : false */
+#else
+									return((0 <= ID) && (KindType.ERROR != Type));	/* ? true : false */
+#endif
 								}
 							}
 
