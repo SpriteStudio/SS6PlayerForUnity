@@ -6539,14 +6539,14 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 									else
 									{	/* Opacity */
-										UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOpacity,
-																								dataAnimation,
-																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
-																								nameGameObject, gameObjectParts,
-																								informationAnimationParts.RateOpacity,
-																								indexAnimation, frameStart, frameEnd, framePerSecond,
-																								1.0f
-																							);
+										UtilityModeUnity.AttributeConvertAnimationClipFloatMultipleParent(	out initialOpacity,
+																											dataAnimation,
+																											NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
+																											nameGameObject, gameObjectParts,
+																											informationAnimationParts.RateOpacity,
+																											indexAnimation, frameStart, frameEnd, framePerSecond,
+																											1.0f
+																										);
 									}
 									if(true == flagSetInitialDataParts)
 									{
@@ -6992,14 +6992,14 @@ public static partial class LibraryEditor_SpriteStudio6
 									}
 									else
 									{	/* Opacity */
-										UtilityModeUnity.AttributeConvertAnimationClipFloat(	out initialOpacity,
-																								dataAnimation,
-																								NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
-																								nameGameObject, gameObjectParts,
-																								informationAnimationParts.RateOpacity,
-																								indexAnimation, frameStart, frameEnd, framePerSecond,
-																								1.0f
-																							);
+										UtilityModeUnity.AttributeConvertAnimationClipFloatMultipleParent(	out initialOpacity,
+																											dataAnimation,
+																											NameScriptPropertyRateOpacity, typeof(Script_SpriteStudio6_PartsUnityNative),
+																											nameGameObject, gameObjectParts,
+																											informationAnimationParts.RateOpacity,
+																											indexAnimation, frameStart, frameEnd, framePerSecond,
+																											1.0f
+																										);
 									}
 									if(true == flagSetInitialDataParts)
 									{
@@ -12084,6 +12084,95 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 				AssetCreateDataCurveSetFloat_End:;
+					AssetCreateCurveSetTangent(animationCurve);
+					animationClip.SetCurve(namePathGameObject, typeProperty, nameProperty, animationCurve);
+
+					return(true);
+				}
+
+				public static bool AttributeConvertAnimationClipFloatMultipleParent(	out float initialValue,
+																						AnimationClip animationClip,
+																						string nameProperty,
+																						System.Type typeProperty,
+																						string namePathGameObject,
+																						GameObject gameObject,
+																						Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeFloat attributeFloat,
+																						int indexAnimation,
+																						int frameStart,
+																						int frameEnd,
+																						int framePerSecond,
+																						float valueInitial,
+																						bool flagGuaranteedFrameEnd=false
+																				)
+				{
+					initialValue = valueInitial;
+
+					int countFrameRange = (frameEnd - frameStart) + 1;
+					if(1 > countFrameRange)
+					{
+						return(true);
+					}
+
+					AnimationCurve animationCurve = new AnimationCurve();
+					Keyframe keyframe;
+					float value;
+
+//					if(0 >= attributeFloat.CountGetKey())
+//					{
+//						value = valueInitial;
+//
+//						keyframe = new Keyframe();
+//						FrameInitializeAnimationClip(ref keyframe);
+//						keyframe.time = AssetCreateDataTimeGetFrame(0, framePerSecond);
+//						keyframe.value = value;
+//						animationCurve.AddKey(keyframe);
+//
+//						goto AttributeConvertAnimationClipFloatMultipleParent_End;
+//					}
+
+					initialValue = float.NaN;	/* Reset */
+					float valuePrevious = float.NaN;
+					int frame;
+					bool flagForceSetKey = true;
+					for(int i=0; i<countFrameRange; i++)
+					{
+						frame = i + frameStart;
+
+						if(false == Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetFloatMultiple(out value, attributeFloat, frame, valueInitial))
+						{
+							value = valueInitial;
+						}
+
+						if((flagForceSetKey == true) || (valuePrevious != value))
+						{
+							keyframe = new Keyframe();
+							FrameInitializeAnimationClip(ref keyframe);
+							keyframe.time = AssetCreateDataTimeGetFrame(i, framePerSecond);
+							keyframe.value = value;
+							animationCurve.AddKey(keyframe);
+						}
+
+						if(true == float.IsNaN(initialValue))
+						{
+							initialValue = value;
+						}
+
+						flagForceSetKey = false;
+						valuePrevious = value;
+					}
+
+					if(true == flagGuaranteedFrameEnd)
+					{
+						/* MEMO: Forcibly create key-data.                  */
+						/*       - end frame: for ensuring animation length */
+						keyframe = new Keyframe();
+						FrameInitializeAnimationClip(ref keyframe);
+						keyframe.time = AssetCreateDataTimeGetFrame(countFrameRange, framePerSecond);
+						keyframe.value = valuePrevious;	/* Last value */
+						animationCurve.AddKey(keyframe);
+					}
+
+//				AttributeConvertAnimationClipFloatMultipleParent_End:;
 					AssetCreateCurveSetTangent(animationCurve);
 					animationClip.SetCurve(namePathGameObject, typeProperty, nameProperty, animationCurve);
 
