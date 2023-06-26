@@ -2277,10 +2277,6 @@ public static partial class LibraryEditor_SpriteStudio6
 					data.Value.TableCommand[i].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
 #endif
 
-					countParameter = tableNodeValueParams[i].Count;
-					data.Value.TableCommand[i].BootUp(countParameter);
-					data.Value.TableCommand[i].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
-
 					if(true == tableActive[i])
 					{
 						data.Value.TableCommand[i].Flags |= Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.FlagBit.ACTIVE;
@@ -2320,11 +2316,11 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							return(false);
 						}
+						data.Value.TableCommand[i].TableParameter[indexParameter].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
 #endif
+						typeParameter = Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.Parameter.KindType.ERROR;
 
 						valueTextParameter = string.Empty;
-						typeParameter = Library_SpriteStudio6.Data.Animation.Attribute.Signal.Command.Parameter.KindType.ERROR;
-						data.Value.TableCommand[i].TableParameter[indexParameter].ID = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
 						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParameter, "type", managerNameSpace);
 						switch(valueText)
 						{
@@ -2854,10 +2850,6 @@ public static partial class LibraryEditor_SpriteStudio6
 								{
 									animationParts.FlipY.Parent = informationAnimationPartsParent.FlipY;
 								}
-//								if(true == setting.InheritAddition.FlagAttributePriority)
-//								{
-//									animationParts.Priority.Parent = informationAnimationPartsParent.Priority;
-//								}
 							}
 
 							/* Adjust Top-Frame Key-Data */
