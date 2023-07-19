@@ -481,6 +481,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				"SS6PU",
 				"UNITY_NATIVE",
+				"UNITY_UI",
 
 				/* "BATCH_IMPORTER" *//* Can not set the mode "batch import" from batch-importer's list. */
 			};
@@ -3094,7 +3095,11 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Import(string[] textArgument)
 				{
-					string namePathMaterial = textArgument[1];
+					if(null == textArgument)
+					{
+						return(false);
+					}
+					string namePathMaterial = (1 < textArgument.Length) ? textArgument[1] : string.Empty;
 					switch(textArgument[0])
 					{
 						case TextKeyAnimationUnityNativeMix:
@@ -3289,6 +3294,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							SkinnedMeshUnityNativeInv = MaterlalGetPath(PathGetForImport(namePathMaterial));
 							return(true);
 
+						case TextKeyAnimationUnityUIMix:	/* Old */
 						case TextKeyAnimationUnityUI:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
@@ -3608,7 +3614,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeySkinnedMeshUnityNativeScr = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationScr;
 				private const string KeySkinnedMeshUnityNativeExc = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationExc;
 				private const string KeySkinnedMeshUnityNativeInv = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationInv;
-				private const string KeyAnimationUnityUI = KeyKindAnimation + KeyModeUnityUI + KeyOperationMix;
+				/* Obsolete */	private const string KeyAnimationUnityUIMix = KeyKindAnimation + KeyModeUnityUI + KeyOperationMix;
+				private const string KeyAnimationUnityUI = KeyKindAnimation + KeyModeUnityUI;
 
 				private const string TextKeyPrefix = "PresetMaterial_";
 
@@ -3636,6 +3643,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeySkinnedMeshUnityNativeScr = TextKeyPrefix + KeySkinnedMeshUnityNativeScr;
 				private const string TextKeySkinnedMeshUnityNativeExc = TextKeyPrefix + KeySkinnedMeshUnityNativeExc;
 				private const string TextKeySkinnedMeshUnityNativeInv = TextKeyPrefix + KeySkinnedMeshUnityNativeInv;
+				/* Obsolete */	private const string TextKeyAnimationUnityUIMix = TextKeyPrefix + KeyAnimationUnityUIMix;
 				private const string TextKeyAnimationUnityUI = TextKeyPrefix + KeyAnimationUnityUI;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
