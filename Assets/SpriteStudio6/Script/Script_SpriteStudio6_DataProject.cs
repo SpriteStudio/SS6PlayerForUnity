@@ -6,6 +6,8 @@
 	All rights reserved.
 */
 
+// #define COMPILEOPTION_SHUTDOWN_ONDESTROY
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -69,7 +71,11 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		}
 	}
 
+#if COMPILEOPTION_SHUTDOWN_ONDESTROY
 	void OnDestroy()
+#else
+	void OnDisable()
+#endif
 	{
 		/* All Material-Cache shut-down */
 		if(null != CacheMaterial)
@@ -77,6 +83,8 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 			CacheMaterial.ShutDown(true);
 			CacheMaterial = null;
 		}
+
+		StatusIsBootup = false;
 	}
 	#endregion ScriptableObject-Functions
 
