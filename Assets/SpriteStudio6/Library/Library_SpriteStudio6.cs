@@ -18,7 +18,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.1.8";
+	public const string SignatureVersionAsset = "2.2.4";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -3370,6 +3370,7 @@ public static partial class Library_SpriteStudio6
 					CacheMaterial.ShutDown(true);
 				}
 			}
+
 			protected void SelfDestroy()
 			{
 				if(null == InstanceRootParent)
@@ -3704,7 +3705,6 @@ public static partial class Library_SpriteStudio6
 
 				ListCoordinate = null;
 				ListColorParts = null;
-				ListUVTexture = null;
 				ListUVTexture = null;
 				ListUVMinMax = null;
 				ListUVAverage = null;
@@ -4399,6 +4399,10 @@ public static partial class Library_SpriteStudio6
 
 				if(null == gameObject)
 				{	/* Instantiate */
+					Vector3 localPosition = prefab.transform.localPosition;
+					Vector3 localScale = prefab.transform.localScale;
+					Quaternion localRotation = prefab.transform.localRotation;
+
 #if UNITY_EDITOR
 					gameObject = UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
 					if(null == gameObject)
@@ -4410,18 +4414,21 @@ public static partial class Library_SpriteStudio6
 					gameObject = Object.Instantiate(prefab) as GameObject;
 					gameObject.name = prefab.name;	/* Remove "(clone)" */
 #endif
-					transform = gameObject.transform;
-
-					if (null != gameObjectParent)
-					{
-						transform = gameObject.transform;
-						transform.parent = transformParent;
-					}
 					if(null != gameObject)
 					{
-						transform.localPosition = Vector3.zero;
-						transform.localEulerAngles = Vector3.zero;
-						transform.localScale = Vector3.one;
+						transform = gameObject.transform;
+
+						if (null != gameObjectParent)
+						{
+							transform.parent = transformParent;
+						}
+
+//						transform.localPosition = Vector3.zero;
+//						transform.localEulerAngles = Vector3.zero;
+//						transform.localScale = Vector3.one;
+						transform.localPosition = localPosition;
+						transform.localRotation = localRotation;
+						transform.localScale = localScale;
 					}
 				}
 

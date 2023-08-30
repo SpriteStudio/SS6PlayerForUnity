@@ -402,7 +402,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			/*       Always divide "Normal (Sprite)" and "Mask" into 4 triangles according to SpriteStudio6's specifications. */
 			/* MEMO: Support "Mesh Deformation" */
 			/* MEMO: Support "Z-Position" Priority */
-		CODE_010101 = 0x00010100,	/* SS6PU Ver.1.2.0 */
+		CODE_010101 = 0x00010100,	/* 0x00010200 */	/* SS6PU Ver.1.2.0 */
 			/* MEMO: Added "Name (Original SSAE file's Body-Name) */
 	}
 	#endregion Enums & Constants

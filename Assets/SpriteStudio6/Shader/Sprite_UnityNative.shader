@@ -34,8 +34,7 @@ Shader "Custom/SpriteStudio6/UnityNative/Sprite"
 		[PerRendererData] _MainTex("Sprite Texture", 2D) = "white" {}
 		_Color("Tint", Color) = (1, 1, 1, 1)
 		[Toggle(PIXELSNAP_ON)] PixelSnap("Pixel snap", Float) = 0
-		[HideInInspector] _RendererColor("RendererColor", Color) = (1, 1, 1, 1)
-		[HideInInspector] _Flip("Flip", Vector) = (1, 1, 1, 1)
+
 		[PerRendererData] _AlphaTex("External Alpha", 2D) = "white" {}
 		[PerRendererData] _EnableExternalAlpha("Enable External Alpha", Float) = 0
 
@@ -46,6 +45,16 @@ Shader "Custom/SpriteStudio6/UnityNative/Sprite"
 
 		[Toggle(PS_NOT_DISCARD)] _NotDiscardPixel("Not Discard Pixel", Float) = 0
 		[Toggle(PS_OUTPUT_PMA)] _OutputPixelPMA("Output PreMultiplied Alpha", Float) = 0
+
+		[HideInInspector] _RendererColor("RendererColor", Color) = (1, 1, 1, 1)
+		[HideInInspector] _Flip("Flip", Vector) = (1, 1, 1, 1)
+		[HideInInspector] _BlendParam("BlendParam", Vector) = (0.01, 1.0, 0.0, 0.0)
+		[HideInInspector] _PartsColor_LU("PartsColor_LU", Color) = (1, 1, 1, 0)
+		[HideInInspector] _PartsColor_RU("PartsColor_RU", Color) = (1, 1, 1, 0)
+		[HideInInspector] _PartsColor_RD("PartsColor_RD", Color) = (1, 1, 1, 0)
+		[HideInInspector] _PartsColor_LD("PartsColor_LD", Color) = (1, 1, 1, 0)
+		[HideInInspector] _PartsColor_Opacity("PartsColor_Opacity", Color) = (1, 1, 1, 1)
+		[HideInInspector] _CellPivot_LocalScale("CellPivot_LocalScale", Vector) = (1.0, 1.0, 1.0, 1.0)
 	}
 
 	SubShader

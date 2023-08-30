@@ -84,7 +84,6 @@ public partial class Script_SpriteStudio6_Replicate : MonoBehaviour
 	{
 		get
 		{
-			/* MEMO:  */
 			return(true == double.IsNaN(TimePreviousTimeline));	/* ? true : false */
 		}
 	}
