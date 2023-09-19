@@ -6,6 +6,11 @@
 	All rights reserved.
 */
 
+#if UNITY_2022_3_OR_NEWER
+#define USE_SPRITEATLAS
+#else
+#endif
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -398,7 +403,10 @@ public static partial class LibraryEditor_SpriteStudio6
 						importer.npotScale = TextureImporterNPOTScale.None;
 						importer.textureType = TextureImporterType.Sprite;
 						importer.spriteImportMode = SpriteImportMode.Multiple;
+#if USE_SPRITEATLAS
+#else
 						importer.spritePackingTag = LibraryEditor_SpriteStudio6.Import.NameTagSpritePackerTexture;
+#endif
 
 						switch(informationTexture.Wrap)
 						{
@@ -788,7 +796,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					public LibraryEditor_SpriteStudio6.Import.Assets<Texture2D> PrefabTexture;
 					public LibraryEditor_SpriteStudio6.Import.Assets<Material> MaterialAnimationUnityNative;
 
-					public List<SpriteMetaData> ListSpriteMetaDataUnityNative;	/* Temporary */
+//					public List<SpriteMetaData> ListSpriteMetaDataUnityNative;	/* Temporary */
+					public List<InformationSprite> ListSpriteMetaDataUnityNative;	/* Temporary */
 					public List<Sprite> ListSpriteUnityNative;
 					#endregion Variables & Properties
 
@@ -827,6 +836,26 @@ public static partial class LibraryEditor_SpriteStudio6
 						return(NameDirectory + NameFileBody + NameFileExtension);
 					}
 					#endregion Functions
+
+					/* ----------------------------------------------- Classes, Structs & Interfaces */
+					#region Classes, Structs & Interfaces
+					/* MEMO: Copy of "UnityEditor.SpriteMetaData". */
+					public struct InformationSprite
+					{
+						/* ----------------------------------------------- Variables & Properties */
+						#region Variables & Properties
+						public int alignment;
+						public Vector4 border;
+						public string name;
+						public Vector2 pivot;
+						public Rect rect;
+						#endregion Variables & Properties
+
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						#endregion Functions
+					}
+					#endregion Classes, Structs & Interfaces
 				}
 				#endregion Classes, Structs & Interfaces
 			}
@@ -896,7 +925,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					const string messageLogPrefix = "Convert (CellMap)";
 
-					List<SpriteMetaData> listSpriteMetaData = null;
+//					List<SpriteMetaData> listSpriteMetaData = null;
+					List<Information.Texture.InformationSprite> listSpriteMetaData = null;
 					string[] tableNameSprite = null;
 
 					LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture informationTexture = null;	/* "UnityEngine.Texture" and my "Texture", class-names are conflict unless fully-qualified. */
@@ -905,7 +935,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						informationTexture = informationSSPJ.TableInformationTexture[informationSSCE.IndexTexture];
 						if(null == informationTexture.ListSpriteMetaDataUnityNative)
 						{
-							informationTexture.ListSpriteMetaDataUnityNative = new List<SpriteMetaData>();
+//							informationTexture.ListSpriteMetaDataUnityNative = new List<SpriteMetaData>();
+							informationTexture.ListSpriteMetaDataUnityNative = new List<Information.Texture.InformationSprite>();
 							if(null == informationTexture.ListSpriteMetaDataUnityNative)
 							{
 								LogError(messageLogPrefix, "Not Enough Memory (CellMap WorkArea)", informationSSCE.FileNameGetFullPath(), informationSSPJ);
@@ -915,7 +946,8 @@ public static partial class LibraryEditor_SpriteStudio6
 						}
 
 						listSpriteMetaData = informationTexture.ListSpriteMetaDataUnityNative;
-						SpriteMetaData spriteMetaData = new SpriteMetaData();
+//						SpriteMetaData spriteMetaData = new SpriteMetaData();
+						Information.Texture.InformationSprite spriteMetaData = new Information.Texture.InformationSprite();
 						Vector2 sizeTexture = new Vector2((float)informationTexture.SizeX, (float)informationTexture.SizeY);
 						Vector2 sizeInverseTexture;
 						sizeInverseTexture.x = 1.0f / sizeTexture.x;
@@ -986,7 +1018,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 					return(false);
 				}
-				private static string ConvertCellMapNameCreate(List<SpriteMetaData> listSpriteMetaData, string nameCell)
+//				private static string ConvertCellMapNameCreate(List<SpriteMetaData> listSpriteMetaData, string nameCell)
+				private static string ConvertCellMapNameCreate(List<Information.Texture.InformationSprite> listSpriteMetaData, string nameCell)
 				{
 					bool flagRetry = true;
 					int countRetry = 0;
@@ -1037,8 +1070,15 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					TextureImporter importer = TextureImporter.GetAtPath(informationTexture.PrefabTexture.TableName[0]) as TextureImporter;
 					importer.spriteImportMode = SpriteImportMode.Multiple;
+#if USE_SPRITEATLAS
+#else
 					importer.spritePackingTag = LibraryEditor_SpriteStudio6.Import.NameTagSpritePackerTexture;
+#endif
+#if false
 					importer.spritesheet = informationTexture.ListSpriteMetaDataUnityNative.ToArray();
+#else
+					CellDataSetSprite(informationTexture.ListSpriteMetaDataUnityNative, importer);
+#endif
 					importer.spritePixelsPerUnit = 1.0f;
 					bool flagEnableRead = false;
 					if(true == setting.Basic.FlagTextureReadable)
@@ -1085,7 +1125,166 @@ public static partial class LibraryEditor_SpriteStudio6
 				CellMapSetTexture_ErrorEnd:;
 					return(false);
 				}
+				private static void CellDataSetSprite(List<Information.Texture.InformationSprite> listDataSprite, TextureImporter importer)
+				{
+#if USE_SPRITEATLAS
+					UnityEditor.U2D.Sprites.SpriteDataProviderFactories factory = new UnityEditor.U2D.Sprites.SpriteDataProviderFactories();
+					factory.Init();
+					UnityEditor.U2D.Sprites.ISpriteEditorDataProvider provider = factory.GetSpriteEditorDataProviderFromObject(importer);
+					provider.InitSpriteEditorDataProvider();
+
+					/* Add sprites */
+					SpriteRect[] tableSpriteRect = provider.GetSpriteRects();
+					List<SpriteRect> listSpriteRect = (null == tableSpriteRect)
+														? new List<SpriteRect>()
+														: new List<SpriteRect>(tableSpriteRect);
+					int countListExist = listSpriteRect.Count;
+
+					bool[] tableFlagUsedSpriteRect = new bool[countListExist];
+					int count = countListExist;
+					for(int i=0; i<count; i++)
+					{
+						tableFlagUsedSpriteRect[i] = false;
+					}
+					tableSpriteRect = null;
+					count = listDataSprite.Count;
+					for(int i=0; i<count; i++)
+					{
+						/* MEMO: In SpriteStudio's CellMap, same cell-name are not permitted in a CellMap. */
+						int index = NameSearchSprite(listSpriteRect, listDataSprite[i].name);
+						if(0 > index)
+						{	/* New Data */
+							SpriteRect spriteRect = new SpriteRect();
+
+//							spriteRect.alignment = (SpriteAlignment)listDataSprite[i].alignment;
+							spriteRect.alignment = TableAlignment[listDataSprite[i].alignment];
+							spriteRect.border = listDataSprite[i].border;
+							spriteRect.name = listDataSprite[i].name;
+							spriteRect.pivot = listDataSprite[i].pivot;
+							spriteRect.rect = listDataSprite[i].rect;
+//							spriteRect.spriteID = 
+
+							listSpriteRect.Add(spriteRect);
+						}
+						else
+						{	/* Data Exsist */
+//							listSpriteRect[index].alignment = (SpriteAlignment)listDataSprite[i].alignment;
+							listSpriteRect[index].alignment = TableAlignment[listDataSprite[i].alignment];
+							listSpriteRect[index].border = listDataSprite[i].border;
+							listSpriteRect[index].name = listDataSprite[i].name;
+							listSpriteRect[index].pivot = listDataSprite[i].pivot;
+							listSpriteRect[index].rect = listDataSprite[i].rect;
+//							listSpriteRect[index].spriteID = 
+
+							tableFlagUsedSpriteRect[index] = true;
+						}
+					}
+					/* Delete unused cell */
+					/* MEMO: List is erased by specifying indexes, so should be processed from the end. */
+					/*       However, don't concern in newly added data.                                */
+					count = countListExist;
+					for(int i=(count-1); i>=0; i--)
+					{
+						if(false == tableFlagUsedSpriteRect[i])
+						{
+							listSpriteRect.RemoveAt(i);
+						}
+					}
+
+					/* Apply sprite datas */
+					tableSpriteRect = listSpriteRect.ToArray();
+					provider.SetSpriteRects(tableSpriteRect);
+					listSpriteRect.Clear();
+					listSpriteRect = null;
+
+					/* Apply sprites' name */
+					UnityEditor.U2D.Sprites.ISpriteNameFileIdDataProvider providerName = provider.GetDataProvider<UnityEditor.U2D.Sprites.ISpriteNameFileIdDataProvider>();
+					List<UnityEditor.SpriteNameFileIdPair> listNamePairSprite = new List<SpriteNameFileIdPair>(providerName.GetNameFileIdPairs());
+
+					count = tableSpriteRect.Length;
+					for(int i=0; i<count; i++)
+					{
+						int index = NameSearchFileIDPair(listNamePairSprite, tableSpriteRect[i].name);
+						if(0 > index)
+						{	/* New Data */
+							UnityEditor.SpriteNameFileIdPair pair = new SpriteNameFileIdPair(tableSpriteRect[i].name, tableSpriteRect[i].spriteID);
+							listNamePairSprite.Add(pair);
+						}
+						else
+						{	/* Data Exsist */
+//							listNamePairSprite[index].name = tableSpriteRect[i].name;
+							listNamePairSprite[index].SetFileGUID(tableSpriteRect[i].spriteID);
+						}
+					}
+					providerName.SetNameFileIdPairs(listNamePairSprite);
+					listNamePairSprite.Clear();
+					listNamePairSprite = null;
+
+					/* Apply texture(-inporter) */
+					provider.Apply();
+#else
+					int count = listDataSprite.Count;
+					SpriteMetaData[] tableSprite = new SpriteMetaData[count];
+					for(int i=0; i<count; i++)	{
+						tableSprite[i].alignment = listDataSprite[i].alignment;
+						tableSprite[i].border = listDataSprite[i].border;
+						tableSprite[i].name = listDataSprite[i].name;
+						tableSprite[i].pivot = listDataSprite[i].pivot;
+						tableSprite[i].rect = listDataSprite[i].rect;
+					}
+					importer.spritesheet = tableSprite;
+#endif
+				}
+#if USE_SPRITEATLAS
+				private static int NameSearchSprite(List<SpriteRect> listSpriteRect, string name)
+				{
+					int count = listSpriteRect.Count;
+					for(int i=0; i<count; i++)
+					{
+						if(name == listSpriteRect[i].name)
+						{
+							return(i);
+						}
+					}
+
+					return(-1);
+				}
+				private static int NameSearchFileIDPair(List<UnityEditor.SpriteNameFileIdPair> listPair, string name)
+				{
+					int count = listPair.Count;
+					for(int i=0; i<count; i++)
+					{
+						if(name == listPair[i].name)
+						{
+							return(i);
+						}
+					}
+
+					return(-1);
+				}
+#else
+#endif
 				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+#if USE_SPRITEATLAS
+				private readonly static SpriteAlignment[] TableAlignment = {
+					/* SpriteMetaData.alignment */
+					/* Center = 0 */					SpriteAlignment.Center,
+					/* TopLeft = 1 */					SpriteAlignment.TopLeft,
+					/* TopCenter = 2 */					SpriteAlignment.TopCenter,
+					/* TopRight = 3 */					SpriteAlignment.TopRight,
+					/* LeftCenter = 4 */				SpriteAlignment.LeftCenter,
+					/* RightCenter = 5 */				SpriteAlignment.RightCenter,
+					/* BottomLeft = 6 */				SpriteAlignment.BottomLeft,
+					/* BottomCenter = 7 */				SpriteAlignment.BottomCenter,
+					/* BottomRight = 8 */				SpriteAlignment.BottomRight,
+					/* Custom = 9 */					SpriteAlignment.Custom,
+				};
+#else
+#endif
+				#endregion Enums & Constants
 			}
 
 			public static partial class ModeUnityUI
