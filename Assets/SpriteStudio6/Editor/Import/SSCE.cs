@@ -1268,6 +1268,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				/* ----------------------------------------------- Enums & Constants */
 				#region Enums & Constants
+#if USE_SPRITEATLAS
 				private readonly static SpriteAlignment[] TableAlignment = {
 					/* SpriteMetaData.alignment */
 					/* Center = 0 */					SpriteAlignment.Center,
@@ -1281,6 +1282,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* BottomRight = 8 */				SpriteAlignment.BottomRight,
 					/* Custom = 9 */					SpriteAlignment.Custom,
 				};
+#else
+#endif
 				#endregion Enums & Constants
 			}
 
