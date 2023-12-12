@@ -23,6 +23,9 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 	private SerializedProperty PropertyDataEffect;
 	private SerializedProperty PropertyHolderAsset;
 
+	private SerializedProperty PropertyFlagZWrite;
+//	private SerializedProperty PropertyRenderQueueZWrite;
+
 	private SerializedProperty PropertyHideForce;
 	private SerializedProperty PropertyLimitParticle;
 
@@ -48,6 +51,9 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 //		PropertyDataEffect
 //		PropertyHolderAsset
 //
+//		PropertyFlagZWrite
+//		PropertyRenderQueueZWrite
+// 
 //		PropertyHideForce
 //		PropertyLimitParticle
 
@@ -72,6 +78,9 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 		PropertyDataCellMap = serializedObject.FindProperty("DataCellMap");
 		PropertyDataEffect = serializedObject.FindProperty("DataEffect");
 		PropertyHolderAsset = serializedObject.FindProperty("HolderAsset");
+
+		PropertyFlagZWrite = serializedObject.FindProperty("FlagZWrite");
+//		PropertyRenderQueueZWrite = serializedObject.FindProperty("RenderQueueZWrite");
 
 		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
 		PropertyLimitParticle = serializedObject.FindProperty("LimitParticleDraw");
@@ -106,6 +115,23 @@ public class Inspector_SpriteStudio6_RootEffect : Editor
 		if(true == PropertyLimitParticle.isExpanded)
 		{
 			EditorGUI.indentLevel = levelIndent;
+
+			/* RenderQueue */
+			PropertyFlagZWrite.boolValue = EditorGUILayout.Toggle("Z Write", PropertyFlagZWrite.boolValue);
+//			EditorGUILayout.Space();
+
+// 			if(true == PropertyFlagZWrite.boolValue)
+// 			{
+// 				int renderQueueZWrite = EditorGUILayout.IntField("Render Queue (Z-Write)", PropertyRenderQueueZWrite.intValue);
+// 				if(	((int)UnityEngine.Rendering.RenderQueue.Background > renderQueueZWrite)
+// 					|| ((int)UnityEngine.Rendering.RenderQueue.Overlay < renderQueueZWrite)	)
+// 				{
+// 					renderQueueZWrite = (int)Library_SpriteStudio6.RenderQueueFromShader;
+// 				}
+// 				PropertyRenderQueueZWrite.intValue = renderQueueZWrite;
+// //				EditorGUILayout.Space();
+// 			}
+			EditorGUILayout.Space();
 
 			/* Hide */
 			PropertyHideForce.boolValue = EditorGUILayout.Toggle("Hide Force", PropertyHideForce.boolValue);

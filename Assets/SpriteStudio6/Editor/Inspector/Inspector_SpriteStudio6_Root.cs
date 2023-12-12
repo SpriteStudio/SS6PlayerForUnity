@@ -24,6 +24,9 @@ public class Inspector_SpriteStudio6_Root : Editor
 	private SerializedProperty PropertyDataAnimation;
 	private SerializedProperty PropertyHolderAsset;
 
+	private SerializedProperty PropertyFlagZWrite;
+//	private SerializedProperty PropertyRenderQueueZWrite;
+
 	private SerializedProperty PropertyHideForce;
 	private SerializedProperty PropertyColliderInterlockHideForce;
 	private SerializedProperty PropertyFlagPlanarization;
@@ -56,7 +59,10 @@ public class Inspector_SpriteStudio6_Root : Editor
 //		PropertyDataCellMap
 //		PropertyDataAnimation
 //		PropertyHolderAsset
-
+// 
+//		PropertyFlagZWrite
+//		PropertyRenderQueueZWrite
+// 
 //		PropertyHideForce
 //		PropertyColliderInterlockHideForce
 //		PropertyFlagPlanarization
@@ -88,6 +94,8 @@ public class Inspector_SpriteStudio6_Root : Editor
 		PropertyDataAnimation = serializedObject.FindProperty("DataAnimation");
 		PropertyHolderAsset = serializedObject.FindProperty("HolderAsset");
 
+		PropertyFlagZWrite = serializedObject.FindProperty("FlagZWrite");
+//		PropertyRenderQueueZWrite = serializedObject.FindProperty("RenderQueueZWrite");
 		PropertyHideForce = serializedObject.FindProperty("FlagHideForce");
 		PropertyColliderInterlockHideForce = serializedObject.FindProperty("FlagColliderInterlockHideForce");
 		PropertyFlagPlanarization = serializedObject.FindProperty("FlagPlanarization");
@@ -129,6 +137,23 @@ public class Inspector_SpriteStudio6_Root : Editor
 			/* Order-In-Layer (SortingOrder) */
 			PropertyOrderInLayer.intValue = EditorGUILayout.IntField("Order In Layer", PropertyOrderInLayer.intValue);
 			EditorGUILayout.LabelField("(0: Default)");
+			EditorGUILayout.Space();
+
+			/* RenderQueue */
+			PropertyFlagZWrite.boolValue = EditorGUILayout.Toggle("Z Write", PropertyFlagZWrite.boolValue);
+//			EditorGUILayout.Space();
+
+// 			if(true == PropertyFlagZWrite.boolValue)
+// 			{
+// 				int renderQueueZWrite = EditorGUILayout.IntField("Render Queue (Z-Write)", PropertyRenderQueueZWrite.intValue);
+// 				if(	((int)UnityEngine.Rendering.RenderQueue.Background > renderQueueZWrite)
+// 					|| ((int)UnityEngine.Rendering.RenderQueue.Overlay < renderQueueZWrite)	)
+// 				{
+// 					renderQueueZWrite = (int)Library_SpriteStudio6.RenderQueueFromShader;
+// 				}
+// 				PropertyRenderQueueZWrite.intValue = renderQueueZWrite;
+// //				EditorGUILayout.Space();
+// 			}
 			EditorGUILayout.Space();
 
 			/* Hide */

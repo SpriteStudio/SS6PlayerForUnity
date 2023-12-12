@@ -158,11 +158,13 @@ public partial class Script_SpriteStudio6_RootEffect
 
 				/* MEMO: "Effect" animation does not have masking capability. */
 
-				shader = CacheMaterial.ShaderStandardEffect;
+//				shader = CacheMaterial.ShaderStandardEffect;
+				shader = (true == FlagZWrite) ? CacheMaterial.ShaderStandardZWriteEffect : CacheMaterial.ShaderStandardEffect;
 				if(null == shader)
 				{
 					flagIsLocalShader = false;
-					shader = dataProject.CacheMaterial.ShaderStandardEffect;
+//					shader = dataProject.CacheMaterial.ShaderStandardEffect;
+					shader = (true == FlagZWrite) ? dataProject.CacheMaterial.ShaderStandardZWriteEffect : dataProject.CacheMaterial.ShaderStandardEffect;
 				}
 				else
 				{
@@ -208,6 +210,8 @@ public partial class Script_SpriteStudio6_RootEffect
 													masking,
 													nameShader,
 													shader,
+													FlagZWrite,
+													-1,	/* RenderQueueZWrite, */
 													functionMaterialSetUp,
 													tableTexture,
 													flagCreateNew
@@ -220,6 +224,8 @@ public partial class Script_SpriteStudio6_RootEffect
 												operationBlend,
 												masking,
 												nameShader,
+												FlagZWrite,
+												-1,	/* RenderQueueZWrite, */
 												flagCreateNew,
 												shader,
 												functionMaterialSetUp
@@ -260,6 +266,7 @@ public partial class Script_SpriteStudio6_RootEffect
 													Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 													Library_SpriteStudio6.KindMasking masking,
 													string nameShader,
+													bool flagZWrite,
 													UnityEngine.Material material,
 													bool flagGlobal = false
 											)
@@ -279,6 +286,7 @@ public partial class Script_SpriteStudio6_RootEffect
 															operationBlend,
 															masking,
 															nameShader,
+															flagZWrite,
 															material
 														)
 				);
@@ -302,6 +310,7 @@ public partial class Script_SpriteStudio6_RootEffect
 													operationBlend,
 													masking,
 													nameShader,
+													flagZWrite,
 													material
 											)
 			);

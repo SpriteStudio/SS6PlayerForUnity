@@ -307,11 +307,13 @@ public partial class Script_SpriteStudio6_Root
 				}
 				else
 				{	/* Pixel */
-					shader = CacheMaterial.ShaderStandardAnimation;
+//					shader = CacheMaterial.ShaderStandardAnimation;
+					shader = (true == FlagZWrite) ? CacheMaterial.ShaderStandardZWriteAnimation : CacheMaterial.ShaderStandardAnimation;
 					if(null == shader)
 					{
 						flagIsLocalShader = false;
-						shader = dataProject.CacheMaterial.ShaderStandardAnimation;
+//						shader = dataProject.CacheMaterial.ShaderStandardAnimation;
+						shader = (true == FlagZWrite) ? dataProject.CacheMaterial.ShaderStandardZWriteAnimation : dataProject.CacheMaterial.ShaderStandardAnimation;
 					}
 					else
 					{
@@ -358,6 +360,8 @@ public partial class Script_SpriteStudio6_Root
 														masking,
 														nameShader,
 														shader,
+														FlagZWrite,
+														-1,	/* RenderQueueZWrite, */
 														functionMaterialSetUp,
 														tableTexture,
 														flagCreateNew
@@ -370,6 +374,8 @@ public partial class Script_SpriteStudio6_Root
 													operationBlend,
 													masking,
 													nameShader,
+													FlagZWrite,
+													-1,	/* RenderQueueZWrite, */
 													flagCreateNew,
 													shader,
 													functionMaterialSetUp
@@ -413,6 +419,7 @@ public partial class Script_SpriteStudio6_Root
 															Library_SpriteStudio6.KindOperationBlend operationBlend,
 															Library_SpriteStudio6.KindMasking masking,
 															string nameShader,
+															bool flagZWrite,
 															UnityEngine.Material material,
 															bool flagGlobal = false
 													)
@@ -432,6 +439,7 @@ public partial class Script_SpriteStudio6_Root
 															operationBlend,
 															masking,
 															nameShader,
+															flagZWrite,
 															material
 														)
 				);
@@ -455,6 +463,7 @@ public partial class Script_SpriteStudio6_Root
 														operationBlend,
 														masking,
 														nameShader,
+														flagZWrite,
 														material
 												)
 			);

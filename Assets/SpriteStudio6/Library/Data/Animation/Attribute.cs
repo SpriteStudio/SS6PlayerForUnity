@@ -1134,7 +1134,11 @@ public static partial class Library_SpriteStudio6
 						/* ----------------------------------------------- Variables & Properties */
 						#region Variables & Properties
 						public FlagBit Flags;
+#if SIGNAL_ID_STRING
+						public string ID;
+#else
 						public int ID;
+#endif
 						public string Note;
 						public Parameter[] TableParameter;
 
@@ -1160,7 +1164,11 @@ public static partial class Library_SpriteStudio6
 						public void CleanUp()
 						{
 							Flags = FlagBit.CLEAR;
+#if SIGNAL_ID_STRING
+							ID = string.Empty;
+#else
 							ID = -1;
+#endif
 							Note = string.Empty;
 							TableParameter = null;
 						}
@@ -1231,7 +1239,11 @@ public static partial class Library_SpriteStudio6
 						{
 							/* ----------------------------------------------- Variables & Properties */
 							#region Variables & Properties
+#if SIGNAL_ID_STRING
+							public string ID;
+#else
 							public int ID;
+#endif
 							public KindType Type;
 							public string Data;
 
@@ -1239,7 +1251,11 @@ public static partial class Library_SpriteStudio6
 							{
 								get
 								{
+#if SIGNAL_ID_STRING
+									return(KindType.ERROR != Type);	/* ? true : false */
+#else
 									return((0 <= ID) && (KindType.ERROR != Type));	/* ? true : false */
+#endif
 								}
 							}
 
@@ -1333,7 +1349,11 @@ public static partial class Library_SpriteStudio6
 							#region Functions
 							public void CleanUp()
 							{
+#if SIGNAL_ID_STRING
+								ID = string.Empty;
+#else
 								ID = -1;
+#endif
 								Type = KindType.ERROR;
 								Data = string.Empty;
 							}

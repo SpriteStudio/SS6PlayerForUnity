@@ -84,6 +84,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 			CacheMaterial = null;
 		}
 
+		/* Status Reset */
 		StatusIsBootup = false;
 	}
 	#endregion ScriptableObject-Functions
@@ -227,6 +228,9 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		CacheMaterial.ShaderStandardEffect = Library_SpriteStudio6.Data.Shader.EffectSS6PU;	/* Standard-Shader(Effect) */
 		CacheMaterial.ShaderStandardStencil = Library_SpriteStudio6.Data.Shader.StencilSS6PU;	/* Standard-Shader(Stencil) */
 
+		CacheMaterial.ShaderStandardZWriteAnimation = Library_SpriteStudio6.Data.Shader.SpriteSS6PU_ZWrite;	/* Standard-Shader(Animation) - Z-Write */
+		CacheMaterial.ShaderStandardZWriteEffect = Library_SpriteStudio6.Data.Shader.EffectSS6PU_ZWrite;	/* Standard-Shader(Effect) - Z-Write */
+
 		CacheMaterial.FunctionMaterialSetUpAnimation = Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpAnimation;
 		CacheMaterial.FunctionMaterialSetUpEffect = Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpEffect;
 
@@ -294,6 +298,8 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 														Library_SpriteStudio6.KindOperationBlend operationBlend,
 														Library_SpriteStudio6.KindMasking masking,
 														string nameShader,
+														bool flagZWrite,
+														int renderQueueZWrite,
 														bool flagCreateNew,
 														Shader shader=null,
 														Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp=null
@@ -309,6 +315,8 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 													masking,
 													nameShader,
 													shader,
+													flagZWrite,
+													renderQueueZWrite,
 													functionMaterialSetUp,
 													TableTexture,
 													flagCreateNew
@@ -371,6 +379,8 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 														Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 														Library_SpriteStudio6.KindMasking masking,
 														string nameShader,
+														bool flagZWrite,
+														int renderQueueZWrite,
 														bool flagCreateNew,
 														Shader shader=null,
 														Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp=null
@@ -386,6 +396,8 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 												masking,
 												nameShader,
 												shader,
+												flagZWrite,
+												renderQueueZWrite,
 												functionMaterialSetUp,
 												TableTexture,
 												flagCreateNew
@@ -421,6 +433,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 															Library_SpriteStudio6.KindOperationBlend operationBlend,
 															Library_SpriteStudio6.KindMasking masking,
 															string nameShader,
+															bool flagZWrite,
 															UnityEngine.Material material
 														)
 	{
@@ -433,6 +446,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 														operationBlend,
 														masking,
 														nameShader,
+														flagZWrite,
 														material
 													)
 			);
@@ -466,6 +480,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 															Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 															Library_SpriteStudio6.KindMasking masking,
 															string nameShader,
+															bool flagZWrite,
 															UnityEngine.Material material
 														)
 	{
@@ -478,6 +493,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 													operationBlend,
 													masking,
 													nameShader,
+													flagZWrite,
 													material
 											)
 			);
