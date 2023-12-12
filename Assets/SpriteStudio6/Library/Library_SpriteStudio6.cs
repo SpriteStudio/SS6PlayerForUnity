@@ -2428,7 +2428,7 @@ public static partial class Library_SpriteStudio6
 							return(null);
 						}
 						instanceMaterial.mainTexture = tableTexture[indexCellMap];
-						instanceMaterial.renderQueue = renderQueueZWrite;
+//						instanceMaterial.renderQueue = renderQueueZWrite;
 						DataAppend(codeHash, instanceMaterial);
 					}
 				}
@@ -2486,7 +2486,7 @@ public static partial class Library_SpriteStudio6
 							return(null);
 						}
 						instanceMaterial.mainTexture = tableTexture[indexCellMap];
-						instanceMaterial.renderQueue = renderQueueZWrite;
+//						instanceMaterial.renderQueue = renderQueueZWrite;
 						DataAppend(codeHash, instanceMaterial);
 					}
 				}
