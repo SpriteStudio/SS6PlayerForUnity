@@ -4726,6 +4726,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					Script_SpriteStudio6_Root scriptRoot = null;
 					Script_SpriteStudio6_Root.InformationPlay[] informationPlayRoot = null;
 					string[] nameAnimation = null;
+//					int /* UnityEngine.Rendering.RenderQueue */ renderQueueZWrite = (int)Library_SpriteStudio6.RenderQueueFromShader;
+					bool flagZWrite = false;
 					bool flagHideForce = false;
 					bool flagColliderInterlockHideForce = false;
 					bool flagPlanarization = false;
@@ -4773,11 +4775,18 @@ public static partial class LibraryEditor_SpriteStudio6
 						scriptRoot = gameObjectRoot.GetComponent<Script_SpriteStudio6_Root>();
 						if(null != scriptRoot)
 						{
+							flagZWrite = scriptRoot.FlagZWrite;
+//							renderQueueZWrite = scriptRoot.RenderQueueZWrite;
 							flagHideForce = scriptRoot.FlagHideForce;
 							flagColliderInterlockHideForce = scriptRoot.FlagColliderInterlockHideForce;
 							flagPlanarization = scriptRoot.FlagPlanarization;
 							orderInLayer = scriptRoot.OrderInLayer;
 							limitTrack = scriptRoot.LimitTrack;
+
+//							if((int)UnityEngine.Rendering.RenderQueue.Background > renderQueueZWrite)
+//							{
+//								renderQueueZWrite = (int)Library_SpriteStudio6.RenderQueueFromShader;
+//							}
 
 							if(null != scriptRoot.TableInformationPlay)
 							{
@@ -5091,6 +5100,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					scriptRoot.TableControlParts = tableControlParts;
 					tableControlParts = null;
 
+					scriptRoot.FlagZWrite = flagZWrite;
+//					scriptRoot.RenderQueueZWrite = renderQueueZWrite;
 					scriptRoot.FlagHideForce = flagHideForce;
 					scriptRoot.FlagColliderInterlockHideForce = flagColliderInterlockHideForce;
 					scriptRoot.FlagPlanarization = flagPlanarization;

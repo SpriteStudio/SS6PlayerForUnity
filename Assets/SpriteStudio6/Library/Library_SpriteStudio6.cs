@@ -18,7 +18,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.1.24";
+	public const string SignatureVersionAsset = "2.1.24 (Mod ZW)";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -114,6 +114,8 @@ public static partial class Library_SpriteStudio6
 		END,
 		UPDATE,
 	}
+
+	public const UnityEngine.Rendering.RenderQueue RenderQueueFromShader = (UnityEngine.Rendering.RenderQueue)(-1);
 	#endregion Enums & Constants
 
 	/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -1701,7 +1703,7 @@ public static partial class Library_SpriteStudio6
 			internal static UnityEngine.Material FunctionMaterialSetUpAnimation(	UnityEngine.Material material,
 																					int operationBlend,
 																					Library_SpriteStudio6.KindMasking masking,
-																					bool flagZWrite
+																					bool flagZWrite	/* MEMO: Obsolescent */
 																				)
 			{
 				switch((Library_SpriteStudio6.KindOperationBlend)operationBlend)
@@ -1813,7 +1815,7 @@ public static partial class Library_SpriteStudio6
 								break;
 						}
 
-						material.SetFloat(IDPropertyZWrite, ((true == flagZWrite) ? 1.0f : 0.0f));
+						material.SetFloat(IDPropertyZWrite, ((true == flagZWrite) ? 1.0f : 0.0f));	/* MEMO: Obsolescent */
 						break;
 				}
 				return(material);
@@ -1821,7 +1823,7 @@ public static partial class Library_SpriteStudio6
 			internal static UnityEngine.Material FunctionMaterialSetUpEffect(	UnityEngine.Material material,
 																				int operationBlend, 
 																				Library_SpriteStudio6.KindMasking masking,
-																				bool flagZWrite
+																				bool flagZWrite	/* MEMO: Obsolescent */
 																		)
 			{
 				switch((Library_SpriteStudio6.KindOperationBlendEffect)operationBlend)
@@ -1859,7 +1861,7 @@ public static partial class Library_SpriteStudio6
 								break;
 						}
 
-						material.SetFloat(IDPropertyZWrite, ((true == flagZWrite) ? 1.0f : 0.0f));
+						material.SetFloat(IDPropertyZWrite, ((true == flagZWrite) ? 1.0f : 0.0f));	/* MEMO: Obsolescent */
 						break;
 				}
 
@@ -1877,6 +1879,9 @@ public static partial class Library_SpriteStudio6
 			public readonly static UnityEngine.Shader SpriteSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Sprite");
 			public readonly static UnityEngine.Shader EffectSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Effect");
 			public readonly static UnityEngine.Shader StencilSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Stencil");
+			public readonly static UnityEngine.Shader SpriteSS6PU_ZWrite = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Sprite_ZWrite");
+			public readonly static UnityEngine.Shader EffectSS6PU_ZWrite = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Effect_ZWrite");
+
 			public readonly static UnityEngine.Shader SpriteUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite");
 			public readonly static UnityEngine.Shader SpriteUnityNativeNonBatch = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite_NonBatch");
 			public readonly static UnityEngine.Shader SkinnedMeshUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "SkinnedMesh");
@@ -2208,6 +2213,8 @@ public static partial class Library_SpriteStudio6
 			public UnityEngine.Shader ShaderStandardAnimation;
 			public UnityEngine.Shader ShaderStandardEffect;
 			public UnityEngine.Shader ShaderStandardStencil;
+			public UnityEngine.Shader ShaderStandardZWriteAnimation;
+			public UnityEngine.Shader ShaderStandardZWriteEffect;
 
 			public Library_SpriteStudio6.CallBack.FunctionMaterialSetUp FunctionMaterialSetUpAnimation;
 			public Library_SpriteStudio6.CallBack.FunctionMaterialSetUp FunctionMaterialSetUpEffect;
@@ -2232,6 +2239,8 @@ public static partial class Library_SpriteStudio6
 				ShaderStandardAnimation = null;
 				ShaderStandardEffect = null;
 				ShaderStandardStencil = null;
+				ShaderStandardZWriteAnimation = null;
+				ShaderStandardZWriteEffect = null;
 
 				FunctionMaterialSetUpAnimation = null;
 				FunctionMaterialSetUpEffect = null;
@@ -2247,6 +2256,8 @@ public static partial class Library_SpriteStudio6
 				ShaderStandardAnimation = null;
 				ShaderStandardEffect = null;
 				ShaderStandardStencil = null;
+				ShaderStandardZWriteAnimation = null;
+				ShaderStandardZWriteEffect = null;
 
 				FunctionMaterialSetUpAnimation = null;
 				FunctionMaterialSetUpEffect = null;
@@ -2363,6 +2374,8 @@ public static partial class Library_SpriteStudio6
 																Library_SpriteStudio6.KindMasking masking,
 																string nameShader,
 																Shader shader,
+																bool flagZWrite,
+																int renderQueueZWrite,
 																Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
 																Texture[] tableTexture,
 																bool flagCreateNew
@@ -2371,7 +2384,8 @@ public static partial class Library_SpriteStudio6
 				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetAnimation(	indexCellMap,
 																												operationBlend,
 																												masking,
-																												nameShader
+																												nameShader,
+																												flagZWrite
 																										);
 				UnityEngine.Material instanceMaterial = MaterialGet(codeHash);
 				if(null == instanceMaterial)
@@ -2387,7 +2401,8 @@ public static partial class Library_SpriteStudio6
 							}
 							else
 							{	/* for Color */
-								shader = ShaderStandardAnimation;
+//								shader = ShaderStandardAnimation;
+								shader = (true == flagZWrite) ? ShaderStandardZWriteAnimation : ShaderStandardAnimation;
 							}
 
 							if(null == functionMaterialSetUp)
@@ -2406,12 +2421,14 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Create new material */
+//						instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateAnimation(functionMaterialSetUp, shader, operationBlend, masking, flagZWrite);
 						instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateAnimation(functionMaterialSetUp, shader, operationBlend, masking, false);
 						if(null == instanceMaterial)
 						{	/* Miss-Create */
 							return(null);
 						}
 						instanceMaterial.mainTexture = tableTexture[indexCellMap];
+						instanceMaterial.renderQueue = renderQueueZWrite;
 						DataAppend(codeHash, instanceMaterial);
 					}
 				}
@@ -2423,6 +2440,8 @@ public static partial class Library_SpriteStudio6
 																Library_SpriteStudio6.KindMasking masking,
 																string nameShader,
 																Shader shader,
+																bool flagZWrite,
+																int renderQueueZWrite,
 																Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
 																Texture[] tableTexture,
 																bool flagCreateNew
@@ -2431,7 +2450,8 @@ public static partial class Library_SpriteStudio6
 				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetEffect(	indexCellMap,
 																											operationBlend,
 																											masking,
-																											nameShader
+																											nameShader,
+																											flagZWrite
 																									);
 				UnityEngine.Material instanceMaterial = MaterialGet(codeHash);
 				if(null == instanceMaterial)
@@ -2443,7 +2463,8 @@ public static partial class Library_SpriteStudio6
 						if(null == shader)
 						{
 							/* MEMO: "Effect" does not have "Masking" function. */
-							shader = ShaderStandardEffect;
+//							shader = ShaderStandardEffect;
+							shader = (true == flagZWrite) ? ShaderStandardZWriteEffect : ShaderStandardEffect;
 							if(null == functionMaterialSetUp)
 							{
 								functionMaterialSetUp = FunctionMaterialSetUpEffect;
@@ -2458,12 +2479,14 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Create new material */
+//						instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(functionMaterialSetUp, shader, operationBlend, masking, flagZWrite);
 						instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(functionMaterialSetUp, shader, operationBlend, masking, false);
 						if(null == instanceMaterial)
 						{	/* Miss-Create */
 							return(null);
 						}
 						instanceMaterial.mainTexture = tableTexture[indexCellMap];
+						instanceMaterial.renderQueue = renderQueueZWrite;
 						DataAppend(codeHash, instanceMaterial);
 					}
 				}
@@ -2475,13 +2498,15 @@ public static partial class Library_SpriteStudio6
 																	Library_SpriteStudio6.KindOperationBlend operationBlend,
 																	Library_SpriteStudio6.KindMasking masking,
 																	string nameShader,
+																	bool flagZWrite,
 																	UnityEngine.Material material
 																)
 			{
 				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetAnimation(	indexCellMap,
 																												operationBlend,
 																												masking,
-																												nameShader
+																												nameShader,
+																												flagZWrite
 																										);
 				int indexMaterial = IndexGet(codeHash);
 				if(0 > indexMaterial)
@@ -2507,13 +2532,15 @@ public static partial class Library_SpriteStudio6
 																	Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 																Library_SpriteStudio6.KindMasking masking,
 																string nameShader,
+																bool flagZWrite,
 																UnityEngine.Material material
 															)
 			{
 				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetEffect(	indexCellMap,
 																											operationBlend,
 																											masking,
-																											nameShader
+																											nameShader,
+																											flagZWrite
 																									);
 				int indexMaterial = IndexGet(codeHash);
 				if(0 > indexMaterial)
@@ -2749,7 +2776,7 @@ public static partial class Library_SpriteStudio6
 
 				/* MEMO: Possess all information in raw.                                                    */
 				/*       Not just a value for identification, but is also used extracting original setting. */
-				internal static long CodeGetAnimation(int indexCellMap, KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader)
+				internal static long CodeGetAnimation(int indexCellMap, KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader, bool flagZWrite)
 				{
 					long code;
 					if(null == nameShader)
@@ -2762,6 +2789,7 @@ public static partial class Library_SpriteStudio6
 					}
 
 					code &= MaskCodeNameShader;
+					code |= ((true == flagZWrite) ? MaskCodeIsZWrite : 0) << CountShiftIsZWrite;
 					code |= ((long)operationBlend & MaskCodeOperation) << CountShiftCodeOperation;
 					code |= ((long)masking & MaskCodeMasking) << CountShiftCodeMasking;
 					code |= ((long)indexCellMap & MaskCodeIndexCellMap) << CountShiftCodeIndexCellMap;
@@ -2769,7 +2797,7 @@ public static partial class Library_SpriteStudio6
 
 					return(code);
 				}
-				internal static long CodeGetEffect(int indexCellMap, KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader)
+				internal static long CodeGetEffect(int indexCellMap, KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader, bool flagZWrite)
 				{
 					long code;
 					if(null == nameShader)
@@ -2782,6 +2810,7 @@ public static partial class Library_SpriteStudio6
 					}
 
 					code &= MaskCodeNameShader;
+					code |= ((true == flagZWrite) ? MaskCodeIsZWrite : 0) << CountShiftIsZWrite;
 					code |= ((long)operationBlend & MaskCodeOperation) << CountShiftCodeOperation;
 					code |= ((long)masking & MaskCodeMasking) << CountShiftCodeMasking;
 					code |= ((long)indexCellMap & MaskCodeIndexCellMap) << CountShiftCodeIndexCellMap;
@@ -2822,13 +2851,15 @@ public static partial class Library_SpriteStudio6
 				private readonly static int CodeHashNameShaderDefault = NameShaderDefault.GetHashCode();
 
 				internal const long MaskCodeNameShader = 0x00000000ffffffffL;
-				internal const long MaskCodeOperation = 0x00000000000000ffL;
+				internal const long MaskCodeIsZWrite = 0x0000000000000001L;
+				internal const long MaskCodeOperation = 0x000000000000007fL;
 				internal const long MaskCodeMasking = 0x000000000000000fL;
 				internal const long MaskCodeIndexCellMap = 0x0000000000000fffL;
 				internal const long MaskCodeIsEffect = 0x0000000000000001L;
 
 //				internal const int CountShiftCodeNameShader = 0;
-				internal const int CountShiftCodeOperation = 32;
+				internal const int CountShiftIsZWrite = 32;
+				internal const int CountShiftCodeOperation = 33;
 				internal const int CountShiftCodeMasking = 40;
 				internal const int CountShiftCodeIndexCellMap = 44;
 				internal const int CountShiftCodeIsEffect = 61;
@@ -3285,6 +3316,9 @@ public static partial class Library_SpriteStudio6
 			public Script_SpriteStudio6_Root InstanceRootParent;
 			public GameObject InstanceGameObjectControl;
 
+			public bool FlagZWrite;
+//			public int /* UnityEngine.Rendering.RenderQueue */ RenderQueueZWrite;
+
 			public bool FlagHideForce;
 
 			protected float RateOpacityForce = 1.0f;
@@ -3582,6 +3616,9 @@ public static partial class Library_SpriteStudio6
 					CacheMaterial.ShaderStandardAnimation = null;	/* Not override */
 					CacheMaterial.ShaderStandardEffect = null;	/* Not override */
 					CacheMaterial.ShaderStandardStencil = null;	/* Not override */
+
+					CacheMaterial.ShaderStandardZWriteAnimation = null;	/* Not override */
+					CacheMaterial.ShaderStandardZWriteEffect = null;	/* Not override */
 				}
 
 				return(true);
