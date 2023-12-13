@@ -37,8 +37,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite_ZWrite"
 		{
 			Tags
 			{
-				"Queue" = "Transparent"
-//				"Queue" = "Geometry"
+				"Queue" = "Geometry"
 			}
 
 //			Cull Off
@@ -75,10 +74,8 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite_ZWrite"
 		{
 			Tags
 			{
-				"Queue" = "Transparent"
-//				"IgnoreProjector" = "True"
+				"Queue" = "Geometry"
 				"IgnoreProjector" = "False"
-				"RenderType" = "Transparent"
 			}
 
 			Cull Off
