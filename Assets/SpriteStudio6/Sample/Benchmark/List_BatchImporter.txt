@@ -20,7 +20,7 @@
 * [Folder Setting]
 ? NameBaseFolderSetting > SpriteStudioProject/
 ? NameBaseFolderData > SpriteStudioProject/
-* ? NameBaseFolderAsset > /SpriteStudio6Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/
+* ? NameBaseFolderAsset > /SpriteStudio6/Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/
 
 * [Import Setting]
 ? SettingFile > SS6PU_ImportSetting.txt
@@ -28,7 +28,7 @@
 * ------------- for SS6Player Mode
 * [Import Mode]
 ? Common_Mode > SS6PU
-? NameBaseFolderAsset > /SpriteStudio6Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/SS6P/
+? NameBaseFolderAsset > /SpriteStudio6/Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/SS6P/
 
 * [Files]
 Comipo/Comipo.sspj
@@ -36,7 +36,7 @@ Comipo/Comipo.sspj
 * ------------- for Unity-Native Mode
 * [Import Mode]
 ? Common_Mode > UNITY_NATIVE
-? NameBaseFolderAsset > /SpriteStudio6Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/UnityNative/
+? NameBaseFolderAsset > /SpriteStudio6/Sample/Benchmark/Resources/SpriteStudio6Sample_Benchmark/UnityNative/
 
 * [Files]
 Comipo/Comipo.sspj

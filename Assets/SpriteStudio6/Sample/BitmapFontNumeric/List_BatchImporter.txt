@@ -21,7 +21,7 @@
 * [Folder Setting]
 ? NameBaseFolderSetting > SpriteStudioProject/
 ? NameBaseFolderData > SpriteStudioProject/
-? NameBaseFolderAsset > SpriteStudio6Sample/BitmapFontNumeric/Data/
+? NameBaseFolderAsset > /SpriteStudio6/Sample/BitmapFontNumeric/Data/
 
 * [Import Setting]
 ? SettingFile > SS6PU_ImportSetting.txt

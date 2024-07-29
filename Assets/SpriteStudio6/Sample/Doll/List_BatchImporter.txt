@@ -21,7 +21,7 @@
 * [Folder Setting]
 ? NameBaseFolderSetting > SpriteStudioProject/
 ? NameBaseFolderData > SpriteStudioProject/Doll/
-? NameBaseFolderAsset > SpriteStudio6Sample/Doll/Data/
+? NameBaseFolderAsset > /SpriteStudio6/Sample/Doll/Data/
 
 * [Import Setting]
 ? SettingFile > SS6PU_ImportSetting.txt

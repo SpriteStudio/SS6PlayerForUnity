@@ -84,7 +84,6 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 			CacheMaterial = null;
 		}
 
-		/* Status Reset */
 		StatusIsBootup = false;
 	}
 	#endregion ScriptableObject-Functions
