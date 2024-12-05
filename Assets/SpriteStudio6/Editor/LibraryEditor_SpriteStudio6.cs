@@ -6,6 +6,8 @@
 	All rights reserved.
 */
 
+// #define COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -946,6 +948,12 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 						}
 					}
+
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+					/* Convert SSAEs: Calculate Bone-Matrix (for Bind-Pose) */
+					SSAE.ModeUnityNative.CalculateMatrixBone(ref setting, informationSSPJ, informationSSAE);
+#else
+#endif
 
 					/* Create Asset: Animation (Prefab) */
 					flagCreateAssetData = true;

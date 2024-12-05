@@ -23,6 +23,7 @@ fixed4 PS_main(InputPS input) : COLOR0
 	fixed4 alpha = tex2D(_AlphaTex, uv);
 	pixel.a = lerp(pixel.a, alpha.r, _EnableExternalAlpha);
 #endif
+	pixel = PixelSolveColorspaceInput(pixel);
 
 	pixel *= input.ColorMain;
 #if !defined(PS_NOT_DISCARD)
@@ -57,6 +58,7 @@ fixed4 PS_main(InputPS input) : COLOR0
 	pixel.xyz *= pixelA;
 #endif
 	pixel.a = pixelA;
+	pixel = PixelSolveColorspaceOutput(pixel);
 
 	output = pixel;
 

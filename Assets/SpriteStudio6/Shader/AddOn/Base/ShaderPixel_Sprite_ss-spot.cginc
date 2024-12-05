@@ -41,7 +41,8 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	/* MEMO: Run "PixelSynthesizeExternalAlpha", especially if you want to support ETC1's split-alpha. */
 	float4 pixel = tex2D(_MainTex,  input.Texture00UV.xy);
 	PixelSynthesizeExternalAlpha(pixel.a, _AlphaTex, input.Texture00UV.xy, _EnableExternalAlpha);
-	PixelSolvePMA(pixel, pixel.a);
+	pixel = PixelSolveColorspaceInput(pixel);
+	PixelSolvePMA(pixel, pixel.a);	/* for Converting HSB */
 
 	/* Calculate Spot */
 	pixel.rgb = lerp(float3(1.0f, 1.0f, 1.0f), pixel.rgb, fColor);
@@ -58,7 +59,11 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSynthesizePartsColor(pixel, input);
 	pixel.a = pixelA;
 
+	/* PreMultiplied-Alpha Solving */
+	PixelSolvePMA(pixel, pixel.a);
+
 	/* Finalize */
+	pixel = PixelSolveColorspaceOutput(pixel);
 	output = pixel;
 	return(output);
 }

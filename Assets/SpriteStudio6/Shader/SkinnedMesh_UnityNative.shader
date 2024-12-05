@@ -23,6 +23,7 @@ Shader "Custom/SpriteStudio6/UnityNative/SkinnedMesh"
 
 		[Toggle(PS_NOT_DISCARD)] _NotDiscardPixel("Not Discard Pixel", Float) = 0
 		[Toggle(PS_OUTPUT_PMA)] _OutputPixelPMA("Output PreMultiplied Alpha", Float) = 0
+		[Toggle(PS_INPUT_PMA)] _InputPixelPMA("Input PreMultiplied Alpha", Float) = 0
 
 		[HideInInspector] _RendererColor("RendererColor", Color) = (1, 1, 1, 1)
 		[HideInInspector] _Flip("Flip", Vector) = (1, 1, 1, 1)
@@ -62,9 +63,11 @@ Shader "Custom/SpriteStudio6/UnityNative/SkinnedMesh"
 			#include "UnityCG.cginc"
 
 			#define RESTRICT_SHADER_MODEL_3
-			#define PS_OPTION_NOT_DISCARD
-			#define PS_OPTION_OUTPUT_PMA
+			#pragma multi_compile _ PS_NOT_DISCARD
+			#pragma multi_compile _ PS_OUTPUT_PMA
+			#pragma multi_compile _ PS_INPUT_PMA
 			#include "Base/Shader_Data_UnityNative.cginc"
+			#include "Base/Shader_Lib_SpriteStudio6.cginc"
 			#include "Base/ShaderVertex_SkinnedMesh_UnityNative.cginc"
 			#include "Base/ShaderPixel_Sprite_UnityNative.cginc"
 			ENDCG

@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Sprite_UnityNative_INV
   m_Shader: {fileID: 4800000, guid: 778af36b1fa70ed47b074db61b2065e8, type: 3}
-  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA PS_NOT_DISCARD PS_OUTPUT_PMA
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA PS_INPUT_PMA PS_NOT_DISCARD PS_OUTPUT_PMA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -72,6 +72,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _InputPixelPMA: 1
     - _Metallic: 0
     - _Mode: 0
     - _NotDiscardPixel: 1

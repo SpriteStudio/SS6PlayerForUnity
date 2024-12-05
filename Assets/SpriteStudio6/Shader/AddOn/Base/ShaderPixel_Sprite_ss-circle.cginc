@@ -58,7 +58,8 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	float2 texUV = float2(A_LU, A_TV) + st;
 	fixed4 pixel = tex2D(_MainTex, texUV);
 	PixelSynthesizeExternalAlpha(pixel.a, _AlphaTex, texUV.xy, _EnableExternalAlpha);
-	PixelSolvePMA(pixel, pixel.a);
+	pixel = PixelSolveColorspaceInput(pixel);
+//	PixelSolvePMA(pixel, pixel.a);
 
 	/* Blending "Parts-Color" */
 	float pixelA = pixel.a;
@@ -66,6 +67,7 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	pixel.a = pixelA;
 
 	/* Finalize */
+	pixel = PixelSolveColorspaceOutput(pixel);
 	output = pixel;
 	return(output);
 }

@@ -9,13 +9,15 @@ sampler2D _MainTex;
 sampler2D _AlphaTex;
 float _EnableExternalAlpha;
 
-half4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
+float4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 {
-	half4 output;
+	float4 output;
 
 	/* Texel Sampling */
 	/* MEMO: Run "PixelSynthesizeExternalAlpha", especially if you want to support ETC1's split-alpha. */
-	half4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
+	float4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
+	pixel = PixelSolveColorspaceInput(pixel);
+
 	PixelSynthesizeExternalAlpha(pixel.a, _AlphaTex, input.Texture00UV.xy, _EnableExternalAlpha);
 
 	/* MEMO: No "Part-Color" is applied to "Effect". */
@@ -27,6 +29,7 @@ half4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	/* Finalize color */
 	PixelSolvePMA(pixel, pixel.a);
 	PixelDiscardAlpha(pixel.a, 0.0f);
+	pixel = PixelSolveColorspaceOutput(pixel);
 
 	output = pixel;
 

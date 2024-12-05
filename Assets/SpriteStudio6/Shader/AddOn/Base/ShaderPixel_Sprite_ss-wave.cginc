@@ -43,7 +43,8 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	/* MEMO: Run "PixelSynthesizeExternalAlpha", especially if you want to support ETC1's split-alpha. */
 	Pixel = tex2D(_MainTex, Coord.xy);
 	PixelSynthesizeExternalAlpha(Pixel.a, _AlphaTex, Coord.xy, _EnableExternalAlpha);
-	PixelSolvePMA(Pixel, Pixel.a);
+	Pixel = PixelSolveColorspaceInput(Pixel);
+//	PixelSolvePMA(Pixel, Pixel.a);
 
 	/* Blending Vertex-Color & Check Discarding-Pixel */
 	/* MEMO: Once pixel's alpha has been determined, Need to run "PixelDiscardAlpha". */
@@ -56,7 +57,11 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSynthesizePartsColor(Pixel, input);
 	Pixel.a = pixelA;
 
+	/* PreMultiplied-Alpha Solving */
+	PixelSolvePMA(Pixel, Pixel.a);
+
 	/* Finalize */
+	Pixel = PixelSolveColorspaceOutput(Pixel);
 	output = Pixel;
 	return(output);
 }

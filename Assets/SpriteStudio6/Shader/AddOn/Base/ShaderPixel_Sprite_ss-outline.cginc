@@ -22,25 +22,30 @@ float toOutlineValue(float2 p, float2 v, float fRatio)
 	Coord = p + float2(-v.x, 0.0f);
 	Pixel = tex2D(_MainTex, Coord);
 	PixelSynthesizeExternalAlpha(Pixel.a, _AlphaTex, Coord, _EnableExternalAlpha);
+	Pixel = PixelSolveColorspaceInput(Pixel);
 	lo += step(Pixel.a, fRatio);
 
 	Coord = p + float2(+v.x, 0.0f);
 	Pixel = tex2D(_MainTex, Coord);
 	PixelSynthesizeExternalAlpha(Pixel.a, _AlphaTex, Coord, _EnableExternalAlpha);
+	Pixel = PixelSolveColorspaceInput(Pixel);
 	lo += step(Pixel.a, fRatio);
 
 	Coord = p + float2(0.0f, -v.y);
 	Pixel = tex2D(_MainTex, Coord);
 	PixelSynthesizeExternalAlpha(Pixel.a, _AlphaTex, Coord, _EnableExternalAlpha);
+	Pixel = PixelSolveColorspaceInput(Pixel);
 	lo += step(Pixel.a, fRatio);
 
 	Coord = p + float2(0.0f, +v.y);
 	Pixel = tex2D(_MainTex, Coord);
 	PixelSynthesizeExternalAlpha(Pixel.a, _AlphaTex, Coord, _EnableExternalAlpha);
+	Pixel = PixelSolveColorspaceInput(Pixel);
 	lo += step(Pixel.a, fRatio);
 
 	Pixel = tex2D(_MainTex, p);
 	PixelSynthesizeExternalAlpha(Pixel.a, _AlphaTex, p, _EnableExternalAlpha);
+	Pixel = PixelSolveColorspaceInput(Pixel);
 	hi = step(fRatio + e, Pixel.a);
 
 	return(min(hi * lo, 1.0f));
@@ -81,7 +86,11 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSynthesizePartsColor(pixel, input);
 	pixel.a = pixelA;
 
+	/* PreMultiplied-Alpha Solving */
+	PixelSolvePMA(pixel, pixel.a);
+
 	/* Finalize */
+	pixel = PixelSolveColorspaceOutput(pixel);
 	output = pixel;
 	return(output);
 }

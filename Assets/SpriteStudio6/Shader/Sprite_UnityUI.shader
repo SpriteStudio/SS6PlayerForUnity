@@ -96,6 +96,7 @@ Shader "Custom/SpriteStudio6/UnityUI/Sprite"
 //			#define RESTRICT_SHADER_MODEL_3
 //			#define RESTRICT_UNITY_2017_2
 			#include "Base/Shader_Data_UnityUI.cginc"
+			#include "Base/Shader_Lib_SpriteStudio6.cginc"
 			#include "Base/ShaderVertex_Sprite_UnityUI.cginc"
 			#include "Base/ShaderPixel_Sprite_UnityUI.cginc"
 			ENDCG

@@ -18,7 +18,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.1.24";
+	public const string SignatureVersionAsset = "2.1.25";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -1733,11 +1733,13 @@ public static partial class Library_SpriteStudio6
 						goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;	/* Common Setting for Masking-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.MIX:
-						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.One);	/* UnityEngine.Rendering.BlendMode.SrcAlpha */
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.One);
+//						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
 						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
 						material.EnableKeyword(NamePropertyOutputPixelPMA);	/* true */
+						material.EnableKeyword(NamePropertyInputPixelPMA);	/* true */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.ADD:
@@ -1746,6 +1748,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
 						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						material.DisableKeyword(NamePropertyInputPixelPMA);	/* false */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.SUB:
@@ -1754,6 +1757,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.ReverseSubtract);
 						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
 						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						material.DisableKeyword(NamePropertyInputPixelPMA);	/* false */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.MUL:
@@ -1762,6 +1766,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
 						material.EnableKeyword(NamePropertyOutputPixelPMA);		/* true */
+						material.EnableKeyword(NamePropertyInputPixelPMA);	/* true */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.MUL_NA:
@@ -1770,6 +1775,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.EnableKeyword(NamePropertyNotDiscardPixel);	/* true */
 						material.EnableKeyword(NamePropertyOutputPixelPMA);		/* true */
+						material.EnableKeyword(NamePropertyInputPixelPMA);	/* true */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.SCR:
@@ -1778,6 +1784,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
 						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						material.DisableKeyword(NamePropertyInputPixelPMA);	/* false */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.EXC:
@@ -1786,6 +1793,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
 						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						material.DisableKeyword(NamePropertyInputPixelPMA);	/* false */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.INV:
@@ -1794,6 +1802,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.EnableKeyword(NamePropertyNotDiscardPixel);	/* true */
 						material.EnableKeyword(NamePropertyOutputPixelPMA);		/* true */
+						material.EnableKeyword(NamePropertyInputPixelPMA);	/* true */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlend.TERMINATOR:
@@ -1832,6 +1841,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
 						material.EnableKeyword(NamePropertyOutputPixelPMA);	/* true */
+						material.EnableKeyword(NamePropertyInputPixelPMA);	/* true */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlendEffect.ADD:
@@ -1840,6 +1850,7 @@ public static partial class Library_SpriteStudio6
 						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
 						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
 						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						material.DisableKeyword(NamePropertyInputPixelPMA);	/* false */
 						goto default;	/* Common Setting for Drawing-Shader */
 
 					case Library_SpriteStudio6.KindOperationBlendEffect.TERMINATOR:
@@ -1894,6 +1905,7 @@ public static partial class Library_SpriteStudio6
 
 			public const string NamePropertyNotDiscardPixel = "PS_NOT_DISCARD";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
 			public const string NamePropertyOutputPixelPMA = "PS_OUTPUT_PMA";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyInputPixelPMA = "PS_INPUT_PMA";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
 			public const string NamePropertyStencilOperation = "_StencilOperation";			/* Stencil_SpriteStudio6 */
 
 			public const string NamePropertyUIColor = "_Color";								/* Sprite_UnityUI */
@@ -4399,6 +4411,10 @@ public static partial class Library_SpriteStudio6
 
 				if(null == gameObject)
 				{	/* Instantiate */
+					Vector3 localPosition = prefab.transform.localPosition;
+					Vector3 localScale = prefab.transform.localScale;
+					Quaternion localRotation = prefab.transform.localRotation;
+
 #if UNITY_EDITOR
 					gameObject = UnityEditor.PrefabUtility.InstantiatePrefab(prefab) as GameObject;
 					if(null == gameObject)
@@ -4410,17 +4426,21 @@ public static partial class Library_SpriteStudio6
 					gameObject = Object.Instantiate(prefab) as GameObject;
 					gameObject.name = prefab.name;	/* Remove "(clone)" */
 #endif
-					transform = gameObject.transform;
-
-					if (null != gameObjectParent)
-					{
-						transform.parent = transformParent;
-					}
 					if(null != gameObject)
 					{
-						transform.localPosition = Vector3.zero;
-						transform.localEulerAngles = Vector3.zero;
-						transform.localScale = Vector3.one;
+						transform = gameObject.transform;
+
+						if (null != gameObjectParent)
+						{
+							transform.parent = transformParent;
+						}
+
+//						transform.localPosition = Vector3.zero;
+//						transform.localEulerAngles = Vector3.zero;
+//						transform.localScale = Vector3.one;
+						transform.localPosition = localPosition;
+						transform.localRotation = localRotation;
+						transform.localScale = localScale;
 					}
 				}
 
