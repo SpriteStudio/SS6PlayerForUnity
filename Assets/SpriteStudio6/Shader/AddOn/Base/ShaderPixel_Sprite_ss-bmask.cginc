@@ -30,7 +30,8 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	/* Texel Sampling */
 	fixed4 pixel = tex2D(_MainTex, input.Texture00UV.xy);
 	PixelSynthesizeExternalAlpha(pixel.a, _AlphaTex, coord.xy, _EnableExternalAlpha);
-	PixelSolvePMA(pixel, pixel.a);
+	pixel = PixelSolveColorspaceInput(pixel);
+//	PixelSolvePMA(pixel, pixel.a);
 
 	/* Check Discarding-Pixel */
 	float b = ParameterGetDiscard(fBrightness, pixel);
@@ -42,7 +43,11 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSynthesizePartsColor(pixel, input);
 	pixel.a = pixelA;
 
+	/* PreMultiplied-Alpha Solving */
+	PixelSolvePMA(pixel, pixel.a);
+
 	/* Finalize */
+	pixel = PixelSolveColorspaceOutput(pixel);
 	output = pixel;
 	return(output);
 }

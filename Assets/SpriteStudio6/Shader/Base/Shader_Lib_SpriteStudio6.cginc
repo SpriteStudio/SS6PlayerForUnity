@@ -243,7 +243,7 @@ When "PS_OUTPUT_PMA" is not defined, process empty.
 */
 #if defined(PS_OUTPUT_PMA)
 #define PixelSolvePMA(_pixelRGB_,_pixelA_)				\
-	if(0.0f >= _pixelA_)	{							\
+	if(0.0 >= _pixelA_)	{								\
 		_pixelRGB_ = float4(0.0f, 0.0f, 0.0f, 0.0f);	\
 	} else {											\
 		_pixelRGB_.xyz *= _pixelA_;						\
@@ -258,3 +258,61 @@ When "PS_OUTPUT_PMA" is not defined, process empty.
 #else
 #define PixelSolvePMA_ValidAlpha(_pixelRGB_,_pixelA_)
 #endif
+
+/* ********************************************************* */
+//! [for Vertex/Pixel-Shader] Solve ColorSpace Linear to Gamma
+/*!
+@param	_pixleA_
+	[In/Out] Pixel's RGBA (float4 / fixed4)
+
+@retval	Return-Value
+	Adjusted RGB (float4)
+
+Solves differences in Color-Space settings.
+*/
+float4 PixelSolveColorspaceInput(float4 color)
+{
+#if defined(UNITY_COLORSPACE_GAMMA)
+	return(color);
+#else
+#if defined(PS_INPUT_PMA)
+	if((1.0 / 255.0) > color.a)	{
+//		color = float4(0.0, 0.0, 0.0, 0.0);
+		color = color;
+	} else {
+		color.rgb = color.rgb / color.a;
+	}
+#endif
+// //	color.rgb = color.rgb;
+//	color.rgb = sqrt(color.rgb);
+	color.rgb = pow(color.rgb, 1.0/2.2);
+//	color.rgb = (max(1.055h * pow(max(color, float4(0.0, 0.0, 0.0, 0.0)), 0.416666667) - 0.055, 0.0)).rgb;
+
+	return(color);
+#endif
+}
+
+/* ********************************************************* */
+//! [for Vertex/Pixel-Shader] Solve ColorSpace Gamma to Linear
+/*!
+@param	_pixleA_
+	[In/Out] Pixel's RGBA (float4 / fixed4)
+
+@retval	Return-Value
+	Adjusted RGB (float4)
+
+Solves differences in Color-Space settings.
+*/
+float4 PixelSolveColorspaceOutput(float4 color)
+{
+#if defined(UNITY_COLORSPACE_GAMMA)
+	return(color);
+#else
+// //	color.rgb = color.rgb;
+//	color.rgb = (color * color).rgb;
+	color.rgb = (pow(color, 2.2)).rgb;
+//	color.rgb = (color * (color * (color * 0.305306011h + 0.682171111h) + 0.012522878h)).rgb;
+
+	return(color);
+#endif
+}
