@@ -21,6 +21,7 @@ Shader "Custom/SpriteStudio6/SS6PU/ss-move"
 
 		[Toggle(PS_NOT_DISCARD)] _NotDiscardPixel("Not Discard Pixel", Float) = 0
 		[Toggle(PS_OUTPUT_PMA)] _OutputPixelPMA("Output PreMultiplied Alpha", Float) = 0
+		[Toggle(PS_INPUT_PMA)] _InputPixelPMA("Input PreMultiplied Alpha", Float) = 0
 
 		[HideInInspector] _ArgumentFs00("Argument Fs00", Vector) = (0,0,0,0)
 		[HideInInspector] _ParameterFs00("Parameter Fs00", Vector) = (0,0,0,0)
@@ -59,6 +60,7 @@ Shader "Custom/SpriteStudio6/SS6PU/ss-move"
 //			#define RESTRICT_SHADER_MODEL_3
 			#pragma multi_compile _ PS_NOT_DISCARD
 			#pragma multi_compile _ PS_OUTPUT_PMA
+			#pragma multi_compile _ PS_INPUT_PMA
 			#include "../Base/Shader_Lib_SpriteStudio6.cginc"
 			#include "../Base/Shader_Data_SpriteStudio6.cginc"
 			#include "../Base/ShaderVertex_Sprite_SpriteStudio6.cginc"

@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: SkinnedMesh_UnityNative_MUL_NA
   m_Shader: {fileID: 4800000, guid: 919c2bfa16a0a644ca5004b4feb106f1, type: 3}
-  m_ShaderKeywords: PS_NOT_DISCARD PS_OUTPUT_PMA
+  m_ShaderKeywords: PS_INPUT_PMA PS_NOT_DISCARD PS_OUTPUT_PMA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -72,6 +72,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _InputPixelPMA: 1
     - _Metallic: 0
     - _Mode: 0
     - _NotDiscardPixel: 1
@@ -85,9 +86,15 @@ Material:
     - _ZWrite: 0
     m_Colors:
     - _BlendParam: {r: 0.01, g: 1, b: 1, a: 0}
+    - _CellPivot_LocalScale: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _LocalScale: {r: 0, g: 0, b: 1, a: 1}
     - _PartsColor: {r: 1, g: 1, b: 1, a: 0}
+    - _PartsColor_LD: {r: 1, g: 1, b: 1, a: 0}
+    - _PartsColor_LU: {r: 1, g: 1, b: 1, a: 0}
+    - _PartsColor_Opacity: {r: 1, g: 1, b: 1, a: 1}
+    - _PartsColor_RD: {r: 1, g: 1, b: 1, a: 0}
+    - _PartsColor_RU: {r: 1, g: 1, b: 1, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}

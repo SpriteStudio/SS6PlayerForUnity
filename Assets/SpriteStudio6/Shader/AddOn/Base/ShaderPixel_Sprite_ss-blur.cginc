@@ -41,6 +41,8 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	out_color += tex2D(_MainTex, float2(tc.x,				tc.y - defocused_y	));
 	out_color /= 9.0f;	/* Number of Sampling-point is 9 */
 
+	out_color = PixelSolveColorspaceInput(out_color);
+
 	/* Blending Vertex-Color & Check Discarding-Pixel */
 	out_color *= input.ColorMain;
 	PixelDiscardAlpha(out_color.a, 0.0f);
@@ -49,6 +51,7 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSolvePMA(out_color, out_color.a);
 
 	/* Finalize */
+	out_color = PixelSolveColorspaceOutput(out_color);
 	output = out_color;
 	return(output);
 }

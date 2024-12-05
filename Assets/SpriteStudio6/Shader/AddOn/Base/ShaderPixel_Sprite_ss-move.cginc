@@ -46,13 +46,15 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	Coord -= Vel;
 	Pixel = tex2D(_MainTex, Coord);
 	PixelSynthesizeExternalAlpha(Pixel.a, _AlphaTex, Coord.xy, _EnableExternalAlpha);
-	PixelSolvePMA(Pixel, Pixel.a);
+	Pixel = PixelSolveColorspaceInput(Pixel);
+//	PixelSolvePMA(Pixel, Pixel.a);
 
 	float4 PixelShift;
 	for(int i=1; i<iCount; i++)	{
 		Coord -= Vel;
 		PixelShift = tex2D(_MainTex, Coord);
 		PixelSynthesizeExternalAlpha(PixelShift.a, _AlphaTex, Coord.xy, _EnableExternalAlpha);
+		PixelShift = PixelSolveColorspaceInput(PixelShift);
 		PixelSolvePMA(PixelShift, PixelShift.a);
 
 		Pixel = lerp(PixelShift, Pixel, 0.96f * abs(fPower));
@@ -69,7 +71,11 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSynthesizePartsColor(Pixel, input);
 	Pixel.a = pixelA;
 
+	/* PreMultiplied-Alpha Solving */
+	PixelSolvePMA(Pixel, Pixel.a);
+
 	/* Finalize */
+	Pixel = PixelSolveColorspaceOutput(Pixel);
 	output = Pixel;
 	return(output);
 }

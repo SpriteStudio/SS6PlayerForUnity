@@ -43,7 +43,8 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 
 	Pixel = tex2D(_MainTex, Coord.xy);
 	PixelSynthesizeExternalAlpha(Pixel.a, _AlphaTex, coord.xy, _EnableExternalAlpha);
-	PixelSolvePMA(Pixel, Pixel.a);
+	Pixel = PixelSolveColorspaceInput(Pixel);
+//	PixelSolvePMA(Pixel, Pixel.a);
 
 	/* Change to noise */
 	float2 t = u + float2(fPhase, fPhase);
@@ -67,7 +68,11 @@ fixed4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSynthesizePartsColor(Pixel, input);
 	Pixel.a = pixelA;
 
+	/* PreMultiplied-Alpha Solving */
+	PixelSolvePMA(Pixel, Pixel.a);
+
 	/* Finalize */
+	Pixel = PixelSolveColorspaceOutput(Pixel);
 	output = Pixel;
 	return(output);
 }
