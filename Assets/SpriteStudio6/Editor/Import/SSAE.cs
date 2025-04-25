@@ -2750,6 +2750,8 @@ public static partial class LibraryEditor_SpriteStudio6
 												Information informationSSAE
 											)
 					{
+						const string messageLogPrefix = "Data Solving(Animation)";
+
 						int countParts = TableParts.Length;
 						Parts animationParts = null;
 						Parts animationPartsSetup = null;
@@ -2853,6 +2855,45 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 
 							/* Adjust Top-Frame Key-Data */
+							animationParts.FlagCancelAnimationSkeletal = false;
+							switch(parts.Data.Feature)
+							{
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+									break;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+									/* MEMO: (In rare cases,) Invalid "Reference Cell" are possible to set to "Mesh" parts */
+									/*         in "SpriteStudio 6", so aboidance behavior is mimicked.                     */
+									if(0 < animationParts.Cell.CountGetKey())
+									{
+										animationParts.FlagCancelAnimationSkeletal = true;
+									}
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+									break;
+
+								default:
+									break;
+							}
 							animationParts.Cell.KeyDataAdjustTopFrame((null == animationPartsSetup) ? null : animationPartsSetup.Cell);
 
 							/* MEMO: In the case of "bone" parts, when no key at frame 0,  necessary to set bone's information to attributes. */
@@ -3227,12 +3268,41 @@ public static partial class LibraryEditor_SpriteStudio6
 											{
 												countVertexCell = informationSSPJ.TableInformationSSCE[indexCellMap].TableCell[indexCell].Data.Mesh.TableCoordinate.Length;
 												int countMesh = informationSSPJ.TableInformationSSCE[indexCellMap].TableCell[indexCell].Data.Mesh.CountMesh;
+												if(null != animationPartsSetup)
+												{
+													int indexCellMapSetup = animationPartsSetup.Cell.ListKey[0].Value.IndexCellMap;
+													int indexCellSetup = animationPartsSetup.Cell.ListKey[0].Value.IndexCell;
+													int countMeshSetup = informationSSPJ.TableInformationSSCE[indexCellMapSetup].TableCell[indexCellSetup].Data.Mesh.CountMesh;
+
+													if((indexCellMap != indexCellMapSetup) || (indexCell != indexCellSetup))
+													{
+														LogWarning(messageLogPrefix, "Different cell (from \"Setup\" animation) used in \"Mesh\" part. Parts[" + informationSSAE.TableParts[i].Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+													}
+
+													indexCellMap = indexCellMapSetup;
+													indexCell = indexCellSetup;
+													if(countMesh < countMeshSetup)
+													{
+														countMesh = countMeshSetup;
+													}
+												}
+
+												parts.IndexCellMapMeshBind = indexCellMap;
+												parts.IndexCellMeshBind = indexCell;
 												if(parts.Data.CountMesh < countMesh)
 												{
-													parts.IndexCellMapMeshBind = indexCellMap;
-													parts.IndexCellMeshBind = indexCell;
-
 													parts.Data.CountMesh = countMesh;
+												}
+											}
+
+											int countKeyCell = animationParts.Cell.CountGetKey();
+											if(1 < countKeyCell)
+											{
+												LogWarning(messageLogPrefix, "Ineffective key-data (Attribute \"Reference Cell\") are set. Datas truncated. Parts[" + informationSSAE.TableParts[i].Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+
+												for(int j=(countKeyCell - 1); j>=1; j--)
+												{
+													animationParts.Cell.ListKey.RemoveAt(j);
 												}
 											}
 										}
@@ -3455,6 +3525,42 @@ public static partial class LibraryEditor_SpriteStudio6
 							if(true == parts.FlagVerbose)
 							{
 								flagInUse = false;
+							}
+
+							/* Patching of ivalid "Reference Cell" */
+							/* MEMO: SpriteStudio6's Error avoidance behavior is that skeletal-animation */
+							/*         is unworked when "Mesh" part has "Reference-cell" datas.          */
+							animationParts.StatusParts &= ~Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ANIMATION_SKELETAL;
+							switch(parts.Data.Feature)
+							{
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+									break;
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+									if(true == animationParts.FlagCancelAnimationSkeletal)
+									{
+										animationParts.StatusParts |= Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_ANIMATION_SKELETAL;
+									}
+									break;
+
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+									break;
 							}
 
 							if(false == flagInUse)
@@ -3974,6 +4080,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						public bool[] TableHide;	/* Expand "Hide"attribute in order to drawing state optimize. */
 						public int[] TableOrderDraw;
 						public int[] TableOrderPreDraw;
+						public bool FlagCancelAnimationSkeletal;	/* only "Mesh" part */
 						#endregion Variables & Properties
 
 						/* ----------------------------------------------- Functions */
@@ -4078,6 +4185,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							TableHide = null;
 							TableOrderDraw = null;
 							TableOrderPreDraw = null;
+							FlagCancelAnimationSkeletal = false;
 						}
 
 						public bool BootUp()
@@ -4139,6 +4247,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							TableHide = null;
 							TableOrderDraw = null;
 							TableOrderPreDraw = null;
+							FlagCancelAnimationSkeletal = false;
 
 							return(true);
 						}
@@ -4202,6 +4311,7 @@ public static partial class LibraryEditor_SpriteStudio6
 							TableHide = null;
 							TableOrderDraw = null;
 							TableOrderPreDraw = null;
+							FlagCancelAnimationSkeletal = false;
 						}
 						#endregion Functions
 					}

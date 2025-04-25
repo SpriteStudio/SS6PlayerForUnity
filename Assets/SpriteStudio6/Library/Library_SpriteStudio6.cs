@@ -18,7 +18,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.2.6";
+	public const string SignatureVersionAsset = "2.2.7";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -435,6 +435,7 @@ public static partial class Library_SpriteStudio6
 					HIDE_FULL = 0x10000000,
 
 					NOT_MASKING = 0x08000000,
+					NO_ANIMATION_SKELETAL = 0x04000000,
 					/* 0x01000000, */	/* Reserved */
 
 					NO_POSITION = 0x00800000,

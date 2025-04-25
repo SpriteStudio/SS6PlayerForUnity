@@ -2788,8 +2788,8 @@ public static partial class Library_SpriteStudio6
 						/* MEMO: On SpriteStudio6.0, Cell's vertices count and MeshBind's vertices count may be different. */
 						/*       (Truncate surplus information)                                                            */
 						int countVertex = instanceRoot.DataAnimation.TableParts[idParts].Mesh.CountVertex;
-						int countTableBind = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableVertex.Length;
-						int countTableUV = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableRateUV.Length;
+						int countTableBind = (null == instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableVertex) ? 0 : instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableVertex.Length;
+						int countTableUV = (null == instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableRateUV) ? 0 : instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableRateUV.Length;
 						int countVertexDeform = instanceRoot.DataAnimation.TableParts[idParts].Mesh.CountVertexDeform;
 #if DEFORM_CALCULATE_STRICT
 						bool flagUseSkeletalAnimation = ((0 < countTableBind) && (0 < instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length));	/* ? true : false */
@@ -3852,74 +3852,109 @@ public static partial class Library_SpriteStudio6
 							goto DrawMesh_ErrorEnd;
 						}
 
+						Vector2[] tableVertexCell = cellMap.TableCell[indexCell].Mesh.TableCoordinate;
+						int countVertex = CountVertex;
+						int countVertexCell = tableVertexCell.Length;
+						if(countVertex > countVertexCell)
+						{
+							countVertex = countVertexCell;
+						}
+
 						/* MEMO: Mapping-control attributes can not be set for "Mesh" parts, so UV recalculation occurs only when "Cell" is changed or initialized. */
+						bool flagMeshInvalid = (0 != (dataAnimationParts.StatusParts & Data.Animation.Parts.FlagBitStatus.NO_ANIMATION_SKELETAL));	/* ? true : false */
 						if(0 != (Status & FlagBitStatus.UPDATE_UVTEXTURE))
 						{
 							Vector4 uvTexture = Vector4.zero;
 							Vector4 uvMinMax = Vector4.zero;
 							Vector4 uvAverage = Vector4.zero;
 
+							if(true == flagMeshInvalid)
+							{
+								IndexVertexDraw = cellMap.TableCell[indexCell].Mesh.TableIndexVertex;
+							}
+							else
+							{
+								IndexVertexDraw = instanceRoot.DataAnimation.TableParts[idParts].Mesh.TableIndexVertex;
+							}
+
 							/* Calculate UV */
 							if(null != UVTextureDraw)
 							{
 								/* MEMO: Calculate UV when change Cell. (Mesh-Bind is not changed.) */
 								/* MEMO: Each UV-coordinate is as ratio when original Mesh-Cell's size is 1. */
-								Vector2[] tableUVRate = instanceParts.Mesh.TableRateUV;
 								float sizeTextureX = SizeTexture.x;
 								float sizeTextureY = SizeTexture.y;
 								float sizeInverseTextureX = 1.0f / sizeTextureX;
 								float sizeInverseTextureY = 1.0f / sizeTextureY;
 								float positionCellX = PositionCell.x;
 								float positionCellY = PositionCell.y;
-								float sizeCellX = SizeCell.x;
-								float sizeCellY = SizeCell.y;
-								float rateUVX;
-								float rateUVY;
-								countTableUV = tableUVRate.Length;
-								bool flagSetUVMinMax = false;
-								for(int i=0; i<countTableUV; i++)
+								Vector2[] tableUVRate = instanceParts.Mesh.TableRateUV;
+
+								if(true == flagMeshInvalid)
 								{
-									/* MEMO: Round to integer since original coordinate is pixel-alignment. */
-									rateUVX = tableUVRate[i].x;
-									rateUVY = tableUVRate[i].y;
-
-									rateUVX *= sizeCellX;
-									rateUVX = Mathf.Floor(rateUVX);
-									rateUVX += positionCellX;
-									uvTexture.x = rateUVX * sizeInverseTextureX;
-
-									rateUVY *= sizeCellY;
-									rateUVY = Mathf.Floor(rateUVY);
-									rateUVY += positionCellY;
-									rateUVY = sizeTextureY - rateUVY;
-									uvTexture.y = rateUVY * sizeInverseTextureY;
-
-									UVTextureDraw[i].x = uvTexture.x;
-									UVTextureDraw[i].y = uvTexture.y;
-
-									if(false == flagSetUVMinMax)
+									tableUVRate = cellMap.TableCell[indexCell].Mesh.TableCoordinate;
+									Rect rectangleCell = cellMap.TableCell[indexCell].Rectangle;
+									Vector2 coordinate;
+//									for(int i=0; i<countVertexCell; i++)
+									for(int i=0; i<countVertex; i++)
 									{
-										uvMinMax.x = uvMinMax.z = uvTexture.x;
-										uvMinMax.y = uvMinMax.w = uvTexture.y;
-										flagSetUVMinMax = true;
+										coordinate = tableUVRate[i];
+										UVTextureDraw[i].x = (coordinate.x + positionCellX) * sizeInverseTextureX;
+										UVTextureDraw[i].y = 1.0f - ((coordinate.y + positionCellY) * sizeInverseTextureY);
 									}
-									else
+								}
+								else
+								{
+									float sizeCellX = SizeCell.x;
+									float sizeCellY = SizeCell.y;
+									float rateUVX;
+									float rateUVY;
+									countTableUV = tableUVRate.Length;
+									bool flagSetUVMinMax = false;
+									for(int i=0; i<countTableUV; i++)
 									{
-										uvMinMax.x = Mathf.Min(uvMinMax.x, uvTexture.x);
-										uvMinMax.y = Mathf.Min(uvMinMax.y, uvTexture.y);
-										uvMinMax.z = Mathf.Max(uvMinMax.z, uvTexture.x);
-										uvMinMax.w = Mathf.Max(uvMinMax.w, uvTexture.y);
+										/* MEMO: Round to integer since original coordinate is pixel-alignment. */
+										rateUVX = tableUVRate[i].x;
+										rateUVY = tableUVRate[i].y;
+
+										rateUVX *= sizeCellX;
+										rateUVX = Mathf.Floor(rateUVX);
+										rateUVX += positionCellX;
+										uvTexture.x = rateUVX * sizeInverseTextureX;
+
+										rateUVY *= sizeCellY;
+										rateUVY = Mathf.Floor(rateUVY);
+										rateUVY += positionCellY;
+										rateUVY = sizeTextureY - rateUVY;
+										uvTexture.y = rateUVY * sizeInverseTextureY;
+
+										UVTextureDraw[i].x = uvTexture.x;
+										UVTextureDraw[i].y = uvTexture.y;
+
+										if(false == flagSetUVMinMax)
+										{
+											uvMinMax.x = uvMinMax.z = uvTexture.x;
+											uvMinMax.y = uvMinMax.w = uvTexture.y;
+											flagSetUVMinMax = true;
+										}
+										else
+										{
+											uvMinMax.x = Mathf.Min(uvMinMax.x, uvTexture.x);
+											uvMinMax.y = Mathf.Min(uvMinMax.y, uvTexture.y);
+											uvMinMax.z = Mathf.Max(uvMinMax.z, uvTexture.x);
+											uvMinMax.w = Mathf.Max(uvMinMax.w, uvTexture.y);
+										}
+										uvAverage += uvTexture;
 									}
-									uvAverage += uvTexture;
-								}
-								if(0 < countTableUV)
-								{
-									uvAverage /= (float)countTableUV;
-								}
-								for(int i=0; i<countTableUV; i++)
-								{
-									UVMaxMinDraw[i] = uvMinMax;
-									UVAverageDraw[i] = uvAverage;
+									if(0 < countTableUV)
+									{
+										uvAverage /= (float)countTableUV;
+									}
+									for(int i=0; i<countTableUV; i++)
+									{
+										UVMaxMinDraw[i] = uvMinMax;
+										UVAverageDraw[i] = uvAverage;
+									}
 								}
 							}
 
@@ -3927,15 +3962,18 @@ public static partial class Library_SpriteStudio6
 							if(null != CoordinateDraw)
 							{	/* not Skeletal-Animation */
 								Vector2 pivot = cellMap.TableCell[indexCell].Pivot;
-								Vector2[] tableVertexCell = cellMap.TableCell[indexCell].Mesh.TableCoordinate;
-								for(int i=0; i<CountVertex; i++)
+								for(int i=0; i<countVertex; i++)
 								{
 									CoordinateDraw[i] = tableVertexCell[i] - pivot;
 									CoordinateDraw[i].y *= -1.0f;
 								}
+//								for(int i=countVertex; i<CountVertex; i++)
+//								{
+//									CoordinateDraw[i] = Vector2.zero;
+//								}
 								if(null != DeformDraw)
 								{	/* Use Deform */
-									for(int i=0; i<CountVertex; i++)
+									for(int i=0; i<countVertex; i++)
 									{
 										DeformDraw[i] = CoordinateDraw[i];
 									}
@@ -3995,22 +4033,23 @@ public static partial class Library_SpriteStudio6
 						int countBoneList = instanceRoot.DataAnimation.CatalogParts.TableIDPartsBone.Length;
 						if(	(0 >= countTableBindMesh)
 							|| (0 >= countBoneList)
+							|| (true == flagMeshInvalid)
 						)
 						{	/* not Skeletal-Animation / Skeletal-Animation, but has no bones */
 							if(true == Deform.Value.IsValid)
 							{	/* Use Deform */
 								/* Transform including "Deform" */
 								/* MEMO: In this case, "DeformDraw" is coordinate after posting "Deform". */
-								if(0 != (Status & FlagBitStatus.UPDATE_DEFORM))
+								if((0 != (Status & FlagBitStatus.UPDATE_DEFORM)) && (countVertex == Deform.Value.TableCoordinate.Length))
 								{
 									Vector2[] tableVertexDeform = Deform.Value.TableCoordinate;
-									for(int i=0; i<CountVertex; i++)
+									for(int i=0; i<countVertex; i++)
 									{
 										DeformDraw[i] = CoordinateDraw[i] + (Vector3)tableVertexDeform[i];
 									}
 								}
 
-								for(int i=0; i<CountVertex; i++)
+								for(int i=0; i<countVertex; i++)
 								{
 									CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(DeformDraw[i]);	/* .z = 0 */
 								}
@@ -4019,7 +4058,7 @@ public static partial class Library_SpriteStudio6
 							{	/* not use Deform */
 								/* Transform ignoring "Deform" */
 								/* MEMO: In this case, "DeformDraw" is not used. (Transform "CoordinateDraw" directly.) */
-								for(int i=0; i<CountVertex; i++)
+								for(int i=0; i<countVertex; i++)
 								{
 									CoordinateTransformDraw[i] = matrixTransform.MultiplyPoint3x4(CoordinateDraw[i]);	/* .z = 0 */
 								}
