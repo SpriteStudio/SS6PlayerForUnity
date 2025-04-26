@@ -2591,6 +2591,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					public int IndexCellMapMeshBind;
 					public int IndexCellMeshBind;
+					public int CountVertexMaximum;	/* "Mesh" parts only */
 
 					public float LengthBone;
 					public float PositionXBone;
@@ -2643,6 +2644,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 						IndexCellMapMeshBind = -1;
 						IndexCellMeshBind = -1;
+						CountVertexMaximum = 0;
 
 						LengthBone = 0.0f;
 						PositionXBone = 0.0f;
@@ -3263,6 +3265,7 @@ public static partial class LibraryEditor_SpriteStudio6
 													int indexCellMapSetup = animationPartsSetup.Cell.ListKey[0].Value.IndexCellMap;
 													int indexCellSetup = animationPartsSetup.Cell.ListKey[0].Value.IndexCell;
 													int countMeshSetup = informationSSPJ.TableInformationSSCE[indexCellMapSetup].TableCell[indexCellSetup].Data.Mesh.CountMesh;
+													int countVertexSetup = informationSSPJ.TableInformationSSCE[indexCellMapSetup].TableCell[indexCellSetup].Data.Mesh.CountMesh;
 
 													if((indexCellMap != indexCellMapSetup) || (indexCell != indexCellSetup))
 													{
@@ -3275,6 +3278,10 @@ public static partial class LibraryEditor_SpriteStudio6
 													{
 														countMesh = countMeshSetup;
 													}
+													if(countVertexCell < countVertexSetup)
+													{
+														countVertexCell = countVertexSetup;
+													}
 												}
 
 												parts.IndexCellMapMeshBind = indexCellMap;
@@ -3282,6 +3289,9 @@ public static partial class LibraryEditor_SpriteStudio6
 												if(parts.Data.CountMesh < countMesh)
 												{
 													parts.Data.CountMesh = countMesh;
+												}
+												if(parts.CountVertexMaximum < countVertexCell)	{
+													parts.CountVertexMaximum = countVertexCell;
 												}
 											}
 
@@ -5503,7 +5513,9 @@ public static partial class LibraryEditor_SpriteStudio6
 												}
 											}
 										}
-										informationParts.Data.Mesh.CountVertex = countVertexMesh;
+										informationParts.Data.Mesh.CountVertex = (informationParts.CountVertexMaximum < countVertexMesh)
+																					? countVertexMesh
+																					: informationParts.CountVertexMaximum;
 
 										/* Set(Overwrite) Bone-Parts' ID */
 										if(0 >= countVertexMesh)
