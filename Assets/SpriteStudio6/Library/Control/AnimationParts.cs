@@ -944,7 +944,7 @@ public static partial class Library_SpriteStudio6
 					/* Get decoding top frame */
 					if(true == flagFirst)
 					{
-						framePrevious = frame;
+						framePrevious = frameStart;
 					}
 					else
 					{
@@ -1245,7 +1245,7 @@ public static partial class Library_SpriteStudio6
 					/* Get decoding top frame */
 					if(true == flagFirst)
 					{
-						framePrevious = frame;
+						framePrevious = frameStart;
 					}
 					else
 					{
