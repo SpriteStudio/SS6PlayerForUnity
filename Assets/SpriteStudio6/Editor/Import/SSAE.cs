@@ -2857,7 +2857,6 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 
 							/* Adjust Top-Frame Key-Data */
-							animationParts.FlagCancelAnimationSkeletal = false;
 							switch(parts.Data.Feature)
 							{
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
@@ -2881,12 +2880,6 @@ public static partial class LibraryEditor_SpriteStudio6
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
 									break;
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
-									/* MEMO: (In rare cases,) Invalid "Reference Cell" are possible to set to "Mesh" parts */
-									/*         in "SpriteStudio 6", so aboidance behavior is mimicked.                     */
-									if(0 < animationParts.Cell.CountGetKey())
-									{
-										animationParts.FlagCancelAnimationSkeletal = true;
-									}
 									break;
 
 								case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
@@ -3260,6 +3253,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 									/* MEMO: Since Mesh's cell is set in "Setup" animation, can not be changed for each animation. */
 									/*       But just in case, get mesh count each animation.                                      */
+									/* MEMO: (In rare cases,) Invalid "Reference Cell" are possible to set to "Mesh" parts */
+									/*       in "SpriteStudio 6", so aboidance behavior is mimicked.                       */
+									animationParts.FlagCancelAnimationSkeletal = false;
 									if(0 < animationParts.Cell.CountGetKey())
 									{
 										int indexCellMap = animationParts.Cell.ListKey[0].Value.IndexCellMap;
@@ -3280,6 +3276,7 @@ public static partial class LibraryEditor_SpriteStudio6
 													if((indexCellMap != indexCellMapSetup) || (indexCell != indexCellSetup))
 													{
 														LogWarning(messageLogPrefix, "Different cell (from \"Setup\" animation) used in \"Mesh\" part. Parts[" + informationSSAE.TableParts[i].Data.Name + "]", informationSSAE.FileNameGetFullPath(), informationSSPJ);
+														animationParts.FlagCancelAnimationSkeletal = true;
 													}
 
 													indexCellMap = indexCellMapSetup;
