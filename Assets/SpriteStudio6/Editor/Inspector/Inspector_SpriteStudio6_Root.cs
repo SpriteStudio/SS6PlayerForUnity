@@ -524,6 +524,10 @@ public class Inspector_SpriteStudio6_Root : Editor
 		return(FlagPlayAnimationPreview);
 	}
 
+#if false
+#else
+	private bool FlagChangeIcons = true;
+#endif
 	public override void OnPreviewSettings()
 	{
 		if(null == InstanceRootPreview)
@@ -536,10 +540,45 @@ public class Inspector_SpriteStudio6_Root : Editor
 		}
 
 		/* "Fold-out" Buttoons */
+#if false
 		FlagFoldOutInterfaces = UnityEngine.GUILayout.Toggle(	FlagFoldOutInterfaces,
 																(true == FlagFoldOutInterfaces) ? EditorGUIUtility.IconContent("ArrowNavigationLeft") : EditorGUIUtility.IconContent("ArrowNavigationRight"),
 																(UnityEngine.GUIStyle)"preButton"
 														);
+#else
+		/* MEMO: Avoid rendering stages other than "Layout" when icons are changing. */
+		if(true == FlagChangeIcons)
+		{
+			if(Event.current.type != EventType.Layout)
+			{
+				return;
+			}
+
+			FlagChangeIcons = false;
+		}
+
+		/* MEMO: (Some versions of Unity) may raise an exception when there is  branchs or dynamic elements in parameters of "GUILayout.XXX" (???)). */
+		/*       Would be safer to describe evaluating as definitive as possible.                                                                    */
+		bool flagFoldOutInterfaces = FlagFoldOutInterfaces;
+		GUIContent iconFoldOut;
+		if(true == flagFoldOutInterfaces)
+		{
+			iconFoldOut = EditorGUIUtility.IconContent("ArrowNavigationLeft");
+		}
+		else
+		{
+			iconFoldOut = EditorGUIUtility.IconContent("ArrowNavigationRight");
+		}
+		FlagFoldOutInterfaces = UnityEngine.GUILayout.Toggle(	flagFoldOutInterfaces,
+																iconFoldOut,
+																(UnityEngine.GUIStyle)"preButton"
+														);
+		if(FlagFoldOutInterfaces != flagFoldOutInterfaces)
+		{
+//			FlagChangeIcons |= true;
+			FlagChangeIcons = true;
+		}
+#endif
 		if(false == FlagFoldOutInterfaces)
 		{	/* Show Interfaces */
 			if(null != InstanceRootPreview)
@@ -547,10 +586,32 @@ public class Inspector_SpriteStudio6_Root : Editor
 				const int indexTrackAnimation = 0;	/* force */
 
 				/* "Play" Button */
+#if false
 				FlagPlayAnimationPreview = UnityEngine.GUILayout.Toggle(	FlagPlayAnimationPreview,
 																			(true == FlagPlayAnimationPreview) ? EditorGUIUtility.IconContent("preAudioPlayOn") : EditorGUIUtility.IconContent("preAudioPlayOff"),
 																			(UnityEngine.GUIStyle)"preButton"
 																	);
+#else
+				bool flagPlayAnimationPreview = FlagPlayAnimationPreview;
+				GUIContent iconPlay;
+				if(true == flagPlayAnimationPreview)
+				{
+					iconPlay = EditorGUIUtility.IconContent("preAudioPlayOn");
+				}
+				else
+				{
+					iconPlay = EditorGUIUtility.IconContent("preAudioPlayOff");
+				}
+				FlagPlayAnimationPreview = UnityEngine.GUILayout.Toggle(	flagPlayAnimationPreview,
+																			iconPlay,
+																			(UnityEngine.GUIStyle)"preButton"
+																	);
+				if(FlagFoldOutInterfaces != flagFoldOutInterfaces)
+				{
+//					FlagChangeIcons |= true;
+					FlagChangeIcons = true;
+				}
+#endif
 
 				/* "Animation" Select */
 				int indexAnimation = -1;
