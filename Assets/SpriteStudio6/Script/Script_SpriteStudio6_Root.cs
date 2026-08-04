@@ -219,6 +219,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 	public Library_SpriteStudio6.CallBack.FunctionPlayEnd FunctionPlayEnd = null;
 	public Library_SpriteStudio6.CallBack.FunctionUserData FunctionUserData = null;
 	public Library_SpriteStudio6.CallBack.FunctionSignal FunctionSignal = null;
+	public Library_SpriteStudio6.CallBack.FunctionSound FunctionSound = null;
 
 	public Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderEnter = null;
 	public Library_SpriteStudio6.CallBack.FunctionCallBackCollider FunctionColliderExit = null;
@@ -427,6 +428,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				LateUpdateMain(	timeElapsed,
 								false,
 								Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
+								false,
 								ref matrixInverseMeshRenderer,
 								true,
 								FlagPlanarization
@@ -448,9 +450,12 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		}
 #endif
 	}
+	/* MEMO: (Ver.2.3.0-) "flagDrawInsideMask" is the masking-polarity propagated from the "Instance"-part that calls */
+	/*       this animation. It is OR-ed with each part's own "visibleInsideMask" setting.                            */
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
 									Library_SpriteStudio6.KindMasking masking,
+									bool flagDrawInsideMask,
 									ref Matrix4x4 matrixCorrection,
 									bool flagInitializeMatrixCorrection,
 									bool flagPlanarization
@@ -556,6 +561,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 		/*       Hidden "Normal" parts are not processed.(Not included in the Draw-Order-Chain)                                */
 		/* MEMO: Before 1.0.x, draw-order are baked. */
 		int idPartsDrawNext;
+		flagAnimationSynthesize = true;
 		if(true == flagAnimationSynthesize)
 		{
 			int countChainDraw;
@@ -575,11 +581,16 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				countChainDraw = ListPartsPreDraw.Count;
 				for(int i=0; i<countChainDraw; i++)
 				{
+#if false
 					idPartsDrawNext = ListPartsPreDraw[i] & Library_SpriteStudio6.Control.Animation.MaskSortKeyIDParts;
+#else
+					idPartsDrawNext = (-ListPartsPreDraw[i]) & Library_SpriteStudio6.Control.Animation.MaskSortKeyIDParts;
+#endif
 					TableControlParts[idPartsDrawNext].PreDraw(	this,
 																idPartsDrawNext,
 																flagHide,
 																masking,
+																flagDrawInsideMask,
 																ref matrixCorrection,
 																flagPlanarization
 															);
@@ -590,16 +601,30 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			countChainDraw = ListPartsDraw.Count;
 			for(int i=0; i<countChainDraw; i++)
 			{
+#if false
 				idPartsDrawNext = ListPartsDraw[i] & Library_SpriteStudio6.Control.Animation.MaskSortKeyIDParts;
+#else
+				bool flagMaskPost = false;
+				idPartsDrawNext = ListPartsDraw[i];
+				if(Library_SpriteStudio6.Control.Animation.BoundaryOverPriority < idPartsDrawNext)
+				{
+//					idPartsDrawNext -= Library_SpriteStudio6.Control.Animation.CenterOverPriority;
+					flagMaskPost = true;
+				}
+				idPartsDrawNext &= Library_SpriteStudio6.Control.Animation.MaskSortKeyIDParts;
+#endif
 				TableControlParts[idPartsDrawNext].Draw(	this,
 															idPartsDrawNext,
 															flagHide,
 															masking,
+															flagDrawInsideMask,
 															ref matrixCorrection,
-															flagPlanarization
+															flagPlanarization,
+															flagMaskPost
 													);
 			}
 		}
+#if false
 		else
 		{
 			if(null == InstanceRootParent)
@@ -616,6 +641,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 																idPartsDrawNext,
 																flagHide,
 																masking,
+																flagDrawInsideMask,
 																ref matrixCorrection,
 																flagPlanarization
 															);
@@ -631,12 +657,15 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 															idPartsDrawNext,
 															flagHide,
 															masking,
+															flagDrawInsideMask,
 															ref matrixCorrection,
 															flagPlanarization
 													);
 				idPartsDrawNext = TableControlParts[idPartsDrawNext].IDPartsNextDraw;
 			}
 		}
+#else
+#endif
 
 		/* Mesh Combine & Set to Renderer */
 		if((null == InstanceRootParent) && (null != MeshCombined))
@@ -734,6 +763,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.TRANSITION_START
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA
 												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL
+												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_SOUND
 											);
 			if(true == flagDecodeNextForce)
 			{
@@ -1018,7 +1048,7 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				CountParts = 1;
 			}
 			ListPartsDraw = new List<int>(CountParts);
-			if(null == ListPartsPreDraw)
+			if(null == ListPartsDraw)
 			{
 				goto ChainDrawBootUp_ErrorEnd;
 			}
@@ -1122,6 +1152,12 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+					break;
 			}
 		}
 		return(true);
@@ -1179,11 +1215,25 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
-					countMesh += DataAnimation.TableParts[i].CountMesh;
+					if(true == DataAnimation.TableParts[i].StatusIsMaskClipping)
+					{
+						/* MEMO: Draw three-times when "Clipping-Mask". (Draw + Pre-Mask + Post-Mask) */
+						countMesh += (DataAnimation.TableParts[i].CountMesh * 3);
+					}
+					else
+					{
+						countMesh += DataAnimation.TableParts[i].CountMesh;
+					}
 					break;
 
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
 					break;
 			}
 		}
@@ -1359,12 +1409,12 @@ public partial class Script_SpriteStudio6_Root : Library_SpriteStudio6.Script.Ro
 			FlagSetInitial = false;
 			FlagStopInitial = false;
 
-			NameAnimation = "";
+			NameAnimation = string.Empty;
 			IndexAnimation = -1;
 			FlagPingPong = false;
-			LabelStart = "";
+			LabelStart = string.Empty;
 			FrameOffsetStart = 0;
-			LabelEnd = "";
+			LabelEnd = string.Empty;
 			FrameOffsetEnd = 0;
 			Frame = 0;
 			TimesPlay = 0;

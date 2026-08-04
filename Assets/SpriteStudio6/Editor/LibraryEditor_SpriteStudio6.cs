@@ -33,9 +33,9 @@ public static partial class LibraryEditor_SpriteStudio6
 			int countProgressMax = 0;
 
 			/* Select Project(SSPJ) */
-			string nameDirectory = "";
-			string nameFileBody = "";
-			string nameFileExtension = "";
+			string nameDirectory = string.Empty;
+			string nameFileBody = string.Empty;
+			string nameFileExtension = string.Empty;
 			nameInputFullPathSSPJ = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameInputFullPathSSPJ);
 			LibraryEditor_SpriteStudio6.Utility.Log.Message("Importing Start [" + nameInputFullPathSSPJ + "]", true, false);	/* External-File only, no indent */
 
@@ -67,12 +67,14 @@ public static partial class LibraryEditor_SpriteStudio6
 			int countSSAE = informationSSPJ.TableNameSSAE.Length;
 			int countSSEE = informationSSPJ.TableNameSSEE.Length;
 			int countSSQE = informationSSPJ.TableNameSSQE.Length;
+			int countSSSE = informationSSPJ.TableNameSSSE.Length;
 			int countSSPJ = 1;	/* Force */
 			int countTexture = countSSCE;
 			countProgressMax += (	countSSCE
 									+ countSSAE
 									+ countSSEE
 									+ countSSQE
+									+ countSSSE
 //									+ countSSPJ
 									+ 1				/* Create Texture-Information */
 								);	/* Parse */
@@ -84,12 +86,14 @@ public static partial class LibraryEditor_SpriteStudio6
 												+ countSSAE
 												+ countSSEE
 												+ countSSQE
+												+ countSSSE
 												+ countSSPJ
 											);	/* Convert */
 						countProgressMax += (	countTexture
 												+ countSSAE
 												+ countSSEE
 												+ countSSQE
+												+ countSSSE
 												+ countSSPJ
 											);	/* Create-Asset (Data) */
 						countProgressMax += (countSSAE + countSSEE);	/* Create-Asset (Prefab) */
@@ -130,6 +134,21 @@ public static partial class LibraryEditor_SpriteStudio6
 				case Setting.KindMode.BATCH_IMPORTER:
 				default:
 					return(false);
+			}
+
+			/* Read SoundList (SSSE) */
+			/* MEMO: Referenced by SSAE, so should be decoded before SSAE. */
+			for(int i=0; i<countSSSE; i++)
+			{
+				ProgressBarUpdate(	"Reading SSSEs (" + (i + 1).ToString() + "/" + countSSSE.ToString() + ")",
+									flagDisplayProgressBar, ref countProgressNow, countProgressMax
+								);
+
+				informationSSPJ.TableInformationSSSE[i] = SSSE.Parse(ref setting, informationSSPJ.TableNameSSSE[i], informationSSPJ);
+				if(null == informationSSPJ.TableInformationSSSE[i])
+				{
+					goto Exec_ErrorEnd;
+				}
 			}
 
 			/* Read CellMap(SSCE) & Collect Texture-FileNames */
@@ -274,7 +293,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			}
 
 			countProgressNow = -1;
-			ProgressBarUpdate("", flagDisplayProgressBar, ref countProgressNow, -1);
+			ProgressBarUpdate(string.Empty, flagDisplayProgressBar, ref countProgressNow, -1);
 
 			LibraryEditor_SpriteStudio6.Utility.Log.Message("Success", true, false);	/* External-File only */
 
@@ -284,7 +303,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			return(true);
 
 		Exec_ErrorEnd:;
-			ProgressBarUpdate("", flagDisplayProgressBar, ref countProgressNow, -1);
+			ProgressBarUpdate(string.Empty, flagDisplayProgressBar, ref countProgressNow, -1);
 			if(null != informationSSPJ)
 			{
 				informationSSPJ.CleanUp();
@@ -306,9 +325,9 @@ public static partial class LibraryEditor_SpriteStudio6
 										)
 		{
 			const string messageLogPrefix = "Convert-Main (SS6PU)";
-			string nameOutputAssetFolder = "";
-			string nameOutputAssetBody = "";
-			string nameOutputAssetExtention = "";
+			string nameOutputAssetFolder = string.Empty;
+			string nameOutputAssetBody = string.Empty;
+			string nameOutputAssetExtention = string.Empty;
 			bool flagCreateAssetData = true;
 
 			/* Decide Asset Names & Check Assets existing */
@@ -323,6 +342,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			int countSSAE = informationSSPJ.TableInformationSSAE.Length;
 			int countSSEE = informationSSPJ.TableInformationSSEE.Length;
 			int countSSQE = informationSSPJ.TableInformationSSQE.Length;
+			int countSSSE = informationSSPJ.TableInformationSSSE.Length;
 			int countSSPJ = 1;	/* Force */
 			bool flagOverwriteDataProject = false;
 
@@ -379,6 +399,65 @@ public static partial class LibraryEditor_SpriteStudio6
 					}
 
 					flagOverwriteDataProject = true;
+				}
+			}
+
+			/* Create Asset: SoundList */
+			/* MEMO: Create SoundList-Assets before Animation. */
+			if(0 < countSSSE)
+			{
+				SSSE.Information informationSSSE = null;
+				for(int i=0; i<countSSSE; i++)
+				{
+					/* MEMO: Be sure to "Convert" even when not create SoundList data-assets. Datas may be used at converting SSAE. */
+					informationSSSE = informationSSPJ.TableInformationSSSE[i];
+
+					/* Convert */
+					ProgressBarUpdate(	"Convert SSSEs (" + (i + 1).ToString() + "/" + countSSSE.ToString() + ")",
+										flagDisplayProgressBar, ref countProgressNow, countProgressMax
+									);
+					if(false == SSSE.ModeSS6PU.ConvertSound(ref setting, informationSSPJ, informationSSSE))
+					{
+						goto ExecSS6PU_ErrorEnd;
+					}
+				}
+
+				/* Create-Asset */
+				ProgressBarUpdate(	"Create Asset \"Data-SoundList\"",
+									flagDisplayProgressBar, ref countProgressNow, countProgressMax
+								);
+
+				flagCreateAssetData = true;
+				if(null == informationSSPJ.DataSoundListSS6PU.TableData[0])
+				{	/* New */
+					/* Create Output Asset-Folder */
+					LibraryEditor_SpriteStudio6.Utility.File.PathSplit(	out nameOutputAssetFolder, out nameOutputAssetBody, out nameOutputAssetExtention,
+																		informationSSPJ.DataSoundListSS6PU.TableName[0]
+																	);
+					if(true == string.IsNullOrEmpty(LibraryEditor_SpriteStudio6.Utility.File.AssetFolderCreate(nameOutputAssetFolder)))
+					{
+						LogError(messageLogPrefix, "Asset-Folder \"" + nameOutputAssetFolder + "\" could not be created at [" + informationSSPJ.FileNameGetFullPath() + "]");
+						goto ExecSS6PU_ErrorEnd;
+					}
+				}
+				else
+				{	/* Exist */
+					if(false == LibraryEditor_SpriteStudio6.Utility.File.PermissionGetConfirmDialogueOverwrite(	ref setting.ConfirmOverWrite.FlagDataSoundList,
+																												informationSSPJ.DataSoundListSS6PU.TableName[0],
+																												"Data SoundList"
+																											)
+						)
+					{	/* Not overwrite */
+						flagCreateAssetData = false;
+						informationSSPJ.DataSoundListSS6PU.FlagUpdate[0] = false;
+					}
+				}
+				if(true == flagCreateAssetData)
+				{
+					if(false == SSPJ.ModeSS6PU.AssetCreateSoundList(ref setting, informationSSPJ))
+					{
+						goto ExecSS6PU_ErrorEnd;
+					}
 				}
 			}
 
@@ -772,10 +851,13 @@ public static partial class LibraryEditor_SpriteStudio6
 											)
 		{
 			const string messageLogPrefix = "Convert-Main (UnityNative)";
-			string nameOutputAssetFolder = "";
-			string nameOutputAssetBody = "";
-			string nameOutputAssetExtention = "";
+			string nameOutputAssetFolder = string.Empty;
+			string nameOutputAssetBody = string.Empty;
+			string nameOutputAssetExtention = string.Empty;
 			bool flagCreateAssetData = true;
+
+			/* Warn "Obsolete" */
+			LibraryEditor_SpriteStudio6.Utility.Log.Warning("\"Convert To Unity-Native\" mode is deprecated. If you require equivalent functionality, please consider adopt \"SpriteStudio Importer for Unity\".");
 
 			/* Decide Asset Names & Check Assets existing */
 			if(false == SSPJ.ModeUnityNative.AssetNameDecide(ref setting, informationSSPJ, nameOutputAssetFolderBase))
@@ -1006,9 +1088,9 @@ public static partial class LibraryEditor_SpriteStudio6
 											)
 		{
 			const string messageLogPrefix = "Convert-Main (UnityUI)";
-			string nameOutputAssetFolder = "";
-			string nameOutputAssetBody = "";
-			string nameOutputAssetExtention = "";
+			string nameOutputAssetFolder = string.Empty;
+			string nameOutputAssetBody = string.Empty;
+			string nameOutputAssetExtention = string.Empty;
 			bool flagCreateAssetData = true;
 
 			/* Decide Asset Names & Check Assets existing */
@@ -1181,9 +1263,9 @@ public static partial class LibraryEditor_SpriteStudio6
 														string messageLogPrefix
 											)
 		{
-			string nameOutputAssetFolder = "";
-			string nameOutputAssetBody = "";
-			string nameOutputAssetExtention = "";
+			string nameOutputAssetFolder = string.Empty;
+			string nameOutputAssetBody = string.Empty;
+			string nameOutputAssetExtention = string.Empty;
 			bool flagCreateAssetData = true;
 
 			/* Create-Asset */
@@ -1255,6 +1337,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			SSAE,
 			SSEE,
 			SSQE,
+			SSSE,
 		}
 
 		public const string NameExtentionMesh = ".asset";
@@ -1333,6 +1416,16 @@ public static partial class LibraryEditor_SpriteStudio6
 			/* Part: SpriteStudio6/Editor/Import/SSEE.cs */
 		}
 
+		public static partial class SSQE
+		{
+			/* Part: SpriteStudio6/Editor/Import/SSQE.cs */
+		}
+
+		public static partial class SSSE
+		{
+			/* Part: SpriteStudio6/Editor/Import/SSSE.cs */
+		}
+
 		public static partial class Batch
 		{
 			/* Part: SpriteStudio6/Editor/Import/Batch.cs */
@@ -1358,9 +1451,9 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				if(true == string.IsNullOrEmpty(namePath))
 				{
-					nameDirectory = "";
-					nameFileBody = "";
-					nameFileExtention = "";
+					nameDirectory = string.Empty;
+					nameFileBody = string.Empty;
+					nameFileExtention = string.Empty;
 					return(false);
 				}
 
@@ -1427,16 +1520,16 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				if(true == string.IsNullOrEmpty(nameDirectoryPrevious))
 				{
-					nameDirectoryPrevious = "";
+					nameDirectoryPrevious = string.Empty;
 				}
 
 				/* Choose file */
 				string fileNameFullPath = EditorUtility.OpenFilePanel(textTitleDialog, nameDirectoryPrevious, filterExtension);
 				if(0 == fileNameFullPath.Length)
 				{	/* Cancelled */
-					nameDirectory = "";
-					nameFileBody = "";
-					nameFileExtension = "";
+					nameDirectory = string.Empty;
+					nameFileBody = string.Empty;
+					nameFileExtension = string.Empty;
 
 					return(false);
 				}
@@ -1457,9 +1550,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				string fileNameFullPath = EditorUtility.SaveFilePanel(textTitleDialog, nameDirectoryPrevious, nameFilePrevious, nameExtension);
 				if(0 == fileNameFullPath.Length)
 				{	/* Cancelled */
-					nameDirectory = "";
-					nameFileBody = "";
-					nameFileExtension = "";
+					nameDirectory = string.Empty;
+					nameFileBody = string.Empty;
+					nameFileExtension = string.Empty;
 
 					return(false);
 				}
@@ -1510,7 +1603,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* MEMO: When use "AssetDataBase.CreateFolder" to create folders recursively, processing may be delayed. */
 				/* Create Folder Recursive */
 				string namePathParent = "Assets";
-				string namePathChild = "";
+				string namePathChild = string.Empty;
 				string[] namePathSplit = namePath.Split(TextSplitFolder);
 				int count = namePathSplit.Length;
 				if(0 >= count)
@@ -1772,15 +1865,15 @@ public static partial class LibraryEditor_SpriteStudio6
 														bool flagRuleOld = false
 													)
 			{
-				string rv = "";
+				string rv = string.Empty;
 				if(true == string.IsNullOrEmpty(namePath))
 				{
 					return("");
 				}
 
-				string nameNewDirectory = "";
-				string nameNewFileBody = "";
-				string nameNewFileExtention = "";
+				string nameNewDirectory = string.Empty;
+				string nameNewFileBody = string.Empty;
+				string nameNewFileExtention = string.Empty;
 				LibraryEditor_SpriteStudio6.Utility.File.PathSplit(out nameNewDirectory, out nameNewFileBody, out nameNewFileExtention, namePath);
 				if((true == string.IsNullOrEmpty(nameNewDirectory)) || (true == flagRuleOld))
 				{
@@ -1801,7 +1894,7 @@ public static partial class LibraryEditor_SpriteStudio6
 			{
 				if(true == string.IsNullOrEmpty(name))
 				{
-					return("");
+					return(string.Empty);
 				}
 
 				string rv = string.Copy(name);
@@ -1901,7 +1994,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				return(KindType.NORMAL);
 
 			TypeGetLine_EndIgnore:;
-				textValid = "";
+				textValid = string.Empty;
 				return(KindType.IGNORE);
 			}
 
@@ -1912,7 +2005,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			public static string LineEncodeCommand(params string[] textArgument)
 			{
-				string text = "";
+				string text = string.Empty;
 				int count = textArgument.Length;
 				bool flagSeparator = false;
 				for(int i=0; i<count; i++)

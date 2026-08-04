@@ -129,7 +129,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				System.Xml.NameTable nodeNameSpace = new System.Xml.NameTable();
 				System.Xml.XmlNamespaceManager managerNameSpace = new System.Xml.XmlNamespaceManager(nodeNameSpace);
 
-				//string valueText = "";
+				//string valueText = string.Empty;
 				informationSSQE.Name = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "name", managerNameSpace);
 				informationSSQE.ExportPath = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "exportPath", managerNameSpace);
 
@@ -240,12 +240,12 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					Version = LibraryEditor_SpriteStudio6.Import.SSQE.KindVersion.ERROR;
 
-					NameDirectory = "";
-					NameFileBody = "";
-					NameFileExtension = "";
+					NameDirectory = string.Empty;
+					NameFileBody = string.Empty;
+					NameFileExtension = string.Empty;
 
-					Name = "";
-					ExportPath = "";
+					Name = string.Empty;
+					ExportPath = string.Empty;
 
 					DataSequenceSS6PU.CleanUp();
 					DataSequenceSS6PU.BootUp(1);	/* Always 1 */

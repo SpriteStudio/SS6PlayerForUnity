@@ -60,6 +60,7 @@ public static partial class Library_SpriteStudio6
 					public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack TypePack;
 					public CodeValueContainer[] TableCodeValue;
 					public _TypeValue[] TableValue;
+					public float[] TableAccessory;	/* Additional elements for "Value" ("Parameter for Interpolation" etc.) *//* *)Usually float[0] */
 
 					public _TypeInterface Function;	/* NonSerialized */
 					#endregion Variables & Properties
@@ -74,6 +75,18 @@ public static partial class Library_SpriteStudio6
 						TableValue = null;
 
 						Function = default(_TypeInterface);
+					}
+					public void TablePurge()
+					{
+						TableCodeValue = null;
+						TableValue = null;
+						TableAccessory = null;
+					}
+					public void TableCreateEmpty()
+					{
+						TableCodeValue = new CodeValueContainer[0];
+						TableValue = new _TypeValue[0];
+						TableAccessory = new float[0];
 					}
 					#endregion Functions
 				}
@@ -110,6 +123,10 @@ public static partial class Library_SpriteStudio6
 																							ContainerVertexCorrection,
 																							Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeVertexCorrection
 																						> {}
+				public interface InterfaceContainerSkew : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Skew,
+																				ContainerSkew,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSkew
+																			> {}
 				public interface InterfaceContainerUserData : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.UserData,
 																					ContainerUserData,
 																					Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeUserData
@@ -134,6 +151,14 @@ public static partial class Library_SpriteStudio6
 																				ContainerSignal,
 																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSignal
 																			> {}
+				public interface InterfaceContainerSound : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.Sound,
+																				ContainerSound,
+																				Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSound
+																			> {}
+				public interface InterfaceContainerChangeTexture : InterfaceContainer<	Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture,
+																						ContainerChangeTexture,
+																						Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeChangeTexture
+																					> {}
 
 				public interface InterfaceContainer<_TypeValue, _TypeContainer, _TypeSource>
 					where _TypeValue : struct
@@ -372,6 +397,13 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.RATE_OPACITY));
 						}
 					}
+					public bool PowerMask
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.POWER_MASK));
+						}
+					}
 					public bool Priority
 					{
 						get
@@ -391,6 +423,13 @@ public static partial class Library_SpriteStudio6
 						get
 						{
 							return(0 != (Flags & FlagBit.VERTEX_CORRECTION));
+						}
+					}
+					public bool Skew
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.SKEW));
 						}
 					}
 					public bool OffsetPivot
@@ -484,6 +523,20 @@ public static partial class Library_SpriteStudio6
 							return(0 != (Flags & FlagBit.SIGNAL));
 						}
 					}
+					public bool Sound
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.SOUND));
+						}
+					}
+					public bool ChangeTexture
+					{
+						get
+						{
+							return(0 != (Flags & FlagBit.CHANGE_TEXTURE));
+						}
+					}
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -495,9 +548,11 @@ public static partial class Library_SpriteStudio6
 												bool scaling,
 												bool scalingLocal,
 												bool rateOpacity,
+												bool powerMask,
 												bool priority,
 												bool partsColor,
 												bool vertexCorrection,
+												bool skew,
 												bool offsetPivot,
 												bool positionAnchor,
 												bool sizeForce,
@@ -510,7 +565,9 @@ public static partial class Library_SpriteStudio6
 												bool effect,
 												bool deform,
 												bool shader,
-												bool signal
+												bool signal,
+												bool sound,
+												bool changeTexture
 											)
 					{
 						Flags = 0;
@@ -524,9 +581,11 @@ public static partial class Library_SpriteStudio6
 						Flags |= (true == scalingLocal) ? FlagBit.SCALING_LOCAL : (FlagBit)0;
 
 						Flags |= (true == rateOpacity) ? FlagBit.RATE_OPACITY : (FlagBit)0;
+						Flags |= (true == powerMask) ? FlagBit.POWER_MASK : (FlagBit)0;
 						Flags |= (true == priority) ? FlagBit.PRIORITY : (FlagBit)0;
 						Flags |= (true == partsColor) ? FlagBit.PARTS_COLOR : (FlagBit)0;
 						Flags |= (true == vertexCorrection) ? FlagBit.VERTEX_CORRECTION : (FlagBit)0;
+						Flags |= (true == skew) ? FlagBit.SKEW : (FlagBit)0;
 
 						Flags |= (true == offsetPivot) ? FlagBit.OFFSET_PIVOT : (FlagBit)0;
 						Flags |= (true == positionAnchor) ? FlagBit.POSITION_ANCHOR : (FlagBit)0;
@@ -543,6 +602,9 @@ public static partial class Library_SpriteStudio6
 						Flags |= (true == deform) ? FlagBit.DEFORM : (FlagBit)0;
 						Flags |= (true == shader) ? FlagBit.SHADER : (FlagBit)0;
 						Flags |= (true == signal) ? FlagBit.SIGNAL : (FlagBit)0;
+
+						Flags |= (true == sound) ? FlagBit.SOUND : (FlagBit)0;
+						Flags |= (true == changeTexture) ? FlagBit.CHANGE_TEXTURE : (FlagBit)0;
 					}
 					#endregion Functions
 
@@ -574,6 +636,10 @@ public static partial class Library_SpriteStudio6
 						DEFORM = 0x00100000,
 						SHADER = 0x00200000,
 						SIGNAL = 0x00400000,
+						POWER_MASK = 0x00800000,	/* After version 2.3.0, Split off from "RATE_OPACITY". */
+						SOUND = 0x01000000,
+						CHANGE_TEXTURE = 0x02000000,
+						SKEW = 0x04000000,
 					}
 					#endregion Enums & Constants
 				}

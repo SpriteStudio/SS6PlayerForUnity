@@ -1,4 +1,4 @@
-//
+Ôªø//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
@@ -30,10 +30,11 @@ InputPS VS_main(InputVS input)
 	output.ColorOverlay = input.color;
 
 	/* MEMO: For calculate "Parts-Color" in Pixel-Shader, Need to run "VertexSetPartsColor". */
-	/*       At the same time, set ÅhArgumentVs00"(uniform for Vertex-Shader).               */
+	/*       At the same time, set "ArgumentVs00"(uniform for Vertex-Shader).                */
 //	float4 argumentVs00;
 //	VertexSetPartsColor(output, argumentVs00, indexBlend, input.texcoord.w);
 	VertexSetPartsColor(output, indexBlend, input.texcoord.w);	/* Now, "argumentVs00" is not used in this Vertex-Shader. */
+	output.ParameterOverlay.x = input.texcoord2.w;
 
 	/* Set Draw-Position */
 	temp = input.vertex;

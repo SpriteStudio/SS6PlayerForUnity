@@ -115,6 +115,13 @@ public static partial class Library_SpriteStudio6
 						return(0 != (Status & FlagBitStatus.IGNORE_SIGNAL));
 					}
 				}
+				public bool StatusIsIgnoreSound
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.IGNORE_SOUND));
+					}
+				}
 				public bool StatusIsIgnoreNextUpdateUserData
 				{
 					get
@@ -127,6 +134,13 @@ public static partial class Library_SpriteStudio6
 					get
 					{
 						return(0 != (Status & FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL));
+					}
+				}
+				public bool StatusIsIgnoreNextUpdateSound
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.IGNORE_NEXTUPDATE_SOUND));
 					}
 				}
 				public bool StatusIsTransitionStart
@@ -355,6 +369,7 @@ public static partial class Library_SpriteStudio6
 							);
 					Status &= ~(	FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA
 									| FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL
+									| FlagBitStatus.IGNORE_NEXTUPDATE_SOUND
 								);
 
 					FrameRange = (FrameEnd - FrameStart) + 1;
@@ -994,9 +1009,11 @@ public static partial class Library_SpriteStudio6
 					IGNORE_SIGNAL = 0x00000400,
 					IGNORE_NEXTUPDATE_USERDATA = 0x00000200,
 					IGNORE_NEXTUPDATE_SIGNAL = 0x00000100,
+					IGNORE_SOUND = 0x00000080,
+					IGNORE_NEXTUPDATE_SOUND = 0x00000040,
 
-					TRANSITION_START = 0x00000080,
-					TRANSITION_CANCEL_PAUSE = 0x00000040,
+					TRANSITION_START = 0x00000020,
+					TRANSITION_CANCEL_PAUSE = 0x00000010,
 
 					REQUEST_PLAYEND = 0x00000008,
 					REQUEST_TRANSITIONEND = 0x00000004,

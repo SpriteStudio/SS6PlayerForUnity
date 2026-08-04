@@ -128,6 +128,7 @@ public partial class Script_SpriteStudio6_RootEffect
 	public UnityEngine.Material MaterialGet(	int indexCellMap,
 												Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 												Library_SpriteStudio6.KindMasking masking,
+												bool flagDrawInsideMask,
 												string nameShader,
 												bool flagCreateNew,
 												UnityEngine.Shader shader=null,
@@ -206,6 +207,7 @@ public partial class Script_SpriteStudio6_RootEffect
 			return(CacheMaterial.MaterialGetEffect(	indexCellMap,
 													operationBlend,
 													masking,
+													flagDrawInsideMask,
 													nameShader,
 													shader,
 													functionMaterialSetUp,
@@ -219,6 +221,7 @@ public partial class Script_SpriteStudio6_RootEffect
 		return(dataProject.MaterialGetEffect(	indexCellMap,
 												operationBlend,
 												masking,
+												flagDrawInsideMask,
 												nameShader,
 												flagCreateNew,
 												shader,
@@ -278,6 +281,7 @@ public partial class Script_SpriteStudio6_RootEffect
 			return(	CacheMaterial.MaterialReplaceEffect(	indexCellMap,
 															operationBlend,
 															masking,
+															false,
 															nameShader,
 															material
 														)
@@ -297,7 +301,7 @@ public partial class Script_SpriteStudio6_RootEffect
 			return(null);
 		}
 
-		/* MEMO: The texture used in calculating hashcode to identify  material must be it stored in the project. */
+		/* MEMO: The texture used in calculating hashcode to identify material must be it stored in the project. */
 		return(	dataProject.MaterialReplaceEffect(	indexCellMap,
 													operationBlend,
 													masking,
@@ -314,7 +318,7 @@ public partial class Script_SpriteStudio6_RootEffect
 		Shader to be set<br>
 		null == Reset to initial
 	@param	flagReplaceMaterialCache
-		true == Cached materials (that using  standard-shaders) are replaced new shader.
+		true == Cached materials (that using standard-shaders) are replaced new shader.
 		false == Cached materials are not changing.
 	@retval	Return-Value
 		Previous shader
@@ -333,7 +337,7 @@ public partial class Script_SpriteStudio6_RootEffect
 		Function called to set parameters when creating new material<br>
 		null == Default Function<br>
 	@param	flagReplaceMaterialCache
-		true == Cached materials (that using  standard-shaders) are replaced new shader.<br>
+		true == Cached materials (that using standard-shaders) are replaced new shader.<br>
 		false == Cached materials are not changing.
 	@param	flagGlobal
 		true == Replace Standard-Shader that "Global"(DataProject) has.<br>
@@ -386,6 +390,7 @@ public partial class Script_SpriteStudio6_RootEffect
 																	null,
 																	functionMaterialSetUp,
 																	null,
+																	false,
 																	flagReplaceMaterialCache
 															)
 				);

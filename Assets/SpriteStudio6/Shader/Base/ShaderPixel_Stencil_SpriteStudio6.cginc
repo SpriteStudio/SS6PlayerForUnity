@@ -1,4 +1,4 @@
-//
+﻿//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
@@ -19,7 +19,7 @@ half4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 
 	/* Check Discarding-Pixel */
 	/* MEMO: Once pixel's alpha has been determined, Need to run "PixelDiscardAlpha". */
-	PixelDiscardAlpha(pixel.a, input.ColorMain.a);
+	PixelDiscardAlpha(pixel.a, input.Texture00UVAverage.z);
 
 	/* MEMO: "Part-Color", Vertex-Color and "PMA Solving" are not applied to "Mask". */
 	/*       (Since only care about drawing or not ...)                              */

@@ -1,4 +1,4 @@
-//
+﻿//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
@@ -56,6 +56,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Effect"
 
 			#pragma multi_compile _ ETC1_EXTERNAL_ALPHA
 			#include "UnityCG.cginc"
+			#include "HLSLSupport.cginc"
 
 //			#define RESTRICT_SHADER_MODEL_3
 			#pragma multi_compile _ PS_NOT_DISCARD

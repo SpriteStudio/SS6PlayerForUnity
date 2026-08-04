@@ -33,6 +33,9 @@ public static partial class Library_SpriteStudio6
 			internal uint SeedOffset;
 
 			internal Library_SpriteStudio6.KindMasking Masking;
+			/* MEMO: (Ver.2.3.0-) "Draw-Pixel-Inside-Mask" propagated from the calling "Effect"-part. */
+			/*       "Effect" has no masking-settings of its own, so this is used as-is.              */
+			internal bool MaskingDrawInside;
 
 			internal Matrix4x4 MatrixRoot;
 			#endregion Variables & Properties
@@ -56,6 +59,7 @@ public static partial class Library_SpriteStudio6
 				SeedOffset = 0;
 
 				Masking = (Library_SpriteStudio6.KindMasking)(-1);
+				MaskingDrawInside = false;
 
 				MatrixRoot = Matrix4x4.identity;
 			}
@@ -85,6 +89,7 @@ public static partial class Library_SpriteStudio6
 				/* Set Masking */
 				/* MEMO: Tentatively, set initial to THROUGH. */
 				Masking = Library_SpriteStudio6.KindMasking.THROUGH;
+				MaskingDrawInside = false;
 
 				/* Boot up Emitters */
 				Status = FlagBitStatus.CLEAR;
@@ -165,6 +170,7 @@ public static partial class Library_SpriteStudio6
 
 			internal void Update(	Script_SpriteStudio6_RootEffect instanceRoot,
 									Library_SpriteStudio6.KindMasking masking,
+									bool flagDrawInsideMask,
 									ref Matrix4x4 matrixCorrection,
 									bool flagPlanarization
 								)
@@ -219,6 +225,11 @@ public static partial class Library_SpriteStudio6
 					Masking = masking;
 					flagUpdateCell |= true;
 				}
+				if(MaskingDrawInside != flagDrawInsideMask)
+				{
+					MaskingDrawInside = flagDrawInsideMask;
+					flagUpdateCell |= true;
+				}
 
 				/* Update Emitters */
 				int[] tableIndexEmitter = instanceRoot.DataEffect.TableIndexEmitterOrderDraw;
@@ -241,7 +252,7 @@ public static partial class Library_SpriteStudio6
 						|| (0 != (TableEmitter[indexEmitter].Status & Emitter.FlagBitStatus.CHANGE_CELL_UNREFLECTED | Emitter.FlagBitStatus.REDECODE_MATERIAL))
 					)
 					{
-						TableEmitter[indexEmitter].CellPresetParticle(instanceRoot, Masking);
+						TableEmitter[indexEmitter].CellPresetParticle(instanceRoot, Masking, MaskingDrawInside);
 					}
 
 					/* Update Random-Seed-Offset */
@@ -451,7 +462,7 @@ public static partial class Library_SpriteStudio6
 					}
 
 					/* Set Particle's UV */
-					if(false == CellPresetParticle(instanceRoot, controlEffect.Masking))
+					if(false == CellPresetParticle(instanceRoot, controlEffect.Masking, controlEffect.MaskingDrawInside))
 					{
 						goto BootUp_ErrorEnd;
 					}
@@ -579,7 +590,7 @@ public static partial class Library_SpriteStudio6
 					return(true);
 				}
 
-				internal bool CellPresetParticle(Script_SpriteStudio6_RootEffect instanceRoot, Library_SpriteStudio6.KindMasking masking)
+				internal bool CellPresetParticle(Script_SpriteStudio6_RootEffect instanceRoot, Library_SpriteStudio6.KindMasking masking, bool flagDrawInsideMask)
 				{
 					int indexCellMap = DataCellApply.IndexCellMap;
 					int indexCell = DataCellApply.IndexCell;
@@ -612,6 +623,7 @@ public static partial class Library_SpriteStudio6
 							MaterialDraw = instanceRoot.MaterialGet(	indexCellMap,
 																		DataEffect.TableEmitter[IndexEmitter].OperationBlendTarget,
 																		masking,
+																		flagDrawInsideMask,
 																		null,
 																		true,
 																		null,

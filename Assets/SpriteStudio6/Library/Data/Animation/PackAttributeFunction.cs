@@ -277,6 +277,31 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
+				public static void BootUpFunctionSkew(ContainerSkew container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = StandardUncompressed.FunctionSkew;
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionSkew;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = CPE_Interpolate.FunctionSkew;
+							break;
+
+						default:
+							break;
+					}
+				}
+
 				public static void BootUpFunctionUserData(ContainerUserData container)
 				{
 					switch(container.TypePack)
@@ -412,6 +437,56 @@ public static partial class Library_SpriteStudio6
 
 						case KindTypePack.STANDARD_CPE:
 							container.Function = StandardCPE.FunctionSignal;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionSound(ContainerSound container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionSound;
+							break;
+
+						case KindTypePack.CPE_FLYWEIGHT:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.CPE_INTERPOLATE:
+							container.Function = null;	/* Not Support */
+							break;
+
+						default:
+							break;
+					}
+				}
+
+				public static void BootUpFunctionChangeTexture(ContainerChangeTexture container)
+				{
+					switch(container.TypePack)
+					{
+						case KindTypePack.STANDARD_UNCOMPRESSED:
+							container.Function = null;	/* Not Support */
+							break;
+
+						case KindTypePack.STANDARD_CPE:
+							container.Function = StandardCPE.FunctionChangeTexture;
 							break;
 
 						case KindTypePack.CPE_FLYWEIGHT:

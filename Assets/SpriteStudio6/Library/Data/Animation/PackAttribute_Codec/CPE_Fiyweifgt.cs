@@ -34,9 +34,11 @@ public static partial class Library_SpriteStudio6
 						true,	/* Scaling */
 						true,	/* ScalingLocal */
 						true,	/* RateOpacity */
+						true,	/* PowerMask */
 						true,	/* Priority */
 						true,	/* PartsColor */
 						true,	/* VertexCorrection */
+						true,	/* Skew */
 						true,	/* OffsetPivot */
 						true,	/* PositionAnchor */
 						true,	/* SizeForce */
@@ -49,7 +51,9 @@ public static partial class Library_SpriteStudio6
 						false,	/* Effect (Trigger) */
 						false,	/* Deform */
 						false,	/* Shader */
-						false	/* Signal */
+						false,	/* Signal */
+						false,	/* Sound (Trigger) */
+						false	/* ChangeTexture (Trigger) */
 					);
 
 					public const string ID = "CPE_Flyweight";
@@ -207,12 +211,15 @@ public static partial class Library_SpriteStudio6
 					/*       Therefore, named not "Factory" but "Dictionary".(Same as data-compression's "Dictionary")                      */
 					public class Dictionary
 					{
+						/* ----------------------------------------------- Variables & Properties */
+						#region Variables & Properties
 						/* MEMO: In order to reduce overflow, float is divided into two. */
 						public int[] TableValueInt;
 						public float[] TableValueFloat;
 						public float[] TableValueFloatVector;	/* Vector3 */
 						public float[] TableValueFloatCoordinate;	/* VertexCorrection */
 						public Color[] TableValueColor;
+						#endregion Variables & Properties
 					}
 
 					public class InterfaceFunctionInt : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerInt
@@ -1167,8 +1174,7 @@ public static partial class Library_SpriteStudio6
 					{
 						if(0 >= containerStandardCPE.TableCodeValue.Length)
 						{
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-							container.TableValue = new int[0];
+							container.TableCreateEmpty();
 							return(true);
 						}
 						int[] tableStatusStandardCPE = containerStandardCPE.TableCodeValue[0].TableCode;	/* Always 1 */
@@ -1186,10 +1192,16 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 						container.TableValue = new int[0];	/* Has no (parts')value table */
+						container.TableAccessory = new float[0];	/* Has no (parts')secondery-value table */
 						if(null == container.TableValue)
 						{
 							return(false);
 						}
+						if(null == container.TableAccessory)
+						{
+							return(false);
+						}
+
 						int[] tableStatusBase = container.TableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
 
 						if(0 >= countStartus)
@@ -1216,8 +1228,7 @@ public static partial class Library_SpriteStudio6
 							tableStatusBase[i] = StatusGet(index, frame);
 						}
 
-						containerStandardCPE.TableCodeValue = null;	/* Purge */
-						containerStandardCPE.TableValue = null;	/* Purge */
+						containerStandardCPE.TablePurge();
 
 						return(true);
 					}
@@ -1228,8 +1239,7 @@ public static partial class Library_SpriteStudio6
 					{
 						if(0 >= containerStandardCPE.TableCodeValue.Length)
 						{
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-							container.TableValue = new float[0];
+							container.TableCreateEmpty();
 							return(true);
 						}
 						int[] tableStatusStandardCPE = containerStandardCPE.TableCodeValue[0].TableCode;	/* Always 1 */
@@ -1247,10 +1257,16 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 						container.TableValue = new float[0];	/* Has no (parts')value table */
+						container.TableAccessory = new float[0];	/* Has no (parts')secondery-value table */
 						if(null == container.TableValue)
 						{
 							return(false);
 						}
+						if(null == container.TableAccessory)
+						{
+							return(false);
+						}
+
 						int[] tableStatusBase = container.TableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
 
 						if(0 >= countStartus)
@@ -1277,8 +1293,7 @@ public static partial class Library_SpriteStudio6
 							tableStatusBase[i] = StatusGet(index, frame);
 						}
 
-						containerStandardCPE.TableCodeValue = null;	/* Purge */
-						containerStandardCPE.TableValue = null;	/* Purge */
+						containerStandardCPE.TablePurge();
 
 						return(true);
 					}
@@ -1289,8 +1304,7 @@ public static partial class Library_SpriteStudio6
 					{
 						if(0 >= containerStandardCPE.TableCodeValue.Length)
 						{
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-							container.TableValue = new Vector2[0];
+							container.TableCreateEmpty();
 							return(true);
 						}
 						int[] tableStatusStandardCPE = containerStandardCPE.TableCodeValue[0].TableCode;	/* Always 1 */
@@ -1313,10 +1327,16 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 						container.TableValue = new Vector2[0];	/* Has no (parts')value table */
+						container.TableAccessory = new float[0];	/* Has no (parts')secondery-value table */
 						if(null == container.TableValue)
 						{
 							return(false);
 						}
+						if(null == container.TableAccessory)
+						{
+							return(false);
+						}
+
 						int[] tableStatusBase = container.TableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
 						int[] tableStatusVector = container.TableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode;
 
@@ -1351,8 +1371,7 @@ public static partial class Library_SpriteStudio6
 							tableStatusVector[i] = StatusGetVector(index, 0);	/* Disuse Z */
 						}
 
-						containerStandardCPE.TableCodeValue = null;	/* Purge */
-						containerStandardCPE.TableValue = null;	/* Purge */
+						containerStandardCPE.TablePurge();
 
 						return(true);
 					}
@@ -1363,8 +1382,7 @@ public static partial class Library_SpriteStudio6
 					{
 						if(0 >= containerStandardCPE.TableCodeValue.Length)
 						{
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-							container.TableValue = new Vector3[0];
+							container.TableCreateEmpty();
 							return(true);
 						}
 						int[] tableStatusStandardCPE = containerStandardCPE.TableCodeValue[0].TableCode;	/* Always 1 */
@@ -1387,10 +1405,16 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 						container.TableValue = new Vector3[0];	/* Has no (parts')value table */
+						container.TableAccessory = new float[0];	/* Has no (parts')secondery-value table */
 						if(null == container.TableValue)
 						{
 							return(false);
 						}
+						if(null == container.TableAccessory)
+						{
+							return(false);
+						}
+
 						int[] tableStatusBase = container.TableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
 						int[] tableStatusVector = container.TableCodeValue[(int)IndexTableCodeValue.VECTOR_YZ].TableCode;
 
@@ -1431,8 +1455,7 @@ public static partial class Library_SpriteStudio6
 							tableStatusVector[i] = StatusGetVector(index, indexZ);
 						}
 
-						containerStandardCPE.TableCodeValue = null;	/* Purge */
-						containerStandardCPE.TableValue = null;	/* Purge */
+						containerStandardCPE.TablePurge();
 
 						return(true);
 					}
@@ -1443,8 +1466,7 @@ public static partial class Library_SpriteStudio6
 					{
 						if(0 >= containerStandardCPE.TableCodeValue.Length)
 						{
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection[0];
+							container.TableCreateEmpty();
 							return(true);
 						}
 						int[] tableStatusStandardCPE = containerStandardCPE.TableCodeValue[0].TableCode;	/* Always 1 */
@@ -1482,10 +1504,16 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 						container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection[0];	/* Has no (parts')value table */
+						container.TableAccessory = new float[0];	/* Has no (parts')secondery-value table */
 						if(null == container.TableValue)
 						{
 							return(false);
 						}
+						if(null == container.TableAccessory)
+						{
+							return(false);
+						}
+
 						int[] tableStatusBase = container.TableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
 						int[] tableStatusLU = container.TableCodeValue[(int)IndexTableCodeValue.VERTEX_LU].TableCode;
 						int[] tableStatusRU = container.TableCodeValue[(int)IndexTableCodeValue.VERTEX_RU].TableCode;
@@ -1560,8 +1588,7 @@ public static partial class Library_SpriteStudio6
 							tableStatusLD[i] = StatusGetVector(index, indexY);
 						}
 
-						containerStandardCPE.TableCodeValue = null;	/* Purge */
-						containerStandardCPE.TableValue = null;	/* Purge */
+						containerStandardCPE.TablePurge();
 
 						return(true);
 					}
@@ -1572,8 +1599,7 @@ public static partial class Library_SpriteStudio6
 					{
 						if(0 >= containerStandardCPE.TableCodeValue.Length)
 						{
-							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColor[0];
+							container.TableCreateEmpty();
 							return(true);
 						}
 						int[] tableStatusStandardCPE = containerStandardCPE.TableCodeValue[0].TableCode;	/* Always 1 */
@@ -1611,10 +1637,16 @@ public static partial class Library_SpriteStudio6
 							return(false);
 						}
 						container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColor[0];	/* Has no (parts')value table */
+						container.TableAccessory = new float[0];	/* Has no (parts')secondery-value table */
 						if(null == container.TableValue)
 						{
 							return(false);
 						}
+						if(null == container.TableAccessory)
+						{
+							return(false);
+						}
+
 						int[] tableStatusBase = container.TableCodeValue[(int)IndexTableCodeValue.BASE].TableCode;
 						int[] tableStatusLURU = container.TableCodeValue[(int)IndexTableCodeValue.COLOR_LURU].TableCode;
 						int[] tableStatusRDLD = container.TableCodeValue[(int)IndexTableCodeValue.COLOR_RDLD].TableCode;
@@ -1689,8 +1721,7 @@ public static partial class Library_SpriteStudio6
 							tableStatusPowerRDLD[i] = StatusGetVector(index, indexY);
 						}
 
-						containerStandardCPE.TableCodeValue = null;	/* Purge */
-						containerStandardCPE.TableValue = null;	/* Purge */
+						containerStandardCPE.TablePurge();
 
 						return(true);
 					}

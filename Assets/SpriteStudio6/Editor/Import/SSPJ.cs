@@ -96,7 +96,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				System.Xml.NameTable nodeNameSpace = new System.Xml.NameTable();
 				System.Xml.XmlNamespaceManager managerNameSpace = new System.Xml.XmlNamespaceManager(nodeNameSpace);
 
-				string valueText = "";
+				string valueText = string.Empty;
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/imageBaseDirectory", managerNameSpace);
 				informationSSPJ.NameDirectoryBaseTexture = (true == string.IsNullOrEmpty(valueText)) ? string.Copy(informationSSPJ.NameDirectory) : LibraryEditor_SpriteStudio6.Utility.File.PathGetAbsolute(informationSSPJ.NameDirectory + valueText + "/", informationSSPJ.NameDirectory);
@@ -113,6 +113,10 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* MEMO: SSQE has no Base-Directory specification. */
 //				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/sequenceBaseDirectory", managerNameSpace);
 				informationSSPJ.NameDirectoryBaseSSQE = string.Copy(informationSSPJ.NameDirectory);
+
+				/* MEMO: SSSE has no Base-Directory specification. */
+//				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/soundlistBaseDirectory", managerNameSpace);
+				informationSSPJ.NameDirectoryBaseSSSE = string.Copy(informationSSPJ.NameDirectory);
 
 				/* Get Texture-Mode-Setting */
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "settings/wrapMode", managerNameSpace);
@@ -277,6 +281,71 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationSSPJ.TableInformationSSQE = new LibraryEditor_SpriteStudio6.Import.SSQE.Information[informationSSPJ.TableNameSSQE.Length];
 				listNameFile.Clear();
 
+				/* Get Bitmap-Font FileNames */
+//				nodeList = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "charmapNames/value", managerNameSpace);
+//				if((null == nodeList) || (0 >= nodeList.Count))
+//				{
+//					informationSSPJ.TableNameFnt = new string[0];
+//				}
+//				else
+//				{
+//					foreach(System.Xml.XmlNode nodeNameFontBitmap in nodeList)
+//					{
+//						nameFile = nodeNameFontBitmap.InnerText;
+//						nameFile = informationSSPJ.PathGetAbsolute(nameFile, LibraryEditor_SpriteStudio6.Import.KindFile.FNT);
+//						listNameFile.Add(nameFile);
+//					}
+//					informationSSPJ.TableNameFnt = listNameFile.ToArray();
+//				}
+//				informationSSPJ.TableInformationFnt = new LibraryEditor_SpriteStudio6.Import.Fnt.Information[informationSSPJ.TableNameFnt.Length];
+//				listNameFile.Clear();
+
+				/* Get Sound-List FileNames */
+				nodeList = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "audiopackNames/value", managerNameSpace);
+				if((null == nodeList) || (0 >= nodeList.Count))
+				{
+					informationSSPJ.TableNameSSSE = new string[0];
+				}
+				else
+				{
+					foreach (System.Xml.XmlNode NodeSoundList in nodeList)
+					{
+						nameFile = NodeSoundList.InnerText;
+						nameFile = informationSSPJ.PathGetAbsolute(nameFile, LibraryEditor_SpriteStudio6.Import.KindFile.SSSE);
+						listNameFile.Add(nameFile);
+					}
+					informationSSPJ.TableNameSSSE = listNameFile.ToArray();
+				}
+				informationSSPJ.TableInformationSSSE = new LibraryEditor_SpriteStudio6.Import.SSSE.Information[informationSSPJ.TableNameSSSE.Length];
+				listNameFile.Clear();
+
+				/* Get External-Texture List FileNames */
+//				nodeList = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "ExternalTextures/files/value", managerNameSpace);
+//				if((null == nodeList) || (0 >= nodeList.Count))
+//				{
+//					informationSSPJ.TableInformationTextureExternal = new LibraryEditor_SpriteStudio6.Import.SSCE.Information.Texture[0];
+//				}
+//				else
+//				{
+//					foreach (System.Xml.XmlNode NodeTextureExternal in nodeList)
+//					{
+//						string pathTexture = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(NodeTextureExternal, "PathName", managerNameSpace);
+//
+//						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(NodeTextureExternal, "index", managerNameSpace);
+//						int indexTexture = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+//
+//						valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(NodeTextureExternal, "flags", managerNameSpace);
+//						int flagsTexture = LibraryEditor_SpriteStudio6.Utility.Text.ValueGetInt(valueText);
+//
+//						informationSSPJ.AddTextureExternal(pathTexture, indexTexture, flagsTexture);
+//					}
+//
+//					if(false == informationSSPJ.InformationCreateTextureExternal(ref setting))
+//					{
+//						goto Parse_ErrorEnd;
+//					}
+//				}
+
 				return(informationSSPJ);
 
 			Parse_ErrorEnd:
@@ -372,8 +441,13 @@ public static partial class LibraryEditor_SpriteStudio6
 				public LibraryEditor_SpriteStudio6.Import.SSQE.Information[] TableInformationSSQE;
 				public string[] TableNameSSQE;	/* Temporary */
 
+				public string NameDirectoryBaseSSSE;
+				public LibraryEditor_SpriteStudio6.Import.SSSE.Information[] TableInformationSSSE;
+				public string[] TableNameSSSE;	/* Temporary */
+
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataProject> DataProjectSS6PU;
 				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataCellMap> DataCellMapSS6PU;
+				public LibraryEditor_SpriteStudio6.Import.Assets<Script_SpriteStudio6_DataSoundList> DataSoundListSS6PU;
 
 				/* MEMO: Before 6.4 */
 				public string Signal;
@@ -389,9 +463,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					Version = LibraryEditor_SpriteStudio6.Import.SSPJ.KindVersion.ERROR;
 
-					NameDirectory = "";
-					NameFileBody = "";
-					NameFileExtension = "";
+					NameDirectory = string.Empty;
+					NameFileBody = string.Empty;
+					NameFileExtension = string.Empty;
 
 					WrapTexture = Library_SpriteStudio6.Data.Texture.KindWrap.CLAMP;
 					FilterTexture = Library_SpriteStudio6.Data.Texture.KindFilter.NEAREST;
@@ -399,22 +473,30 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagBlendImagePremultipliedAlpha = false;
 					FlagVertexAnimeFloat = false;
 
-					NameDirectoryBaseTexture = "";
+					NameDirectoryBaseTexture = string.Empty;
 					ListNameTexture = null;
 					TableInformationTexture = null;
 
-					NameDirectoryBaseSSCE = "";
+					NameDirectoryBaseSSCE = string.Empty;
 					TableNameSSCE = null;
 					TableInformationSSCE = null;
 
-					NameDirectoryBaseSSAE = "";
+					NameDirectoryBaseSSAE = string.Empty;
 					TableNameSSAE = null;
 					TableInformationSSAE = null;
 					QueueConvertSSAE = null;
 
-					NameDirectoryBaseSSEE = "";
+					NameDirectoryBaseSSEE = string.Empty;
 					TableNameSSEE = null;
 					TableInformationSSEE = null;
+
+					NameDirectoryBaseSSQE = string.Empty;
+					TableNameSSQE = null;
+					TableInformationSSQE = null;
+
+					NameDirectoryBaseSSSE = string.Empty;
+					TableNameSSSE = null;
+					TableInformationSSSE = null;
 
 					DataProjectSS6PU.CleanUp();
 					DataProjectSS6PU.BootUp(1);
@@ -422,7 +504,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					DataCellMapSS6PU.CleanUp();
 //					DataCellMapSS6PU.BootUp(1);	/* Don't boot-up here. */
 
-					Signal = "";
+					DataSoundListSS6PU.CleanUp();
+//					DataSoundListSS6PU.BootUp(1);	/* Don't boot-up here. */
+
+					Signal = string.Empty;
 					CoordUnit = KindCoordUnit.INVALID;	/* KindCoordUnit.RATE */
 					InformationSignalSetting = null;
 				}
@@ -482,7 +567,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string PathGetAbsolute(string namePath, LibraryEditor_SpriteStudio6.Import.KindFile kindFile)
 				{
-					string namePathNew = "";
+					string namePathNew = string.Empty;
 					if(true == System.IO.Path.IsPathRooted(namePath))
 					{	/* MEMO: "namePath" is "Absolute". */
 						namePathNew = namePath;
@@ -518,6 +603,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							case LibraryEditor_SpriteStudio6.Import.KindFile.SSQE:
 								namePathNew = NameDirectoryBaseSSQE + namePath;
 								break;
+
+							case LibraryEditor_SpriteStudio6.Import.KindFile.SSSE:
+								namePathNew = NameDirectoryBaseSSSE + namePath;
+								break;
 						}
 					}
 
@@ -529,7 +618,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string PathGetRelative(string namePath, LibraryEditor_SpriteStudio6.Import.KindFile kindFile)
 				{
-					string nameBase = "";
+					string nameBase = string.Empty;
 					if(false == System.IO.Path.IsPathRooted(namePath))
 					{	/* MEMO: "namePath" is "Relative". */
 						nameBase = namePath;
@@ -566,11 +655,15 @@ public static partial class LibraryEditor_SpriteStudio6
 							case LibraryEditor_SpriteStudio6.Import.KindFile.SSQE:
 								nameBase = NameDirectoryBaseSSQE;
 								break;
+
+							case LibraryEditor_SpriteStudio6.Import.KindFile.SSSE:
+								nameBase = NameDirectoryBaseSSSE;
+								break;
 						}
 
 						nameBase = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(nameBase);
 						string namePathNew = LibraryEditor_SpriteStudio6.Utility.File.PathNormalize(namePath);
-						namePathNew = namePathNew.Replace(nameBase, "");
+						namePathNew = namePathNew.Replace(nameBase, string.Empty);
 						return(namePathNew);
 					}
 				}
@@ -692,6 +785,60 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 						}
 					}
+					return(-1);
+				}
+
+				public int IndexGetSoundList(string name)
+				{
+					int count = TableInformationSSSE.Length;
+					for(int i=0; i<count; i++)
+					{
+						if(null != TableInformationSSSE[i])
+						{
+							if(name == TableInformationSSSE[i].NameFileBody)
+							{
+								return(i);
+							}
+						}
+					}
+
+					return(-1);
+				}
+				public int IndexGetSoundList(int id)
+				{
+					int count = TableInformationSSSE.Length;
+					for(int i=0; i<count; i++)
+					{
+						if(null != TableInformationSSSE[i])
+						{
+							if(id == TableInformationSSSE[i].ID)
+							{
+								return(i);
+							}
+						}
+					}
+
+					return(-1);
+				}
+				public int IndexGetSound(int indexList, string name)
+				{
+					if((0 > indexList) || (TableInformationSSSE.Length <= indexList))
+					{
+						return(-1);
+					}
+
+					int count = TableInformationSSSE[indexList].TableSound.Length;
+					for(int i=0; i<count; i++)
+					{
+						if(null != TableInformationSSSE[indexList].TableSound[i])
+						{
+							if(name == TableInformationSSSE[indexList].TableSound[i].Name)
+							{
+								return(i);
+							}
+						}
+					}
+
 					return(-1);
 				}
 
@@ -867,6 +1014,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countSSEE = informationSSPJ.TableInformationSSEE.Length;
 					int countSSCE = informationSSPJ.TableInformationSSCE.Length;
 					int countSSQE = informationSSPJ.TableInformationSSQE.Length;
+					int countSSSE = informationSSPJ.TableInformationSSSE.Length;
 					int countTexture = informationSSPJ.TableInformationTexture.Length;
 					int countPrefabAnimation = informationSSPJ.TableInformationSSQE.Length;
 
@@ -877,6 +1025,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					Script_SpriteStudio6_DataAnimation[] dataAnimationOld = new Script_SpriteStudio6_DataAnimation[countSSAE];
 					Script_SpriteStudio6_DataEffect[] dataEffectOld = new Script_SpriteStudio6_DataEffect[countSSEE];
 					Script_SpriteStudio6_DataSequence[] dataSequenceOld = new Script_SpriteStudio6_DataSequence[countSSQE];
+					Script_SpriteStudio6_DataSoundList dataSoundListOld = null;
 					Texture2D[] textureOld = new Texture2D[countTexture];	/* Texture[] */
 					Script_SpriteStudio6_Root[] prefabAnimationOld = new Script_SpriteStudio6_Root[countSSAE];
 					Script_SpriteStudio6_RootEffect[] prefabEffectOld = new Script_SpriteStudio6_RootEffect[countSSEE];
@@ -1063,6 +1212,10 @@ public static partial class LibraryEditor_SpriteStudio6
 								}
 							}
 						}
+
+						/* SSSE */
+						/* MEMO: In principle, SoundList-data (SSSE) is paired with project-data. */
+						dataSoundListOld = dataProjectOld.DataSoundList;
 					}
 
 					/* Determine asset-names */
@@ -1091,6 +1244,23 @@ public static partial class LibraryEditor_SpriteStudio6
 						{
 							goto AssetNameDecide_ErrorEnd;
 						}
+					}
+					if(0 < countSSEE)	/* SSEEs (SoundList data) */
+					{	/* Has data */
+						informationSSPJ.DataSoundListSS6PU.BootUp(1);	/* Always 1 */
+						if(false == AssetNameDecideSoundList(	ref setting,
+																informationSSPJ,
+																nameOutputAssetFolderBase,
+																dataSoundListOld
+															)
+							)
+						{
+							goto AssetNameDecide_ErrorEnd;
+						}
+					}
+					else
+					{	/* Has no data */
+						informationSSPJ.DataSoundListSS6PU.CleanUp();
 					}
 					if(0 < countSSCE)	/* SSCEs (CellMap data) */
 					{	/* Has data */
@@ -1167,6 +1337,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					dataAnimationOld = null;
 					dataEffectOld = null;
 					dataSequenceOld = null;
+					dataSoundListOld = null;
 					textureOld = null;
 					prefabAnimationOld = null;
 					prefabEffectOld = null;
@@ -1179,6 +1350,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					dataAnimationOld = null;
 					dataEffectOld = null;
 					dataSequenceOld = null;
+					dataSoundListOld = null;
 					textureOld = null;
 					prefabAnimationOld = null;
 					prefabEffectOld = null;
@@ -1271,6 +1443,64 @@ public static partial class LibraryEditor_SpriteStudio6
 //					return(false);
 				}
 
+				private static bool AssetNameDecideSoundList(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+																LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ,
+																string nameOutputAssetFolderBase,
+																Script_SpriteStudio6_DataSoundList dataOverride
+														)
+				{
+					if(null != dataOverride)
+					{	/* Specified */
+						informationSSPJ.DataSoundListSS6PU.TableName[0] = AssetDatabase.GetAssetPath(dataOverride);
+					}
+					else
+					{	/* Default */
+						informationSSPJ.DataSoundListSS6PU.TableName[0] = setting.RuleNameAssetFolder.NameGetAssetFolder(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_SOUNDLIST_SS6PU, nameOutputAssetFolderBase)
+																			+ setting.RuleNameAsset.NameGetAsset(LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_SOUNDLIST_SS6PU, informationSSPJ.NameFileBody, informationSSPJ.NameFileBody)
+																			+ LibraryEditor_SpriteStudio6.Import.NameExtentionScriptableObject;
+						dataOverride = AssetDatabase.LoadAssetAtPath<Script_SpriteStudio6_DataSoundList>(informationSSPJ.DataSoundListSS6PU.TableName[0]);
+					}
+
+					informationSSPJ.DataSoundListSS6PU.TableData[0] = dataOverride;
+					informationSSPJ.DataSoundListSS6PU.Version[0] = (null != dataOverride) ? (int)(dataOverride.Version) : (int)Script_SpriteStudio6_DataSoundList.KindVersion.SS5PU;
+
+					return(true);
+
+//				AssetNameDecideSoundList_ErrorEnd:;
+//					return(false);
+				}
+
+				public static bool AssetCreateSoundList(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
+															LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
+													)
+				{
+					Script_SpriteStudio6_DataSoundList dataSoundList = informationSSPJ.DataSoundListSS6PU.TableData[0];
+					if(null == dataSoundList)
+					{
+						dataSoundList = ScriptableObject.CreateInstance<Script_SpriteStudio6_DataSoundList>();
+						AssetDatabase.CreateAsset(dataSoundList, informationSSPJ.DataSoundListSS6PU.TableName[0]);
+						informationSSPJ.DataSoundListSS6PU.TableData[0] = dataSoundList;
+					}
+
+					int countSSSE = informationSSPJ.TableInformationSSSE.Length;
+					dataSoundList.Version = Script_SpriteStudio6_DataSoundList.KindVersion.SUPPORT_LATEST;
+					dataSoundList.DataProject = informationSSPJ.DataProjectSS6PU.TableData[0];
+
+					dataSoundList.TableSoundList = new Library_SpriteStudio6.Data.Sound.Inventory[countSSSE];
+					for(int i=0; i<countSSSE; i++)
+					{
+						dataSoundList.TableSoundList[i] = informationSSPJ.TableInformationSSSE[i].Data;
+					}
+
+					EditorUtility.SetDirty(dataSoundList);
+					AssetDatabase.SaveAssets();
+
+					return(true);
+
+//				AssetCreateSoundList_ErrorEnd:;
+//					return(false);
+				}
+
 				public static bool ConvertDataProject(	ref LibraryEditor_SpriteStudio6.Import.Setting setting,
 														LibraryEditor_SpriteStudio6.Import.SSPJ.Information informationSSPJ
 													)
@@ -1306,6 +1536,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countSSCE = (null != informationSSPJ.TableInformationSSCE) ? informationSSPJ.TableInformationSSCE.Length : 0;
 					int countSSEE = (null != informationSSPJ.TableInformationSSEE) ? informationSSPJ.TableInformationSSEE.Length : 0;
 					int countSSQE = (null != informationSSPJ.TableInformationSSQE) ? informationSSPJ.TableInformationSSQE.Length : 0;
+					int countSSSE = (null != informationSSPJ.TableInformationSSSE) ? informationSSPJ.TableInformationSSSE.Length : 0;
 
 					/* MEMO: Each-data's reference is not set here (not been finalized).      */
 					/*       Determined references are set in "AssetFixDataProject" function. */
@@ -1324,6 +1555,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					/* Sequence */
 					dataProject.DataSequence = new Script_SpriteStudio6_DataSequence[countSSQE];
+
+					/* Sound-List */
+					dataProject.DataSoundList = null;
 
 					EditorUtility.SetDirty(dataProject);
 					AssetDatabase.SaveAssets();
@@ -1350,6 +1584,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					int countSSCE = (null != informationSSPJ.TableInformationSSCE) ? informationSSPJ.TableInformationSSCE.Length : 0;
 					int countSSEE = (null != informationSSPJ.TableInformationSSEE) ? informationSSPJ.TableInformationSSEE.Length : 0;
 					int countSSQE = (null != informationSSPJ.TableInformationSSQE) ? informationSSPJ.TableInformationSSQE.Length : 0;
+					int countSSSE = (null != informationSSPJ.TableInformationSSSE) ? informationSSPJ.TableInformationSSSE.Length : 0;
 
 					/* Cell-Map & Texture */
 					dataProject.DataCellMap = (0 < countSSCE) ? informationSSPJ.DataCellMapSS6PU.TableData[0] : null;
@@ -1386,6 +1621,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						dataProject.DataSequence[i] = informationSSPJ.TableInformationSSQE[i].DataSequenceSS6PU.TableData[0];
 					}
+
+					/* Sound-List */
+					dataProject.DataSoundList = (0 < countSSSE) ? informationSSPJ.DataSoundListSS6PU.TableData[0] : null;
 
 					EditorUtility.SetDirty(dataProject);
 					AssetDatabase.SaveAssets();

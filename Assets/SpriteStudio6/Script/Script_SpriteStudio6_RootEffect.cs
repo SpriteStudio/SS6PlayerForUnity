@@ -351,15 +351,19 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 				LateUpdateMain(	timeElapsed,
 								false,
 								Library_SpriteStudio6.KindMasking.THROUGH,	/* FOLLOW_DATA */
+								false,
 								ref matrixInverseMeshRenderer,
 								false
 							);
 			}
 		}
 	}
+	/* MEMO: (Ver.2.3.0-) "flagDrawInsideMask" is the masking-polarity propagated from the "Effect"-part that calls */
+	/*       this effect. "Effect" has no masking-settings of its own, so it is applied to every particle as-is.    */
 	internal void LateUpdateMain(	float timeElapsed,
 									bool flagHideDefault,
 									Library_SpriteStudio6.KindMasking masking,
+									bool flagDrawInsideMask,
 									ref Matrix4x4 matrixCorrection,
 									bool flagPlanarization
 								)
@@ -439,7 +443,7 @@ public partial class Script_SpriteStudio6_RootEffect : Library_SpriteStudio6.Scr
 		/* Update & Draw Effect */
 		if(false == flagHide)
 		{
-			ControlEffect.Update(this, masking, ref matrixCorrection, flagPlanarization);
+			ControlEffect.Update(this, masking, flagDrawInsideMask, ref matrixCorrection, flagPlanarization);
 		}
 
 		/* Mesh Combine & Set to Renderer */

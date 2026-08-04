@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) 1997-2021 Web Technology Corp.
@@ -165,7 +165,7 @@ public partial class Script_SpriteStudio6_RootUnityNative : MonoBehaviour
 			NumberInt = 0;
 			Rectangle = Rect.zero;
 			Coordinate = Vector2.zero;
-			Text = "";
+			Text = string.Empty;
 		}
 
 		public static UserData CreateFromJSON(string json)

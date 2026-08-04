@@ -29,6 +29,9 @@ public static partial class Library_SpriteStudio6
 				{
 					/* ----------------------------------------------- Enums & Constants */
 					#region Enums & Constants
+					/* MEMO: Following attrubytes are for internal-development purposes only and are not currently provided */
+					/*         for general use. May be removed in the future. (Reserved)                                    */
+					/*       - Skew                                                                                         */
 					public const string NameAttributeStatus = "Status";
 					public const string NameAttributeCell = "Cell";
 					public const string NameAttributePosition = "Position";
@@ -41,6 +44,7 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributePriority = "Priority";
 					public const string NameAttributePartsColor = "PartsColor";
 					public const string NameAttributeVertexCorrection = "VertexCorrection";
+					public const string NameAttributeSkew = "Skew";	/* Reserved */
 					public const string NameAttributeOffsetPivot = "OffsetPivot";
 					public const string NameAttributePositionAnchor = "PositionAnchor";
 					public const string NameAttributeSizeForce = "SizeForce";
@@ -54,6 +58,8 @@ public static partial class Library_SpriteStudio6
 					public const string NameAttributeDeform = "Deform";
 					public const string NameAttributeShader = "Shader";
 					public const string NameAttributeSignal = "Signal";
+					public const string NameAttributeSound = "Sound";
+					public const string NameAttributeChangeTexture = "ChangeTexture";
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -116,7 +122,8 @@ public static partial class Library_SpriteStudio6
 																										ListKey[indexStart].FrameCurveStart,
 																										ListKey[indexStart].ValueCurveStart,
 																										ListKey[indexStart].FrameCurveEnd,
-																										ListKey[indexStart].ValueCurveEnd
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
 																									);
 							valueOutput = (int)value;
 							return(true);
@@ -168,7 +175,8 @@ public static partial class Library_SpriteStudio6
 																										ListKey[indexStart].FrameCurveStart,
 																										ListKey[indexStart].ValueCurveStart,
 																										ListKey[indexStart].FrameCurveEnd,
-																										ListKey[indexStart].ValueCurveEnd
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
 																									);
 							return(true);
 
@@ -219,7 +227,8 @@ public static partial class Library_SpriteStudio6
 																										ListKey[indexStart].FrameCurveStart,
 																										ListKey[indexStart].ValueCurveStart,
 																										ListKey[indexStart].FrameCurveEnd,
-																										ListKey[indexStart].ValueCurveEnd
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
 																									);
 							valueOutput.y = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
 																										frame,
@@ -230,7 +239,8 @@ public static partial class Library_SpriteStudio6
 																										ListKey[indexStart].FrameCurveStart,
 																										ListKey[indexStart].ValueCurveStart,
 																										ListKey[indexStart].FrameCurveEnd,
-																										ListKey[indexStart].ValueCurveEnd
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
 																									);
 							return(true);
 
@@ -280,7 +290,8 @@ public static partial class Library_SpriteStudio6
 																										ListKey[indexStart].FrameCurveStart,
 																										ListKey[indexStart].ValueCurveStart,
 																										ListKey[indexStart].FrameCurveEnd,
-																										ListKey[indexStart].ValueCurveEnd
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
 																									);
 							valueOutput.y = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
 																										frame,
@@ -291,7 +302,8 @@ public static partial class Library_SpriteStudio6
 																										ListKey[indexStart].FrameCurveStart,
 																										ListKey[indexStart].ValueCurveStart,
 																										ListKey[indexStart].FrameCurveEnd,
-																										ListKey[indexStart].ValueCurveEnd
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
 																									);
 							valueOutput.z = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
 																										frame,
@@ -302,7 +314,8 @@ public static partial class Library_SpriteStudio6
 																										ListKey[indexStart].FrameCurveStart,
 																										ListKey[indexStart].ValueCurveStart,
 																										ListKey[indexStart].FrameCurveEnd,
-																										ListKey[indexStart].ValueCurveEnd
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
 																									);
 							return(true);
 
@@ -414,7 +427,8 @@ public static partial class Library_SpriteStudio6
 																															ListKey[indexStart].FrameCurveStart,
 																															ListKey[indexStart].ValueCurveStart,
 																															ListKey[indexStart].FrameCurveEnd,
-																															ListKey[indexStart].ValueCurveEnd
+																															ListKey[indexStart].ValueCurveEnd,
+																															ListKey[indexStart].EasingRate
 																														);
 								valueOutput.VertexColor[i].g = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
 																															frame,
@@ -425,7 +439,8 @@ public static partial class Library_SpriteStudio6
 																															ListKey[indexStart].FrameCurveStart,
 																															ListKey[indexStart].ValueCurveStart,
 																															ListKey[indexStart].FrameCurveEnd,
-																															ListKey[indexStart].ValueCurveEnd
+																															ListKey[indexStart].ValueCurveEnd,
+																															ListKey[indexStart].EasingRate
 																														);
 								valueOutput.VertexColor[i].b = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
 																															frame,
@@ -436,7 +451,8 @@ public static partial class Library_SpriteStudio6
 																															ListKey[indexStart].FrameCurveStart,
 																															ListKey[indexStart].ValueCurveStart,
 																															ListKey[indexStart].FrameCurveEnd,
-																															ListKey[indexStart].ValueCurveEnd
+																															ListKey[indexStart].ValueCurveEnd,
+																															ListKey[indexStart].EasingRate
 																														);
 								valueOutput.VertexColor[i].a = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
 																															frame,
@@ -447,7 +463,8 @@ public static partial class Library_SpriteStudio6
 																															ListKey[indexStart].FrameCurveStart,
 																															ListKey[indexStart].ValueCurveStart,
 																															ListKey[indexStart].FrameCurveEnd,
-																															ListKey[indexStart].ValueCurveEnd
+																															ListKey[indexStart].ValueCurveEnd,
+																															ListKey[indexStart].EasingRate
 																														);
 
 								valueOutput.RateAlpha[i] = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
@@ -459,7 +476,8 @@ public static partial class Library_SpriteStudio6
 																														ListKey[indexStart].FrameCurveStart,
 																														ListKey[indexStart].ValueCurveStart,
 																														ListKey[indexStart].FrameCurveEnd,
-																														ListKey[indexStart].ValueCurveEnd
+																														ListKey[indexStart].ValueCurveEnd,
+																														ListKey[indexStart].EasingRate
 																													);
 #else
 								/* MEMO: SpriteStudio Ver.5.2- or Ver -4.x */
@@ -472,7 +490,8 @@ public static partial class Library_SpriteStudio6
 																										ListKey[indexStart].FrameCurveStart,
 																										ListKey[indexStart].ValueCurveStart,
 																										ListKey[indexStart].FrameCurveEnd,
-																										ListKey[indexStart].ValueCurveEnd
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
 																									);
 								rate = Mathf.Clamp01(rate);
 
@@ -491,6 +510,7 @@ public static partial class Library_SpriteStudio6
 						}
 						#endregion Functions
 					}
+
 					public class AttributeVertexCorrection : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection>
 					{
 						/* ----------------------------------------------- Functions */
@@ -535,7 +555,8 @@ public static partial class Library_SpriteStudio6
 																															ListKey[indexStart].FrameCurveStart,
 																															ListKey[indexStart].ValueCurveStart,
 																															ListKey[indexStart].FrameCurveEnd,
-																															ListKey[indexStart].ValueCurveEnd
+																															ListKey[indexStart].ValueCurveEnd,
+																															ListKey[indexStart].EasingRate
 																														);
 								valueOutput.Coordinate[i].y = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
 																															frame,
@@ -546,7 +567,8 @@ public static partial class Library_SpriteStudio6
 																															ListKey[indexStart].FrameCurveStart,
 																															ListKey[indexStart].ValueCurveStart,
 																															ListKey[indexStart].FrameCurveEnd,
-																															ListKey[indexStart].ValueCurveEnd
+																															ListKey[indexStart].ValueCurveEnd,
+																															ListKey[indexStart].EasingRate
 																														);
 							}
 							return(true);
@@ -557,6 +579,76 @@ public static partial class Library_SpriteStudio6
 						}
 						#endregion Functions
 					}
+
+					/* MEMO: Attrubyte"Skew" is for internal-development purposes */
+					public class AttributeSkew : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.Skew>
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.Skew valueOutput, int frame)
+						{	/* MEMO: This attribute does not consider inheritance. */
+							int indexStart = IndexGetFramePrevious(frame);
+							int indexEnd = IndexGetFrameNext(frame);
+
+							if(0 > frame)
+							{
+								goto ValueGet_ErrorEnd;
+							}
+							if(0 > indexStart)
+							{	/* Front blank */
+								if(0 > indexEnd)
+								{	/* No Key */
+									goto ValueGet_ErrorEnd;
+								}
+								valueOutput = ListKey[indexEnd].Value;
+								return(false);
+							}
+							else
+							{
+								if(0 > indexEnd)
+								{	/* End Blank */
+									valueOutput = ListKey[indexStart].Value;
+									return(false);
+								}
+							}
+
+							valueOutput.X = 0;
+							valueOutput.Y = 0;
+
+							valueOutput.X = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
+																										frame,
+																										ListKey[indexStart].Frame,
+																										ListKey[indexStart].Value.X,
+																										ListKey[indexEnd].Frame,
+																										ListKey[indexEnd].Value.X,
+																										ListKey[indexStart].FrameCurveStart,
+																										ListKey[indexStart].ValueCurveStart,
+																										ListKey[indexStart].FrameCurveEnd,
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
+																									);
+							valueOutput.Y = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
+																										frame,
+																										ListKey[indexStart].Frame,
+																										ListKey[indexStart].Value.Y,
+																										ListKey[indexEnd].Frame,
+																										ListKey[indexEnd].Value.Y,
+																										ListKey[indexStart].FrameCurveStart,
+																										ListKey[indexStart].ValueCurveStart,
+																										ListKey[indexStart].FrameCurveEnd,
+																										ListKey[indexStart].ValueCurveEnd,
+																										ListKey[indexStart].EasingRate
+																									);
+
+							return(true);
+
+						ValueGet_ErrorEnd:;
+							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultSkew;
+							return(false);
+						}
+						#endregion Functions
+					}
+
 					public class AttributeInstance : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.Instance>
 					{
 						/* ----------------------------------------------- Functions */
@@ -655,7 +747,8 @@ public static partial class Library_SpriteStudio6
 																																		ListKey[indexStart].FrameCurveStart,
 																																		ListKey[indexStart].ValueCurveStart,
 																																		ListKey[indexStart].FrameCurveEnd,
-																																		ListKey[indexStart].ValueCurveEnd
+																																		ListKey[indexStart].ValueCurveEnd,
+																																		ListKey[indexStart].EasingRate
 																																	);
 								valueOutput.TableVertex[i].Coordinate.y = Library_SpriteStudio6.Utility.Interpolation.ValueGetFloat(	ListKey[indexStart].Formula,
 																																		frame,
@@ -666,7 +759,8 @@ public static partial class Library_SpriteStudio6
 																																		ListKey[indexStart].FrameCurveStart,
 																																		ListKey[indexStart].ValueCurveStart,
 																																		ListKey[indexStart].FrameCurveEnd,
-																																		ListKey[indexStart].ValueCurveEnd
+																																		ListKey[indexStart].ValueCurveEnd,
+																																		ListKey[indexStart].EasingRate
 																																	);
 							}
 							return(true);
@@ -836,7 +930,8 @@ public static partial class Library_SpriteStudio6
 																									ListKey[indexStart].FrameCurveStart,
 																									ListKey[indexStart].ValueCurveStart,
 																									ListKey[indexStart].FrameCurveEnd,
-																									ListKey[indexStart].ValueCurveEnd
+																									ListKey[indexStart].ValueCurveEnd,
+																									ListKey[indexStart].EasingRate
 																								);
 							rate = Mathf.Clamp01(rate);
 
@@ -876,6 +971,61 @@ public static partial class Library_SpriteStudio6
 							}
 
 							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultSignal;
+							return(false);
+						}
+						#endregion Functions
+					}
+
+					public class AttributeSound : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.Sound>
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.Sound valueOutput, int frame)
+						{
+							int count = (null != ListKey) ? ListKey.Count : 0;
+							for (int i = 0; i < count; i++)
+							{
+								if(ListKey[i].Frame == frame)
+								{
+									valueOutput = ListKey[i].Value;
+									return(true);
+								}
+							}
+
+							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultSound;
+							return(false);
+						}
+						#endregion Functions
+					}
+
+					public class AttributeChangeTexture : Attribute<Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture>
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public override bool ValueGet(out Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture valueOutput, int frame)
+						{
+							int indexStart = IndexGetFramePrevious(frame);
+							int indexEnd = IndexGetFrameNext(frame);
+
+							if(0 > frame)
+							{
+								goto ValueGet_ErrorEnd;
+							}
+							if(0 > indexStart)
+							{	/* Front blank */
+								if(0 > indexEnd)
+								{	/* No Key */
+									goto ValueGet_ErrorEnd;
+								}
+								valueOutput = ListKey[indexEnd].Value;
+								return(true);
+							}
+
+							valueOutput = ListKey[indexStart].Value;
+							return(true);
+
+						ValueGet_ErrorEnd:;
+							valueOutput = Library_SpriteStudio6.Data.Animation.Attribute.DefaultChangeTexture;
 							return(false);
 						}
 						#endregion Functions
@@ -1146,6 +1296,7 @@ public static partial class Library_SpriteStudio6
 							public float ValueCurveStart;
 							public float FrameCurveEnd;
 							public float ValueCurveEnd;
+							public float EasingRate;
 							#endregion Variables & Properties
 
 							/* ----------------------------------------------- Functions */
@@ -1160,6 +1311,7 @@ public static partial class Library_SpriteStudio6
 								ValueCurveStart = 0.0f;
 								FrameCurveEnd = 0.0f;
 								ValueCurveEnd = 0.0f;
+								EasingRate = 0.0f;
 							}
 							#endregion Functions
 						}
@@ -1383,6 +1535,28 @@ public static partial class Library_SpriteStudio6
 							return(true);
 
 //						ValueGetBoolOR_ErrorEnd:;
+//							valueOutput = valueDefault;
+//							return(false);
+						}
+
+						public static bool ValueGetIntAdd(out int valueOutput, Library_SpriteStudio6.Data.Animation.Attribute.Importer.Attribute<int> attribute, int frame, int valueDefault)
+						{
+							int valueParent = 0;
+							if(null != attribute.Parent)
+							{
+								ValueGetIntAdd(out valueParent, attribute.Parent, frame, valueDefault);
+							}
+
+							int value = valueDefault;
+							if(false == attribute.ValueGet(out value, frame))
+							{
+								value = valueDefault;
+							}
+
+							valueOutput = valueParent + value;
+							return(true);
+
+//						ValueGetIntAdd_ErrorEnd:;
 //							valueOutput = valueDefault;
 //							return(false);
 						}

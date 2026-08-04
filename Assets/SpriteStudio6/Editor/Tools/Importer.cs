@@ -76,8 +76,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		{
 			if(LibraryEditor_SpriteStudio6.Import.Setting.KindMode.BATCH_IMPORTER == SettingImport.Mode)
 			{	/* Batch-Import */
-				string nameFileList = "";
-				string nameFileLog = "";
+				string nameFileList = string.Empty;
+				string nameFileLog = string.Empty;
 
 				string nameDirectoryList;
 				string nameFileBodyList;
@@ -118,7 +118,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 						}
 						else
 						{
-							nameFileList = "";
+							nameFileList = string.Empty;
 						}
 					}
 
@@ -227,7 +227,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 //				SettingImport.Save();
 
 				string nameFile = EditorUtility.SaveFilePanel(	"Save \"" + Library_SpriteStudio6.SignatureNameAsset + "\" Import Setting file",
-																"",
+																string.Empty,
 																"SS6PU_ImportSetting",
 																"txt"
 															);
@@ -252,7 +252,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			if(true == GUILayout.Button("Load from Text-File"))
 			{
 				string nameFile = EditorUtility.OpenFilePanel(	"Load \"" + Library_SpriteStudio6.SignatureNameAsset + "\" Import Setting file",
-																"",
+																string.Empty,
 																"txt"
 															);
 				if((null != nameFile) && (0 < nameFile.Length))
@@ -818,6 +818,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		SettingImport.ConfirmOverWrite.FlagDataAnimation = EditorGUILayout.ToggleLeft("Data-Animation", SettingImport.ConfirmOverWrite.FlagDataAnimation);
 		SettingImport.ConfirmOverWrite.FlagDataEffect = EditorGUILayout.ToggleLeft("Data-Effect", SettingImport.ConfirmOverWrite.FlagDataEffect);
 		SettingImport.ConfirmOverWrite.FlagDataSequence = EditorGUILayout.ToggleLeft("Data-Sequence", SettingImport.ConfirmOverWrite.FlagDataSequence);
+		SettingImport.ConfirmOverWrite.FlagDataSoundList = EditorGUILayout.ToggleLeft("Data-SoundList", SettingImport.ConfirmOverWrite.FlagDataSoundList);
 		EditorGUILayout.Space();
 
 		SettingImport.ConfirmOverWrite.FlagTexture = EditorGUILayout.ToggleLeft("Textures", SettingImport.ConfirmOverWrite.FlagTexture);
@@ -838,6 +839,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		SettingImport.CheckVersion.FlagInvalidSSAE = EditorGUILayout.ToggleLeft("SSAE (Animation)", SettingImport.CheckVersion.FlagInvalidSSAE);
 		SettingImport.CheckVersion.FlagInvalidSSEE = EditorGUILayout.ToggleLeft("SSEE (Effect)", SettingImport.CheckVersion.FlagInvalidSSEE);
 		SettingImport.CheckVersion.FlagInvalidSSQE = EditorGUILayout.ToggleLeft("SSQE (Sequence)", SettingImport.CheckVersion.FlagInvalidSSQE);
+		SettingImport.CheckVersion.FlagInvalidSSSE = EditorGUILayout.ToggleLeft("SSSE (Sound-List)", SettingImport.CheckVersion.FlagInvalidSSSE);
 		EditorGUILayout.Space();
 		EditorGUI.indentLevel = levelIndent;
 	}
@@ -876,6 +878,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				SettingImport.RuleNameAsset.NamePrefixDataAnimationSS6PU = EditorGUILayout.TextField("Data-Animation", SettingImport.RuleNameAsset.NamePrefixDataAnimationSS6PU);
 				SettingImport.RuleNameAsset.NamePrefixDataEffectSS6PU = EditorGUILayout.TextField("Data-Effect", SettingImport.RuleNameAsset.NamePrefixDataEffectSS6PU);
 				SettingImport.RuleNameAsset.NamePrefixDataSequenceSS6PU = EditorGUILayout.TextField("Data-Sequence", SettingImport.RuleNameAsset.NamePrefixDataSequenceSS6PU);
+				SettingImport.RuleNameAsset.NamePrefixDataSoundListSS6PU = EditorGUILayout.TextField("Data-SoundList", SettingImport.RuleNameAsset.NamePrefixDataSoundListSS6PU);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -928,6 +931,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("Data-Animation", SettingImport.RuleNameAsset.NamePrefixDataAnimationSS6PU);
 				EditorGUILayout.LabelField("Data-Effect", SettingImport.RuleNameAsset.NamePrefixDataEffectSS6PU);
 				EditorGUILayout.LabelField("Data-Sequence", SettingImport.RuleNameAsset.NamePrefixDataSequenceSS6PU);
+				EditorGUILayout.LabelField("Data-SoundList", SettingImport.RuleNameAsset.NamePrefixDataSoundListSS6PU);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -976,6 +980,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("Data-Animation", SettingImport.RuleNameAsset.NamePrefixDataAnimationSS6PU);
 				EditorGUILayout.LabelField("Data-Effect", SettingImport.RuleNameAsset.NamePrefixDataEffectSS6PU);
 				EditorGUILayout.LabelField("Data-Sequence", SettingImport.RuleNameAsset.NamePrefixDataSequenceSS6PU);
+				EditorGUILayout.LabelField("Data-SoundList", SettingImport.RuleNameAsset.NamePrefixDataSoundListSS6PU);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -1045,6 +1050,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				SettingImport.RuleNameAssetFolder.NameFolderDataAnimationSS6PU = EditorGUILayout.TextField("Data-Animation", SettingImport.RuleNameAssetFolder.NameFolderDataAnimationSS6PU);
 				SettingImport.RuleNameAssetFolder.NameFolderDataEffectSS6PU = EditorGUILayout.TextField("Data-Effect", SettingImport.RuleNameAssetFolder.NameFolderDataEffectSS6PU);
 				SettingImport.RuleNameAssetFolder.NameFolderDataSequenceSS6PU = EditorGUILayout.TextField("Data-Sequence", SettingImport.RuleNameAssetFolder.NameFolderDataSequenceSS6PU);
+				SettingImport.RuleNameAssetFolder.NameFolderDataSoundListSS6PU = EditorGUILayout.TextField("Data-SoundList", SettingImport.RuleNameAssetFolder.NameFolderDataSoundListSS6PU);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -1075,6 +1081,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("Data-Animation", SettingImport.RuleNameAssetFolder.NameFolderDataAnimationSS6PU);
 				EditorGUILayout.LabelField("Data-Effect", SettingImport.RuleNameAssetFolder.NameFolderDataEffectSS6PU);
 				EditorGUILayout.LabelField("Data-Sequence", SettingImport.RuleNameAssetFolder.NameFolderDataSequenceSS6PU);
+				EditorGUILayout.LabelField("Data-SoundList", SettingImport.RuleNameAssetFolder.NameFolderDataSoundListSS6PU);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -1103,6 +1110,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				EditorGUILayout.LabelField("Data-Animation", SettingImport.RuleNameAssetFolder.NameFolderDataAnimationSS6PU);
 				EditorGUILayout.LabelField("Data-Effect", SettingImport.RuleNameAssetFolder.NameFolderDataEffectSS6PU);
 				EditorGUILayout.LabelField("Data-Sequence", SettingImport.RuleNameAssetFolder.NameFolderDataSequenceSS6PU);
+				EditorGUILayout.LabelField("Data-SoundList", SettingImport.RuleNameAssetFolder.NameFolderDataSoundListSS6PU);
 				EditorGUI.indentLevel = levelIndent;
 				EditorGUILayout.Space();
 
@@ -1133,7 +1141,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		EditorGUILayout.LabelField("Don't manipulate this setting without reason.");
 		EditorGUILayout.LabelField("Understand amply the implementation of SS6PU data format before setting.");
 		EditorGUILayout.Space();
-		EditorGUILayout.LabelField("\"RateOpacity\" is shared for \"RateOpacity\", \"RateOpacityLocal\" and \"PowerMask\".");
+//		EditorGUILayout.LabelField("\"RateOpacity\" is shared for \"RateOpacity\", \"RateOpacityLocal\" and \"PowerMask\".");
+		EditorGUILayout.LabelField("\"RateOpacity\" is shared for \"RateOpacity\" and \"RateOpacityLocal\".");
 		EditorGUILayout.Space();
 
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Status, "Status", ref PullDownPackAttributeAnimation.Status);
@@ -1149,9 +1158,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			EditorGUILayout.LabelField("Only when packing \"RateOpacity\", \"Standard CPE\" is used.");
 			EditorGUI.indentLevel = levelIndent;
 		}
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PowerMask, "PowerMask", ref PullDownPackAttributeAnimation.PowerMask);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Priority, "Priority", ref PullDownPackAttributeAnimation.Priority);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PartsColor, "PartsColor", ref PullDownPackAttributeAnimation.PartsColor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.VertexCorrection, "VertexCorrection", ref PullDownPackAttributeAnimation.VertexCorrection);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Skew, "Skew", ref PullDownPackAttributeAnimation.Skew);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.OffsetPivot, "OffsetPivot", ref PullDownPackAttributeAnimation.OffsetPivot);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.PositionAnchor, "PositionAnchor", ref PullDownPackAttributeAnimation.PositionAnchor);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.SizeForce, "SizeForce", ref PullDownPackAttributeAnimation.SizeForce);
@@ -1165,7 +1176,15 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Deform, "Deform", ref PullDownPackAttributeAnimation.Deform);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Shader, "Shader", ref PullDownPackAttributeAnimation.Shader);
 		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Signal, "Signal", ref PullDownPackAttributeAnimation.Signal);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.Sound, "Sound", ref PullDownPackAttributeAnimation.Sound);
+		PullDownExecPackAttributeAnimationPart(ref SettingImport.PackAttributeAnimation.ChangeTexture, "ChangeTexture", ref PullDownPackAttributeAnimation.ChangeTexture);
 		EditorGUILayout.Space();
+
+		if(true == GUILayout.Button("Reset (& Save) Packing Setting"))
+		{
+			SettingImport.PackAttributeAnimation = LibraryEditor_SpriteStudio6.Import.Setting.GroupPackAttributeAnimation.Default;
+			SettingImport.PackAttributeAnimation.Save();
+		}
 	}
 	private void PullDownExecPackAttributeAnimationPart(ref Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack pack, string message, ref PullDownPackAttribute.Attribute dataPopup)
 	{
@@ -1308,6 +1327,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				SettingImport.PresetMaterial.AnimationUnityNativeScr = EditorGUILayout.ObjectField("[Sprite]Scr", SettingImport.PresetMaterial.AnimationUnityNativeScr, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.AnimationUnityNativeExc = EditorGUILayout.ObjectField("[Sprite]Exc", SettingImport.PresetMaterial.AnimationUnityNativeExc, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.AnimationUnityNativeInv = EditorGUILayout.ObjectField("[Sprite]Inv", SettingImport.PresetMaterial.AnimationUnityNativeInv, typeof(Material), false) as Material;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				SettingImport.PresetMaterial.AnimationUnityNativeMul2 = EditorGUILayout.ObjectField("[Sprite]Mul2", SettingImport.PresetMaterial.AnimationUnityNativeMul2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.AnimationUnityNativeDiv2 = EditorGUILayout.ObjectField("[Sprite]Div2", SettingImport.PresetMaterial.AnimationUnityNativeDiv2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.AnimationUnityNativeScr2 = EditorGUILayout.ObjectField("[Sprite]Scr2", SettingImport.PresetMaterial.AnimationUnityNativeScr2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.AnimationUnityNativeOvl2 = EditorGUILayout.ObjectField("[Sprite]Ovl2", SettingImport.PresetMaterial.AnimationUnityNativeOvl2, typeof(Material), false) as Material;
 				EditorGUILayout.Space();
 				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMix = EditorGUILayout.ObjectField("[Sprite-NB]Mix", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMix, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchAdd = EditorGUILayout.ObjectField("[Sprite-NB]Add", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchAdd, typeof(Material), false) as Material;
@@ -1317,6 +1341,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr = EditorGUILayout.ObjectField("[Sprite-NB]Scr", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchExc = EditorGUILayout.ObjectField("[Sprite-NB]Exc", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchExc, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchInv = EditorGUILayout.ObjectField("[Sprite-NB]Inv", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchInv, typeof(Material), false) as Material;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMul2 = EditorGUILayout.ObjectField("[Sprite-NB]Mul2", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchMul2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchDiv2 = EditorGUILayout.ObjectField("[Sprite-NB]Div2", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchDiv2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr2 = EditorGUILayout.ObjectField("[Sprite-NB]Scr2", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchScr2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.AnimationUnityNativeNonBatchOvl2 = EditorGUILayout.ObjectField("[Sprite-NB]Ovl2", SettingImport.PresetMaterial.AnimationUnityNativeNonBatchOvl2, typeof(Material), false) as Material;
 				EditorGUILayout.Space();
 				SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix = EditorGUILayout.ObjectField("[Mesh]Mix", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMix, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd = EditorGUILayout.ObjectField("[Mesh]Add", SettingImport.PresetMaterial.SkinnedMeshUnityNativeAdd, typeof(Material), false) as Material;
@@ -1326,6 +1355,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr = EditorGUILayout.ObjectField("[Mesh]Scr", SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc = EditorGUILayout.ObjectField("[Mesh]Exc", SettingImport.PresetMaterial.SkinnedMeshUnityNativeExc, typeof(Material), false) as Material;
 				SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv = EditorGUILayout.ObjectField("[Mesh]Inv", SettingImport.PresetMaterial.SkinnedMeshUnityNativeInv, typeof(Material), false) as Material;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul2 = EditorGUILayout.ObjectField("[Mesh]Mul2", SettingImport.PresetMaterial.SkinnedMeshUnityNativeMul2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.SkinnedMeshUnityNativeDiv2 = EditorGUILayout.ObjectField("[Mesh]Div2", SettingImport.PresetMaterial.SkinnedMeshUnityNativeDiv2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr2 = EditorGUILayout.ObjectField("[Mesh]Scr2", SettingImport.PresetMaterial.SkinnedMeshUnityNativeScr2, typeof(Material), false) as Material;
+//				SettingImport.PresetMaterial.SkinnedMeshUnityNativeOvl2 = EditorGUILayout.ObjectField("[Mesh]Ovl2", SettingImport.PresetMaterial.SkinnedMeshUnityNativeOvl2, typeof(Material), false) as Material;
 				EditorGUILayout.Space();
 
 				break;
@@ -1395,7 +1429,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 	private readonly static string[] NameMode = new string[(int)LibraryEditor_SpriteStudio6.Import.Setting.KindMode.TERMINATOR + 1]
 	{
 		"SpriteStudio6 Player",
-		"Convert To Unity-Native",
+		"Convert To Unity-Native (Deprecated)",
 		"Convert To Unity-UI",
 
 		"Batch Import",
@@ -1476,7 +1510,7 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		private const string PrefsKeyNameFolderImportPrevious = PrefsKeyPrefix + "NameFolderImportPrevious";
 		private const string PrefsKeyFlagFoldOutSettingBackUp = PrefsKeyPrefix + "FlagFoldOutSettingBackUp";
 
-		private const string DefaultNameFolderImportPrevious = "";
+		private const string DefaultNameFolderImportPrevious = "";	/* string.Empty */
 		private const bool DefaultFlagFoldOutSettingBackUp = false;
 		#endregion Enums & Constants
 
@@ -2026,9 +2060,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute Scaling;
 		public Attribute ScalingLocal;
 		public Attribute RateOpacity;
+		public Attribute PowerMask;
 		public Attribute Priority;
 		public Attribute PartsColor;
 		public Attribute VertexCorrection;
+		public Attribute Skew;
 		public Attribute OffsetPivot;
 		public Attribute PositionAnchor;
 		public Attribute SizeForce;
@@ -2042,6 +2078,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 		public Attribute Deform;
 		public Attribute Shader;
 		public Attribute Signal;
+		public Attribute Sound;
+		public Attribute ChangeTexture;
 		#endregion Variables & Properties
 
 		/* ----------------------------------------------- Functions */
@@ -2055,9 +2093,11 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			Scaling.CleanUp();
 			ScalingLocal.CleanUp();
 			RateOpacity.CleanUp();
+			PowerMask.CleanUp();
 			Priority.CleanUp();
 			PartsColor.CleanUp();
 			VertexCorrection.CleanUp();
+			Skew.CleanUp();
 			OffsetPivot.CleanUp();
 			PositionAnchor.CleanUp();
 			SizeForce.CleanUp();
@@ -2071,6 +2111,8 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 			Deform.CleanUp();
 			Shader.CleanUp();
 			Signal.CleanUp();
+			Sound.CleanUp();
+			ChangeTexture.CleanUp();
 		}
 
 		public void BootUp()
@@ -2133,6 +2175,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 
 			for(int i=0; i<countPack; i++)
 			{
+				tableFlagEnablePack[i] = capacityPack[i].PowerMask;
+			}
+			PowerMask.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
 				tableFlagEnablePack[i] = capacityPack[i].Priority;
 			}
 			Priority.BootUp(tableFlagEnablePack);
@@ -2148,6 +2196,12 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].VertexCorrection;
 			}
 			VertexCorrection.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].Skew;
+			}
+			Skew.BootUp(tableFlagEnablePack);
 
 			for(int i=0; i<countPack; i++)
 			{
@@ -2226,6 +2280,18 @@ public sealed class MenuItem_SpriteStudio6_ImportProject : EditorWindow
 				tableFlagEnablePack[i] = capacityPack[i].Signal;
 			}
 			Signal.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].Sound;
+			}
+			Sound.BootUp(tableFlagEnablePack);
+
+			for(int i=0; i<countPack; i++)
+			{
+				tableFlagEnablePack[i] = capacityPack[i].ChangeTexture;
+			}
+			ChangeTexture.BootUp(tableFlagEnablePack);
 
 			SettingImport.PackAttributeAnimation.Adjust();
 		}

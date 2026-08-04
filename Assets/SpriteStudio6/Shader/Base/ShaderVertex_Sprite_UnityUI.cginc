@@ -1,18 +1,24 @@
-//
+﻿//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
 //	Copyright(C) CRI Middleware Co., Ltd.
 //	All rights reserved.
 //
-#if defined(RESTRICT_SHADER_MODEL_3)
-/* MEMO: ".x" is not used, now. */
+
+/* MEMO: ".x" is used for alphablending-method. */
 static const float4 _OverlayParameter_Mix = {1.0f, 1.0f, 0.0f, 1.0f};
 static const float4 _OverlayParameter_Add = {1.0f, 0.0f, 0.0f, 1.0f};
 static const float4 _OverlayParameter_Sub = {1.0f, 0.0f, 0.0f, -1.0f};
 static const float4 _OverlayParameter_Mul = {1.0f, 1.0f, 1.0f, 1.0f};
-#else
-#endif
+// #if defined(RESTRICT_SHADER_MODEL_3)
+// /* MEMO: ".x" is not used, now. */
+// static const float4 _OverlayParameter_Mix = {1.0f, 1.0f, 0.0f, 1.0f};
+// static const float4 _OverlayParameter_Add = {1.0f, 0.0f, 0.0f, 1.0f};
+// static const float4 _OverlayParameter_Sub = {1.0f, 0.0f, 0.0f, -1.0f};
+// static const float4 _OverlayParameter_Mul = {1.0f, 1.0f, 1.0f, 1.0f};
+// #else
+// #endif
 
 InputPS VS_main(InputVS input)
 {
@@ -44,14 +50,19 @@ InputPS VS_main(InputVS input)
 									fmod(input.coloParts.y, 256.0) * (1.0 / 255.0)
 								);
 
-#if defined(RESTRICT_SHADER_MODEL_3)
+// #if defined(RESTRICT_SHADER_MODEL_3)
+// 	/* Set Parameter-Overlay */
+// 	float blend = input.blend.x;
+// 	output.ParameterOverlay = (2.0f > blend)
+// 		? ((1.0f > blend) ? _OverlayParameter_Mix : _OverlayParameter_Add)
+// 		: ((3.0f > blend) ? _OverlayParameter_Sub : _OverlayParameter_Mul);
+// #else
+// #endif
 	/* Set Parameter-Overlay */
 	float blend = input.blend.x;
 	output.ParameterOverlay = (2.0f > blend)
 		? ((1.0f > blend) ? _OverlayParameter_Mix : _OverlayParameter_Add)
 		: ((3.0f > blend) ? _OverlayParameter_Sub : _OverlayParameter_Mul);
-#else
-#endif
 
 	/* Set Positions */
 	output.PositionWorld = vertex;

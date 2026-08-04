@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) 1997-2021 Web Technology Corp.
@@ -399,6 +399,13 @@ public partial class Script_SpriteStudio6_Root
 			default:
 //				flagSettable = false;
 				break;
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+//				flagSettable = false;
+				break;
 		}
 
 		if(true == flagSettable)
@@ -482,6 +489,12 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+
 			default:
 				goto CoefficientGetScaleParts_ErrorEnd;
 		}
@@ -608,6 +621,16 @@ public partial class Script_SpriteStudio6_Root
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+				return(false);
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+				break;
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+//				break;
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+				return(false);
+
 			default:
 				return(false);
 		}

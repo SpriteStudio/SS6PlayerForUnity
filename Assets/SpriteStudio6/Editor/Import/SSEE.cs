@@ -151,7 +151,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				System.Xml.XmlNodeList nodeList = null;
 
 				/* Get Base-Data */
-				string valueText = "";
+				string valueText = string.Empty;
 				switch(informationSSEE.Version)
 				{
 					case KindVersion.CODE_010002:
@@ -274,7 +274,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationParts.BootUp();
 
 				/* Get Base-Datas */
-				string valueText = "";
+				string valueText = string.Empty;
 
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeParts, "name", managerNameSpace);
 				informationParts.Data.Name = string.Copy(valueText);
@@ -410,7 +410,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				informationEmitter.NameCellMap = nameFileBodyCellMap;
 				informationEmitter.NameCell = nameCell;
 
-				string valueText = "";
+				string valueText = string.Empty;
 				valueText = nameCellMap;
 				if(false == string.IsNullOrEmpty(valueText))
 				{
@@ -704,7 +704,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				const string messageLogPrefix = "Parse SSEE(Emitter)";
 
 				bool flagValid = true;
-				string valueText = "";
+				string valueText = string.Empty;
 				System.Xml.XmlNode nodeNow = LibraryEditor_SpriteStudio6.Utility.XML.NodeGet(nodeAttribute, name, managerNameSpace);
 				if(null != nodeNow)
 				{
@@ -755,7 +755,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				const string messageLogPrefix = "Parse SSEE(Emitter)";
 
 				bool flagValid = true;
-				string valueText = "";
+				string valueText = string.Empty;
 				System.Xml.XmlNode nodeNow = LibraryEditor_SpriteStudio6.Utility.XML.NodeGet(nodeAttribute, name, managerNameSpace);
 				if(null != nodeNow)
 				{
@@ -905,9 +905,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					Version = LibraryEditor_SpriteStudio6.Import.SSEE.KindVersion.ERROR;
 
-					NameDirectory = "";
-					NameFileBody = "";
-					NameFileExtension = "";
+					NameDirectory = string.Empty;
+					NameFileBody = string.Empty;
+					NameFileExtension = string.Empty;
 
 					VersionRenderer = 0;
 					ScaleLayout = Vector2.one;
@@ -1016,8 +1016,8 @@ public static partial class LibraryEditor_SpriteStudio6
 							Data.CleanUp();
 
 							PriorityParticle = 64.0f;
-							NameCellMap = "";
-							NameCell = "";
+							NameCellMap = string.Empty;
+							NameCell = string.Empty;
 						}
 						#endregion Functions
 					}

@@ -56,6 +56,9 @@ public static partial class Library_SpriteStudio6
 					Vector2.zero,
 				};
 				public readonly static VertexCorrection DefaultVertexCorrection = new VertexCorrection(TableCoordinateVertexCorrectionDefault);
+
+				public readonly static Skew DefaultSkew = new Skew(0.0f, 0.0f);
+
 				private readonly static Color[] TableVertexColorPartsColorDefault = new Color[(int)Library_SpriteStudio6.KindVertex.TERMINATOR2]
 				{
 					Library_SpriteStudio6.Data.Animation.Attribute.ColorClear,
@@ -101,9 +104,15 @@ public static partial class Library_SpriteStudio6
 
 				public const float DefaultRadiusCollision = 0.0f;
 
-				public readonly static UserData DefaultUseData = new UserData(UserData.FlagBit.CLEAR, 0, Rect.zero, Vector2.zero, "");
+				public readonly static UserData DefaultUseData = new UserData(UserData.FlagBit.CLEAR, 0, Rect.zero, Vector2.zero, string.Empty);
 
-				public readonly static Instance DefaultInstance = new Instance(Instance.FlagBit.CLEAR, 0, 1.0f, 0, 0, "", "");
+#if false
+				/* MEMO: SS5.x (??) */
+				public readonly static Instance DefaultInstance = new Instance(Instance.FlagBit.CLEAR, 0, 1.0f, 0, 0, string.Empty, string.Empty);
+#else
+				/* MEMO: SS7.x - */
+				public readonly static Instance DefaultInstance = new Instance(Instance.FlagBit.CLEAR, 1, 1.0f, 0, 0, string.Empty, string.Empty);
+#endif
 
 				public readonly static Effect DefaultEffect = new Effect(Effect.FlagBit.CLEAR, 0, 1.0f);
 
@@ -113,6 +122,11 @@ public static partial class Library_SpriteStudio6
 				public readonly static Shader DefaultShader = new Shader(string.Empty, ref TableParameterShaderDefault);
 
 				public readonly static Signal DefaultSignal = new Signal(new Signal.Command[0]);
+
+				public readonly static Sound DefaultSound = new Sound(0, 0, 0);
+
+//				public readonly static ChangeTexture DefaultChangeTexture = new ChangeTexture(string.Empty);
+				public readonly static ChangeTexture DefaultChangeTexture = new ChangeTexture(-1);
 				#endregion Enums & Constants
 
 				/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -370,6 +384,71 @@ public static partial class Library_SpriteStudio6
 				}
 
 				[System.Serializable]
+				public struct Skew
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public float X;
+					public float Y;
+
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public Skew(float x, float y)
+					{
+						X = x;
+						Y = y;
+					}
+
+					public void CleanUp()
+					{
+						X = 0;
+						Y = 0;
+					}
+
+					public void BootUp()
+					{
+						X = 0;
+						Y = 0;
+					}
+
+					public void Duplicate(Skew original)
+					{
+						/* MEMO: Shallow copy */
+						X = original.X;
+						Y = original.Y;
+					}
+
+					public override bool Equals(System.Object target)
+					{
+						if((null == target) || (GetType() != target.GetType()))
+						{
+							return(false);
+						}
+
+						Skew targetData = (Skew)target;
+
+						if(X != targetData.X)
+						{
+							return(false);
+						}
+						if(Y != targetData.Y)
+						{
+							return(false);
+						}
+
+						return(true);
+					}
+
+					public override int GetHashCode()
+					{
+						return(base.GetHashCode());
+					}
+					#endregion Functions
+				}
+
+				[System.Serializable]
 				public struct PartsColor
 				{
 					/* ----------------------------------------------- Variables & Properties */
@@ -402,7 +481,7 @@ public static partial class Library_SpriteStudio6
 						RateAlpha = null;
 					}
 
-					public void BootUp(int countVertex)
+					public void BootUp(int countVertex, in Color colorDerault)
 					{
 						Bound = Library_SpriteStudio6.KindBoundBlend.NON;
 						Operation = Library_SpriteStudio6.KindOperationBlend.MIX;
@@ -410,7 +489,8 @@ public static partial class Library_SpriteStudio6
 						VertexColor = new Color[countVertex];
 						for(int i=0; i<countVertex; i++)
 						{
-							VertexColor[i] = ColorClear;
+//							VertexColor[i] = ColorClear;
+							VertexColor[i] = colorDerault;
 						}
 
 						RateAlpha = new float[countVertex];
@@ -572,7 +652,7 @@ public static partial class Library_SpriteStudio6
 						NumberInt = 0;
 						Rectangle = Rect.zero;
 						Coordinate = Vector2.zero;
-						Text = "";
+						Text = string.Empty;
 					}
 
 					public void Duplicate(UserData original)
@@ -583,14 +663,14 @@ public static partial class Library_SpriteStudio6
 						NumberInt = original.NumberInt;
 						Rectangle = original.Rectangle;
 						Coordinate = original.Coordinate;
-						Text = (true == string.IsNullOrEmpty(original.Text)) ? "" : string.Copy(original.Text);
+						Text = (true == string.IsNullOrEmpty(original.Text)) ? string.Empty : string.Copy(original.Text);
 #else
 						/* MEMO: Shallow copy */
 						Flags = original.Flags;
 						NumberInt = original.NumberInt;
 						Rectangle = original.Rectangle;
 						Coordinate = original.Coordinate;
-						Text = (true == string.IsNullOrEmpty(original.Text)) ? "" : original.Text;
+						Text = (true == string.IsNullOrEmpty(original.Text)) ? string.Empty : original.Text;
 #endif
 					}
 
@@ -682,8 +762,8 @@ public static partial class Library_SpriteStudio6
 						RateTime = 1.0f;
 						OffsetStart = 0;
 						OffsetEnd = 0;
-						LabelStart = "";
-						LabelEnd = "";
+						LabelStart = string.Empty;
+						LabelEnd = string.Empty;
 					}
 
 					public void Duplicate(Instance original)
@@ -1376,6 +1456,164 @@ public static partial class Library_SpriteStudio6
 						}
 						#endregion Classes, Structs & Interfaces
 					}
+					#endregion Enums & Constants
+				}
+
+				[System.Serializable]
+				public struct Sound
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+//					public int IDList;
+//					public string Name;
+					public int IDList;
+					public int Index;
+					public int CountPlay;
+
+					public bool IsValid
+					{
+						get
+						{
+							if(	(0 > IDList)
+//								|| (true == string.IsNullOrEmpty(Name))
+								|| (0 > Index)
+								|| (0 > CountPlay)
+							)
+							{
+								return(false);
+							}
+							return(true);
+						}
+					}
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public Sound(short idList, short index, int countPlay)
+					{
+						IDList = idList;
+						Index = index;
+						CountPlay = countPlay;
+					}
+
+					public void CleanUp()
+					{
+						IDList = -1;
+						Index = -1;
+						CountPlay = -1;
+					}
+
+					public bool BootUp()
+					{
+						CleanUp();
+
+						return(true);
+					}
+
+					public void Duplicate(Sound original)
+					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+						IDList = original.IDList;
+						Name = string.Copy(original.Name);;
+						CountPlay = original.CountPlay;
+#else
+						/* MEMO: Shallow copy */
+						IDList = original.IDList;
+						Index = original.Index;
+						CountPlay = original.CountPlay;
+#endif
+					}
+
+					public override bool Equals(System.Object target)
+					{
+						return(false);
+					}
+
+					public override int GetHashCode()
+					{
+						return(base.GetHashCode());
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
+					#endregion Enums & Constants
+				}
+
+				[System.Serializable]
+				public struct ChangeTexture
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+//					public string NameTexture;
+					public int IndexTexture;
+					//SsImage* image;
+
+					public bool IsValid
+					{
+						get
+						{
+//							return(!(false == string.IsNullOrEmpty(NameTexture)));	/* (false : true) ... !(true : false) */
+							return(0 <= IndexTexture);	/* ? true : false */
+						}
+					}
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+//					public ChangeTexture(string nameTexture)
+//					{
+//						NameTexture = nameTexture;
+//					}
+					public ChangeTexture(int indexTexture)
+					{
+						IndexTexture = indexTexture;
+					}
+
+					public void CleanUp()
+					{
+//						NameTexture = string.Empty;
+						IndexTexture = -1;
+					}
+
+					public bool BootUp()
+					{
+						CleanUp();
+						return(true);
+					}
+
+					public void Duplicate(ChangeTexture original)
+					{
+#if ATTRIBUTE_DUPLICATE_DEEP
+//						NameTexture = string.Copy(original.NameTexture);;
+						IndexTexture = original.IndexTexture;
+#else
+						/* MEMO: Shallow copy */
+//						NameTexture = original.NameTexture;
+						IndexTexture = original.IndexTexture;
+#endif
+					}
+
+					public override bool Equals(System.Object target)
+					{
+						if((null == target) || (GetType() != target.GetType()))
+						{
+							return(false);
+						}
+
+						ChangeTexture targetData = (ChangeTexture)target;
+//						return(NameTexture == targetData.NameTexture);	/* ? true : falase */
+						return(IndexTexture == targetData.IndexTexture);	/* ? true : falase */
+					}
+
+					public override int GetHashCode()
+					{
+						return(base.GetHashCode());
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
 					#endregion Enums & Constants
 				}
 				#endregion Classes, Structs & Interfaces

@@ -86,7 +86,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				System.Xml.NameTable nodeNameSpace = new System.Xml.NameTable();
 				System.Xml.XmlNamespaceManager managerNameSpace = new System.Xml.XmlNamespaceManager(nodeNameSpace);
 
-				string valueText = "";
+				string valueText = string.Empty;
 
 				/* Get Command Setting */
 				System.Xml.XmlNodeList listNode = LibraryEditor_SpriteStudio6.Utility.XML.ListGetNode(nodeRoot, "commands/value", managerNameSpace);
@@ -399,9 +399,9 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					Version = KindVersion.ERROR;
 
-					NameDirectory = "";
-					NameFileBody = "";
-					NameFileExtension = "";
+					NameDirectory = string.Empty;
+					NameFileBody = string.Empty;
+					NameFileExtension = string.Empty;
 
 					TableCommand = null;
 					TableValue = null;

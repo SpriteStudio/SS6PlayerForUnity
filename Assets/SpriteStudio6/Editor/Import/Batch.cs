@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) 1997-2021 Web Technology Corp.
@@ -21,12 +21,12 @@ public static partial class LibraryEditor_SpriteStudio6
 		{
 			/* ----------------------------------------------- Variables & Properties */
 			#region Variables & Properties
-			private static string NameFolderBaseExternal = "";
-			private static string NameFolderRootAsset = "";
+			private static string NameFolderBaseExternal = string.Empty;
+			private static string NameFolderRootAsset = string.Empty;
 
-			private static string NameBaseFolderSetting = "";
-			private static string NameBaseFolderAsset = "";
-			private static string NameBaseFolderData = "";
+			private static string NameBaseFolderSetting = string.Empty;
+			private static string NameBaseFolderAsset = string.Empty;
+			private static string NameBaseFolderData = string.Empty;
 
 			private static LibraryEditor_SpriteStudio6.Import.Setting.KindMode Mode;
 			#endregion Variables & Properties
@@ -87,8 +87,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Decode List-File (1 Line) */
 				Mode = LibraryEditor_SpriteStudio6.Import.Setting.KindMode.SS6PU;
 				int indexLine = 0;
-				string textLine = "";
-				string textLineValid = "";
+				string textLine = string.Empty;
+				string textLineValid = string.Empty;
 				bool flagValid;
 				while(0 <= streamList.Peek())
 				{

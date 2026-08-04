@@ -725,7 +725,8 @@ public partial class Script_SpriteStudio6_Root
 
 		/* MEMO: No decode User-Data as the elapsed section is abnormal. */
 		TableControlTrack[indexTrack].Status |= Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_USERDATA
-												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL;
+												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_SIGNAL
+												| Library_SpriteStudio6.Control.Animation.Track.FlagBitStatus.IGNORE_NEXTUPDATE_SOUND;
 		TableControlTrack[indexTrack].TimeElapsed = cursor;
 
 		return(true);
