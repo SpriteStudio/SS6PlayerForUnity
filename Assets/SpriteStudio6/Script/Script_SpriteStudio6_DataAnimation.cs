@@ -114,7 +114,15 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
-						count++;
+						if(true == TableParts[i].StatusIsMaskClipping)
+						{
+							/* MEMO: Draw three-times when "Clipping-Mask". (Pre-Draw + Draw + Post-Draw) */
+							count += 3;
+						}
+						else
+						{
+							count++;
+						}
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
@@ -122,7 +130,7 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
-						/* MEMO: "Mask"s are drawn twice(Predraw + Draw). */
+						/* MEMO: "Mask"s are drawn twice(Pre-Draw + Post-Draw). */
 						count += 2;
 						break;
 
@@ -140,6 +148,23 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+						break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+						if(true == TableParts[i].StatusIsMaskPure)
+						{
+							/* MEMO: Draw twice when "Mask". (Pre-Draw + Post-Draw) */
+							count += 2;
+						}
+						else
+						{
+							count++;
+						}
+						break;
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+						break;
 				}
 			}
 		}
@@ -150,7 +175,47 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 //						+ (	CatalogParts.TableIDPartsMaskTriangle2.Length
 //							+ CatalogParts.TableIDPartsMaskTriangle4.Length
 //							) * 2;
-			count = CatalogParts.TableIDPartsNormal.Length + (CatalogParts.TableIDPartsMask.Length * 2);
+
+			int countCatalog;
+			int[] tableIDParts;
+
+			/* "Normal" parts */
+			tableIDParts = CatalogParts.TableIDPartsNormal;
+			countCatalog = tableIDParts.Length;
+			for(int i=0; i<countCatalog; i++)
+			{
+				if(true == TableParts[tableIDParts[i]].StatusIsMaskClipping)
+				{
+					/* MEMO: Draw three-times when "Clipping-Mask". (Pre-Draw + Draw + Post-Draw) */
+					count += 3;
+				}
+				else
+				{
+					count++;
+				}
+			}
+
+			/* "Mask" parts */
+			/* MEMO: "Mask"s are drawn twice(Pre-Draw + Post-Draw). */
+			count += CatalogParts.TableIDPartsMask.Length * 2;
+
+			/* "Shape" parts */
+			tableIDParts = CatalogParts.TableIDPartsShape;
+			countCatalog = tableIDParts.Length;
+			for(int i=0; i<countCatalog; i++)
+			{
+				if(true == TableParts[tableIDParts[i]].StatusIsMaskPure)
+				{
+					/* MEMO: Draw twice when "Mask". (Pre-Draw + Post-Draw) */
+					count += 2;
+				}
+				else
+				{
+					count++;
+				}
+			}
+
+			/* MEMO: "Text" and "9-Slice" are not counted, since not implemented yet. */
 		}
 		return(count);
 	}
@@ -170,7 +235,8 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
-						count++;
+						/* MEMO: "Clipping-Mask" is chained twice. (Draw + Post-Draw) */
+						count += (true == TableParts[i].StatusIsMaskClipping) ? 2 : 1;
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
@@ -190,11 +256,26 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
-						/* MEMO: Not count. (not sprite) */
+						/* MEMO: "Mesh" is not a sprite, but is chained in Draw-Order-List. */
+						/* MEMO: "Clipping-Mask" is chained twice. (Draw + Post-Draw) */
+						count += (true == TableParts[i].StatusIsMaskClipping) ? 2 : 1;
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+						count++;
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+//						count++;
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+//						count++;
 						break;
 				}
 			}
@@ -205,7 +286,36 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 //						+ CatalogParts.TableIDPartsTriangle4.Length
 //						+ CatalogParts.TableIDPartsMaskTriangle2.Length
 //						+ CatalogParts.TableIDPartsMaskTriangle4.Length;
-			count = CatalogParts.TableIDPartsNormal.Length + CatalogParts.TableIDPartsMask.Length;
+			/* MEMO: "Catalog" holds only Parts-IDs, so refer "TableParts[].Status" for masking. */
+			int countCatalog;
+			int[] tableIDParts;
+
+			/* "Normal" parts */
+			tableIDParts = CatalogParts.TableIDPartsNormal;
+			countCatalog = tableIDParts.Length;
+			for(int i=0; i<countCatalog; i++)
+			{
+				/* MEMO: "Clipping-Mask" is chained twice. (Draw + Post-Draw) */
+				count += (true == TableParts[tableIDParts[i]].StatusIsMaskClipping) ? 2 : 1;
+			}
+
+			/* "Mesh" parts */
+			/* MEMO: "Mesh" is not a sprite, but is chained in Draw-Order-List. */
+			tableIDParts = CatalogParts.TableIDPartsMesh;
+			countCatalog = tableIDParts.Length;
+			for(int i=0; i<countCatalog; i++)
+			{
+				/* MEMO: "Clipping-Mask" is chained twice. (Draw + Post-Draw) */
+				count += (true == TableParts[tableIDParts[i]].StatusIsMaskClipping) ? 2 : 1;
+			}
+
+			/* "Instance" / "Effect" / "Mask" / "Shape" parts */
+			count +=	CatalogParts.TableIDPartsInstance.Length
+						+ CatalogParts.TableIDPartsEffect.Length
+						+ CatalogParts.TableIDPartsMask.Length
+						+ CatalogParts.TableIDPartsShape.Length;
+
+			/* MEMO: "Text" and "9-Slice" are not counted, since not implemented yet. */
 		}
 		return(count);
 	}
@@ -225,6 +335,8 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+						/* MEMO: "Clipping-Mask" writes the stencil at its own rank in "Draw", */
+						/*        so it is not chained in "ListPartsPreDraw".                  */
 						break;
 
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
@@ -248,6 +360,25 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+						/* MEMO: "Shape"'s masking is decided by "MASK", not "DRAW_STENCIL_MASK". */
+						if(true == TableParts[i].StatusIsMaskPure)
+						{
+							count++;
+						}
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+//						count++;
+						break;
+
+					case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+//						count++;
+						break;
 				}
 			}
 		}
@@ -259,7 +390,22 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			/* MEMO: Yuzu. */
 			count = CatalogParts.TableIDPartsNormal.Length;
 #else
+			/* "Mask" parts */
 			count = CatalogParts.TableIDPartsMask.Length;
+
+			/* "Shape" parts */
+			/* MEMO: "Shape"'s masking is decided by "MASK", not "DRAW_STENCIL_MASK". */
+			int[] tableIDParts = CatalogParts.TableIDPartsShape;
+			int countCatalog = tableIDParts.Length;
+			for(int i=0; i<countCatalog; i++)
+			{
+				if(true == TableParts[tableIDParts[i]].StatusIsMaskPure)
+				{
+					count++;
+				}
+			}
+
+			/* MEMO: "Text" and "9-Slice" are not counted, since not implemented yet. */
 #endif
 		}
 		return (count);
@@ -344,10 +490,16 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].Scaling);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].ScalingLocal);
 
+#if false
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RateOpacity);
+#else
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].RateOpacity);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(TableAnimation[i].TableParts[j].PowerMask);
+#endif
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(TableAnimation[i].TableParts[j].Priority);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(TableAnimation[i].TableParts[j].PartsColor);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(TableAnimation[i].TableParts[j].VertexCorrection);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionSkew(TableAnimation[i].TableParts[j].Skew);
 
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].OffsetPivot);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(TableAnimation[i].TableParts[j].PositionAnchor);
@@ -364,6 +516,8 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionDeform(TableAnimation[i].TableParts[j].Deform);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionShader(TableAnimation[i].TableParts[j].Shader);
 				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionSignal(TableAnimation[i].TableParts[j].Signal);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionSound(TableAnimation[i].TableParts[j].Sound);
+				Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionChangeTexture(TableAnimation[i].TableParts[j].ChangeTexture);
 			}
 		}
 	}
@@ -378,8 +532,8 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 	#region Enums & Constants
 	public enum KindVersion
 	{
-		SUPPORT_EARLIEST = CODE_010100,
-		SUPPORT_LATEST = CODE_010101,
+		SUPPORT_EARLIEST = CODE_010200,
+		SUPPORT_LATEST = CODE_010200,
 
 		SS5PU = 0,	/* Before SS5PU *//* (Reserved) */
 		CODE_010000 = 0x00010000,	/* SS6PU Ver.0.8.0 */
@@ -402,8 +556,16 @@ public class Script_SpriteStudio6_DataAnimation : ScriptableObject
 			/*       Always divide "Normal (Sprite)" and "Mask" into 4 triangles according to SpriteStudio6's specifications. */
 			/* MEMO: Support "Mesh Deformation" */
 			/* MEMO: Support "Z-Position" Priority */
-		CODE_010101 = 0x00010100,	/* 0x00010200 */	/* SS6PU Ver.1.2.0 */
+		CODE_010101 = 0x00010100,	/* SS6PU Ver.1.2.1 */
 			/* MEMO: Added "Name (Original SSAE file's Body-Name) */
+
+		CODE_010200 = 0x00010200,	/* SS6PU Ver.2.3.0 */
+			/* MEMO: Support "Clipping-Mask" */
+			/* MEMO: Support "Audio" part */
+			/* MEMO: Support "Texture-Change" part */
+			/* MEMO: Support "9slice" part (Reserved) */
+			/* MEMO: Support "Skew" part (Reserved & Experimental) */
+			/* MEMO: Support "Alpha-Blending-V2" series. */
 	}
 	#endregion Enums & Constants
 

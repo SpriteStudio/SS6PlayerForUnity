@@ -26,6 +26,7 @@ public static partial class Library_SpriteStudio6
 				{
 					/* ----------------------------------------------- Enums & Constants */
 					#region Enums & Constants
+#if false
 					public readonly static Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer Capacity = new Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer(
 						true,	/* Status */
 						true,	/* Cell */
@@ -34,9 +35,11 @@ public static partial class Library_SpriteStudio6
 						false,	/* Scaling *//* Use only in front stage of other pack formats, since performance is very poor. */
 						true,	/* ScalingLocal */
 						true,	/* RateOpacity */
+						true,	/* PowerMask */
 						true,	/* Priority */
 						true,	/* PartsColor */
 						true,	/* VertexCorrection */
+						true,	/* Skew */
 						true,	/* OffsetPivot */
 						true,	/* PositionAnchor */
 						true,	/* SizeForce */
@@ -49,8 +52,41 @@ public static partial class Library_SpriteStudio6
 						false,	/* Effect (Trigger) *//* Not Supported */
 						true,	/* Deform */
 						true,	/* Shader */
-						false	/* Signal *//* Not Supported */
+						false,	/* Signal *//* Not Supported */
+						false,	/* Sound (Trigger) *//* Not Supported */
+						true	/* ChangeTexture (Trigger) */
 					);
+#else
+					public readonly static Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer Capacity = new Library_SpriteStudio6.Data.Animation.PackAttribute.CapacityContainer(
+						false,	/* Status */
+						false,	/* Cell */
+						false,	/* Position *//* Use only in front stage of other pack formats, since performance is very poor. */
+						false,	/* Rotation *//* Use only in front stage of other pack formats, since performance is very poor. */
+						false,	/* Scaling *//* Use only in front stage of other pack formats, since performance is very poor. */
+						false,	/* ScalingLocal */
+						false,	/* RateOpacity */
+						false,	/* PowerMask */
+						false,	/* Priority */
+						false,	/* PartsColor */
+						false,	/* VertexCorrection */
+						false,	/* Skew */
+						false,	/* OffsetPivot */
+						false,	/* PositionAnchor */
+						false,	/* SizeForce */
+						false,	/* PositionTexture */
+						false,	/* RotationTexture */
+						false,	/* ScalingTexture */
+						false,	/* RadiusCollision *//* Use only in front stage of other pack formats, since performance is very poor. */
+						false,	/* UserData (Trigger) *//* Not Supported */
+						false,	/* Instance (Trigger) *//* Not Supported */
+						false,	/* Effect (Trigger) *//* Not Supported */
+						false,	/* Deform */
+						false,	/* Shader */
+						false,	/* Signal *//* Not Supported */
+						false,	/* Sound (Trigger) *//* Not Supported */
+						false	/* ChangeTexture (Trigger) */
+					);
+#endif
 
 					public const string ID = "StandardUncompressed";
 
@@ -62,12 +98,15 @@ public static partial class Library_SpriteStudio6
 					internal readonly static InterfaceFunctionCell FunctionCell = new InterfaceFunctionCell();
 					internal readonly static InterfaceFunctionPartsColor FunctionPartsColor = new InterfaceFunctionPartsColor();
 					internal readonly static InterfaceFunctionVertexCorrection FunctionVertexCorrection = new InterfaceFunctionVertexCorrection();
+					internal readonly static InterfaceFunctionSkew FunctionSkew = new InterfaceFunctionSkew();
 //					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
 //					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 //					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
 					internal readonly static InterfaceFunctionDeform FunctionDeform = new InterfaceFunctionDeform();
 					internal readonly static InterfaceFunctionShader FunctionShader = new InterfaceFunctionShader();
 //					internal readonly static InterfaceFunctionSignal FunctionSignal = new InterfaceFunctionSignal();
+//					internal readonly static InterfaceFunctionSound FunctionSound = new InterfaceFunctionSound();
+//					internal readonly static InterfaceFunctionChangeTexture FunctionChangeTexture = new InterfaceFunctionChangeTexture();
 					#endregion Enums & Constants
 
 					/* ----------------------------------------------- Dictionary-Functions */
@@ -126,7 +165,9 @@ public static partial class Library_SpriteStudio6
 
 							if(0 >= listKeyData[0].CountGetKey())
 							{
+//								container.TableCreateEmpty();
 								container.TableValue = new int[0];
+								container.TableAccessory = new float[0];
 								return(true);
 							}
 
@@ -135,6 +176,8 @@ public static partial class Library_SpriteStudio6
 
 							int value;
 							container.TableValue = new int[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
+#if false
 							for(int i=0; i<countFrame; i++)
 							{
 								if(false == listKeyData[0].ValueGet(out value, i))
@@ -143,6 +186,32 @@ public static partial class Library_SpriteStudio6
 								}
 								container.TableValue[i] = value;
 							}
+#else
+							switch(nameAttribute)
+							{
+								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributePriority:
+									for(int i=0; i<countFrame; i++)
+									{
+										if(false == Library_SpriteStudio6.Data.Animation.Attribute.Importer.Inheritance.ValueGetIntAdd(out value, listKeyData[0], i, 0))
+										{
+											value = valueDefault;
+										}
+										container.TableValue[i] = value;
+									}
+									break;
+
+								default:
+									for(int i=0; i<countFrame; i++)
+									{
+										if(false == listKeyData[0].ValueGet(out value, i))
+										{
+											value = valueDefault;
+										}
+										container.TableValue[i] = value;
+									}
+									break;
+							}
+#endif
 							return(true);
 						}
 						#endregion Functions
@@ -189,6 +258,7 @@ public static partial class Library_SpriteStudio6
 							/*       RateOpacity = 1.0f / other = 0.0f                                                             */
 							float value;
 							container.TableValue = new float[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							switch(nameAttribute)
 							{
 								case Library_SpriteStudio6.Data.Animation.Attribute.Importer.NameAttributeRateOpacity:
@@ -281,7 +351,9 @@ public static partial class Library_SpriteStudio6
 
 							if((0 >= listKeyData[0].CountGetKey()) && (0 >= listKeyData[1].CountGetKey()))
 							{
+//								container.TableCreateEmpty();
 								container.TableValue = new Vector2[0];
+								container.TableAccessory = new float[0];
 								return(true);
 							}
 
@@ -307,6 +379,7 @@ public static partial class Library_SpriteStudio6
 
 							float value;
 							container.TableValue = new Vector2[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							for(int i=0; i<countFrame; i++)
 							{
 								if(false == listKeyData[0].ValueGet(out value, i))
@@ -365,13 +438,16 @@ public static partial class Library_SpriteStudio6
 
 							if((0 >= listKeyData[0].CountGetKey()) && (0 >= listKeyData[1].CountGetKey()) && (0 >= listKeyData[2].CountGetKey()))
 							{
+//								container.TableCreateEmpty();
 								container.TableValue = new Vector3[0];
+								container.TableAccessory = new float[0];
 								return(true);
 							}
 
 							float valueDefault = 0.0f;
 							float value;
 							container.TableValue = new Vector3[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							for(int i=0; i<countFrame; i++)
 							{
 								if(false == listKeyData[0].ValueGet(out value, i))
@@ -436,6 +512,7 @@ public static partial class Library_SpriteStudio6
 
 							/* MEMO: Attribute"Status" is never omitted. */
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Status[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							bool valueAttribute;
 							for(int i=0; i<countFrame; i++)
 							{
@@ -531,11 +608,14 @@ public static partial class Library_SpriteStudio6
 
 							if(0 >= listKeyData[0].CountGetKey())
 							{
+//								container.TableCreateEmpty();
 								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Cell[0];
+								container.TableAccessory = new float[0];
 								return(true);
 							}
 
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Cell[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							for(int i=0; i<countFrame; i++)
 							{
 								listKeyData[0].ValueGet(out container.TableValue[i], i);
@@ -584,11 +664,14 @@ public static partial class Library_SpriteStudio6
 
 							if(0 >= listKeyData[0].CountGetKey())
 							{
+//								container.TableCreateEmpty();
 								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColor[0];
+								container.TableAccessory = new float[0];
 								return(true);
 							}
 
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.PartsColor[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							for(int i=0; i<countFrame; i++)
 							{
 								listKeyData[0].ValueGet(out container.TableValue[i], i);
@@ -637,11 +720,70 @@ public static partial class Library_SpriteStudio6
 
 							if(0 >= listKeyData[0].CountGetKey())
 							{
+//								container.TableCreateEmpty();
 								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection[0];
+								container.TableAccessory = new float[0];
 								return(true);
 							}
 
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
+							for(int i=0; i<countFrame; i++)
+							{
+								listKeyData[0].ValueGet(out container.TableValue[i], i);
+							}
+							return(true);
+						}
+						#endregion Functions
+					}
+
+					public class InterfaceFunctionSkew : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerSkew
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Skew> cacheDecode,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
+						}
+
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Skew> cacheDecode,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew container)
+						{
+							return(container.TableValue.Length);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSkew[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
+
+							if(0 >= listKeyData[0].CountGetKey())
+							{
+//								container.TableCreateEmpty();
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Skew[0];
+								container.TableAccessory = new float[0];
+								return(true);
+							}
+
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Skew[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							for(int i=0; i<countFrame; i++)
 							{
 								listKeyData[0].ValueGet(out container.TableValue[i], i);
@@ -719,7 +861,9 @@ public static partial class Library_SpriteStudio6
 
 							if(0 >= listKeyData[0].CountGetKey())
 							{
+//								container.TableCreateEmpty();
 								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Deform[0];
+								container.TableAccessory = new float[0];
 								return(true);
 							}
 
@@ -777,6 +921,7 @@ public static partial class Library_SpriteStudio6
 							container.CountVertexMesh = countVertexChange;
 							container.TableIndexVertex = listIndexVertexChange.ToArray();
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Deform[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							int indexTable;
 							for(int i=0; i<countFrame; i++)
 							{
@@ -835,11 +980,14 @@ public static partial class Library_SpriteStudio6
 
 							if(0 >= listKeyData[0].CountGetKey())
 							{
+//								container.TableCreateEmpty();
 								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Shader[0];
+								container.TableAccessory = new float[0];
 								return(true);
 							}
 
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Shader[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
 							for(int i=0; i<countFrame; i++)
 							{
 								listKeyData[0].ValueGet(out container.TableValue[i], i);
@@ -851,6 +999,64 @@ public static partial class Library_SpriteStudio6
 
 					/* MEMO: Not Support */
 //					public class InterfaceFunctionSignal : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerSignal
+//					public class InterfaceFunctionSound : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerSound
+#if false
+					public class InterfaceFunctionChangeTexture : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerChangeTexture
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture> cacheDecode,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, argument.Frame, container.TableValue));
+						}
+
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture> cacheDecode,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardUncompressed.ValueGet(ref cacheDecode, index, container.TableValue));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture container)
+						{
+							return(container.TableValue.Length);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeChangeTexture[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 *//* MEMO: No inheritance is related to attribute stored in this type. */
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
+
+							if(0 >= listKeyData[0].CountGetKey())
+							{
+//								container.TableCreateEmpty();
+								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture[0];
+								container.TableAccessory = new float[0];
+								return(true);
+							}
+
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture[countFrame];
+							container.TableAccessory = new float[0];	/* Always Length=0 */
+							for(int i=0; i<countFrame; i++)
+							{
+								listKeyData[0].ValueGet(out container.TableValue[i], i);
+							}
+							return(true);
+						}
+						#endregion Functions
+					}
+#endif
 					#endregion Classes, Structs & Interfaces
 
 					/* ----------------------------------------------- Functions */

@@ -1,4 +1,4 @@
-//
+﻿//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
@@ -7,14 +7,19 @@
 //
 fixed4 _Color;	// Material Color.
 
-#if defined(RESTRICT_SHADER_MODEL_3)
-/* MEMO: ".x" is not used, now. */
+/* MEMO: ".x" is used for alphablending-method. */
 static const float4 _OverlayParameter_Mix = {1.0f, 1.0f, 0.0f, 1.0f};
 static const float4 _OverlayParameter_Add = {1.0f, 0.0f, 0.0f, 1.0f};
 static const float4 _OverlayParameter_Sub = {1.0f, 0.0f, 0.0f, -1.0f};
 static const float4 _OverlayParameter_Mul = {1.0f, 1.0f, 1.0f, 1.0f};
-#else
-#endif
+// #if defined(RESTRICT_SHADER_MODEL_3)
+// /* MEMO: ".x" is not used, now. */
+// static const float4 _OverlayParameter_Mix = {1.0f, 1.0f, 0.0f, 1.0f};
+// static const float4 _OverlayParameter_Add = {1.0f, 0.0f, 0.0f, 1.0f};
+// static const float4 _OverlayParameter_Sub = {1.0f, 0.0f, 0.0f, -1.0f};
+// static const float4 _OverlayParameter_Mul = {1.0f, 1.0f, 1.0f, 1.0f};
+// #else
+// #endif
 
 InputPS VS_main(InputVS input)
 {
@@ -39,13 +44,17 @@ InputPS VS_main(InputVS input)
 	temp.w = 0.0f;
 	output.Texture00UV = temp;
 
-#if defined(RESTRICT_SHADER_MODEL_3)
+// #if defined(RESTRICT_SHADER_MODEL_3)
+// 	/* Set Parameter-Overlay */
+// 	output.ParameterOverlay = (2.0f > temp.z)
+// 		? ((1.0f > temp.z) ? _OverlayParameter_Mix : _OverlayParameter_Add)
+// 		: ((3.0f > temp.z) ? _OverlayParameter_Sub : _OverlayParameter_Mul);
+// #else
+// #endif
 	/* Set Parameter-Overlay */
 	output.ParameterOverlay = (2.0f > temp.z)
 		? ((1.0f > temp.z) ? _OverlayParameter_Mix : _OverlayParameter_Add)
 		: ((3.0f > temp.z) ? _OverlayParameter_Sub : _OverlayParameter_Mul);
-#else
-#endif
 
 	/* Get vertex's rate in Rectangle */
 	float4 rate;

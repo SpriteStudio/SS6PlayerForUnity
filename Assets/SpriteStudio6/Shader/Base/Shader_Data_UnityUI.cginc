@@ -1,4 +1,4 @@
-//
+﻿//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
@@ -30,10 +30,11 @@ struct InputPS
 	float4 MaskUV : TEXCOORD5;
 	float4 PositionWorld : TEXCOORD6;
 	float4 PositionDraw : TEXCOORD7;
-#if defined(RESTRICT_SHADER_MODEL_3)
+// #if defined(RESTRICT_SHADER_MODEL_3)
+// 	float4	ParameterOverlay : TEXCOORD1;
+// #else
+// #endif
 	float4	ParameterOverlay : TEXCOORD1;
-#else
-#endif
 	UNITY_VERTEX_OUTPUT_STEREO
 };
 

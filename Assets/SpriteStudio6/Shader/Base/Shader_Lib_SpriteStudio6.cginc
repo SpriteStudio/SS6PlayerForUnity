@@ -1,4 +1,4 @@
-//
+﻿//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
@@ -7,12 +7,18 @@
 //
 
 /* Defines for Vertex-Shader */
+/* MEMO: ".x" is used for alphablending-method. (.x = Target Blending Type) */
 #define VERTEX_STATICDATA_PARTSCOLOR											\
-	/* MEMO: ".x" is not used, now.  */											\
-	static const float4 _OverlayParameter_Mix = { 1.0f, 1.0f, 0.0f, 1.0f };		\
-	static const float4 _OverlayParameter_Add = { 1.0f, 0.0f, 0.0f, 1.0f };		\
-	static const float4 _OverlayParameter_Sub = { 1.0f, 0.0f, 0.0f, -1.0f };	\
-	static const float4 _OverlayParameter_Mul = { 1.0f, 1.0f, 1.0f, 1.0f }
+static const float4 _OverlayParameter_Mix = {0.0f, 1.0f, 0.0f, 1.0f};			\
+static const float4 _OverlayParameter_Add = {0.0f, 0.0f, 0.0f, 1.0f};			\
+static const float4 _OverlayParameter_Sub = {0.0f, 0.0f, 0.0f, -1.0f};			\
+static const float4 _OverlayParameter_Mul = {0.0f, 1.0f, 1.0f, 1.0f}
+// #define VERTEX_STATICDATA_PARTSCOLOR											\
+// 	/* MEMO: ".x" is not used, now.  */											\
+// 	static const float4 _OverlayParameter_Mix = { 1.0f, 1.0f, 0.0f, 1.0f };		\
+// 	static const float4 _OverlayParameter_Add = { 1.0f, 0.0f, 0.0f, 1.0f };		\
+// 	static const float4 _OverlayParameter_Sub = { 1.0f, 0.0f, 0.0f, -1.0f };	\
+// 	static const float4 _OverlayParameter_Mul = { 1.0f, 1.0f, 1.0f, 1.0f }
 
 /* Defines for Pixel-Shader */
 #if defined(SV_Target)
@@ -70,7 +76,6 @@ Use in conjunction with "VERTEX_STATICDATA_PARTSCOLOR".
 When "RESTRICT_SHADER_MODEL_3" is not defined, process empty
 	(When not defined, all calculations will be done in Pixel-Shader).
 */
-#if defined(RESTRICT_SHADER_MODEL_3)
 #define VertexSetPartsColor(_output_,_indexBlend_,_rate_)							\
 	{																				\
 		float _ratioSrc = 1.0;														\
@@ -98,34 +103,62 @@ When "RESTRICT_SHADER_MODEL_3" is not defined, process empty
 									);												\
 		_output_.ParameterOverlay = _parameterOverlay;								\
 	}
-#else
-#define VertexSetPartsColor(_output_,_indexBlend_,_rate_)							\
-	{																				\
-		float _ratioSrc = 1.0;														\
-		float _ratioDst = _rate_;													\
-		float4 _parameterOverlay;													\
-		if(2.0f > _indexBlend_)	{													\
-			if(1.0f > _indexBlend_)	{												\
-				_parameterOverlay = _OverlayParameter_Mix;							\
-				_ratioSrc -= _ratioDst;												\
-			} else {																\
-				_parameterOverlay = _OverlayParameter_Add;							\
-			}																		\
-		} else {																	\
-			if(3.0f > _indexBlend_)	{												\
-				_parameterOverlay = _OverlayParameter_Sub;							\
-			} else {																\
-				_parameterOverlay = _OverlayParameter_Mul;							\
-				_ratioSrc -= _ratioDst;												\
-			}																		\
-		}																			\
-		_output_.ArgumentVs00 = float4(	_ratioSrc,									\
-										_parameterOverlay.w * _ratioDst,			\
-										_parameterOverlay.y,						\
-										0.0											\
-									);												\
-	}
-#endif
+// #if defined(RESTRICT_SHADER_MODEL_3)
+// #define VertexSetPartsColor(_output_,_indexBlend_,_rate_)							\
+// 	{																				\
+// 		float _ratioSrc = 1.0;														\
+// 		float _ratioDst = _rate_;													\
+// 		float4 _parameterOverlay;													\
+// 		if(2.0f > _indexBlend_)	{													\
+// 			if(1.0f > _indexBlend_)	{												\
+// 				_parameterOverlay = _OverlayParameter_Mix;							\
+// 				_ratioSrc -= _ratioDst;												\
+// 			} else {																\
+// 				_parameterOverlay = _OverlayParameter_Add;							\
+// 			}																		\
+// 		} else {																	\
+// 			if(3.0f > _indexBlend_)	{												\
+// 				_parameterOverlay = _OverlayParameter_Sub;							\
+// 			} else {																\
+// 				_parameterOverlay = _OverlayParameter_Mul;							\
+// 				_ratioSrc -= _ratioDst;												\
+// 			}																		\
+// 		}																			\
+// 		_output_.ArgumentVs00 = float4(	_ratioSrc,									\
+// 										_parameterOverlay.w * _ratioDst,			\
+// 										_parameterOverlay.y,						\
+// 										0.0											\
+// 									);												\
+// 		_output_.ParameterOverlay = _parameterOverlay;								\
+// 	}
+// #else
+// #define VertexSetPartsColor(_output_,_indexBlend_,_rate_)							\
+// 	{																				\
+// 		float _ratioSrc = 1.0;														\
+// 		float _ratioDst = _rate_;													\
+// 		float4 _parameterOverlay;													\
+// 		if(2.0f > _indexBlend_)	{													\
+// 			if(1.0f > _indexBlend_)	{												\
+// 				_parameterOverlay = _OverlayParameter_Mix;							\
+// 				_ratioSrc -= _ratioDst;												\
+// 			} else {																\
+// 				_parameterOverlay = _OverlayParameter_Add;							\
+// 			}																		\
+// 		} else {																	\
+// 			if(3.0f > _indexBlend_)	{												\
+// 				_parameterOverlay = _OverlayParameter_Sub;							\
+// 			} else {																\
+// 				_parameterOverlay = _OverlayParameter_Mul;							\
+// 				_ratioSrc -= _ratioDst;												\
+// 			}																		\
+// 		}																			\
+// 		_output_.ArgumentVs00 = float4(	_ratioSrc,									\
+// 										_parameterOverlay.w * _ratioDst,			\
+// 										_parameterOverlay.y,						\
+// 										0.0											\
+// 									);												\
+// 	}
+// #endif
 
 /* ********************************************************* */
 //! [for Pixel-Shader] Routine processing for "Parts-Color"
@@ -144,7 +177,33 @@ Set parameter for "Parts-Color".
 
 Be sure to process the "VertexSetPartsColor" in Vertex-Shader.
 */
-#if defined(RESTRICT_SHADER_MODEL_3)
+//#define PixelSynthesizePartsColor(_pixel_,_input_)																										\
+//	{																																					\
+//		half4	colorOverlay = _input_.ColorOverlay;																									\
+//		float	colorOverlayA = colorOverlay.w;																											\
+//		half4	parameterOverlay = _input_.ParameterOverlay;																							\
+//		half4	white = half4(1.0, 1.0, 1.0, 1.0);																										\
+//		half4	pixelCoefficientColorOvelay = (white * (1.0f - parameterOverlay.z)) + (_pixel_ * parameterOverlay.z);									\
+//		colorOverlay *= colorOverlayA;																													\
+//																																						\
+//		float	methodAlphaBlend = parameterOverlay.x;																									\
+//		if(11.0 <= methodAlphaBlend)	{		/* Ovl2 */																								\
+//			if(((_pixel_.r + _pixel_.g + _pixel_.b) / 3) < 0.5)	{																						\
+//				_pixel_ = 2.0 * (_pixel_  * colorOverlay);																								\
+//			} else {																																	\
+//				_pixel_ = white - (2.0 * (white - _pixel_) * (white - colorOverlay));																	\
+//			}																																			\
+//		} else if(10.0 <= methodAlphaBlend)	{	/* Scr2 */																								\
+//			half4	white = half4(1.0, 1.0, 1.0, 1.0);																									\
+//			_pixel_ = white - (white - _pixel_) * (white - colorOverlay);																				\
+//		} else if(9.0 <= methodAlphaBlend)	{	/* Div2 */																								\
+//			_pixel_ = colorOverlay / _pixel_;																											\
+//		} else if(8.0 <= methodAlphaBlend)	{	/* Mul2 */																								\
+//			_pixel_ = colorOverlay * _pixel_;																											\
+//		} else {								/* MIX - INV */																							\
+//			_pixel_ = (_pixel_ * (1.0f - (colorOverlayA * parameterOverlay.y))) + (pixelCoefficientColorOvelay * colorOverlay * parameterOverlay.w);	\
+//		}																																				\
+//	}
 #define PixelSynthesizePartsColor(_pixel_,_input_)																									\
 	{																																				\
 		half4	colorOverlay = _input_.ColorOverlay;																								\
@@ -154,19 +213,30 @@ Be sure to process the "VertexSetPartsColor" in Vertex-Shader.
 		colorOverlay *= colorOverlayA;																												\
 		_pixel_ = (_pixel_ * (1.0f - (colorOverlayA * overlayParameter.y))) + (pixelCoefficientColorOvelay * colorOverlay * overlayParameter.w);	\
 	}
-#else
-#define PixelSynthesizePartsColor(_pixel_,_input_)														\
-	{																									\
-		half4 color[4];																					\
-		float rate = _input_.ColorOverlay.w;															\
-		float rateInverse = 1.0f - rate;																\
-		color[0] = (_pixel_ * rateInverse) + (_input_.ColorOverlay * rate);	/* Mix */					\
-		color[1] = _pixel_ + (_input_.ColorOverlay * rate);	/* Add */									\
-		color[2] = _pixel_ - (_input_.ColorOverlay * rate);	/* Subtract */								\
-		color[3] = (_pixel_ * rateInverse) + ((_pixel_ * _input_.ColorOverlay) * rate);	/* Multiple */	\
-		_pixel_ = color[_input_.Texture00UV.z];															\
-	}
-#endif
+
+// #if defined(RESTRICT_SHADER_MODEL_3)
+// #define PixelSynthesizePartsColor(_pixel_,_input_)																									\
+// 	{																																				\
+// 		half4	colorOverlay = _input_.ColorOverlay;																								\
+// 		float	colorOverlayA = colorOverlay.w;																										\
+// 		half4	overlayParameter = _input_.ParameterOverlay;																						\
+// 		half4	pixelCoefficientColorOvelay = (half4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - overlayParameter.z)) + (_pixel_ * overlayParameter.z);		\
+// 		colorOverlay *= colorOverlayA;																												\
+// 		_pixel_ = (_pixel_ * (1.0f - (colorOverlayA * overlayParameter.y))) + (pixelCoefficientColorOvelay * colorOverlay * overlayParameter.w);	\
+// 	}
+// #else
+// #define PixelSynthesizePartsColor(_pixel_,_input_)														\
+// 	{																									\
+// 		half4 color[4];																					\
+// 		float rate = _input_.ColorOverlay.w;															\
+// 		float rateInverse = 1.0f - rate;																\
+// 		color[0] = (_pixel_ * rateInverse) + (_input_.ColorOverlay * rate);	/* Mix */					\
+// 		color[1] = _pixel_ + (_input_.ColorOverlay * rate);	/* Add */									\
+// 		color[2] = _pixel_ - (_input_.ColorOverlay * rate);	/* Subtract */								\
+// 		color[3] = (_pixel_ * rateInverse) + ((_pixel_ * _input_.ColorOverlay) * rate);	/* Multiple */	\
+// 		_pixel_ = color[_input_.Texture00UV.z];															\
+// 	}
+// #endif
 
 /* ********************************************************* */
 //! [for Pixel-Shader] Synthesize External-Alpha
@@ -310,9 +380,112 @@ float4 PixelSolveColorspaceOutput(float4 color)
 #else
 // //	color.rgb = color.rgb;
 //	color.rgb = (color * color).rgb;
-	color.rgb = (pow(color, 2.2)).rgb;
+    color.rgb = (pow(color, 2.2)).rgb;
 //	color.rgb = (color * (color * (color * 0.305306011h + 0.682171111h) + 0.012522878h)).rgb;
 
-	return(color);
+    return (color);
 #endif
 }
+
+/* ********************************************************* */
+//! [for Pixel-Shader] Target Blending (Sampling FrameBuffer)
+/*!
+@param	_output_
+	[Out] Result
+@param	_source_
+	[In] Pixel's RGBA (float4 / fixed4)
+@param	_destination_
+	[In] FrameBuffer's RGBA
+
+@retval	_output_
+	Blended color
+*/
+#if COMPILEOPTION_FRAMEBUFFER_FETCH
+#define alphaSource	(_source_.a)
+#define alphaDestination	(_destination_.a)
+#define alphaOneMinusSourceAlpha	((1.0 - alphaSource) * alphaDestination)
+#define colorWhite	float4(1.0, 1.0, 1.0, 1.0)
+#define PixelBlendTarget(_output_,_source_,_destination_)																							\
+	{																																				\
+		float	methodAlphaBlend = parameterOverlay.x;																								\
+		if(6.0 <= methodAlphaBlend)	{																												\
+			if(9.0 <= methodAlphaBlend)	{																											\
+				if(10.0 <= methodAlphaBlend)	{																									\
+					if(11.0 <= methodAlphaBlend)	{																			/* OVL2 : 11 */		\
+						if(((_pixel_.r + _pixel_.g + _pixel_.b) / 3) < 0.5)	{																		\
+							_output_.xyz = 2.0 * (_source_.xyz  * _destination_.xyz);																\
+						} else {																													\
+							_output_.xyz = colorWhite.xyz - (2.0 * (colorWhite.xyz - _source_.xyz) * (colorWhite.xyz - _destination_.xyz));			\
+						}																															\
+					} else {																									/* SCR2 : 10 */		\
+						_output_.xyz = colorWhite.xyz - (colorWhite.xyz - _source_.xyz) * (colorWhite.xyz - _destination_.xyz);						\
+					}																																\
+				} else {																										/* DIV2 : 9 */		\
+					_output_.xyz = _destination_.xyz / _source_.xyz;																				\
+				}																																	\
+			} else {																																\
+				if(7.0 <= methodAlphaBlend)	{																										\
+					if(8.0 <= methodAlphaBlend)	{																				/* MUL2 : 8 */		\
+						_output_.xyz = _source_.xyz * _destination_.xyz;																			\
+					} else {																									/* INV : 7 */		\
+						_output_.xyz = (_source_.xyz * (colorWhite.xyz - _destination_.xyz));														\
+					}																																\
+				} else {																										/* EXC : 6 */		\
+					_output_.xyz = (_source_.xyz * (colorWhite.xyz - _destination_.xyz)) + (_destination_.xyz * alphaOneMinusSourceAlpha);			\
+				}																																	\
+			}																																		\
+		} else {																																	\
+			if(3.0 <= methodAlphaBlend)	{																											\
+				if(4.0 <= methodAlphaBlend)	{																										\
+					if(5.0 <= methodAlphaBlend)	{																				/* SCR : 5 */		\
+						_output_.xyz = (_source_.xyz * (colorWhite.xyz - _destination_.xyz)) + _destination_.xyz;									\
+					} else {																									/* MUL_NA : 4 */	\
+						_output_.xyz = _source_.xyz * _destination_.xyz;																			\
+					}																																\
+				} else {																										/* MUL : 3 */		\
+					_output_.xyz = (_source_.xyz * _destination_.xyz) + (_destination_.xyz * alphaOneMinusSourceAlpha);								\
+				}																																	\
+			} else {																																\
+				if(1.0 <= methodAlphaBlend)	{																										\
+					if(2.0 <= methodAlphaBlend)	{																				/* SUB : 2 */		\
+						_output_.xyz = _destination_.xyz - (_source_.xyz * alphaSource);															\
+					} else {																									/* ADD : 1 */		\
+						_output_.xyz = (_source_.xyz * alphaSource) + _destination_.xyz;															\
+					}																																\
+				} else {																										/* MIX : 0 */		\
+					_output_.xyz = _source_.xyz + (_destination_.xyz * alphaOneMinusSourceAlpha);													\
+				}																																	\
+			}																																		\
+		}																																			\
+																																					\
+		_output_.w = _source_.w + (_destination_.w * alphaOneMinusSourceAlpha);																		\
+	}
+
+//	{																																					\
+//		half4	colorOverlay = _input_.ColorOverlay;																									\
+//		float	colorOverlayA = colorOverlay.w;																											\
+//		half4	parameterOverlay = _input_.ParameterOverlay;																							\
+//		half4	white = half4(1.0, 1.0, 1.0, 1.0);																										\
+//		half4	pixelCoefficientColorOvelay = (white * (1.0f - parameterOverlay.z)) + (_pixel_ * parameterOverlay.z);									\
+//		colorOverlay *= colorOverlayA;																													\
+//																																						\
+//		float	methodAlphaBlend = parameterOverlay.x;																									\
+//		if(11.0 <= methodAlphaBlend)	{		/* Ovl2 */																								\
+//			if(((_pixel_.r + _pixel_.g + _pixel_.b) / 3) < 0.5)	{																						\
+//				_pixel_ = 2.0 * (_pixel_  * colorOverlay);																								\
+//			} else {																																	\
+//				_pixel_ = white - (2.0 * (white - _pixel_) * (white - colorOverlay));																	\
+//			}																																			\
+//		} else if(10.0 <= methodAlphaBlend)	{	/* Scr2 */																								\
+//			half4	white = half4(1.0, 1.0, 1.0, 1.0);																									\
+//			_pixel_ = white - (white - _pixel_) * (white - colorOverlay);																				\
+//		} else if(9.0 <= methodAlphaBlend)	{	/* Div2 */																								\
+//			_pixel_ = colorOverlay / _pixel_;																											\
+//		} else if(8.0 <= methodAlphaBlend)	{	/* Mul2 */																								\
+//			_pixel_ = colorOverlay * _pixel_;																											\
+//		} else {								/* MIX - INV */																							\
+//			_pixel_ = (_pixel_ * (1.0f - (colorOverlayA * parameterOverlay.y))) + (pixelCoefficientColorOvelay * colorOverlay * parameterOverlay.w);	\
+//		}																																				\
+//	}
+#else
+#endif

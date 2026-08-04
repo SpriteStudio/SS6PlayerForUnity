@@ -1,10 +1,12 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) 1997-2021 Web Technology Corp.
 	Copyright(C) CRI Middleware Co., Ltd.
 	All rights reserved.
 */
+
+#define COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -24,6 +26,12 @@ public partial class Script_SpriteStudio6_RootUnityNative : MonoBehaviour
 	public int CountDrawPartsMax;
 	public int SortingOffsetPartsDraw;
 	public Transform[] TableTransformBonePoint;
+
+#if COMPILEOPTION_BUFFERING_LOCAL_UNITYNATIVE
+	/* MEMO: Do not change these variables externally. (Buffers "Writing from AnimationClip" and "Storing Initial-State") */
+	public Matrix4x4[] TableMatrixBoneSetup;
+#else
+#endif
 	#endregion Variables & Properties
 
 	/* ----------------------------------------------- MonoBehaviour-Functions */
@@ -157,7 +165,7 @@ public partial class Script_SpriteStudio6_RootUnityNative : MonoBehaviour
 			NumberInt = 0;
 			Rectangle = Rect.zero;
 			Coordinate = Vector2.zero;
-			Text = "";
+			Text = string.Empty;
 		}
 
 		public static UserData CreateFromJSON(string json)

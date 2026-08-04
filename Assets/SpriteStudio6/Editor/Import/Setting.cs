@@ -362,8 +362,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				{
 					using(System.IO.StreamReader fileStream = new System.IO.StreamReader(nameFile, System.Text.Encoding.UTF8))
 					{
-						string textLine = "";
-						string textLineValid = "";
+						string textLine = string.Empty;
+						string textLineValid = string.Empty;
 						while(0 <= fileStream.Peek())
 						{
 							textLine = fileStream.ReadLine();
@@ -393,30 +393,30 @@ public static partial class LibraryEditor_SpriteStudio6
 
 			public static void FolderLoadPrevious(out string nameFolder)
 			{
-				nameFolder = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyFolderPrevious, "");
+				nameFolder = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyFolderPrevious, string.Empty);
 			}
 
 			public static string AssetNameNormalize(string name)
 			{
 				/* Spaces */
-				string nameNormalize = name.Replace(" ", "");
-				nameNormalize = nameNormalize.Replace("\t", "");
+				string nameNormalize = name.Replace(" ", string.Empty);
+				nameNormalize = nameNormalize.Replace("\t", string.Empty);
 
 				/* File & Hierarchy Delimiter */
-				nameNormalize = nameNormalize.Replace(":", "");
-				nameNormalize = nameNormalize.Replace("/", "");
-				nameNormalize = nameNormalize.Replace("\\", "");
-				nameNormalize = nameNormalize.Replace(".", "");
-				nameNormalize = nameNormalize.Replace("*", "");
-				nameNormalize = nameNormalize.Replace("?", "");
+				nameNormalize = nameNormalize.Replace(":", string.Empty);
+				nameNormalize = nameNormalize.Replace("/", string.Empty);
+				nameNormalize = nameNormalize.Replace("\\", string.Empty);
+				nameNormalize = nameNormalize.Replace(".", string.Empty);
+				nameNormalize = nameNormalize.Replace("*", string.Empty);
+				nameNormalize = nameNormalize.Replace("?", string.Empty);
 
 				/* Line-Feeds */
-				nameNormalize = nameNormalize.Replace("\n", "");
-				nameNormalize = nameNormalize.Replace("\r", "");
+				nameNormalize = nameNormalize.Replace("\n", string.Empty);
+				nameNormalize = nameNormalize.Replace("\r", string.Empty);
 
 				/* Quotations */
-				nameNormalize = nameNormalize.Replace("\"", "");
-				nameNormalize = nameNormalize.Replace("\'", "");
+				nameNormalize = nameNormalize.Replace("\"", string.Empty);
+				nameNormalize = nameNormalize.Replace("\'", string.Empty);
 
 				return(nameNormalize);
 			}
@@ -447,6 +447,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				DATA_ANIMATION_SS6PU,
 				DATA_EFFECT_SS6PU,
 				DATA_SEQUENCE_SS6PU,
+				DATA_SOUNDLIST_SS6PU,
 				/* Obsolete */	// MATERIAL_ANIMATION_SS6PU,
 				/* Obsolete */	// MATERIAL_EFFECT_SS6PU,
 
@@ -601,6 +602,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagDataAnimation;
 				public bool FlagDataEffect;
 				public bool FlagDataSequence;
+				public bool FlagDataSoundList;
 				public bool FlagTexture;
 				#endregion Variables & Properties
 
@@ -613,6 +615,7 @@ public static partial class LibraryEditor_SpriteStudio6
 												bool flagDataAnimation,
 												bool flagDataEffect,
 												bool flagDataSequence,
+												bool flagDataSoundList,
 												bool flagTexture
 											)
 				{
@@ -623,6 +626,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagDataAnimation = flagDataAnimation;
 					FlagDataEffect = flagDataEffect;
 					FlagDataSequence = flagDataSequence;
+					FlagDataSoundList = flagDataSoundList;
 					FlagTexture = flagTexture;
 				}
 
@@ -640,6 +644,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagDataAnimation = EditorPrefs.GetBool(PrefsKeyFlagDataAnimation, Default.FlagDataAnimation);
 					FlagDataEffect = EditorPrefs.GetBool(PrefsKeyFlagDataEffect, Default.FlagDataEffect);
 					FlagDataSequence = EditorPrefs.GetBool(PrefsKeyFlagDataSequence, Default.FlagDataSequence);
+					FlagDataSoundList = EditorPrefs.GetBool(PrefsKeyFlagDataSoundList, Default.FlagDataSoundList);
 					FlagTexture = EditorPrefs.GetBool(PrefsKeyFlagTexture, Default.FlagTexture);
 
 					return(true);
@@ -654,6 +659,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetBool(PrefsKeyFlagDataAnimation, FlagDataAnimation);
 					EditorPrefs.SetBool(PrefsKeyFlagDataEffect, FlagDataEffect);
 					EditorPrefs.SetBool(PrefsKeyFlagDataSequence, FlagDataSequence);
+					EditorPrefs.SetBool(PrefsKeyFlagDataSoundList, FlagDataSoundList);
 					EditorPrefs.SetBool(PrefsKeyFlagTexture, FlagTexture);
 
 					return(true);
@@ -661,7 +667,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[8];
+					string[] textEncode = new string[9];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagPrefabAnimation);
@@ -685,8 +691,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDataSequence);
 					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataSequence, textValue);
 
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagDataSoundList);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagDataSoundList, textValue);
+
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagTexture);
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTexture, textValue);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagTexture, textValue);
 
 					return(textEncode);
 				}
@@ -723,6 +732,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagDataSequence = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
+						case TextKeyFlagDataSoundList:
+							FlagDataSoundList = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
 						case TextKeyFlagTexture:
 							FlagTexture = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
@@ -743,6 +756,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagDataAnimation = "FlagDataAnimation";
 				private const string KeyFlagDataEffect = "FlagDataEffect";
 				private const string KeyFlagDataSequence = "FlagDataSequence";
+				private const string KeyFlagDataSoundList = "FlagDataSoundList";
 				/* Obsolete */	// private const string KeyFlagMaterialAnimation = "FlagMaterialAnimation";
 				/* Obsolete */	// private const string KeyFlagMaterialEffect = "FlagMaterialEffect";
 				private const string KeyFlagTexture = "FlagTexture";
@@ -755,6 +769,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyFlagDataAnimation = TextKeyPrefix + KeyFlagDataAnimation;
 				private const string TextKeyFlagDataEffect = TextKeyPrefix + KeyFlagDataEffect;
 				private const string TextKeyFlagDataSequence = TextKeyPrefix + KeyFlagDataSequence;
+				private const string TextKeyFlagDataSoundList = TextKeyPrefix + KeyFlagDataSoundList;
 				/* Obsolete */	// private const string TextKeyFlagMaterialAnimation = TextKeyPrefix + KeyFlagMaterialAnimation;
 				/* Obsolete */	// private const string TextKeyFlagMaterialEffect = TextKeyPrefix + KeyFlagMaterialEffect;
 				private const string TextKeyFlagTexture = TextKeyPrefix + KeyFlagTexture;
@@ -767,6 +782,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagDataAnimation = PrefsKeyPrefix + KeyFlagDataAnimation;
 				private const string PrefsKeyFlagDataEffect = PrefsKeyPrefix + KeyFlagDataEffect;
 				private const string PrefsKeyFlagDataSequence = PrefsKeyPrefix + KeyFlagDataSequence;
+				private const string PrefsKeyFlagDataSoundList = PrefsKeyPrefix + KeyFlagDataSoundList;
 				/* Obsolete */	// private const string PrefsKeyFlagMaterialAnimation = PrefsKeyPrefix + KeyFlagMaterialAnimation;
 				/* Obsolete */	// private const string PrefsKeyFlagMaterialEffect = PrefsKeyPrefix + KeyFlagMaterialEffect;
 				private const string PrefsKeyFlagTexture = PrefsKeyPrefix + KeyFlagTexture;
@@ -779,6 +795,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					false,	/* FlagDataAnimation */
 					false,	/* FlagDataEffect */
 					false,	/* FlagDataSequence */
+					false,	/* FlagDataSoundList */
 					false	/* FlagTexture */
 				);
 				#endregion Enums & Constants
@@ -933,6 +950,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool FlagInvalidSSAE;
 				public bool FlagInvalidSSEE;
 				public bool FlagInvalidSSQE;
+				public bool FlagInvalidSSSE;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -941,7 +959,8 @@ public static partial class LibraryEditor_SpriteStudio6
 											bool flagInvalidSSCE,
 											bool flagInvalidSSAE,
 											bool flagInvalidSSEE,
-											bool flagInvalidSSQE
+											bool flagInvalidSSQE,
+											bool flagInvalidSSSE
 										)
 				{
 					FlagInvalidSSPJ = flagInvalidSSPJ;
@@ -949,6 +968,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagInvalidSSAE = flagInvalidSSAE;
 					FlagInvalidSSEE = flagInvalidSSEE;
 					FlagInvalidSSQE = flagInvalidSSQE;
+					FlagInvalidSSSE = flagInvalidSSSE;
 				}
 
 				public void CleanUp()
@@ -963,6 +983,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					FlagInvalidSSAE = EditorPrefs.GetBool(PrefsKeyFlagInvalidSSAE, Default.FlagInvalidSSAE);
 					FlagInvalidSSEE = EditorPrefs.GetBool(PrefsKeyFlagInvalidSSEE, Default.FlagInvalidSSEE);
 					FlagInvalidSSQE = EditorPrefs.GetBool(PrefsKeyFlagInvalidSSQE, Default.FlagInvalidSSQE);
+					FlagInvalidSSSE = EditorPrefs.GetBool(PrefsKeyFlagInvalidSSSE, Default.FlagInvalidSSSE);
 
 					return(true);
 				}
@@ -974,13 +995,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.GetBool(PrefsKeyFlagInvalidSSAE, FlagInvalidSSAE);
 					EditorPrefs.GetBool(PrefsKeyFlagInvalidSSEE, FlagInvalidSSEE);
 					EditorPrefs.GetBool(PrefsKeyFlagInvalidSSQE, FlagInvalidSSQE);
+					EditorPrefs.GetBool(PrefsKeyFlagInvalidSSSE, FlagInvalidSSSE);
 
 					return(true);
 				}
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[5];
+					string[] textEncode = new string[6];
 					string textValue;
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvalidSSPJ);
@@ -997,6 +1019,9 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvalidSSQE);
 					textEncode[4] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvalidSSQE, textValue);
+
+					textValue = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolEncode(FlagInvalidSSSE);
+					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyFlagInvalidSSSE, textValue);
 
 					return(textEncode);
 				}
@@ -1025,6 +1050,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							FlagInvalidSSQE = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
 							return(true);
 
+						case TextKeyFlagInvalidSSSE:
+							FlagInvalidSSSE = LibraryEditor_SpriteStudio6.Utility.ExternalText.BoolDecode(textArgument[1]);
+							return(true);
+
 						default:
 							break;
 					}
@@ -1039,6 +1068,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyFlagInvalidSSAE = "FlagInvalidSSAE";
 				private const string KeyFlagInvalidSSEE = "FlagInvalidSSEE";
 				private const string KeyFlagInvalidSSQE = "FlagInvalidSSQE";
+				private const string KeyFlagInvalidSSSE = "FlagInvalidSSSE";
 
 				private const string TextKeyPrefix = "CheckVersion_";
 				private const string TextKeyFlagInvalidSSPJ = TextKeyPrefix + KeyFlagInvalidSSPJ;
@@ -1046,6 +1076,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyFlagInvalidSSAE = TextKeyPrefix + KeyFlagInvalidSSAE;
 				private const string TextKeyFlagInvalidSSEE = TextKeyPrefix + KeyFlagInvalidSSEE;
 				private const string TextKeyFlagInvalidSSQE = TextKeyPrefix + KeyFlagInvalidSSQE;
+				private const string TextKeyFlagInvalidSSSE = TextKeyPrefix + KeyFlagInvalidSSSE;
 
 				private const string PrefsKeyPrefix = LibraryEditor_SpriteStudio6.Import.Setting.PrefsKeyPrefix + TextKeyPrefix;
 				private const string PrefsKeyFlagInvalidSSPJ = PrefsKeyPrefix + KeyFlagInvalidSSPJ;
@@ -1053,13 +1084,15 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyFlagInvalidSSAE = PrefsKeyPrefix + KeyFlagInvalidSSAE;
 				private const string PrefsKeyFlagInvalidSSEE = PrefsKeyPrefix + KeyFlagInvalidSSEE;
 				private const string PrefsKeyFlagInvalidSSQE = PrefsKeyPrefix + KeyFlagInvalidSSQE;
+				private const string PrefsKeyFlagInvalidSSSE = PrefsKeyPrefix + KeyFlagInvalidSSSE;
 
 				internal readonly static GroupCheckVersion Default = new GroupCheckVersion(
 					false,	/* FlagInvalidSSPJ */
 					false,	/* FlagInvalidSSCE */
 					false,	/* FlagInvalidSSAE */
 					false,	/* FlagInvalidSSEE */
-					false	/* FlagInvalidSSQE */
+					false,	/* FlagInvalidSSQE */
+					false	/* FlagInvalidSSSE */
 				);
 				#endregion Enums & Constants
 			}
@@ -1387,6 +1420,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public string NamePrefixDataAnimationSS6PU;
 				public string NamePrefixDataEffectSS6PU;
 				public string NamePrefixDataSequenceSS6PU;
+				public string NamePrefixDataSoundListSS6PU;
 
 				/* Prefix Unity-Native */
 				public string NamePrefixPrefabAnimationUnityNative;
@@ -1409,6 +1443,7 @@ public static partial class LibraryEditor_SpriteStudio6
 											string namePrefixDataAnimationSS6PU,
 											string namePrefixDataEffectSS6PU,
 											string namePrefixDataSequenceSS6PU,
+											string namePrefixDataSoundListSS6PU,
 											string namePrefixPrefabAnimationUnityNative,
 											string namePrefixAnimationClipUnityNative,
 											string namePrefixSkinnedMeshUnityNative,
@@ -1427,6 +1462,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					NamePrefixDataAnimationSS6PU = namePrefixDataAnimationSS6PU;
 					NamePrefixDataEffectSS6PU = namePrefixDataEffectSS6PU;
 					NamePrefixDataSequenceSS6PU = namePrefixDataSequenceSS6PU;
+					NamePrefixDataSoundListSS6PU = namePrefixDataSoundListSS6PU;
 
 					NamePrefixPrefabAnimationUnityNative = namePrefixPrefabAnimationUnityNative;
 					NamePrefixAnimationClipUnityNative = namePrefixAnimationClipUnityNative;
@@ -1454,6 +1490,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					NamePrefixDataAnimationSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataAnimationSS6PU, Default.NamePrefixDataAnimationSS6PU);
 					NamePrefixDataEffectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataEffectSS6PU, Default.NamePrefixDataEffectSS6PU);
 					NamePrefixDataSequenceSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataSequenceSS6PU, Default.NamePrefixDataSequenceSS6PU);
+					NamePrefixDataSoundListSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixDataSoundListSS6PU, Default.NamePrefixDataSoundListSS6PU);
 
 					NamePrefixPrefabAnimationUnityNative = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixPrefabAnimationUnityNative, Default.NamePrefixPrefabAnimationUnityNative);
 					NamePrefixAnimationClipUnityNative = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNamePrefixAnimationClipUnityNative, Default.NamePrefixAnimationClipUnityNative);
@@ -1478,6 +1515,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataAnimationSS6PU, NamePrefixDataAnimationSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataEffectSS6PU, NamePrefixDataEffectSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataSequenceSS6PU, NamePrefixDataSequenceSS6PU);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixDataSoundListSS6PU, NamePrefixDataSoundListSS6PU);
 
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixPrefabAnimationUnityNative, NamePrefixPrefabAnimationUnityNative);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNamePrefixAnimationClipUnityNative, NamePrefixAnimationClipUnityNative);
@@ -1491,7 +1529,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[14];
+					string[] textEncode = new string[15];
 					string textValue;
 
 					Adjust();
@@ -1508,13 +1546,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataAnimationSS6PU, NamePrefixDataAnimationSS6PU);
 					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataEffectSS6PU, NamePrefixDataEffectSS6PU);
 					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataSequenceSS6PU, NamePrefixDataSequenceSS6PU);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixDataSoundListSS6PU, NamePrefixDataSoundListSS6PU);
 
-					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixPrefabAnimationUnityNative, NamePrefixPrefabAnimationUnityNative);
-					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixAnimationClipUnityNative, NamePrefixAnimationClipUnityNative);
-					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixSkinnedMeshUnityNative, NamePrefixSkinnedMeshUnityNative);
+					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixPrefabAnimationUnityNative, NamePrefixPrefabAnimationUnityNative);
+					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixAnimationClipUnityNative, NamePrefixAnimationClipUnityNative);
+					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixSkinnedMeshUnityNative, NamePrefixSkinnedMeshUnityNative);
 
-					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixPrefabAnimationUnityUI, NamePrefixPrefabAnimationUnityUI);
-					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixAnimationClipUnityUI, NamePrefixAnimationClipUnityUI);
+					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixPrefabAnimationUnityUI, NamePrefixPrefabAnimationUnityUI);
+					textEncode[14] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNamePrefixAnimationClipUnityUI, NamePrefixAnimationClipUnityUI);
 
 					return(textEncode);
 				}
@@ -1528,46 +1567,49 @@ public static partial class LibraryEditor_SpriteStudio6
 							return(true);
 
 						case TextKeyNamePrefixTexture:
-							NamePrefixTexture = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixTexture = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 
 						case TextKeyNamePrefixPrefabAnimationSS6PU:
-							NamePrefixPrefabAnimationSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixPrefabAnimationSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixPrefabEffectSS6PU:
-							NamePrefixPrefabEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixPrefabEffectSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixDataProjectSS6PU:
-							NamePrefixDataProjectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixDataProjectSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixDataCellMapSS6PU:
-							NamePrefixDataCellMapSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixDataCellMapSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixDataAnimationSS6PU:
-							NamePrefixDataAnimationSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixDataAnimationSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixDataEffectSS6PU:
-							NamePrefixDataEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixDataEffectSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixDataSequenceSS6PU:
-							NamePrefixDataSequenceSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixDataSequenceSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
+							return(true);
+						case TextKeyNamePrefixDataSoundListSS6PU:
+							NamePrefixDataSoundListSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 
 						case TextKeyNamePrefixPrefabAnimationUnityNative:
-							NamePrefixPrefabAnimationUnityNative = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixPrefabAnimationUnityNative = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixAnimationClipUnityNative:
-							NamePrefixAnimationClipUnityNative = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixAnimationClipUnityNative = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixSkinnedMeshUnityNative:
-							NamePrefixSkinnedMeshUnityNative = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixSkinnedMeshUnityNative = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 
 						case TextKeyNamePrefixPrefabAnimationUnityUI:
-							NamePrefixPrefabAnimationUnityUI = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixPrefabAnimationUnityUI = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNamePrefixAnimationClipUnityUI:
-							NamePrefixAnimationClipUnityUI = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NamePrefixAnimationClipUnityUI = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 
 						default:
@@ -1589,6 +1631,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					NamePrefixDataAnimationSS6PU = Adjust(NamePrefixDataAnimationSS6PU);
 					NamePrefixDataEffectSS6PU = Adjust(NamePrefixDataEffectSS6PU);
 					NamePrefixDataSequenceSS6PU = Adjust(NamePrefixDataSequenceSS6PU);
+					NamePrefixDataSoundListSS6PU = Adjust(NamePrefixDataSoundListSS6PU);
 
 					NamePrefixPrefabAnimationUnityNative = Adjust(NamePrefixPrefabAnimationUnityNative);
 					NamePrefixAnimationClipUnityNative = Adjust(NamePrefixAnimationClipUnityNative);
@@ -1610,84 +1653,89 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.TEXTURE:
 							name = NamePrefixTexture
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_SS6PU:
 							/* MEMO: (PrefabAnimation)_Control */
 							name = NamePrefixPrefabAnimationSS6PU
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase
 									+ "_Control";
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_SS6PU:
 							name = NamePrefixPrefabAnimationSS6PU
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_EFFECT_SS6PU:
 							name = NamePrefixPrefabEffectSS6PU
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_PROJECT_SS6PU:
 							name = NamePrefixDataProjectSS6PU
-//									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+//									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_CELLMAP_SS6PU:
 							name = NamePrefixDataCellMapSS6PU
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_SS6PU:
 							name = NamePrefixDataAnimationSS6PU
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_EFFECT_SS6PU:
 							name = NamePrefixDataEffectSS6PU
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_SEQUENCE_SS6PU:
 							name = NamePrefixDataSequenceSS6PU
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
+									+ nameBase;
+							break;
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_SOUNDLIST_SS6PU:
+							name = NamePrefixDataSoundListSS6PU
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_UNITYNATIVE:
 							/* MEMO: (PrefabAnimation)_Control */
 							name = NamePrefixPrefabAnimationUnityNative
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase
 									+ "_Control";
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_UNITYNATIVE:
 							name = NamePrefixPrefabAnimationUnityNative
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_UNITYNATIVE:
 							name = NamePrefixAnimationClipUnityNative
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_MESH_UNITYNATIVE:
 							name = NamePrefixSkinnedMeshUnityNative
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_ANIMATION_UNITYUI:
 							name = NamePrefixPrefabAnimationUnityUI
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_ANIMATION_UNITYUI:
 							name = NamePrefixAnimationClipUnityUI
-									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : "")
+									+ ((true == FlagAttachSpecificNameSSPJ) ? (nameSSPJ + "_") : string.Empty)
 									+ nameBase;
 							break;
 
@@ -1709,6 +1757,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyNamePrefixDataAnimationSS6PU = "NamePrefixDataAnimationSS6PU";
 				private const string KeyNamePrefixDataEffectSS6PU = "NamePrefixDataEffectSS6PU";
 				private const string KeyNamePrefixDataSequenceSS6PU = "NamePrefixDataSequenceSS6PU";
+				private const string KeyNamePrefixDataSoundListSS6PU = "NamePrefixDataSoundListSS6PU";
 				/* Obsolete */	// private const string KeyNamePrefixMaterialAnimationSS6PU = "NamePrefixMaterialAnimationSS6PU";
 				/* Obsolete */	// private const string KeyNamePrefixMaterialEffectSS6PU = "NamePrefixMaterialEffectSS6PU";
 				private const string KeyNamePrefixPrefabAnimationUnityNative = "NamePrefixPrefabAnimatorUnityNative";	/* Typo: miss"Animator" / correct"Animation" */
@@ -1731,6 +1780,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyNamePrefixDataAnimationSS6PU = TextKeyPrefix + KeyNamePrefixDataAnimationSS6PU;
 				private const string TextKeyNamePrefixDataEffectSS6PU = TextKeyPrefix + KeyNamePrefixDataEffectSS6PU;
 				private const string TextKeyNamePrefixDataSequenceSS6PU = TextKeyPrefix + KeyNamePrefixDataSequenceSS6PU;
+				private const string TextKeyNamePrefixDataSoundListSS6PU = TextKeyPrefix + KeyNamePrefixDataSoundListSS6PU;
 				/* Obsolete */	// private const string TextKeyNamePrefixMaterialAnimationSS6PU = TextKeyPrefix + KeyNamePrefixMaterialAnimationSS6PU;
 				/* Obsolete */	// private const string TextKeyNamePrefixMaterialEffectSS6PU = TextKeyPrefix + KeyNamePrefixMaterialEffectSS6PU;
 				private const string TextKeyNamePrefixPrefabAnimationUnityNative = TextKeyPrefix + KeyNamePrefixPrefabAnimationUnityNative;
@@ -1753,6 +1803,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyNamePrefixDataAnimationSS6PU = PrefsKeyPrefix + KeyNamePrefixDataAnimationSS6PU;
 				private const string PrefsKeyNamePrefixDataEffectSS6PU = PrefsKeyPrefix + KeyNamePrefixDataEffectSS6PU;
 				private const string PrefsKeyNamePrefixDataSequenceSS6PU = PrefsKeyPrefix + KeyNamePrefixDataSequenceSS6PU;
+				private const string PrefsKeyNamePrefixDataSoundListSS6PU = PrefsKeyPrefix + KeyNamePrefixDataSoundListSS6PU;
 				/* Obsolete */	// private const string PrefsKeyNamePrefixMaterialAnimationSS6PU = PrefsKeyPrefix + KeyNamePrefixMaterialAnimationSS6PU;
 				/* Obsolete */	// private const string PrefsKeyNamePrefixMaterialEffectSS6PU = PrefsKeyPrefix + KeyNamePrefixMaterialEffectSS6PU;
 				private const string PrefsKeyNamePrefixPrefabAnimationUnityNative = PrefsKeyPrefix + KeyNamePrefixPrefabAnimationUnityNative;
@@ -1766,20 +1817,21 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Obsolete */	// private const string PrefsKeyNamePrefixMaterialAnimationUnityUI = PrefsKeyPrefix + KeyNamePrefixMaterialAnimationUnityUI;
 
 				private readonly static GroupRuleNameAsset Default = new GroupRuleNameAsset(
-					false,	/* FlagAttachSpecificNameSSPJ */
-					"",		/* NamePrefixTexture */
-					"",		/* NamePrefixPrefabAnimationSS6PU */
-					"pe_",	/* NamePrefixPrefabEffectSS6PU */
-					"dp_",	/* NamePrefixDataProjectSS6PU */
-					"dc_",	/* NamePrefixDataCellMapSS6PU */
-					"da_",	/* NamePrefixDataAnimationSS6PU */
-					"de_",	/* NamePrefixDataEffectSS6PU */
-					"ds_",	/* NamePrefixDataSequenceSS6PU */
-					"ps_",	/* NamePrefixPrefabAnimationUnityNative */
-					"ac_",	/* NamePrefixAnimationClipUnityNative */
-					"sm_",	/* NamePrefixSkinnedMeshUnityNative */
-					"",		/* NamePrefixPrefabAnimationUnityUI */
-					"au_"	/* NamePrefixAnimationClipUnityUI */
+					false,			/* FlagAttachSpecificNameSSPJ */
+					string.Empty,	/* NamePrefixTexture */
+					string.Empty,	/* NamePrefixPrefabAnimationSS6PU */
+					"pe_",			/* NamePrefixPrefabEffectSS6PU */
+					"dp_",			/* NamePrefixDataProjectSS6PU */
+					"dc_",			/* NamePrefixDataCellMapSS6PU */
+					"da_",			/* NamePrefixDataAnimationSS6PU */
+					"de_",			/* NamePrefixDataEffectSS6PU */
+					"ds_",			/* NamePrefixDataSequenceSS6PU */
+					"dl_",			/* NamePrefixDataSoundListSS6PU */
+					"ps_",			/* NamePrefixPrefabAnimationUnityNative */
+					"ac_",			/* NamePrefixAnimationClipUnityNative */
+					"sm_",			/* NamePrefixSkinnedMeshUnityNative */
+					string.Empty,	/* NamePrefixPrefabAnimationUnityUI */
+					"au_"			/* NamePrefixAnimationClipUnityUI */
 				);
 				#endregion Enums & Constants
 			}
@@ -1799,6 +1851,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				public string NameFolderDataAnimationSS6PU;
 				public string NameFolderDataEffectSS6PU;
 				public string NameFolderDataSequenceSS6PU;
+				public string NameFolderDataSoundListSS6PU;
 
 				/* Folder Names for Unity-Native */
 				public string NameFolderPrefabAnimationUnityNative;
@@ -1819,6 +1872,7 @@ public static partial class LibraryEditor_SpriteStudio6
 													string nameFolderDataAnimationSS6PU,
 													string nameFolderDataEffectSS6PU,
 													string nameFolderDataSequenceSS6PU,
+													string nameFolderDataSoundListSS6PU,
 													string nameFolderPrefabAnimationUnityNative,
 													string nameFolderAnimationClipUnityNative,
 													string nameFolderSkinnedMeshUnityNative,
@@ -1834,6 +1888,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						NameFolderDataAnimationSS6PU = nameFolderDataAnimationSS6PU;
 						NameFolderDataEffectSS6PU = nameFolderDataEffectSS6PU;
 						NameFolderDataSequenceSS6PU = nameFolderDataSequenceSS6PU;
+						NameFolderDataSoundListSS6PU = nameFolderDataSoundListSS6PU;
 
 						NameFolderPrefabAnimationUnityNative = nameFolderPrefabAnimationUnityNative;
 						NameFolderAnimationClipUnityNative = nameFolderAnimationClipUnityNative;
@@ -1858,6 +1913,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					NameFolderDataAnimationSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataAnimationSS6PU, Default.NameFolderDataAnimationSS6PU);
 					NameFolderDataEffectSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataEffectSS6PU, Default.NameFolderDataEffectSS6PU);
 					NameFolderDataSequenceSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataSequenceSS6PU, Default.NameFolderDataSequenceSS6PU);
+					NameFolderDataSoundListSS6PU = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderDataSoundListSS6PU, Default.NameFolderDataSoundListSS6PU);
 
 					NameFolderPrefabAnimationUnityNative = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderPrefabAnimationUnityNative, Default.NameFolderPrefabAnimationUnityNative);
 					NameFolderAnimationClipUnityNative = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyNameFolderAnimationClipUnityNative, Default.NameFolderAnimationClipUnityNative);
@@ -1883,6 +1939,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataAnimationSS6PU, NameFolderDataAnimationSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataEffectSS6PU, NameFolderDataEffectSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataSequenceSS6PU, NameFolderDataSequenceSS6PU);
+					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderDataSoundListSS6PU, NameFolderDataSoundListSS6PU);
 
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderPrefabAnimationUnityNative, NameFolderPrefabAnimationUnityNative);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyNameFolderAnimationClipUnityNative, NameFolderAnimationClipUnityNative);
@@ -1895,7 +1952,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[12];
+					string[] textEncode = new string[13];
 
 					Adjust();
 
@@ -1908,12 +1965,13 @@ public static partial class LibraryEditor_SpriteStudio6
 					textEncode[5] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataAnimationSS6PU, NameFolderDataAnimationSS6PU);
 					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataEffectSS6PU, NameFolderDataEffectSS6PU);
 					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataSequenceSS6PU, NameFolderDataSequenceSS6PU);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderDataSoundListSS6PU, NameFolderDataSoundListSS6PU);
 
-					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderPrefabAnimationUnityNative, NameFolderPrefabAnimationUnityNative);
-					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderAnimationClipUnityNative, NameFolderAnimationClipUnityNative);
-					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderSkinnedMeshUnityNative, NameFolderSkinnedMeshUnityNative);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderPrefabAnimationUnityNative, NameFolderPrefabAnimationUnityNative);
+					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderAnimationClipUnityNative, NameFolderAnimationClipUnityNative);
+					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderSkinnedMeshUnityNative, NameFolderSkinnedMeshUnityNative);
 
-					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderAnimationClipUnityUI, NameFolderAnimationClipUnityUI);
+					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyNameFolderAnimationClipUnityUI, NameFolderAnimationClipUnityUI);
 
 					return(textEncode);
 				}
@@ -1923,43 +1981,46 @@ public static partial class LibraryEditor_SpriteStudio6
 					switch(textArgument[0])
 					{
 						case TextKeyNameFolderTexture:
-							NameFolderTexture = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderTexture = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 
 						case TextKeyNameFolderPrefabAnimationSS6PU:
-							NameFolderPrefabAnimationSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderPrefabAnimationSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNameFolderPrefabEffectSS6PU:
-							NameFolderPrefabEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderPrefabEffectSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNameFolderDataProjectSS6PU:
-							NameFolderDataProjectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderDataProjectSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNameFolderDataCellMapSS6PU:
-							NameFolderDataCellMapSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderDataCellMapSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNameFolderDataAnimationSS6PU:
-							NameFolderDataAnimationSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderDataAnimationSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNameFolderDataEffectSS6PU:
-							NameFolderDataEffectSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderDataEffectSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNameFolderDataSequenceSS6PU:
-							NameFolderDataSequenceSS6PU = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderDataSequenceSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
+							return(true);
+						case TextKeyNameFolderDataSoundListSS6PU:
+							NameFolderDataSoundListSS6PU = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 
 						case TextKeyNameFolderPrefabAnimationUnityNative:
-							NameFolderPrefabAnimationUnityNative = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderPrefabAnimationUnityNative = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNameFolderAnimationClipUnityNative:
-							NameFolderAnimationClipUnityNative = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderAnimationClipUnityNative = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 						case TextKeyNameFolderSkinnedMeshUnityNative:
-							NameFolderSkinnedMeshUnityNative = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderSkinnedMeshUnityNative = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 
 						case TextKeyNameFolderAnimationClipUnityUI:
-							NameFolderAnimationClipUnityUI = (1 >= textArgument.Length) ? "" : Adjust(textArgument[1]);
+							NameFolderAnimationClipUnityUI = (1 >= textArgument.Length) ? string.Empty : Adjust(textArgument[1]);
 							return(true);
 
 						default:
@@ -1979,6 +2040,7 @@ public static partial class LibraryEditor_SpriteStudio6
 						NameFolderDataAnimationSS6PU = Adjust(NameFolderDataAnimationSS6PU);
 						NameFolderDataEffectSS6PU = Adjust(NameFolderDataEffectSS6PU);
 						NameFolderDataSequenceSS6PU = Adjust(NameFolderDataSequenceSS6PU);
+						NameFolderDataSoundListSS6PU = Adjust(NameFolderDataSoundListSS6PU);
 
 						NameFolderPrefabAnimationUnityNative = Adjust(NameFolderPrefabAnimationUnityNative);
 						NameFolderAnimationClipUnityNative = Adjust(NameFolderAnimationClipUnityNative);
@@ -2025,6 +2087,9 @@ public static partial class LibraryEditor_SpriteStudio6
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_SEQUENCE_SS6PU:
 							name += NameFolderDataSequenceSS6PU + "/";
 							break;
+						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.DATA_SOUNDLIST_SS6PU:
+							name += NameFolderDataSoundListSS6PU + "/";
+							break;
 
 						case LibraryEditor_SpriteStudio6.Import.Setting.KindAsset.PREFAB_CONTROL_ANIMATION_UNITYNATIVE:
 							/* MEMO: Not stored in subfolder. */
@@ -2064,6 +2129,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyNameFolderDataAnimationSS6PU = "NameFolderDataAnimationSS6PU";
 				private const string KeyNameFolderDataEffectSS6PU = "NameFolderDataEffectSS6PU";
 				private const string KeyNameFolderDataSequenceSS6PU = "NameFolderDataSequenceSS6PU";
+				private const string KeyNameFolderDataSoundListSS6PU = "NameFolderDataSoundListSS6PU";
 				/* Obsolete */	// private const string KeyNameFolderMaterialAnimationSS6PU = "NameFolderMaterialAnimationSS6PU";
 				/* Obsolete */	// private const string KeyNameFolderMaterialEffectSS6PU = "NameFolderMaterialEffectSS6PU";
 				private const string KeyNameFolderPrefabAnimationUnityNative = "NameFolderPrefabAnimatorUnityNative";	/* Typo: miss"Animator" / correct"Animation" */
@@ -2084,6 +2150,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyNameFolderDataAnimationSS6PU = TextKeyPrefix + KeyNameFolderDataAnimationSS6PU;
 				private const string TextKeyNameFolderDataEffectSS6PU = TextKeyPrefix + KeyNameFolderDataEffectSS6PU;
 				private const string TextKeyNameFolderDataSequenceSS6PU = TextKeyPrefix + KeyNameFolderDataSequenceSS6PU;
+				private const string TextKeyNameFolderDataSoundListSS6PU = TextKeyPrefix + KeyNameFolderDataSoundListSS6PU;
 				/* Obsolete */	// private const string TextKeyNameFolderMaterialAnimationSS6PU = TextKeyPrefix + KeyNameFolderMaterialAnimationSS6PU;
 				/* Obsolete */	// private const string TextKeyNameFolderMaterialEffectSS6PU = TextKeyPrefix + KeyNameFolderMaterialEffectSS6PU;
 				private const string TextKeyNameFolderPrefabAnimationUnityNative = TextKeyPrefix + KeyNameFolderPrefabAnimationUnityNative;
@@ -2104,6 +2171,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyNameFolderDataAnimationSS6PU = PrefsKeyPrefix + KeyNameFolderDataAnimationSS6PU;
 				private const string PrefsKeyNameFolderDataEffectSS6PU = PrefsKeyPrefix + KeyNameFolderDataEffectSS6PU;
 				private const string PrefsKeyNameFolderDataSequenceSS6PU = PrefsKeyPrefix + KeyNameFolderDataSequenceSS6PU;
+				private const string PrefsKeyNameFolderDataSoundListSS6PU = PrefsKeyPrefix + KeyNameFolderDataSoundListSS6PU;
 				/* Obsolete */	// private const string PrefsKeyNameFolderMaterialAnimationSS6PU = PrefsKeyPrefix + KeyNameFolderMaterialAnimationSS6PU;
 				/* Obsolete */	// private const string PrefsKeyNameFolderMaterialEffectSS6PU = PrefsKeyPrefix + KeyNameFolderMaterialEffectSS6PU;
 				private const string PrefsKeyNameFolderPrefabAnimationUnityNative = PrefsKeyPrefix + KeyNameFolderPrefabAnimationUnityNative;
@@ -2124,6 +2192,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					"DataAnimation",		/* NameFolderDataAnimationSS6PU */
 					"DataEffect",			/* NameFolderDataEffectSS6PU */
 					"DataSequence",			/* NameFolderDataSequenceSS6PU */
+					"DataSoundList",		/* NameFolderDataSoundListSS6PU */
 					"PrefabSprite",			/* NameFolderPrefabAnimationUnityNative */
 					"DataAnimationClip",	/* NameFolderAnimationClipUnityNative */
 					"DataMesh",				/* NameFolderSkinnedMeshUnityNative */
@@ -2143,9 +2212,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Scaling;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack ScalingLocal;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PowerMask;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Priority;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PartsColor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack VertexCorrection;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Skew;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack OffsetPivot;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack PositionAnchor;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack RadiusCollision;
@@ -2159,6 +2230,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Deform;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Shader;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Signal;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack Sound;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack ChangeTexture;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -2170,9 +2243,11 @@ public static partial class LibraryEditor_SpriteStudio6
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack scaling,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack scalingLocal,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack rateOpacity,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack powerMask,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack priority,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack partsColor,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack vertexCorrection,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack skew,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack offsetPivot,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack positionAnchor,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack sizeForce,
@@ -2185,7 +2260,9 @@ public static partial class LibraryEditor_SpriteStudio6
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack effect,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack deform,
 													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack shader,
-													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack signal
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack signal,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack sound,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack changeTexture
 												)
 				{
 					Status = status;
@@ -2195,9 +2272,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					Scaling = scaling;
 					ScalingLocal = scalingLocal;
 					RateOpacity = rateOpacity;
+					PowerMask = powerMask;
 					Priority = priority;
 					PartsColor = partsColor;
 					VertexCorrection = vertexCorrection;
+					Skew = skew;
 					OffsetPivot = offsetPivot;
 					PositionAnchor = positionAnchor;
 					SizeForce = sizeForce;
@@ -2211,6 +2290,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					Deform = deform;
 					Shader = shader;
 					Signal = signal;
+					Sound = sound;
+					ChangeTexture = changeTexture;
 				}
 
 				public void CleanUp()
@@ -2227,9 +2308,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					Scaling = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyScaling, (int)Default.Scaling));
 					ScalingLocal = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyScalingLocal, (int)Default.ScalingLocal));
 					RateOpacity = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyRateOpacity, (int)Default.RateOpacity));
+					PowerMask = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPowerMask, (int)Default.PowerMask));
 					Priority = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPriority, (int)Default.Priority));
 					PartsColor = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPartsColor, (int)Default.PartsColor));
 					VertexCorrection = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyVertexCorrection, (int)Default.VertexCorrection));
+					Skew = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeySkew, (int)Default.Skew));
 					OffsetPivot = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyOffsetPivot, (int)Default.OffsetPivot));
 					PositionAnchor = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyPositionAnchor, (int)Default.PositionAnchor));
 					SizeForce = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeySizeForce, (int)Default.SizeForce));
@@ -2243,6 +2326,8 @@ public static partial class LibraryEditor_SpriteStudio6
 					Deform = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyDeform, (int)Default.Deform));
 					Shader = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyShader, (int)Default.Shader));
 					Signal = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeySignal, (int)Default.Signal));
+					Sound = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeySound, (int)Default.Sound));
+					ChangeTexture = (Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack)(EditorPrefs.GetInt(PrefsKeyChangeTexture, (int)Default.ChangeTexture));
 
 					return(true);
 				}
@@ -2250,14 +2335,23 @@ public static partial class LibraryEditor_SpriteStudio6
 				public bool Save()
 				{
 					EditorPrefs.SetInt(PrefsKeyStatus, (int)Status);
+					EditorPrefs.SetInt(PrefsKeyCell, (int)Cell);
 					EditorPrefs.SetInt(PrefsKeyPosition, (int)Position);
 					EditorPrefs.SetInt(PrefsKeyRotation, (int)Rotation);
 					EditorPrefs.SetInt(PrefsKeyScaling, (int)Scaling);
 					EditorPrefs.SetInt(PrefsKeyScalingLocal, (int)ScalingLocal);
 					EditorPrefs.SetInt(PrefsKeyRateOpacity, (int)RateOpacity);
+					EditorPrefs.SetInt(PrefsKeyPowerMask, (int)PowerMask);
 					EditorPrefs.SetInt(PrefsKeyPriority, (int)Priority);
 					EditorPrefs.SetInt(PrefsKeyPartsColor, (int)PartsColor);
+					EditorPrefs.SetInt(PrefsKeyVertexCorrection, (int)VertexCorrection);
+					EditorPrefs.SetInt(PrefsKeySkew, (int)Skew);
+					EditorPrefs.SetInt(PrefsKeyOffsetPivot, (int)OffsetPivot);
 					EditorPrefs.SetInt(PrefsKeyPositionAnchor, (int)PositionAnchor);
+					EditorPrefs.SetInt(PrefsKeySizeForce, (int)SizeForce);
+					EditorPrefs.SetInt(PrefsKeyPositionTexture, (int)PositionTexture);
+					EditorPrefs.SetInt(PrefsKeyRotationTexture, (int)RotationTexture);
+					EditorPrefs.SetInt(PrefsKeyScalingTexture, (int)ScalingTexture);
 					EditorPrefs.SetInt(PrefsKeyRadiusCollision, (int)RadiusCollision);
 					EditorPrefs.SetInt(PrefsKeyUserData, (int)UserData);
 					EditorPrefs.SetInt(PrefsKeyInstance, (int)Instance);
@@ -2265,21 +2359,15 @@ public static partial class LibraryEditor_SpriteStudio6
 					EditorPrefs.SetInt(PrefsKeyDeform, (int)Deform);
 					EditorPrefs.SetInt(PrefsKeyShader, (int)Shader);
 					EditorPrefs.SetInt(PrefsKeySignal, (int)Signal);
-
-					EditorPrefs.SetInt(PrefsKeyCell, (int)Cell);
-					EditorPrefs.SetInt(PrefsKeySizeForce, (int)SizeForce);
-					EditorPrefs.SetInt(PrefsKeyVertexCorrection, (int)VertexCorrection);
-					EditorPrefs.SetInt(PrefsKeyOffsetPivot, (int)OffsetPivot);
-					EditorPrefs.SetInt(PrefsKeyPositionTexture, (int)PositionTexture);
-					EditorPrefs.SetInt(PrefsKeyScalingTexture, (int)ScalingTexture);
-					EditorPrefs.SetInt(PrefsKeyRotationTexture, (int)RotationTexture);
+					EditorPrefs.SetInt(PrefsKeySound, (int)Sound);
+					EditorPrefs.SetInt(PrefsKeyChangeTexture, (int)ChangeTexture);
 
 					return(true);
 				}
 
 				public string[] Export()
 				{
-					string[] textEncode = new string[23];
+					string[] textEncode = new string[27];
 					string textValue;
 
 					textValue = NameGetPackKind(Status);
@@ -2303,53 +2391,65 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = NameGetPackKind(RateOpacity);
 					textEncode[6] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRateOpacity, textValue);
 
+					textValue = NameGetPackKind(PowerMask);
+					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPowerMask, textValue);
+
 					textValue = NameGetPackKind(Priority);
-					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPriority, textValue);
+					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPriority, textValue);
 
 					textValue = NameGetPackKind(PartsColor);
-					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPartsColor, textValue);
+					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPartsColor, textValue);
 
 					textValue = NameGetPackKind(VertexCorrection);
-					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyVertexCorrection, textValue);
+					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyVertexCorrection, textValue);
+
+					textValue = NameGetPackKind(Skew);
+					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkew, textValue);
 
 					textValue = NameGetPackKind(OffsetPivot);
-					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyOffsetPivot, textValue);
+					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyOffsetPivot, textValue);
 
 					textValue = NameGetPackKind(PositionAnchor);
-					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionAnchor, textValue);
+					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionAnchor, textValue);
 
 					textValue = NameGetPackKind(SizeForce);
-					textEncode[12] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySizeForce, textValue);
+					textEncode[14] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySizeForce, textValue);
 
 					textValue = NameGetPackKind(PositionTexture);
-					textEncode[13] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionTexture, textValue);
+					textEncode[15] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyPositionTexture, textValue);
 
 					textValue = NameGetPackKind(RotationTexture);
-					textEncode[14] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRotationTexture, textValue);
+					textEncode[16] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRotationTexture, textValue);
 
 					textValue = NameGetPackKind(ScalingTexture);
-					textEncode[15] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyScalingTexture, textValue);
+					textEncode[17] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyScalingTexture, textValue);
 
 					textValue = NameGetPackKind(RadiusCollision);
-					textEncode[16] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRadiusCollision, textValue);
+					textEncode[18] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyRadiusCollision, textValue);
 
 					textValue = NameGetPackKind(UserData);
-					textEncode[17] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyUserData, textValue);
+					textEncode[19] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyUserData, textValue);
 
 					textValue = NameGetPackKind(Instance);
-					textEncode[18] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyInstance, textValue);
+					textEncode[20] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyInstance, textValue);
 
 					textValue = NameGetPackKind(Effect);
-					textEncode[19] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffect, textValue);
+					textEncode[21] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyEffect, textValue);
 
 					textValue = NameGetPackKind(Deform);
-					textEncode[20] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyDeform, textValue);
+					textEncode[22] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyDeform, textValue);
 
 					textValue = NameGetPackKind(Shader);
-					textEncode[21] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyShader, textValue);
+					textEncode[23] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyShader, textValue);
 
 					textValue = NameGetPackKind(Signal);
-					textEncode[22] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySignal, textValue);
+					textEncode[24] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySignal, textValue);
+
+					textValue = NameGetPackKind(Sound);
+					textEncode[25] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySound, textValue);
+
+					textValue = NameGetPackKind(ChangeTexture);
+					textEncode[26] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyChangeTexture, textValue);
 
 					return(textEncode);
 				}
@@ -2387,6 +2487,10 @@ public static partial class LibraryEditor_SpriteStudio6
 							RateOpacity = KindGetPackName(textArgument[1]);
 							return(true);
 
+						case TextKeyPowerMask:
+							PowerMask = KindGetPackName(textArgument[1]);
+							return(true);
+
 						case TextKeyPriority:
 							Priority = KindGetPackName(textArgument[1]);
 							return(true);
@@ -2398,6 +2502,10 @@ public static partial class LibraryEditor_SpriteStudio6
 						case TextKeyPlainVertexCorrection:	/* Obsolete command */
 						case TextKeyVertexCorrection:
 							VertexCorrection = KindGetPackName(textArgument[1]);
+							return(true);
+
+						case TextKeySkew:
+							Skew = KindGetPackName(textArgument[1]);
 							return(true);
 
 						case TextKeyPlainOffsetPivot:	/* Obsolete command */
@@ -2457,6 +2565,14 @@ public static partial class LibraryEditor_SpriteStudio6
 							Signal = KindGetPackName(textArgument[1]);
 							return(true);
 
+						case TextKeySound:
+							Sound = KindGetPackName(textArgument[1]);
+							return(true);
+
+						case TextKeyChangeTexture:
+							ChangeTexture = KindGetPackName(textArgument[1]);
+							return(true);
+
 						case TextKeyFixIndexCellMap:	/* Obsolete command */
 						case TextKeyFixCoordinate:	/* Obsolete command */
 						case TextKeyFixUV0:	/* Obsolete command */
@@ -2508,6 +2624,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						RateOpacity = PackError;
 					}
+					if(false == capacityPack[(int)PowerMask].PowerMask)
+					{
+						PowerMask = PackError;
+					}
 					if(false == capacityPack[(int)Priority].Priority)
 					{
 						Priority = PackError;
@@ -2519,6 +2639,10 @@ public static partial class LibraryEditor_SpriteStudio6
 					if(false == capacityPack[(int)VertexCorrection].VertexCorrection)
 					{
 						VertexCorrection = PackError;
+					}
+					if(false == capacityPack[(int)VertexCorrection].Skew)
+					{
+						Skew = PackError;
 					}
 					if(false == capacityPack[(int)OffsetPivot].OffsetPivot)
 					{
@@ -2572,6 +2696,14 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						Deform = PackError;
 					}
+					if(false == capacityPack[(int)Signal].Sound)
+					{
+						Sound = PackError;
+					}
+					if(false == capacityPack[(int)Signal].ChangeTexture)
+					{
+						ChangeTexture = PackError;
+					}
 				}
 
 				private static void BootUpNamePack()
@@ -2618,9 +2750,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyScaling = "Scaling";
 				private const string KeyScalingLocal = "ScalingLocal";
 				private const string KeyRateOpacity = "RateOpacity";
+				private const string KeyPowerMask = "PowerMask";
 				private const string KeyPriority = "Priority";
 				private const string KeyPartsColor = "PartsColor";
 				private const string KeyVertexCorrection = "VertexCorrection";
+				private const string KeySkew = "Skew";
 				private const string KeyOffsetPivot = "OffsetPivot";
 				private const string KeyPositionAnchor = "PositionAnchor";
 				private const string KeySizeForce = "SizeForce";
@@ -2634,6 +2768,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyDeform = "Deform";
 				private const string KeyShader = "Shader";
 				private const string KeySignal = "Signal";
+				private const string KeySound = "Sound";
+				private const string KeyChangeTexture = "ChangeTexture";
 				/* Obsolete */	private const string KeyPlainCell = "PlainCell";
 				/* Obsolete */	private const string KeyPlainSizeForce = "PlainSizeForce";
 				/* Obsolete */	private const string KeyPlainVertexCorrection = "PlainVertexCorrection";
@@ -2655,9 +2791,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyScaling = TextKeyPrefix + KeyScaling;
 				private const string TextKeyScalingLocal = TextKeyPrefix + KeyScalingLocal;
 				private const string TextKeyRateOpacity = TextKeyPrefix + KeyRateOpacity;
+				private const string TextKeyPowerMask = TextKeyPrefix + KeyPowerMask;
 				private const string TextKeyPriority = TextKeyPrefix + KeyPriority;
 				private const string TextKeyPartsColor = TextKeyPrefix + KeyPartsColor;
 				private const string TextKeyVertexCorrection = TextKeyPrefix + KeyVertexCorrection;
+				private const string TextKeySkew = TextKeyPrefix + KeySkew;
 				private const string TextKeyOffsetPivot = TextKeyPrefix + KeyOffsetPivot;
 				private const string TextKeyPositionAnchor = TextKeyPrefix + KeyPositionAnchor;
 				private const string TextKeySizeForce = TextKeyPrefix + KeySizeForce;
@@ -2671,6 +2809,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyDeform = TextKeyPrefix + KeyDeform;
 				private const string TextKeyShader = TextKeyPrefix + KeyShader;
 				private const string TextKeySignal = TextKeyPrefix + KeySignal;
+				private const string TextKeySound = TextKeyPrefix + KeySound;
+				private const string TextKeyChangeTexture = TextKeyPrefix + KeyChangeTexture;
 				/* Obsolete */	private const string TextKeyPlainCell = TextKeyPrefix + KeyPlainCell;
 				/* Obsolete */	private const string TextKeyPlainSizeForce = TextKeyPrefix + KeyPlainSizeForce;
 				/* Obsolete */	private const string TextKeyPlainVertexCorrection = TextKeyPrefix + KeyPlainVertexCorrection;
@@ -2692,9 +2832,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyScaling = PrefsKeyPrefix + KeyScaling;
 				private const string PrefsKeyScalingLocal = PrefsKeyPrefix + KeyScalingLocal;
 				private const string PrefsKeyRateOpacity = PrefsKeyPrefix + KeyRateOpacity;
+				private const string PrefsKeyPowerMask = PrefsKeyPrefix + KeyPowerMask;
 				private const string PrefsKeyPriority = PrefsKeyPrefix + KeyPriority;
 				private const string PrefsKeyPartsColor = PrefsKeyPrefix + KeyPartsColor;
 				private const string PrefsKeyVertexCorrection = PrefsKeyPrefix + KeyVertexCorrection;
+				private const string PrefsKeySkew = PrefsKeyPrefix + KeySkew;
 				private const string PrefsKeyOffsetPivot = PrefsKeyPrefix + KeyOffsetPivot;
 				private const string PrefsKeyPositionAnchor = PrefsKeyPrefix + KeyPositionAnchor;
 				private const string PrefsKeySizeForce = PrefsKeyPrefix + KeySizeForce;
@@ -2708,6 +2850,8 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyDeform = PrefsKeyPrefix + KeyDeform;
 				private const string PrefsKeyShader = PrefsKeyPrefix + KeyShader;
 				private const string PrefsKeySignal = PrefsKeyPrefix + KeySignal;
+				private const string PrefsKeySound = PrefsKeyPrefix + KeySound;
+				private const string PrefsKeyChangeTexture = PrefsKeyPrefix + KeyChangeTexture;
 				/* Obsolete */	private const string PrefsKeyPlainCell = PrefsKeyPrefix + KeyPlainCell;
 				/* Obsolete */	private const string PrefsKeyPlainSizeForce = PrefsKeyPrefix + KeyPlainSizeForce;
 				/* Obsolete */	private const string PrefsKeyPlainVertexCorrection = PrefsKeyPrefix + KeyPlainVertexCorrection;
@@ -2721,6 +2865,7 @@ public static partial class LibraryEditor_SpriteStudio6
 				/* Obsolete */	private const string PrefsKeyFixSizeCollision = PrefsKeyPrefix + KeyFixSizeCollision;
 				/* Obsolete */	private const string PrefsKeyFixPivotCollision = PrefsKeyPrefix + KeyFixPivotCollision;
 
+#if false
 				private readonly static GroupPackAttributeAnimation Default = new GroupPackAttributeAnimation(
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Status */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Cell */
@@ -2729,9 +2874,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Scaling */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* ScalingLocal */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* RateOpacity */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* PowerMask */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Priority */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* PartsColor */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* VertexCorrection */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Skew */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* OffsetPivot */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* PositionAnchor */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* SizeForce */
@@ -2746,6 +2893,38 @@ public static partial class LibraryEditor_SpriteStudio6
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Shader */
 					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE		/* Signal */
 				);
+#else
+				/* MEMO: After SS6PU ver.2.3.0 : Default changed. */
+				internal readonly static GroupPackAttributeAnimation Default = new GroupPackAttributeAnimation(
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Status */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Cell */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* Position */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* Rotation */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* Scaling */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* ScalingLocal */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* RateOpacity */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* PowerMask */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* Priority */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* PartsColor */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* VertexCorrection */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* Skew */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* OffsetPivot */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* PositionAnchor */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* SizeForce */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* PositionTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* RotationTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* ScalingTexture */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* RadiusCollision */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* UserData */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Instance */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Effect */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* Deform */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.CPE_INTERPOLATE,	/* Shader */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Signal */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE,		/* Sound */
+					Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_CPE		/* ChangeTexture */
+				);
+#endif
 				#endregion Enums & Constants
 			}
 
@@ -2761,6 +2940,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Material AnimationUnityNativeScr;
 				public Material AnimationUnityNativeExc;
 				public Material AnimationUnityNativeInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				public Material AnimationUnityNativeMul2;
+//				public Material AnimationUnityNativeDiv2;
+//				public Material AnimationUnityNativeScr2;
+//				public Material AnimationUnityNativeOvl2;
 				public Material AnimationUnityNativeNonBatchMix;
 				public Material AnimationUnityNativeNonBatchAdd;
 				public Material AnimationUnityNativeNonBatchSub;
@@ -2769,6 +2953,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Material AnimationUnityNativeNonBatchScr;
 				public Material AnimationUnityNativeNonBatchExc;
 				public Material AnimationUnityNativeNonBatchInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				public Material AnimationUnityNativeNonBatchMul2;
+//				public Material AnimationUnityNativeNonBatchDiv2;
+//				public Material AnimationUnityNativeNonBatchScr2;
+//				public Material AnimationUnityNativeNonBatchOvl2;
 
 				public Material SkinnedMeshUnityNativeMix;
 				public Material SkinnedMeshUnityNativeAdd;
@@ -2778,6 +2967,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				public Material SkinnedMeshUnityNativeScr;
 				public Material SkinnedMeshUnityNativeExc;
 				public Material SkinnedMeshUnityNativeInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				public Material SkinnedMeshUnityNativeMul2;
+//				public Material SkinnedMeshUnityNativeDiv2;
+//				public Material SkinnedMeshUnityNativeScr2;
+//				public Material SkinnedMeshUnityNativeOvl2;
 
 				public Material AnimationUnityUI;
 				#endregion Variables & Properties
@@ -2792,6 +2986,11 @@ public static partial class LibraryEditor_SpriteStudio6
 											string animationUnityNativeScr,
 											string animationUnityNativeExc,
 											string animationUnityNativeInv,
+											/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//											string animationUnityNativeMul2,
+//											string animationUnityNativeDiv2,
+//											string animationUnityNativeScr2,
+//											string animationUnityNativeOvl2,
 											string animationUnityNativeNonBatchMix,
 											string animationUnityNativeNonBatchAdd,
 											string animationUnityNativeNonBatchSub,
@@ -2800,6 +2999,11 @@ public static partial class LibraryEditor_SpriteStudio6
 											string animationUnityNativeNonBatchScr,
 											string animationUnityNativeNonBatchExc,
 											string animationUnityNativeNonBatchInv,
+											/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//											string animationUnityNativeNonBatchMul2,
+//											string animationUnityNativeNonBatchDiv2,
+//											string animationUnityNativeNonBatchScr2,
+//											string animationUnityNativeNonBatchOvl2,
 											string skinnedMeshUnityNativeMix,
 											string skinnedMeshUnityNativeAdd,
 											string skinnedMeshUnityNativeSub,
@@ -2808,6 +3012,11 @@ public static partial class LibraryEditor_SpriteStudio6
 											string skinnedMeshUnityNativeScr,
 											string skinnedMeshUnityNativeExc,
 											string skinnedMeshUnityNativeInv,
+											/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//											string skinnedMeshUnityNativeMul2,
+//											string skinnedMeshUnityNativeDiv2,
+//											string skinnedMeshUnityNativeScr2,
+//											string skinnedMeshUnityNativeOvl2,
 											string animationUnityUI
 										)
 				{
@@ -2819,6 +3028,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					AnimationUnityNativeScr = MaterlalGetPath(animationUnityNativeScr);
 					AnimationUnityNativeExc = MaterlalGetPath(animationUnityNativeExc);
 					AnimationUnityNativeInv = MaterlalGetPath(animationUnityNativeInv);
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					AnimationUnityNativeMul2 = MaterlalGetPath(animationUnityNativeMul2);
+//					AnimationUnityNativeDiv2 = MaterlalGetPath(animationUnityNativeDiv2);
+//					AnimationUnityNativeScr2 = MaterlalGetPath(animationUnityNativeScr2);
+//					AnimationUnityNativeOvl2 = MaterlalGetPath(animationUnityNativeOvl2);
 
 					AnimationUnityNativeNonBatchMix = MaterlalGetPath(animationUnityNativeNonBatchMix);
 					AnimationUnityNativeNonBatchAdd = MaterlalGetPath(animationUnityNativeNonBatchAdd);
@@ -2828,6 +3042,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					AnimationUnityNativeNonBatchScr = MaterlalGetPath(animationUnityNativeNonBatchScr);
 					AnimationUnityNativeNonBatchExc = MaterlalGetPath(animationUnityNativeNonBatchExc);
 					AnimationUnityNativeNonBatchInv = MaterlalGetPath(animationUnityNativeNonBatchInv);
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					AnimationUnityNativeNonBatchMul2 = MaterlalGetPath(animationUnityNativeNonBatchMul2);
+//					AnimationUnityNativeNonBatchDiv2 = MaterlalGetPath(animationUnityNativeNonBatchDiv2);
+//					AnimationUnityNativeNonBatchScr2 = MaterlalGetPath(animationUnityNativeNonBatchScr2);
+//					AnimationUnityNativeNonBatchOvl2 = MaterlalGetPath(animationUnityNativeNonBatchOvl2);
 
 					SkinnedMeshUnityNativeMix = MaterlalGetPath(skinnedMeshUnityNativeMix);
 					SkinnedMeshUnityNativeAdd = MaterlalGetPath(skinnedMeshUnityNativeAdd);
@@ -2837,6 +3056,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					SkinnedMeshUnityNativeScr = MaterlalGetPath(skinnedMeshUnityNativeScr);
 					SkinnedMeshUnityNativeExc = MaterlalGetPath(skinnedMeshUnityNativeExc);
 					SkinnedMeshUnityNativeInv = MaterlalGetPath(skinnedMeshUnityNativeInv);
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					SkinnedMeshUnityNativeMul2 = MaterlalGetPath(skinnedMeshUnityNativeMul2);
+//					SkinnedMeshUnityNativeDiv2 = MaterlalGetPath(skinnedMeshUnityNativeDiv2);
+//					SkinnedMeshUnityNativeScr2 = MaterlalGetPath(skinnedMeshUnityNativeScr2);
+//					SkinnedMeshUnityNativeOvl2 = MaterlalGetPath(skinnedMeshUnityNativeOvl2);
 
 					AnimationUnityUI = MaterlalGetPath(animationUnityUI);
 				}
@@ -2848,7 +3072,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Load()
 				{
-					string guid = "";
+					string guid = string.Empty;
 
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeMix, GUIDGetMaterial(Default.AnimationUnityNativeMix));
 					AnimationUnityNativeMix = MaterialGetGUID(guid);
@@ -2874,6 +3098,19 @@ public static partial class LibraryEditor_SpriteStudio6
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeInv, GUIDGetMaterial(Default.AnimationUnityNativeInv));
 					AnimationUnityNativeInv = MaterialGetGUID(guid);
 
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeMul2, GUIDGetMaterial(Default.AnimationUnityNativeMul2));
+//					AnimationUnityNativeMul2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeDiv2, GUIDGetMaterial(Default.AnimationUnityNativeDiv2));
+//					AnimationUnityNativeDiv2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeScr2, GUIDGetMaterial(Default.AnimationUnityNativeScr2));
+//					AnimationUnityNativeScr2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeOvl2, GUIDGetMaterial(Default.AnimationUnityNativeOvl2));
+//					AnimationUnityNativeOvl2 = MaterialGetGUID(guid);
+
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchMix, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchMix));
 					AnimationUnityNativeNonBatchMix = MaterialGetGUID(guid);
 
@@ -2897,6 +3134,19 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchInv, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchInv));
 					AnimationUnityNativeNonBatchInv = MaterialGetGUID(guid);
+
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchMul2, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchMul2));
+//					AnimationUnityNativeNonBatchMul2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchDiv2, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchDiv2));
+//					AnimationUnityNativeNonBatchDiv2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchScr2, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchScr2));
+//					AnimationUnityNativeNonBatchScr2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityNativeNonBatchOvl2, GUIDGetMaterial(Default.AnimationUnityNativeNonBatchOvl2));
+//					AnimationUnityNativeNonBatchOvl2 = MaterialGetGUID(guid);
 
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeySkinnedMeshUnityNativeMix, GUIDGetMaterial(Default.SkinnedMeshUnityNativeMix));
 					SkinnedMeshUnityNativeMix = MaterialGetGUID(guid);
@@ -2922,6 +3172,19 @@ public static partial class LibraryEditor_SpriteStudio6
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeySkinnedMeshUnityNativeInv, GUIDGetMaterial(Default.SkinnedMeshUnityNativeInv));
 					SkinnedMeshUnityNativeInv = MaterialGetGUID(guid);
 
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeySkinnedMeshUnityNativeMul2, GUIDGetMaterial(Default.SkinnedMeshUnityNativeMul2));
+//					SkinnedMeshUnityNativeMul2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeySkinnedMeshUnityNativeDiv2, GUIDGetMaterial(Default.SkinnedMeshUnityNativeDiv2));
+//					SkinnedMeshUnityNativeDiv2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeySkinnedMeshUnityNativeScr2, GUIDGetMaterial(Default.SkinnedMeshUnityNativeScr2));
+//					SkinnedMeshUnityNativeScr2 = MaterialGetGUID(guid);
+//
+//					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeySkinnedMeshUnityNativeOvl2, GUIDGetMaterial(Default.SkinnedMeshUnityNativeOvl2));
+//					SkinnedMeshUnityNativeOvl2 = MaterialGetGUID(guid);
+
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsKeyAnimationUnityUI, GUIDGetMaterial(Default.AnimationUnityUI));
 					AnimationUnityUI = MaterialGetGUID(guid);
 
@@ -2930,7 +3193,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Save()
 				{
-					string guid = "";
+					string guid = string.Empty;
 
 					guid = GUIDGetMaterial(AnimationUnityNativeMix);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeMix, guid);
@@ -2956,6 +3219,19 @@ public static partial class LibraryEditor_SpriteStudio6
 					guid = GUIDGetMaterial(AnimationUnityNativeInv);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeInv, guid);
 
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					guid = GUIDGetMaterial(AnimationUnityNativeMul2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeMul2, guid);
+//
+//					guid = GUIDGetMaterial(AnimationUnityNativeDiv2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeDiv2, guid);
+//
+//					guid = GUIDGetMaterial(AnimationUnityNativeScr2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeScr2, guid);
+//
+//					guid = GUIDGetMaterial(AnimationUnityNativeOvl2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeOvl2, guid);
+
 					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchMix);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchMix, guid);
 
@@ -2980,6 +3256,19 @@ public static partial class LibraryEditor_SpriteStudio6
 					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchInv);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchInv, guid);
 
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchMul2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchMul2, guid);
+//
+//					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchDiv2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchDiv2, guid);
+//
+//					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchScr2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchScr2, guid);
+//
+//					guid = GUIDGetMaterial(AnimationUnityNativeNonBatchOvl2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityNativeNonBatchOvl2, guid);
+
 					guid = GUIDGetMaterial(SkinnedMeshUnityNativeMix);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeySkinnedMeshUnityNativeMix, guid);
 
@@ -3003,6 +3292,19 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					guid = GUIDGetMaterial(SkinnedMeshUnityNativeInv);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeySkinnedMeshUnityNativeInv, guid);
+
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					guid = GUIDGetMaterial(SkinnedMeshUnityNativeMul2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeySkinnedMeshUnityNativeMul2, guid);
+//
+//					guid = GUIDGetMaterial(SkinnedMeshUnityNativeDiv2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeySkinnedMeshUnityNativeDiv2, guid);
+//
+//					guid = GUIDGetMaterial(SkinnedMeshUnityNativeScr2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeySkinnedMeshUnityNativeScr2, guid);
+//
+//					guid = GUIDGetMaterial(SkinnedMeshUnityNativeOvl2);
+//					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeySkinnedMeshUnityNativeOvl2, guid);
 
 					guid = GUIDGetMaterial(AnimationUnityUI);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsKeyAnimationUnityUI, guid);
@@ -3039,6 +3341,19 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeInv));
 					textEncode[7] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeInv, textValue);
 
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeMul2));
+//					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeMul2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeDiv2));
+//					textEncode[9] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeDiv2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeScr2));
+//					textEncode[10] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeScr2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeOvl2));
+//					textEncode[11] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeOvl2, textValue);
+
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchMix));
 					textEncode[8] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMix, textValue);
 
@@ -3063,6 +3378,19 @@ public static partial class LibraryEditor_SpriteStudio6
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchInv));
 					textEncode[15] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchInv, textValue);
 
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchMul2));
+//					textEncode[20] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchMul2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchDiv2));
+//					textEncode[21] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchDiv2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchScr2));
+//					textEncode[22] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchScr2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(AnimationUnityNativeNonBatchOvl2));
+//					textEncode[23] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityNativeNonBatchOvl2, textValue);
+
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeMix));
 					textEncode[16] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMix, textValue);
 
@@ -3086,6 +3414,19 @@ public static partial class LibraryEditor_SpriteStudio6
 
 					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeInv));
 					textEncode[23] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeInv, textValue);
+
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeMul2));
+//					textEncode[32] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeMul2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeDiv2));
+//					textEncode[33] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeDiv2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeScr2));
+//					textEncode[34] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeScr2, textValue);
+//
+//					textValue = PathGetForExport(PathGetMaterial(SkinnedMeshUnityNativeOvl2));
+//					textEncode[35] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeySkinnedMeshUnityNativeOvl2, textValue);
 
 					textValue = PathGetForExport(PathGetMaterial(AnimationUnityUI));
 					textEncode[24] = LibraryEditor_SpriteStudio6.Utility.ExternalText.LineEncodeCommand(TextKeyAnimationUnityUI, textValue);
@@ -3166,6 +3507,39 @@ public static partial class LibraryEditor_SpriteStudio6
 							AnimationUnityNativeInv = MaterlalGetPath(PathGetForImport(namePathMaterial));
 							return(true);
 
+						/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//						case TextKeyAnimationUnityNativeMul2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeMul2));
+//							}
+//							AnimationUnityNativeMul2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeyAnimationUnityNativeDiv2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeDiv2));
+//							}
+//							AnimationUnityNativeDiv2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeyAnimationUnityNativeScr2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeScr2));
+//							}
+//							AnimationUnityNativeScr2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeyAnimationUnityNativeOvl2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeOvl2));
+//							}
+//							AnimationUnityNativeOvl2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+
 						case TextKeyAnimationUnityNativeNonBatchMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
 							{
@@ -3229,6 +3603,39 @@ public static partial class LibraryEditor_SpriteStudio6
 							}
 							AnimationUnityNativeNonBatchInv = MaterlalGetPath(PathGetForImport(namePathMaterial));
 							return(true);
+
+						/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//						case TextKeyAnimationUnityNativeNonBatchMul2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchMul2));
+//							}
+//							AnimationUnityNativeNonBatchMul2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeyAnimationUnityNativeNonBatchDiv2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchDiv2));
+//							}
+//							AnimationUnityNativeNonBatchDiv2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeyAnimationUnityNativeNonBatchScr2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchScr2));
+//							}
+//							AnimationUnityNativeNonBatchScr2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeyAnimationUnityNativeNonBatchOvl2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.AnimationUnityNativeNonBatchOvl2));
+//							}
+//							AnimationUnityNativeNonBatchOvl2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
 
 						case TextKeySkinnedMeshUnityNativeMix:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
@@ -3294,6 +3701,39 @@ public static partial class LibraryEditor_SpriteStudio6
 							SkinnedMeshUnityNativeInv = MaterlalGetPath(PathGetForImport(namePathMaterial));
 							return(true);
 
+						/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//						case TextKeySkinnedMeshUnityNativeMul2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeMul2));
+//							}
+//							SkinnedMeshUnityNativeMul2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeySkinnedMeshUnityNativeDiv2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeDiv2));
+//							}
+//							SkinnedMeshUnityNativeDiv2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeySkinnedMeshUnityNativeScr2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeScr2));
+//							}
+//							SkinnedMeshUnityNativeScr2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+//
+//						case TextKeySkinnedMeshUnityNativeOvl2:
+//							if(true == string.IsNullOrEmpty(namePathMaterial))
+//							{
+//								namePathMaterial = PathGetForExport(PathGetMaterial(Default.SkinnedMeshUnityNativeOvl2));
+//							}
+//							SkinnedMeshUnityNativeOvl2 = MaterlalGetPath(PathGetForImport(namePathMaterial));
+//							return(true);
+
 						case TextKeyAnimationUnityUIMix:	/* Old */
 						case TextKeyAnimationUnityUI:
 							if(true == string.IsNullOrEmpty(namePathMaterial))
@@ -3331,6 +3771,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					AnimationUnityNativeScr = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeScr);
 					AnimationUnityNativeExc = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeExc);
 					AnimationUnityNativeInv = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeInv);
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					AnimationUnityNativeMul2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeMul2);
+//					AnimationUnityNativeDiv2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeDiv2);
+//					AnimationUnityNativeScr2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeScr2);
+//					AnimationUnityNativeOvl2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeOvl2);
 
 					AnimationUnityNativeNonBatchMix = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchMix);
 					AnimationUnityNativeNonBatchAdd = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchAdd);
@@ -3340,6 +3785,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					AnimationUnityNativeNonBatchScr = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchScr);
 					AnimationUnityNativeNonBatchExc = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchExc);
 					AnimationUnityNativeNonBatchInv = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchInv);
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					AnimationUnityNativeNonBatchMul2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchMul2);
+//					AnimationUnityNativeNonBatchDiv2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchDiv2);
+//					AnimationUnityNativeNonBatchScr2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchScr2);
+//					AnimationUnityNativeNonBatchOvl2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeNonBatchOvl2);
 
 					SkinnedMeshUnityNativeMix = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshMix);
 					SkinnedMeshUnityNativeAdd = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshAdd);
@@ -3349,6 +3799,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					SkinnedMeshUnityNativeScr = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshScr);
 					SkinnedMeshUnityNativeExc = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshExc);
 					SkinnedMeshUnityNativeInv = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshInv);
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					SkinnedMeshUnityNativeMul2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshMul2);
+//					SkinnedMeshUnityNativeDiv2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshDiv2);
+//					SkinnedMeshUnityNativeScr2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshScr2);
+//					SkinnedMeshUnityNativeOvl2 = MaterlalGetPath(pathBase + NameFileBodyPresetUnityNativeSkinnedMeshOvl2);
 
 					/* MEMO: Save information of redefined assets */
 					Save();
@@ -3410,6 +3865,23 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						material = AnimationUnityNativeInv;
 					}
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					else if(null == AnimationUnityNativeMul2)
+//					{
+//						material = AnimationUnityNativeMul2;
+//					}
+//					else if(null == AnimationUnityNativeDiv2)
+//					{
+//						material = AnimationUnityNativeDiv2;
+//					}
+//					else if(null == AnimationUnityNativeScr2)
+//					{
+//						material = AnimationUnityNativeScr2;
+//					}
+//					else if(null == AnimationUnityNativeOvl2)
+//					{
+//						material = AnimationUnityNativeOvl2;
+//					}
 					else if(null == AnimationUnityNativeNonBatchMix)
 					{
 						material = AnimationUnityNativeNonBatchMix;
@@ -3442,6 +3914,23 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						material = AnimationUnityNativeNonBatchInv;
 					}
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					else if(null == AnimationUnityNativeNonBatchMul2)
+//					{
+//						material = AnimationUnityNativeNonBatchMul2;
+//					}
+//					else if(null == AnimationUnityNativeNonBatchDiv2)
+//					{
+//						material = AnimationUnityNativeNonBatchDiv2;
+//					}
+//					else if(null == AnimationUnityNativeNonBatchScr2)
+//					{
+//						material = AnimationUnityNativeNonBatchScr2;
+//					}
+//					else if(null == AnimationUnityNativeNonBatchOvl2)
+//					{
+//						material = AnimationUnityNativeNonBatchOvl2;
+//					}
 					else if(null == SkinnedMeshUnityNativeMix)
 					{
 						material = SkinnedMeshUnityNativeMix;
@@ -3474,6 +3963,23 @@ public static partial class LibraryEditor_SpriteStudio6
 					{
 						material = SkinnedMeshUnityNativeInv;
 					}
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					else if(null == SkinnedMeshUnityNativeMul2)
+//					{
+//						material = SkinnedMeshUnityNativeMul2;
+//					}
+//					else if(null == SkinnedMeshUnityNativeDiv2)
+//					{
+//						material = SkinnedMeshUnityNativeDiv2;
+//					}
+//					else if(null == SkinnedMeshUnityNativeScr2)
+//					{
+//						material = SkinnedMeshUnityNativeScr2;
+//					}
+//					else if(null == SkinnedMeshUnityNativeOvl2)
+//					{
+//						material = SkinnedMeshUnityNativeOvl2;
+//					}
 
 					/* Get and Split Material's path */
 					string path = null;
@@ -3589,6 +4095,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyOperationScr = "Scr";
 				private const string KeyOperationExc = "Exc";
 				private const string KeyOperationInv = "Inv";
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string KeyOperationMul2 = "Mul2";
+//				private const string KeyOperationDiv2 = "Div2";
+//				private const string KeyOperationScr2 = "Scr2";
+//				private const string KeyOperationOvl2 = "Ovl2";
 
 				private const string KeyAnimationUnityNativeMix = KeyKindAnimation + KeyModeUnityNative + KeyOperationMix;
 				private const string KeyAnimationUnityNativeAdd = KeyKindAnimation + KeyModeUnityNative + KeyOperationAdd;
@@ -3598,6 +4109,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyAnimationUnityNativeScr = KeyKindAnimation + KeyModeUnityNative + KeyOperationScr;
 				private const string KeyAnimationUnityNativeExc = KeyKindAnimation + KeyModeUnityNative + KeyOperationExc;
 				private const string KeyAnimationUnityNativeInv = KeyKindAnimation + KeyModeUnityNative + KeyOperationInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string KeyAnimationUnityNativeMul2 = KeyKindAnimation + KeyModeUnityNative + KeyOperationMul2;
+//				private const string KeyAnimationUnityNativeDiv2 = KeyKindAnimation + KeyModeUnityNative + KeyOperationDiv2;
+//				private const string KeyAnimationUnityNativeScr2 = KeyKindAnimation + KeyModeUnityNative + KeyOperationScr2;
+//				private const string KeyAnimationUnityNativeOvl2 = KeyKindAnimation + KeyModeUnityNative + KeyOperationOvl2;
 				private const string KeyAnimationUnityNativeNonBatchMix = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationMix;
 				private const string KeyAnimationUnityNativeNonBatchAdd = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationAdd;
 				private const string KeyAnimationUnityNativeNonBatchSub = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationSub;
@@ -3606,6 +4122,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeyAnimationUnityNativeNonBatchScr = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationScr;
 				private const string KeyAnimationUnityNativeNonBatchExc = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationExc;
 				private const string KeyAnimationUnityNativeNonBatchInv = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string KeyAnimationUnityNativeNonBatchMul2 = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationMul2;
+//				private const string KeyAnimationUnityNativeNonBatchDiv2 = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationDiv2;
+//				private const string KeyAnimationUnityNativeNonBatchScr2 = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationScr2;
+//				private const string KeyAnimationUnityNativeNonBatchOvl2 = KeyKindAnimation + KeyModeUnityNative + KeyNonBatch + KeyOperationOvl2;
 				private const string KeySkinnedMeshUnityNativeMix = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationMix;
 				private const string KeySkinnedMeshUnityNativeAdd = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationAdd;
 				private const string KeySkinnedMeshUnityNativeSub = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationSub;
@@ -3614,6 +4135,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string KeySkinnedMeshUnityNativeScr = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationScr;
 				private const string KeySkinnedMeshUnityNativeExc = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationExc;
 				private const string KeySkinnedMeshUnityNativeInv = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string KeySkinnedMeshUnityNativeMul2 = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationMul2;
+//				private const string KeySkinnedMeshUnityNativeDiv2 = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationDiv2;
+//				private const string KeySkinnedMeshUnityNativeScr2 = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationScr2;
+//				private const string KeySkinnedMeshUnityNativeOvl2 = KeyKindSkinnedMesh + KeyModeUnityNative + KeyOperationOvl2;
 				/* Obsolete */	private const string KeyAnimationUnityUIMix = KeyKindAnimation + KeyModeUnityUI + KeyOperationMix;
 				private const string KeyAnimationUnityUI = KeyKindAnimation + KeyModeUnityUI;
 
@@ -3627,6 +4153,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyAnimationUnityNativeScr = TextKeyPrefix + KeyAnimationUnityNativeScr;
 				private const string TextKeyAnimationUnityNativeExc = TextKeyPrefix + KeyAnimationUnityNativeExc;
 				private const string TextKeyAnimationUnityNativeInv = TextKeyPrefix + KeyAnimationUnityNativeInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string TextKeyAnimationUnityNativeMul2 = TextKeyPrefix + KeyAnimationUnityNativeMul2;
+//				private const string TextKeyAnimationUnityNativeDiv2 = TextKeyPrefix + KeyAnimationUnityNativeDiv2;
+//				private const string TextKeyAnimationUnityNativeScr2 = TextKeyPrefix + KeyAnimationUnityNativeScr2;
+//				private const string TextKeyAnimationUnityNativeOvl2 = TextKeyPrefix + KeyAnimationUnityNativeOvl2;
 				private const string TextKeyAnimationUnityNativeNonBatchMix = TextKeyPrefix + KeyAnimationUnityNativeNonBatchMix;
 				private const string TextKeyAnimationUnityNativeNonBatchAdd = TextKeyPrefix + KeyAnimationUnityNativeNonBatchAdd;
 				private const string TextKeyAnimationUnityNativeNonBatchSub = TextKeyPrefix + KeyAnimationUnityNativeNonBatchSub;
@@ -3635,6 +4166,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeyAnimationUnityNativeNonBatchScr = TextKeyPrefix + KeyAnimationUnityNativeNonBatchScr;
 				private const string TextKeyAnimationUnityNativeNonBatchExc = TextKeyPrefix + KeyAnimationUnityNativeNonBatchExc;
 				private const string TextKeyAnimationUnityNativeNonBatchInv = TextKeyPrefix + KeyAnimationUnityNativeNonBatchInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string TextKeyAnimationUnityNativeNonBatchMul2 = TextKeyPrefix + KeyAnimationUnityNativeNonBatchMul2;
+//				private const string TextKeyAnimationUnityNativeNonBatchDiv2 = TextKeyPrefix + KeyAnimationUnityNativeNonBatchDiv2;
+//				private const string TextKeyAnimationUnityNativeNonBatchScr2 = TextKeyPrefix + KeyAnimationUnityNativeNonBatchScr2;
+//				private const string TextKeyAnimationUnityNativeNonBatchOvl2 = TextKeyPrefix + KeyAnimationUnityNativeNonBatchOvl2;
 				private const string TextKeySkinnedMeshUnityNativeMix = TextKeyPrefix + KeySkinnedMeshUnityNativeMix;
 				private const string TextKeySkinnedMeshUnityNativeAdd = TextKeyPrefix + KeySkinnedMeshUnityNativeAdd;
 				private const string TextKeySkinnedMeshUnityNativeSub = TextKeyPrefix + KeySkinnedMeshUnityNativeSub;
@@ -3643,6 +4179,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string TextKeySkinnedMeshUnityNativeScr = TextKeyPrefix + KeySkinnedMeshUnityNativeScr;
 				private const string TextKeySkinnedMeshUnityNativeExc = TextKeyPrefix + KeySkinnedMeshUnityNativeExc;
 				private const string TextKeySkinnedMeshUnityNativeInv = TextKeyPrefix + KeySkinnedMeshUnityNativeInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string TextKeySkinnedMeshUnityNativeMul2 = TextKeyPrefix + KeySkinnedMeshUnityNativeMul2;
+//				private const string TextKeySkinnedMeshUnityNativeDiv2 = TextKeyPrefix + KeySkinnedMeshUnityNativeDiv2;
+//				private const string TextKeySkinnedMeshUnityNativeScr2 = TextKeyPrefix + KeySkinnedMeshUnityNativeScr2;
+//				private const string TextKeySkinnedMeshUnityNativeOvl2 = TextKeyPrefix + KeySkinnedMeshUnityNativeOvl2;
 				/* Obsolete */	private const string TextKeyAnimationUnityUIMix = TextKeyPrefix + KeyAnimationUnityUIMix;
 				private const string TextKeyAnimationUnityUI = TextKeyPrefix + KeyAnimationUnityUI;
 
@@ -3656,6 +4197,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyAnimationUnityNativeScr = PrefsKeyPrefix + KeyAnimationUnityNativeScr;
 				private const string PrefsKeyAnimationUnityNativeExc = PrefsKeyPrefix + KeyAnimationUnityNativeExc;
 				private const string PrefsKeyAnimationUnityNativeInv = PrefsKeyPrefix + KeyAnimationUnityNativeInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string PrefsKeyAnimationUnityNativeMul2 = PrefsKeyPrefix + KeyAnimationUnityNativeMul2;
+//				private const string PrefsKeyAnimationUnityNativeDiv2 = PrefsKeyPrefix + KeyAnimationUnityNativeDiv2;
+//				private const string PrefsKeyAnimationUnityNativeScr2 = PrefsKeyPrefix + KeyAnimationUnityNativeScr2;
+//				private const string PrefsKeyAnimationUnityNativeOvl2 = PrefsKeyPrefix + KeyAnimationUnityNativeOvl2;
 				private const string PrefsKeyAnimationUnityNativeNonBatchMix = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchMix;
 				private const string PrefsKeyAnimationUnityNativeNonBatchAdd = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchAdd;
 				private const string PrefsKeyAnimationUnityNativeNonBatchSub = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchSub;
@@ -3664,6 +4210,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeyAnimationUnityNativeNonBatchScr = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchScr;
 				private const string PrefsKeyAnimationUnityNativeNonBatchExc = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchExc;
 				private const string PrefsKeyAnimationUnityNativeNonBatchInv = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string PrefsKeyAnimationUnityNativeNonBatchMul2 = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchMul2;
+//				private const string PrefsKeyAnimationUnityNativeNonBatchDiv2 = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchDiv2;
+//				private const string PrefsKeyAnimationUnityNativeNonBatchScr2 = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchScr2;
+//				private const string PrefsKeyAnimationUnityNativeNonBatchOvl2 = PrefsKeyPrefix + KeyAnimationUnityNativeNonBatchOvl2;
 				private const string PrefsKeySkinnedMeshUnityNativeMix = PrefsKeyPrefix + KeySkinnedMeshUnityNativeMix;
 				private const string PrefsKeySkinnedMeshUnityNativeAdd = PrefsKeyPrefix + KeySkinnedMeshUnityNativeAdd;
 				private const string PrefsKeySkinnedMeshUnityNativeSub = PrefsKeyPrefix + KeySkinnedMeshUnityNativeSub;
@@ -3672,6 +4223,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				private const string PrefsKeySkinnedMeshUnityNativeScr = PrefsKeyPrefix + KeySkinnedMeshUnityNativeScr;
 				private const string PrefsKeySkinnedMeshUnityNativeExc = PrefsKeyPrefix + KeySkinnedMeshUnityNativeExc;
 				private const string PrefsKeySkinnedMeshUnityNativeInv = PrefsKeyPrefix + KeySkinnedMeshUnityNativeInv;
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				private const string PrefsKeySkinnedMeshUnityNativeMul2 = PrefsKeyPrefix + KeySkinnedMeshUnityNativeMul2;
+//				private const string PrefsKeySkinnedMeshUnityNativeDiv2 = PrefsKeyPrefix + KeySkinnedMeshUnityNativeDiv2;
+//				private const string PrefsKeySkinnedMeshUnityNativeScr2 = PrefsKeyPrefix + KeySkinnedMeshUnityNativeScr2;
+//				private const string PrefsKeySkinnedMeshUnityNativeOvl2 = PrefsKeyPrefix + KeySkinnedMeshUnityNativeOvl2;
 				private const string PrefsKeyAnimationUnityUI = PrefsKeyPrefix + KeyAnimationUnityUI;
 
 				private const string NamePathSubPreset = "SpriteStudio6/Material/UnityNative/";
@@ -3684,6 +4240,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				internal const string NameFileBodyPresetUnityNativeScr = "Sprite_UnityNative_SCR.mat";
 				internal const string NameFileBodyPresetUnityNativeExc = "Sprite_UnityNative_EXC.mat";
 				internal const string NameFileBodyPresetUnityNativeInv = "Sprite_UnityNative_INV.mat";
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				internal const string NameFileBodyPresetUnityNativeMul2 = "Sprite_UnityNative_MUL2.mat";
+//				internal const string NameFileBodyPresetUnityNativeDiv2 = "Sprite_UnityNative_DIV2.mat";
+//				internal const string NameFileBodyPresetUnityNativeScr2 = "Sprite_UnityNative_SCR2.mat";
+//				internal const string NameFileBodyPresetUnityNativeOvl2 = "Sprite_UnityNative_OVL2.mat";
 				internal const string NameFileBodyPresetUnityNativeNonBatchMix = "Sprite_UnityNative_NonBatch_MIX.mat";
 				internal const string NameFileBodyPresetUnityNativeNonBatchAdd = "Sprite_UnityNative_NonBatch_ADD.mat";
 				internal const string NameFileBodyPresetUnityNativeNonBatchSub = "Sprite_UnityNative_NonBatch_SUB.mat";
@@ -3692,6 +4253,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				internal const string NameFileBodyPresetUnityNativeNonBatchScr = "Sprite_UnityNative_NonBatch_SCR.mat";
 				internal const string NameFileBodyPresetUnityNativeNonBatchExc = "Sprite_UnityNative_NonBatch_EXC.mat";
 				internal const string NameFileBodyPresetUnityNativeNonBatchInv = "Sprite_UnityNative_NonBatch_INV.mat";
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				internal const string NameFileBodyPresetUnityNativeNonBatchMul2 = "Sprite_UnityNative_NonBatch_MUL2.mat";
+//				internal const string NameFileBodyPresetUnityNativeNonBatchDiv2 = "Sprite_UnityNative_NonBatch_DIV2.mat";
+//				internal const string NameFileBodyPresetUnityNativeNonBatchScr2 = "Sprite_UnityNative_NonBatch_SCR2.mat";
+//				internal const string NameFileBodyPresetUnityNativeNonBatchOvl2 = "Sprite_UnityNative_NonBatch_OVL2.mat";
 				internal const string NameFileBodyPresetUnityNativeSkinnedMeshMix = "SkinnedMesh_UnityNative_MIX.mat";
 				internal const string NameFileBodyPresetUnityNativeSkinnedMeshAdd = "SkinnedMesh_UnityNative_ADD.mat";
 				internal const string NameFileBodyPresetUnityNativeSkinnedMeshSub = "SkinnedMesh_UnityNative_SUB.mat";
@@ -3700,6 +4266,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				internal const string NameFileBodyPresetUnityNativeSkinnedMeshScr = "SkinnedMesh_UnityNative_SCR.mat";
 				internal const string NameFileBodyPresetUnityNativeSkinnedMeshExc = "SkinnedMesh_UnityNative_EXC.mat";
 				internal const string NameFileBodyPresetUnityNativeSkinnedMeshInv = "SkinnedMesh_UnityNative_INV.mat";
+				/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//				internal const string NameFileBodyPresetUnityNativeSkinnedMeshMul2 = "SkinnedMesh_UnityNative_MUL2.mat";
+//				internal const string NameFileBodyPresetUnityNativeSkinnedMeshDiv2 = "SkinnedMesh_UnityNative_DIV2.mat";
+//				internal const string NameFileBodyPresetUnityNativeSkinnedMeshScr2 = "SkinnedMesh_UnityNative_SCR2.mat";
+//				internal const string NameFileBodyPresetUnityNativeSkinnedMeshOvl2 = "SkinnedMesh_UnityNative_OVL2.mat";
 				private const string NamePathSubPresetUI = "SpriteStudio6/Material/UnityUI/";
 				internal const string NameFileBodyPresetUnityUI = "Sprite_UnityUI.mat";
 
@@ -3712,6 +4283,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* AnimationUnityNativeScr */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeScr,
 					/* AnimationUnityNativeExc */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeExc,
 					/* AnimationUnityNativeInv */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeInv,
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					/* AnimationUnityNativeMul2 */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeMul2,
+//					/* AnimationUnityNativeDiv2 */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeDiv2,
+//					/* AnimationUnityNativeScr2 */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeScr2,
+//					/* AnimationUnityNativeOvl2 */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeOvl2,
 					/* AnimationUnityNativeNonBatchMix */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchMix,
 					/* AnimationUnityNativeNonBatchAdd */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchAdd,
 					/* AnimationUnityNativeNonBatchSub */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchSub,
@@ -3720,6 +4296,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* AnimationUnityNativeNonBatchScr */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchScr,
 					/* AnimationUnityNativeNonBatchExc */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchExc,
 					/* AnimationUnityNativeNonBatchInv */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchInv,
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					/* AnimationUnityNativeNonBatchMul2 */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchMul2,
+//					/* AnimationUnityNativeNonBatchDiv2 */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchDiv2,
+//					/* AnimationUnityNativeNonBatchScr2 */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchScr2,
+//					/* AnimationUnityNativeNonBatchOvl2 */	LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeNonBatchOvl2,
 					/* SkinnedMeshUnityNativeMix */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshMix,
 					/* SkinnedMeshUnityNativeAdd */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshAdd,
 					/* SkinnedMeshUnityNativeSub */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshSub,
@@ -3728,6 +4309,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					/* SkinnedMeshUnityNativeScr */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshScr,
 					/* SkinnedMeshUnityNativeExc */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshExc,
 					/* SkinnedMeshUnityNativeInv */			LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshInv,
+					/* MEMO: (Ver.2.3.0-) "Mul2" / "Div2" / "Scr2" / "Ovl2" are not opened. (Test code from the development phase, so does not function correctly.) */
+//					/* SkinnedMeshUnityNativeMul2 */		LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshMul2,
+//					/* SkinnedMeshUnityNativeDiv2 */		LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshDiv2,
+//					/* SkinnedMeshUnityNativeScr2 */		LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshScr2,
+//					/* SkinnedMeshUnityNativeOvl2 */		LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPreset + NameFileBodyPresetUnityNativeSkinnedMeshOvl2,
 					/* AnimationUnityUI */					string.Empty	/* LibraryEditor_SpriteStudio6.Utility.File.NamePathRootAsset + "/" + NamePathSubPresetUI + NameFileBodyPresetUnityUI */
 				);
 				#endregion Enums & Constants
@@ -3755,7 +4341,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Load()
 				{
-					string guid = "";
+					string guid = string.Empty;
 
 					guid = LibraryEditor_SpriteStudio6.Utility.Prefs.StringLoad(PrefsPrefabHolderAssetSS6PU, GUIDGetPrefab(Default.PrefabHolderAssetSS6PU));
 					PrefabHolderAssetSS6PU = PrefabGetGUID(guid);
@@ -3765,7 +4351,7 @@ public static partial class LibraryEditor_SpriteStudio6
 
 				public bool Save()
 				{
-					string guid = "";
+					string guid = string.Empty;
 
 					guid = GUIDGetPrefab(PrefabHolderAssetSS6PU);
 					LibraryEditor_SpriteStudio6.Utility.Prefs.StringSave(PrefsPrefabHolderAssetSS6PU, guid);

@@ -1,4 +1,4 @@
-//
+﻿//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
@@ -11,7 +11,7 @@ struct InputVS
 	float4 color : COLOR0;
 	float4 texcoord : TEXCOORD0;	/* .x:U / .y:V / .z:PartsColor-Blend / .w:PartsColor-Power */
 	float4 texcoord1 : TEXCOORD1;	/* .x:U-Min / .y:V-Min / .z:U-Max / .w:V-Max */
-	float4 texcoord2 : TEXCOORD2;	/* .x:U-Avr / .y:V-Avr / (No-Use) / .w:(No-Use) */
+	float4 texcoord2 : TEXCOORD2;	/* .x:U-Avr / .y:V-Avr / .z:Power-Masking / .w:Target-Blend operation */
 };
 
 struct InputPS
@@ -19,10 +19,11 @@ struct InputPS
 	float4 Position : PIXELSHADER_BINDDATA_POSITION;
 	float4 ColorMain : COLOR0;
 	float4 ColorOverlay : COLOR1;
-#if defined(RESTRICT_SHADER_MODEL_3)
-	float4 ParameterOverlay : TEXCOORD0;
+// #if defined(RESTRICT_SHADER_MODEL_3)
+// 	float4 ParameterOverlay : TEXCOORD0;
 // #else
-#endif
+// #endif
+	float4 ParameterOverlay : TEXCOORD0;
 	float4 ArgumentVs00 : TEXCOORD1;
 	float4 Texture00UV : TEXCOORD2;
 	float4 Texture00UVMinMax : TEXCOORD3;

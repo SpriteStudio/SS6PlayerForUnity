@@ -24,6 +24,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	public Script_SpriteStudio6_DataAnimation[] DataAnimation;
 	public Script_SpriteStudio6_DataEffect[] DataEffect;
 	public Script_SpriteStudio6_DataSequence[] DataSequence;
+	public Script_SpriteStudio6_DataSoundList DataSoundList;
 
 	public Object[] PrefabAnimation;
 	public Object[] PrefabEffect;
@@ -98,6 +99,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		DataAnimation = null;
 		DataEffect = null;
 		DataSequence = null;
+		DataSoundList = null;
 
 		PrefabAnimation = null;
 		PrefabEffect = null;
@@ -226,6 +228,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		CacheMaterial.ShaderStandardAnimation = Library_SpriteStudio6.Data.Shader.SpriteSS6PU;	/* Standard-Shader(Animation) */
 		CacheMaterial.ShaderStandardEffect = Library_SpriteStudio6.Data.Shader.EffectSS6PU;	/* Standard-Shader(Effect) */
 		CacheMaterial.ShaderStandardStencil = Library_SpriteStudio6.Data.Shader.StencilSS6PU;	/* Standard-Shader(Stencil) */
+		CacheMaterial.ShaderStandardShape = Library_SpriteStudio6.Data.Shader.ShapeSS6PU;	/* Standard-Shader(Shape) */
 
 		CacheMaterial.FunctionMaterialSetUpAnimation = Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpAnimation;
 		CacheMaterial.FunctionMaterialSetUpEffect = Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpEffect;
@@ -251,6 +254,12 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		null == Standard-Shader's name
 	@param	masking
 		Masking type
+	@param	flagDrawInsideMask
+		true == Draw pixels inside mask (for Clipping-Mask)<br>
+		false == Draw pixels outside mask (for Masking)
+	@param	nameShader
+		Shader's name in animation-data<br>
+		null == Standard-shader's name
 	@param	flagCreateNew
 		true == If not exist, create.
 		false == If not exist, return null.
@@ -293,6 +302,8 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	internal UnityEngine.Material MaterialGetAnimation(	int indexCellMap,
 														Library_SpriteStudio6.KindOperationBlend operationBlend,
 														Library_SpriteStudio6.KindMasking masking,
+														bool flagDrawInsideMask,
+														bool flagIsShape,
 														string nameShader,
 														bool flagCreateNew,
 														Shader shader=null,
@@ -307,6 +318,8 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		return(CacheMaterial.MaterialGetAnimation(	indexCellMap,
 													operationBlend,
 													masking,
+													flagDrawInsideMask,
+													flagIsShape,
 													nameShader,
 													shader,
 													functionMaterialSetUp,
@@ -370,6 +383,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	internal UnityEngine.Material MaterialGetEffect(	int indexCellMap,
 														Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 														Library_SpriteStudio6.KindMasking masking,
+														bool flagDrawInsideMask,
 														string nameShader,
 														bool flagCreateNew,
 														Shader shader=null,
@@ -384,6 +398,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		return(CacheMaterial.MaterialGetEffect(	indexCellMap,
 												operationBlend,
 												masking,
+												flagDrawInsideMask,
 												nameShader,
 												shader,
 												functionMaterialSetUp,
@@ -402,6 +417,9 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		Blending Operation
 	@param	masking
 		Masking type
+	@param	flagDrawInsideMask
+		true == Draw pixels inside mask (for Clipping-Mask)<br>
+		false == Draw pixels outside mask (for Masking)
 	@param	nameShadcer
 		Shader's name in animation-data<br>
 		null == Default(Standard) shader's name
@@ -420,6 +438,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 	internal UnityEngine.Material MaterialReplaceAnimation(	int indexCellMap,
 															Library_SpriteStudio6.KindOperationBlend operationBlend,
 															Library_SpriteStudio6.KindMasking masking,
+															bool flagDrawInsideMask,
 															string nameShader,
 															UnityEngine.Material material
 														)
@@ -432,6 +451,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		return(CacheMaterial.MaterialReplaceAnimation(	indexCellMap,
 														operationBlend,
 														masking,
+														flagDrawInsideMask,
 														nameShader,
 														material
 													)
@@ -477,6 +497,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		return(CacheMaterial.MaterialReplaceEffect(	indexCellMap,
 													operationBlend,
 													masking,
+													false,
 													nameShader,
 													material
 											)
@@ -541,6 +562,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 																	Library_SpriteStudio6.Data.Shader.SpriteSS6PU,
 																	functionMaterialSetUp,
 																	Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpAnimation,
+																	false,
 																	flagReplaceMaterialCache
 															)
 			);
@@ -587,6 +609,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 																Library_SpriteStudio6.Data.Shader.EffectSS6PU,
 																functionMaterialSetUp,
 																Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpEffect,
+																false,
 																flagReplaceMaterialCache
 															)
 			);
@@ -625,6 +648,7 @@ public class Script_SpriteStudio6_DataProject : ScriptableObject
 		return(CacheMaterial.ShaderReplaceStandardStencil(	shader,
 															Library_SpriteStudio6.Data.Shader.StencilSS6PU,
 															Library_SpriteStudio6.Data.Shader.FunctionMaterialSetUpAnimation,
+															false,
 															flagReplaceMaterialCache
 														)
 			);

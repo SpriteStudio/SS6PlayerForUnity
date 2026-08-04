@@ -8,8 +8,10 @@
 
 #define DECODE_USERDATA
 #define DECODE_SIGNAL
+#define DECODE_SOUND
 // #define DECODE_IN_INSTANCE_USERDATA
 #define DECODE_IN_INSTANCE_SIGNAL
+#define DECODE_IN_INSTANCE_SOUND
 // #define EXPERIMENT_FOR_CAMERA
 #define DEFORM_CALCULATE_STRICT
 
@@ -63,8 +65,13 @@ public static partial class Library_SpriteStudio6
 			/*       Necessary to improve Priority-Key's accuracy for supporting 2 sorts   */
 			/*        of "Priority" and "Z- coordinate", so PartID-Key's range is reduced. */
 			public const int CountShiftSortKeyPriority = 12;
-			public const int MaskSortKeyPriority = 0x7ffff000;	/* -524288 to 524287 */
+//			public const int MaskSortKeyPriority = 0xfffff000;	/* -524288 to 524287 */
 			public const int MaskSortKeyIDParts = 0x00000fff;	/* 0 to 4095 */
+#if false
+#else
+			public const int BoundaryOverPriority = 10000 << CountShiftSortKeyPriority;
+			public const int CenterOverPriority = 20000 << CountShiftSortKeyPriority;
+#endif
 			#endregion Enums & Constants
 
 			/* ----------------------------------------------- Classes, Structs & Interfaces */
@@ -143,6 +150,7 @@ public static partial class Library_SpriteStudio6
 
 				internal Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Vector2> ScaleLocal;
 				internal Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<float> RateOpacity;
+				internal Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<float> PowerMask;
 				internal Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<int> Priority;
 
 				internal BufferParameterSprite ParameterSprite;
@@ -185,6 +193,7 @@ public static partial class Library_SpriteStudio6
 
 					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
 					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
+					PowerMask.CleanUp();	PowerMask.Value = 1.0f;
 					Priority.CleanUp();	Priority.Value = 0;
 
 					ParameterSprite.CleanUp();
@@ -251,7 +260,7 @@ public static partial class Library_SpriteStudio6
 							PrefabUnderControl = null;
 							InstanceGameObjectUnderControl = null;
 
-							if(false == ParameterSprite.BootUp(instanceRoot, idParts, (int)Library_SpriteStudio6.KindVertex.TERMINATOR4, countPartsSprite, true))
+							if(false == ParameterSprite.BootUp(instanceRoot, idParts, (int)Library_SpriteStudio6.KindVertex.TERMINATOR4, countPartsSprite, false))
 							{
 								goto BootUp_ErrorEnd;
 							}
@@ -269,7 +278,7 @@ public static partial class Library_SpriteStudio6
 							PrefabUnderControl = null;
 							InstanceGameObjectUnderControl = null;
 
-							if(false == ParameterSprite.BootUpMesh(instanceRoot, idParts, false))
+							if(false == ParameterSprite.BootUpMesh(instanceRoot, idParts))
 							{
 								goto BootUp_ErrorEnd;
 							}
@@ -279,6 +288,23 @@ public static partial class Library_SpriteStudio6
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+							break;
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+							break;
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+							PrefabUnderControl = null;
+							InstanceGameObjectUnderControl = null;
+
+							/* MEMO: "Shape" with "MASK" behaves as a "Mask"-part. (Rendered only at Pre-Draw & Post-Draw) */
+							if(false == ParameterSprite.BootUp(instanceRoot, idParts, (int)Library_SpriteStudio6.KindVertex.TERMINATOR4, countPartsSprite, true))
+							{
+								goto BootUp_ErrorEnd;
+							}
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+							break;
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
 							break;
 					}
 
@@ -392,49 +418,93 @@ public static partial class Library_SpriteStudio6
 						return;
 					}
 
-					/* Update Transform (GameObject) & Spatus */
-					/* MEMO: For reseting at animation switching, "UpdateGameObject" is always called. */
-					UpdateGameObject(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
-
-					/* Check Unused part */
-					if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+					/* Update for common-attributes */
+					/* MEMO: Only "AUDIO" part excludes even common-attributes. */
+					switch(instanceRoot.DataAnimation.TableParts[idParts].Feature)
 					{
-						return;
-					}
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.ROOT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MOVENODE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CONSTRAINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.BONEPOINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+//						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+							/* Update Transform (GameObject) & Spatus */
+							/* MEMO: For reseting at animation switching, "UpdateGameObject" is always called. */
+							UpdateGameObject(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+
+							/* Check Unused part */
+							if(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_USED))
+							{
+								return;
+							}
 
 #if DECODE_USERDATA
-					/* Update UserData */
+							/* Update UserData */
 #if DECODE_IN_INSTANCE_USERDATA
-					{
+							{
 #else
-					/* MEMO: "UserData" is not decoded when not playing animation. */
-					/* MEMO: "UserData" is not decoded in "Instance" animation. */
-					if(true == instanceRoot.TableControlTrack[indexTrack].StatusIsPlaying)
-					{
+							/* MEMO: "UserData" is not decoded when not playing animation. */
+							/* MEMO: "UserData" is not decoded in "Instance" animation. */
+							if(true == instanceRoot.TableControlTrack[indexTrack].StatusIsPlaying)
+							{
 #endif
-						if((null == instanceRoot.InstanceRootParent) && (0 == (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA)))
-						{
-							UpdateUserData(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
-						}
-					}
+								if((null == instanceRoot.InstanceRootParent) && (0 == (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_USERDATA)))
+								{
+									UpdateUserData(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+								}
+							}
 #endif
 
 #if DECODE_SIGNAL
-					/* Update Signal */
+							/* Update Signal */
 #if DECODE_IN_INSTANCE_SIGNAL
-					{
+							{
 #else
-					/* MEMO: "Signal" is not decoded when not playing animation. */
-					/* MEMO: "Signal" is not decoded in "Instance" animation. */
-					if(true == instanceRoot.TableControlTrack[indexTrack].StatusIsPlaying)
-					{
+							/* MEMO: "Signal" is not decoded when not playing animation. */
+							/* MEMO: "Signal" is not decoded in "Instance" animation. */
+							if(true == instanceRoot.TableControlTrack[indexTrack].StatusIsPlaying)
+							{
 #endif
-						if((null == instanceRoot.InstanceRootParent) && (0 == (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SIGNAL)))
-						{
-							UpdateSignal(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
-						}
+								if((null == instanceRoot.InstanceRootParent) && (0 == (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SIGNAL)))
+								{
+									UpdateSignal(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+								}
+							}
+#endif
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+#if DECODE_SOUND
+							/* Update UserData */
+#if DECODE_IN_INSTANCE_SOUND
+							{
+#else
+							/* MEMO: "Sound" is not decoded when not playing animation. */
+							/* MEMO: "Sound" is not decoded in "Instance" animation. */
+							if(true == instanceRoot.TableControlTrack[indexTrack].StatusIsPlaying)
+							{
+#endif
+								if((null == instanceRoot.InstanceRootParent) && (0 == (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SOUND)))
+								{
+									UpdateSound(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+								}
+							}
+#endif
+
+							break;
 					}
-#endif
 
 					/* Update for each parts' feature */
 					switch(instanceRoot.DataAnimation.TableParts[idParts].Feature)
@@ -443,25 +513,25 @@ public static partial class Library_SpriteStudio6
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NULL:
 							break;
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
-							UpdateNormal(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
-							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, false, indexTrackRoot);
+							UpdateNormal(instanceRoot, idParts, true, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, indexTrackRoot);
 							break;
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 							/* Update Instance */
 							/* MEMO: No processing */
 //							UpdateInstance(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
-							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, true, false, indexTrackRoot);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, true, indexTrackRoot);
 							break;
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 							/* Update Effect */
 							/* MEMO: No processing */
 //							UpdateEffect(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
-							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, true, false, indexTrackRoot);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, true, indexTrackRoot);
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MASK:
-							UpdateNormal(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
-							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, true, indexTrackRoot);
+							UpdateNormal(instanceRoot, idParts, true, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, indexTrackRoot);
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.JOINT:
@@ -477,7 +547,7 @@ public static partial class Library_SpriteStudio6
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
 							UpdateMesh(instanceRoot, idParts, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
-							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, false, indexTrackRoot);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, indexTrackRoot);
 							break;
 
 						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
@@ -490,6 +560,17 @@ public static partial class Library_SpriteStudio6
 								instanceRoot.ArgumentShareEntire.TransformPartsCamera = InstanceTransform;
 							}
 #endif
+							break;
+
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+							break;
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+							UpdateNormal(instanceRoot, idParts, false, ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts], ref instanceRoot.TableControlTrack[indexTrack]);
+							UpdateSetPartsDraw(instanceRoot, idParts, flagHideDefault, false, indexTrackRoot);
+							break;
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+							break;
+						case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
 							break;
 					}
 
@@ -899,8 +980,17 @@ public static partial class Library_SpriteStudio6
 						Status |= FlagBitStatus.UPDATE_RATEOPACITY;
 					}
 
+					/* Get Power-Mask */
+#if UNITY_EDITOR
+					if(null != dataAnimationParts.PowerMask.Function)
+					{
+						dataAnimationParts.PowerMask.Function.ValueGet(ref PowerMask, dataAnimationParts.PowerMask, ref controlTrack.ArgumentContainer);
+					}
+#else
+					dataAnimationParts.PowerMask.Function.ValueGet(ref PowerMask, dataAnimationParts.PowerMask, ref controlTrack.ArgumentContainer);
+#endif
+
 					/* Get Priority */
-					/* MEMO: "RateOpacity" are data that must be constantly updated in most parts, so decode here. */
 #if UNITY_EDITOR
 					if(null != dataAnimationParts.Priority.Function)
 					{
@@ -1513,8 +1603,310 @@ public static partial class Library_SpriteStudio6
 					}
 				}
 
+				private void UpdateSound(	Script_SpriteStudio6_Root instanceRoot,
+											int idParts,
+											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+											ref Library_SpriteStudio6.Control.Animation.Track controlTrack
+										)
+				{
+					if(	(true == controlTrack.StatusIsIgnoreSound)
+						|| (true == controlTrack.StatusIsIgnoreNextUpdateSound)
+						|| (false == controlTrack.StatusIsDecodeAttribute)
+						|| (null == instanceRoot.FunctionSound))
+					{	/* No Need to decode Sound-s */
+						return;
+					}
+
+					int countLoop = controlTrack.CountLoopNow;
+					if(true == controlTrack.StatusIsIgnoreSkipLoop)
+					{
+						countLoop = 0;
+					}
+					bool flagLoop = (0 < countLoop);
+					bool flagFirst = controlTrack.StatusIsPlayingStart;
+					bool flagReverse = controlTrack.StatusIsPlayingReverse;
+					bool flagReversePrevious = controlTrack.StatusIsPlayingReversePrevious;
+					bool flagTurn = controlTrack.StatusIsPlayingTurn;
+					bool flagStylePingPong = controlTrack.StatusIsPlayStylePingpong;
+					int frame = controlTrack.ArgumentContainer.Frame;
+					int frameStart = controlTrack.FrameStart;
+					int frameEnd = controlTrack.FrameEnd;
+					int framePrevious = -1;
+
+					/* Get decoding top frame */
+					if(true == flagFirst)
+					{
+						framePrevious = frameStart;
+					}
+					else
+					{
+						framePrevious = controlTrack.ArgumentContainer.FramePrevious;
+						if(true== flagReversePrevious)
+						{
+							framePrevious--;
+							if((false == flagTurn) && (framePrevious < frame))
+							{
+								return;
+							}
+						}
+						else
+						{
+							framePrevious++;
+							if((false == flagTurn) && (framePrevious > frame))
+							{
+								return;
+							}
+						}
+					}
+
+					/* Decoding Sound-s */
+					if(true == flagStylePingPong)
+					{	/* Play-Style: PingPong */
+						bool FlagStyleReverse = controlTrack.StatusIsPlayStyleReverse;
+
+						/* Decoding skipped frame */
+						if(true == FlagStyleReverse)
+						{	/* Reverse */
+							if(true == flagLoop)
+							{
+								/* Part-Head */
+								if(true == flagReversePrevious)
+								{
+									framePrevious = controlTrack.ArgumentContainer.FramePrevious - 1;	/* Force */
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frameStart, frame, false);
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frameEnd, frame, true);
+								}
+								else
+								{
+									framePrevious = controlTrack.ArgumentContainer.FramePrevious + 1;	/* Force */
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frameEnd, frame, true);
+								}
+
+								/* Part-Loop */
+								for(int i=1; i<countLoop; i++)
+								{
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frameStart, frame, false);
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frameEnd, frame, true);
+								}
+
+								/* Part-Tail & Just-Now */
+								if(true == flagReverse)
+								{	/* Now-Reverse */
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frame, frame, false);
+								}
+								else
+								{	/* Now-Foward */
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frameStart, frame, false);
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frame, frame, true);
+								}
+							}
+							else
+							{	/* Normal */
+								if(true == flagTurn)
+								{	/* Turn-Back */
+									/* MEMO: No-Loop & Turn-Back ... Always "Reverse to Foward" */
+									framePrevious = controlTrack.ArgumentContainer.FramePrevious - 1;	/* Force */
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frameStart, frame, false);
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frame, frame, true);
+								}
+								else
+								{	/* Normal */
+									if(true == flagReverse)
+									{	/* Reverse */
+										UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frame, frame, false);
+									}
+									else
+									{	/* Foward */
+										UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frame, frame, true);
+									}
+								}
+							}
+						}
+						else
+						{	/* Normal */
+							if(true == flagLoop)
+							{
+								/* Part-Head */
+								if(true == flagReversePrevious)
+								{
+									framePrevious = controlTrack.ArgumentContainer.FramePrevious - 1;	/* Force */
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frameStart, frame, true);
+								}
+								else
+								{
+									framePrevious = controlTrack.ArgumentContainer.FramePrevious + 1;	/* Force */
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frameEnd, frame, false);
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frameStart, frame, true);
+								}
+
+								/* Part-Loop */
+								for(int i=1; i<countLoop; i++)
+								{
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frameEnd, frame, false);
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frameStart, frame, true);
+								}
+
+								/* Part-Tail & Just-Now */
+								if(true == flagReverse)
+								{	/* Now-Reverse */
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frameEnd, frame, false);
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frame, frame, true);
+								}
+								else
+								{	/* Now-Foward */
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frame, frame, false);
+								}
+							}
+							else
+							{	/* Normal */
+								if(true == flagTurn)
+								{	/* Turn-Back */
+									/* MEMO: No-Loop & Turn-Back ... Always "Foward to Revese" */
+									framePrevious = controlTrack.ArgumentContainer.FramePrevious + 1;	/* Force */
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frameEnd, frame, false);
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frame, frame, true);
+								}
+								else
+								{	/* Normal */
+									if(true == flagReverse)
+									{	/* Reverse */
+										UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frame, frame, true);
+									}
+									else
+									{	/* Foward */
+										UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frame, frame, false);
+									}
+								}
+							}
+						}
+					}
+					else
+					{	/* Play-Style: OneWay */
+						/* Decoding skipped frame */
+						if(true == flagReverse)
+						{	/* Backwards */
+							if(true == flagTurn)
+							{	/* Wrap-Around */
+								/* Part-Head */
+								UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frameStart, frame, false);
+
+								/* Part-Loop */
+								for(int j=1; j<countLoop ; j++)
+								{
+									UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frameStart, frame, false);
+								}
+
+								/* Part-Tail & Just-Now */
+								UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameEnd, frame, frame, false);
+							}
+							else
+							{	/* Normal */
+								UpdateSoundReverse(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frame, frame, false);
+							}
+						}
+						else
+						{	/* Foward */
+							if(true == flagTurn)
+							{	/* Wrap-Around */
+								/* Part-Head */
+								UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frameEnd, frame, false);
+
+								/* Part-Loop */
+								for(int j=1; j<countLoop; j++)
+								{
+									UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frameEnd, frame, false);
+								}
+
+								/* Part-Tail & Just-Now */
+								UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, frameStart, frame, frame, false);
+							}
+							else
+							{	/* Normal */
+								UpdateSoundFoward(instanceRoot, idParts, ref dataAnimationParts, ref controlTrack, framePrevious, frame, frame, false);
+							}
+						}
+					}
+				}
+				private void UpdateSoundFoward(	Script_SpriteStudio6_Root instanceRoot,
+													int idParts,
+													ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+													ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
+													int frameRangeStart,
+													int frameRangeEnd,
+													int frameDecode,
+													bool flagTurnBack
+											)
+				{
+					if(null != dataAnimationParts.Sound.Function)
+					{
+						int countData = dataAnimationParts.Sound.Function.CountGetValue(dataAnimationParts.Sound);
+						string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
+						int frameKey = -1;
+						int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Sound> sound = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.Sound>();
+
+						for(int i=0; i<countData; i++)
+						{
+							dataAnimationParts.Sound.Function.ValueGetIndex(ref sound, i, dataAnimationParts.Sound, ref controlTrack.ArgumentContainer);
+
+							frameKey = sound.FrameKey;
+							if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
+							{	/* In range */
+								instanceRoot.FunctionSound(	instanceRoot,
+															nameParts,
+															idParts,
+															indexAnimation,
+															frameDecode,
+															frameKey,
+															ref sound.Value,
+															flagTurnBack
+														);
+							}
+						}
+					}
+				}
+				private void UpdateSoundReverse(	Script_SpriteStudio6_Root instanceRoot,
+													int idParts,
+													ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+													ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
+													int frameRangeEnd,
+													int frameRangeStart,
+													int frameDecode,
+													bool flagTurnBack
+											)
+				{
+					if(null != dataAnimationParts.Sound.Function)
+					{
+						int countData = dataAnimationParts.Sound.Function.CountGetValue(dataAnimationParts.Sound);
+						string nameParts = instanceRoot.DataAnimation.TableParts[idParts].Name;
+						int frameKey = -1;
+						int indexAnimation = controlTrack.ArgumentContainer.IndexAnimation;
+						Library_SpriteStudio6.Data.Animation.PackAttribute.CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Sound> sound = new Data.Animation.PackAttribute.CacheDecode<Data.Animation.Attribute.Sound>();
+
+						for(int i=(countData-1); i>=0; i--)
+						{
+							dataAnimationParts.Sound.Function.ValueGetIndex(ref sound, i, dataAnimationParts.Sound, ref controlTrack.ArgumentContainer);
+
+							frameKey = sound.FrameKey;
+							if((frameRangeStart <= frameKey) && (frameRangeEnd >= frameKey))
+							{	/* In range */
+								instanceRoot.FunctionSound(	instanceRoot,
+															nameParts,
+															idParts,
+															indexAnimation,
+															frameDecode,
+															frameKey,
+															ref sound.Value,
+															flagTurnBack
+														);
+							}
+						}
+					}
+				}
+
 				private void UpdateNormal(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
+											bool flagDecodeAttributeCell,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack
 										)
@@ -1524,7 +1916,7 @@ public static partial class Library_SpriteStudio6
 
 					/* Update Sprite */
 					ParameterSprite.StatusSetFlip(ref StatusAnimationFrame.Value);
-					ParameterSprite.UpdatePlain(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
+					ParameterSprite.UpdatePlain(instanceRoot, idParts, flagDecodeAttributeCell, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
 				}
 
 				private void UpdateInstance(	Script_SpriteStudio6_Root instanceRoot,
@@ -1564,14 +1956,13 @@ public static partial class Library_SpriteStudio6
 					/* Update Mesh */
 					/* MEMO: "Update" processing is same as "Normal". */
 					ParameterSprite.StatusSetFlip(ref StatusAnimationFrame.Value);
-					ParameterSprite.UpdatePlain(instanceRoot, idParts, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
+					ParameterSprite.UpdatePlain(instanceRoot, idParts, true, InstanceGameObject, InstanceTransform, ref Status, ref dataAnimationParts, ref controlTrack.ArgumentContainer);
 				}
 
 				private void UpdateSetPartsDraw(	Script_SpriteStudio6_Root instanceRoot,
 													int idParts,
 													bool flagHideDefault,
 													bool flagSetForce,
-													bool flagMask,
 													int indexTrackRoot
 												)
 				{
@@ -1580,10 +1971,16 @@ public static partial class Library_SpriteStudio6
 					)
 					{
 						int priority = Priority.Value;
+						bool flagMask = instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskPure;
 
 						/* Set Draw-Chain */
 						int keySort;
+#if false
+#if false
 						if(true == flagMask)
+#else
+						if((true == flagMask) || (0 != (instanceRoot.DataAnimation.TableParts[idParts].Status & Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus.DRAW_STENCIL_MASK)))
+#endif
 						{
 							/* MEMO: At "PreDraw", "Mask"'s drawing order is reverse. */
 							keySort = (-priority << CountShiftSortKeyPriority) | idParts;
@@ -1591,13 +1988,49 @@ public static partial class Library_SpriteStudio6
 						}
 						keySort = (priority << CountShiftSortKeyPriority) | idParts;
 						instanceRoot.ListPartsDraw.Add(keySort);
+#else
+						keySort = (priority << CountShiftSortKeyPriority) | idParts;
+#if true
+						if(true == flagMask)
+						{
+							/* MEMO: At "PreDraw", "Mask"'s drawing order is reverse. */
+							/* MEMO: For "Mask"s, writing in advance at pre-draw and erasing at drawing. */
+							instanceRoot.ListPartsPreDraw.Add(-keySort);
+						}
+						else
+						{
+							/* MEMO: For "Normal" / "Mesh" part, mask add-drawing when "Draw mask" is set. (Clipping-Mask) */
+							if(true == instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskClipping)
+							{
+//								Debug.Log("Parts:" + idParts.ToString() + " Re-Mask");
+
+								/* MEMO: For clipping masks, pre-drawing immediately after drawing part, */
+								/*        and erasing once all drawing is complete.                      */
+								/* MEMO: Erasing-order is not significant, since both "Increment/Decrement" and "Invert" are commutative. */
+//								instanceRoot.ListPartsPreDraw.Add(-keySort);
+								instanceRoot.ListPartsDraw.Add(keySort + CenterOverPriority);
+							}
+						}
+						instanceRoot.ListPartsDraw.Add(keySort);
+#else
+						flagMask |= (0 != (instanceRoot.DataAnimation.TableParts[idParts].Status & Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus.DRAW_STENCIL_MASK));	/* ? true : false */
+						Debug.Log("Parts:" + idParts.ToString() + " Mask:" + flagMask.ToString());
+						if(true == flagMask)
+						{
+							/* MEMO: At "PreDraw", "Mask"'s drawing order is reverse. */
+							/* MEMO: For "Mask"s, writing in advance at pre-draw and erasing at drawing. */
+//							Debug.Log("Parts: " + idParts.ToString());
+							instanceRoot.ListPartsPreDraw.Add(-keySort);
+						}
+						instanceRoot.ListPartsDraw.Add(keySort);
+#endif
+#endif
 
 						/* Set "Animation Synthesize" */
 						if(indexTrackRoot != IndexControlTrack)
 						{
 							instanceRoot.StatusIsAnimationSynthesize = true;
 						}
-
 					}
 				}
 
@@ -1709,6 +2142,7 @@ public static partial class Library_SpriteStudio6
 										int idParts,
 										bool flagHideDefault,
 										Library_SpriteStudio6.KindMasking masking,
+										bool flagDrawInsideMask,
 										ref Matrix4x4 matrixCorrection,
 										bool flagPlanarization
 									)
@@ -1735,6 +2169,10 @@ public static partial class Library_SpriteStudio6
 //								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
+								/* MEMO: "Clipping-Mask" writes the stencil at its own rank in "Draw", not here. */
+								/*       (Only "Pure-Mask"s are chained in "ListPartsPreDraw")                   */
+								break;
+
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.EFFECT:
 								break;
@@ -1748,6 +2186,7 @@ public static partial class Library_SpriteStudio6
 											ref instanceRoot.TableControlTrack[indexTrack],
 											flagHideDefault,
 											masking,
+											flagDrawInsideMask,
 											true,
 											ref matrixCorrection,
 											flagPlanarization
@@ -1769,6 +2208,31 @@ public static partial class Library_SpriteStudio6
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+								break;
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+								/* MEMO: "Masking-Shape"s are rendered at "PreDraw", and at "Draw", changing shaders and render same. */
+								if(true == instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskPure)
+								{
+									DrawShape(	instanceRoot,
+												idParts,
+												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+												ref instanceRoot.TableControlParts[idParts],
+												ref instanceRoot.TableControlTrack[indexTrack],
+												flagHideDefault,
+												masking,
+												flagDrawInsideMask,
+												true,
+												ref matrixCorrection,
+												flagPlanarization
+											);
+								}
+								break;
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+								break;
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+								break;
 						}
 					}
 				}
@@ -1777,8 +2241,10 @@ public static partial class Library_SpriteStudio6
 									int idParts,
 									bool flagHideDefault,
 									Library_SpriteStudio6.KindMasking masking,
+									bool flagDrawInsideMask,
 									ref Matrix4x4 matrixCorrection,
-									bool flagPlanarization
+									bool flagPlanarization,
+									bool flagMaskPost
 								)
 				{
 					/* Check Unused part */
@@ -1800,17 +2266,40 @@ public static partial class Library_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NORMAL:
-								DrawNormal(	instanceRoot,
-											idParts,
-											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
-											ref instanceRoot.TableControlParts[idParts],
-											ref instanceRoot.TableControlTrack[indexTrack],
-											flagHideDefault,
-											masking,
-											false,
-											ref matrixCorrection,
-											flagPlanarization
-										);
+								if(true == flagMaskPost)
+								{
+//									if(null == instanceRoot.InstanceRootParent)
+//									{
+										/* (Re)Draw Mask */
+										/* MEMO: Caution that "(Clipping-Mask's) Mask"s re-draw only. */
+										/*       Updating is executed "DrawNormal".                   */
+										DrawMask(	instanceRoot,
+													idParts,
+													ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+													ref instanceRoot.TableControlTrack[indexTrack],
+													flagHideDefault,
+													masking,
+													false,
+													ref matrixCorrection,
+													flagPlanarization
+												);
+//									}
+								}
+								else
+								{
+									DrawNormal(	instanceRoot,
+												idParts,
+												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+												ref instanceRoot.TableControlParts[idParts],
+												ref instanceRoot.TableControlTrack[indexTrack],
+												flagHideDefault,
+												masking,
+												flagDrawInsideMask,
+												false,
+												ref matrixCorrection,
+												flagPlanarization
+											);
+								}
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.INSTANCE:
@@ -1822,6 +2311,7 @@ public static partial class Library_SpriteStudio6
 												ref instanceRoot.TableControlTrack[indexTrack],
 												flagHideDefault,
 												masking,
+												flagDrawInsideMask,
 												false,
 												ref matrixCorrection,
 												flagPlanarization
@@ -1836,6 +2326,7 @@ public static partial class Library_SpriteStudio6
 											ref instanceRoot.TableControlTrack[indexTrack],
 											flagHideDefault,
 											masking,
+											flagDrawInsideMask,
 											false,
 											ref matrixCorrection,
 											flagPlanarization
@@ -1869,23 +2360,80 @@ public static partial class Library_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.MESH:
-								DrawMesh(	instanceRoot,
-											idParts,
-											ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
-											ref instanceRoot.TableControlParts[idParts],
-											ref instanceRoot.TableControlTrack[indexTrack],
-											flagHideDefault,
-											masking,
-											false,
-											ref matrixCorrection,
-											flagPlanarization
-										);
+								if(true == flagMaskPost)
+								{
+									/* (Re)Draw Mask */
+									/* MEMO: Caution that "(Clipping-Mask's) Mask"s re-draw only. */
+									/*       Updating is executed "DrawMesh".                     */
+									DrawMask(	instanceRoot,
+												idParts,
+												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+												ref instanceRoot.TableControlTrack[indexTrack],
+												flagHideDefault,
+												masking,
+												false,
+												ref matrixCorrection,
+												flagPlanarization
+											);
+								}
+								else
+								{
+									DrawMesh(	instanceRoot,
+												idParts,
+												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+												ref instanceRoot.TableControlParts[idParts],
+												ref instanceRoot.TableControlTrack[indexTrack],
+												flagHideDefault,
+												masking,
+												flagDrawInsideMask,
+												false,
+												ref matrixCorrection,
+												flagPlanarization
+											);
+								}
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 								break;
 
 							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+								break;
+
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+								break;
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+								if(true == instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskPure)
+								{
+									DrawMask(	instanceRoot,
+												idParts,
+												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+												ref instanceRoot.TableControlTrack[indexTrack],
+												flagHideDefault,
+												masking,
+												false,
+												ref matrixCorrection,
+												flagPlanarization
+											);
+								}
+								else
+								{
+									DrawShape(	instanceRoot,
+												idParts,
+												ref instanceRoot.DataAnimation.TableAnimation[indexAnimation].TableParts[idParts],
+												ref instanceRoot.TableControlParts[idParts],
+												ref instanceRoot.TableControlTrack[indexTrack],
+												flagHideDefault,
+												masking,
+												flagDrawInsideMask,
+												false,
+												ref matrixCorrection,
+												flagPlanarization
+											);
+								}
+								break;
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+								break;
+							case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
 								break;
 						}
 					}
@@ -1897,6 +2445,7 @@ public static partial class Library_SpriteStudio6
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 											bool flagHideDefault,
 											Library_SpriteStudio6.KindMasking masking,
+											bool flagDrawInsideMask,
 											bool flagPreDraw,
 											ref Matrix4x4 matrixCorrection,
 											bool flagPlanarization
@@ -1915,6 +2464,7 @@ public static partial class Library_SpriteStudio6
 													InstanceGameObject,
 													InstanceTransform,
 													masking,
+													flagDrawInsideMask,
 													flagPreDraw,
 													ref matrixCorrection,
 													flagPlanarization,
@@ -1924,6 +2474,34 @@ public static partial class Library_SpriteStudio6
 												);
 					}
 				}
+				/* MEMO: (Ver.2.3.0-) Decides the masking-settings handed to the animation called by "Instance" / "Effect"-parts. */
+				/*       Follows SpriteStudio 7.5's behavior:                                                                     */
+				/*         "maskInfluence"     ... AND-ed with the setting of each part in the called animation.                  */
+				/*         "visibleInsideMask" ... OR-ed with the setting of each part in the called animation.                   */
+				/*       The AND is realized by what is handed down, so the called side needs no extra work:                      */
+				/*       - Calling part is a masking-target     -> "maskingFollow"(AND-partner is true, so the called part's own  */
+				/*                                                   setting becomes the result as-is)                            */
+				/*       - Calling part is not a masking-target -> "THROUGH" (AND-partner is false, so the result is fixed)       */
+				/*                                                                                                                */
+				/*       Once an ancestor has decided "THROUGH", the AND result can never become true again, so it is kept.       */
+				/* MEMO: "maskingFollow" is the value to hand down when the calling part is a masking-target.                              */
+				/*       "Instance" gives "FOLLOW_DATA", because the called animation's parts have their own "maskInfluence" to be AND-ed. */
+				/*       "Effect" gives "MASK", because particles have no setting of their own to AND with.                                */
+				private void MaskingPropagate(	ref Library_SpriteStudio6.Data.Parts.Animation dataParts,
+												Library_SpriteStudio6.KindMasking maskingFollow,
+												ref Library_SpriteStudio6.KindMasking masking,
+												ref bool flagDrawInsideMask
+											)
+				{
+					if(Library_SpriteStudio6.KindMasking.THROUGH != masking)
+					{
+						masking = (	(0 == (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING))
+									|| (true == dataParts.StatusIsMaskTargetCalling)
+								) ? maskingFollow : Library_SpriteStudio6.KindMasking.THROUGH;
+					}
+					flagDrawInsideMask |= dataParts.StatusIsMaskDrawInside;	/* ? true : false */
+				}
+
 				private void DrawInstance(	Script_SpriteStudio6_Root instanceRoot,
 											int idParts,
 											ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
@@ -1931,6 +2509,7 @@ public static partial class Library_SpriteStudio6
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 											bool flagHideDefault,
 											Library_SpriteStudio6.KindMasking masking,
+											bool flagDrawInsideMask,
 											bool flagPreDraw,
 											ref Matrix4x4 matrixCorrection,
 											bool flagPlanarization
@@ -2123,9 +2702,19 @@ public static partial class Library_SpriteStudio6
 						}
 					}
 
+					/* Propagate Masking-Settings to the called animation */
+					/* MEMO: (Ver.2.3.0-) "Instance"-part is a masking-target when "maskInfluence" is specified, and also    */
+					/*       when specified as "Clipping-Mask". (It never writes the stencil, only becomes a target.)        */
+					MaskingPropagate(	ref instanceRoot.DataAnimation.TableParts[idParts],
+										Library_SpriteStudio6.KindMasking.FOLLOW_DATA,
+										ref masking,
+										ref flagDrawInsideMask
+									);
+
 					InstanceRootUnderControl.LateUpdateMain(	timeElapsed,
 																flagHide,
-																(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
+																masking,
+																flagDrawInsideMask,
 																ref matrixCorrection,
 																false,
 																flagPlanarization
@@ -2175,6 +2764,7 @@ public static partial class Library_SpriteStudio6
 											ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 											bool flagHideDefault,
 											Library_SpriteStudio6.KindMasking masking,
+											bool flagDrawInsideMask,
 											bool flagPreDraw,
 											ref Matrix4x4 matrixCorrection,
 											bool flagPlanarization
@@ -2294,9 +2884,19 @@ public static partial class Library_SpriteStudio6
 					}
 					if(false == flagHide)
 					{
+						/* Propagate Masking-Settings to the called "Effect" */
+						/* MEMO: (Ver.2.3.0-) "Effect" has no masking-settings of its own, so the values decided here are  */
+						/*       applied to every particle as-is. (Nothing to be AND-ed / OR-ed at the called side)         */
+						MaskingPropagate(	ref instanceRoot.DataAnimation.TableParts[idParts],
+											Library_SpriteStudio6.KindMasking.MASK,
+											ref masking,
+											ref flagDrawInsideMask
+										);
+
 						InstanceRootEffectUnderControl.LateUpdateMain(	timeElapsed,
 																		flagHide,
-																		(0 != (StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK,
+																		masking,
+																		flagDrawInsideMask,
 																		ref matrixCorrection,
 																		flagPlanarization
 																	);
@@ -2329,6 +2929,7 @@ public static partial class Library_SpriteStudio6
 #if false
 					ParameterSprite.DrawAddCluster(instanceRoot.ClusterDraw, ParameterSprite.ChainDrawMask, ParameterSprite.MaterialDrawMask);
 #else
+#if false
 					instanceRoot.ClusterDraw.VertexAdd(	ParameterSprite.ChainDrawMask,
 														false,
 														ParameterSprite.MaterialDrawMask,
@@ -2340,6 +2941,37 @@ public static partial class Library_SpriteStudio6
 														ParameterSprite.UVMaxMinDraw,
 														ParameterSprite.UVAverageDraw
 													);
+#else
+					/* MEMO: "IndexVertexDraw" is set only in "Mesh" parts. (null in "Sprite" / "Shape" parts) */
+					if(null == ParameterSprite.IndexVertexDraw)
+					{
+						instanceRoot.ClusterDraw.VertexAdd(	ParameterSprite.ChainMaskPost,
+															false,
+															ParameterSprite.MaterialMaskPost,
+															ParameterSprite.UniformShader,
+															ParameterSprite.CountVertex,
+															ParameterSprite.CoordinateTransformDraw,
+															ParameterSprite.ColorPartsDraw,
+															ParameterSprite.UVTextureDraw,
+															ParameterSprite.UVMaxMinDraw,
+															ParameterSprite.UVAverageDraw
+														);
+					}
+					else
+					{
+						instanceRoot.ClusterDraw.VertexAddMesh(	ParameterSprite.ChainMaskPost,
+																false,
+																ParameterSprite.MaterialMaskPost,
+																ParameterSprite.UniformShader,
+																ParameterSprite.IndexVertexDraw,
+																ParameterSprite.CoordinateTransformDraw,
+																ParameterSprite.ColorPartsDraw,
+																ParameterSprite.UVTextureDraw,
+																ParameterSprite.UVMaxMinDraw,
+																ParameterSprite.UVAverageDraw
+															);
+					}
+#endif
 #endif
 				}
 
@@ -2384,6 +3016,7 @@ public static partial class Library_SpriteStudio6
 				{
 					ScaleLocal.CleanUp();	ScaleLocal.Value = Vector2.one;
 					RateOpacity.CleanUp();	RateOpacity.Value = 1.0f;
+					PowerMask.CleanUp();	PowerMask.Value = 1.0f;
 					Priority.CleanUp();	Priority.Value = 0;
 
 					FramePreviousUpdateUnderControl = -1;
@@ -2403,6 +3036,7 @@ public static partial class Library_SpriteStudio6
 										ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
 										bool flagHideDefault,
 										Library_SpriteStudio6.KindMasking masking,
+										bool flagDrawInsideMask,
 										bool flagPreDraw,
 										ref Matrix4x4 matrixCorrection,
 										bool flagPlanarization
@@ -2422,6 +3056,44 @@ public static partial class Library_SpriteStudio6
 													InstanceGameObject,
 													InstanceTransform,
 													masking,
+													flagDrawInsideMask,
+													flagPreDraw,
+													ref matrixCorrection,
+													flagPlanarization,
+													ref Status,
+													ref dataAnimationParts,
+													ref controlTrack.ArgumentContainer
+												);
+					}
+				}
+				private void DrawShape(	Script_SpriteStudio6_Root instanceRoot,
+										int idParts,
+										ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+										ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
+										ref Library_SpriteStudio6.Control.Animation.Track controlTrack,
+										bool flagHideDefault,
+										Library_SpriteStudio6.KindMasking masking,
+										bool flagDrawInsideMask,
+										bool flagPreDraw,
+										ref Matrix4x4 matrixCorrection,
+										bool flagPlanarization
+									)
+				{
+					/* MEMO: Since specification of pre-calculating has not been decided, currently use only "DrawMesh". */
+					controlTrack.ArgumentContainer.IDParts = idParts;
+
+					/* Draw Sprite */
+					bool flagHide = flagHideDefault;
+					flagHide |= (0 != (Status & (FlagBitStatus.HIDE_FORCE | FlagBitStatus.HIDE)));	/* ? true : false */
+					if(false == flagHide)
+					{
+						ParameterSprite.DrawShape(	instanceRoot,
+													idParts,
+													ref controlParts,
+													InstanceGameObject,
+													InstanceTransform,
+													masking,
+													flagDrawInsideMask,
 													flagPreDraw,
 													ref matrixCorrection,
 													flagPlanarization,
@@ -2518,6 +3190,9 @@ public static partial class Library_SpriteStudio6
 					internal Library_SpriteStudio6.Data.Animation.Attribute.Status DataStatusPrevious;
 
 					internal Library_SpriteStudio6.KindMasking Masking;
+					/* MEMO: (Ver.2.3.0-) "Draw-Pixel-Inside-Mask" inherited from the calling "Instance"-part. */
+					/*       Effective value is this OR-ed with the part's own "StatusIsMaskDrawInside".       */
+					internal bool MaskingDrawInside;
 
 					internal Vector2 RateScaleMesh;
 					internal Vector2 RateScaleTexture;
@@ -2533,10 +3208,22 @@ public static partial class Library_SpriteStudio6
 
 					internal BufferUniformShader UniformShader;
 					internal int[] IndexVertexDraw;
+#if false
 					internal Material MaterialDraw;	/* "Sprite"'s Draw & "Mask"'s Pre-Draw */
 					internal Material MaterialDrawMask;	/* "Mask"'s Draw */
+#else
+					internal Material MaterialMaskPre;	/* for "Mask"'s Pre-Draw */
+					internal Material MaterialDraw;		/* for "Sprite"'s Draw */
+					internal Material MaterialMaskPost;	/* "for Sprite"'s Post-Draw (Clipping Mask) */
+#endif
+#if false
 					internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDraw;	/* "Sprite"'s Draw & "Mask"'s Pre-Draw */
 					internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDrawMask;	/* "Mask"'s Draw */
+#else
+					internal Library_SpriteStudio6.Draw.Cluster.Chain ChainMaskPre;			/* for "Mask"'s Pre-Draw */
+					internal Library_SpriteStudio6.Draw.Cluster.Chain ChainDraw;			/* for "Sprite"'s Draw */
+					internal Library_SpriteStudio6.Draw.Cluster.Chain ChainMaskPost;		/* for "Mask"'s Post-Draw */
+#endif
 
 					internal Vector2 SizeSprite;
 					internal Vector2 PivotSprite;
@@ -2571,7 +3258,16 @@ public static partial class Library_SpriteStudio6
 					{
 						Status = FlagBitStatus.CLEAR;
 
+#if false
 						MaterialDraw = null;
+						MaterialDrawMask = null;
+						MaterialDrawMaskPost = null;
+#else
+						MaterialMaskPre = null;
+						MaterialDraw = null;
+						MaterialMaskPost = null;
+#endif
+
 						CoordinateTransformDraw = null;
 						CoordinateDraw = null;
 						DeformDraw = null;
@@ -2582,8 +3278,14 @@ public static partial class Library_SpriteStudio6
 
 						UniformShader = null;
 						IndexVertexDraw = null;
+#if false
 						ChainDraw = null;
 						ChainDrawMask = null;
+#else
+						ChainMaskPre = null;
+						ChainDraw = null;
+						ChainMaskPost = null;
+#endif
 
 						TableVertexColorPartsColor = null;
 						TableRateAlphaPartsColor = null;
@@ -2605,6 +3307,7 @@ public static partial class Library_SpriteStudio6
 						DataStatusPrevious.CleanUp();
 
 						Masking = (Library_SpriteStudio6.KindMasking)(-1);
+						MaskingDrawInside = false;
 
 						RateScaleMesh = Vector2.one;
 						RateScaleTexture = Vector2.one;
@@ -2637,13 +3340,21 @@ public static partial class Library_SpriteStudio6
 						Shader.CleanUp();	Shader.Value.CleanUp();
 					}
 
-					internal bool BootUp(Script_SpriteStudio6_Root instanceRoot, int idParts, int countVertex, int countPartsSprite, bool flagMask)
+					internal bool BootUp(Script_SpriteStudio6_Root instanceRoot, int idParts, int countVertex, int countPartsSprite, bool flagShape)
 					{
 						CleanUp();
 
 						CountVertex = countVertex;
 
+#if false
 						MaterialDraw = null;
+						MaterialDrawMask = null;
+#else
+						MaterialMaskPre = null;
+						MaterialDraw = null;
+						MaterialMaskPost = null;
+#endif
+
 						CoordinateTransformDraw = new Vector3[countVertex];
 						if(null == CoordinateTransformDraw)
 						{
@@ -2682,7 +3393,6 @@ public static partial class Library_SpriteStudio6
 						}
 						IndexVertexDraw = null;	/* Disuse */
 
-
 						Vector4 uvMinMax = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 						Vector4 uvAverage = new Vector4(0.5f, 0.5f, 0.0f, 0.0f);
 						for(int i=0; i<countVertex; i++)
@@ -2708,7 +3418,7 @@ public static partial class Library_SpriteStudio6
 //						CoordinateFix.Value.TableCoordinate = CoordinateDraw;
 //						UV0Fix.Value.TableUV = UVTextureDraw;
 
-						if(false == BootUpCommon(instanceRoot, idParts, countVertex, flagMask))
+						if(false == BootUpCommon(instanceRoot, idParts, countVertex, flagShape))
 						{
 							/* MEMO: Since workareas have been cleared, return direct. */
 							return(false);
@@ -2716,18 +3426,37 @@ public static partial class Library_SpriteStudio6
 						return(true);
 
 					BootUp_ErrorEnd:;
+#if false
 						MaterialDraw = null;
+						MaterialDrawMask = null;
+#else
+						MaterialMaskPre = null;
+						MaterialDraw = null;
+						MaterialMaskPost = null;
+#endif
+
 						CoordinateDraw = null;
 						ColorPartsDraw = null;
 						UVTextureDraw = null;
 						UVMaxMinDraw = null;
 						UVAverageDraw = null;
 						IndexVertexDraw = null;
+#if false
 						ChainDraw = null;
+#else
+						ChainMaskPre = null;
+						ChainDraw = null;
+						ChainMaskPost = null;
+#endif
+
 						return(false);
 					}
-					private bool BootUpCommon(Script_SpriteStudio6_Root instanceRoot, int idParts, int countPartsColorBuffer, bool flagMask)
+					private bool BootUpCommon(Script_SpriteStudio6_Root instanceRoot, int idParts, int countPartsColorBuffer, bool flagShape)
 					{
+						bool flagMask = instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskPure;
+						bool flagMaskWriter = instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskWriter;
+
+#if false
 						ChainDraw = new Draw.Cluster.Chain();
 						if(null == ChainDraw)
 						{
@@ -2746,6 +3475,27 @@ public static partial class Library_SpriteStudio6
 //							ChainDrawMask.CleanUp();
 							ChainDrawMask.BootUp();
 						}
+#else
+						/* MEMO: Only "Pure-Mask" draws no color-pixel. */
+						ChainDraw = null;
+						if(false == flagMask)
+						{
+							ChainDraw = new Draw.Cluster.Chain();
+							ChainDraw.BootUp();
+						}
+
+						/* MEMO: Both "Pure-Mask" and "Clipping-Mask" write the stencil, so both need masking-chains. */
+						ChainMaskPre = null;
+						ChainMaskPost = null;
+						if(true == flagMaskWriter)
+						{
+							ChainMaskPre = new Draw.Cluster.Chain();
+							ChainMaskPre.BootUp();
+
+							ChainMaskPost = new Draw.Cluster.Chain();
+							ChainMaskPost.BootUp();
+						}
+#endif
 
 						UniformShader = new BufferUniformShader();
 						if(null == UniformShader)
@@ -2754,7 +3504,9 @@ public static partial class Library_SpriteStudio6
 						}
 						UniformShader.CleanUp();
 
-						PartsColor.Value.BootUp((int)Library_SpriteStudio6.KindVertex.TERMINATOR2);
+						PartsColor.Value.BootUp(	(int)Library_SpriteStudio6.KindVertex.TERMINATOR2,
+													(true == flagShape) ? Color.white : Library_SpriteStudio6.Data.Animation.Attribute.ColorClear
+											);
 						TableVertexColorPartsColor = PartsColor.Value.VertexColor;
 						TableRateAlphaPartsColor = PartsColor.Value.RateAlpha;
 
@@ -2774,14 +3526,20 @@ public static partial class Library_SpriteStudio6
 						return(true);
 
 					BootUpCommon_ErrorEnd:;
+#if false
 						ChainDraw = null;
 						ChainDrawMask = null;
+#else
+						ChainMaskPre = null;
+						ChainDraw = null;
+						ChainMaskPost = null;
+#endif
 						UniformShader = null;
 
 						return(false);
 					}
 
-					internal bool BootUpMesh(Script_SpriteStudio6_Root instanceRoot, int idParts, bool flagMask)
+					internal bool BootUpMesh(Script_SpriteStudio6_Root instanceRoot, int idParts)
 					{
 						CleanUp();
 
@@ -2796,7 +3554,15 @@ public static partial class Library_SpriteStudio6
 #endif
 						CountVertex = countVertex;
 
+#if false
 						MaterialDraw = null;
+						MaterialDrawMask = null;
+#else
+						MaterialMaskPre = null;
+						MaterialDraw = null;
+						MaterialMaskPost = null;
+#endif
+
 						CoordinateTransformDraw = new Vector3[countVertex];
 						if(null == CoordinateTransformDraw)
 						{
@@ -2890,7 +3656,7 @@ public static partial class Library_SpriteStudio6
 							Deform.Value.CoordinateReset();
 						}
 
-						if(false == BootUpCommon(instanceRoot, idParts, 0, flagMask))
+						if(false == BootUpCommon(instanceRoot, idParts, 0, false))
 						{
 							/* MEMO: Since workareas have been cleared, return direct. */
 							return(false);
@@ -2898,14 +3664,28 @@ public static partial class Library_SpriteStudio6
 						return(true);
 
 					BootUpMesh_ErrorEnd:;
+#if false
 						MaterialDraw = null;
+						MaterialDrawMask = null;
+#else
+						MaterialMaskPre = null;
+						MaterialDraw = null;
+						MaterialMaskPost = null;
+#endif
+
 						CoordinateDraw = null;
 						ColorPartsDraw = null;
 						UVTextureDraw = null;
 						UVMaxMinDraw = null;
 						UVAverageDraw = null;
 						IndexVertexDraw = null;
+#if false
 						ChainDraw = null;
+#else
+						ChainMaskPre = null;
+						ChainDraw = null;
+						ChainMaskPost = null;
+#endif
 						return(false);
 					}
 
@@ -3003,6 +3783,7 @@ public static partial class Library_SpriteStudio6
 
 					internal bool UpdatePlain(	Script_SpriteStudio6_Root instanceRoot,
 												int idParts,
+												bool flagDecodeAttributeCell,
 												GameObject instanceGameObject,
 												Transform instanceTransform,
 												ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
@@ -3030,6 +3811,7 @@ public static partial class Library_SpriteStudio6
 							Status |= FlagBitStatus.UPDATE_PARAMETERBLEND;
 						}
 
+#if false
 						/* Create sprite data (from cell to use) */
 						/* MEMO: If do not always decode "Cell", malfunctions at restoration after cell-change. */
 						/* MEMO: Since "UPDATE_COORDINATE" is cumulative status for drawing, it is necessary   */
@@ -3104,6 +3886,93 @@ public static partial class Library_SpriteStudio6
 								indexCell = -1;
 							}
 						}
+#else
+						int indexCellMap = -1;
+						int indexCell = -1;
+						Library_SpriteStudio6.Data.CellMap cellMap = null;
+						if(true == flagDecodeAttributeCell)
+						{
+							/* Create sprite data (from cell to use) */
+							/* MEMO: If do not always decode "Cell", malfunctions at restoration after cell-change. */
+							/* MEMO: Since "UPDATE_COORDINATE" is cumulative status for drawing, it is necessary   */
+							/*        to judge "Cell"-changing in current frame with "UPDATE_COORDINATE_NOWFRAME". */
+							/*       If judge only with UPDATE_COORDINATE, miss-update with non-drawing parts.     */
+#if UNITY_EDITOR
+							if(null != dataAnimationParts.Cell.Function)
+							{
+								flagUpdateValueAttribute = dataAnimationParts.Cell.Function.ValueGet(ref DataCell, dataAnimationParts.Cell, ref argumentContainer);
+							}
+							else
+							{
+								flagUpdateValueAttribute = false;
+							}
+#else
+							flagUpdateValueAttribute = dataAnimationParts.Cell.Function.ValueGet(ref DataCell, dataAnimationParts.Cell, ref argumentContainer);
+#endif
+							if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED))
+							{
+								if(0 == (statusControlParts & Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_IGNORE_ATTRIBUTE))
+								{
+									if(true == flagUpdateValueAttribute)
+									{	/* New Data */
+										DataCellApply = DataCell.Value;
+
+										Status |= FlagBitStatus.UPDATE_UVTEXTURE;
+										Status |= FlagBitStatus.UPDATE_COORDINATE;
+										Status |= FlagBitStatus.UPDATE_TRANSFORM_TEXTURE;
+										Status |= FlagBitStatus.UPDATE_COORDINATE_NOWFRAME;
+									}
+								}
+							}
+							else
+							{	/* New Value (Cell changed from script) */
+								if((0 > DataCellApply.IndexCellMap) || (0 > DataCellApply.IndexCell))
+								{
+									DataCellApply = DataCell.Value;
+								}
+
+								Status |= FlagBitStatus.UPDATE_COORDINATE;
+								Status |= FlagBitStatus.UPDATE_UVTEXTURE;
+								Status |= FlagBitStatus.UPDATE_COORDINATE_NOWFRAME;
+							}
+							/* MEMO: Don't clear "CHANGE_PARTSCOLOR_UNREFLECTED", hear. */
+							/*       Because "PartsColor" has not been decoded yet.     */
+							statusControlParts &= ~(	Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_CELL_UNREFLECTED
+//														| Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.CHANGE_PARTSCOLOR_UNREFLECTED
+												);
+
+							indexCellMap = DataCellApply.IndexCellMap;
+							indexCell = DataCellApply.IndexCell;
+							if(0 > indexCellMap)
+							{
+								Status |= FlagBitStatus.NO_DRAW;
+							}
+							else
+							{
+								Status &= ~FlagBitStatus.NO_DRAW;
+							}
+
+							cellMap = instanceRoot.DataGetCellMap(indexCellMap);
+							if(null == cellMap)
+							{	/* CellMap Invalid */
+								indexCellMap = -1;
+								indexCell = -1;
+							}
+							else
+							{	/* CellMap Valid */
+								if((0 > indexCell) || (cellMap.CountGetCell() <= indexCell))
+								{	/* Cell Invalid */
+									indexCellMap = -1;
+									indexCell = -1;
+								}
+							}
+						}
+						else
+						{
+							Status |= FlagBitStatus.UPDATE_COORDINATE_NOWFRAME;
+							Status |= FlagBitStatus.REDECODE_MATERIAL;
+						}
+#endif
 						if(0 > indexCellMap)
 						{	/* Invalid */
 							SizeTexture = Library_SpriteStudio6.Control.Animation.SizeTextureDefault;
@@ -3452,6 +4321,7 @@ public static partial class Library_SpriteStudio6
 												GameObject instanceGameObject,
 												Transform instanceTransform,
 												Library_SpriteStudio6.KindMasking masking,
+												bool flagDrawInsideMask,
 												bool flagPreDraw,
 												ref Matrix4x4 matrixCorrection,
 												bool flagPlanarization,
@@ -3467,6 +4337,8 @@ public static partial class Library_SpriteStudio6
 
 						bool flagTriangle4 = ((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex);	/* ? true : false */
 						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
+						Library_SpriteStudio6.KindOperationBlend operationBlendTarget = instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget;
+						Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus statusParts = instanceRoot.DataAnimation.TableParts[idParts].Status;
 
 						Vector2 sizeSprite = SizeSprite;
 						Vector2 pivotSprite = PivotSprite;
@@ -3481,6 +4353,13 @@ public static partial class Library_SpriteStudio6
 						if(Masking != masking)
 						{
 							Masking = masking;
+							Status |= FlagBitStatus.UPDATE_MASKING;
+						}
+						/* MEMO: (Ver.2.3.0-) "flagDrawInsideMask" is what has been propagated from the calling "Instance"-part. */
+						/*       (Not the part's own setting. Both are OR-ed in "MaterialDetermine".)                            */
+						if(MaskingDrawInside != flagDrawInsideMask)
+						{
+							MaskingDrawInside = flagDrawInsideMask;
 							Status |= FlagBitStatus.UPDATE_MASKING;
 						}
 
@@ -3587,8 +4466,8 @@ public static partial class Library_SpriteStudio6
 
 						/* Set Mapping (Center) */
 						uv2C *= 0.25f;
-						uv2C.z = 0.0f;
-						uv2C.w = 0.0f;
+						uv2C.z = controlParts.PowerMask.Value;	/* 0.0f */
+						uv2C.w = 0.0f;	/* (float)operationBlendTarget + 0.005f */	/* 0.0f */
 						UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.C].x = uv2C.x;
 						UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.C].y = uv2C.y;
 						for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR4; i++)
@@ -3721,13 +4600,14 @@ public static partial class Library_SpriteStudio6
 						coordinate.y *= scaleLocalY;
 						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.C] = matrixTransform.MultiplyPoint3x4(coordinate);
 
+#if false
 						/* Update Material */
 						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.UPDATE_SHADER | FlagBitStatus.REDECODE_MATERIAL)))
 						{
+							int indexCellMap = DataCellApply.IndexCellMap;
 							if(true == flagPreDraw)
 							{
 								/* MEMO: "Mask" use only standard shaders. */
-								int indexCellMap = DataCellApply.IndexCellMap;
 								MaterialDraw = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, null, true, null, null);
 								MaterialDrawMask = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, null, true, null, null);
 							}
@@ -3742,8 +4622,8 @@ public static partial class Library_SpriteStudio6
 								}
 
 								/* Get Material */
-								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
-																			instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget,
+								MaterialDraw = instanceRoot.MaterialGet(	indexCellMap,
+																			operationBlendTarget,	/* instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget */
 																			masking,
 																			nameShader,
 																			true,
@@ -3765,6 +4645,62 @@ public static partial class Library_SpriteStudio6
 															UVMaxMinDraw,
 															UVAverageDraw
 														);
+#else
+						/* Update Material */
+						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.UPDATE_SHADER | FlagBitStatus.REDECODE_MATERIAL)))
+						{
+							MaterialDetermine(instanceRoot, idParts, masking, operationBlendTarget, statusParts);
+						}
+
+						/* Set to Draw-Cluster */
+						if(true == flagPreDraw)
+						{
+							/* Pre-Mask */
+							instanceRoot.ClusterDraw.VertexAdd(	ChainMaskPre,
+																false,
+																MaterialMaskPre,
+																UniformShader,
+																CountVertex,
+																CoordinateTransformDraw,
+																ColorPartsDraw,
+																UVTextureDraw,
+																UVMaxMinDraw,
+																UVAverageDraw
+															);
+						}
+						else
+						{
+							/* Main Draw */
+							/* MEMO: Do not combine meshes when using "shader" attributes. */
+							instanceRoot.ClusterDraw.VertexAdd(	ChainDraw,
+																(0 == (controlParts.StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SHADER)),
+																MaterialDraw,
+																UniformShader,
+																CountVertex,
+																CoordinateTransformDraw,
+																ColorPartsDraw,
+																UVTextureDraw,
+																UVMaxMinDraw,
+																UVAverageDraw
+															);
+
+							if(true == instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskClipping)
+							{
+								/* Post-Mask */
+								instanceRoot.ClusterDraw.VertexAdd(	ChainMaskPre,
+																	false,
+																	MaterialMaskPre,
+																	UniformShader,
+																	CountVertex,
+																	CoordinateTransformDraw,
+																	ColorPartsDraw,
+																	UVTextureDraw,
+																	UVMaxMinDraw,
+																	UVAverageDraw
+																);
+							}
+						}
+#endif
 
 						/* MEMO: "UPDATE" flags need to be cleared after add to Draw-Cluster.       */
 						/*       (Because "Draw" may not be executed even if "Update" is executed.) */
@@ -3790,6 +4726,7 @@ public static partial class Library_SpriteStudio6
 											GameObject instanceGameObject,
 											Transform instanceTransform,
 											Library_SpriteStudio6.KindMasking masking,
+											bool flagDrawInsideMask,
 											bool flagPreDraw,
 											ref Matrix4x4 matrixCorrection,
 											bool flagPlanarization,
@@ -3805,7 +4742,9 @@ public static partial class Library_SpriteStudio6
 
 						Library_SpriteStudio6.Data.Parts.Animation instanceParts = instanceRoot.DataAnimation.TableParts[idParts];
 						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
+						Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus statusParts = instanceRoot.DataAnimation.TableParts[idParts].Status;
 						Library_SpriteStudio6.Data.Parts.Animation.BindMesh.Vertex[] tableBindMesh = instanceParts.Mesh.TableVertex;
+						Library_SpriteStudio6.KindOperationBlend operationBlendTarget = instanceParts.OperationBlendTarget;
 #if UNITY_EDITOR
 						if(null == tableBindMesh)
 						{
@@ -3826,6 +4765,13 @@ public static partial class Library_SpriteStudio6
 						if(Masking != masking)
 						{
 							Masking = masking;
+							Status |= FlagBitStatus.UPDATE_MASKING;
+						}
+						/* MEMO: (Ver.2.3.0-) "flagDrawInsideMask" is what has been propagated from the calling "Instance"-part. */
+						/*       (Not the part's own setting. Both are OR-ed in "MaterialDetermine".)                            */
+						if(MaskingDrawInside != flagDrawInsideMask)
+						{
+							MaskingDrawInside = flagDrawInsideMask;
 							Status |= FlagBitStatus.UPDATE_MASKING;
 						}
 
@@ -3950,6 +4896,8 @@ public static partial class Library_SpriteStudio6
 									{
 										uvAverage /= (float)countTableUV;
 									}
+									uvAverage.z = controlParts.PowerMask.Value;	/* 0.0f */
+									uvAverage.w = 0.0f;	/* (float)operationBlendTarget + 0.005f */	/* 0.0f */
 									for(int i=0; i<countTableUV; i++)
 									{
 										UVMaxMinDraw[i] = uvMinMax;
@@ -4191,6 +5139,7 @@ public static partial class Library_SpriteStudio6
 #endif
 						}
 
+#if false
 						/* Update Material */
 						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.UPDATE_SHADER | FlagBitStatus.REDECODE_MATERIAL)))
 						{
@@ -4215,7 +5164,7 @@ public static partial class Library_SpriteStudio6
 								}
 
 								MaterialDraw = instanceRoot.MaterialGet(	DataCellApply.IndexCellMap,
-																			instanceParts.OperationBlendTarget,
+																			operationBlendTarget,	/* instanceParts.OperationBlendTarget */
 																			masking,
 																			nameShader,
 																			true,
@@ -4237,6 +5186,62 @@ public static partial class Library_SpriteStudio6
 																UVMaxMinDraw,
 																UVAverageDraw
 															);
+#else
+						/* Update Material */
+						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.UPDATE_SHADER | FlagBitStatus.REDECODE_MATERIAL)))
+						{
+							MaterialDetermine(instanceRoot, idParts, masking, operationBlendTarget, statusParts);
+						}
+
+						/* Set to Draw-Cluster */
+						if(true == flagPreDraw)
+						{
+							/* Pre-Mask */
+							instanceRoot.ClusterDraw.VertexAddMesh(	ChainMaskPre,
+																	false,
+																	MaterialMaskPre,
+																	UniformShader,
+																	IndexVertexDraw,
+																	CoordinateTransformDraw,
+																	ColorPartsDraw,
+																	UVTextureDraw,
+																	UVMaxMinDraw,
+																	UVAverageDraw
+																);
+						}
+						else
+						{
+							/* Main Draw */
+							/* MEMO: Do not combine meshes when using "shader" attributes. */
+							instanceRoot.ClusterDraw.VertexAddMesh(	ChainDraw,
+																	(0 == (controlParts.StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SHADER)),
+																	MaterialDraw,
+																	UniformShader,
+																	IndexVertexDraw,
+																	CoordinateTransformDraw,
+																	ColorPartsDraw,
+																	UVTextureDraw,
+																	UVMaxMinDraw,
+																	UVAverageDraw
+																);
+
+							if(true == instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskClipping)
+							{
+								/* Post-Mask */
+								instanceRoot.ClusterDraw.VertexAddMesh(	ChainMaskPre,
+																		false,
+																		MaterialMaskPre,
+																		UniformShader,
+																		IndexVertexDraw,
+																		CoordinateTransformDraw,
+																		ColorPartsDraw,
+																		UVTextureDraw,
+																		UVMaxMinDraw,
+																		UVAverageDraw
+																	);
+							}
+						}
+#endif
 
 						/* MEMO: "UPDATE" flags need to be cleared after add to Draw-Cluster.       */
 						/*       (Because "Draw" may not be executed even if "Update" is executed.) */
@@ -4260,6 +5265,371 @@ public static partial class Library_SpriteStudio6
 
 					DrawMesh_ErrorEnd:;
 						return;
+					}
+
+					internal void DrawShape(	Script_SpriteStudio6_Root instanceRoot,
+												int idParts,
+												ref Library_SpriteStudio6.Control.Animation.Parts controlParts,
+												GameObject instanceGameObject,
+												Transform instanceTransform,
+												Library_SpriteStudio6.KindMasking masking,
+												bool flagDrawInsideMask,
+												bool flagPreDraw,
+												ref Matrix4x4 matrixCorrection,
+												bool flagPlanarization,
+												ref Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus statusControlParts,
+												ref Library_SpriteStudio6.Data.Animation.Parts dataAnimationParts,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argumentContainer
+											)
+					{
+						if(0 != (Status & FlagBitStatus.NO_DRAW))
+						{
+							return;
+						}
+
+						bool flagTriangle4 = ((int)Library_SpriteStudio6.KindVertex.TERMINATOR4 == CountVertex);	/* ? true : false */
+						Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus statusPartsAnimation = dataAnimationParts.StatusParts;
+						Library_SpriteStudio6.KindOperationBlend operationBlendTarget = instanceRoot.DataAnimation.TableParts[idParts].OperationBlendTarget;
+						Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus statusParts = instanceRoot.DataAnimation.TableParts[idParts].Status;
+
+						Vector2 sizeSprite = SizeSprite;
+						Vector2 pivotSprite = PivotSprite;
+						Vector2 sizeMapping = SizeCell;
+						Vector2 positionMapping = PositionCell;
+
+						/* Check Masking */
+						if(Library_SpriteStudio6.KindMasking.FOLLOW_DATA == masking)
+						{
+							masking = (0 != (statusPartsAnimation & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NOT_MASKING)) ? Library_SpriteStudio6.KindMasking.THROUGH : Library_SpriteStudio6.KindMasking.MASK;
+						}
+						if(Masking != masking)
+						{
+							Masking = masking;
+							Status |= FlagBitStatus.UPDATE_MASKING;
+						}
+						/* MEMO: (Ver.2.3.0-) "flagDrawInsideMask" is what has been propagated from the calling "Instance"-part. */
+						/*       (Not the part's own setting. Both are OR-ed in "MaterialDetermine".)                            */
+						if(MaskingDrawInside != flagDrawInsideMask)
+						{
+							MaskingDrawInside = flagDrawInsideMask;
+							Status |= FlagBitStatus.UPDATE_MASKING;
+						}
+
+						/* Calculate Texture-UV */
+						/* MEMO: "Shape" has no texture-UVs. */
+
+						/* Set Mapping (Center) */
+
+						/* Set Parts-Color */
+						float operationBlend;
+						Color[] tableColor;
+						float[] tableAlpha;
+						if(0 != (Status & FlagBitStatus.USE_ADDITIONALCOLOR))
+						{
+							Library_SpriteStudio6.Control.AdditionalColor additionalColor = instanceRoot.AdditionalColor;
+							operationBlend = (float)((int)additionalColor.OperationBlend) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+							tableColor = additionalColor.ColorVertex;
+							tableAlpha = Library_SpriteStudio6.Data.Animation.Attribute.TableRateAlphaPartsColorDefault;
+						}
+						else
+						{
+							operationBlend = (float)((int)PartsColor.Value.Operation) + 0.01f;	/* "+0.01f" for Rounding-off-Error */
+							tableColor = PartsColor.Value.VertexColor;
+							tableAlpha = PartsColor.Value.RateAlpha;
+						}
+
+						float rateOpacity = instanceRoot.RateOpacity * controlParts.RateOpacity.Value;
+						if(0 != (Status & (FlagBitStatus.UPDATE_COLORPARTS | FlagBitStatus.UPDATE_PARAMETERBLEND)))
+						{
+							Color sumColor = Library_SpriteStudio6.Data.Animation.Attribute.ColorClear;
+							float sumAlpha = 0.0f;
+							for(int i=0; i<(int)Library_SpriteStudio6.KindVertex.TERMINATOR2; i++)
+							{
+								UVTextureDraw[i].z = operationBlend;
+								UVTextureDraw[i].w = rateOpacity * tableAlpha[i];
+
+								ColorPartsDraw[i] = tableColor[i];
+								sumColor += tableColor[i];
+								sumAlpha += tableAlpha[i];
+							}
+							tableColor = null;
+
+							if(flagTriangle4)	/* (true == flagTriangle4) */
+							{
+								UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.C].z = operationBlend;
+								UVTextureDraw[(int)Library_SpriteStudio6.KindVertex.C].w = rateOpacity * (sumAlpha * 0.25f);
+
+								ColorPartsDraw[(int)Library_SpriteStudio6.KindVertex.C] = sumColor * 0.25f;
+							}
+						}
+
+						/* Calculate Mesh coordinates */
+						if(0 != (Status & FlagBitStatus.UPDATE_COORDINATE))
+						{
+							/* Set Coordinates */
+							float scaleMeshX = RateScaleMesh.x;
+							float scaleMeshY = -RateScaleMesh.y;	/* * -1.0f ... Y-Axis Inverse */
+							float left = (-pivotSprite.x) * scaleMeshX;
+							float right = (sizeSprite.x - pivotSprite.x) * scaleMeshX;
+							float top = (-pivotSprite.y) * scaleMeshY;
+							float bottom = (sizeSprite.y - pivotSprite.y) * scaleMeshY;
+
+							int indexVertex;
+							int[] tableIndex = Library_SpriteStudio6.Control.Animation.TableIndexVertexCorrectionOrder[IndexVertexCollectionTable];
+							Vector2[] tableCoordinate = VertexCorrection.Value.Coordinate;
+
+							indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.LU];
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] = new Vector3((left + tableCoordinate[indexVertex].x), (top + tableCoordinate[indexVertex].y), 0.0f);
+
+							indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.RU];
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU] = new Vector3((right + tableCoordinate[indexVertex].x), (top + tableCoordinate[indexVertex].y), 0.0f);
+
+							indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.RD];
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD] = new Vector3((right + tableCoordinate[indexVertex].x), (bottom + tableCoordinate[indexVertex].y), 0.0f);
+
+							indexVertex = tableIndex[(int)Library_SpriteStudio6.KindVertex.LD];
+							CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD] = new Vector3((left + tableCoordinate[indexVertex].x), (bottom + tableCoordinate[indexVertex].y), 0.0f);
+
+							/* MEMO: Center is the intersection of lines through midpoints of opposite-sides. (not of diagonals) */
+							Vector3 coordinateLURU = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU]) * 0.5f;
+							Vector3 coordinateLULD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD]) * 0.5f;
+							Vector3 coordinateLDRD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD]) * 0.5f;
+							Vector3 coordinateRURD = (CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU] + CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD]) * 0.5f;
+							Library_SpriteStudio6.Utility.Math.CoordinateGetDiagonalIntersection(	out CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.C],
+																									ref coordinateLURU,
+																									ref coordinateRURD,
+																									ref coordinateLULD,
+																									ref coordinateLDRD
+																								);
+						}
+
+						/* Transform Coordinates */
+						/* MEMO: Prevent double effect MeshRenderer's world-matrix and InstanceTransform's world-matrix. */
+						float scaleLocalX = controlParts.ScaleLocal.Value.x * instanceRoot.RateScaleLocal.x;
+						float scaleLocalY = controlParts.ScaleLocal.Value.y * instanceRoot.RateScaleLocal.y;
+						Matrix4x4 matrixTransform =	matrixCorrection * instanceTransform.localToWorldMatrix;
+						if(true == flagPlanarization)
+						{
+							/* MEMO: Z-coordinate is always set to 0 after transformation. */
+							matrixTransform[2, 0] = 
+							matrixTransform[2, 1] = 
+							matrixTransform[2, 2] = 
+							matrixTransform[2, 3] = 0.0f;
+						}
+						Vector3 coordinate;
+
+						/* MEMO: Expand "for" loop. */
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LU];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.LU] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RU];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.RU] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.RD];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.RD] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.LD];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.LD] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						coordinate = CoordinateDraw[(int)Library_SpriteStudio6.KindVertex.C];
+						coordinate.x *= scaleLocalX;
+						coordinate.y *= scaleLocalY;
+						CoordinateTransformDraw[(int)Library_SpriteStudio6.KindVertex.C] = matrixTransform.MultiplyPoint3x4(coordinate);
+
+						/* Update Material */
+						/* MEMO: The “Shape” part does not support "Texture (UV)"s and "Shader"s. */
+//						if(0 != (Status & (FlagBitStatus.UPDATE_UVTEXTURE | FlagBitStatus.UPDATE_MASKING | FlagBitStatus.UPDATE_SHADER | FlagBitStatus.REDECODE_MATERIAL)))
+						if(0 != (Status & (FlagBitStatus.UPDATE_MASKING | FlagBitStatus.REDECODE_MATERIAL)))
+						{
+							MaterialDetermineShape(instanceRoot, idParts, masking, operationBlendTarget, statusParts);
+						}
+
+						/* Set to Draw-Cluster */
+						if(true == flagPreDraw)
+						{
+							/* Pre-Mask */
+							instanceRoot.ClusterDraw.VertexAdd(	ChainMaskPre,
+																false,
+																MaterialMaskPre,
+																UniformShader,
+																CountVertex,
+																CoordinateTransformDraw,
+																ColorPartsDraw,
+																UVTextureDraw,
+																UVMaxMinDraw,
+																UVAverageDraw
+															);
+						}
+						else
+						{
+							/* Main Draw */
+							/* MEMO: Do not combine meshes when using "shader" attributes. */
+							instanceRoot.ClusterDraw.VertexAdd(	ChainDraw,
+																(0 == (controlParts.StatusAnimationParts & Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus.NO_SHADER)),
+																MaterialDraw,
+																UniformShader,
+																CountVertex,
+																CoordinateTransformDraw,
+																ColorPartsDraw,
+																UVTextureDraw,
+																UVMaxMinDraw,
+																UVAverageDraw
+															);
+
+							/* MEMO: The “Shape” part does not support "Texture (UV)"s and "Shader"s. */
+//							if(0 != (statusParts & Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus.DRAW_STENCIL_MASK))
+//							{
+//								/* Post-Mask */
+//								instanceRoot.ClusterDraw.VertexAdd(	ChainMaskPre,
+//																	false,
+//																	MaterialMaskPre,
+//																	UniformShader,
+//																	CountVertex,
+//																	CoordinateTransformDraw,
+//																	ColorPartsDraw,
+//																	UVTextureDraw,
+//																	UVMaxMinDraw,
+//																	UVAverageDraw
+//																);
+//							}
+						}
+
+						/* MEMO: "UPDATE" flags need to be cleared after add to Draw-Cluster.       */
+						/*       (Because "Draw" may not be executed even if "Update" is executed.) */
+						Status &= ~(	FlagBitStatus.REDECODE_MATERIAL
+										| FlagBitStatus.UPDATE_COORDINATE
+										| FlagBitStatus.UPDATE_UVTEXTURE
+										| FlagBitStatus.UPDATE_PARAMETERBLEND
+										| FlagBitStatus.UPDATE_COLORPARTS
+										| FlagBitStatus.UPDATE_MASKING
+										| FlagBitStatus.UPDATE_DEFORM
+										| FlagBitStatus.UPDATE_SHADER
+										| FlagBitStatus.UPDATE_TRANSFORM_TEXTURE
+//										| FlagBitStatus.USE_ADDITIONALCOLOR		/* update in "UpdatePlain", so not erase here */
+								);
+						statusControlParts &= ~(	Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_SCALELOCAL
+													| Library_SpriteStudio6.Control.Animation.Parts.FlagBitStatus.UPDATE_RATEOPACITY
+											);
+					}
+
+					private void MaterialDetermine(	Script_SpriteStudio6_Root instanceRoot,
+													int idParts,
+													Library_SpriteStudio6.KindMasking masking,
+													Library_SpriteStudio6.KindOperationBlend operationBlendTarget,
+													Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus statusParts
+												)
+					{
+						int indexCellMap = DataCellApply.IndexCellMap;
+						/* MEMO: (Ver.2.3.0-) OR of the part's own setting and what has been propagated from the calling "Instance"-part. */
+						bool flagDrawInsideMask = MaskingDrawInside | (0 != (statusParts & Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus.DRAW_PIXEL_INSIDEMASK));	/* ? true : false */
+
+						bool flagPartsMask = instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskPure;
+						if(true == flagPartsMask)
+						{
+							MaterialDraw = null;
+							MaterialMaskPre = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, false, false, null, true, null, null);
+							MaterialMaskPost = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, false, false, null, true, null, null);
+						}
+						else
+						{
+							string nameShader = null;
+							UnityEngine.Shader shader = null;
+							if(true == Shader.Value.IsValid)
+							{
+								nameShader = Shader.Value.ID;
+								shader = UnityEngine.Shader.Find(Library_SpriteStudio6.Data.Shader.NameShaderPrefixSS6P + nameShader);
+							}
+
+							/* Get Material */
+							MaterialDraw = instanceRoot.MaterialGet(	indexCellMap,
+																		operationBlendTarget,
+																		masking,
+																		flagDrawInsideMask,
+																		false,
+																		nameShader,
+																		true,
+																		shader,
+																		null
+																);
+
+							if(true == instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskClipping)
+							{	/* Sprite with Mask (Clipping-Mask) */
+								MaterialMaskPre = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, false, false, null, true, null, null);
+								MaterialMaskPost = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, false, false, null, true, null, null);
+							}
+//							else
+//							{
+//								MaterialMaskPre = null;
+//								MaterialMaskPost = null;
+//							}
+						}
+					}
+					private void MaterialDetermineShape(	Script_SpriteStudio6_Root instanceRoot,
+															int idParts,
+															Library_SpriteStudio6.KindMasking masking,
+															Library_SpriteStudio6.KindOperationBlend operationBlendTarget,
+															Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus statusParts
+													)
+					{	/* MEMO: For "Shape" / "Text" parts. */
+						int indexCellMap = DataCellApply.IndexCellMap;
+						/* MEMO: (Ver.2.3.0-) OR of the part's own setting and what has been propagated from the calling "Instance"-part. */
+						bool flagDrawInsideMask = MaskingDrawInside | (0 != (statusParts & Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus.DRAW_PIXEL_INSIDEMASK));	/* ? true : false */
+
+						/* MEMO: "Shape" with "MASK" behaves as a "Mask"-part. */
+						bool flagPartsMask = instanceRoot.DataAnimation.TableParts[idParts].StatusIsMaskPure;
+						if(true == flagPartsMask)
+						{
+							/* MEMO: "Shape" has no cell, so "flagIsShape" must be true even for masking. */
+							/*       (Shader itself is chosen as "Stencil" by the blend-operation.)       */
+							MaterialDraw = null;
+							MaterialMaskPre = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, false, true, null, true, null, null);
+							MaterialMaskPost = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, false, true, null, true, null, null);
+						}
+						else
+						{
+							/* MEMO: "Shader" attribute is not used in "Shape" parts. */
+//							string nameShader = null;
+//							UnityEngine.Shader shader = null;
+//							if(true == Shader.Value.IsValid)
+//							{
+//								nameShader = Shader.Value.ID;
+//								shader = UnityEngine.Shader.Find(Library_SpriteStudio6.Data.Shader.NameShaderPrefixSS6P + nameShader);
+//							}
+
+							/* Get Material */
+							MaterialDraw = instanceRoot.MaterialGet(	indexCellMap,
+																		operationBlendTarget,
+																		masking,
+																		flagDrawInsideMask,
+																		true,	/* is Shape */
+																		null,	/* nameShader */
+																		true,
+																		null,	/* shader */
+																		null
+																);
+
+							/* MEMO: "Shape" part does not have specification to draw mask simultaneously (as "Clipping-Mask"). */
+// 							if(0 != (statusParts & Library_SpriteStudio6.Data.Parts.Animation.FlagBitStatus.MASK))
+// 							{	/* Sprite with Mask */
+// 								MaterialMaskPre = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK_PRE, masking, false, false, null, true, null, null);
+// 								MaterialMaskPost = instanceRoot.MaterialGet(indexCellMap, Library_SpriteStudio6.KindOperationBlend.MASK, masking, false, false, null, true, null, null);
+// 							}
+// //						else
+// //						{
+// //							MaterialMaskPre = null;
+// //							MaterialMaskPost = null;
+// //						}
+							MaterialMaskPre = null;
+							MaterialMaskPost = null;
+						}
 					}
 					#endregion Functions
 

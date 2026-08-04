@@ -18,7 +18,7 @@ public static partial class Library_SpriteStudio6
 	/* ----------------------------------------------- Signatures */
 	#region Signatures
 	public const string SignatureNameAsset = "SpriteStudio6 Player for Unity";
-	public const string SignatureVersionAsset = "2.1.28";
+	public const string SignatureVersionAsset = "2.3.0";
 	public const string SignatureNameDistributor = "CRI Middleware Co., Ltd.";
 	#endregion Signatures
 
@@ -45,6 +45,11 @@ public static partial class Library_SpriteStudio6
 		SCR,
 		EXC,
 		INV,
+
+		MUL2,
+		DIV2,
+		SCR2,
+		OVL2,
 
 		TERMINATOR,
 	}
@@ -127,6 +132,7 @@ public static partial class Library_SpriteStudio6
 		public delegate bool FunctionPlayEndSequence(Script_SpriteStudio6_Sequence scriptSequence);
 		public delegate void FunctionUserData(Script_SpriteStudio6_Root scriptRoot, string nameParts, int indexParts, int indexAnimation, int frameDecode, int frameKeyData, ref Library_SpriteStudio6.Data.Animation.Attribute.UserData userData, bool flagWayBack);
 		public delegate void FunctionSignal(Script_SpriteStudio6_Root scriptRoot, string nameParts, int indexParts, int indexAnimation, int frameDecode, int frameKeyData, ref Library_SpriteStudio6.Data.Animation.Attribute.Signal signal, bool flagWayBack);
+		public delegate void FunctionSound(Script_SpriteStudio6_Root scriptRoot, string nameParts, int indexParts, int indexAnimation, int frameDecode, int frameKeyData, ref Library_SpriteStudio6.Data.Animation.Attribute.Sound signal, bool flagWayBack);
 
 		public delegate void FunctionCallBackCollider(Script_SpriteStudio6_Root instanceRoot, GameObject instanceGameObject, string nameParts, int idParts, Library_SpriteStudio6.Control.InformationCollision information);
 
@@ -138,7 +144,7 @@ public static partial class Library_SpriteStudio6
 
 		public delegate int FunctionDecodeStepSequence(ref Library_SpriteStudio6.Data.Sequence.Data.Step dataStep, Script_SpriteStudio6_Sequence scriptSequence, int step);
 
-		public delegate UnityEngine.Material FunctionMaterialSetUp(UnityEngine.Material material, int operationBlend, Library_SpriteStudio6.KindMasking masking, bool flagZWrite);
+		public delegate UnityEngine.Material FunctionMaterialSetUp(UnityEngine.Material material, int operationBlend, Library_SpriteStudio6.KindMasking masking, bool flagZWrite, bool flagDrawInsideMask);
 
 		public delegate bool FunctionTimeline(Script_SpriteStudio6_Root scriptRoot, KindSituationTimeline situation, float timeElapsed, double timeLocal);
 		public delegate bool FunctionTimelineEffect(Script_SpriteStudio6_RootEffect scriptRoot, KindSituationTimeline situation, float timeElapsed, double timeLocal);
@@ -178,7 +184,7 @@ public static partial class Library_SpriteStudio6
 			#region Functions
 			public void CleanUp()
 			{
-				Name = "";
+				Name = string.Empty;
 				FramePerSecond = 0;
 				CountFrame = 0;
 
@@ -365,10 +371,16 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 Scaling;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 ScalingLocal;	/* used in Sprite, Mask, Instance, Effect */
 
+#if false
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+#else
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat RateOpacity;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat PowerMask;
+#endif
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt Priority;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor PartsColor;	/* used in Sprite, Mask (Contents different) */
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection VertexCorrection;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew Skew;
 
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 OffsetPivot;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 PositionAnchor;	/* (Unsupported now) */
@@ -385,6 +397,8 @@ public static partial class Library_SpriteStudio6
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform Deform;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerShader Shader;
 				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSignal Signal;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSound Sound;
+				public Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture ChangeTexture;
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
@@ -402,10 +416,16 @@ public static partial class Library_SpriteStudio6
 					Scaling = null;
 					ScalingLocal = null;
 
+#if false
 					RateOpacity = null;
+#else
+					RateOpacity = null;
+					PowerMask = null;
+#endif
 					Priority = null;
 					PartsColor = null;
 					VertexCorrection = null;
+					Skew = null;
 
 					OffsetPivot = null;
 					PositionAnchor = null;
@@ -422,6 +442,8 @@ public static partial class Library_SpriteStudio6
 
 					Shader = null;
 					Signal = null;
+					Sound = null;
+					ChangeTexture = null;
 				}
 				#endregion Functions
 
@@ -436,7 +458,7 @@ public static partial class Library_SpriteStudio6
 
 					NOT_MASKING = 0x08000000,
 					NO_ANIMATION_SKELETAL = 0x04000000,
-					/* 0x01000000, */	/* Reserved */
+					MODE_SKEW = 0x01000000,	/* Reserved */
 
 					NO_POSITION = 0x00800000,
 					NO_ROTATION = 0x00400000,
@@ -450,6 +472,7 @@ public static partial class Library_SpriteStudio6
 
 					NO_SIGNAL = 0x00008000,
 					NO_SHADER = 0x00004000,
+					NO_SOUND = 0x00002000,
 
 					/* 0x00000001, */	/* Reserved */
 					CLEAR = 0x00000000
@@ -470,7 +493,7 @@ public static partial class Library_SpriteStudio6
 				#region Functions
 				public void CleanUp()
 				{
-					Name = "";
+					Name = string.Empty;
 					Frame = -1;
 				}
 
@@ -535,6 +558,8 @@ public static partial class Library_SpriteStudio6
 				[System.Serializable]
 				public class ContainerVertexCorrection : Container<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection, InterfaceContainerVertexCorrection> {}
 				[System.Serializable]
+				public class ContainerSkew : Container<Library_SpriteStudio6.Data.Animation.Attribute.Skew, InterfaceContainerSkew> {}
+				[System.Serializable]
 				public class ContainerUserData : Container<Library_SpriteStudio6.Data.Animation.Attribute.UserData, InterfaceContainerUserData> {}
 				[System.Serializable]
 				public class ContainerInstance : Container<Library_SpriteStudio6.Data.Animation.Attribute.Instance, InterfaceContainerInstance> {}
@@ -582,6 +607,10 @@ public static partial class Library_SpriteStudio6
 				public class ContainerShader : Container<Library_SpriteStudio6.Data.Animation.Attribute.Shader, InterfaceContainerShader> {}
 				[System.Serializable]
 				public class ContainerSignal : Container<Library_SpriteStudio6.Data.Animation.Attribute.Signal, InterfaceContainerSignal> {}
+				[System.Serializable]
+				public class ContainerSound : Container<Library_SpriteStudio6.Data.Animation.Attribute.Sound, InterfaceContainerSound> {}
+				[System.Serializable]
+				public class ContainerChangeTexture : Container<Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture, InterfaceContainerChangeTexture> {}
 				#endregion Classes, Structs & Interfaces
 
 				/* Part: SpriteStudio6/Library/Data/Animation/PackAttributeFunction.cs */
@@ -988,7 +1017,7 @@ public static partial class Library_SpriteStudio6
 			#region Functions
 			public void CleanUp()
 			{
-				Name = "";
+				Name = string.Empty;
 				SizeOriginal = Vector2.zero;
 				TableCell = null;
 			}
@@ -1078,7 +1107,7 @@ public static partial class Library_SpriteStudio6
 				#region Functions
 				public void CleanUp()
 				{
-					Name = "";
+					Name = string.Empty;
 					Rectangle.x = 0.0f;
 					Rectangle.y = 0.0f;
 					Rectangle.width = 0.0f;
@@ -1281,13 +1310,103 @@ public static partial class Library_SpriteStudio6
 
 				public Object PrefabUnderControl;
 				public string NameAnimationUnderControl;
+
+				public float SizeFontText;
+				public float SpaceText;
+				public int SizeXText;
+				public int SizeYText;
+				public string NameFamilyFontText;
+				public int IndexBitmapFontText;
+				public string Text;
+				public KindAnchorText AnchorText;
+
+				public KindShape Shape;
+
+				public int MarginLNineSlice;
+				public int MarginRNineSlice;
+				public int MarginUNineSlice;
+				public int MarginDNineSlice;
+
+				public FlagBitStatus Status;
+
+				/* MEMO: Derivations for "Masking". Do not open-code these conditions at each call-site.  */
+				/*       (Properties are not serialized, so data-format and data-version are unaffected.) */
+				/* MEMO: Part draws no color-pixel and masks the parts drawn BEFORE it.                   */
+				/*       "Mask"-parts, and "Shape" / "Text" / "9-Slice"-parts that have "Mask" specified. */
+				/*       (Both are same meaning, but sources of the datas are different)                  */
+				public bool StatusIsMaskPure
+				{
+					get
+					{
+						return(	(KindFeature.MASK == Feature)
+								|| (0 != (Status & FlagBitStatus.MASK))
+							);	/* ? true : false */
+					}
+				}
+
+				/* MEMO: Part draws color-pixel and masks the parts drawn AFTER it. */
+				/*       Only "Normal" and "Mesh"-parts can be a "Clipping-Mask".   */
+				public bool StatusIsMaskClipping
+				{
+					get
+					{
+						if(0 == (Status & FlagBitStatus.DRAW_STENCIL_MASK))
+						{
+							return(false);
+						}
+						if(true == StatusIsMaskPure)
+						{
+							return(false);
+						}
+						return(	(KindFeature.NORMAL == Feature)
+								|| (KindFeature.MESH == Feature)
+							);	/* ? true : false */
+					}
+				}
+
+				/* MEMO: Part contributes to the stencil-coverage. */
+				public bool StatusIsMaskWriter
+				{
+					get
+					{
+						return(StatusIsMaskPure | StatusIsMaskClipping);	/* ? true : false */
+					}
+				}
+
+				/* MEMO: Polarity of masking. (true == Draw pixels inside "Mask" / false == Draw pixels outside "Mask") */
+				/*       At "Instance" / "Effect"-parts, this is propagated to the animation they call, and OR-ed with  */
+				/*         each part's own value there. (Follows SpriteStudio 7.5's behavior)                           */
+				public bool StatusIsMaskDrawInside
+				{
+					get
+					{
+						return(0 != (Status & FlagBitStatus.DRAW_PIXEL_INSIDEMASK));	/* ? true : false */
+					}
+				}
+
+				/* MEMO: "Instance" / "Effect"-parts are able to be specified as "Clipping-Mask" in SpriteStudio, but  */
+				/*       they never write the stencil themselves. (The specification only makes them masking-targets.) */
+				/*       "StatusIsMaskClipping" excludes these part-kinds, so it can not be used for this decision.    */
+				public bool StatusIsMaskTargetCalling
+				{
+					get
+					{
+						switch(Feature)
+						{
+							case KindFeature.INSTANCE:
+							case KindFeature.EFFECT:
+								return(0 != (Status & FlagBitStatus.DRAW_STENCIL_MASK));	/* ? true : false */
+						}
+						return(false);
+					}
+				}
 				#endregion Variables & Properties
 
 				/* ----------------------------------------------- Functions */
 				#region Functions
 				public void CleanUp()
 				{
-					Name = "";
+					Name = string.Empty;
 
 					ID = -1;
 					IDParent = -1;
@@ -1299,10 +1418,11 @@ public static partial class Library_SpriteStudio6
 					LabelColor.CleanUp();
 
 					ShapeCollision = KindCollision.NON;
+//					ShapeCollision = KindCollision.NON & KindCollition_BITMASK;
 					SizeCollisionZ = 0.0f;
 
 					PrefabUnderControl = null;
-					NameAnimationUnderControl = "";
+					NameAnimationUnderControl = string.Empty;
 				}
 				#endregion Functions
 
@@ -1334,10 +1454,15 @@ public static partial class Library_SpriteStudio6
 					TRANSFORM_CONSTRAINT,
 					CAMERA,
 
+					AUDIO,
+					SHAPE,
+					TEXT,
+					NINE_SLICE,
+
 					TERMINATOR,
 				}
 
-				public enum KindCollision
+				public enum KindCollision : ushort
 				{
 					NON = 0,
 					SQUARE,
@@ -1345,6 +1470,46 @@ public static partial class Library_SpriteStudio6
 					CIRCLE,
 					CIRCLE_SCALEMINIMUM,
 					CIRCLE_SCALEMAXIMUM
+				}
+
+				public enum KindAnchorText : short
+				{
+					NON = -1,
+
+					LU = 0,								/* b:0000 */
+					CU,									/* b:0001 */
+					RU,									/* b:0010 */
+					_RESERVE_U,
+					LC,									/* b:0100 */
+					CC,									/* b:0101 */
+					RC,									/* b:0110 */
+					_RESERVE_C,
+					LD,									/* b:1000 */
+					CD,									/* b:1001 */
+					RD,									/* b:1010 */
+					_RESERVE_D,
+				}
+
+				public enum KindShape : short
+				{
+					NON = -1,
+					RECTANGLE = 0,
+				}
+
+				[System.Flags]
+				public enum FlagBitStatus : ushort
+				{
+					VERBOSE = 0x4000,
+
+					NINE_SLICE_MODE_TILE = 0x0080,			/* 9-Slice */
+					TEXT_SMOOTH_TEXTURE = 0x0040,			/* Text */
+					TEXT_BITMAP = 0x0020,					/* Text */
+
+					MASK = 0x0008,							/* Shape / Text / 9-Slice */	/* Should merge with "DRAW_STENCIL_MASK" */
+					DRAW_PIXEL_INSIDEMASK = 0x0002,
+					DRAW_STENCIL_MASK = 0x0001,
+
+					CLEAR = 0,
 				}
 				#endregion Enums & Constants
 
@@ -1528,6 +1693,12 @@ public static partial class Library_SpriteStudio6
 					public int[] TableIDPartsConstraint;
 					public int[] TableIDPartsBonePoint;
 					public int[] TableIDPartsMesh;
+					public int[] TableIDPartsTransformConstraint;
+					public int[] TableIDPartsCamera;
+					public int[] TableIDPartsAudio;
+					public int[] TableIDPartsShape;
+					public int[] TableIDPartsText;
+					public int[] TableIDPartsNineSlice;
 					#endregion Variables & Properties
 
 					/* ----------------------------------------------- Functions */
@@ -1549,6 +1720,12 @@ public static partial class Library_SpriteStudio6
 						TableIDPartsConstraint = null;
 						TableIDPartsBonePoint = null;
 						TableIDPartsMesh = null;
+						TableIDPartsTransformConstraint = null;
+						TableIDPartsCamera = null;
+						TableIDPartsAudio = null;
+						TableIDPartsShape = null;
+						TableIDPartsText = null;
+						TableIDPartsNineSlice = null;
 					}
 					#endregion Functions
 				}
@@ -1574,7 +1751,7 @@ public static partial class Library_SpriteStudio6
 				#region Functions
 				public void CleanUp()
 				{
-					Name = "";
+					Name = string.Empty;
 
 					ID = -1;
 					IDParent = -1;
@@ -1620,6 +1797,10 @@ public static partial class Library_SpriteStudio6
 					case Library_SpriteStudio6.KindOperationBlend.SCR:
 					case Library_SpriteStudio6.KindOperationBlend.EXC:
 					case Library_SpriteStudio6.KindOperationBlend.INV:
+					case Library_SpriteStudio6.KindOperationBlend.MUL2:
+					case Library_SpriteStudio6.KindOperationBlend.DIV2:
+					case Library_SpriteStudio6.KindOperationBlend.SCR2:
+					case Library_SpriteStudio6.KindOperationBlend.OVL2:
 						return(SpriteSS6PU);
 				}
 
@@ -1646,7 +1827,8 @@ public static partial class Library_SpriteStudio6
 																		UnityEngine.Shader shader,
 																		Library_SpriteStudio6.KindOperationBlend operationBlend,
 																		Library_SpriteStudio6.KindMasking masking,
-																		bool flagZWrite
+																		bool flagZWrite,
+																		bool flagDrawInsideMask
 																	)
 			{
 				UnityEngine.Material material = null;
@@ -1665,13 +1847,14 @@ public static partial class Library_SpriteStudio6
 				}
 				material.hideFlags = HideFlags.DontSave;
 
-				return(functionMaterialSetUp(material, (int)operationBlend, masking, flagZWrite));
+				return(functionMaterialSetUp(material, (int)operationBlend, masking, flagZWrite, flagDrawInsideMask));
 			}
 			public static UnityEngine.Material MaterialCreateEffect(	Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
 																		UnityEngine.Shader shader,
 																		Library_SpriteStudio6.KindOperationBlendEffect operationBlend, 
 																		Library_SpriteStudio6.KindMasking masking,
-																		bool flagZWrite
+																		bool flagZWrite,
+																		bool flagDrawInsideMask
 																)
 			{
 				UnityEngine.Material material = null;
@@ -1696,26 +1879,34 @@ public static partial class Library_SpriteStudio6
 				}
 				material.hideFlags = HideFlags.DontSave;
 
-				return(functionMaterialSetUp(material, (int)operationBlend, KindMasking.MASK, flagZWrite));
+				/* MEMO: (Ver.2.3.0-) "masking" had been fixed to "MASK" here, so "Effect"s were stencil-tested even when  */
+				/*         not specified as masking-target. (Harmless while no "Mask" exists, since stencil-Ref is 0)      */
+				/*       Now that the polarity ("flagDrawInsideMask") is honored, leaving it fixed would draw an opted-out */
+				/*         "Effect" only inside the "Mask", so the given "masking" is used as-is.                          */
+				return(functionMaterialSetUp(material, (int)operationBlend, masking, flagZWrite, flagDrawInsideMask));
 			}
 
 			internal static UnityEngine.Material FunctionMaterialSetUpAnimation(	UnityEngine.Material material,
 																					int operationBlend,
 																					Library_SpriteStudio6.KindMasking masking,
-																					bool flagZWrite
+																					bool flagZWrite,
+																					bool flagDrawInsideMask
 																				)
 			{
 				switch((Library_SpriteStudio6.KindOperationBlend)operationBlend)
 				{
 					case Library_SpriteStudio6.KindOperationBlend.MASK_PRE:
+						/* MEMO: (Ver.2.3.0-) Write-mask separates the bit-planes. See "StencilWriteMaskCount/Parity". */
 						switch(masking)
 						{
 							case Library_SpriteStudio6.KindMasking.THROUGH:
 								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.IncrementWrap);
+								material.SetFloat(IDPropertyStencilWriteMask, StencilWriteMaskCount);
 								break;
 
 							case Library_SpriteStudio6.KindMasking.MASK:
 								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.Invert);
+								material.SetFloat(IDPropertyStencilWriteMask, StencilWriteMaskParity);
 								break;
 						}
 						goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;	/* Common Setting for Masking-Shader */
@@ -1725,10 +1916,12 @@ public static partial class Library_SpriteStudio6
 						{
 							case Library_SpriteStudio6.KindMasking.THROUGH:
 								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.DecrementWrap);
+								material.SetFloat(IDPropertyStencilWriteMask, StencilWriteMaskCount);
 								break;
 
 							case Library_SpriteStudio6.KindMasking.MASK:
 								material.SetFloat(IDPropertyStencilOperation, (float)UnityEngine.Rendering.StencilOp.Invert);
+								material.SetFloat(IDPropertyStencilWriteMask, StencilWriteMaskParity);
 								break;
 						}
 						goto case Library_SpriteStudio6.KindOperationBlend.TERMINATOR;	/* Common Setting for Masking-Shader */
@@ -1806,6 +1999,55 @@ public static partial class Library_SpriteStudio6
 						material.EnableKeyword(NamePropertyInputPixelPMA);	/* true */
 						goto default;	/* Common Setting for Drawing-Shader */
 
+					/* MEMO: (Ver.2.3.0-) "MUL2" / "DIV2" / "SCR2" / "OVL2" are not opened. (Test code from the development phase, so does not function correctly.) */
+					/* MEMO: Only the definitions and the reflection to the data at import are left. */
+					case Library_SpriteStudio6.KindOperationBlend.MUL2:
+					case Library_SpriteStudio6.KindOperationBlend.DIV2:
+					case Library_SpriteStudio6.KindOperationBlend.SCR2:
+					case Library_SpriteStudio6.KindOperationBlend.OVL2:
+						goto case Library_SpriteStudio6.KindOperationBlend.MIX;
+
+#if false
+					case Library_SpriteStudio6.KindOperationBlend.MUL2:
+					case Library_SpriteStudio6.KindOperationBlend.DIV2:
+					case Library_SpriteStudio6.KindOperationBlend.SCR2:
+					case Library_SpriteStudio6.KindOperationBlend.OVL2:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Add);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+//						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						material.EnableKeyword(NamePropertyOutputPixelPMA);	/* true */
+						material.DisableKeyword(NamePropertyInputPixelPMA);	/* false */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.MUL2:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Multiply);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+//						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						material.EnableKeyword(NamePropertyOutputPixelPMA);	/* true */
+						material.DisableKeyword(NamePropertyInputPixelPMA);	/* false */
+						goto default;	/* Common Setting for Drawing-Shader */
+
+					case Library_SpriteStudio6.KindOperationBlend.DIV2:
+
+
+					case Library_SpriteStudio6.KindOperationBlend.SCR2:
+						goto case Library_SpriteStudio6.KindOperationBlend.SCR;
+
+					case Library_SpriteStudio6.KindOperationBlend.OVL2:
+						material.SetFloat(IDPropertyBlendSource, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+						material.SetFloat(IDPropertyBlendDestination, (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+						material.SetFloat(IDPropertyBlendOperation, (float)UnityEngine.Rendering.BlendOp.Overlay);
+						material.DisableKeyword(NamePropertyNotDiscardPixel);	/* false */
+//						material.DisableKeyword(NamePropertyOutputPixelPMA);	/* false */
+						material.EnableKeyword(NamePropertyOutputPixelPMA);	/* true */
+						material.DisableKeyword(NamePropertyInputPixelPMA);	/* false */
+						goto default;	/* Common Setting for Drawing-Shader */
+#endif
+
 					case Library_SpriteStudio6.KindOperationBlend.TERMINATOR:
 						/* MEMO: Common Setting for Masking-Shader */
 						break;
@@ -1819,7 +2061,14 @@ public static partial class Library_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.KindMasking.MASK:
-								material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Equal);
+								if(true == flagDrawInsideMask)
+								{
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.NotEqual);
+								}
+								else
+								{
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Equal);
+								}
 								break;
 						}
 
@@ -1831,7 +2080,8 @@ public static partial class Library_SpriteStudio6
 			internal static UnityEngine.Material FunctionMaterialSetUpEffect(	UnityEngine.Material material,
 																				int operationBlend, 
 																				Library_SpriteStudio6.KindMasking masking,
-																				bool flagZWrite
+																				bool flagZWrite,
+																				bool flagDrawInsideMask
 																		)
 			{
 				switch((Library_SpriteStudio6.KindOperationBlendEffect)operationBlend)
@@ -1867,7 +2117,16 @@ public static partial class Library_SpriteStudio6
 								break;
 
 							case Library_SpriteStudio6.KindMasking.MASK:
-								material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Equal);
+								/* MEMO: (Ver.2.3.0-) "Effect" itself has no masking-settings, so the value propagated */
+								/*       from the calling "Effect"-part is used as-is.                                 */
+								if(true == flagDrawInsideMask)
+								{
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.NotEqual);
+								}
+								else
+								{
+									material.SetFloat(IDPropertyCompareStencil, (float)UnityEngine.Rendering.CompareFunction.Equal);
+								}
 								break;
 						}
 
@@ -1889,6 +2148,7 @@ public static partial class Library_SpriteStudio6
 			public readonly static UnityEngine.Shader SpriteSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Sprite");
 			public readonly static UnityEngine.Shader EffectSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Effect");
 			public readonly static UnityEngine.Shader StencilSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Stencil");
+			public readonly static UnityEngine.Shader ShapeSS6PU = UnityEngine.Shader.Find(NameShaderPrefixSS6P + "Shape");
 			public readonly static UnityEngine.Shader SpriteUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite");
 			public readonly static UnityEngine.Shader SpriteUnityNativeNonBatch = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "Sprite_NonBatch");
 			public readonly static UnityEngine.Shader SkinnedMeshUnityNative = UnityEngine.Shader.Find(NameShaderPrefixUnityNative + "SkinnedMesh");
@@ -1896,18 +2156,35 @@ public static partial class Library_SpriteStudio6
 
 			public const string NamePropertyAlphaTex = "_AlphaTex";							/* (Common) */
 			public const string NamePropertyEnableExternalAlpha = "_EnableExternalAlpha";	/* (Common) */
-			public const string NamePropertyBlendSource = "_BlendSource";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyBlendDestination = "_BlendDestination";			/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyBlendOperation = "_BlendOperation";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyCompareStencil = "_CompareStencil";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyZWrite = "_ZWrite";								/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyArgumentFs00 = "_ArgumentFs00";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyParameterFs00 = "_ParameterFs00";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
+			public const string NamePropertyBlendSource = "_BlendSource";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyBlendDestination = "_BlendDestination";			/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyBlendOperation = "_BlendOperation";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyCompareStencil = "_CompareStencil";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyColorMaskStencol = "_ColorMask";				/* Shape_SpriteStudio6 */
+			public const string NamePropertyZWrite = "_ZWrite";								/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyArgumentFs00 = "_ArgumentFs00";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyParameterFs00 = "_ParameterFs00";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
 
-			public const string NamePropertyNotDiscardPixel = "PS_NOT_DISCARD";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyOutputPixelPMA = "PS_OUTPUT_PMA";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyInputPixelPMA = "PS_INPUT_PMA";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 */
-			public const string NamePropertyStencilOperation = "_StencilOperation";			/* Stencil_SpriteStudio6 */
+			public const string NamePropertyNotDiscardPixel = "PS_NOT_DISCARD";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyOutputPixelPMA = "PS_OUTPUT_PMA";				/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyInputPixelPMA = "PS_INPUT_PMA";					/* Sprite_SpriteStudio6 / Effect_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyStencilOperation = "_StencilOperation";			/* Stencil_SpriteStudio6 / Shape_SpriteStudio6 */
+			public const string NamePropertyStencilWriteMask = "_StencilWriteMask";			/* Stencil_SpriteStudio6 / Shape_SpriteStudio6 */
+
+			/* MEMO: (Ver.2.3.0-) Bit-planes of the stencil-buffer for masking.                                          */
+			/*       "Mask"-parts affected by masking use "Invert", and ones not affected use "Increment/DecrementWrap". */
+			/*       "Invert" flips every bit inside the write-mask, and "Increment/DecrementWrap" carries through the   */
+			/*         whole value, so sharing bits makes the result order-dependent and leaves residue that leaks into  */
+			/*         the parts drawn later. (Both are self-inverse alone, but do not commute with each other.)         */
+			/*       Giving each a separate bit-plane makes them mutually independent:                                   */
+			/*       - "Invert"                    ... flips the parity-bit only. (any number of parts, by odd/even)     */
+			/*       - "Increment/DecrementWrap"   ... the carry into the parity-bit is discarded by the write-mask, so  */
+			/*                                           it behaves as a counter closed within the lower bits. (max 127) */
+			/*       Coverage is still "value != 0", so the drawing-side (Ref 0 / Compare) needs no change at all.       */
+			/* MEMO: "SetFloat" for a non-existent property is silently ignored, so replaced shaders that do not have "_StencilWriteMask" */
+			/*         keep the write-mask at its default 255, reproducing the behavior before this.                                      */
+			public const float StencilWriteMaskCount = 0x7f;								/* Not affected by masking */
+			public const float StencilWriteMaskParity = 0x80;							/* Affected by masking */
 
 			public const string NamePropertyUIColor = "_Color";								/* Sprite_UnityUI */
 			public const string NamePropertyUIStencilComp = "_StencilComp";					/* Sprite_UnityUI */
@@ -1918,6 +2195,7 @@ public static partial class Library_SpriteStudio6
 			public const string NamePropertyUIColorMask = "_ColorMask";						/* Sprite_UnityUI */
 
 			public readonly static int IDPropertyStencilOperation = UnityEngine.Shader.PropertyToID(NamePropertyStencilOperation);
+			public readonly static int IDPropertyStencilWriteMask = UnityEngine.Shader.PropertyToID(NamePropertyStencilWriteMask);
 			public readonly static int IDPropertyBlendSource = UnityEngine.Shader.PropertyToID(NamePropertyBlendSource);
 			public readonly static int IDPropertyBlendDestination = UnityEngine.Shader.PropertyToID(NamePropertyBlendDestination);
 			public readonly static int IDPropertyBlendOperation = UnityEngine.Shader.PropertyToID(NamePropertyBlendOperation);
@@ -2030,6 +2308,77 @@ public static partial class Library_SpriteStudio6
 			#endregion Classes, Structs & Interfaces
 		}
 
+		public static partial class Sound
+		{
+			/* ----------------------------------------------- Variables & Properties */
+			#region Variables & Properties
+			#endregion Variables & Properties
+
+			/* ----------------------------------------------- Functions */
+			#region Functions
+			#endregion Functions
+
+			/* ----------------------------------------------- Enums & Constants */
+			#region Enums & Constants
+			#endregion Enums & Constants
+
+			/* ----------------------------------------------- Classes, Structs & Interfaces */
+			#region Classes, Structs & Interfaces
+			/* MEMO: Although feature of "Sound-List", this class named "Inventory" to avoid confusion with "List<T>". */
+			[System.Serializable]
+			public class Inventory
+			{
+				/* ----------------------------------------------- Variables & Properties */
+				#region Variables & Properties
+				public string Name;
+				public Fragment[] Sound;
+				#endregion Variables & Properties
+
+				/* ----------------------------------------------- Functions */
+				#region Functions
+				public void CleanUp()
+				{
+					Name = string.Empty;
+					Sound = null;
+				}
+				#endregion Functions
+
+				/* ----------------------------------------------- Enums & Constants */
+				#region Enums & Constants
+				#endregion Enums & Constants
+
+				/* ----------------------------------------------- Classes, Structs & Interfaces */
+				#region Classes, Structs & Interfaces
+				[System.Serializable]
+				public struct Fragment
+				{
+					/* ----------------------------------------------- Variables & Properties */
+					#region Variables & Properties
+					public string Name;
+					public float Duration;
+					#endregion Variables & Properties
+
+					/* ----------------------------------------------- Functions */
+					#region Functions
+					public void CleanUp()
+					{
+						Name = string.Empty;
+						Duration = -1.0f;	/* float.NaN; */
+					}
+					#endregion Functions
+
+					/* ----------------------------------------------- Enums & Constants */
+					#region Enums & Constants
+					#endregion Enums & Constants
+
+					/* ----------------------------------------------- Classes, Structs & Interfaces */
+					#region Classes, Structs & Interfaces
+					#endregion Classes, Structs & Interfaces
+				}
+				#endregion Classes, Structs & Interfaces
+			}
+			#endregion Classes, Structs & Interfaces
+		}
 		#endregion Classes, Structs & Interfaces
 	}
 
@@ -2221,10 +2570,11 @@ public static partial class Library_SpriteStudio6
 			public UnityEngine.Shader ShaderStandardAnimation;
 			public UnityEngine.Shader ShaderStandardEffect;
 			public UnityEngine.Shader ShaderStandardStencil;
+			public UnityEngine.Shader ShaderStandardShape;
 
 			public Library_SpriteStudio6.CallBack.FunctionMaterialSetUp FunctionMaterialSetUpAnimation;
 			public Library_SpriteStudio6.CallBack.FunctionMaterialSetUp FunctionMaterialSetUpEffect;
-			/* MEMO: For "Stencil" is shared with for "Animation". */
+			/* MEMO: For "Stencil" and "Shape" is shared with for "Animation". */
 
 			public bool StatusIsBootedUp
 			{
@@ -2245,6 +2595,7 @@ public static partial class Library_SpriteStudio6
 				ShaderStandardAnimation = null;
 				ShaderStandardEffect = null;
 				ShaderStandardStencil = null;
+				ShaderStandardShape = null;
 
 				FunctionMaterialSetUpAnimation = null;
 				FunctionMaterialSetUpEffect = null;
@@ -2260,6 +2611,7 @@ public static partial class Library_SpriteStudio6
 				ShaderStandardAnimation = null;
 				ShaderStandardEffect = null;
 				ShaderStandardStencil = null;
+				ShaderStandardShape = null;
 
 				FunctionMaterialSetUpAnimation = null;
 				FunctionMaterialSetUpEffect = null;
@@ -2374,6 +2726,8 @@ public static partial class Library_SpriteStudio6
 			public UnityEngine.Material MaterialGetAnimation(	int indexCellMap,
 																Library_SpriteStudio6.KindOperationBlend operationBlend,
 																Library_SpriteStudio6.KindMasking masking,
+																bool flagDrawInsideMask,
+																bool flagIsShape,
 																string nameShader,
 																Shader shader,
 																Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
@@ -2384,7 +2738,8 @@ public static partial class Library_SpriteStudio6
 				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetAnimation(	indexCellMap,
 																												operationBlend,
 																												masking,
-																												nameShader
+																												nameShader,
+																												flagDrawInsideMask
 																										);
 				UnityEngine.Material instanceMaterial = MaterialGet(codeHash);
 				if(null == instanceMaterial)
@@ -2400,7 +2755,14 @@ public static partial class Library_SpriteStudio6
 							}
 							else
 							{	/* for Color */
-								shader = ShaderStandardAnimation;
+								if(true == flagIsShape)
+								{
+									shader = ShaderStandardShape;
+								}
+								else
+								{
+									shader = ShaderStandardAnimation;
+								}
 							}
 
 							if(null == functionMaterialSetUp)
@@ -2419,12 +2781,12 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Create new material */
-						instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateAnimation(functionMaterialSetUp, shader, operationBlend, masking, false);
+						instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateAnimation(functionMaterialSetUp, shader, operationBlend, masking, false, flagDrawInsideMask);
 						if(null == instanceMaterial)
 						{	/* Miss-Create */
 							return(null);
 						}
-						instanceMaterial.mainTexture = tableTexture[indexCellMap];
+						instanceMaterial.mainTexture = (0 > indexCellMap) ? null : tableTexture[indexCellMap];
 						DataAppend(codeHash, instanceMaterial);
 					}
 				}
@@ -2434,6 +2796,7 @@ public static partial class Library_SpriteStudio6
 			public UnityEngine.Material MaterialGetEffect(	int indexCellMap,
 																Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 																Library_SpriteStudio6.KindMasking masking,
+																bool flagDrawInsideMask,
 																string nameShader,
 																Shader shader,
 																Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
@@ -2444,7 +2807,8 @@ public static partial class Library_SpriteStudio6
 				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetEffect(	indexCellMap,
 																											operationBlend,
 																											masking,
-																											nameShader
+																											nameShader,
+																											flagDrawInsideMask
 																									);
 				UnityEngine.Material instanceMaterial = MaterialGet(codeHash);
 				if(null == instanceMaterial)
@@ -2471,12 +2835,12 @@ public static partial class Library_SpriteStudio6
 						}
 
 						/* Create new material */
-						instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(functionMaterialSetUp, shader, operationBlend, masking, false);
+						instanceMaterial = Library_SpriteStudio6.Data.Shader.MaterialCreateEffect(functionMaterialSetUp, shader, operationBlend, masking, false, flagDrawInsideMask);
 						if(null == instanceMaterial)
 						{	/* Miss-Create */
 							return(null);
 						}
-						instanceMaterial.mainTexture = tableTexture[indexCellMap];
+						instanceMaterial.mainTexture = (0 > indexCellMap) ? null : tableTexture[indexCellMap];
 						DataAppend(codeHash, instanceMaterial);
 					}
 				}
@@ -2487,6 +2851,7 @@ public static partial class Library_SpriteStudio6
 			public UnityEngine.Material MaterialReplaceAnimation(	int indexCellMap,
 																	Library_SpriteStudio6.KindOperationBlend operationBlend,
 																	Library_SpriteStudio6.KindMasking masking,
+																	bool flagDrawInsideMask,
 																	string nameShader,
 																	UnityEngine.Material material
 																)
@@ -2494,7 +2859,8 @@ public static partial class Library_SpriteStudio6
 				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetAnimation(	indexCellMap,
 																												operationBlend,
 																												masking,
-																												nameShader
+																												nameShader,
+																												flagDrawInsideMask
 																										);
 				int indexMaterial = IndexGet(codeHash);
 				if(0 > indexMaterial)
@@ -2517,8 +2883,9 @@ public static partial class Library_SpriteStudio6
 				return(instanceMaterialOld);
 			}
 			public UnityEngine.Material MaterialReplaceEffect(	int indexCellMap,
-																	Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
+																Library_SpriteStudio6.KindOperationBlendEffect operationBlend,
 																Library_SpriteStudio6.KindMasking masking,
+																bool flagDrawInsideMask,
 																string nameShader,
 																UnityEngine.Material material
 															)
@@ -2526,7 +2893,8 @@ public static partial class Library_SpriteStudio6
 				long codeHash = Library_SpriteStudio6.Control.CacheMaterial.InformationData.CodeGetEffect(	indexCellMap,
 																											operationBlend,
 																											masking,
-																											nameShader
+																											nameShader,
+																											flagDrawInsideMask
 																									);
 				int indexMaterial = IndexGet(codeHash);
 				if(0 > indexMaterial)
@@ -2553,6 +2921,7 @@ public static partial class Library_SpriteStudio6
 																			UnityEngine.Shader shaderDefault,
 																			Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
 																			Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUpDefault,
+																			bool flagDrawInsideMask,
 																			bool flagReplaceMaterial
 																		)
 			{
@@ -2574,7 +2943,7 @@ public static partial class Library_SpriteStudio6
 				if(true == flagReplaceMaterial)
 				{
 
-					MaterialReplaceShaderStandard(shader, functionMaterialSetUp, false, false);
+					MaterialReplaceShaderStandard(shader, functionMaterialSetUp, false, false, flagDrawInsideMask);
 				}
 
 				return(shaderOld);
@@ -2583,6 +2952,7 @@ public static partial class Library_SpriteStudio6
 																		UnityEngine.Shader shaderDefault,
 																		Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
 																		Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUpDefault,
+																		bool flagDrawInsideMask,
 																		bool flagReplaceMaterial
 																	)
 			{
@@ -2603,7 +2973,7 @@ public static partial class Library_SpriteStudio6
 				/* Material (using corresponding shader) replace */
 				if(true == flagReplaceMaterial)
 				{
-					MaterialReplaceShaderStandard(shader, functionMaterialSetUp, true, false);
+					MaterialReplaceShaderStandard(shader, functionMaterialSetUp, true, false, flagDrawInsideMask);
 				}
 
 				return(shaderOld);
@@ -2611,6 +2981,7 @@ public static partial class Library_SpriteStudio6
 			public UnityEngine.Shader ShaderReplaceStandardStencil(	UnityEngine.Shader shader,
 																	UnityEngine.Shader shaderDefault,
 																	Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUpDefault,
+																	bool flagDrawInsideMask,
 																	bool flagReplaceMaterial
 																)
 			{
@@ -2633,7 +3004,7 @@ public static partial class Library_SpriteStudio6
 						functionMaterialSetUp = functionMaterialSetUpDefault;
 					}
 
-					MaterialReplaceShaderStandard(shader, functionMaterialSetUp, false, true);
+					MaterialReplaceShaderStandard(shader, functionMaterialSetUp, false, true, flagDrawInsideMask);
 				}
 
 				return(shaderOld);
@@ -2641,7 +3012,8 @@ public static partial class Library_SpriteStudio6
 			public void MaterialReplaceShaderStandard(	UnityEngine.Shader shader,
 														Library_SpriteStudio6.CallBack.FunctionMaterialSetUp functionMaterialSetUp,
 														bool flagIsEffect,
-														bool flagIsStencil
+														bool flagIsStencil,
+														bool flagDrawInsideMask
 													)
 			{
 				long codeShader = InformationData.CodeGetNameShader(null, flagIsEffect);	/* Standard-Shader */
@@ -2683,12 +3055,17 @@ public static partial class Library_SpriteStudio6
 									continue;
 								}
 							}
+							bool flagDrawInsideMaskCache = (0 != ((codeCache >> InformationData.CountShiftCodeDrawInsideMask) & InformationData.MaskCodeDrawInsideMask));
+							if(flagDrawInsideMaskCache != flagDrawInsideMask)
+							{
+								continue;
+							}
 							Library_SpriteStudio6.KindMasking masking = (Library_SpriteStudio6.KindMasking)((codeCache >> InformationData.CountShiftCodeMasking) & InformationData.MaskCodeMasking);
 
 							/* Overwrite material */
 							/* MEMO: "Keyword"s need to be reconfigured when change shader, so reset material. */
 							material.shader = shader;
-							material = functionMaterialSetUp(material, operationBlend, masking, false);
+							material = functionMaterialSetUp(material, operationBlend, masking, false, flagDrawInsideMask);
 							if(null == material)
 							{	/* Failure to set up */
 								Data.RemoveAt(i);
@@ -2762,7 +3139,7 @@ public static partial class Library_SpriteStudio6
 
 				/* MEMO: Possess all information in raw.                                                    */
 				/*       Not just a value for identification, but is also used extracting original setting. */
-				internal static long CodeGetAnimation(int indexCellMap, KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader)
+				internal static long CodeGetAnimation(int indexCellMap, KindOperationBlend operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader, bool flagDrawInsideMask)
 				{
 					long code;
 					if(null == nameShader)
@@ -2778,11 +3155,18 @@ public static partial class Library_SpriteStudio6
 					code |= ((long)operationBlend & MaskCodeOperation) << CountShiftCodeOperation;
 					code |= ((long)masking & MaskCodeMasking) << CountShiftCodeMasking;
 					code |= ((long)indexCellMap & MaskCodeIndexCellMap) << CountShiftCodeIndexCellMap;
+					if(true == flagDrawInsideMask)
+					{
+						code |= MaskCodeDrawInsideMask << CountShiftCodeDrawInsideMask;
+					}
+//					else
+//					{
+//						code &= ~(MaskCodeDrawInsideMask << CountShiftCodeDrawInsideMask);
+//					}
 //					code &= ~FlagCodeIsEffect;	/* for Animation (not for Effect) */
-
 					return(code);
 				}
-				internal static long CodeGetEffect(int indexCellMap, KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader)
+				internal static long CodeGetEffect(int indexCellMap, KindOperationBlendEffect operationBlend, Library_SpriteStudio6.KindMasking masking, string nameShader, bool flagDrawInsideMask)
 				{
 					long code;
 					if(null == nameShader)
@@ -2798,6 +3182,14 @@ public static partial class Library_SpriteStudio6
 					code |= ((long)operationBlend & MaskCodeOperation) << CountShiftCodeOperation;
 					code |= ((long)masking & MaskCodeMasking) << CountShiftCodeMasking;
 					code |= ((long)indexCellMap & MaskCodeIndexCellMap) << CountShiftCodeIndexCellMap;
+					if(true == flagDrawInsideMask)
+					{
+						code |= MaskCodeDrawInsideMask << CountShiftCodeDrawInsideMask;
+					}
+//					else
+//					{
+//						code &= ~(MaskCodeDrawInsideMask << CountShiftCodeDrawInsideMask);
+//					}
 					code |= FlagCodeIsEffect;	/* for Effect */
 
 					return(code);
@@ -2839,12 +3231,14 @@ public static partial class Library_SpriteStudio6
 				internal const long MaskCodeMasking = 0x000000000000000fL;
 				internal const long MaskCodeIndexCellMap = 0x0000000000000fffL;
 				internal const long MaskCodeIsEffect = 0x0000000000000001L;
+				internal const long MaskCodeDrawInsideMask = 0x0000000000000001L;
 
 //				internal const int CountShiftCodeNameShader = 0;
 				internal const int CountShiftCodeOperation = 32;
 				internal const int CountShiftCodeMasking = 40;
 				internal const int CountShiftCodeIndexCellMap = 44;
 				internal const int CountShiftCodeIsEffect = 61;
+				internal const int CountShiftCodeDrawInsideMask = 62;
 
 				internal const long FlagCodeIsEffect = MaskCodeIsEffect << CountShiftCodeIsEffect;
 				#endregion Enums & Constants
@@ -3194,7 +3588,7 @@ public static partial class Library_SpriteStudio6
 				}
 			}
 
-			/* MEMO: "Collider/Pair/Contact" and "Collider2D/Pair2D/Contact2D" are mutually exclusive.
+			/* MEMO: "Collider/Pair/Contact" and "Collider2D/Pair2D/Contact2D" are mutually exclusive. */
 			/* MEMO: When (Is2D==false), Valid information. */
 			private UnityEngine.Collider InstanceCollider = null;
 			public UnityEngine.Collider Collider
@@ -3898,17 +4292,19 @@ public static partial class Library_SpriteStudio6
 					return(null);
 				}
 
-//				if(null == material)
-//				{	/* Material Invalid */
-//					return(null);
-//				}
+				if((null == chain) || (null == material))
+				{	/* Chain or Material Invalid */
+					/* MEMO: Not drawn, but do not treat as an error.                                  */
+					/*       (Reaches here when masking-workareas are not prepared for the part-kind.) */
+					return(null);
+				}
 
 				/* Decide Chain */
 				/* MEMO: Do not unite Sub-Cluster calls. */
 				/* MEMO: UniformShader is additional data to the material, so not included in comparing at "Mesh-Batching". */
 				/*       Assumption, shader-constants will be the same when same material.                                  */
 				/*       Shader-constants also vary with "Shader" attribute's parameters. However, "Mesh-batching" is not   */
-				/*        performed at using of "Shader" attributes.                                                        */
+				/*         performed at using of "Shader" attributes.                                                       */
 				if(	(null != ChainLast)
 					&& ((false == ChainLast.FlagNotCombine) && (false == flagNotCombine))
 					&& (material == ChainLast.MaterialDraw)
@@ -3975,10 +4371,12 @@ public static partial class Library_SpriteStudio6
 					return(null);
 				}
 
-//				if(null == material)
-//				{	/* Material Invalid */
-//					return(null);
-//				}
+				if((null == chain) || (null == material))
+				{	/* Chain or Material Invalid */
+					/* MEMO: Not drawn, but do not treat as an error.                                  */
+					/*       (Reaches here when masking-workareas are not prepared for the part-kind.) */
+					return(null);
+				}
 
 				/* Decide Chain */
 				/* MEMO: Do not unite Sub-Cluster calls. */
@@ -4519,6 +4917,252 @@ public static partial class Library_SpriteStudio6
 				return(((end - start) * rate) + start);
 			}
 
+
+			public static float Ease(out float rate, int indexFunction, float valueStart, float valueEnd, float time, float easingRate)
+			{
+//				if(0 > indexFunction)
+//				{
+//					return(0.0f);
+//				}
+//				if(TableFunctionEase.Length <= indexFunction)
+//				{
+//					return(0.0f);
+//				}
+//
+				return(TableFunctionEase[indexFunction](out rate, valueStart, valueEnd, time, easingRate));
+			}
+
+			private static float EaseIn(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = UnityEngine.Mathf.Pow(time, easingRate);
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = UnityEngine.Mathf.Pow(time, (1.0f / easingRate));
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseInOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				time *= 2;
+//				rate = 0.0f;
+				if(time < 1.0f)
+				{
+					rate = 0.5f * UnityEngine.Mathf.Pow(time, easingRate);
+				}
+				else
+				{
+					rate = 1.0f - (0.5f * UnityEngine.Mathf.Pow((2.0f - time), easingRate));
+				}
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+
+			private static float EaseExponentialIn(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = (0.0f == time) ? 0.0f : UnityEngine.Mathf.Pow(2.0f, (10.0f * (time - 1.0f)) - (1 * 0.001f));
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseExponentialOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = (1.0f <= time) ? 1.0f : (-UnityEngine.Mathf.Pow(2.0f, (-10.0f * time)) + 1.0f);
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseExponentialInOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				time *= 2.0f;
+				rate = 0.0f;
+				if(time < 1.0f)
+				{
+					rate = 0.5f * UnityEngine.Mathf.Pow(2.0f, (10.0f * (time - 1.0f)));
+				}
+				else
+				{
+					rate = 0.5f * (-UnityEngine.Mathf.Pow(2.0f, (-10.0f * (time - 1.0f))) + 2.0f);
+				}
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+
+			private static float EaseSineIn(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = -1.0f * UnityEngine.Mathf.Cos(time * (UnityEngine.Mathf.PI * 0.5f)) + 1.0f;
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseSineOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = UnityEngine.Mathf.Sin(time * (UnityEngine.Mathf.PI * 0.5f));
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseSineInOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = -0.5f * (UnityEngine.Mathf.Cos(UnityEngine.Mathf.PI * time) - 1.0f);
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+
+			//set period of the wave in radians.
+			private static float EaseElasticIn(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = 0.0f;
+//				if((time == 0.0f) || (time == 1.0f))
+				if((0.0f >= time) || (1.0f <= time))
+				{
+					rate = time;
+				}
+				else
+				{
+					float s = easingRate * 0.25f;
+					time = time - 1.0f;
+					rate = -1.0f * UnityEngine.Mathf.Pow(2.0f, 10.0f * time) * UnityEngine.Mathf.Sin((time - s) * (UnityEngine.Mathf.PI * 2.0f) / easingRate);
+				}
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseElasticOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = 0.0f;
+//				if((time == 0.0f) || (time == 1.0f))
+				if((0.0f >= time) || (1.0f <= time))
+				{
+					rate = time;
+				}
+				else
+				{
+					float s = easingRate * 0.25f;
+					rate = UnityEngine.Mathf.Pow(2.0f, -10.0f * time) * UnityEngine.Mathf.Sin((time - s) * (UnityEngine.Mathf.PI * 2.0f) / easingRate) + 1.0f;
+				}
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseElasticInOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = 0.0f;
+//				if(time == 0 || time == 1)
+				if((0.0f >= time) || (1.0f <= time))
+				{
+					rate = time;
+				}
+				else
+				{
+					time *= 2.0f;
+//					if(!easingRate)
+					if(0.0f == easingRate)
+					{
+						easingRate = 0.3f * 1.5f;
+					}
+
+					float s = easingRate * 0.25f;
+					time = time - 1.0f;
+					if(time < 0.0f)
+					{
+//						newT = -0.5f * powf(2, 10 * time) * sinf((time - s) * M_PI_X_2 / fPeriod);
+//						rate = (float)(-0.5 * System.Math.Pow(2.0, 10.0 * (double)time) * System.Math.Sin(((double)time - s) * (System.Math.PI * 2.0) / easingRate));
+						rate = -0.5f * UnityEngine.Mathf.Pow(2.0f, 10.0f * time) * UnityEngine.Mathf.Sin((time - s) * (UnityEngine.Mathf.PI * 2.0f) / easingRate);
+					}
+					else
+					{
+//						newT = powf(2, -10 * time) * sinf((time - s) * M_PI_X_2 / fPeriod) * 0.5f + 1;
+//						rate = (float)(System.Math.Pow(2.0, -10.0 * (double)time) * System.Math.Sin(((double)time - s) * (System.Math.PI * 2.0) / easingRate) * 0.5 + 1.0);
+						rate = UnityEngine.Mathf.Pow(2.0f, -10.0f * time) * UnityEngine.Mathf.Sin((time - s) * (UnityEngine.Mathf.PI * 2.0f) / easingRate) * 0.5f + 1.0f;
+					}
+				}
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+
+			private static float EaseBounceIn(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = 1.0f - BounceTime(1.0f - time);
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseBounceOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				rate = BounceTime(time);
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseBounceInOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+//				rate =0.0f;
+				if(time < 0.5f)
+				{
+					time = time * 2;
+					rate = (1.0f - BounceTime(1.0f - time)) * 0.5f;
+				}
+				else
+				{
+					rate = BounceTime(time * 2.0f - 1.0f) * 0.5f + 0.5f;
+				}
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseBackIn(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				const float overshoot = 1.70158f;
+
+				rate = (time * time * ((overshoot + 1.0f) * time - overshoot));
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseBackOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				const float overshoot = 1.70158f;
+
+				time = time - 1.0f;
+				rate = (time * time * ((overshoot + 1.0f) * time + overshoot) + 1.0f);
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+			private static float EaseBackInOut(out float rate, float valueStart, float valueEnd, float time, float easingRate)
+			{
+				const float overshoot = 1.70158f * 1.525f;
+
+				time *= 2.0f;
+				rate = 0.0f;
+				if(time < 1.0f)
+				{
+					rate = ((time * time * ((overshoot + 1.0f) * time - overshoot)) * 0.5f);
+				}
+				else
+				{
+					time = time - 2;
+					rate = ((time * time * ((overshoot + 1.0f) * time + overshoot)) * 0.5f + 1.0f);
+				}
+
+				return(((valueEnd - valueStart) * rate) + valueStart);	/* Linear */
+			}
+
+			private static float BounceTime(float time)
+			{
+				if(time < (1.0f / 2.75f))
+				{
+					return(7.5625f * time * time);
+				}
+				else
+				if(time < (2.0f / 2.75f))
+				{
+					time -= 1.5f / 2.75f;
+					return(7.5625f * time * time + 0.75f);
+				}
+				else
+				if(time < (2.5f / 2.75f))
+				{
+					time -= 2.25f / 2.75f;
+					return(7.5625f * time * time + 0.9375f);
+				}
+
+				time -= 2.625f / 2.75f;
+				return(7.5625f * time * time + 0.984375f);
+			}
+
 			public static float ValueGetFloat(	Library_SpriteStudio6.Utility.Interpolation.KindFormula formula,
 												int frameNow,
 												int frameStart,
@@ -4528,7 +5172,8 @@ public static partial class Library_SpriteStudio6
 												float curveFrameStart,
 												float curveValueStart,
 												float curveFrameEnd,
-												float curveValueEnd
+												float curveValueEnd,
+												float rateEasing
 											)
 			{
 				if(frameEnd <= frameStart)
@@ -4565,6 +5210,29 @@ public static partial class Library_SpriteStudio6
 					case KindFormula.DECELERATE:
 						return(Decelerate(valueStart, valueEnd, frameNormalized));
 
+					case KindFormula.EASE_IN:
+					case KindFormula.EASE_OUT:
+					case KindFormula.EASE_INOUT:
+					case KindFormula.EASE_EXPONENTIAL_IN:
+					case KindFormula.EASE_EXPONENTIAL_OUT:
+					case KindFormula.EASE_EXPONENTIAL_INOUT:
+					case KindFormula.EASE_SINE_IN:
+					case KindFormula.EASE_SINE_OUT:
+					case KindFormula.EASE_SINE_INOUT:
+					case KindFormula.EASE_ELASTIC_IN:
+					case KindFormula.EASE_ELASTIC_OUT:
+					case KindFormula.EASE_ELASTIC_INOUT:
+					case KindFormula.EASE_BOUNCE_IN:
+					case KindFormula.EASE_BOUNCE_OUT:
+					case KindFormula.EASE_BOUNCE_INOUT:
+					case KindFormula.EASE_BACK_IN:
+					case KindFormula.EASE_BACK_OUT:
+					case KindFormula.EASE_BACK_INOUT:
+						{
+							float rateLinear;
+							return(Ease(out rateLinear, (int)(formula - KindFormula.EASE_IN), valueStart, valueEnd, frameNormalized, rateEasing));
+						}
+
 					default:
 						break;
 				}
@@ -4582,8 +5250,57 @@ public static partial class Library_SpriteStudio6
 				BEZIER,
 				ACCELERATE,
 				DECELERATE,
+
+				/* MEMO: After SpriteStudio 7.1 (Optional) */
+				EASE_IN,
+				EASE_OUT,
+				EASE_INOUT,
+				EASE_EXPONENTIAL_IN,
+				EASE_EXPONENTIAL_OUT,
+				EASE_EXPONENTIAL_INOUT,
+				EASE_SINE_IN,
+				EASE_SINE_OUT,
+				EASE_SINE_INOUT,
+				EASE_ELASTIC_IN,
+				EASE_ELASTIC_OUT,
+				EASE_ELASTIC_INOUT,
+				EASE_BOUNCE_IN,
+				EASE_BOUNCE_OUT,
+				EASE_BOUNCE_INOUT,
+				EASE_BACK_IN,
+				EASE_BACK_OUT,
+				EASE_BACK_INOUT,
 			}
+
+			private const int LengthTableFunction = (int)(KindFormula.EASE_BACK_INOUT - KindFormula.EASE_IN) + 1;
+			private readonly static FunctionEase[] TableFunctionEase = new FunctionEase[LengthTableFunction]
+			{
+				EaseIn,
+				EaseOut,
+				EaseInOut,
+				EaseExponentialIn,
+				EaseExponentialOut,
+				EaseExponentialInOut,
+				EaseSineIn,
+				EaseSineOut,
+				EaseSineInOut,
+				EaseElasticIn,
+				EaseElasticOut,
+				EaseElasticInOut,
+				EaseBounceIn,
+				EaseBounceOut,
+				EaseBounceInOut,
+				EaseBackIn,
+				EaseBackOut,
+				EaseBackInOut,
+			};
 			#endregion Enums & Constants
+
+			/* ----------------------------------------------- Delegate types */
+			#region Delegates
+			private delegate float FunctionEase(out float rate, float valueStart, float valueEnd, float time, float easeingRate);
+			private delegate Color FunctionEaseColor(out float rate, Color valueStart, Color valueEnd, float time, float easeingRate);
+			#endregion Delegates
 		}
 
 		public static partial class Material

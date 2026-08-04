@@ -120,6 +120,12 @@ public partial class Script_SpriteStudio6_Root
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+					break;
 			}
 		}
 	}
@@ -207,6 +213,12 @@ public partial class Script_SpriteStudio6_Root
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
 					break;
+
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+				case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
+					break;
 			}
 		}
 	}
@@ -220,6 +232,12 @@ public partial class Script_SpriteStudio6_Root
 		Blend Operation for the target
 	@param	masking
 		masking for the target
+	@param	flagDrawInsideMask
+		true == Draw pixels inside mask (for Clipping-Mask)<br>
+		false == Draw pixels outside mask (for Masking)
+	@param	flagIsShape
+		true == for "Shape" part (Non-Texture and Switchable masking and drawing)
+		false == for Non-"Shape" part (Normal, Mesh or Mask)
 	@param	nameShader
 		Shader's name in animation-data<br>
 		null == Standard-shader's name
@@ -264,6 +282,8 @@ public partial class Script_SpriteStudio6_Root
 	public UnityEngine.Material MaterialGet(	int indexCellMap,
 												Library_SpriteStudio6.KindOperationBlend operationBlend,
 												Library_SpriteStudio6.KindMasking masking,
+												bool flagDrawInsideMask,
+												bool flagIsShape,
 												string nameShader,
 												bool flagCreateNew,
 												UnityEngine.Shader shader=null,
@@ -274,7 +294,8 @@ public partial class Script_SpriteStudio6_Root
 		{
 			return(null);
 		}
-		if(0 > indexCellMap)
+//		if(0 > indexCellMap)
+		if((0 > indexCellMap) && (false == flagIsShape))
 		{
 			return(null);
 		}
@@ -292,6 +313,8 @@ public partial class Script_SpriteStudio6_Root
 			{	/* Standard-Shader */
 				nameShader = null;	/* Standard-Shader */
 
+				/* MEMO: "Stencil" has priority over "Shape", since "Shape" can be a "Mask" too. */
+				/*       (Same order as "Control.CacheMaterial.MaterialGetAnimation")            */
 				if(Library_SpriteStudio6.KindOperationBlend.MIX > operationBlend)
 				{	/* Stencil */
 					shader = CacheMaterial.ShaderStandardStencil;
@@ -306,16 +329,32 @@ public partial class Script_SpriteStudio6_Root
 					}
 				}
 				else
-				{	/* Pixel */
-					shader = CacheMaterial.ShaderStandardAnimation;
-					if(null == shader)
-					{
-						flagIsLocalShader = false;
-						shader = dataProject.CacheMaterial.ShaderStandardAnimation;
+				{
+					if(true == flagIsShape)
+					{	/* Shape */
+						shader = CacheMaterial.ShaderStandardShape;
+						if(null == shader)
+						{
+							flagIsLocalShader = false;
+							shader = dataProject.CacheMaterial.ShaderStandardShape;
+						}
+						else
+						{
+							flagIsLocalShader = true;
+						}
 					}
 					else
-					{
-						flagIsLocalShader = true;
+					{	/* Pixel */
+						shader = CacheMaterial.ShaderStandardAnimation;
+						if(null == shader)
+						{
+							flagIsLocalShader = false;
+							shader = dataProject.CacheMaterial.ShaderStandardAnimation;
+						}
+						else
+						{
+							flagIsLocalShader = true;
+						}
 					}
 				}
 			}
@@ -324,7 +363,8 @@ public partial class Script_SpriteStudio6_Root
 		/* Check Texture Override */
 		bool flagIsLocalTexture = false;
 		UnityEngine.Texture[] tableTexture = null;
-		if(null != TableTexture)
+//		if(null != TableTexture)
+		if((null != TableTexture) && (false == flagIsShape))
 		{	/* Texture-Override is running */
 			if(TableTexture.Length <= indexCellMap)
 			{
@@ -356,6 +396,8 @@ public partial class Script_SpriteStudio6_Root
 			return(CacheMaterial.MaterialGetAnimation(	indexCellMap,
 														operationBlend,
 														masking,
+														flagDrawInsideMask,
+														flagIsShape,
 														nameShader,
 														shader,
 														functionMaterialSetUp,
@@ -369,6 +411,8 @@ public partial class Script_SpriteStudio6_Root
 		return(dataProject.MaterialGetAnimation(	indexCellMap,
 													operationBlend,
 													masking,
+													flagDrawInsideMask,
+													flagIsShape,
 													nameShader,
 													flagCreateNew,
 													shader,
@@ -412,6 +456,7 @@ public partial class Script_SpriteStudio6_Root
 	public UnityEngine.Material MaterialReplaceAnimation(	int indexCellMap,
 															Library_SpriteStudio6.KindOperationBlend operationBlend,
 															Library_SpriteStudio6.KindMasking masking,
+															bool flagDrawInsideMask,
 															string nameShader,
 															UnityEngine.Material material,
 															bool flagGlobal = false
@@ -431,6 +476,7 @@ public partial class Script_SpriteStudio6_Root
 			return(	CacheMaterial.MaterialReplaceAnimation(	indexCellMap,
 															operationBlend,
 															masking,
+															flagDrawInsideMask,
 															nameShader,
 															material
 														)
@@ -454,6 +500,7 @@ public partial class Script_SpriteStudio6_Root
 		return(	dataProject.MaterialReplaceAnimation(	indexCellMap,
 														operationBlend,
 														masking,
+														flagDrawInsideMask,
 														nameShader,
 														material
 												)
@@ -513,6 +560,7 @@ public partial class Script_SpriteStudio6_Root
 																		null,
 																		functionMaterialSetUp,
 																		null,
+																		false,
 																		flagReplaceMaterialCache
 																)
 				);
@@ -598,6 +646,7 @@ public partial class Script_SpriteStudio6_Root
 																	null,
 																	functionMaterialSetUp,
 																	null,
+																	false,
 																	flagReplaceMaterialCache
 															)
 				);
@@ -660,6 +709,7 @@ public partial class Script_SpriteStudio6_Root
 			return(CacheMaterial.ShaderReplaceStandardStencil(	shader,
 																null,
 																null,
+																false,
 																flagReplaceMaterialCache
 														)
 				);

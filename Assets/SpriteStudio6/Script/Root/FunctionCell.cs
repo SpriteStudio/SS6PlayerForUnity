@@ -1,4 +1,4 @@
-/**
+﻿/**
 	SpriteStudio6 Player for Unity
 
 	Copyright(C) 1997-2021 Web Technology Corp.
@@ -437,6 +437,12 @@ public partial class Script_SpriteStudio6_Root
 
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TRANSFORM_CONSTRAINT:
 			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.CAMERA:
+				return(true);
+
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.AUDIO:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.SHAPE:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.TEXT:
+			case Library_SpriteStudio6.Data.Parts.Animation.KindFeature.NINE_SLICE:
 				return(true);
 		}
 

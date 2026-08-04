@@ -97,11 +97,11 @@ public static partial class LibraryEditor_SpriteStudio6
 				System.Xml.NameTable nodeNameSpace = new System.Xml.NameTable();
 				System.Xml.XmlNamespaceManager managerNameSpace = new System.Xml.XmlNamespaceManager(nodeNameSpace);
 
-				string valueText = "";
+				string valueText = string.Empty;
 
 				/* Get Texture Path-Name */
 				valueText = LibraryEditor_SpriteStudio6.Utility.XML.TextGetNode(nodeRoot, "imagePath", managerNameSpace);
-				string namePathTexture = "";
+				string namePathTexture = string.Empty;
 				if(true == System.IO.Path.IsPathRooted(valueText))
 				{
 					namePathTexture = string.Copy(valueText);
@@ -709,9 +709,9 @@ public static partial class LibraryEditor_SpriteStudio6
 					Data = new Library_SpriteStudio6.Data.CellMap();
 					Data.CleanUp();
 
-					NameDirectory = "";
-					NameFileBody = "";
-					NameFileExtension = "";
+					NameDirectory = string.Empty;
+					NameFileBody = string.Empty;
+					NameFileExtension = string.Empty;
 
 					IndexTexture = -1;
 					WrapTexture = (Library_SpriteStudio6.Data.Texture.KindWrap)(-1);
@@ -805,11 +805,11 @@ public static partial class LibraryEditor_SpriteStudio6
 					#region Functions
 					public void CleanUp()
 					{
-						Name = "";
+						Name = string.Empty;
 
-						NameDirectory = "";
-						NameFileBody = "";
-						NameFileExtension = "";
+						NameDirectory = string.Empty;
+						NameFileBody = string.Empty;
+						NameFileExtension = string.Empty;
 
 						Wrap = (Library_SpriteStudio6.Data.Texture.KindWrap)(-1);
 						Filter = (Library_SpriteStudio6.Data.Texture.KindFilter)(-1);
@@ -1055,7 +1055,7 @@ public static partial class LibraryEditor_SpriteStudio6
 					if(null == informationTexture)
 					{
 						/* MEMO: Usually do not reach here. */
-						LogError(messageLogPrefix, "Texture information vanished. index[" + indexTexture.ToString() + "]", "", informationSSPJ);
+						LogError(messageLogPrefix, "Texture information vanished. index[" + indexTexture.ToString() + "]", string.Empty, informationSSPJ);
 						goto CellMapSetTexture_ErrorEnd;
 					}
 					if(null == informationTexture.ListSpriteMetaDataUnityNative)

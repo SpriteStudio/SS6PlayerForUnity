@@ -1,4 +1,4 @@
-//
+﻿//
 //	SpriteStudio6 Player for Unity
 //
 //	Copyright(C) 1997-2021 Web Technology Corp.
@@ -14,6 +14,10 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil"
 		[PerRendererData] _EnableExternalAlpha("Enable External Alpha", Float) = 0
 
 		[Enum(UnityEngine.Rendering.StencilOp)] _StencilOperation("Stencil Operation", Float) = 0
+		/* MEMO: (Ver.2.3.0-) Separates the stencil into bit-planes, so that "Invert"("Mask"-parts affected by */
+		/*       masking) and "Increment/DecrementWrap"(not affected) never disturb each other.                */
+		/*       Default 255 reproduces the behavior before Ver.2.3.0. (For replaced shaders lacking this)     */
+		_StencilWriteMask("Stencil Write Mask", Float) = 255
 
 		[HideInInspector] _ArgumentFs00("Argument Fs00", Vector) = (0,0,0,0)
 		[HideInInspector] _ParameterFs00("Parameter Fs00", Vector) = (0,0,0,0)
@@ -38,6 +42,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil"
 				Ref 0
 				Comp Always
 				Pass [_StencilOperation]
+				WriteMask [_StencilWriteMask]
 			}
 			ColorMask 0
 			Blend SrcAlpha OneMinusSrcAlpha
@@ -48,6 +53,7 @@ Shader "Custom/SpriteStudio6/SS6PU/Stencil"
 
 			#pragma multi_compile _ ETC1_EXTERNAL_ALPHA
 			#include "UnityCG.cginc"
+			#include "HLSLSupport.cginc"
 
 //			#define RESTRICT_SHADER_MODEL_3
 // 			#define PS_NOT_DISCARD

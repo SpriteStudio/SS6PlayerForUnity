@@ -35,9 +35,11 @@ public static partial class Library_SpriteStudio6
 						true,	/* Scaling */
 						true,	/* ScalingLocal */
 						true,	/* RateOpacity */
+						true,	/* PowerMask */
 						true,	/* Priority */
 						true,	/* PartsColor */
 						true,	/* VertexCorrection */
+						true,	/* Skew */
 						true,	/* OffsetPivot */
 						true,	/* PositionAnchor */
 						true,	/* SizeForce */
@@ -50,7 +52,9 @@ public static partial class Library_SpriteStudio6
 						true,	/* Effect (Trigger) */
 						true,	/* Deform */
 						true,	/* Shader */
-						true	/* Signal */
+						true,	/* Signal */
+						true,	/* Sound (Trigger) */
+						true	/* ChangeTexture (Trigger) */
 					);
 
 					public const string ID = "StandardCPE";
@@ -63,12 +67,15 @@ public static partial class Library_SpriteStudio6
 					internal readonly static InterfaceFunctionCell FunctionCell = new InterfaceFunctionCell();
 					internal readonly static InterfaceFunctionPartsColor FunctionPartsColor = new InterfaceFunctionPartsColor();
 					internal readonly static InterfaceFunctionVertexCorrection FunctionVertexCorrection = new InterfaceFunctionVertexCorrection();
+					internal readonly static InterfaceFunctionSkew FunctionSkew = new InterfaceFunctionSkew();
 					internal readonly static InterfaceFunctionUserData FunctionUserData = new InterfaceFunctionUserData();
 					internal readonly static InterfaceFunctionInstance FunctionInstance = new InterfaceFunctionInstance();
 					internal readonly static InterfaceFunctionEffect FunctionEffect = new InterfaceFunctionEffect();
 					internal readonly static InterfaceFunctionDeform FunctionDeform = new InterfaceFunctionDeform();
 					internal readonly static InterfaceFunctionShader FunctionShader = new InterfaceFunctionShader();
 					internal readonly static InterfaceFunctionSignal FunctionSignal = new InterfaceFunctionSignal();
+					internal readonly static InterfaceFunctionSound FunctionSound = new InterfaceFunctionSound();
+					internal readonly static InterfaceFunctionChangeTexture FunctionChangeTexture = new InterfaceFunctionChangeTexture();
 
 					/* MEMO: Originally "private", but other decoders need these values, so set to "public". */
 					[System.Flags]
@@ -116,7 +123,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<int> cacheDecode,
@@ -129,7 +136,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInt container)
@@ -156,7 +163,11 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionInt(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -179,7 +190,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<float> cacheDecode,
@@ -192,7 +203,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerFloat container)
@@ -219,7 +230,11 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionFloat(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -242,7 +257,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Vector2> cacheDecode,
@@ -255,7 +270,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector2 container)
@@ -282,7 +297,11 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector2(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -305,7 +324,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Vector3> cacheDecode,
@@ -318,7 +337,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVector3 container)
@@ -345,7 +364,11 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVector3(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -368,7 +391,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Status> cacheDecode,
@@ -381,7 +404,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerStatus container)
@@ -408,7 +431,11 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionStatus(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -431,7 +458,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Cell> cacheDecode,
@@ -444,7 +471,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerCell container)
@@ -471,7 +498,11 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionCell(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -494,7 +525,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.PartsColor> cacheDecode,
@@ -507,7 +538,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerPartsColor container)
@@ -534,7 +565,11 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionPartsColor(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -557,7 +592,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.VertexCorrection> cacheDecode,
@@ -570,7 +605,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerVertexCorrection container)
@@ -597,7 +632,78 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionVertexCorrection(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
+						}
+						#endregion Functions
+					}
+
+					public class InterfaceFunctionSkew : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerSkew
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Skew> cacheDecode,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							int frame = argument.Frame;
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
+							{
+								return(false);
+							}
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
+						}
+
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Skew> cacheDecode,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew container)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(0);
+							}
+							return(container.TableCodeValue[0].TableCode.Length);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSkew[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 */
+							/* MEMO: Get values that have undergone dedicated processing and inheriting for each attribute. */
+							Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew dataUncompressed = new Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSkew();
+							dataUncompressed.TypePack = Library_SpriteStudio6.Data.Animation.PackAttribute.KindTypePack.STANDARD_UNCOMPRESSED;
+							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionSkew(dataUncompressed);
+							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
+
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -620,7 +726,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.UserData> cacheDecode,
@@ -633,7 +739,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerUserData container)
@@ -657,14 +763,14 @@ public static partial class Library_SpriteStudio6
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
-								container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.UserData[0];
+								container.TableCreateEmpty();
 								return(true);
 							}
 
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
 							container.TableCodeValue[0].TableCode = new int[countKey];
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.UserData[countKey];
+							container.TableAccessory = new float[0];	/* Fixed */
 							for(int i=0; i<countKey; i++)
 							{
 								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
@@ -695,7 +801,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Instance> cacheDecode,
@@ -708,7 +814,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerInstance container)
@@ -732,14 +838,14 @@ public static partial class Library_SpriteStudio6
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
-								container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Instance[0];
+								container.TableCreateEmpty();
 								return(true);
 							}
 
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
 							container.TableCodeValue[0].TableCode = new int[countKey];
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Instance[countKey];
+							container.TableAccessory = new float[0];	/* Fixed */
 							for(int i=0; i<countKey; i++)
 							{
 								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
@@ -770,7 +876,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Effect> cacheDecode,
@@ -783,7 +889,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerEffect container)
@@ -807,14 +913,14 @@ public static partial class Library_SpriteStudio6
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
-								container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Effect[0];
+								container.TableCreateEmpty();
 								return(true);
 							}
 
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
 							container.TableCodeValue[0].TableCode = new int[countKey];
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Effect[countKey];
+							container.TableAccessory = new float[0];	/* Fixed */
 							for(int i=0; i<countKey; i++)
 							{
 								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
@@ -856,7 +962,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetDeform(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetDeform(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory, container));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Deform> cacheDecode,
@@ -880,7 +986,7 @@ public static partial class Library_SpriteStudio6
 								return(false);	/* outValue is not overwritten. */
 							}
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndexDeform(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndexDeform(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory, container));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container)
@@ -911,7 +1017,11 @@ public static partial class Library_SpriteStudio6
 							container.CountVertexMesh = dataUncompressed.CountVertexMesh;
 							container.TableIndexVertex = dataUncompressed.TableIndexVertex;
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -934,7 +1044,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Shader> cacheDecode,
@@ -947,7 +1057,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerShader container)
@@ -974,7 +1084,11 @@ public static partial class Library_SpriteStudio6
 							Library_SpriteStudio6.Data.Animation.PackAttribute.BootUpFunctionShader(dataUncompressed);
 							dataUncompressed.Function.Pack(dataUncompressed, nameAttribute, countFrame, flagStatusParts, tableOrderDraw, tableOrderPreDraw, listKeyData);
 
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(out container.TableCodeValue, out container.TableValue, dataUncompressed.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.Compress(	out container.TableCodeValue,
+																											out container.TableValue, dataUncompressed.TableValue,
+																											out container.TableAccessory, dataUncompressed.TableAccessory
+																										)
+								);
 						}
 						#endregion Functions
 					}
@@ -997,7 +1111,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Signal> cacheDecode,
@@ -1010,7 +1124,7 @@ public static partial class Library_SpriteStudio6
 							{
 								return(false);
 							}
-							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue));
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
 						}
 
 						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSignal container)
@@ -1034,14 +1148,164 @@ public static partial class Library_SpriteStudio6
 							int countKey = listKeyData[0].CountGetKey();
 							if(0 >= countKey)
 							{
-								container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
-								container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Signal[0];
+								container.TableCreateEmpty();
 								return(true);
 							}
 
 							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
 							container.TableCodeValue[0].TableCode = new int[countKey];
 							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Signal[countKey];
+							container.TableAccessory = new float[0];	/* Fixed */
+							for(int i=0; i<countKey; i++)
+							{
+								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
+								container.TableCodeValue[0].TableCode[i] |= (int)FlagBit.FRAMEKEY & listKeyData[0].ListKey[i].Frame;
+
+								container.TableValue[i] = listKeyData[0].ListKey[i].Value;
+							}
+							return(true);
+						}
+						#endregion Functions
+					}
+
+					public class InterfaceFunctionSound : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerSound
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Sound> cacheDecode,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSound container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							int frame = argument.Frame;
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
+							{
+								return(false);
+							}
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
+						}
+
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.Sound> cacheDecode,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSound container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSound container)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(0);
+							}
+							return(container.TableCodeValue[0].TableCode.Length);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerSound container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeSound[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 */
+							int countKey = listKeyData[0].CountGetKey();
+							if(0 >= countKey)
+							{
+								container.TableCreateEmpty();
+								return(true);
+							}
+
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
+							container.TableCodeValue[0].TableCode = new int[countKey];
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.Sound[countKey];
+							container.TableAccessory = new float[0];	/* Fixed */
+							for(int i=0; i<countKey; i++)
+							{
+								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
+								container.TableCodeValue[0].TableCode[i] |= (int)FlagBit.FRAMEKEY & listKeyData[0].ListKey[i].Frame;
+
+								container.TableValue[i] = listKeyData[0].ListKey[i].Value;
+							}
+							return(true);
+						}
+						#endregion Functions
+					}
+
+					public class InterfaceFunctionChangeTexture : Library_SpriteStudio6.Data.Animation.PackAttribute.InterfaceContainerChangeTexture
+					{
+						/* ----------------------------------------------- Functions */
+						#region Functions
+						public bool ValueGet(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture> cacheDecode,
+												Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture container,
+												ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+											)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							int frame = argument.Frame;
+							if((0 <= cacheDecode.FrameKey) && (frame == argument.FramePrevious))
+							{
+								return(false);
+							}
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGet(ref cacheDecode, frame, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
+						}
+
+						public bool ValueGetIndex(	ref CacheDecode<Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture> cacheDecode,
+													int index,
+													Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture container,
+													ref Library_SpriteStudio6.Data.Animation.PackAttribute.ArgumentContainer argument
+												)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(false);
+							}
+							return(Library_SpriteStudio6.Data.Animation.PackAttribute.StandardCPE.ValueGetIndex(ref cacheDecode, index, container.TableCodeValue[0].TableCode, container.TableValue, container.TableAccessory));
+						}
+
+						public int CountGetValue(Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture container)
+						{
+							if(0 >= container.TableCodeValue.Length)
+							{
+								return(0);
+							}
+							return(container.TableCodeValue[0].TableCode.Length);
+						}
+
+						public bool Pack(	Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerChangeTexture container,
+											string nameAttribute,
+											int countFrame,
+											Library_SpriteStudio6.Data.Animation.Parts.FlagBitStatus flagStatusParts,
+											int[] tableOrderDraw,
+											int[] tableOrderPreDraw,
+											params Library_SpriteStudio6.Data.Animation.Attribute.Importer.AttributeChangeTexture[] listKeyData
+										)
+						{	/* MEMO: "listKeyData.Length" is always 1 */
+							int countKey = listKeyData[0].CountGetKey();
+							if(0 >= countKey)
+							{
+								container.TableCreateEmpty();
+								return(true);
+							}
+
+							container.TableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[1];	/* only 1 type status */
+							container.TableCodeValue[0].TableCode = new int[countKey];
+							container.TableValue = new Library_SpriteStudio6.Data.Animation.Attribute.ChangeTexture[countKey];
+							container.TableAccessory = new float[0];	/* Fixed */
 							for(int i=0; i<countKey; i++)
 							{
 								container.TableCodeValue[0].TableCode[i] = (int)FlagBit.INDEX & (i << 15);
@@ -1060,7 +1324,8 @@ public static partial class Library_SpriteStudio6
 					public static bool ValueGet<_Type>(	ref CacheDecode<_Type> cacheDecode,
 														int frame,
 														int[] tableStatus,
-														_Type[] tableValue
+														_Type[] tableValue,
+														float[] tableAccessory
 													)
 						where _Type : struct
 					{
@@ -1139,6 +1404,7 @@ public static partial class Library_SpriteStudio6
 														int frame,
 														int[] tableStatus,
 														Library_SpriteStudio6.Data.Animation.Attribute.Deform[] tableValue,
+														float[] tableAccessory,
 														Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container
 													)
 					{
@@ -1180,6 +1446,8 @@ public static partial class Library_SpriteStudio6
 						{
 							tableCoordinateOutput[tableIndexVertex[i]] = tableCoordinate[i];
 						}
+
+						/* MEMO: "TableAccessory" is not used. */
 
 						return(true);	/* outValue is overwritten. */
 #else
@@ -1235,7 +1503,8 @@ public static partial class Library_SpriteStudio6
 					public static bool ValueGetIndex<_Type>(	ref CacheDecode<_Type> cacheDecode,
 																int index,
 																int[] tableStatus,
-																_Type[] tableValue
+																_Type[] tableValue,
+																float[] tableAccessory
 															)
 						where _Type : struct
 					{
@@ -1252,6 +1521,7 @@ public static partial class Library_SpriteStudio6
 															int index,
 															int[] tableStatus,
 															Library_SpriteStudio6.Data.Animation.Attribute.Deform[] tableValue,
+															float[] tableAccessory,
 															Library_SpriteStudio6.Data.Animation.PackAttribute.ContainerDeform container
 														)
 					{
@@ -1275,16 +1545,22 @@ public static partial class Library_SpriteStudio6
 							tableCoordinateOutput[tableIndexVertex[i]] = tableCoordinate[i];
 						}
 
+						/* MEMO: "TableAccessory" is not used. */
+
 						return(true);
 					}
 
-					public static bool Compress<_Type>(out Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[] tableCodeValue, out _Type[] tableValue, _Type[] tableValueUncompressed)
+					public static bool Compress<_Type>(	out Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[] tableCodeValue,
+														out _Type[] tableValue, _Type[] tableValueUncompressed,
+														out float[] tableAccessory, float[] tableAccessoryUncompressed
+													)
 					{
 						int countFrame = tableValueUncompressed.Length;
 						if(0 >= countFrame)
 						{
 							tableCodeValue = new Library_SpriteStudio6.Data.Animation.PackAttribute.CodeValueContainer[0];
 							tableValue = new _Type[0];
+							tableAccessory = new float[0];	/* Force */
 							return(true);
 						}
 
@@ -1339,6 +1615,8 @@ public static partial class Library_SpriteStudio6
 						tableValue = listValue.ToArray();
 						listValue.Clear();
 						listValue = null;
+
+						tableAccessory = new float[0];	/* Force */
 
 						return(true);
 
