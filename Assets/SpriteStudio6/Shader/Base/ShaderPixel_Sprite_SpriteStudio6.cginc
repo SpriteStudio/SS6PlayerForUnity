@@ -9,16 +9,9 @@ sampler2D _MainTex;
 sampler2D _AlphaTex;
 float _EnableExternalAlpha;
 
-#if COMPILEOPTION_FRAMEBUFFER_FETCH
-void PS_main(InputPS input, inout half4 output : SV_Target)
-#else
 float4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
-#endif
 {
-#if COMPILEOPTION_FRAMEBUFFER_FETCH
-#else
 	float4 output;
-#endif
 
 	/* Texel Sampling */
 	/* MEMO: Run "PixelSynthesizeExternalAlpha", especially if you want to support ETC1's split-alpha. */
@@ -41,11 +34,7 @@ float4 PS_main(InputPS input) : PIXELSHADER_BINDOUTPUT
 	PixelSolvePMA(pixel, pixel.a);
 	pixel = PixelSolveColorspaceOutput(pixel);
 
-#if COMPILEOPTION_FRAMEBUFFER_FETCH
-	PixelBlendTarget(output, pixel, output);
-#else
 	output = pixel;
 
-    return (output);
-#endif
+	return (output);
 }

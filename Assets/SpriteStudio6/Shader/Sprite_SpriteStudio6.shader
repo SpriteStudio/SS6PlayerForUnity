@@ -58,7 +58,6 @@ Shader "Custom/SpriteStudio6/SS6PU/Sprite"
 			#include "UnityCG.cginc"
 			#include "HLSLSupport.cginc"
 
-			#define COMPILEOPTION_FRAMEBUFFER_FETCH UNITY_FRAMEBUFFER_FETCH_AVAILABLE
 //			#define RESTRICT_SHADER_MODEL_3
 			#pragma multi_compile _ PS_NOT_DISCARD
 			#pragma multi_compile _ PS_OUTPUT_PMA
