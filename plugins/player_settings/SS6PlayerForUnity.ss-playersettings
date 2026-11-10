@@ -1,9 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version='1.0' encoding='utf8'?>
 <list>
 	<item>
 		<available>1</available>
-		<id>SS6PlayerForUnity</id>
-		<caption>SS6PlayerForUnity v1.1</caption>
+		<id>SS6PlayerForUnity_v2</id>
+		<caption>SS6PlayerForUnity v2.1</caption>
+		<notification>
+			<ja>このプレイヤーでは表示結果が異なるものがあります。\n
+詳しくは下記のページをご覧ください。\n
+https://github.com/SpriteStudio/SS6PlayerForUnity</ja>
+			<en>This player has some incompatibilities.\n
+Please see the following page for the detail.\n
+https://github.com/SpriteStudio/SS6PlayerForUnity</en>
+		</notification>
 		<platform>any</platform>
 		<inputProjectFormat>sspj</inputProjectFormat>
 		<inputAnimeFormat>ssae</inputAnimeFormat>
@@ -48,6 +56,7 @@
 			<item>IPRM</item>
 			<item>EFCT</item>
 			<item>DEFM</item>
+			<item>SHDR</item>
 		</attributes>
 		<alphaBlendTypes>
 			<item>mix</item>
@@ -80,9 +89,26 @@
 			<item>bone</item>
 			<item>mesh</item>
 		</features>
+		<availableShaders>
+			<item>default</item>
+			<item warning="different">ss-blur</item>
+			<item warning="different">ss-bmask</item>
+			<item warning="different-edge">ss-circle</item>
+			<item warning="different">ss-hsb</item>
+			<item warning="different">ss-move</item>
+			<item warning="different">ss-noise</item>
+			<item>ss-outline</item>
+			<item warning="different">ss-pix</item>
+			<item warning="different">ss-scatter</item>
+			<item warning="different">ss-sepia</item>
+			<item warning="different">ss-spot</item>
+			<item warning="different">ss-step</item>
+			<item warning="different">ss-wave</item>
+		</availableShaders> 
 		<enablePMASettings>0</enablePMASettings>
 		<convertImageToPMA>0</convertImageToPMA>
 		<blendImageAsPMA>0</blendImageAsPMA>
 		<unpremultiplyAlpha>0</unpremultiplyAlpha>
+		<tags>official</tags>
 	</item>
 </list>
